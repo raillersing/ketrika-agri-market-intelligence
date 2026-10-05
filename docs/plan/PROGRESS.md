@@ -9,8 +9,8 @@
 
 | ID | Priorité | Phase | Description | Dépendances | Statut | Commit / Preuve |
 |---|---|---|---|---|---|---|
-| **T0.1** | MUST | 0 | Initialiser le dépôt et la gouvernance | — | **IN_PROGRESS** | — |
-| **T0.2** | MUST | 0 | Squelette du monorepo et outillage qualité | T0.1 | TODO | — |
+| **T0.1** | MUST | 0 | Initialiser le dépôt et la gouvernance | — | **DONE** | d109bb7 (git init, attributes, docs/plan) |
+| **T0.2** | MUST | 0 | Squelette du monorepo et outillage qualité | T0.1 | **DONE** | `./scripts/dev.ps1 check` vert (ruff 0, mypy 0, pytest 1 passed, vitest 1 passed) |
 | **T0.3** | MUST | 0 | Stack Docker de développement | T0.2 | TODO | — |
 | **T0.4** | SHOULD | 0 | Configuration CI locale/GitHub Actions | T0.3 | TODO | — |
 | **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | TODO | — |
@@ -57,10 +57,26 @@
 
 ## 2. Journal d'exécution
 
-### [2026-10-05T20:55:00Z] Démarrage de T0.1 : Initialiser le dépôt et la gouvernance
-- **Mini-plan T0.1 :**
-  1. Vérifier prérequis environnement (git, docker, uv).
-  2. Initialiser git repository sur la branche `main`.
-  3. Configurer `.gitignore`, `.gitattributes`, `.editorconfig`.
-  4. Créer les dossiers de gouvernance et `README.md` minimal.
-  5. Vérifier les critères d'acceptation T0.1 et committer `chore(T0.1): bootstrap repository`.
+### [2026-10-05T20:55:00Z] Exécution de T0.1 : Initialiser le dépôt et la gouvernance
+- Vérification environnement (git, docker, compose, uv).
+- Création `.gitignore`, `.gitattributes`, `.editorconfig`, `README.md`, `scripts/dev.sh`.
+- Création `DECISIONS.md` (ADR-001 à ADR-006), `BLOCKERS.md`, `BACKLOG.md`.
+- Validation acceptation : git repository initialisé, `git check-attr eol -- scripts/dev.sh` renvoie `lf`.
+- Commit : `d109bb7` (`chore(T0.1): bootstrap repository`). Statut : **DONE**.
+
+### [2026-10-05T21:05:00Z] Démarrage de T0.2 : Squelette du monorepo et outillage qualité
+- **Mini-plan T0.2 :**
+  1. Créer l'arborescence normative (backend, web, deploy, registry, taxonomy, geo).
+  2. Configurer `backend/pyproject.toml` (ruff, mypy, pytest, uv) et Dockerfile.
+  3. Initialiser `web` (Next.js, TypeScript, Tailwind, pnpm, vitest).
+  4. Rédiger `scripts/dev.ps1` et `scripts/dev.sh` avec commandes normatives.
+  5. Générer `uv.lock` et `pnpm-lock.yaml`.
+  6. Écrire des tests unitaires minimaux backend et web.
+  7. Vérifier `./scripts/dev.ps1 check` et sortie d'erreur sur argument invalide.
+  8. Committer `chore(T0.2): monorepo skeleton and quality tooling`.
+- **Validation acceptation :**
+  - `./scripts/dev.ps1 check` : vert (backend: ruff check & format 17 fichiers, mypy 17 fichiers sans erreur, pytest 1 passed ; web: vitest 1 test passed).
+  - Lockfiles `backend/uv.lock` et `web/pnpm-lock.yaml` présents et versionnés.
+  - `./scripts/dev.ps1 nope` affiche l'aide et retourne le code de sortie 1.
+- Statut : **DONE**.
+
