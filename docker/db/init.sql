@@ -20,6 +20,9 @@ CREATE EXTENSION IF NOT EXISTS "postgis";
 CREATE SCHEMA IF NOT EXISTS meta;
 CREATE SCHEMA IF NOT EXISTS ref;
 CREATE SCHEMA IF NOT EXISTS obs;
+CREATE SCHEMA IF NOT EXISTS ml;
+CREATE SCHEMA IF NOT EXISTS ops;
+CREATE SCHEMA IF NOT EXISTS auth;
 CREATE SCHEMA IF NOT EXISTS gold;
 CREATE SCHEMA IF NOT EXISTS dq;
 
@@ -32,13 +35,13 @@ BEGIN
 END
 $$;
 
-GRANT ALL PRIVILEGES ON SCHEMA meta, ref, obs, gold, dq TO ketrika;
-GRANT ALL PRIVILEGES ON SCHEMA meta, ref, obs, gold, dq TO ketrika_app;
+GRANT ALL PRIVILEGES ON SCHEMA meta, ref, obs, ml, ops, auth, gold, dq TO ketrika;
+GRANT ALL PRIVILEGES ON SCHEMA meta, ref, obs, ml, ops, auth, gold, dq TO ketrika_app;
 
-ALTER DEFAULT PRIVILEGES IN SCHEMA meta, ref, obs, gold, dq GRANT ALL ON TABLES TO ketrika;
-ALTER DEFAULT PRIVILEGES IN SCHEMA meta, ref, obs, gold, dq GRANT ALL ON TABLES TO ketrika_app;
-ALTER DEFAULT PRIVILEGES IN SCHEMA meta, ref, obs, gold, dq GRANT ALL ON SEQUENCES TO ketrika;
-ALTER DEFAULT PRIVILEGES IN SCHEMA meta, ref, obs, gold, dq GRANT ALL ON SEQUENCES TO ketrika_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA meta, ref, obs, ml, ops, auth, gold, dq GRANT ALL ON TABLES TO ketrika;
+ALTER DEFAULT PRIVILEGES IN SCHEMA meta, ref, obs, ml, ops, auth, gold, dq GRANT ALL ON TABLES TO ketrika_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA meta, ref, obs, ml, ops, auth, gold, dq GRANT ALL ON SEQUENCES TO ketrika;
+ALTER DEFAULT PRIVILEGES IN SCHEMA meta, ref, obs, ml, ops, auth, gold, dq GRANT ALL ON SEQUENCES TO ketrika_app;
 
 -- 5. Copilot Read-Only Role (copilot_ro)
 -- SPECS §10.1 & §21: strictly limited to SELECT on schema gold only

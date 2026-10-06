@@ -65,7 +65,13 @@ case "$COMMAND" in
     ;;
   check)
     echo "=== Running Backend Quality Checks ==="
-    docker run --rm -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
+    NET_ARG=""
+    if docker network ls --filter "name=aiagent_default" -q | grep -q .; then
+      NET_ARG="--network aiagent_default"
+      docker run --rm $NET_ARG -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
+    else
+      docker run --rm -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network and not integration'"
+    fi
     echo "=== Running Web Quality Checks ==="
     docker run --rm -v "${PWD}/web:/app" -v /app/node_modules -w /app ketrika-web:dev pnpm test
     echo "All checks passed successfully!"

@@ -92,7 +92,12 @@ switch ($Command) {
         Write-Host "=== Running Backend Quality Checks ===" -ForegroundColor Cyan
         $backendExit = 0
         try {
-            docker run --rm -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
+            $netCheck = docker network ls --filter "name=aiagent_default" -q
+            if ($netCheck) {
+                docker run --rm --network aiagent_default -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
+            } else {
+                docker run --rm -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network and not integration'"
+            }
             $backendExit = $LASTEXITCODE
         } catch {
             $backendExit = 1

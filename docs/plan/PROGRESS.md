@@ -17,7 +17,7 @@
 | **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | **DONE** | f6d3fec (products.yaml, aliases.yaml, rice_varieties.yaml, 13 tests pytest passants) |
 | **T1.3** | MUST | 1 | Unités et conversions | T1.1 | **DONE** | ed8639c (units.yaml, moteur de conversion, tests Hypothesis passants, 20 tests pytest) |
 | **T1.4** | MUST | 1 | Géographie de référence | T1.1 | **DONE** | fcb0966 (admin0/1/2 GeoJSON 23 régions, location_aliases.yaml, crop_calendar.yaml, 28 tests pytest) |
-| **T2.1** | MUST | 2 | Migrations de base de données (Alembic) | T0.3 | TODO | — |
+| **T2.1** | MUST | 2 | Migrations de base de données (Alembic) | T0.3 | **DONE** | 0001_initial_schema (alembic upgrade head ok, downgrade/upgrade ok, dev.ps1 reset ok, 4 tests intégration passants) |
 | **T2.2** | MUST | 2 | Bibliothèque ketrika.core | T2.1 | TODO | — |
 | **T2.3** | MUST | 2 | Framework Connector et factory Dagster | T2.2 | TODO | — |
 | **T2.4** | MUST | 2 | Bibliothèque d'extraction (PDF, HTML, LLM) | T2.2 | TODO | — |
@@ -204,5 +204,25 @@
   - **Dettes :** Aucune dette non tracée.
   - **Risques :** Évolution future de la 24ème région administrative (Ambatosoa) documentée dans `geo/README.md` et gérée par alias sans rupture des séries historiques.
   - **Tag :** `phase-1-done`.
+
+### [2026-10-06T22:35:00Z] Démarrage de T2.1 : Migrations de base de données (Alembic)
+- **Mini-plan T2.1 :**
+  1. Configurer `backend/alembic.ini`, `backend/alembic/env.py` (chargement de `settings.database_url`) et `script.py.mako`.
+  2. Créer la migration initiale Alembic `0001_initial_schema.py` couvrant SPECS §8 : extensions, schémas (`meta`, `ref`, `obs`, `ml`, `ops`, `auth`, `gold`, `dq`), tables complètes avec contraintes, clés étrangères, index spatiaux PostGIS GIST et index partiels.
+  3. Mettre en place les triggers d'immutabilité : append-only sur tables `obs` (seul `superseded_by` est modifiable) et immutabilité de `meta.source_record`.
+  4. Configurer les rôles et permissions : `ketrika_app` (accès complet) et `copilot_ro` (accès strictement limité à SELECT sur `gold`, pas d'accès aux tables `obs`).
+  5. Écrire le test d'intégration `tests/integration/test_db_permissions.py` vérifiant les permissions de `copilot_ro` et l'immutabilité des tables.
+  6. Valider `alembic upgrade head`, `alembic downgrade base && alembic upgrade head`, `./scripts/dev.ps1 migrate`.
+  7. Valider `./scripts/dev.ps1 check` et committer `feat(T2.1): alembic database migrations`.
+- **Validation acceptation :**
+  - `backend/alembic.ini`, `backend/alembic/env.py` et `script.py.mako` configurés dynamiquement avec `settings.database_url`.
+  - Migration `0001_initial_schema.py` générée : 8 schémas (`meta`, `ref`, `obs`, `ml`, `ops`, `dq`, `gold`, `auth`), 21 tables, index GIST spatiaux PostGIS, triggers d'immutabilité Bronze et append-only Silver obs (`trg_source_record_immutable`, `trg_price_obs_superseded_only`...), rôles `ketrika_app` et `copilot_ro` avec isolation stricte.
+  - `./scripts/dev.ps1 migrate` exécuté avec succès.
+  - Cycle complet `alembic downgrade base && alembic upgrade head` vérifié avec succès (code 0).
+  - 4 tests d'intégration dans `backend/tests/integration/test_db_permissions.py` passants : interdiction de lecture `copilot_ro` sur `obs.price_observation`, accès à `gold`, blocage de suppression Bronze, et règle d'or d'immutabilité des observations (seul `superseded_by` est modifiable).
+  - `./scripts/dev.ps1 reset` validé : suppression des volumes, démarrage des services sains, migration automatique vers `head`.
+  - `./scripts/dev.ps1 check` et `./scripts/dev.ps1 test` 100 % verts (37 tests backend dont 4 intégration, 1 test web).
+- Statut : **DONE**.
+
 
 
