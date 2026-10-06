@@ -38,7 +38,7 @@ case "$COMMAND" in
     if [ ! -f .env ] && [ -f .env.example ]; then
       cp .env.example .env
     fi
-    docker compose up -d --build
+    docker compose up -d --build --wait
     ;;
   down)
     docker compose down
@@ -50,16 +50,24 @@ case "$COMMAND" in
     "$0" seed
     ;;
   migrate)
-    docker compose exec -T api alembic upgrade head
+    if docker compose exec -T api test -f /app/alembic.ini 2>/dev/null; then
+      docker compose exec -T api alembic upgrade head
+    else
+      echo "Notice: alembic.ini not yet present (scheduled for T2.1). Skipping migration."
+    fi
     ;;
   seed)
-    docker compose exec -T api python -m ketrika.normalize.loader seed
+    if docker compose exec -T api python -c "import ketrika.normalize.loader" 2>/dev/null; then
+      docker compose exec -T api python -m ketrika.normalize.loader seed
+    else
+      echo "Notice: ketrika.normalize.loader not yet present (scheduled for T2.5). Skipping seed."
+    fi
     ;;
   check)
     echo "=== Running Backend Quality Checks ==="
     docker run --rm -v "${PWD}/backend:/app" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
     echo "=== Running Web Quality Checks ==="
-    docker run --rm -v "${PWD}/web:/app" -w /app node:22-alpine sh -c "corepack enable pnpm && pnpm test"
+    docker run --rm -v "${PWD}/web:/app" -v /app/node_modules -w /app ketrika-web:dev pnpm test
     echo "All checks passed successfully!"
     ;;
   test)

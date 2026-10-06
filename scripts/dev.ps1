@@ -50,7 +50,7 @@ switch ($Command) {
                 Copy-Item .env.example .env
             }
         }
-        docker compose up -d --build
+        docker compose up -d --build --wait
         exit $LASTEXITCODE
     }
     "down" {
@@ -68,13 +68,25 @@ switch ($Command) {
     }
     "migrate" {
         Write-Host "Running Alembic migrations..." -ForegroundColor Cyan
-        docker compose exec -T api alembic upgrade head
-        exit $LASTEXITCODE
+        $check = docker compose exec -T api sh -c "test -f /app/alembic.ini && echo yes || echo no"
+        if ($check.Trim() -eq "yes") {
+            docker compose exec -T api alembic upgrade head
+            exit $LASTEXITCODE
+        } else {
+            Write-Host "Notice: alembic.ini not yet present (scheduled for T2.1). Skipping migration." -ForegroundColor Yellow
+            exit 0
+        }
     }
     "seed" {
         Write-Host "Seeding database..." -ForegroundColor Cyan
-        docker compose exec -T api python -m ketrika.normalize.loader seed
-        exit $LASTEXITCODE
+        $check = docker compose exec -T api sh -c "python -c 'import ketrika.normalize.loader' 2>/dev/null && echo yes || echo no"
+        if ($check.Trim() -eq "yes") {
+            docker compose exec -T api python -m ketrika.normalize.loader seed
+            exit $LASTEXITCODE
+        } else {
+            Write-Host "Notice: ketrika.normalize.loader not yet present (scheduled for T2.5). Skipping seed." -ForegroundColor Yellow
+            exit 0
+        }
     }
     "check" {
         Write-Host "=== Running Backend Quality Checks ===" -ForegroundColor Cyan
@@ -89,7 +101,7 @@ switch ($Command) {
         Write-Host "=== Running Web Quality Checks ===" -ForegroundColor Cyan
         $webExit = 0
         try {
-            docker run --rm -v "${PWD}/web:/app" -w /app node:22-alpine sh -c "corepack enable pnpm && pnpm test"
+            docker run --rm -v "${PWD}/web:/app" -v /app/node_modules -w /app ketrika-web:dev pnpm test
             $webExit = $LASTEXITCODE
         } catch {
             $webExit = 1

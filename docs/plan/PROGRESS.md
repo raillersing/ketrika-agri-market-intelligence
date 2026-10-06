@@ -10,8 +10,8 @@
 | ID | Priorité | Phase | Description | Dépendances | Statut | Commit / Preuve |
 |---|---|---|---|---|---|---|
 | **T0.1** | MUST | 0 | Initialiser le dépôt et la gouvernance | — | **DONE** | d109bb7 (git init, attributes, docs/plan) |
-| **T0.2** | MUST | 0 | Squelette du monorepo et outillage qualité | T0.1 | **DONE** | `./scripts/dev.ps1 check` vert (ruff 0, mypy 0, pytest 1 passed, vitest 1 passed) |
-| **T0.3** | MUST | 0 | Stack Docker de développement | T0.2 | TODO | — |
+| **T0.2** | MUST | 0 | Squelette du monorepo et outillage qualité | T0.1 | **DONE** | 3ac9f33 (`check` vert : ruff 0, mypy 0, pytest 1 passed, vitest 1 passed) |
+| **T0.3** | MUST | 0 | Stack Docker de développement | T0.2 | **DONE** | services healthy, /v1/health ok, MinIO bronze versioned, dagster/web/mailpit ok, dev.ps1 check vert |
 | **T0.4** | SHOULD | 0 | Configuration CI locale/GitHub Actions | T0.3 | TODO | — |
 | **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | TODO | — |
 | **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | TODO | — |
@@ -78,5 +78,28 @@
   - `./scripts/dev.ps1 check` : vert (backend: ruff check & format 17 fichiers, mypy 17 fichiers sans erreur, pytest 1 passed ; web: vitest 1 test passed).
   - Lockfiles `backend/uv.lock` et `web/pnpm-lock.yaml` présents et versionnés.
   - `./scripts/dev.ps1 nope` affiche l'aide et retourne le code de sortie 1.
+- Statut : **DONE**.
+
+### [2026-10-06T01:02:00Z] Démarrage de T0.3 : Stack Docker de développement
+- **Mini-plan T0.3 :**
+  1. Créer `.env.example` avec toutes les variables définies dans SPECS §4.
+  2. Créer `docker/db/init.sql` (bases `ketrika` et `dagster`, extensions PostGIS/pg_trgm, schémas, rôles `ketrika_app`, `copilot_ro`, `dagster`).
+  3. Configurer Dagster (`backend/src/ketrika/dagster_project/workspace.yaml`, `dagster.yaml`, `definitions.py`).
+  4. Implémenter le endpoint `GET /v1/health` vérifiant la connectivité DB (Postgres) et S3 (MinIO).
+  5. Rédiger `docker-compose.yml` complet (db, minio, minio-init, mailpit, dagster-webserver, dagster-daemon, api, web) avec healthchecks et volumes nommés.
+  6. Mettre à jour `scripts/dev.ps1` et `scripts/dev.sh` (up avec attente healthchecks).
+  7. Tester `./scripts/dev.ps1 up`, vérifier les healthchecks et `curl http://localhost:8000/v1/health`.
+  8. Vérifier bucket `bronze` MinIO et UI Dagster sur port 3001.
+  9. Tester `./scripts/dev.ps1 down`.
+  10. Valider DoD, mettre à jour PROGRESS.md et committer `feat(T0.3): docker development stack`.
+- **Validation acceptation :**
+  - `docker compose ps` : tous les services persistants (db, minio, mailpit, dagster-webserver, dagster-daemon, api, web) sont UP et healthy.
+  - Ports hôte isolés sans conflit (ADR-007) : DB :5434, MinIO :9100/:9101, API :8090, Web :3005, Dagster :3010, Mailpit :8025/:1025.
+  - `curl http://localhost:8090/v1/health` renvoie `{"status":"ok","version":"0.1.0","database":"connected","storage":"connected"}`.
+  - MinIO bucket `bronze` présent avec versioning activé (`Status: Enabled`).
+  - Dagster webserver répond HTTP 200 sur port 3010 (`/` et `/server_info`, instance ID valide avec stockage PostgreSQL `postgresql+psycopg2`).
+  - Web Next.js répond HTTP 200 sur port 3005.
+  - Mailpit répond HTTP 200 sur port 8025 (`/api/v1/info`).
+  - `./scripts/dev.ps1 check` est vert (ruff format/check 22 fichiers, mypy 22 fichiers sans erreur, pytest 3 passed, vitest 1 passed).
 - Statut : **DONE**.
 
