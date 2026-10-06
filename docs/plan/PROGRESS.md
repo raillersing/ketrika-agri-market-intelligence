@@ -15,7 +15,7 @@
 | **T0.4** | SHOULD | 0 | Configuration CI locale/GitHub Actions | T0.3 | **DONE** | .github/workflows/ci.yml valide (actionlint 0 erreur, dev.ps1 check vert) |
 | **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | **DONE** | 447e704 (sources.yaml validé, 10 fiches docs, 10 fixtures, 8 tests pytest passants) |
 | **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | **DONE** | f6d3fec (products.yaml, aliases.yaml, rice_varieties.yaml, 13 tests pytest passants) |
-| **T1.3** | MUST | 1 | Unités et conversions | T1.1 | TODO | — |
+| **T1.3** | MUST | 1 | Unités et conversions | T1.1 | **DONE** | units.yaml, moteur de conversion, tests Hypothesis passants (20 tests pytest) |
 | **T1.4** | MUST | 1 | Géographie de référence | T1.1 | TODO | — |
 | **T2.1** | MUST | 2 | Migrations de base de données (Alembic) | T0.3 | TODO | — |
 | **T2.2** | MUST | 2 | Bibliothèque ketrika.core | T2.1 | TODO | — |
@@ -157,5 +157,20 @@
   - Module `ketrika.core.taxonomy` avec fonctions `load_products`, `load_aliases`, `load_rice_varieties`, `resolve_product`, `validate_taxonomy`.
   - Tests unitaires `tests/unit/test_taxonomy.py` (5 tests) : unicité des codes produits, unicité des alias normalisés, validité des références, couverture complète des fixtures.
   - `./scripts/dev.ps1 check` vert (ruff 0, mypy 0, pytest 13 passed, vitest 1 passed).
+- Statut : **DONE**.
+
+### [2026-10-06T21:35:00Z] Démarrage de T1.3 : Unités et conversions
+- **Mini-plan T1.3 :**
+  1. Définir les modèles Pydantic (`UnitDefinition`, `ProductConversion`) dans `backend/src/ketrika/core/models/units.py`.
+  2. Rédiger `taxonomy/units.yaml` avec unités SI, conditionnements standards et unités locales malagasy (kapoaka, daba, gony...) avec preuves documentaires obligatoires.
+  3. Implémenter le moteur de conversion et de validation dans `backend/src/ketrika/core/units.py`.
+  4. Écrire les tests unitaires et tests de propriétés (Hypothesis) dans `backend/tests/unit/test_units.py`.
+  5. Valider `./scripts/dev.ps1 check` et committer `feat(T1.3): units taxonomy and conversion engine`.
+- **Validation acceptation :**
+  - Référentiel `taxonomy/units.yaml` créé avec unités métriques SI (kg, g, t, qx, l, ml), conditionnements standards (sac_50kg, sac_25kg, bouteille_1l) et unités traditionnelles malagasy (kapoaka, daba, gony).
+  - Preuves documentaires obligatoires (ODR, CIRAD, INSTAT) associées à chaque conversion de confiance ≥ 0,8.
+  - Moteur de conversion dans `backend/src/ketrika/core/units.py` implémentant `convert_to_base`, `convert_from_base`, `validate_units`.
+  - Tests unitaires et de propriétés (Hypothesis) dans `backend/tests/unit/test_units.py` (7 tests) : cohérence inverse prouvée sur des nombres aléatoires, vérification stricte des preuves, validation des unités de fixtures.
+  - `./scripts/dev.ps1 check` vert (ruff 0, mypy 0, pytest 20 passed, vitest 1 passed).
 - Statut : **DONE**.
 

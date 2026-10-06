@@ -1,0 +1,145 @@
+- unit_code: kg
+  name_fr: "Kilogramme"
+  kind: mass
+  target_unit: kg
+  factor: 1.0
+  confidence: 1.0
+  evidence: "Unité de base SI de masse"
+  notes: "Unité de référence canonique pour les produits solides."
+
+- unit_code: g
+  name_fr: "Gramme"
+  kind: mass
+  target_unit: kg
+  factor: 0.001
+  confidence: 1.0
+  evidence: "Sous-multiple SI (1 g = 0.001 kg)"
+  notes: ""
+
+- unit_code: t
+  name_fr: "Tonne métrique"
+  kind: mass
+  target_unit: kg
+  factor: 1000.0
+  confidence: 1.0
+  evidence: "Unité métrique légale (1 t = 1000 kg)"
+  notes: "Utilisée dans les statistiques douanières et FAOSTAT."
+
+- unit_code: qx
+  name_fr: "Quintal"
+  kind: mass
+  target_unit: kg
+  factor: 100.0
+  confidence: 1.0
+  evidence: "Unité métrique historique (1 qx = 100 kg)"
+  notes: "Utilisé dans les bilans agricoles et transports de gros."
+
+- unit_code: l
+  name_fr: "Litre"
+  kind: volume
+  target_unit: l
+  factor: 1.0
+  confidence: 1.0
+  evidence: "Unité standard de volume pour liquides alimentaires"
+  notes: "Unité canonique pour les huiles alimentaires."
+
+- unit_code: ml
+  name_fr: "Millilitre"
+  kind: volume
+  target_unit: l
+  factor: 0.001
+  confidence: 1.0
+  evidence: "Sous-multiple SI (1 ml = 0.001 l)"
+  notes: ""
+
+- unit_code: sac_50kg
+  name_fr: "Sac de 50 kg"
+  kind: package
+  target_unit: kg
+  factor: 50.0
+  confidence: 1.0
+  evidence: "Conditionnement commercial standard certifié de 50 kg (riz, sucre, farine)"
+  notes: ""
+
+- unit_code: sac_25kg
+  name_fr: "Sac de 25 kg"
+  kind: package
+  target_unit: kg
+  factor: 25.0
+  confidence: 1.0
+  evidence: "Conditionnement commercial standard de 25 kg"
+  notes: ""
+
+- unit_code: bouteille_1l
+  name_fr: "Bouteille de 1 litre"
+  kind: package
+  target_unit: l
+  factor: 1.0
+  confidence: 1.0
+  evidence: "Bouteille scellée d'huile alimentaire de 1 litre"
+  notes: ""
+
+- unit_code: kapoaka
+  name_fr: "Kapoaka (boîte de lait concentré)"
+  kind: local
+  confidence: 0.85
+  evidence: "Mesure de détail usuelle à Madagascar (boîte de 300 ml / 397 g type lait Nestlé)"
+  product_specific:
+    RICE_WHITE_LOCAL:
+      factor: 0.285
+      target_unit: kg
+      confidence: 0.85
+      evidence: "Étude ODR/INSTAT : 1 kapoaka de riz blanc local = ~285 g"
+      verified: true
+    RICE_WHITE_IMPORTED:
+      factor: 0.280
+      target_unit: kg
+      confidence: 0.85
+      evidence: "Mesures marchés urbains : 1 kapoaka de riz importé = ~280 g"
+      verified: true
+    RICE_PADDY:
+      factor: 0.220
+      target_unit: kg
+      confidence: 0.85
+      evidence: "Étude ODR/CIRAD : 1 kapoaka de paddy = ~220 g (densité apparente moindre)"
+      verified: true
+    MAIZE_GRAIN:
+      factor: 0.260
+      target_unit: kg
+      confidence: 0.80
+      evidence: "Mesures marchés locaux : 1 kapoaka de maïs grain = ~260 g"
+      verified: true
+    BEANS_DRY:
+      factor: 0.280
+      target_unit: kg
+      confidence: 0.80
+      evidence: "Mesures marchés locaux : 1 kapoaka de haricots secs = ~280 g"
+      verified: true
+  notes: "Conversion spécifique par produit indispensable en raison des densités variables."
+
+- unit_code: daba
+  name_fr: "Daba (seau en fer blanc ~18L)"
+  kind: local
+  confidence: 0.75
+  evidence: "Mesure volumique traditionnelle pour céréales et tubercules au bord champ"
+  product_specific:
+    RICE_PADDY:
+      factor: 10.0
+      target_unit: kg
+      confidence: 0.80
+      evidence: "Relevés régionaux MiASA : 1 daba de paddy = environ 10 kg (45-50 kapoaka)"
+      verified: true
+    CASSAVA_FRESH:
+      factor: 12.0
+      target_unit: kg
+      confidence: 0.70
+      evidence: "Observation marchés ruraux (estimation variable sans pesée standard)"
+      verified: false
+  notes: "Sans spécification de produit ou pesée, confiance < 0.8 (statut uncertain)."
+
+- unit_code: gony
+  name_fr: "Gony (sac indéfini)"
+  kind: package
+  confidence: 0.50
+  evidence: "Sac générique en toile de jute ou plastique sans masse unitaire garantie"
+  notes: "Masse déclarée requise par observation. Confiance < 0.8 (conversion interdite sans pesée)."

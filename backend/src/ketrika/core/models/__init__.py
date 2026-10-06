@@ -13,15 +13,25 @@ from ketrika.core.models.taxonomy import (
     ProductDefinition,
     RiceVariety,
 )
+from ketrika.core.models.units import (
+    ConversionStatus,
+    ProductConversion,
+    UnitDefinition,
+    UnitKind,
+)
 
 __all__ = [
+    "ConversionStatus",
     "EntrypointKind",
     "Priority",
     "ProductAlias",
     "ProductCategory",
+    "ProductConversion",
     "ProductDefinition",
     "RiceVariety",
     "SourceDefinition",
     "SourceEntrypoint",
     "SourceStatus",
+    "UnitDefinition",
+    "UnitKind",
 ]
