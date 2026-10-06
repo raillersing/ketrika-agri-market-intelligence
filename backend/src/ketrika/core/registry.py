@@ -1,6 +1,7 @@
 """Sources registry loader and schema validator."""
 
 import sys
+from datetime import UTC
 from pathlib import Path
 from typing import Any
 
@@ -135,6 +136,46 @@ def validate_registry(
         errors.append(f"Missing required MVP sources in registry: {sorted(missing_required)}")
 
     return errors
+
+
+def sync_sources_to_db(session: Any, registry_path: Path | str | None = None) -> int:
+    """Synchronize source definitions from YAML registry into meta.source table.
+
+    Returns the count of synced sources.
+    """
+    from datetime import datetime
+
+    from sqlalchemy.dialects.postgresql import insert
+
+    from ketrika.core.models.db import Source
+
+    sources = load_sources(registry_path)
+    count = 0
+    now = datetime.now(UTC)
+
+    for s in sources:
+        spec_dict = s.model_dump(mode="json")
+        stmt = (
+            insert(Source)
+            .values(
+                source_id=s.source_id,
+                spec=spec_dict,
+                status=s.status,
+                updated_at=now,
+            )
+            .on_conflict_do_update(
+                index_elements=[Source.source_id],
+                set_={
+                    "spec": spec_dict,
+                    "status": s.status,
+                    "updated_at": now,
+                },
+            )
+        )
+        session.execute(stmt)
+        count += 1
+
+    return count
 
 
 def main() -> None:

@@ -18,7 +18,7 @@
 | **T1.3** | MUST | 1 | Unités et conversions | T1.1 | **DONE** | ed8639c (units.yaml, moteur de conversion, tests Hypothesis passants, 20 tests pytest) |
 | **T1.4** | MUST | 1 | Géographie de référence | T1.1 | **DONE** | fcb0966 (admin0/1/2 GeoJSON 23 régions, location_aliases.yaml, crop_calendar.yaml, 28 tests pytest) |
 | **T2.1** | MUST | 2 | Migrations de base de données (Alembic) | T0.3 | **DONE** | 0001_initial_schema (alembic upgrade head ok, downgrade/upgrade ok, dev.ps1 reset ok, 4 tests intégration passants) |
-| **T2.2** | MUST | 2 | Bibliothèque ketrika.core | T2.1 | TODO | — |
+| **T2.2** | MUST | 2 | Bibliothèque ketrika.core | T2.1 | **DONE** | Couverture 96%, HTTP poli/offline/robots/429/304 validés, Bronze immuable, DB ORM complet |
 | **T2.3** | MUST | 2 | Framework Connector et factory Dagster | T2.2 | TODO | — |
 | **T2.4** | MUST | 2 | Bibliothèque d'extraction (PDF, HTML, LLM) | T2.2 | TODO | — |
 | **T2.5** | MUST | 2 | Normalisation et chargement | T2.3, T1.2–T1.4 | TODO | — |
@@ -222,6 +222,32 @@
   - 4 tests d'intégration dans `backend/tests/integration/test_db_permissions.py` passants : interdiction de lecture `copilot_ro` sur `obs.price_observation`, accès à `gold`, blocage de suppression Bronze, et règle d'or d'immutabilité des observations (seul `superseded_by` est modifiable).
   - `./scripts/dev.ps1 reset` validé : suppression des volumes, démarrage des services sains, migration automatique vers `head`.
   - `./scripts/dev.ps1 check` et `./scripts/dev.ps1 test` 100 % verts (37 tests backend dont 4 intégration, 1 test web).
+- Statut : **DONE**.
+
+### [2026-10-06T23:10:00Z] Démarrage de T2.2 : Bibliothèque ketrika.core
+- **Mini-plan T2.2 :**
+  1. Implémenter `ketrika.core.time` (timestamps UTC, fuseau Indian/Antananarivo, bornes mensuelles).
+  2. Implémenter `ketrika.core.logging` (structlog avec sortie JSON/dev et liaison contextuelle).
+  3. Définir les modèles ORM SQLAlchemy et Pydantic complets (`meta`, `ref`, `obs`, `ml`, `ops`, `auth`, `dq`) dans `ketrika.core.models` et `ketrika.core.db`.
+  4. Compléter `ketrika.core.db` avec sessionmaker, context managers transactionnels et vérification de provenance.
+  5. Implémenter `BronzeStore` dans `ketrika.core.bronze` (put idempotent par sha256, get, presigned URL, métadonnées, pas de delete).
+  6. Implémenter `ketrika.core.policy` (PolicyStop, OfflineError, rate limiter token bucket par domaine, détection de challenges/captchas, vérification robots.txt Protego).
+  7. Implémenter `ketrika.core.http` (client poli httpx, respect des politiques, User-Agent normatif, retries tenacity, respect 429/Retry-After, requêtes conditionnelles 304).
+  8. Synchroniser `meta.source` dans `ketrika.core.registry`.
+  9. Écrire la suite de tests unitaires couvrant l'ensemble des modules core (couverture >= 80 %).
+  10. Valider `./scripts/dev.ps1 check` et committer `feat(T2.2): ketrika core data models and utilities`.
+- **Validation acceptation :**
+  - Couverture sur les modules `ketrika.core` : **96 %** globale (bronze: 92%, db: 100%, http: 80%, logging: 96%, models.db: 100%, policy: 91%, time: 91%).
+  - Tests obligatoires SPECS §12 & MVP_EXECUTION_PLAN T2.2 vérifiés :
+    - robots `Disallow` -> aucune requête émise (testé et validé) ;
+    - challenge/captcha -> arrêt immédiat avec exception `PolicyStop` (testé et validé) ;
+    - HTTP 429 avec `Retry-After: 2` -> attente respectée >= 2s (testé et validé) ;
+    - HTTP 304 Not Modified -> aucun artefact généré (testé et validé) ;
+    - `HTTP_OFFLINE=1` -> déclenchement `OfflineError` (testé et validé) ;
+    - double `put` idempotent du même contenu sha256 -> une seule clé créée, `is_new=False` (testé et validé) ;
+    - débit mesuré <= `max_rps` * 1.15 sur 20 requêtes consécutives (testé et validé).
+  - Immutabilité Bronze garantie : aucune méthode `delete`/`remove`/`drop` exposée.
+  - `./scripts/dev.ps1 check` 100 % vert (61 tests backend dont 4 intégration, 1 test web, 0 erreur ruff/mypy).
 - Statut : **DONE**.
 
 
