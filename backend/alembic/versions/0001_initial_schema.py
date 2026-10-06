@@ -218,7 +218,7 @@ def upgrade() -> None:
             evidence             JSONB,
             confidence           NUMERIC(3,2) NOT NULL,
             review_status        TEXT NOT NULL DEFAULT 'accepted',
-            superseded_by        UUID REFERENCES obs.price_observation(observation_id)
+            superseded_by        UUID REFERENCES obs.price_observation(observation_id) DEFERRABLE INITIALLY DEFERRED
         );
         CREATE INDEX IF NOT EXISTS idx_price_obs_prod_loc_period
             ON obs.price_observation (product_id, location_id, period_start);
@@ -248,7 +248,7 @@ def upgrade() -> None:
             evidence             JSONB,
             confidence           NUMERIC(3,2) NOT NULL,
             review_status        TEXT NOT NULL DEFAULT 'accepted',
-            superseded_by        UUID REFERENCES obs.stock_observation(observation_id)
+            superseded_by        UUID REFERENCES obs.stock_observation(observation_id) DEFERRABLE INITIALLY DEFERRED
         );
         CREATE UNIQUE INDEX IF NOT EXISTS stock_obs_current_uk
             ON obs.stock_observation (natural_key) WHERE superseded_by IS NULL;
@@ -276,7 +276,7 @@ def upgrade() -> None:
             evidence             JSONB,
             confidence           NUMERIC(3,2) NOT NULL,
             review_status        TEXT NOT NULL DEFAULT 'accepted',
-            superseded_by        UUID REFERENCES obs.trade_flow(observation_id)
+            superseded_by        UUID REFERENCES obs.trade_flow(observation_id) DEFERRABLE INITIALLY DEFERRED
         );
         CREATE UNIQUE INDEX IF NOT EXISTS trade_current_uk
             ON obs.trade_flow (natural_key) WHERE superseded_by IS NULL;
@@ -300,7 +300,7 @@ def upgrade() -> None:
             extraction_method    TEXT NOT NULL,
             evidence             JSONB,
             confidence           NUMERIC(3,2) NOT NULL,
-            superseded_by        UUID REFERENCES obs.production_observation(observation_id)
+            superseded_by        UUID REFERENCES obs.production_observation(observation_id) DEFERRABLE INITIALLY DEFERRED
         );
         CREATE UNIQUE INDEX IF NOT EXISTS prod_current_uk
             ON obs.production_observation (natural_key) WHERE superseded_by IS NULL;
@@ -334,7 +334,7 @@ def upgrade() -> None:
             extraction_method    TEXT NOT NULL,
             evidence             JSONB,
             confidence           NUMERIC(3,2) NOT NULL,
-            superseded_by        UUID REFERENCES obs.cpi_observation(observation_id)
+            superseded_by        UUID REFERENCES obs.cpi_observation(observation_id) DEFERRABLE INITIALLY DEFERRED
         );
         CREATE UNIQUE INDEX IF NOT EXISTS cpi_current_uk
             ON obs.cpi_observation (natural_key) WHERE superseded_by IS NULL;

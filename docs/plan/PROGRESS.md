@@ -19,7 +19,7 @@
 | **T1.4** | MUST | 1 | Géographie de référence | T1.1 | **DONE** | fcb0966 (admin0/1/2 GeoJSON 23 régions, location_aliases.yaml, crop_calendar.yaml, 28 tests pytest) |
 | **T2.1** | MUST | 2 | Migrations de base de données (Alembic) | T0.3 | **DONE** | 0001_initial_schema (alembic upgrade head ok, downgrade/upgrade ok, dev.ps1 reset ok, 4 tests intégration passants) |
 | **T2.2** | MUST | 2 | Bibliothèque ketrika.core | T2.1 | **DONE** | Couverture 96%, HTTP poli/offline/robots/429/304 validés, Bronze immuable, DB ORM complet |
-| **T2.3** | MUST | 2 | Framework Connector et factory Dagster | T2.2 | TODO | — |
+| **T2.3** | MUST | 2 | Framework Connector et factory Dagster | T2.2 | **DONE** | Connector base, records typés, Dagster factory, runner supersession transactionnel validé |
 | **T2.4** | MUST | 2 | Bibliothèque d'extraction (PDF, HTML, LLM) | T2.2 | TODO | — |
 | **T2.5** | MUST | 2 | Normalisation et chargement | T2.3, T1.2–T1.4 | TODO | — |
 | **T2.6** | MUST | 2 | Commande rebuild et runbook connecteur | T2.3–T2.5 | TODO | — |
@@ -249,6 +249,32 @@
   - Immutabilité Bronze garantie : aucune méthode `delete`/`remove`/`drop` exposée.
   - `./scripts/dev.ps1 check` 100 % vert (61 tests backend dont 4 intégration, 1 test web, 0 erreur ruff/mypy).
 - Statut : **DONE**.
+
+### [2026-10-06T23:40:00Z] Démarrage de T2.3 : Framework Connector et factory Dagster
+- **Mini-plan T2.3 :**
+  1. Créer `backend/src/ketrika/connectors/base.py` (`DiscoveredItem`, `RawArtifact`, `RecordBase`, `ParseResult`, `Connector` Protocol, `RunContext`).
+  2. Créer `backend/src/ketrika/connectors/records.py` (`PriceRecord`, `StockRecord`, `TradeFlowRecord`, `ProductionRecord`, `WeatherRecord`, `CpiRecord`, `EventRecord`).
+  3. Implémenter le cycle de vie d'ingestion et chargement Silver/supersession dans `backend/src/ketrika/connectors/runner.py`.
+  4. Créer la factory Dagster `build_source_assets` dans `backend/src/ketrika/pipelines/factory.py` (assets bronze/silver, schedules, checks DQ).
+  5. Implémenter le connecteur factice `dummy_csv` dans `backend/src/ketrika/connectors/dummy_csv.py` lisant un CSV de prix.
+  6. Écrire le test d'intégration `tests/integration/test_connector_pipeline.py` validant les 3 exécutions (insertion N lignes, idempotence 0 ligne, modification 1 ligne + 1 superseded_by).
+  7. Écrire des tests unitaires pour `base.py`, `records.py`, `factory.py`.
+  8. Valider DoD et `./scripts/dev.ps1 check`.
+  9. Consigner les preuves et committer `feat(T2.3): connector framework and dagster factory`.
+- **Validation acceptation :**
+  - Protocol `Connector`, modèles `DiscoveredItem`, `RawArtifact`, `ParseResult`, `RunContext` implémentés dans `ketrika.connectors.base`.
+  - 7 modèles d'enregistrements typés dans `ketrika.connectors.records` (`PriceRecord`, `StockRecord`, `TradeFlowRecord`, `ProductionRecord`, `WeatherRecord`, `CpiRecord`, `EventRecord`) avec calcul déterministe de `natural_key`.
+  - Moteur de pipeline et d'ingestion `execute_connector_pipeline` avec supersession transactionnelle (SPECS §8.1) dans `ketrika.connectors.runner`.
+  - Foreign keys `superseded_by` configurées `DEFERRABLE INITIALLY DEFERRED` pour permettre la mise à jour atomique de l'ancien enregistrement avant l'insertion du nouvel enregistrement sans collision d'index unique partiel.
+  - Factory Dagster `build_source_assets(connector_cls)` générant assets bronze, assets silver, checks DQ de provenance et schedules selon la cadence du registre.
+  - Connecteur factice `dummy_csv` (`DummyCsvConnector`) lisant un flux CSV de prix.
+  - Test d'intégration `tests/integration/test_connector_pipeline.py` validé à 100 % :
+    - Run 1 : 1 artefact Bronze, 3 observations insérées dans `obs.price_observation` avec `source_record_id` valide et `superseded_by IS NULL` ;
+    - Run 2 : 0 nouvel artefact, 0 observation insérée, 3 enregistrements ignorés (idempotence totale, compte inchangé = 3) ;
+    - Run 3 : 1 nouvel artefact, révision d'un prix (Antananarivo 2800 -> 2900 MGA/kg) générant 1 nouvelle ligne active (`superseded_by IS NULL`) et 1 ligne obsolète pointant vers la nouvelle via `superseded_by` (total = 4 observations, 3 actives, 1 archivée).
+  - `./scripts/dev.ps1 check` 100 % vert (65 tests backend passants, 1 test web, 0 erreur ruff/mypy).
+- Statut : **DONE**.
+
 
 
 
