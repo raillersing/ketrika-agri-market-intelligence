@@ -14,7 +14,7 @@
 | **T0.3** | MUST | 0 | Stack Docker de développement | T0.2 | **DONE** | d4c8269 (services healthy, /v1/health ok, MinIO bronze versioned, dagster/web/mailpit ok, dev.ps1 check vert) |
 | **T0.4** | SHOULD | 0 | Configuration CI locale/GitHub Actions | T0.3 | **DONE** | .github/workflows/ci.yml valide (actionlint 0 erreur, dev.ps1 check vert) |
 | **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | **DONE** | 447e704 (sources.yaml validé, 10 fiches docs, 10 fixtures, 8 tests pytest passants) |
-| **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | **DONE** | products.yaml, aliases.yaml, rice_varieties.yaml (100% fixtures résolues, 13 tests pytest passants) |
+| **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | **DONE** | f6d3fec (products.yaml, aliases.yaml, rice_varieties.yaml, 13 tests pytest passants) |
 | **T1.3** | MUST | 1 | Unités et conversions | T1.1 | TODO | — |
 | **T1.4** | MUST | 1 | Géographie de référence | T1.1 | TODO | — |
 | **T2.1** | MUST | 2 | Migrations de base de données (Alembic) | T0.3 | TODO | — |
