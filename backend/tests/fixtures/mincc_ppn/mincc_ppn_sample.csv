@@ -1,0 +1,6 @@
+date,region,district,produit,prix_detail_ar_kg,stock_tonne,statut_approvisionnement
+2024-01-18,Analamanga,Antananarivo,Sucre blanc,4200,1200,normal
+2024-01-18,Analamanga,Antananarivo,Huile alimentaire vrac,7500,850,tendu
+2024-01-18,Analamanga,Antananarivo,Farine de ble,3800,950,normal
+2024-01-18,Atsinanana,Toamasina,Sucre blanc,4000,2500,normal
+2024-01-18,Atsinanana,Toamasina,Huile alimentaire vrac,7200,1800,normal

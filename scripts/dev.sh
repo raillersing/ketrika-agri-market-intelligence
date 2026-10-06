@@ -65,7 +65,7 @@ case "$COMMAND" in
     ;;
   check)
     echo "=== Running Backend Quality Checks ==="
-    docker run --rm -v "${PWD}/backend:/app" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
+    docker run --rm -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
     echo "=== Running Web Quality Checks ==="
     docker run --rm -v "${PWD}/web:/app" -v /app/node_modules -w /app ketrika-web:dev pnpm test
     echo "All checks passed successfully!"
@@ -96,7 +96,7 @@ case "$COMMAND" in
     docker compose logs -f "${1:-}"
     ;;
   validate-registry)
-    docker run --rm -v "${PWD}:/workspace" -w /workspace ketrika-backend:test python -m ketrika.core.registry
+    docker run --rm -v "${PWD}:/workspace" -w /workspace -e PYTHONPATH=/workspace/backend/src ketrika-backend:test python -m ketrika.core.registry
     ;;
   *)
     echo "Error: Unknown command '$COMMAND'" >&2

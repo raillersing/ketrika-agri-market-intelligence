@@ -1,0 +1,6 @@
+chirps-v2.0.2024.01.sample
+Madagascar precipitation summary:
+Decad 1: 45.2 mm
+Decad 2: 62.8 mm
+Decad 3: 31.0 mm
+Monthly total: 139.0 mm

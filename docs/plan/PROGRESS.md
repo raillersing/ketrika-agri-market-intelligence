@@ -13,7 +13,7 @@
 | **T0.2** | MUST | 0 | Squelette du monorepo et outillage qualité | T0.1 | **DONE** | 3ac9f33 (`check` vert : ruff 0, mypy 0, pytest 1 passed, vitest 1 passed) |
 | **T0.3** | MUST | 0 | Stack Docker de développement | T0.2 | **DONE** | d4c8269 (services healthy, /v1/health ok, MinIO bronze versioned, dagster/web/mailpit ok, dev.ps1 check vert) |
 | **T0.4** | SHOULD | 0 | Configuration CI locale/GitHub Actions | T0.3 | **DONE** | .github/workflows/ci.yml valide (actionlint 0 erreur, dev.ps1 check vert) |
-| **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | TODO | — |
+| **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | **DONE** | sources.yaml validé (10 sources, 10 fiches docs, 10 fixtures, 8 tests pytest passants) |
 | **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | TODO | — |
 | **T1.3** | MUST | 1 | Unités et conversions | T1.1 | TODO | — |
 | **T1.4** | MUST | 1 | Géographie de référence | T1.1 | TODO | — |
@@ -123,4 +123,22 @@
   - **Dettes :** Aucune dette non tracée.
   - **Risques :** Conflit potentiel de ports sur machine hôte géré de manière pérenne par ADR-007.
   - **Tag :** `phase-0-done`.
+
+### [2026-10-06T21:15:00Z] Démarrage de T1.1 : Reconnaissance des sources et registre
+- **Mini-plan T1.1 :**
+  1. Définir le modèle Pydantic `SourceDefinition` / `SourceSpec` dans `backend/src/ketrika/core/models/source.py`.
+  2. Établir le registre `registry/sources.yaml` pour l'ensemble des sources de SPECS §5.2.
+  3. Intégrer les fixtures réelles pour chaque source sous `backend/tests/fixtures/<source_id>/`.
+  4. Rédiger les fiches descriptives normatives sous `docs/sources/<source_id>.md`.
+  5. Implémenter le validateur CLI `python -m ketrika.core.registry`.
+  6. Valider `./scripts/dev.ps1 validate-registry` et `./scripts/dev.ps1 check`.
+  7. Mettre à jour PROGRESS.md et committer `feat(T1.1): source registry and documentation`.
+- **Validation acceptation :**
+  - Modèle Pydantic `SourceDefinition` complet (champs obligatoires, validation stricte, types, validation `redistribution_allowed`).
+  - `registry/sources.yaml` créé et conforme avec les 9 sources obligatoires du MVP + source CHIRPS (10 sources au total).
+  - Fiches normatives rédigées dans `docs/sources/<source_id>.md` (10 fiches conformes au template SPECS §5.3).
+  - Fixtures réelles versionnées dans `backend/tests/fixtures/<source_id>/` (GeoJSON, CSV, JSON, texte).
+  - Commande `./scripts/dev.ps1 validate-registry` exécutée avec succès (10 sources vérifiées).
+  - Tests unitaires `tests/unit/test_registry.py` (5 tests) et `./scripts/dev.ps1 check` verts (ruff 0, mypy 0, pytest 8 passed, vitest 1 passed).
+- Statut : **DONE**.
 

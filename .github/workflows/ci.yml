@@ -35,6 +35,7 @@ jobs:
         run: |
           docker run --rm \
             -v "${{ github.workspace }}/backend:/app" \
+            -v "${{ github.workspace }}:/workspace" \
             -w /app \
             ketrika-backend:test \
             sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"

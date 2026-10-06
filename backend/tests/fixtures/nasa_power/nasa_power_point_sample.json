@@ -1,0 +1,25 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [47.525, -18.924, 1280.0]
+  },
+  "properties": {
+    "parameter": {
+      "PRECTOTCORR": {
+        "20240101": 12.5,
+        "20240102": 5.2,
+        "20240103": 0.0
+      },
+      "T2M": {
+        "20240101": 21.4,
+        "20240102": 22.1,
+        "20240103": 23.0
+      }
+    }
+  },
+  "header": {
+    "title": "NASA POWER Agroclimatology Daily Point API",
+    "api_version": "v2.0.0"
+  }
+}

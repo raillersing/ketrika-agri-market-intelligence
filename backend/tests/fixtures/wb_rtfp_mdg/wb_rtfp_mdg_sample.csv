@@ -1,0 +1,4 @@
+country,country_code,adm1_name,market_name,date,commodity,unit,currency,price_observed,price_imputed,value_kind
+Madagascar,MDG,Analamanga,Anosibe,2024-01-01,Rice,kg,MGA,3150.0,3150.0,observed
+Madagascar,MDG,Analamanga,Anosibe,2024-02-01,Rice,kg,MGA,3200.0,3200.0,observed
+Madagascar,MDG,Atsinanana,Toamasina,2024-01-01,Rice,kg,MGA,null,3350.0,imputed

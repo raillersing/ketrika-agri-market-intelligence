@@ -1,0 +1,322 @@
+- source_id: ocha_codab_mdg
+  name: "OCHA Madagascar - Subnational Administrative Boundaries (COD-AB)"
+  owner: "OCHA Madagascar / BNGRC / FTM"
+  priority: P0
+  status: active
+  access_method: file
+  connector: ketrika.connectors.ocha_codab_mdg:Connector
+  cadence: static
+  freshness_sla_days: 365
+  partitioning: static
+  entrypoints:
+    - url: "https://data.humdata.org/dataset/cod-ab-mdg"
+      kind: landing
+      verified_at: null
+  languages: [fr, en]
+  licence: "Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO)"
+  tos_url: "https://data.humdata.org/terms"
+  tos_sha256: null
+  tos_checked_at: null
+  robots_checked_at: null
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [boundary]
+  notes: "Référentiel officiel des limites administratives (régions, districts, communes) de Madagascar."
+
+- source_id: wfp_hdx_mdg
+  name: "WFP Food Prices – Madagascar (HDX)"
+  owner: "World Food Programme / OCHA HDX"
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.wfp_hdx_mdg:Connector
+  cadence: monthly
+  freshness_sla_days: 62
+  partitioning: static
+  entrypoints:
+    - url: "https://data.humdata.org/dataset/wfp-food-prices-for-madagascar"
+      kind: landing
+      verified_at: null
+  languages: [en]
+  licence: "Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO)"
+  tos_url: "https://data.humdata.org/terms"
+  tos_sha256: null
+  tos_checked_at: null
+  robots_checked_at: null
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 500
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [price]
+  notes: "Données historiques mensuelles des prix des denrées alimentaires sur les marchés de Madagascar."
+
+- source_id: wb_rtfp_mdg
+  name: "World Bank Real-Time Food Prices – Madagascar (RTFP)"
+  owner: "World Bank Data360 / Development Economics Data Group"
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.wb_rtfp_mdg:Connector
+  cadence: monthly
+  freshness_sla_days: 62
+  partitioning: static
+  entrypoints:
+    - url: "https://microdata.worldbank.org/index.php/catalog/food-prices"
+      kind: landing
+      verified_at: null
+  languages: [en]
+  licence: "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+  tos_url: "https://www.worldbank.org/en/about/legal/terms-and-conditions"
+  tos_sha256: null
+  tos_checked_at: null
+  robots_checked_at: null
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 200
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [price]
+  notes: "Série temporelle des prix vivriers réels et imputés par la Banque mondiale depuis 2007."
+
+- source_id: faostat
+  name: "FAOSTAT – Food and Agriculture Organization Statistics (Madagascar)"
+  owner: "Food and Agriculture Organization (FAO)"
+  priority: P1
+  status: active
+  access_method: api
+  connector: ketrika.connectors.faostat:Connector
+  cadence: annual
+  freshness_sla_days: 365
+  partitioning: annual
+  entrypoints:
+    - url: "https://www.fao.org/faostat/en/#data"
+      kind: landing
+      verified_at: null
+    - url: "https://fenixservices.fao.org/faostat/api/v1/en/data/QCL"
+      kind: api
+      verified_at: null
+  languages: [en, fr]
+  licence: "Creative Commons Attribution-NonCommercial-ShareAlike 3.0 IGO (CC BY-NC-SA 3.0 IGO)"
+  tos_url: "https://www.fao.org/contact-us/terms/en/"
+  tos_sha256: null
+  tos_checked_at: null
+  robots_checked_at: null
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 300
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [production, trade]
+  notes: "Statistiques annuelles de production agricole et de bilans alimentaires (Code FAO Madagascar: 129)."
+
+- source_id: nasa_power
+  name: "NASA POWER Agroclimatology Daily Point API"
+  owner: "NASA Langley Research Center"
+  priority: P1
+  status: active
+  access_method: api
+  connector: ketrika.connectors.nasa_power:Connector
+  cadence: daily
+  freshness_sla_days: 7
+  partitioning: monthly
+  entrypoints:
+    - url: "https://power.larc.nasa.gov/api/temporal/daily/point"
+      kind: api
+      verified_at: null
+  languages: [en]
+  licence: "NASA Open Data Policy (Public Domain)"
+  tos_url: "https://power.larc.nasa.gov/docs/services/api/"
+  tos_sha256: null
+  tos_checked_at: null
+  robots_checked_at: null
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 1.0
+  daily_request_budget: 1000
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [weather]
+  notes: "Indicateurs agro-climatiques quotidiens (précipitations, températures, humidité) sur les coordonnées des marchés."
+
+- source_id: instat_nipc
+  name: "INSTAT Madagascar – Indice des Prix à la Consommation (NIPC)"
+  owner: "Institut National de la Statistique de Madagascar (INSTAT)"
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.instat_nipc:Connector
+  cadence: monthly
+  freshness_sla_days: 62
+  partitioning: monthly
+  entrypoints:
+    - url: "https://www.instat.mg"
+      kind: landing
+      verified_at: null
+  languages: [fr]
+  licence: "Données publiques officielles gouvernementales"
+  tos_url: "https://www.instat.mg/mentions-legales"
+  tos_sha256: null
+  tos_checked_at: null
+  robots_checked_at: null
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.2
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [cpi]
+  notes: "Indice national des prix à la consommation (NIPC global et indice alimentaire vivrier)."
+
+- source_id: miasa_odr
+  name: "MiASA Observatoire du Riz (ODR) – Bulletins Périodiques"
+  owner: "Ministère de l'Agriculture et de l'Élevage (MiASA) / Observatoire du Riz"
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.miasa_odr:Connector
+  cadence: weekly
+  freshness_sla_days: 28
+  partitioning: per_document
+  entrypoints:
+    - url: "http://www.agriculture.gov.mg"
+      kind: landing
+      verified_at: null
+  languages: [fr, mg]
+  licence: "Données publiques officielles gouvernementales"
+  tos_url: null
+  tos_sha256: null
+  tos_checked_at: null
+  robots_checked_at: null
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.2
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [price]
+  notes: "Bulletins hebdomadaires ODR détaillant les prix du paddy, riz blanc local et riz importé par région et district."
+
+- source_id: mincc_ppn
+  name: "MinCC – Relevés Prix & Stocks PPN"
+  owner: "Ministère de l'Industrialisation et du Commerce (MinCC) / DRCC"
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.mincc_ppn:Connector
+  cadence: weekly
+  freshness_sla_days: 28
+  partitioning: per_document
+  entrypoints:
+    - url: "http://www.commerce.gov.mg"
+      kind: landing
+      verified_at: null
+  languages: [fr]
+  licence: "Données publiques officielles gouvernementales"
+  tos_url: null
+  tos_sha256: null
+  tos_checked_at: null
+  robots_checked_at: null
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.2
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [price, stock]
+  notes: "Relevés de la Direction du Commerce Intérieur sur les prix et stocks des produits de première nécessité (huile, sucre, farine, riz)."
+
+- source_id: douanes_stats
+  name: "Douanes Malagasy – Statistiques du Commerce Extérieur"
+  owner: "Direction Générale des Douanes de Madagascar"
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.douanes_stats:Connector
+  cadence: monthly
+  freshness_sla_days: 62
+  partitioning: monthly
+  entrypoints:
+    - url: "https://www.douanes.gov.mg"
+      kind: landing
+      verified_at: null
+  languages: [fr]
+  licence: "Données publiques officielles gouvernementales"
+  tos_url: "https://www.douanes.gov.mg/mentions-legales"
+  tos_sha256: null
+  tos_checked_at: null
+  robots_checked_at: null
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.2
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [trade]
+  notes: "Statistiques douanières mensuelles d'importations et exportations de denrées alimentaires (riz, huile, farine, sucre)."
+
+- source_id: chirps
+  name: "CHIRPS – Climate Hazards Center InfraRed Precipitation with Station Data"
+  owner: "Climate Hazards Center, UC Santa Barbara"
+  priority: P2
+  status: planned
+  access_method: file
+  connector: ketrika.connectors.chirps:Connector
+  cadence: monthly
+  freshness_sla_days: 62
+  partitioning: monthly
+  entrypoints:
+    - url: "https://www.chc.ucsb.edu/data/chirps"
+      kind: landing
+      verified_at: null
+  languages: [en]
+  licence: "Public Domain / CC0"
+  tos_url: "https://www.chc.ucsb.edu/data/terms"
+  tos_sha256: null
+  tos_checked_at: null
+  robots_checked_at: null
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [weather]
+  notes: "Estimations satellitaires et stations des précipitations mensuelles et décadaires."

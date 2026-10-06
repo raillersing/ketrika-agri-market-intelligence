@@ -1,0 +1,15 @@
+{
+  "DomainCode": "QCL",
+  "Domain": "Crops and livestock products",
+  "AreaCode": 129,
+  "Area": "Madagascar",
+  "ElementCode": 5510,
+  "Element": "Production",
+  "ItemCode": 27,
+  "Item": "Rice",
+  "YearCode": 2023,
+  "Year": 2023,
+  "Unit": "t",
+  "Value": 4500000,
+  "Flag": "A"
+}

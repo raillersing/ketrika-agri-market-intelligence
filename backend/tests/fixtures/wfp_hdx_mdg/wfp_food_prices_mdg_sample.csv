@@ -1,0 +1,5 @@
+date,admin1,admin2,market,latitude,longitude,category,commodity,unit,priceflag,pricetype,currency,price,usdprice
+2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Rice (local),KG,actual,Retail,MGA,3200,0.71
+2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Rice (imported),KG,actual,Retail,MGA,3000,0.67
+2024-01-15,Atsinanana,Toamasina I,Bazar Be,-18.150,49.416,cereals and tubers,Rice (local),KG,actual,Retail,MGA,3400,0.75
+2024-01-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,cereals and tubers,Maize,KG,actual,Retail,MGA,1800,0.40

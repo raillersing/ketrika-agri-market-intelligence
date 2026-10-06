@@ -92,7 +92,7 @@ switch ($Command) {
         Write-Host "=== Running Backend Quality Checks ===" -ForegroundColor Cyan
         $backendExit = 0
         try {
-            docker run --rm -v "${PWD}/backend:/app" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
+            docker run --rm -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
             $backendExit = $LASTEXITCODE
         } catch {
             $backendExit = 1
@@ -162,7 +162,7 @@ switch ($Command) {
     }
     "validate-registry" {
         Write-Host "Validating source registry schema..." -ForegroundColor Cyan
-        docker run --rm -v "${PWD}:/workspace" -w /workspace ketrika-backend:test python -m ketrika.core.registry
+        docker run --rm -v "${PWD}:/workspace" -w /workspace -e PYTHONPATH=/workspace/backend/src ketrika-backend:test python -m ketrika.core.registry
         exit $LASTEXITCODE
     }
     default {
