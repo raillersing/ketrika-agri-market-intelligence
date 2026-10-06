@@ -16,7 +16,7 @@
 | **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | **DONE** | 447e704 (sources.yaml validé, 10 fiches docs, 10 fixtures, 8 tests pytest passants) |
 | **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | **DONE** | f6d3fec (products.yaml, aliases.yaml, rice_varieties.yaml, 13 tests pytest passants) |
 | **T1.3** | MUST | 1 | Unités et conversions | T1.1 | **DONE** | ed8639c (units.yaml, moteur de conversion, tests Hypothesis passants, 20 tests pytest) |
-| **T1.4** | MUST | 1 | Géographie de référence | T1.1 | **DONE** | admin0/1/2 GeoJSON 23 régions, location_aliases.yaml, crop_calendar.yaml, 28 tests pytest |
+| **T1.4** | MUST | 1 | Géographie de référence | T1.1 | **DONE** | fcb0966 (admin0/1/2 GeoJSON 23 régions, location_aliases.yaml, crop_calendar.yaml, 28 tests pytest) |
 | **T2.1** | MUST | 2 | Migrations de base de données (Alembic) | T0.3 | TODO | — |
 | **T2.2** | MUST | 2 | Bibliothèque ketrika.core | T2.1 | TODO | — |
 | **T2.3** | MUST | 2 | Framework Connector et factory Dagster | T2.2 | TODO | — |
