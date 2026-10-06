@@ -1,5 +1,38 @@
 date,admin1,admin2,market,latitude,longitude,category,commodity,unit,priceflag,pricetype,currency,price,usdprice
+#date,#adm1+name,#adm2+name,#loc+market+name,#geo+lat,#geo+lon,#item+type,#item+name,#item+unit,#item+price+flag,#item+price+type,#currency,#value,#value+usd
 2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Rice (local),KG,actual,Retail,MGA,3200,0.71
 2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Rice (imported),KG,actual,Retail,MGA,3000,0.67
+2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Maize,KG,actual,Retail,MGA,1900,0.42
+2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Cassava (fresh),KG,actual,Retail,MGA,1200,0.27
+2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,pulses and nuts,Beans (dry),KG,actual,Retail,MGA,4500,1.00
+2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,oil and fats,Oil (vegetable),L,actual,Retail,MGA,8500,1.89
+2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,miscellaneous food,Sugar,KG,actual,Retail,MGA,4800,1.07
 2024-01-15,Atsinanana,Toamasina I,Bazar Be,-18.150,49.416,cereals and tubers,Rice (local),KG,actual,Retail,MGA,3400,0.75
-2024-01-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,cereals and tubers,Maize,KG,actual,Retail,MGA,1800,0.40
+2024-01-15,Atsinanana,Toamasina I,Bazar Be,-18.150,49.416,cereals and tubers,Rice (imported),KG,actual,Retail,MGA,3100,0.69
+2024-01-15,Atsinanana,Toamasina I,Bazar Be,-18.150,49.416,cereals and tubers,Maize,KG,actual,Retail,MGA,2000,0.44
+2024-01-15,Atsinanana,Toamasina I,Bazar Be,-18.150,49.416,cereals and tubers,Cassava (fresh),KG,actual,Retail,MGA,1400,0.31
+2024-01-15,Atsinanana,Toamasina I,Bazar Be,-18.150,49.416,pulses and nuts,Beans (dry),KG,actual,Retail,MGA,4800,1.07
+2024-01-15,Atsinanana,Toamasina I,Bazar Be,-18.150,49.416,oil and fats,Oil (vegetable),L,actual,Retail,MGA,8800,1.96
+2024-01-15,Atsinanana,Toamasina I,Bazar Be,-18.150,49.416,miscellaneous food,Sugar,KG,actual,Retail,MGA,5000,1.11
+2024-01-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,cereals and tubers,Rice (local),KG,actual,Retail,MGA,3100,0.69
+2024-01-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,cereals and tubers,Rice (imported),KG,actual,Retail,MGA,2950,0.66
+2024-01-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,cereals and tubers,Maize,KG,actual,Retail,MGA,1750,0.39
+2024-01-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,cereals and tubers,Cassava (fresh),KG,actual,Retail,MGA,1100,0.24
+2024-01-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,pulses and nuts,Beans (dry),KG,actual,Retail,MGA,4200,0.93
+2024-01-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,oil and fats,Oil (vegetable),L,actual,Retail,MGA,8400,1.87
+2024-01-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,miscellaneous food,Sugar,KG,actual,Retail,MGA,4700,1.04
+2024-01-15,Boeny,Mahajanga I,Bazar Be Mahajanga,-15.717,46.317,cereals and tubers,Rice (local),KG,actual,Retail,MGA,3300,0.73
+2024-01-15,Boeny,Mahajanga I,Bazar Be Mahajanga,-15.717,46.317,cereals and tubers,Rice (imported),KG,actual,Retail,MGA,3050,0.68
+2024-01-15,Boeny,Mahajanga I,Bazar Be Mahajanga,-15.717,46.317,cereals and tubers,Maize,KG,actual,Retail,MGA,1850,0.41
+2024-01-15,Boeny,Mahajanga I,Bazar Be Mahajanga,-15.717,46.317,cereals and tubers,Cassava (fresh),KG,actual,Retail,MGA,1300,0.29
+2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Rice (local),KG,actual,Wholesale,MGA,2900,0.64
+2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Rice (imported),KG,actual,Wholesale,MGA,2750,0.61
+2024-01-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Maize,KG,actual,Wholesale,MGA,1600,0.36
+2024-02-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Rice (local),KG,actual,Retail,MGA,3250,0.72
+2024-02-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Rice (imported),KG,actual,Retail,MGA,3000,0.67
+2024-02-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Maize,KG,actual,Retail,MGA,1950,0.43
+2024-02-15,Analamanga,Antananarivo Renivohitra,Anosibe,-18.924,47.525,cereals and tubers,Cassava (fresh),KG,actual,Retail,MGA,1250,0.28
+2024-02-15,Atsinanana,Toamasina I,Bazar Be,-18.150,49.416,cereals and tubers,Rice (local),KG,actual,Retail,MGA,3450,0.77
+2024-02-15,Atsinanana,Toamasina I,Bazar Be,-18.150,49.416,cereals and tubers,Maize,KG,actual,Retail,MGA,2050,0.46
+2024-02-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,cereals and tubers,Rice (local),KG,actual,Retail,MGA,3150,0.70
+2024-02-15,Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,cereals and tubers,Cassava (fresh),KG,actual,Retail,MGA,1150,0.26

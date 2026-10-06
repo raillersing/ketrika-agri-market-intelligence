@@ -145,6 +145,34 @@
   note: ""
   evidence: "Nomenclature douanière DGD SH 1701."
 
+- alias: "Cassava (fresh)"
+  lang: en
+  product_code: CASSAVA_FRESH
+  confidence: 0.95
+  note: ""
+  evidence: "Colonne commodity du dataset WFP HDX Food Prices Madagascar."
+
+- alias: "Beans (dry)"
+  lang: en
+  product_code: BEANS_DRY
+  confidence: 0.95
+  note: ""
+  evidence: "Colonne commodity du dataset WFP HDX Food Prices Madagascar."
+
+- alias: "Oil (vegetable)"
+  lang: en
+  product_code: VEG_OIL
+  confidence: 0.95
+  note: ""
+  evidence: "Colonne commodity du dataset WFP HDX Food Prices Madagascar."
+
+- alias: "Sugar"
+  lang: en
+  product_code: SUGAR
+  confidence: 0.95
+  note: ""
+  evidence: "Colonne commodity du dataset WFP HDX Food Prices Madagascar."
+
 - alias: "tsaramaso"
   lang: mg
   product_code: BEANS_DRY

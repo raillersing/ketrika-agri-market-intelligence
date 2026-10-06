@@ -9,7 +9,10 @@
 - **Cadence constatée (dates des 6 dernières publications) :** Mensuelle. Données consolidées par le WFP VAM.
 - **Couverture :** Madagascar, principaux marchés urbains et ruraux. Produits : riz (local et importé), maïs, manioc, légumineuses, huile, sucre.
 - **Pièges connus :** Variations des libellés de marchés selon les années, flags de prix (actual vs forecast), conversion monétaire MGA vs USD.
-- **Stratégie d'extraction :** Déterministe (Polars / DuckDB / pandas CSV reader).
-- **Mapping vers les tables cibles :** `obs.prices` avec rattachement via `ref.market` et `ref.products`.
-- **Échantillons :** `backend/tests/fixtures/wfp_hdx_mdg/wfp_food_prices_mdg_sample.csv`.
-- **Statut et incidents :** Actif, aucun incident.
+- **Stratégie d'extraction :** Déterministe (`WfpHdxMdgConnector`, parsing CSV avec élimination de la ligne HXL `#`).
+- **Mapping vers les tables cibles :** `obs.price_observation` avec rattachement via `ref.location` (marchés en `admin_level = 9`, districts, régions) et `ref.product` (`RICE_WHITE_LOCAL`, `RICE_WHITE_IMPORTED`, `MAIZE_GRAIN`, `CASSAVA_FRESH`, `BEANS_DRY`, `VEG_OIL`, `SUGAR`).
+- **Échantillons et golden set :**
+  - Fixture : `backend/tests/fixtures/wfp_hdx_mdg/wfp_food_prices_mdg_sample.csv` (35 observations).
+  - Golden set : `backend/tests/golden/wfp_hdx_mdg/wfp_sample.expected.json` (35 valeurs vérifiées manuellement).
+  - Tests unitaires et d'intégration : `backend/tests/unit/test_wfp_hdx_mdg.py`, `backend/tests/integration/test_wfp_hdx_mdg.py`.
+- **Statut et incidents :** `active`, aucun incident. Rejouabilité Bronze et checks DQ validés (CC1–CC6).

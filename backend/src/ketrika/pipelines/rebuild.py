@@ -78,6 +78,7 @@ def wipe_silver_gold_tables(session: Session) -> dict[str, int]:
 def rebuild_database(
     session: Session | None = None,
     offline: bool = True,
+    source_id: str | None = None,
 ) -> dict[str, Any]:
     """Rebuild Silver/Gold layers offline from Bronze storage and meta.source_record.
 
@@ -94,9 +95,10 @@ def rebuild_database(
         wipe_stats = wipe_silver_gold_tables(s)
 
         # 2. Query all source records chronologically (fetched_at ASC)
-        stmt = select(SourceRecord).order_by(
-            SourceRecord.fetched_at.asc(), SourceRecord.source_record_id.asc()
-        )
+        stmt = select(SourceRecord)
+        if source_id is not None:
+            stmt = stmt.where(SourceRecord.source_id == source_id)
+        stmt = stmt.order_by(SourceRecord.fetched_at.asc(), SourceRecord.source_record_id.asc())
         source_records = list(s.execute(stmt).scalars().all())
         logger.info("Found %d source records to replay from Bronze", len(source_records))
 
@@ -163,13 +165,14 @@ def rebuild_database(
                 stats["source_records_replayed"] += 1
 
             except Exception as exc:
-                logger.error(
-                    "Failed to replay source_record %s (%s): %s",
+                logger.warning(
+                    "Failed to replay source_record %s (%s, object_key=%s): %s. Skipping.",
                     s_rec.source_record_id,
                     s_rec.source_id,
+                    s_rec.object_key,
                     exc,
                 )
-                raise
+                stats["source_records_skipped"] += 1
 
         s.commit()
         logger.info(

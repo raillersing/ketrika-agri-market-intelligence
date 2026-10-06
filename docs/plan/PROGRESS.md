@@ -23,7 +23,7 @@
 | **T2.4** | MUST | 2 | Bibliothèque d'extraction (PDF, HTML, LLM) | T2.2 | **DONE** | verify_evidence 16 cas, reconcile 5 cas, BudgetGuard, ReplayClient, HTML/PDF parsers |
 | **T2.5** | MUST | 2 | Normalisation et chargement | T2.3, T1.2–T1.4 | **DONE** | Resolvers produits/unités/lieux, supersession, seed complet (115 tests passés, 85% cov) |
 | **T2.6** | MUST | 2 | Commande rebuild et runbook connecteur | T2.3–T2.5 | **DONE** | rebuild CLI offline vérifié (comptes identiques), runbook 9 sections, 116 tests pytest (88% cov) |
-| **T3.1** | MUST | 3 | Connecteur WFP Food Prices HDX | T2.6 | TODO | — |
+| **T3.1** | MUST | 3 | Connecteur WFP Food Prices HDX | T2.6 | **DONE** | CC1-CC6 validés (36 obs, Golden set recall/acc 100%, DQ passants, offline rebuild stable, dev.ps1 check vert) |
 | **T3.2** | MUST | 3 | Connecteur Banque Mondiale RTFP | T2.6 | TODO | — |
 | **T3.3** | MUST | 3 | Connecteur FAOSTAT | T2.6 | TODO | — |
 | **T3.4** | MUST | 3 | Connecteur NASA POWER Climat | T2.6, T1.4 | TODO | — |
@@ -341,4 +341,28 @@
   - **Dettes :** Aucune dette.
   - **Risques :** Veiller lors des phases 3 et 4 au débit poli (`max_rps <= 0.2`) pour les serveurs gouvernementaux malgaches lors des backfills historiques.
   - **Tag :** `phase-2-done`.
+
+### [2026-10-07T02:15:00Z] Démarrage de T3.1 : Connecteur WFP Food Prices HDX
+- **Mini-plan T3.1 :**
+  1. Étendre `backend/tests/fixtures/wfp_hdx_mdg/wfp_food_prices_mdg_sample.csv` (≥ 35 lignes réelles couvrant riz blanc local/importé, maïs, manioc, haricots, huile, sucre, Anosibe, Bazar Be, Asabotsy, avec gestion de la ligne HXL).
+  2. Créer le golden dataset `backend/tests/golden/wfp_hdx_mdg/wfp_sample.expected.json` (35 valeurs vérifiées manuellement, métadonnées CC2).
+  3. Implémenter le connecteur `WfpHdxMdgConnector` dans `backend/src/ketrika/connectors/wfp_hdx_mdg.py` (parsing CSV, filtre HXL `#`, mapping `commodity`, `unit`, `pricetype` -> `actor_level`, `admin1`, `admin2`, `market` admin_level 9).
+  4. Enregistrer `wfp_hdx_mdg` dans `backend/src/ketrika/connectors/registry.py` et intégrer dans la factory Dagster.
+  5. Écrire les tests unitaires et le test golden dans `backend/tests/unit/test_wfp_hdx_mdg.py`.
+  6. Écrire le test d'intégration du backfill complet et des checks DQ (CC1–CC6) dans `backend/tests/integration/test_wfp_hdx_mdg.py`.
+  7. Mettre à jour `docs/sources/wfp_hdx_mdg.md` (statut `active`).
+  8. Valider `./scripts/dev.ps1 check` et rejouabilité `./scripts/dev.ps1 rebuild`.
+  9. Mettre à jour PROGRESS.md et committer `feat(T3.1): wfp hdx food prices connector`.
+- **Validation acceptation :**
+  - **CC1 (Unit tests) :** Parsing déterministe validé sur `tests/fixtures/wfp_hdx_mdg/wfp_food_prices_mdg_sample.csv` (36 records, filtrage ligne HXL `#`, mapping `pricetype` Retail/Wholesale -> `retail`/`wholesale`, prix riz local/importé, maïs, manioc, haricots, huile, sucre sur Anosibe, Bazar Be, Asabotsy).
+  - **CC2 (Golden test) :** Validé sur `backend/tests/golden/wfp_hdx_mdg/wfp_sample.expected.json` (36 observations de référence annotées) avec exactitude des champs = 100% (≥ 99%) et rappel des enregistrements = 100% (≥ 98%).
+  - **CC3 (Backfill & Silver loading) :** Intégration complète via `execute_connector_pipeline` insérant 36 observations actives dans `obs.price_observation`. Idempotence validée (seconde exécution : 0 inséré, 36 ignorés).
+  - **CC4 (DQ checks) :**
+    - `provenance_complete` : 100% des observations ont un `source_record_id` valide référençant le Bronze ;
+    - `price_range_sanity` : tous les prix dans la fourchette réaliste [500, 25000] MGA ;
+    - Exhaustivité des champs obligatoires (`product_raw`, `unit_raw`, `actor_level`, `period_start`) vérifiée à 100%.
+  - **CC5 (Documentation) :** Fiche descriptive `docs/sources/wfp_hdx_mdg.md` mise à jour avec statut `active` et métriques de backfill.
+  - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='wfp_hdx_mdg')`), comptes strictement préservés (36 observations dans Silver). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès.
+  - `./scripts/dev.ps1 check` 100 % vert (119 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
+- Statut : **DONE**.
 

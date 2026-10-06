@@ -348,3 +348,9 @@
   admin_level: "market"
   confidence: 1.0
   note: "Grand marché hebdomadaire périurbain au nord d'Antananarivo"
+
+- alias: "Bazar Be Mahajanga"
+  pcode: "MKT_BAZAR_BE_MAHAJANGA"
+  admin_level: "market"
+  confidence: 1.0
+  note: "Grand marché central de Mahajanga"
