@@ -80,9 +80,11 @@ services:
       - S3_BUCKET_BRONZE=${S3_BUCKET_BRONZE:-bronze}
       - S3_REGION=${S3_REGION:-auto}
       - PYTHONPATH=/app/src
+      - KETRIKA_REPO_ROOT=/workspace
     volumes:
       - ./backend:/app
       - backend_venv:/app/.venv
+      - ./:/workspace:ro
     command: ["uvicorn", "ketrika.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     depends_on:
       db:
@@ -114,10 +116,12 @@ services:
       - S3_BUCKET_BRONZE=${S3_BUCKET_BRONZE:-bronze}
       - S3_REGION=${S3_REGION:-auto}
       - PYTHONPATH=/app/src
+      - KETRIKA_REPO_ROOT=/workspace
     volumes:
       - ./backend:/app
       - backend_venv:/app/.venv
       - ./docker/dagster:/opt/dagster/dagster_home:ro
+      - ./:/workspace:ro
     command: ["dagster-webserver", "-h", "0.0.0.0", "-p", "3001", "-w", "/opt/dagster/dagster_home/workspace.yaml"]
     depends_on:
       db:
@@ -143,10 +147,12 @@ services:
       - S3_BUCKET_BRONZE=${S3_BUCKET_BRONZE:-bronze}
       - S3_REGION=${S3_REGION:-auto}
       - PYTHONPATH=/app/src
+      - KETRIKA_REPO_ROOT=/workspace
     volumes:
       - ./backend:/app
       - backend_venv:/app/.venv
       - ./docker/dagster:/opt/dagster/dagster_home:ro
+      - ./:/workspace:ro
     command: ["dagster-daemon", "run", "-w", "/opt/dagster/dagster_home/workspace.yaml"]
     depends_on:
       db:
