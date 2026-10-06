@@ -11,7 +11,7 @@
 |---|---|---|---|---|---|---|
 | **T0.1** | MUST | 0 | Initialiser le dépôt et la gouvernance | — | **DONE** | d109bb7 (git init, attributes, docs/plan) |
 | **T0.2** | MUST | 0 | Squelette du monorepo et outillage qualité | T0.1 | **DONE** | 3ac9f33 (`check` vert : ruff 0, mypy 0, pytest 1 passed, vitest 1 passed) |
-| **T0.3** | MUST | 0 | Stack Docker de développement | T0.2 | **DONE** | services healthy, /v1/health ok, MinIO bronze versioned, dagster/web/mailpit ok, dev.ps1 check vert |
+| **T0.3** | MUST | 0 | Stack Docker de développement | T0.2 | **DONE** | d4c8269 (services healthy, /v1/health ok, MinIO bronze versioned, dagster/web/mailpit ok, dev.ps1 check vert) |
 | **T0.4** | SHOULD | 0 | Configuration CI locale/GitHub Actions | T0.3 | TODO | — |
 | **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | TODO | — |
 | **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | TODO | — |
