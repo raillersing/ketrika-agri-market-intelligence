@@ -5,11 +5,29 @@
   - https://microdata.worldbank.org/index.php/catalog/food-prices (2026-10-06, HTTP 200).
 - **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (vérifié 2026-10-06).
 - **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://www.worldbank.org/en/about/legal/terms-and-conditions. Libre réutilisation sous licence ouverte CC-BY.
-- **Format(s) et structure (avec exemples réels, pages, colonnes) :** CSV / Stata / Parquet. Colonnes typiques : `country`, `country_code`, `adm1_name`, `market_name`, `date`, `commodity`, `unit`, `currency`, `price_observed`, `price_imputed`, `value_kind`.
+- **Format(s) et structure (avec exemples réels, pages, colonnes) :** CSV. Colonnes : `country`, `country_code`, `adm1_name`, `market_name`, `date`, `commodity`, `unit`, `currency`, `price_observed`, `price_imputed`, `value_kind`.
 - **Cadence constatée (dates des 6 dernières publications) :** Mensuelle.
 - **Couverture :** Historique étendu (depuis 2007) pour Madagascar. Produits vivriers clés (riz, blé, maïs, manioc).
 - **Pièges connus :** Distinction essentielle entre valeurs observées et valeurs imputées (principe non-négociable n°9 d'AGENTS.md). `observed_or_imputed` obligatoire.
-- **Stratégie d'extraction :** Déterministe (Polars / DuckDB).
-- **Mapping vers les tables cibles :** `obs.prices` avec flag `observed_or_imputed`.
-- **Échantillons :** `backend/tests/fixtures/wb_rtfp_mdg/wb_rtfp_mdg_sample.csv`.
-- **Statut et incidents :** Actif, aucun incident.
+- **Règle d'imputation exacte (SPECS §5.2, T3.2) :**
+  - Si `value_kind == 'imputed'` ou si `price_observed` est absent, vide, ou égal à `null` / `none` / `nd` / `na` :
+    - `observed_or_imputed = 'imputed'`
+    - `price_raw = price_imputed`
+    - `price_value = float(price_imputed)`
+  - Sinon :
+    - `observed_or_imputed = 'observed'`
+    - `price_raw = price_observed`
+    - `price_value = float(price_observed)`
+  - **Garantie stricte :** Aucune valeur imputée ne porte `observed_or_imputed = 'observed'`.
+- **Stratégie d'extraction :** Déterministe (`ketrika.connectors.wb_rtfp_mdg:WbRtfpMdgConnector`).
+- **Mapping vers les tables cibles :** `obs.price_observation` avec traçabilité d'imputation et evidence complète.
+- **Échantillons et tests :**
+  - Fixture : `backend/tests/fixtures/wb_rtfp_mdg/wb_rtfp_mdg_sample.csv` (36 observations).
+  - Golden set : `backend/tests/golden/wb_rtfp_mdg/wb_rtfp_sample.expected.json` (36 observations, 100% exactitude, 100% rappel).
+- **Métriques de validation (T3.2) :**
+  - Enregistrements : 36 observations (24 observées, 12 imputées, part d'imputés : 33,33 %).
+  - Période couverte : 2024-01-01 à 2024-03-01.
+  - Produits : Rice (riz blanc), Maize (maïs grain), Cassava (manioc frais), Wheat (farine de blé).
+  - Marchés : Anosibe (Analamanga), Toamasina (Atsinanana), Antsirabe (Vakinankaratra), Mahajanga (Boeny).
+  - Rejouabilité : Rebuild offline 100% conforme sans accès réseau.
+- **Statut et incidents :** `active`, aucun incident.

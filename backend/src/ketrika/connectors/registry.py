@@ -6,6 +6,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from ketrika.connectors.dummy_csv import DummyCsvConnector
+from ketrika.connectors.wb_rtfp_mdg import WbRtfpMdgConnector
 from ketrika.connectors.wfp_hdx_mdg import WfpHdxMdgConnector
 
 if TYPE_CHECKING:
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "dummy_csv": DummyCsvConnector,
     "wfp_hdx_mdg": WfpHdxMdgConnector,
+    "wb_rtfp_mdg": WbRtfpMdgConnector,
 }
 
 

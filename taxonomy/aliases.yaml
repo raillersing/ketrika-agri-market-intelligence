@@ -228,3 +228,18 @@
   confidence: 0.95
   note: ""
   evidence: "Nomenclature douanière DGD SH 1006.30."
+
+- alias: "Cassava"
+  lang: en
+  product_code: CASSAVA_FRESH
+  confidence: 0.9
+  note: "Défaut manioc frais en l'absence de mention de cossettes sèches"
+  evidence: "Dataset World Bank RTFP Madagascar."
+
+- alias: "Wheat"
+  lang: en
+  product_code: WHEAT_FLOUR
+  confidence: 0.9
+  note: "Blé / farine de blé consommée sur les marchés urbains"
+  evidence: "Dataset World Bank RTFP Madagascar."
+

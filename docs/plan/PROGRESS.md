@@ -24,7 +24,7 @@
 | **T2.5** | MUST | 2 | Normalisation et chargement | T2.3, T1.2–T1.4 | **DONE** | Resolvers produits/unités/lieux, supersession, seed complet (115 tests passés, 85% cov) |
 | **T2.6** | MUST | 2 | Commande rebuild et runbook connecteur | T2.3–T2.5 | **DONE** | rebuild CLI offline vérifié (comptes identiques), runbook 9 sections, 116 tests pytest (88% cov) |
 | **T3.1** | MUST | 3 | Connecteur WFP Food Prices HDX | T2.6 | **DONE** | CC1-CC6 validés (36 obs, Golden set recall/acc 100%, DQ passants, offline rebuild stable, dev.ps1 check vert) |
-| **T3.2** | MUST | 3 | Connecteur Banque Mondiale RTFP | T2.6 | TODO | — |
+| **T3.2** | MUST | 3 | Connecteur Banque Mondiale RTFP | T2.6 | **DONE** | CC1-CC6 validés (36 obs, 24 obs / 12 imp, part 33.33%, 0 imputé marqué observé, rebuild stable, dev.ps1 check vert) |
 | **T3.3** | MUST | 3 | Connecteur FAOSTAT | T2.6 | TODO | — |
 | **T3.4** | MUST | 3 | Connecteur NASA POWER Climat | T2.6, T1.4 | TODO | — |
 | **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | TODO | — |
@@ -364,5 +364,30 @@
   - **CC5 (Documentation) :** Fiche descriptive `docs/sources/wfp_hdx_mdg.md` mise à jour avec statut `active` et métriques de backfill.
   - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='wfp_hdx_mdg')`), comptes strictement préservés (36 observations dans Silver). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès.
   - `./scripts/dev.ps1 check` 100 % vert (119 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
+- Statut : **DONE**.
+
+### [2026-10-07T02:35:00Z] Démarrage de T3.2 : Connecteur Banque Mondiale RTFP
+- **Mini-plan T3.2 :**
+  1. Enrichir la fixture `backend/tests/fixtures/wb_rtfp_mdg/wb_rtfp_mdg_sample.csv` (≥ 35 observations réalistes avec mix de valeurs observées et imputées sur riz, maïs, manioc, blé).
+  2. Établir le golden dataset `backend/tests/golden/wb_rtfp_mdg/wb_rtfp_sample.expected.json` (≥ 30 valeurs annotées, métadonnées CC2).
+  3. Implémenter `WbRtfpMdgConnector` dans `backend/src/ketrika/connectors/wb_rtfp_mdg.py` (parsing CSV, mapping strict `value_kind` -> `observed_or_imputed`, préservation prix brut/valeur, evidence, calcul part imputée).
+  4. Enregistrer `wb_rtfp_mdg` dans le registre des connecteurs `backend/src/ketrika/connectors/registry.py`.
+  5. Écrire les tests unitaires et le golden test dans `backend/tests/unit/test_wb_rtfp_mdg.py` (validation CC1, CC2, vérification stricte qu'aucun imputé n'est marqué observé).
+  6. Écrire le test d'intégration cycle de vie dans `backend/tests/integration/test_wb_rtfp_mdg.py` (backfill, idempotence, checks DQ CC4, part des imputés, rebuild offline stable CC6).
+  7. Mettre à jour la fiche source `docs/sources/wb_rtfp_mdg.md` avec la règle exacte d'imputation et le statut `active`.
+  8. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
+  9. Mettre à jour PROGRESS.md et committer `feat(T3.2): world bank rtfp connector`.
+- **Validation acceptation :**
+  - **CC1 (Unit tests) :** Parsing déterministe validé sur `tests/fixtures/wb_rtfp_mdg/wb_rtfp_mdg_sample.csv` (36 records, 24 observés, 12 imputés, part d'imputés 33,33 %, 0 avertissement/issue, couverture Rice, Maize, Cassava, Wheat sur Anosibe, Toamasina, Antsirabe, Mahajanga).
+  - **CC2 (Golden test) :** Validé sur `backend/tests/golden/wb_rtfp_mdg/wb_rtfp_sample.expected.json` (36 observations de référence annotées) avec exactitude des champs = 100% (≥ 99%) et rappel des enregistrements = 100% (≥ 98%).
+  - **CC3 (Backfill & Silver loading) :** Intégration complète via `execute_connector_pipeline` insérant 36 observations actives dans `obs.price_observation`. Idempotence validée (seconde exécution : 0 inséré, 36 ignorés).
+  - **CC4 (DQ checks) :**
+    - `provenance_complete` : 100% des observations ont un `source_record_id` valide référençant le Bronze ;
+    - `price_range_sanity` : tous les prix dans la fourchette réaliste [500, 25000] MGA ;
+    - Exhaustivité des champs obligatoires (`product_raw`, `unit_raw`, `actor_level`, `period_start`) vérifiée à 100% ;
+    - **Règle stricte T3.2 :** 0 valeur imputée ne porte `observed_or_imputed = 'observed'`. Distribution exacte : 24 observées, 12 imputées (part d'imputés = 33,33 %).
+  - **CC5 (Documentation) :** Fiche descriptive `docs/sources/wb_rtfp_mdg.md` mise à jour avec statut `active` et règle exacte d'imputation.
+  - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='wb_rtfp_mdg')`), comptes strictement préservés (36 observations dans Silver). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès sur l'ensemble de la base.
+  - `./scripts/dev.ps1 check` 100 % vert (122 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
 - Statut : **DONE**.
 
