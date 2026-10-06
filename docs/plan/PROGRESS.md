@@ -20,7 +20,7 @@
 | **T2.1** | MUST | 2 | Migrations de base de données (Alembic) | T0.3 | **DONE** | 0001_initial_schema (alembic upgrade head ok, downgrade/upgrade ok, dev.ps1 reset ok, 4 tests intégration passants) |
 | **T2.2** | MUST | 2 | Bibliothèque ketrika.core | T2.1 | **DONE** | Couverture 96%, HTTP poli/offline/robots/429/304 validés, Bronze immuable, DB ORM complet |
 | **T2.3** | MUST | 2 | Framework Connector et factory Dagster | T2.2 | **DONE** | Connector base, records typés, Dagster factory, runner supersession transactionnel validé |
-| **T2.4** | MUST | 2 | Bibliothèque d'extraction (PDF, HTML, LLM) | T2.2 | TODO | — |
+| **T2.4** | MUST | 2 | Bibliothèque d'extraction (PDF, HTML, LLM) | T2.2 | **DONE** | verify_evidence 16 cas, reconcile 5 cas, BudgetGuard, ReplayClient, HTML/PDF parsers |
 | **T2.5** | MUST | 2 | Normalisation et chargement | T2.3, T1.2–T1.4 | TODO | — |
 | **T2.6** | MUST | 2 | Commande rebuild et runbook connecteur | T2.3–T2.5 | TODO | — |
 | **T3.1** | MUST | 3 | Connecteur WFP Food Prices HDX | T2.6 | TODO | — |
@@ -274,6 +274,29 @@
     - Run 3 : 1 nouvel artefact, révision d'un prix (Antananarivo 2800 -> 2900 MGA/kg) générant 1 nouvelle ligne active (`superseded_by IS NULL`) et 1 ligne obsolète pointant vers la nouvelle via `superseded_by` (total = 4 observations, 3 actives, 1 archivée).
   - `./scripts/dev.ps1 check` 100 % vert (65 tests backend passants, 1 test web, 0 erreur ruff/mypy).
 - Statut : **DONE**.
+
+### [2026-10-07T00:08:00Z] Démarrage de T2.4 : Bibliothèque d'extraction (PDF, HTML, LLM)
+- **Mini-plan T2.4 :**
+  1. Implémenter `backend/src/ketrika/extraction/evidence.py` (`verify_evidence` normalisation NFKC, espaces insécables, similarité rapidfuzz, vérification numérique).
+  2. Implémenter `backend/src/ketrika/extraction/reconcile.py` (table de réconciliation déterministe / LLM selon SPECS §11.1).
+  3. Implémenter `backend/src/ketrika/extraction/pdf.py` (extraction texte par page, extraction tables pdfplumber, rendu PNG pypdfium2).
+  4. Implémenter `backend/src/ketrika/extraction/html.py` (extraction texte et tables HTML via selectolax).
+  5. Implémenter l'architecture client LLM sous `backend/src/ketrika/extraction/llm/` : `base.py`, `replay.py`, `budget.py` (`BudgetGuard`), `gemini.py`, `anthropic.py`, `openai.py`.
+  6. Créer les prompts de référence versionnés sous `backend/src/ketrika/extraction/prompts/`.
+  7. Écrire la suite de tests unitaires : tests de `verify_evidence` (>= 15 cas), tests de `reconcile` (5 cas), tests de `BudgetGuard` (refus de dépassement), tests de `ReplayClient` (erreur explicite clé absente, robustesse injection de prompt).
+  8. Valider DoD (couverture extraction >= 80 %) et `./scripts/dev.ps1 check`.
+  9. Mettre à jour PROGRESS.md et committer `feat(T2.4): deterministic and llm extraction library`.
+- **Validation acceptation :**
+  - Moteur `verify_evidence` validé sur 16 cas de tests unitaires (normalisation NFKC, espaces insécables `\u00a0`, `\u202f`, séparateurs de milliers espaces/points/virgules, décimales fr/en, insensibilité casse, rapidfuzz ratio >= 95 %, détection stricte des faux positifs et scans sans OCR).
+  - Table de réconciliation `reconcile_records` validée sur les 5 cas normatifs de SPECS §11.1 (`dual_agree` 0.99, `deterministic` 0.95, `llm_verified` 0.80, `unverifiable_evidence` vers `review_item`, `extraction_conflict` vers `review_item`).
+  - `BudgetGuard` validé : blocage et levée d'exception `BudgetExceededError` lors du dépassement du plafond mensuel ou par run.
+  - `ReplayClient` validé : levée d'exception explicite `KeyError` sur clé de cache absente, parsing propre sur fixture existante.
+  - Protection contre les injections de prompt validée : isolation étanche `<document>...</document>` avec consigne de neutralisation de toute directive ennemie.
+  - Extraction déterministe HTML (`selectolax.lexbor.LexborHTMLParser`) et PDF (`pdfplumber` + rendu `pypdfium2`) validées.
+  - Couverture sur `ketrika.extraction` : **83 %** (exigence DoD >= 80 % satisfaite).
+  - `./scripts/dev.ps1 check` 100 % vert (92 tests backend passants, 1 test web, 0 erreur ruff/mypy).
+- Statut : **DONE**.
+
 
 
 
