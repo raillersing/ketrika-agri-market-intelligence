@@ -21,7 +21,7 @@
 | **T2.2** | MUST | 2 | Bibliothèque ketrika.core | T2.1 | **DONE** | Couverture 96%, HTTP poli/offline/robots/429/304 validés, Bronze immuable, DB ORM complet |
 | **T2.3** | MUST | 2 | Framework Connector et factory Dagster | T2.2 | **DONE** | Connector base, records typés, Dagster factory, runner supersession transactionnel validé |
 | **T2.4** | MUST | 2 | Bibliothèque d'extraction (PDF, HTML, LLM) | T2.2 | **DONE** | verify_evidence 16 cas, reconcile 5 cas, BudgetGuard, ReplayClient, HTML/PDF parsers |
-| **T2.5** | MUST | 2 | Normalisation et chargement | T2.3, T1.2–T1.4 | TODO | — |
+| **T2.5** | MUST | 2 | Normalisation et chargement | T2.3, T1.2–T1.4 | **DONE** | Resolvers produits/unités/lieux, supersession, seed complet (115 tests passés, 85% cov) |
 | **T2.6** | MUST | 2 | Commande rebuild et runbook connecteur | T2.3–T2.5 | TODO | — |
 | **T3.1** | MUST | 3 | Connecteur WFP Food Prices HDX | T2.6 | TODO | — |
 | **T3.2** | MUST | 3 | Connecteur Banque Mondiale RTFP | T2.6 | TODO | — |
@@ -297,7 +297,25 @@
   - `./scripts/dev.ps1 check` 100 % vert (92 tests backend passants, 1 test web, 0 erreur ruff/mypy).
 - Statut : **DONE**.
 
-
-
-
-
+### [2026-10-07T00:23:00Z] Démarrage de T2.5 : Normalisation et chargement
+- **Mini-plan T2.5 :**
+  1. Implémenter `backend/src/ketrika/normalize/products.py` (résolution alias produit source, global, trigramme rapidfuzz, proposition review_item).
+  2. Implémenter `backend/src/ketrika/normalize/units.py` (parsing nombres fr/mg, ND->NULL+missing_code, devises FMG/5, conversion confiance >= 0.8 vers base_unit).
+  3. Implémenter `backend/src/ketrika/normalize/locations.py` (résolution P-code, alias, trigramme admin_level, proposition review_item).
+  4. Implémenter `backend/src/ketrika/normalize/supersede.py` (logique de supersession transactionnelle et atomique).
+  5. Implémenter `backend/src/ketrika/normalize/loader.py` avec CLI `seed` (alimentation ref.product, ref.location, ref.unit, meta.source, auth demo users).
+  6. Écrire la suite de tests unitaires pour `normalize` (5 critères d'acceptation de T2.5).
+  7. Valider `./scripts/dev.ps1 seed` et `./scripts/dev.ps1 check`.
+  8. Mettre à jour PROGRESS.md et committer `feat(T2.5): normalization pipeline and seed command`.
+- **Validation acceptation :**
+  - Critères T2.5 validés par 23 tests unitaires et d'intégration (`tests/unit/test_normalize.py`) :
+    - `ND` (Non Disponible / Non Défini) parsé en `value=None` avec `missing_code="ND"` (jamais 0) ;
+    - Formats numériques malgaches/français avec séparateurs de milliers et virgule (`2 850,50`) correctement convertis en `float(2850.50)` ;
+    - Devises FMG (Franc Malgache) divisées par 5 avec haute confiance (0.95), conversion MGA/Ar exacte (1.00) ;
+    - Alias produit ou lieu inconnu crée automatiquement une entrée d'arbitrage dans `ops.review_item` avec suggestion trigramme et score ;
+    - Facteur de conversion d'unité de faible confiance (0.50 < 0.80) conserve l'observation brute mais fixe `price_mga_per_base IS NULL` comme exigé par SPECS §13.
+  - Commande `seed` (`python -m ketrika.normalize.loader seed`) fonctionnelle et vérifiée sur la base PostgreSQL réelle :
+    - 17 sources (`meta.source`), 15 produits (`ref.product`), 29 alias de produits (`ref.product_alias`), 16 règles de conversion d'unités (`ref.unit_conversion`), 30 entités géographiques (`ref.location`), 38 alias de lieux (`ref.location_alias`), 2 comptes utilisateurs de démo (`auth.user_account`, hachage Argon2).
+  - Couverture de code sur le module `ketrika.normalize` : **85 %** (exigence DoD >= 80 % respectée).
+  - `./scripts/dev.ps1 check` 100 % vert (115 tests backend passants, 1 test web, 0 erreur ruff/mypy).
+- Statut : **DONE**.
