@@ -16,7 +16,7 @@
 | **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | **DONE** | 447e704 (sources.yaml validé, 10 fiches docs, 10 fixtures, 8 tests pytest passants) |
 | **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | **DONE** | f6d3fec (products.yaml, aliases.yaml, rice_varieties.yaml, 13 tests pytest passants) |
 | **T1.3** | MUST | 1 | Unités et conversions | T1.1 | **DONE** | ed8639c (units.yaml, moteur de conversion, tests Hypothesis passants, 20 tests pytest) |
-| **T1.4** | MUST | 1 | Géographie de référence | T1.1 | TODO | — |
+| **T1.4** | MUST | 1 | Géographie de référence | T1.1 | **DONE** | admin0/1/2 GeoJSON 23 régions, location_aliases.yaml, crop_calendar.yaml, 28 tests pytest |
 | **T2.1** | MUST | 2 | Migrations de base de données (Alembic) | T0.3 | TODO | — |
 | **T2.2** | MUST | 2 | Bibliothèque ketrika.core | T2.1 | TODO | — |
 | **T2.3** | MUST | 2 | Framework Connector et factory Dagster | T2.2 | TODO | — |
@@ -173,4 +173,36 @@
   - Tests unitaires et de propriétés (Hypothesis) dans `backend/tests/unit/test_units.py` (7 tests) : cohérence inverse prouvée sur des nombres aléatoires, vérification stricte des preuves, validation des unités de fixtures.
   - `./scripts/dev.ps1 check` vert (ruff 0, mypy 0, pytest 20 passed, vitest 1 passed).
 - Statut : **DONE**.
+
+### [2026-10-06T21:40:00Z] Démarrage de T1.4 : Géographie de référence
+- **Mini-plan T1.4 :**
+  1. Définir les modèles Pydantic (`GeographicEntity`, `LocationAlias`, `CropCalendarEntry`) dans `backend/src/ketrika/core/models/geo.py`.
+  2. Établir les GeoJSON de référence simplifiés dans `geo/processed/` (admin0, admin1 avec les 23 régions officielles OCHA COD-AB, admin2).
+  3. Rédiger `geo/README.md` avec provenance, `boundary_version`, dénombrement des entités et analyse 22 vs 23 vs 24 régions.
+  4. Créer `taxonomy/location_aliases.yaml` couvrant 100 % des entités géographiques et marchés cités dans les fixtures.
+  5. Rédiger `taxonomy/crop_calendar.yaml` pour le riz et le maïs par zone agro-climatique avec sources FAO GIEWS/FEWS NET.
+  6. Implémenter le chargeur et résolveur géographique dans `backend/src/ketrika/core/geo.py`.
+  7. Écrire les tests unitaires dans `backend/tests/unit/test_geo.py`.
+  8. Valider `./scripts/dev.ps1 check`.
+  9. Mettre à jour PROGRESS.md et committer `feat(T1.4): reference geography, location aliases and crop calendar`.
+  10. Exécuter le Gate de fin de Phase 1 et créer le tag `phase-1-done`.
+- **Validation acceptation :**
+  - Modèles Pydantic `GeographicEntity`, `LocationAlias`, `CropCalendarEntry` dans `backend/src/ketrika/core/models/geo.py`.
+  - GeoJSON de référence versionnés dans `geo/processed/` (admin0, admin1 avec les 23 régions officielles OCHA COD-AB, admin2).
+  - Documentation `geo/README.md` détaillée avec provenance (`ocha_codab_mdg`), version `2024.1`, dénombrement et analyse du découpage (22 vs 23 vs 24 régions).
+  - Référentiel `taxonomy/location_aliases.yaml` couvrant 100 % des entités et marchés cités dans les fixtures (Analamanga, Atsinanana, Vakinankaratra, Antananarivo, Antsirabe, Toamasina, Anosibe, Bazar Be, Asabotsy).
+  - Calendrier des cultures `taxonomy/crop_calendar.yaml` couvrant le riz (cycles vakiambiaty, hosy, asara) et le maïs avec sources FAO GIEWS et FEWS NET.
+  - Résolveur géographique et chargeurs dans `backend/src/ketrika/core/geo.py` avec `validate_geo()` renvoyant 0 erreur.
+  - Suite de tests unitaires `backend/tests/unit/test_geo.py` (8 tests passants).
+  - `./scripts/dev.ps1 check` vert (ruff 0, mypy 0, pytest 28 passed, vitest 1 passed).
+- Statut : **DONE**.
+
+### [2026-10-06T21:55:00Z] Gate de fin de Phase 1 (Reconnaissance et référentiels)
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** Registre exhaustif des 9 sources MUST + CHIRPS (`registry/sources.yaml`), 10 fiches de documentation technique (`docs/sources/`), 10 jeux de fixtures représentatifs (`backend/tests/fixtures/`) ; taxonomie vivrière PPN (`taxonomy/products.yaml` avec codes HS6 et FAOSTAT vérifiés, `taxonomy/aliases.yaml`, `taxonomy/rice_varieties.yaml`) ; référentiel d'unités et conversions (`taxonomy/units.yaml` avec unités SI et traditionnelles malagasy prouvées par des sources documentaires) ; géographie de référence (`geo/processed/` avec 23 régions OCHA COD-AB, `geo/README.md`, `taxonomy/location_aliases.yaml`, `taxonomy/crop_calendar.yaml`). Moteurs de résolution et de validation `ketrika.core.registry`, `ketrika.core.taxonomy`, `ketrika.core.units`, `ketrika.core.geo`.
+  - **Chiffres clés :** 10 sources documentées et vérifiées, 15 produits PPN, 29 alias produits résolvant 100 % des fixtures, 23 régions administratives officielles, 100 % des localisations de fixtures résolues, 28 tests unitaires backend passants (dont tests de propriétés Hypothesis sur conversions), 1 test web passant, 0 erreur lint/typecheck.
+  - **Dettes :** Aucune dette non tracée.
+  - **Risques :** Évolution future de la 24ème région administrative (Ambatosoa) documentée dans `geo/README.md` et gérée par alias sans rupture des séries historiques.
+  - **Tag :** `phase-1-done`.
+
 

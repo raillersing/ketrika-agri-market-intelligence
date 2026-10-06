@@ -1,0 +1,89 @@
+- alias: "Madagascar"
+  pcode: "MDG"
+  admin_level: "admin0"
+  confidence: 1.0
+  note: "Pays"
+
+- alias: "Analamanga"
+  pcode: "MDG11"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région centrale"
+
+- alias: "Vakinankaratra"
+  pcode: "MDG12"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région des hauts plateaux du sud"
+
+- alias: "Atsinanana"
+  pcode: "MDG31"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région côtière orientale"
+
+- alias: "Antananarivo Renivohitra"
+  pcode: "MDG1101"
+  admin_level: "admin2"
+  confidence: 1.0
+  note: "District urbain de la capitale"
+
+- alias: "Antananarivo"
+  pcode: "MDG1101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Désignation usuelle de la capitale"
+
+- alias: "Tananarive"
+  pcode: "MDG1101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Ancien toponyme français"
+
+- alias: "Antsirabe I"
+  pcode: "MDG1201"
+  admin_level: "admin2"
+  confidence: 1.0
+  note: "District urbain d'Antsirabe"
+
+- alias: "Antsirabe"
+  pcode: "MDG1201"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Chef-lieu du Vakinankaratra"
+
+- alias: "Toamasina I"
+  pcode: "MDG3101"
+  admin_level: "admin2"
+  confidence: 1.0
+  note: "District urbain de Toamasina"
+
+- alias: "Toamasina"
+  pcode: "MDG3101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Grand port de l'Est"
+
+- alias: "Tamatave"
+  pcode: "MDG3101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Ancien toponyme français"
+
+- alias: "Anosibe"
+  pcode: "MKT_ANOSIBE"
+  admin_level: "market"
+  confidence: 1.0
+  note: "Grand marché de gros et détail de denrées vivrières à Antananarivo"
+
+- alias: "Bazar Be"
+  pcode: "MKT_BAZAR_BE"
+  admin_level: "market"
+  confidence: 1.0
+  note: "Grand marché central de Toamasina"
+
+- alias: "Asabotsy"
+  pcode: "MKT_ASABOTSY"
+  admin_level: "market"
+  confidence: 1.0
+  note: "Grand marché hebdomadaire et quotidien d'Antsirabe"

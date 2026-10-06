@@ -1,5 +1,11 @@
 """Data models for Ketrika core domain."""
 
+from ketrika.core.models.geo import (
+    AdminLevel,
+    CropCalendarEntry,
+    GeographicEntity,
+    LocationAlias,
+)
 from ketrika.core.models.source import (
     EntrypointKind,
     Priority,
@@ -21,8 +27,12 @@ from ketrika.core.models.units import (
 )
 
 __all__ = [
+    "AdminLevel",
     "ConversionStatus",
+    "CropCalendarEntry",
     "EntrypointKind",
+    "GeographicEntity",
+    "LocationAlias",
     "Priority",
     "ProductAlias",
     "ProductCategory",

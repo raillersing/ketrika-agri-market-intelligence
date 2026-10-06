@@ -1,0 +1,62 @@
+- zone_code: ZONE_CENTRE
+  zone_name: "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)"
+  crop: RICE
+  crop_cycle: "vakiambiaty"
+  planting_months: [10, 11, 12]
+  harvest_months: [4, 5, 6]
+  source: "FAO GIEWS Country Brief / ODR Rapports Annuels"
+  verified: true
+
+- zone_code: ZONE_CENTRE
+  zone_name: "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)"
+  crop: RICE
+  crop_cycle: "hosy"
+  planting_months: [6, 7]
+  harvest_months: [11, 12, 1]
+  source: "ODR Bulletin de suivi des riz précoces"
+  verified: true
+
+- zone_code: ZONE_CENTRE
+  zone_name: "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)"
+  crop: MAIZE
+  crop_cycle: "principale"
+  planting_months: [10, 11, 12]
+  harvest_months: [3, 4, 5]
+  source: "FEWS NET Madagascar Seasonal Calendar"
+  verified: true
+
+- zone_code: ZONE_EST
+  zone_name: "Côte Est (Atsinanana, Analanjirofo, Vatovavy, Fitovinany)"
+  crop: RICE
+  crop_cycle: "asara"
+  planting_months: [11, 12, 1]
+  harvest_months: [5, 6, 7]
+  source: "FAO GIEWS / MiASA DRDA Est"
+  verified: true
+
+- zone_code: ZONE_EST
+  zone_name: "Côte Est (Atsinanana, Analanjirofo, Vatovavy, Fitovinany)"
+  crop: RICE
+  crop_cycle: "hosy"
+  planting_months: [5, 6]
+  harvest_months: [10, 11]
+  source: "FAO GIEWS / MiASA"
+  verified: true
+
+- zone_code: ZONE_SUD
+  zone_name: "Grand Sud (Androy, Anosy, Atsimo-Andrefana)"
+  crop: MAIZE
+  crop_cycle: "saison_pluvieuse"
+  planting_months: [11, 12]
+  harvest_months: [3, 4]
+  source: "FEWS NET Grand Sud Seasonal Livelihood Profiles"
+  verified: true
+
+- zone_code: ZONE_ALAOTRA
+  zone_name: "Bassin du Lac Alaotra (Grenier à riz)"
+  crop: RICE
+  crop_cycle: "saison_principale"
+  planting_months: [11, 12, 1]
+  harvest_months: [5, 6]
+  source: "ODR Monographie Régionale Alaotra Mangoro"
+  verified: true
