@@ -14,7 +14,7 @@
 | **T0.3** | MUST | 0 | Stack Docker de développement | T0.2 | **DONE** | d4c8269 (services healthy, /v1/health ok, MinIO bronze versioned, dagster/web/mailpit ok, dev.ps1 check vert) |
 | **T0.4** | SHOULD | 0 | Configuration CI locale/GitHub Actions | T0.3 | **DONE** | .github/workflows/ci.yml valide (actionlint 0 erreur, dev.ps1 check vert) |
 | **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | **DONE** | 447e704 (sources.yaml validé, 10 fiches docs, 10 fixtures, 8 tests pytest passants) |
-| **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | TODO | — |
+| **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | **DONE** | products.yaml, aliases.yaml, rice_varieties.yaml (100% fixtures résolues, 13 tests pytest passants) |
 | **T1.3** | MUST | 1 | Unités et conversions | T1.1 | TODO | — |
 | **T1.4** | MUST | 1 | Géographie de référence | T1.1 | TODO | — |
 | **T2.1** | MUST | 2 | Migrations de base de données (Alembic) | T0.3 | TODO | — |
@@ -140,5 +140,22 @@
   - Fixtures réelles versionnées dans `backend/tests/fixtures/<source_id>/` (GeoJSON, CSV, JSON, texte).
   - Commande `./scripts/dev.ps1 validate-registry` exécutée avec succès (10 sources vérifiées).
   - Tests unitaires `tests/unit/test_registry.py` (5 tests) et `./scripts/dev.ps1 check` verts (ruff 0, mypy 0, pytest 8 passed, vitest 1 passed).
+- Statut : **DONE**.
+
+### [2026-10-06T21:30:00Z] Démarrage de T1.2 : Taxonomie produits et alias
+- **Mini-plan T1.2 :**
+  1. Définir les modèles Pydantic de la taxonomie (`ProductDefinition`, `ProductAlias`, `RiceVariety`) dans `backend/src/ketrika/core/models/taxonomy.py`.
+  2. Rédiger `taxonomy/products.yaml` avec l'ensemble des produits vivriers PPN (SPECS §6.1).
+  3. Rédiger `taxonomy/aliases.yaml` couvrant les amorces (SPECS §6.2) et 100 % des libellés produits des fixtures (WFP, RTFP, ODR, MinCC, Douanes, FAOSTAT).
+  4. Rédiger `taxonomy/rice_varieties.yaml` répertoriant les variétés de riz ODR (Makalioka, Tsipala, Vary mena, X265...).
+  5. Implémenter le chargeur et validateur dans `backend/src/ketrika/core/taxonomy.py`.
+  6. Écrire la suite de tests unitaires `tests/unit/test_taxonomy.py`.
+  7. Valider `./scripts/dev.ps1 check` et committer `feat(T1.2): product taxonomy, aliases and rice varieties`.
+- **Validation acceptation :**
+  - Fichiers `taxonomy/products.yaml` (15 produits PPN), `taxonomy/aliases.yaml` (29 alias), `taxonomy/rice_varieties.yaml` (8 variétés ODR), `taxonomy/unmapped.yaml` rédigés.
+  - 100 % des libellés produits des fixtures (WFP, RTFP, ODR, MinCC, Douanes) sont résolus vers un code produit canonique avec confiance ≥ 0,7.
+  - Module `ketrika.core.taxonomy` avec fonctions `load_products`, `load_aliases`, `load_rice_varieties`, `resolve_product`, `validate_taxonomy`.
+  - Tests unitaires `tests/unit/test_taxonomy.py` (5 tests) : unicité des codes produits, unicité des alias normalisés, validité des références, couverture complète des fixtures.
+  - `./scripts/dev.ps1 check` vert (ruff 0, mypy 0, pytest 13 passed, vitest 1 passed).
 - Statut : **DONE**.
 

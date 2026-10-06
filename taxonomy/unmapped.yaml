@@ -1,0 +1,6 @@
+# taxonomy/unmapped.yaml : Libellés produits bruts non encore rattachés à un code produit canonique
+# Format:
+# - raw_label: "exemple"
+#   source_id: "wfp_hdx_mdg"
+#   reason: "produit hors périmètre vivrier PPN (ex: bétail, poisson)"
+[]

@@ -1,0 +1,47 @@
+- variety_code: MAKALIOKA
+  name: "Makalioka"
+  rice_type: local
+  grain_type: long
+  notes: "Variété noble réputée du bassin de l'Alaotra, grains longs translucides."
+
+- variety_code: TSIPALA
+  name: "Tsipala"
+  rice_type: local
+  grain_type: medium
+  notes: "Variété locale courante des hauts plateaux et plaines centrales."
+
+- variety_code: VARY_MENA
+  name: "Vary mena"
+  rice_type: local
+  grain_type: medium
+  notes: "Riz rouge traditionnel malagasy, riche en nutriments."
+
+- variety_code: X265
+  name: "X265"
+  rice_type: local
+  grain_type: medium
+  notes: "Variété améliorée FOFIFA à haut rendement pour rizières irriguées."
+
+- variety_code: ROJOFOTSY
+  name: "Rojofotsy"
+  rice_type: local
+  grain_type: round
+  notes: "Variété traditionnelle de riz blanc à grains ronds."
+
+- variety_code: ROJOMENA
+  name: "Rojomena"
+  rice_type: local
+  grain_type: round
+  notes: "Variété traditionnelle rouge à grains ronds."
+
+- variety_code: BOTRY
+  name: "Botry"
+  rice_type: local
+  grain_type: round
+  notes: "Riz local à grains courts et ronds."
+
+- variety_code: IMPORTED_25
+  name: "Riz importé 25% brisures"
+  rice_type: imported
+  grain_type: medium
+  notes: "Qualité standard de riz blanc importé sur les marchés malagasy."

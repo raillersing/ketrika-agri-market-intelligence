@@ -1,0 +1,202 @@
+- alias: "vary"
+  lang: mg
+  product_code: RICE_WHITE_LOCAL
+  confidence: 0.6
+  note: "ambigu ; contexte requis"
+  evidence: "Usage général malagasy désignant le riz cuit ou le riz blanc."
+
+- alias: "vary gasy"
+  lang: mg
+  product_code: RICE_WHITE_LOCAL
+  confidence: 0.9
+  note: ""
+  evidence: "Dénomination courante du riz blanc local malagasy (ODR, marchés locaux)."
+
+- alias: "vary vahiny"
+  lang: mg
+  product_code: RICE_WHITE_IMPORTED
+  confidence: 0.85
+  note: ""
+  evidence: "Dénomination malagasy du riz blanc importé."
+
+- alias: "akotry"
+  lang: mg
+  product_code: RICE_PADDY
+  confidence: 0.9
+  note: ""
+  evidence: "Terme malagasy exact désignant le paddy (riz non décortiqué)."
+
+- alias: "paddy"
+  lang: fr
+  product_code: RICE_PADDY
+  confidence: 0.95
+  note: ""
+  evidence: "Bulletins ODR et relevés de prix des marchés producteurs."
+
+- alias: "Riz paddy"
+  lang: fr
+  product_code: RICE_PADDY
+  confidence: 1.0
+  note: ""
+  evidence: "Libellé officiel récapitulatif dans les bulletins ODR."
+
+- alias: "Riz blanc local"
+  lang: fr
+  product_code: RICE_WHITE_LOCAL
+  confidence: 1.0
+  note: ""
+  evidence: "Libellé officiel récapitulatif dans les bulletins ODR."
+
+- alias: "Riz blanc importé"
+  lang: fr
+  product_code: RICE_WHITE_IMPORTED
+  confidence: 1.0
+  note: ""
+  evidence: "Libellé officiel récapitulatif dans les bulletins ODR."
+
+- alias: "riz importé"
+  lang: fr
+  product_code: RICE_WHITE_IMPORTED
+  confidence: 0.95
+  note: ""
+  evidence: "Terme courant dans les relevés de commerce et bulletins de prix."
+
+- alias: "Rice (local)"
+  lang: en
+  product_code: RICE_WHITE_LOCAL
+  confidence: 0.95
+  note: ""
+  evidence: "Colonne commodity du dataset WFP HDX Food Prices Madagascar."
+
+- alias: "Rice (imported)"
+  lang: en
+  product_code: RICE_WHITE_IMPORTED
+  confidence: 0.95
+  note: ""
+  evidence: "Colonne commodity du dataset WFP HDX Food Prices Madagascar."
+
+- alias: "Rice"
+  lang: en
+  product_code: RICE_WHITE_LOCAL
+  confidence: 0.8
+  note: "Défaut vers local en l'absence de précision"
+  evidence: "Dataset World Bank RTFP Madagascar."
+
+- alias: "katsaka"
+  lang: mg
+  product_code: MAIZE_GRAIN
+  confidence: 0.85
+  note: ""
+  evidence: "Terme malagasy pour le maïs en grain."
+
+- alias: "Maize"
+  lang: en
+  product_code: MAIZE_GRAIN
+  confidence: 0.95
+  note: ""
+  evidence: "Colonne commodity du dataset WFP HDX."
+
+- alias: "mangahazo"
+  lang: mg
+  product_code: CASSAVA_FRESH
+  confidence: 0.8
+  note: "frais vs sec selon contexte"
+  evidence: "Terme malagasy général pour les tubercules de manioc."
+
+- alias: "menaka"
+  lang: mg
+  product_code: VEG_OIL
+  confidence: 0.8
+  note: ""
+  evidence: "Terme malagasy pour huile alimentaire."
+
+- alias: "Huile alimentaire vrac"
+  lang: fr
+  product_code: VEG_OIL
+  confidence: 0.95
+  note: ""
+  evidence: "Relevés de prix hebdomadaires MinCC / DRCC."
+
+- alias: "Huile de palme et fractions"
+  lang: fr
+  product_code: VEG_OIL
+  confidence: 0.95
+  note: ""
+  evidence: "Nomenclature douanière DGD SH 1511.90."
+
+- alias: "siramamy"
+  lang: mg
+  product_code: SUGAR
+  confidence: 0.9
+  note: ""
+  evidence: "Terme malagasy pour le sucre."
+
+- alias: "Sucre blanc"
+  lang: fr
+  product_code: SUGAR
+  confidence: 0.95
+  note: ""
+  evidence: "Relevés MinCC / DRCC pour le sucre raffiné blanc."
+
+- alias: "Sucre de canne ou de betterave"
+  lang: fr
+  product_code: SUGAR
+  confidence: 0.95
+  note: ""
+  evidence: "Nomenclature douanière DGD SH 1701."
+
+- alias: "tsaramaso"
+  lang: mg
+  product_code: BEANS_DRY
+  confidence: 0.85
+  note: ""
+  evidence: "Terme malagasy désignant le haricot sec."
+
+- alias: "voanjobory"
+  lang: mg
+  product_code: BAMBARA_GROUNDNUT
+  confidence: 0.9
+  note: ""
+  evidence: "Terme malagasy pour le pois de terre (Bambara groundnut)."
+
+- alias: "voanjo"
+  lang: mg
+  product_code: GROUNDNUT
+  confidence: 0.85
+  note: ""
+  evidence: "Terme malagasy pour l'arachide."
+
+- alias: "kabaro"
+  lang: mg
+  product_code: LIMA_BEANS
+  confidence: 0.85
+  note: ""
+  evidence: "Désignation malagasy du pois du Cap."
+
+- alias: "vomanga"
+  lang: mg
+  product_code: SWEET_POTATO
+  confidence: 0.85
+  note: ""
+  evidence: "Terme malagasy désignant la patate douce."
+
+- alias: "lafarinina"
+  lang: mg
+  product_code: WHEAT_FLOUR
+  confidence: 0.8
+  note: ""
+  evidence: "Terme malagasy désignant la farine."
+
+- alias: "Farine de ble"
+  lang: fr
+  product_code: WHEAT_FLOUR
+  confidence: 0.95
+  note: ""
+  evidence: "Relevés officiels MinCC et emballages commerciaux."
+
+- alias: "Riz semi-blanchi ou blanchi"
+  lang: fr
+  product_code: RICE_WHITE_IMPORTED
+  confidence: 0.95
+  note: ""
+  evidence: "Nomenclature douanière DGD SH 1006.30."

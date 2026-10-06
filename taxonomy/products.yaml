@@ -1,0 +1,134 @@
+- product_code: RICE_PADDY
+  canonical_name_fr: "Riz paddy"
+  category: cereal
+  base_unit: kg
+  hs6_codes: ["100610"]
+  faostat_item_codes: [27]
+  verified: true
+  notes: "Riz sur paille non décortiqué. Item FAOSTAT 27 (Rice, paddy). SH 1006.10 (Riz en paille)."
+
+- product_code: RICE_WHITE_LOCAL
+  canonical_name_fr: "Riz blanc local"
+  category: cereal
+  base_unit: kg
+  hs6_codes: ["100630"]
+  faostat_item_codes: []
+  verified: true
+  notes: "Riz blanc usiné issu de la production malagasy (vary gasy, makalioka, etc.). SH 1006.30."
+
+- product_code: RICE_WHITE_IMPORTED
+  canonical_name_fr: "Riz blanc importé"
+  category: cereal
+  base_unit: kg
+  hs6_codes: ["100630"]
+  faostat_item_codes: []
+  verified: true
+  notes: "Riz blanc blanchi ou semi-blanchi importé (Inde, Pakistan, etc.), couramment à 25% brisures. SH 1006.30."
+
+- product_code: MAIZE_GRAIN
+  canonical_name_fr: "Maïs grain"
+  category: cereal
+  base_unit: kg
+  hs6_codes: ["100590"]
+  faostat_item_codes: [56]
+  verified: true
+  notes: "Maïs en grains sec. Item FAOSTAT 56 (Maize). SH 1005.90."
+
+- product_code: CASSAVA_FRESH
+  canonical_name_fr: "Manioc frais"
+  category: root_tuber
+  base_unit: kg
+  hs6_codes: ["071410"]
+  faostat_item_codes: [125]
+  verified: true
+  notes: "Racines de manioc fraîches. Item FAOSTAT 125 (Cassava). SH 0714.10."
+
+- product_code: CASSAVA_DRIED
+  canonical_name_fr: "Manioc sec"
+  category: root_tuber
+  base_unit: kg
+  hs6_codes: ["071410"]
+  faostat_item_codes: []
+  verified: true
+  notes: "Cossettes de manioc séchées. SH 0714.10."
+
+- product_code: SWEET_POTATO
+  canonical_name_fr: "Patate douce"
+  category: root_tuber
+  base_unit: kg
+  hs6_codes: ["071420"]
+  faostat_item_codes: [122]
+  verified: true
+  notes: "Patates douces fraîches. Item FAOSTAT 122 (Sweet potatoes). SH 0714.20."
+
+- product_code: BEANS_DRY
+  canonical_name_fr: "Haricot sec"
+  category: pulse
+  base_unit: kg
+  hs6_codes: ["071333"]
+  faostat_item_codes: [176]
+  verified: true
+  notes: "Haricots communs secs (Phaseolus vulgaris). Item FAOSTAT 176 (Beans, dry). SH 0713.33."
+
+- product_code: BAMBARA_GROUNDNUT
+  canonical_name_fr: "Pois de bambara (voanjobory)"
+  category: pulse
+  base_unit: kg
+  hs6_codes: ["071390"]
+  faostat_item_codes: [203]
+  verified: true
+  notes: "Pois de terre malagasy (voanjobory). Item FAOSTAT 203 (Bambara beans). SH 0713.90."
+
+- product_code: LIMA_BEANS
+  canonical_name_fr: "Pois du Cap (kabaro)"
+  category: pulse
+  base_unit: kg
+  hs6_codes: ["071390"]
+  faostat_item_codes: []
+  verified: true
+  notes: "Pois du Cap (Phaseolus lunatus), spécialité du Sud-Ouest malagasy. SH 0713.90."
+
+- product_code: LENTILS
+  canonical_name_fr: "Lentilles"
+  category: pulse
+  base_unit: kg
+  hs6_codes: ["071340"]
+  faostat_item_codes: [201]
+  verified: true
+  notes: "Lentilles sèches. Item FAOSTAT 201 (Lentils). SH 0713.40."
+
+- product_code: GROUNDNUT
+  canonical_name_fr: "Arachide"
+  category: pulse_oilseed
+  base_unit: kg
+  hs6_codes: ["120241", "120242"]
+  faostat_item_codes: [242]
+  verified: true
+  notes: "Arachides en coques ou décortiquées. Item FAOSTAT 242 (Groundnuts, with shell). SH 1202.41 / 1202.42."
+
+- product_code: VEG_OIL
+  canonical_name_fr: "Huile alimentaire (végétale)"
+  category: oil
+  base_unit: l
+  hs6_codes: ["150790", "151190", "151219"]
+  faostat_item_codes: []
+  verified: true
+  notes: "Huiles végétales raffinées alimentaires (soja SH 1507.90, palme SH 1511.90, tournesol SH 1512.19)."
+
+- product_code: SUGAR
+  canonical_name_fr: "Sucre"
+  category: sugar
+  base_unit: kg
+  hs6_codes: ["170114", "170199"]
+  faostat_item_codes: []
+  verified: true
+  notes: "Sucre de canne blanc ou roux. SH 1701.14 (brut) et 1701.99 (raffiné)."
+
+- product_code: WHEAT_FLOUR
+  canonical_name_fr: "Farine de blé"
+  category: flour
+  base_unit: kg
+  hs6_codes: ["110100"]
+  faostat_item_codes: [16]
+  verified: true
+  notes: "Farine de froment (blé). Item FAOSTAT 16 (Wheat flour). SH 1101.00."

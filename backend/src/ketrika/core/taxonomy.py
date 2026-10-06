@@ -1,0 +1,157 @@
+"""Product taxonomy, alias resolution and rice varieties manager."""
+
+import unicodedata
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+from ketrika.core.models.taxonomy import (
+    ProductAlias,
+    ProductDefinition,
+    RiceVariety,
+)
+from ketrika.core.registry import find_repo_root
+
+
+def get_default_taxonomy_dir() -> Path:
+    """Return default path to taxonomy directory."""
+    root = find_repo_root()
+    return root / "taxonomy"
+
+
+def normalize_string(text: str) -> str:
+    """Normalize text for fuzzy or case-insensitive matching."""
+    text = text.strip().lower()
+    text = "".join(c for c in unicodedata.normalize("NFD", text) if unicodedata.category(c) != "Mn")
+    return " ".join(text.split())
+
+
+def load_products(taxonomy_dir: Path | str | None = None) -> list[ProductDefinition]:
+    """Load and validate all products from taxonomy/products.yaml."""
+    t_dir = Path(taxonomy_dir) if taxonomy_dir else get_default_taxonomy_dir()
+    path = t_dir / "products.yaml"
+    if not path.exists():
+        raise FileNotFoundError(f"Products file not found: {path}")
+
+    with open(path, encoding="utf-8") as f:
+        data: Any = yaml.safe_load(f)
+
+    if not isinstance(data, list):
+        raise ValueError(f"Expected YAML list in {path}, got {type(data).__name__}")
+
+    return [ProductDefinition.model_validate(item) for item in data]
+
+
+def load_aliases(taxonomy_dir: Path | str | None = None) -> list[ProductAlias]:
+    """Load and validate all product aliases from taxonomy/aliases.yaml."""
+    t_dir = Path(taxonomy_dir) if taxonomy_dir else get_default_taxonomy_dir()
+    path = t_dir / "aliases.yaml"
+    if not path.exists():
+        raise FileNotFoundError(f"Aliases file not found: {path}")
+
+    with open(path, encoding="utf-8") as f:
+        data: Any = yaml.safe_load(f)
+
+    if not isinstance(data, list):
+        raise ValueError(f"Expected YAML list in {path}, got {type(data).__name__}")
+
+    return [ProductAlias.model_validate(item) for item in data]
+
+
+def load_rice_varieties(taxonomy_dir: Path | str | None = None) -> list[RiceVariety]:
+    """Load and validate all rice varieties from taxonomy/rice_varieties.yaml."""
+    t_dir = Path(taxonomy_dir) if taxonomy_dir else get_default_taxonomy_dir()
+    path = t_dir / "rice_varieties.yaml"
+    if not path.exists():
+        raise FileNotFoundError(f"Rice varieties file not found: {path}")
+
+    with open(path, encoding="utf-8") as f:
+        data: Any = yaml.safe_load(f)
+
+    if not isinstance(data, list):
+        raise ValueError(f"Expected YAML list in {path}, got {type(data).__name__}")
+
+    return [RiceVariety.model_validate(item) for item in data]
+
+
+def get_product(product_code: str, taxonomy_dir: Path | str | None = None) -> ProductDefinition:
+    """Retrieve product definition by canonical code."""
+    products = load_products(taxonomy_dir)
+    for p in products:
+        if p.product_code == product_code:
+            return p
+    raise KeyError(f"Product '{product_code}' not found in taxonomy")
+
+
+def resolve_product(
+    raw_label: str,
+    aliases: list[ProductAlias] | None = None,
+    min_confidence: float = 0.8,
+) -> tuple[str, float] | None:
+    """Resolve a raw commodity label to a canonical product_code.
+
+    Returns (product_code, confidence) or None if unresolved or confidence is below threshold.
+    """
+    if aliases is None:
+        aliases = load_aliases()
+
+    norm_query = normalize_string(raw_label)
+
+    # 1. Exact match against canonical product codes
+    # 2. Exact match on normalized alias
+    best_match: tuple[str, float] | None = None
+    for a in aliases:
+        if normalize_string(a.alias) == norm_query:
+            if a.confidence >= min_confidence:
+                if best_match is None or a.confidence > best_match[1]:
+                    best_match = (a.product_code, a.confidence)
+
+    return best_match
+
+
+def validate_taxonomy(taxonomy_dir: Path | str | None = None) -> list[str]:
+    """Validate completeness, uniqueness, and cross-reference integrity of taxonomy."""
+    errors: list[str] = []
+    t_dir = Path(taxonomy_dir) if taxonomy_dir else get_default_taxonomy_dir()
+
+    try:
+        products = load_products(t_dir)
+    except Exception as e:
+        return [f"Failed to load products: {e}"]
+
+    try:
+        aliases = load_aliases(t_dir)
+    except Exception as e:
+        return [f"Failed to load aliases: {e}"]
+
+    try:
+        varieties = load_rice_varieties(t_dir)
+    except Exception as e:
+        return [f"Failed to load rice varieties: {e}"]
+
+    product_codes: set[str] = set()
+    for p in products:
+        if p.product_code in product_codes:
+            errors.append(f"Duplicate product_code in products.yaml: '{p.product_code}'")
+        product_codes.add(p.product_code)
+
+    normalized_aliases: set[str] = set()
+    for a in aliases:
+        if a.product_code not in product_codes:
+            errors.append(
+                f"Alias '{a.alias}' references non-existent product_code: '{a.product_code}'"
+            )
+
+        norm = normalize_string(a.alias)
+        if norm in normalized_aliases:
+            errors.append(f"Duplicate normalized alias in aliases.yaml: '{a.alias}' ({norm})")
+        normalized_aliases.add(norm)
+
+    variety_codes: set[str] = set()
+    for v in varieties:
+        if v.variety_code in variety_codes:
+            errors.append(f"Duplicate variety_code in rice_varieties.yaml: '{v.variety_code}'")
+        variety_codes.add(v.variety_code)
+
+    return errors
