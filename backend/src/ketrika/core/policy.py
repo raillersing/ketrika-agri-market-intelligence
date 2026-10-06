@@ -8,6 +8,7 @@ Enforces:
 - PolicyStop signaling
 """
 
+import os
 import re
 import threading
 import time
@@ -146,8 +147,9 @@ class PolicyEngine:
 
     def check_pre_fetch(self, url: str, max_rps: float | None = None) -> None:
         """Validate offline status and robots.txt permissions before sending request."""
+        env_offline = os.environ.get("HTTP_OFFLINE", "") in ("1", "true", "True")
         settings = get_settings()
-        if settings.http_offline or int(settings.http_offline) == 1:
+        if env_offline or settings.http_offline:
             raise OfflineError(url)
 
         if not self.is_allowed_by_robots(url):

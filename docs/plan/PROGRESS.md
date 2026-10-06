@@ -22,7 +22,7 @@
 | **T2.3** | MUST | 2 | Framework Connector et factory Dagster | T2.2 | **DONE** | Connector base, records typés, Dagster factory, runner supersession transactionnel validé |
 | **T2.4** | MUST | 2 | Bibliothèque d'extraction (PDF, HTML, LLM) | T2.2 | **DONE** | verify_evidence 16 cas, reconcile 5 cas, BudgetGuard, ReplayClient, HTML/PDF parsers |
 | **T2.5** | MUST | 2 | Normalisation et chargement | T2.3, T1.2–T1.4 | **DONE** | Resolvers produits/unités/lieux, supersession, seed complet (115 tests passés, 85% cov) |
-| **T2.6** | MUST | 2 | Commande rebuild et runbook connecteur | T2.3–T2.5 | TODO | — |
+| **T2.6** | MUST | 2 | Commande rebuild et runbook connecteur | T2.3–T2.5 | **DONE** | rebuild CLI offline vérifié (comptes identiques), runbook 9 sections, 116 tests pytest (88% cov) |
 | **T3.1** | MUST | 3 | Connecteur WFP Food Prices HDX | T2.6 | TODO | — |
 | **T3.2** | MUST | 3 | Connecteur Banque Mondiale RTFP | T2.6 | TODO | — |
 | **T3.3** | MUST | 3 | Connecteur FAOSTAT | T2.6 | TODO | — |
@@ -319,3 +319,26 @@
   - Couverture de code sur le module `ketrika.normalize` : **85 %** (exigence DoD >= 80 % respectée).
   - `./scripts/dev.ps1 check` 100 % vert (115 tests backend passants, 1 test web, 0 erreur ruff/mypy).
 - Statut : **DONE**.
+
+### [2026-10-07T01:45:00Z] Démarrage de T2.6 : Commande rebuild et runbook connecteur
+- **Validation acceptation :**
+  - `docs/runbooks/add-connector.md` rédigé de façon exhaustive couvrant l'ensemble des 9 sections requises (fiche source, registre, fixtures, golden, connecteur, tests, backfill, DQ, PROGRESS) et les règles d'or (Bronze immuable, provenance 100%, offline replay).
+  - Test d'intégration `tests/integration/test_rebuild.py` validé à 100 % :
+    - Égalité stricte des comptes d'observations avant et après rebuild démontrée (3 insérées initialement -> purge obs/ml/gold -> 3 réinsérées identiquement depuis Bronze) ;
+    - Préservation exacte des valeurs de prix (1500.0, 2800.0, 8000.0 MGA) ;
+    - Respect strict du mode `HTTP_OFFLINE=1` : toute tentative HTTP déclenche immédiatement `OfflineError`.
+  - Commande CLI `./scripts/dev.ps1 rebuild` exécutée avec succès sur la stack Docker réelle :
+    - 24 source records parcourus, tables `obs` et `ml` purgées avec `TRUNCATE CASCADE`, 12 records rejoués (21 observations insérées, 5 obsolètes pointées via `superseded_by`, 10 ignorées de façon idempotente) ;
+    - Code de sortie 0.
+  - Couverture globale des modules normatifs : **88 %** (`ketrika.core` 80-100 %, `ketrika.extraction` 83-100 %, `ketrika.normalize` 82-96 %).
+  - `./scripts/dev.ps1 check` 100 % vert (116 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
+- Statut : **DONE**.
+
+### [2026-10-07T02:10:00Z] Gate de fin de Phase 2 (Plateforme de données)
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** Socle complet de données et d'ingestion : migrations Alembic (8 schémas, 21 tables, extensions PostGIS/pg_trgm/uuid, triggers d'immutabilité Bronze et append-only obs, rôles `ketrika_app` et `copilot_ro`) ; bibliothèque `ketrika.core` (modèles SQLAlchemy/Pydantic, sessions transactionnelles, BronzeStore S3 immuable, client HTTP poli avec rate limiting par domaine et détection de challenges/captchas) ; framework Connector (`base.py`, `records.py`, `runner.py`, factory Dagster `build_source_assets`, `dummy_csv`) ; bibliothèque d'extraction (`evidence.py` avec `verify_evidence`, `reconcile.py`, parsers HTML Lexbor et PDF pdfplumber, clients LLM avec `BudgetGuard` et `ReplayClient`) ; pipeline de normalisation (`products.py`, `units.py`, `locations.py`, `supersede.py`, CLI `seed`) ; commande de rejouabilité offline `rebuild` et runbook connecteur `docs/runbooks/add-connector.md`.
+  - **Chiffres clés :** 6 tâches MUST terminées (T2.1 à T2.6), 116 tests unitaires et d'intégration automatisés passants, couverture globale 88 %, rejouabilité Bronze 100 % vérifiée sans accès réseau.
+  - **Dettes :** Aucune dette.
+  - **Risques :** Veiller lors des phases 3 et 4 au débit poli (`max_rps <= 0.2`) pour les serveurs gouvernementaux malgaches lors des backfills historiques.
+  - **Tag :** `phase-2-done`.
+

@@ -16,13 +16,22 @@ from ketrika.connectors.base import (
     RunContext,
 )
 from ketrika.connectors.records import (
+    CpiRecord,
     PriceRecord,
+    ProductionRecord,
+    RecordBase,
+    StockRecord,
+    TradeFlowRecord,
 )
 from ketrika.core.models.db import (
+    CpiObservation,
     IngestionRun,
     PriceObservation,
+    ProductionObservation,
     Source,
     SourceRecord,
+    StockObservation,
+    TradeFlow,
 )
 
 
@@ -197,6 +206,354 @@ def load_price_record_with_supersession(
     return "superseded", new_obs.observation_id
 
 
+def load_stock_record_with_supersession(
+    session: Session,
+    record: StockRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    """Load StockRecord into obs.stock_observation with supersession."""
+    nk = record.compute_natural_key(source_id)
+    stmt = select(StockObservation).where(
+        StockObservation.natural_key == nk,
+        StockObservation.superseded_by.is_(None),
+    )
+    current_obs = session.execute(stmt).scalar_one_or_none()
+
+    q_val = record.quantity_value
+    if q_val is None and record.quantity_raw:
+        try:
+            q_val = float(record.quantity_raw.replace(" ", "").replace(",", "."))
+        except ValueError:
+            q_val = None
+
+    if current_obs is None:
+        new_obs = StockObservation(
+            observation_id=uuid.uuid4(),
+            source_record_id=source_record_id,
+            natural_key=nk,
+            product_raw=record.product_raw,
+            location_raw=record.location_raw,
+            period_start=record.period_start,
+            period_end=record.period_end,
+            published_at=record.published_at,
+            quantity_raw=record.quantity_raw,
+            quantity_value=q_val,
+            unit_raw=record.unit_raw,
+            stock_status=record.stock_status,
+            coverage_days=record.coverage_days,
+            extraction_method=record.extraction_method,
+            evidence=record.evidence,
+            confidence=record.confidence,
+            review_status="accepted",
+            superseded_by=None,
+        )
+        session.add(new_obs)
+        session.flush()
+        return "inserted", new_obs.observation_id
+
+    current_val = (
+        float(current_obs.quantity_value) if current_obs.quantity_value is not None else None
+    )
+    if (
+        current_obs.quantity_raw == record.quantity_raw
+        and current_val == q_val
+        and current_obs.unit_raw == record.unit_raw
+        and current_obs.stock_status == record.stock_status
+    ):
+        return "idempotent_skipped", current_obs.observation_id
+
+    new_id = uuid.uuid4()
+    session.execute(
+        update(StockObservation)
+        .where(StockObservation.observation_id == current_obs.observation_id)
+        .values(superseded_by=new_id)
+    )
+    session.flush()
+
+    new_obs = StockObservation(
+        observation_id=new_id,
+        source_record_id=source_record_id,
+        natural_key=nk,
+        product_raw=record.product_raw,
+        location_raw=record.location_raw,
+        period_start=record.period_start,
+        period_end=record.period_end,
+        published_at=record.published_at,
+        quantity_raw=record.quantity_raw,
+        quantity_value=q_val,
+        unit_raw=record.unit_raw,
+        stock_status=record.stock_status,
+        coverage_days=record.coverage_days,
+        extraction_method=record.extraction_method,
+        evidence=record.evidence,
+        confidence=record.confidence,
+        review_status="accepted",
+        superseded_by=None,
+    )
+    session.add(new_obs)
+    session.flush()
+    return "superseded", new_id
+
+
+def load_trade_flow_with_supersession(
+    session: Session,
+    record: TradeFlowRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    """Load TradeFlowRecord into obs.trade_flow with supersession."""
+    nk = record.compute_natural_key(source_id)
+    stmt = select(TradeFlow).where(
+        TradeFlow.natural_key == nk,
+        TradeFlow.superseded_by.is_(None),
+    )
+    current_obs = session.execute(stmt).scalar_one_or_none()
+
+    if current_obs is None:
+        new_obs = TradeFlow(
+            observation_id=uuid.uuid4(),
+            source_record_id=source_record_id,
+            natural_key=nk,
+            flow=record.flow,
+            hs_code=record.hs_code,
+            product_raw=record.product_raw,
+            partner_raw=record.partner_raw,
+            partner_iso3=record.partner_iso3,
+            period_start=record.period_start,
+            period_end=record.period_end,
+            published_at=record.published_at,
+            value_raw=record.value_raw,
+            value_mga=record.value_mga,
+            value_usd=record.value_usd,
+            weight_raw=record.weight_raw,
+            weight_kg=record.weight_kg,
+            extraction_method=record.extraction_method,
+            evidence=record.evidence,
+            confidence=record.confidence,
+            review_status="accepted",
+            superseded_by=None,
+        )
+        session.add(new_obs)
+        session.flush()
+        return "inserted", new_obs.observation_id
+
+    curr_mga = float(current_obs.value_mga) if current_obs.value_mga is not None else None
+    curr_kg = float(current_obs.weight_kg) if current_obs.weight_kg is not None else None
+    if (
+        current_obs.value_raw == record.value_raw
+        and curr_mga == record.value_mga
+        and curr_kg == record.weight_kg
+    ):
+        return "idempotent_skipped", current_obs.observation_id
+
+    new_id = uuid.uuid4()
+    session.execute(
+        update(TradeFlow)
+        .where(TradeFlow.observation_id == current_obs.observation_id)
+        .values(superseded_by=new_id)
+    )
+    session.flush()
+
+    new_obs = TradeFlow(
+        observation_id=new_id,
+        source_record_id=source_record_id,
+        natural_key=nk,
+        flow=record.flow,
+        hs_code=record.hs_code,
+        product_raw=record.product_raw,
+        partner_raw=record.partner_raw,
+        partner_iso3=record.partner_iso3,
+        period_start=record.period_start,
+        period_end=record.period_end,
+        published_at=record.published_at,
+        value_raw=record.value_raw,
+        value_mga=record.value_mga,
+        value_usd=record.value_usd,
+        weight_raw=record.weight_raw,
+        weight_kg=record.weight_kg,
+        extraction_method=record.extraction_method,
+        evidence=record.evidence,
+        confidence=record.confidence,
+        review_status="accepted",
+        superseded_by=None,
+    )
+    session.add(new_obs)
+    session.flush()
+    return "superseded", new_id
+
+
+def load_production_record_with_supersession(
+    session: Session,
+    record: ProductionRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    """Load ProductionRecord into obs.production_observation with supersession."""
+    nk = record.compute_natural_key(source_id)
+    stmt = select(ProductionObservation).where(
+        ProductionObservation.natural_key == nk,
+        ProductionObservation.superseded_by.is_(None),
+    )
+    current_obs = session.execute(stmt).scalar_one_or_none()
+
+    if current_obs is None:
+        new_obs = ProductionObservation(
+            observation_id=uuid.uuid4(),
+            source_record_id=source_record_id,
+            natural_key=nk,
+            product_raw=record.product_raw,
+            element=record.element,
+            period_start=record.period_start,
+            period_end=record.period_end,
+            published_at=record.published_at,
+            value_raw=record.value_raw,
+            value=record.value,
+            unit_raw=record.unit_raw,
+            flag_raw=record.flag_raw,
+            observed_or_imputed=record.observed_or_imputed,
+            extraction_method=record.extraction_method,
+            evidence=record.evidence,
+            confidence=record.confidence,
+            superseded_by=None,
+        )
+        session.add(new_obs)
+        session.flush()
+        return "inserted", new_obs.observation_id
+
+    curr_val = float(current_obs.value) if current_obs.value is not None else None
+    if (
+        current_obs.unit_raw == record.unit_raw
+        and curr_val == record.value
+        and current_obs.flag_raw == record.flag_raw
+    ):
+        return "idempotent_skipped", current_obs.observation_id
+
+    new_id = uuid.uuid4()
+    session.execute(
+        update(ProductionObservation)
+        .where(ProductionObservation.observation_id == current_obs.observation_id)
+        .values(superseded_by=new_id)
+    )
+    session.flush()
+
+    new_obs = ProductionObservation(
+        observation_id=new_id,
+        source_record_id=source_record_id,
+        natural_key=nk,
+        product_raw=record.product_raw,
+        element=record.element,
+        period_start=record.period_start,
+        period_end=record.period_end,
+        published_at=record.published_at,
+        value_raw=record.value_raw,
+        value=record.value,
+        unit_raw=record.unit_raw,
+        flag_raw=record.flag_raw,
+        observed_or_imputed=record.observed_or_imputed,
+        extraction_method=record.extraction_method,
+        evidence=record.evidence,
+        confidence=record.confidence,
+        superseded_by=None,
+    )
+    session.add(new_obs)
+    session.flush()
+    return "superseded", new_id
+
+
+def load_cpi_record_with_supersession(
+    session: Session,
+    record: CpiRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    """Load CpiRecord into obs.cpi_observation with supersession."""
+    nk = record.compute_natural_key(source_id)
+    stmt = select(CpiObservation).where(
+        CpiObservation.natural_key == nk,
+        CpiObservation.superseded_by.is_(None),
+    )
+    current_obs = session.execute(stmt).scalar_one_or_none()
+
+    if current_obs is None:
+        new_obs = CpiObservation(
+            observation_id=uuid.uuid4(),
+            source_record_id=source_record_id,
+            natural_key=nk,
+            series_code=record.series_code,
+            series_label=record.series_label,
+            geo_scope=record.geo_scope,
+            period_start=record.period_start,
+            period_end=record.period_end,
+            index_value=record.index_value,
+            base_period=record.base_period,
+            published_at=record.published_at,
+            extraction_method=record.extraction_method,
+            evidence=record.evidence,
+            confidence=record.confidence,
+            superseded_by=None,
+        )
+        session.add(new_obs)
+        session.flush()
+        return "inserted", new_obs.observation_id
+
+    curr_val = float(current_obs.index_value) if current_obs.index_value is not None else None
+    if curr_val == record.index_value:
+        return "idempotent_skipped", current_obs.observation_id
+
+    new_id = uuid.uuid4()
+    session.execute(
+        update(CpiObservation)
+        .where(CpiObservation.observation_id == current_obs.observation_id)
+        .values(superseded_by=new_id)
+    )
+    session.flush()
+
+    new_obs = CpiObservation(
+        observation_id=new_id,
+        source_record_id=source_record_id,
+        natural_key=nk,
+        series_code=record.series_code,
+        series_label=record.series_label,
+        geo_scope=record.geo_scope,
+        period_start=record.period_start,
+        period_end=record.period_end,
+        index_value=record.index_value,
+        base_period=record.base_period,
+        published_at=record.published_at,
+        extraction_method=record.extraction_method,
+        evidence=record.evidence,
+        confidence=record.confidence,
+        superseded_by=None,
+    )
+    session.add(new_obs)
+    session.flush()
+    return "superseded", new_id
+
+
+def load_record_with_supersession(
+    session: Session,
+    record: RecordBase,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    """Unified loader dispatching typed record to its corresponding table with supersession."""
+    if isinstance(record, PriceRecord):
+        return load_price_record_with_supersession(session, record, source_id, source_record_id)
+    elif isinstance(record, StockRecord):
+        return load_stock_record_with_supersession(session, record, source_id, source_record_id)
+    elif isinstance(record, TradeFlowRecord):
+        return load_trade_flow_with_supersession(session, record, source_id, source_record_id)
+    elif isinstance(record, ProductionRecord):
+        return load_production_record_with_supersession(
+            session, record, source_id, source_record_id
+        )
+    elif isinstance(record, CpiRecord):
+        return load_cpi_record_with_supersession(session, record, source_id, source_record_id)
+    else:
+        raise ValueError(f"Unsupported record type: {type(record)}")
+
+
 def execute_connector_pipeline(
     connector: Connector,
     ctx: RunContext,
@@ -247,19 +604,18 @@ def execute_connector_pipeline(
             parse_res: ParseResult = connector.parse(bound_artifact, ctx)
 
             for rec in parse_res.records:
-                if isinstance(rec, PriceRecord):
-                    action, _ = load_price_record_with_supersession(
-                        session=session,
-                        record=rec,
-                        source_id=source_id,
-                        source_record_id=s_rec_id,
-                    )
-                    if action == "inserted":
-                        stats["n_inserted"] += 1
-                    elif action == "superseded":
-                        stats["n_superseded"] += 1
-                    else:
-                        stats["n_skipped"] += 1
+                action, _ = load_record_with_supersession(
+                    session=session,
+                    record=rec,
+                    source_id=source_id,
+                    source_record_id=s_rec_id,
+                )
+                if action == "inserted":
+                    stats["n_inserted"] += 1
+                elif action == "superseded":
+                    stats["n_superseded"] += 1
+                else:
+                    stats["n_skipped"] += 1
 
             # Mark source_record parsed
             mark_stmt = (
