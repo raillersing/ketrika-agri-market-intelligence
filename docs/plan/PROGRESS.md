@@ -12,7 +12,7 @@
 | **T0.1** | MUST | 0 | Initialiser le dépôt et la gouvernance | — | **DONE** | d109bb7 (git init, attributes, docs/plan) |
 | **T0.2** | MUST | 0 | Squelette du monorepo et outillage qualité | T0.1 | **DONE** | 3ac9f33 (`check` vert : ruff 0, mypy 0, pytest 1 passed, vitest 1 passed) |
 | **T0.3** | MUST | 0 | Stack Docker de développement | T0.2 | **DONE** | d4c8269 (services healthy, /v1/health ok, MinIO bronze versioned, dagster/web/mailpit ok, dev.ps1 check vert) |
-| **T0.4** | SHOULD | 0 | Configuration CI locale/GitHub Actions | T0.3 | TODO | — |
+| **T0.4** | SHOULD | 0 | Configuration CI locale/GitHub Actions | T0.3 | **DONE** | .github/workflows/ci.yml valide (actionlint 0 erreur, dev.ps1 check vert) |
 | **T1.1** | MUST | 1 | Reconnaissance des sources et registre | T0.3 | TODO | — |
 | **T1.2** | MUST | 1 | Taxonomie produits et alias | T1.1 | TODO | — |
 | **T1.3** | MUST | 1 | Unités et conversions | T1.1 | TODO | — |
@@ -102,4 +102,25 @@
   - Mailpit répond HTTP 200 sur port 8025 (`/api/v1/info`).
   - `./scripts/dev.ps1 check` est vert (ruff format/check 22 fichiers, mypy 22 fichiers sans erreur, pytest 3 passed, vitest 1 passed).
 - Statut : **DONE**.
+
+### [2026-10-06T21:05:00Z] Démarrage de T0.4 : Configuration CI locale/GitHub Actions
+- **Mini-plan T0.4 :**
+  1. Créer le répertoire `.github/workflows`.
+  2. Rédiger `.github/workflows/ci.yml` avec jobs de lint, typecheck, tests backend et frontend sous Docker, sans secret requis (`LLM_PROVIDER=replay`).
+  3. Valider la syntaxe et conformité avec `rhysd/actionlint`.
+  4. Valider le gate Phase 0 et préparer le tag `phase-0-done`.
+  5. Committer `chore(T0.4): github actions ci workflow`.
+- **Validation acceptation :**
+  - Workflow `.github/workflows/ci.yml` créé avec jobs lint, typecheck, tests unitaires et intégration (services postgres postgis & minio).
+  - Validation actionlint : `docker run --rm -v ${PWD}:/repo rhysd/actionlint` exécuté avec succès (0 erreur).
+  - `./scripts/dev.ps1 check` vert.
+- Statut : **DONE**.
+
+### [2026-10-06T21:10:00Z] Gate de fin de Phase 0 (Bootstrap)
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** Monorepo complet (backend FastAPI/Dagster, web Next.js/Tailwind), gouvernance documentaire (`AGENTS.md`, `SPECS.md`, `MVP_EXECUTION_PLAN.md`, `DECISIONS.md`, `PROGRESS.md`), outillage qualité (ruff, mypy, pytest, vitest, dev.ps1), stack Docker de développement orchestrée (PostGIS 17, MinIO bronze versionné, Dagster 1.13, API, Web, Mailpit) avec healthchecks et ports configurables (ADR-007), workflow CI GitHub Actions validé par actionlint.
+  - **Chiffres clés :** 7 services conteneurisés sains, 3 tests unitaires passants backend, 1 test smoke passant web, 0 erreur mypy/ruff/actionlint.
+  - **Dettes :** Aucune dette non tracée.
+  - **Risques :** Conflit potentiel de ports sur machine hôte géré de manière pérenne par ADR-007.
+  - **Tag :** `phase-0-done`.
 
