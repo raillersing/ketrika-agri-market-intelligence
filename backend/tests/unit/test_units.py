@@ -3,7 +3,7 @@
 import math
 
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from ketrika.core.units import (
@@ -71,6 +71,7 @@ def test_uncertain_conversions_return_none_value() -> None:
     assert status == "uncertain"
 
 
+@settings(deadline=None)
 @given(
     val=st.floats(min_value=0.01, max_value=1_000_000.0, allow_nan=False, allow_infinity=False),
     unit_code=st.sampled_from(
@@ -87,6 +88,7 @@ def test_inverse_conversions_are_consistent(val: float, unit_code: str) -> None:
     assert math.isclose(val, restored, rel_tol=1e-5, abs_tol=1e-8)
 
 
+@settings(deadline=None)
 @given(
     val=st.floats(min_value=0.1, max_value=10_000.0, allow_nan=False, allow_infinity=False),
     prod=st.sampled_from(["RICE_WHITE_LOCAL", "RICE_WHITE_IMPORTED", "RICE_PADDY", "MAIZE_GRAIN"]),

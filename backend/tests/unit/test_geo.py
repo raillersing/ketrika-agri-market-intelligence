@@ -5,10 +5,12 @@ import pytest
 from ketrika.core.geo import (
     load_admin_geojson,
     load_crop_calendar,
+    load_geographic_entities,
     load_location_aliases,
     resolve_location,
     validate_geo,
 )
+from ketrika.core.models.geo import GeographicEntity
 
 
 def test_validate_geo_has_no_errors() -> None:
@@ -76,9 +78,66 @@ def test_admin2_geojson_sample_districts() -> None:
     assert "MDG3101" in pcodes  # Toamasina I
 
 
+def test_admin3_geojson_sample_communes() -> None:
+    admin3 = load_admin_geojson("admin3")
+    features = admin3.get("features", [])
+    assert len(features) >= 1
+    pcodes = {f.get("properties", {}).get("ADM3_PCODE") for f in features}
+    assert "MDG110101" in pcodes  # Commune Urbaine d'Antananarivo
+
+
+def test_load_geographic_entities_admin1() -> None:
+    entities = load_geographic_entities("admin1")
+    assert len(entities) == 23
+    for e in entities:
+        assert isinstance(e, GeographicEntity)
+        assert e.admin_level == "admin1"
+        assert e.pcode.startswith("MDG")
+        assert len(e.name_fr) > 2
+        assert e.latitude is not None
+        assert e.longitude is not None
+        assert -26.0 <= e.latitude <= -11.0
+        assert 43.0 <= e.longitude <= 51.0
+
+
 def test_load_admin_geojson_invalid_level_raises() -> None:
     with pytest.raises(FileNotFoundError):
         load_admin_geojson("admin99_non_existent")
+
+
+def test_all_23_official_regions_resolve() -> None:
+    regions_map = {
+        "Analamanga": "MDG11",
+        "Vakinankaratra": "MDG12",
+        "Itasy": "MDG13",
+        "Bongolava": "MDG14",
+        "Haute Matsiatra": "MDG21",
+        "Amoron'i Mania": "MDG22",
+        "Vatovavy": "MDG23",
+        "Fitovinany": "MDG24",
+        "Ihorombe": "MDG25",
+        "Atsimo-Atsinanana": "MDG26",
+        "Atsinanana": "MDG31",
+        "Analanjirofo": "MDG32",
+        "Alaotra-Mangoro": "MDG33",
+        "Boeny": "MDG41",
+        "Sofia": "MDG42",
+        "Betsiboka": "MDG43",
+        "Melaky": "MDG44",
+        "Atsimo-Andrefana": "MDG51",
+        "Androy": "MDG52",
+        "Anosy": "MDG53",
+        "Menabe": "MDG54",
+        "Diana": "MDG71",
+        "Sava": "MDG72",
+    }
+    aliases = load_location_aliases()
+    for name, expected_pcode in regions_map.items():
+        res = resolve_location(name, aliases=aliases)
+        assert res is not None, f"Region '{name}' failed to resolve"
+        assert res[0] == expected_pcode, f"Region '{name}': expected {expected_pcode}, got {res[0]}"
+        assert res[1] == "admin1"
+        assert res[2] == 1.0
 
 
 def test_resolve_location_fixture_locations() -> None:
@@ -110,8 +169,44 @@ def test_resolve_location_fixture_locations() -> None:
         assert conf >= min_conf
 
 
-def test_resolve_location_normalization_and_unmapped() -> None:
+def test_resolve_location_edge_cases_and_normalization() -> None:
     aliases = load_location_aliases()
+
+    # Direct P-Codes
+    res_mdg = resolve_location("MDG", aliases=aliases)
+    assert res_mdg == ("MDG", "admin0", 1.0)
+
+    res_pcode1 = resolve_location("MDG11", aliases=aliases)
+    assert res_pcode1 == ("MDG11", "admin1", 1.0)
+
+    res_pcode2 = resolve_location("MDG1101", aliases=aliases)
+    assert res_pcode2 == ("MDG1101", "admin2", 1.0)
+
+    # Typographic curly apostrophe in Amoron'i Mania
+    res_apo = resolve_location("Amoron’i Mania", aliases=aliases)
+    assert res_apo is not None
+    assert res_apo[0] == "MDG22"
+
+    # Hyphen vs space fallback
+    res_hyphen = resolve_location("Alaotra Mangoro", aliases=aliases)
+    assert res_hyphen is not None
+    assert res_hyphen[0] == "MDG33"
+
+    res_hyphen2 = resolve_location("Atsimo Andrefana", aliases=aliases)
+    assert res_hyphen2 is not None
+    assert res_hyphen2[0] == "MDG51"
+
+    # Historical composite region
+    res_vato = resolve_location("Vatovavy-Fitovinany", aliases=aliases)
+    assert res_vato is not None
+    assert res_vato[0] == "MDG23"
+    assert res_vato[2] == 0.85
+
+    # 24th region Ambatosoa
+    res_amba = resolve_location("Ambatosoa", aliases=aliases)
+    assert res_amba is not None
+    assert res_amba[0] == "MDG32"
+
     # Case and space normalization
     resolved = resolve_location("  anosibe  ", aliases=aliases)
     assert resolved is not None
@@ -121,7 +216,9 @@ def test_resolve_location_normalization_and_unmapped() -> None:
     assert resolved is not None
     assert resolved[0] == "MKT_BAZAR_BE"
 
-    # Unknown location
+    # Empty and unknown locations
+    assert resolve_location("", aliases=aliases) is None
+    assert resolve_location("   ", aliases=aliases) is None
     assert resolve_location("unknown_place_xyz", aliases=aliases) is None
 
 

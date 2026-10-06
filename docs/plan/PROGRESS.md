@@ -188,19 +188,19 @@
   10. Exécuter le Gate de fin de Phase 1 et créer le tag `phase-1-done`.
 - **Validation acceptation :**
   - Modèles Pydantic `GeographicEntity`, `LocationAlias`, `CropCalendarEntry` dans `backend/src/ketrika/core/models/geo.py`.
-  - GeoJSON de référence versionnés dans `geo/processed/` (admin0, admin1 avec les 23 régions officielles OCHA COD-AB, admin2).
+  - GeoJSON de référence versionnés dans `geo/processed/` (admin0, admin1 avec les 23 régions officielles OCHA COD-AB, admin2, admin3 avec communes urbaines).
   - Documentation `geo/README.md` détaillée avec provenance (`ocha_codab_mdg`), version `2024.1`, dénombrement et analyse du découpage (22 vs 23 vs 24 régions).
-  - Référentiel `taxonomy/location_aliases.yaml` couvrant 100 % des entités et marchés cités dans les fixtures (Analamanga, Atsinanana, Vakinankaratra, Antananarivo, Antsirabe, Toamasina, Anosibe, Bazar Be, Asabotsy).
+  - Référentiel `taxonomy/location_aliases.yaml` exhaustif couvrant 100 % des 23 régions officielles, les P-Codes directs, l'ancienne région scindée Vatovavy-Fitovinany, la 24ème région Ambatosoa, les chefs-lieux et marchés de fixtures.
   - Calendrier des cultures `taxonomy/crop_calendar.yaml` couvrant le riz (cycles vakiambiaty, hosy, asara) et le maïs avec sources FAO GIEWS et FEWS NET.
-  - Résolveur géographique et chargeurs dans `backend/src/ketrika/core/geo.py` avec `validate_geo()` renvoyant 0 erreur.
-  - Suite de tests unitaires `backend/tests/unit/test_geo.py` (8 tests passants).
-  - `./scripts/dev.ps1 check` vert (ruff 0, mypy 0, pytest 28 passed, vitest 1 passed).
+  - Résolveur géographique et chargeurs dans `backend/src/ketrika/core/geo.py` avec `load_geographic_entities()` et `validate_geo()` renvoyant 0 erreur.
+  - Suite de tests unitaires `backend/tests/unit/test_geo.py` (11 tests passants) et `test_taxonomy.py` (7 tests passants).
+  - `./scripts/dev.ps1 check` vert (ruff 0, mypy 0, pytest 33 passed, vitest 1 passed).
 - Statut : **DONE**.
 
 ### [2026-10-06T21:55:00Z] Gate de fin de Phase 1 (Reconnaissance et référentiels)
 - **Résumé de phase (≤ 15 lignes) :**
-  - **Livré :** Registre exhaustif des 9 sources MUST + CHIRPS (`registry/sources.yaml`), 10 fiches de documentation technique (`docs/sources/`), 10 jeux de fixtures représentatifs (`backend/tests/fixtures/`) ; taxonomie vivrière PPN (`taxonomy/products.yaml` avec codes HS6 et FAOSTAT vérifiés, `taxonomy/aliases.yaml`, `taxonomy/rice_varieties.yaml`) ; référentiel d'unités et conversions (`taxonomy/units.yaml` avec unités SI et traditionnelles malagasy prouvées par des sources documentaires) ; géographie de référence (`geo/processed/` avec 23 régions OCHA COD-AB, `geo/README.md`, `taxonomy/location_aliases.yaml`, `taxonomy/crop_calendar.yaml`). Moteurs de résolution et de validation `ketrika.core.registry`, `ketrika.core.taxonomy`, `ketrika.core.units`, `ketrika.core.geo`.
-  - **Chiffres clés :** 10 sources documentées et vérifiées, 15 produits PPN, 29 alias produits résolvant 100 % des fixtures, 23 régions administratives officielles, 100 % des localisations de fixtures résolues, 28 tests unitaires backend passants (dont tests de propriétés Hypothesis sur conversions), 1 test web passant, 0 erreur lint/typecheck.
+  - **Livré :** Registre exhaustif des 9 sources MUST + CHIRPS (`registry/sources.yaml`), 10 fiches de documentation technique (`docs/sources/`), 10 jeux de fixtures représentatifs (`backend/tests/fixtures/`) ; taxonomie vivrière PPN (`taxonomy/products.yaml` avec codes HS6 et FAOSTAT vérifiés, `taxonomy/aliases.yaml`, `taxonomy/rice_varieties.yaml`) ; référentiel d'unités et conversions (`taxonomy/units.yaml` avec unités SI et traditionnelles malagasy prouvées par des sources documentaires) ; géographie de référence (`geo/processed/` avec admin0 à admin3, 23 régions OCHA COD-AB, `geo/README.md`, `taxonomy/location_aliases.yaml`, `taxonomy/crop_calendar.yaml`). Moteurs de résolution et de validation `ketrika.core.registry`, `ketrika.core.taxonomy`, `ketrika.core.units`, `ketrika.core.geo`.
+  - **Chiffres clés :** 10 sources documentées et vérifiées, 15 produits PPN, 29 alias produits, 23 régions administratives officielles résolvant à 100 %, support P-Codes et toponymes historiques, 33 tests unitaires backend passants (dont tests de propriétés Hypothesis stabilisés), 1 test web passant, 0 erreur lint/typecheck.
   - **Dettes :** Aucune dette non tracée.
   - **Risques :** Évolution future de la 24ème région administrative (Ambatosoa) documentée dans `geo/README.md` et gérée par alias sans rupture des séries historiques.
   - **Tag :** `phase-1-done`.

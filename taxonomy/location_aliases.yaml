@@ -1,14 +1,39 @@
+# ==========================================
+# Référentiel des alias géographiques
+# Madagascar PPN Market Intelligence
+# ==========================================
+
+# --- Admin 0 : National ---
 - alias: "Madagascar"
   pcode: "MDG"
   admin_level: "admin0"
   confidence: 1.0
   note: "Pays"
 
+- alias: "MDG"
+  pcode: "MDG"
+  admin_level: "admin0"
+  confidence: 1.0
+  note: "Code pays ISO3 / P-Code national"
+
+- alias: "Grande Ile"
+  pcode: "MDG"
+  admin_level: "admin0"
+  confidence: 0.9
+  note: "Dénomination géographique usuelle"
+
+- alias: "Repoblikan'i Madagasikara"
+  pcode: "MDG"
+  admin_level: "admin0"
+  confidence: 1.0
+  note: "Nom constitutionnel en langue malagasy"
+
+# --- Admin 1 : Les 23 Régions Officielles (Loi 2021-010 / OCHA COD-AB) ---
 - alias: "Analamanga"
   pcode: "MDG11"
   admin_level: "admin1"
   confidence: 1.0
-  note: "Région centrale"
+  note: "Région centrale de la capitale"
 
 - alias: "Vakinankaratra"
   pcode: "MDG12"
@@ -16,12 +41,151 @@
   confidence: 1.0
   note: "Région des hauts plateaux du sud"
 
+- alias: "Itasy"
+  pcode: "MDG13"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région du lac Itasy / Miarinarivo"
+
+- alias: "Bongolava"
+  pcode: "MDG14"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région du Moyen-Ouest / Tsiroanomandidy"
+
+- alias: "Haute Matsiatra"
+  pcode: "MDG21"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région de Fianarantsoa"
+
+- alias: "Matsiatra Ambony"
+  pcode: "MDG21"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Appellation malagasy officielle de Haute Matsiatra"
+
+- alias: "Amoron'i Mania"
+  pcode: "MDG22"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région d'Ambositra"
+
+- alias: "Vatovavy"
+  pcode: "MDG23"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région issue de la scission de 2021, chef-lieu Mananjary"
+
+- alias: "Fitovinany"
+  pcode: "MDG24"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région issue de la scission de 2021, chef-lieu Manakara"
+
+- alias: "Vatovavy-Fitovinany"
+  pcode: "MDG23"
+  admin_level: "admin1"
+  confidence: 0.85
+  note: "Ancienne région scindée en Vatovavy (MDG23) et Fitovinany (MDG24) par la Loi 2021-010"
+
+- alias: "Ihorombe"
+  pcode: "MDG25"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région d'Ihosy / plateau de l'Horombe"
+
+- alias: "Atsimo-Atsinanana"
+  pcode: "MDG26"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région Sud-Est côtière, chef-lieu Farafangana"
+
 - alias: "Atsinanana"
   pcode: "MDG31"
   admin_level: "admin1"
   confidence: 1.0
-  note: "Région côtière orientale"
+  note: "Région côtière orientale de Toamasina"
 
+- alias: "Analanjirofo"
+  pcode: "MDG32"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région de Fenoarivo Atsinanana / Sainte-Marie"
+
+- alias: "Ambatosoa"
+  pcode: "MDG32"
+  admin_level: "admin1"
+  confidence: 0.85
+  note: "24ème région créée en 2024 par scission d'Analanjirofo ; rattachée à MDG32 pour séries historiques"
+
+- alias: "Alaotra-Mangoro"
+  pcode: "MDG33"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région grenier à riz, chef-lieu Ambatondrazaka"
+
+- alias: "Boeny"
+  pcode: "MDG41"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région du Nord-Ouest, chef-lieu Mahajanga"
+
+- alias: "Sofia"
+  pcode: "MDG42"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région du bassin de la Sofia, chef-lieu Antsohihy"
+
+- alias: "Betsiboka"
+  pcode: "MDG43"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région de Maevatanana"
+
+- alias: "Melaky"
+  pcode: "MDG44"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région de Maintirano"
+
+- alias: "Atsimo-Andrefana"
+  pcode: "MDG51"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région du Sud-Ouest, chef-lieu Toliara"
+
+- alias: "Androy"
+  pcode: "MDG52"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région de l'extrême Sud, chef-lieu Ambovombe"
+
+- alias: "Anosy"
+  pcode: "MDG53"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région du Sud-Est / Fort-Dauphin (Tolagnaro)"
+
+- alias: "Menabe"
+  pcode: "MDG54"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région de Morondava"
+
+- alias: "Diana"
+  pcode: "MDG71"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région de l'extrême Nord, chef-lieu Antsiranana"
+
+- alias: "Sava"
+  pcode: "MDG72"
+  admin_level: "admin1"
+  confidence: 1.0
+  note: "Région du Nord-Est (Sambava, Antalaha, Vohémar, Andapa)"
+
+# --- Admin 2 : Districts et Villes Principales ---
 - alias: "Antananarivo Renivohitra"
   pcode: "MDG1101"
   admin_level: "admin2"
@@ -70,6 +234,91 @@
   confidence: 0.95
   note: "Ancien toponyme français"
 
+- alias: "Mahajanga I"
+  pcode: "MDG4101"
+  admin_level: "admin2"
+  confidence: 1.0
+  note: "District urbain de Mahajanga"
+
+- alias: "Mahajanga"
+  pcode: "MDG4101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Grand port de l'Ouest"
+
+- alias: "Majunga"
+  pcode: "MDG4101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Ancien toponyme français de Mahajanga"
+
+- alias: "Fianarantsoa I"
+  pcode: "MDG2101"
+  admin_level: "admin2"
+  confidence: 1.0
+  note: "District urbain de Fianarantsoa"
+
+- alias: "Fianarantsoa"
+  pcode: "MDG2101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Chef-lieu de Haute Matsiatra"
+
+- alias: "Toliara I"
+  pcode: "MDG5101"
+  admin_level: "admin2"
+  confidence: 1.0
+  note: "District urbain de Toliara"
+
+- alias: "Toliara"
+  pcode: "MDG5101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Grand port du Sud"
+
+- alias: "Tulear"
+  pcode: "MDG5101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Ancien toponyme français de Toliara"
+
+- alias: "Antsiranana I"
+  pcode: "MDG7101"
+  admin_level: "admin2"
+  confidence: 1.0
+  note: "District urbain d'Antsiranana"
+
+- alias: "Antsiranana"
+  pcode: "MDG7101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Chef-lieu de la région Diana"
+
+- alias: "Diego-Suarez"
+  pcode: "MDG7101"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Ancien toponyme français d'Antsiranana"
+
+- alias: "Ambatondrazaka"
+  pcode: "MDG3301"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "District et chef-lieu du bassin rizicole de l'Alaotra"
+
+- alias: "Tolagnaro"
+  pcode: "MDG5301"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "District et chef-lieu de l'Anosy"
+
+- alias: "Fort-Dauphin"
+  pcode: "MDG5301"
+  admin_level: "admin2"
+  confidence: 0.95
+  note: "Ancien toponyme français de Tolagnaro"
+
+# --- Markets : Marchés Vivriers PPN ---
 - alias: "Anosibe"
   pcode: "MKT_ANOSIBE"
   admin_level: "market"
@@ -87,3 +336,15 @@
   admin_level: "market"
   confidence: 1.0
   note: "Grand marché hebdomadaire et quotidien d'Antsirabe"
+
+- alias: "Isotry"
+  pcode: "MKT_ISOTRY"
+  admin_level: "market"
+  confidence: 1.0
+  note: "Marché de gros et demi-gros de riz et grains secs à Antananarivo"
+
+- alias: "Sabotsy Namehana"
+  pcode: "MKT_SABOTSY_NAMEHANA"
+  admin_level: "market"
+  confidence: 1.0
+  note: "Grand marché hebdomadaire périurbain au nord d'Antananarivo"

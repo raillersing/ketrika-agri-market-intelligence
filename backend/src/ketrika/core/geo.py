@@ -2,12 +2,14 @@
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yaml
 
 from ketrika.core.models.geo import (
+    AdminLevel,
     CropCalendarEntry,
+    GeographicEntity,
     LocationAlias,
 )
 from ketrika.core.registry import find_repo_root
@@ -40,6 +42,62 @@ def load_admin_geojson(level: str = "admin1", geo_dir: Path | str | None = None)
         raise ValueError(f"File {path} is not a valid GeoJSON FeatureCollection")
 
     return data
+
+
+def load_geographic_entities(
+    level: str = "admin1",
+    geo_dir: Path | str | None = None,
+) -> list[GeographicEntity]:
+    """Load administrative boundaries as validated GeographicEntity models."""
+    fc = load_admin_geojson(level, geo_dir)
+    features = fc.get("features", [])
+    entities: list[GeographicEntity] = []
+
+    level_num_str = level.replace("admin", "")
+    pcode_prop = f"ADM{level_num_str}_PCODE"
+    name_prop = f"ADM{level_num_str}_FR"
+    parent_level = (
+        int(level_num_str) - 1 if level_num_str.isdigit() and int(level_num_str) > 0 else None
+    )
+    parent_pcode_prop = f"ADM{parent_level}_PCODE" if parent_level is not None else None
+
+    for feat in features:
+        props = feat.get("properties", {})
+        pcode = props.get(pcode_prop) or props.get("PCODE") or props.get("pcode", "")
+        name_fr = props.get(name_prop) or props.get("name_fr") or props.get("NAME", "")
+        name_mg = props.get(f"ADM{level_num_str}_MG") or props.get("name_mg")
+        parent_pcode = props.get(parent_pcode_prop) if parent_pcode_prop else None
+
+        geom = feat.get("geometry", {})
+        coords = geom.get("coordinates", [])
+        lat: float | None = None
+        lon: float | None = None
+        if coords:
+            if geom.get("type") == "Polygon" and len(coords[0]) > 0:
+                poly = coords[0]
+                lon = sum(c[0] for c in poly) / len(poly)
+                lat = sum(c[1] for c in poly) / len(poly)
+            elif geom.get("type") == "MultiPolygon" and len(coords[0][0]) > 0:
+                poly = coords[0][0]
+                lon = sum(c[0] for c in poly) / len(poly)
+                lat = sum(c[1] for c in poly) / len(poly)
+
+        admin_lvl = cast(
+            AdminLevel, level if level in ("admin0", "admin1", "admin2", "admin3") else "admin1"
+        )
+        entities.append(
+            GeographicEntity(
+                pcode=pcode,
+                name_fr=name_fr,
+                name_mg=name_mg,
+                admin_level=admin_lvl,
+                parent_pcode=parent_pcode,
+                latitude=round(lat, 4) if lat is not None else None,
+                longitude=round(lon, 4) if lon is not None else None,
+            )
+        )
+
+    return entities
 
 
 def load_location_aliases(
@@ -84,14 +142,38 @@ def resolve_location(
     min_confidence: float = 0.8,
 ) -> tuple[str, str, float] | None:
     """Resolve raw location denomination to (pcode, admin_level, confidence)."""
+    if not raw_name or not raw_name.strip():
+        return None
+
     if aliases is None:
         aliases = load_location_aliases()
 
+    norm_upper = raw_name.strip().upper()
+
+    # 1. Direct P-Code match
+    for a in aliases:
+        if a.pcode.upper() == norm_upper:
+            if a.confidence >= min_confidence:
+                return (a.pcode, a.admin_level, 1.0)
+
+    # 2. Exact normalized alias match
     norm_query = normalize_string(raw_name)
     best_match: tuple[str, str, float] | None = None
 
     for a in aliases:
         if normalize_string(a.alias) == norm_query:
+            if a.confidence >= min_confidence:
+                if best_match is None or a.confidence > best_match[2]:
+                    best_match = (a.pcode, a.admin_level, a.confidence)
+
+    if best_match is not None:
+        return best_match
+
+    # 3. Fallback: hyphen/space equivalence
+    norm_query_no_hyphen = " ".join(norm_query.replace("-", " ").split())
+    for a in aliases:
+        a_norm_no_hyphen = " ".join(normalize_string(a.alias).replace("-", " ").split())
+        if a_norm_no_hyphen == norm_query_no_hyphen:
             if a.confidence >= min_confidence:
                 if best_match is None or a.confidence > best_match[2]:
                     best_match = (a.pcode, a.admin_level, a.confidence)
@@ -127,19 +209,76 @@ def validate_geo(
     except Exception as e:
         errors.append(f"Failed to load admin1.geojson: {e}")
 
-    # 2. Validate location aliases
+    try:
+        admin2 = load_admin_geojson("admin2", geo_dir)
+        if len(admin2.get("features", [])) < 3:
+            errors.append("admin2.geojson should contain at least 3 sample districts")
+    except Exception as e:
+        errors.append(f"Failed to load admin2.geojson: {e}")
+
+    try:
+        admin3 = load_admin_geojson("admin3", geo_dir)
+        if len(admin3.get("features", [])) < 1:
+            errors.append("admin3.geojson should contain at least 1 sample commune")
+    except Exception as e:
+        errors.append(f"Failed to load admin3.geojson: {e}")
+
+    # 2. Validate geographic entities loading
+    try:
+        entities = load_geographic_entities("admin1", geo_dir)
+        if len(entities) != 23:
+            errors.append(
+                f"load_geographic_entities('admin1') returned {len(entities)}, expected 23"
+            )
+    except Exception as e:
+        errors.append(f"Failed to load geographic entities: {e}")
+
+    # 3. Validate location aliases
     try:
         aliases = load_location_aliases(taxonomy_dir)
         seen: set[str] = set()
+        admin1_pcodes_in_aliases: set[str] = set()
         for a in aliases:
             norm = normalize_string(a.alias)
             if norm in seen:
                 errors.append(f"Duplicate location alias: '{a.alias}'")
             seen.add(norm)
+            if a.admin_level == "admin1":
+                admin1_pcodes_in_aliases.add(a.pcode)
+
+        # Ensure all 23 official regions are covered in aliases
+        expected_admin1_pcodes = {
+            "MDG11",
+            "MDG12",
+            "MDG13",
+            "MDG14",
+            "MDG21",
+            "MDG22",
+            "MDG23",
+            "MDG24",
+            "MDG25",
+            "MDG26",
+            "MDG31",
+            "MDG32",
+            "MDG33",
+            "MDG41",
+            "MDG42",
+            "MDG43",
+            "MDG44",
+            "MDG51",
+            "MDG52",
+            "MDG53",
+            "MDG54",
+            "MDG71",
+            "MDG72",
+        }
+        missing_admin1 = expected_admin1_pcodes - admin1_pcodes_in_aliases
+        if missing_admin1:
+            errors.append(f"Missing location aliases for admin1 P-Codes: {sorted(missing_admin1)}")
     except Exception as e:
         errors.append(f"Failed to load location aliases: {e}")
 
-    # 3. Validate crop calendar
+    # 4. Validate crop calendar
     try:
         cal = load_crop_calendar(taxonomy_dir)
         for c in cal:

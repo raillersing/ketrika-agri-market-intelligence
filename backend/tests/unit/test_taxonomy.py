@@ -86,3 +86,36 @@ def test_all_fixture_commodity_labels_are_resolved() -> None:
         assert resolved is not None, f"Commodity label '{label}' from fixtures failed to resolve"
         assert resolved[0] is not None
         assert resolved[1] >= 0.7
+
+
+def test_resolve_canonical_product_codes_and_names() -> None:
+    # Resolving exact canonical product code
+    res1 = resolve_product("RICE_WHITE_LOCAL")
+    assert res1 is not None
+    assert res1 == ("RICE_WHITE_LOCAL", 1.0)
+
+    res2 = resolve_product("MAIZE_GRAIN")
+    assert res2 is not None
+    assert res2 == ("MAIZE_GRAIN", 1.0)
+
+    # Resolving canonical French name
+    res3 = resolve_product("Riz blanc local")
+    assert res3 is not None
+    assert res3[0] == "RICE_WHITE_LOCAL"
+    assert res3[1] == 1.0
+
+    # Empty and whitespace inputs
+    assert resolve_product("") is None
+    assert resolve_product("   ") is None
+
+
+def test_normalize_string_special_chars() -> None:
+    from ketrika.core.taxonomy import normalize_string
+
+    # Typographic right single quote / curly apostrophe
+    assert normalize_string("Amoron’i Mania") == "amoron'i mania"
+    # En-dash and em-dash
+    assert normalize_string("Alaotra–Mangoro") == "alaotra-mangoro"
+    assert normalize_string("Alaotra—Mangoro") == "alaotra-mangoro"
+    # Multiple whitespace
+    assert normalize_string("   Vary   Gasy  \t ") == "vary gasy"

@@ -32,3 +32,5 @@
 - `geo/processed/admin0.geojson` : Contour national simplifié (≤ 100 Ko).
 - `geo/processed/admin1.geojson` : Les 23 polygones régionaux officiels (≤ 500 Ko).
 - `geo/processed/admin2.geojson` : Échantillon et centroïdes des districts de référence (≤ 1 Mo).
+- `geo/processed/admin3.geojson` : Échantillon des communes urbaines de référence (≤ 1 Mo).
+

@@ -22,7 +22,13 @@ def get_default_taxonomy_dir() -> Path:
 
 def normalize_string(text: str) -> str:
     """Normalize text for fuzzy or case-insensitive matching."""
+    if not text:
+        return ""
     text = text.strip().lower()
+    for q in ("’", "‘", "ʼ", "ʻ", "`", "´"):
+        text = text.replace(q, "'")
+    for d in ("–", "—", "−"):
+        text = text.replace(d, "-")
     text = "".join(c for c in unicodedata.normalize("NFD", text) if unicodedata.category(c) != "Mn")
     return " ".join(text.split())
 
@@ -87,18 +93,37 @@ def get_product(product_code: str, taxonomy_dir: Path | str | None = None) -> Pr
 def resolve_product(
     raw_label: str,
     aliases: list[ProductAlias] | None = None,
+    products: list[ProductDefinition] | None = None,
     min_confidence: float = 0.8,
 ) -> tuple[str, float] | None:
     """Resolve a raw commodity label to a canonical product_code.
 
     Returns (product_code, confidence) or None if unresolved or confidence is below threshold.
     """
+    if not raw_label or not raw_label.strip():
+        return None
+
     if aliases is None:
         aliases = load_aliases()
 
     norm_query = normalize_string(raw_label)
+    if not norm_query:
+        return None
 
-    # 1. Exact match against canonical product codes
+    # 1. Exact match against canonical product codes or canonical names
+    if products is None:
+        try:
+            products = load_products()
+        except Exception:
+            products = []
+
+    for p in products:
+        if (
+            normalize_string(p.product_code) == norm_query
+            or normalize_string(p.canonical_name_fr) == norm_query
+        ):
+            return (p.product_code, 1.0)
+
     # 2. Exact match on normalized alias
     best_match: tuple[str, float] | None = None
     for a in aliases:
