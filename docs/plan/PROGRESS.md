@@ -47,7 +47,7 @@
 | **T9.3** | SHOULD | 9 | Connecteur CHIRPS v3 | T5.1, T1.4 | TODO | — |
 | **T10.1** | MUST | 10 | Copilote analyste SQL sécurisé | T6.1, T5.2 | **DONE** | ketrika.copilot complet (schema, sql_guard sqlglot, executor copilot_ro 5s, writer sans chiffre libre, banc 22 questions 100% >=80%, Démo 2 docs/DEMO_2.md, check vert 210 tests) |
 | **T11.1** | MUST | 11 | Observabilité et supervision | Phases 8–10 | **DONE** | 24b0329 (Logs JSON contextualisés, sensor Dagster échec -> Mailpit, API /v1/sources & page /sources statut failed, 3 tests intégration passants) |
-| **T11.2** | MUST | 11 | Revue de sécurité et audits | T11.1 | **DONE** | Gitleaks 0 secret sur 48 commits, pip-audit 0 vulnérabilité, pnpm audit analysé & mitigé, conteneurs non-root, en-têtes HTTP de sécurité, docs/SECURITY_REVIEW.md rédigé |
+| **T11.2** | MUST | 11 | Revue de sécurité et audits | T11.1 | **DONE** | d57635c (Gitleaks 0 secret sur 48 commits, pip-audit 0 vulnérabilité, pnpm audit mitigé, conteneurs non-root, en-têtes HTTP sécurité, docs/SECURITY_REVIEW.md rédigé) |
 | **T11.3** | MUST | 11 | Procédures de sauvegarde et restauration | T11.1 | TODO | — |
 | **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | TODO | — |
 | **T11.5** | MUST | 11 | Documentation finale et runbooks | T11.4 | TODO | — |
