@@ -63,96 +63,36 @@ def load_crop_calendar_sensitive_months() -> dict[str, set[int]]:
 def evaluate_price_spike_rules(session: Session) -> list[AlertCandidate]:
     """Evaluate PRICE_SPIKE rule: z > 3 and chg_1m > 0.15.
 
+    Fed by statistical anomalies from ketrika.ml.anomalies.detect_price_anomalies.
     Severity: 'high' if confirmed by >= 2 distinct sources in same month, else 'medium'.
     dedupe_key: PRICE_SPIKE|{product_code}|{location_pcode}|{month}
     """
-    query = text(
-        """
-        WITH spike_candidates AS (
-            SELECT
-                pc.product_id,
-                pc.product_code,
-                pc.product_name,
-                pc.location_id,
-                pc.location_pcode,
-                pc.location_name,
-                pc.month,
-                pc.median_price,
-                pc.chg_1m,
-                pc.z_score_robust,
-                pc.chosen_source_id
-            FROM gold.price_changes pc
-            WHERE pc.z_score_robust > 3.0
-              AND pc.chg_1m > 0.15
-        ),
-        source_counts AS (
-            SELECT
-                pm.product_id,
-                pm.location_id,
-                pm.month,
-                count(DISTINCT pm.source_id) AS n_sources,
-                array_agg(DISTINCT pm.source_id) AS sources
-            FROM gold.price_monthly pm
-            GROUP BY pm.product_id, pm.location_id, pm.month
-        )
-        SELECT
-            sc.product_id,
-            sc.product_code,
-            sc.product_name,
-            sc.location_id,
-            sc.location_pcode,
-            sc.location_name,
-            sc.month,
-            sc.median_price,
-            sc.chg_1m,
-            sc.z_score_robust,
-            sc.chosen_source_id,
-            COALESCE(src.n_sources, 1) AS n_sources,
-            COALESCE(src.sources, ARRAY[sc.chosen_source_id]::text[]) AS sources
-        FROM spike_candidates sc
-        LEFT JOIN source_counts src
-          ON sc.product_id = src.product_id
-         AND sc.location_id = src.location_id
-         AND sc.month = src.month
-        ORDER BY sc.month DESC, sc.z_score_robust DESC;
-        """
-    )
-    rows = session.execute(query).fetchall()
+    from ketrika.ml.anomalies import detect_price_anomalies
+
+    anomalies = detect_price_anomalies(session, z_threshold=3.0, chg_threshold=0.15)
     candidates: list[AlertCandidate] = []
 
-    for r in rows:
-        n_src = int(r.n_sources)
-        severity = "high" if n_src >= 2 else "medium"
-        month_str = str(r.month)[:7]
-        pcode = r.location_pcode or str(r.location_id)[:8]
-        dedupe = f"PRICE_SPIKE|{r.product_code}|{pcode}|{month_str}"
-        chg_pct = round(float(r.chg_1m) * 100, 1)
-        z = round(float(r.z_score_robust), 2)
+    for anom in anomalies:
+        if anom.anomaly_type != "PRICE_SPIKE":
+            continue
+        month_str = str(anom.month)[:7]
+        pcode = anom.location_pcode or (
+            str(anom.location_id)[:8] if anom.location_id else "unknown"
+        )
+        dedupe = f"PRICE_SPIKE|{anom.product_code}|{pcode}|{month_str}"
+        chg_pct = round(float(anom.chg_1m) * 100, 1) if anom.chg_1m is not None else 0.0
+        z = round(float(anom.z_score_robust), 2)
 
-        title = f"Flambée des prix : {r.product_name} à {r.location_name} (+{chg_pct}% sur 1 mois, z={z})"
-        evidence = {
-            "rule": "PRICE_SPIKE",
-            "product_code": r.product_code,
-            "product_name": r.product_name,
-            "location_pcode": r.location_pcode,
-            "location_name": r.location_name,
-            "month": str(r.month),
-            "median_price": float(r.median_price),
-            "chg_1m": float(r.chg_1m),
-            "z_score": z,
-            "n_sources": n_src,
-            "sources": list(r.sources),
-        }
-
+        title = f"Flambée des prix : {anom.product_name} à {anom.location_name} (+{chg_pct}% sur 1 mois, z={z})"
         candidates.append(
             AlertCandidate(
                 rule_code="PRICE_SPIKE",
                 dedupe_key=dedupe,
-                severity=severity,
+                severity=anom.severity,
                 title=title,
-                evidence=evidence,
-                product_id=r.product_id,
-                location_id=r.location_id,
+                evidence=anom.evidence,
+                product_id=anom.product_id,
+                location_id=anom.location_id,
             )
         )
 
@@ -162,62 +102,36 @@ def evaluate_price_spike_rules(session: Session) -> list[AlertCandidate]:
 def evaluate_price_drop_rules(session: Session) -> list[AlertCandidate]:
     """Evaluate PRICE_DROP rule: z < -3 and chg_1m < -0.15.
 
+    Fed by statistical anomalies from ketrika.ml.anomalies.detect_price_anomalies.
     Severity: 'medium'.
     dedupe_key: PRICE_DROP|{product_code}|{location_pcode}|{month}
     """
-    query = text(
-        """
-        SELECT
-            pc.product_id,
-            pc.product_code,
-            pc.product_name,
-            pc.location_id,
-            pc.location_pcode,
-            pc.location_name,
-            pc.month,
-            pc.median_price,
-            pc.chg_1m,
-            pc.z_score_robust,
-            pc.chosen_source_id
-        FROM gold.price_changes pc
-        WHERE pc.z_score_robust < -3.0
-          AND pc.chg_1m < -0.15
-        ORDER BY pc.month DESC, pc.z_score_robust ASC;
-        """
-    )
-    rows = session.execute(query).fetchall()
+    from ketrika.ml.anomalies import detect_price_anomalies
+
+    anomalies = detect_price_anomalies(session, z_threshold=3.0, chg_threshold=0.15)
     candidates: list[AlertCandidate] = []
 
-    for r in rows:
-        month_str = str(r.month)[:7]
-        pcode = r.location_pcode or str(r.location_id)[:8]
-        dedupe = f"PRICE_DROP|{r.product_code}|{pcode}|{month_str}"
-        chg_pct = round(float(r.chg_1m) * 100, 1)
-        z = round(float(r.z_score_robust), 2)
+    for anom in anomalies:
+        if anom.anomaly_type != "PRICE_DROP":
+            continue
+        month_str = str(anom.month)[:7]
+        pcode = anom.location_pcode or (
+            str(anom.location_id)[:8] if anom.location_id else "unknown"
+        )
+        dedupe = f"PRICE_DROP|{anom.product_code}|{pcode}|{month_str}"
+        chg_pct = round(float(anom.chg_1m) * 100, 1) if anom.chg_1m is not None else 0.0
+        z = round(float(anom.z_score_robust), 2)
 
-        title = f"Chute anormale des prix : {r.product_name} à {r.location_name} ({chg_pct}% sur 1 mois, z={z})"
-        evidence = {
-            "rule": "PRICE_DROP",
-            "product_code": r.product_code,
-            "product_name": r.product_name,
-            "location_pcode": r.location_pcode,
-            "location_name": r.location_name,
-            "month": str(r.month),
-            "median_price": float(r.median_price),
-            "chg_1m": float(r.chg_1m),
-            "z_score": z,
-            "chosen_source_id": r.chosen_source_id,
-        }
-
+        title = f"Chute anormale des prix : {anom.product_name} à {anom.location_name} ({chg_pct}% sur 1 mois, z={z})"
         candidates.append(
             AlertCandidate(
                 rule_code="PRICE_DROP",
                 dedupe_key=dedupe,
-                severity="medium",
+                severity=anom.severity,
                 title=title,
-                evidence=evidence,
-                product_id=r.product_id,
-                location_id=r.location_id,
+                evidence=anom.evidence,
+                product_id=anom.product_id,
+                location_id=anom.location_id,
             )
         )
 

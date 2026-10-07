@@ -43,7 +43,7 @@
 | **T8.1** | MUST | 8 | Moteur d'alertes | T5.2 | **DONE** | Moteur idempotent 5 règles SPECS §18, déduplication, auto-résolution après 2 cycles, sévérité high 2 sources, SMTP Mailpit vérifié, garde H3 Telegram validé, 10 tests passants (couv 96%), check 100% vert |
 | **T8.2** | MUST | 8 | Générateur de bulletin hebdomadaire PPN | T5.2, T6.1 | **DONE** | Générateur SPECS §20 (facts Gold, writer placeholders, rejet chiffres libres avec repli, rendu HTML+PDF WeasyPrint, S3 MinIO, tests audit 100% nombres, dev.ps1 bulletin validé, check vert) |
 | **T9.1** | MUST | 9 | Modèles de prévision de prix | T5.1 | **DONE** | Pipeline ml.forecast (13 séries, 39 prévisions, WAPE moyen 0.85%, couverture 80%: 79.5%, test anti-fuite temporelle validé, dev.ps1 check 100% vert 190 tests) |
-| **T9.2** | MUST | 9 | Intégration des anomalies dans les alertes | T9.1, T8.1 | TODO | — |
+| **T9.2** | MUST | 9 | Intégration des anomalies dans les alertes | T9.1, T8.1 | **DONE** | ketrika.ml.anomalies & rules.py (test synthétique injection pic z>3 / chute z<-3, feeds PRICE_SPIKE/DROP, multi-source high, model_run, check vert 193 tests) |
 | **T9.3** | SHOULD | 9 | Connecteur CHIRPS v3 | T5.1, T1.4 | TODO | — |
 | **T10.1** | MUST | 10 | Copilote analyste SQL sécurisé | T6.1, T5.2 | TODO | — |
 | **T11.1** | MUST | 11 | Observabilité et supervision | Phases 8–10 | TODO | — |
@@ -935,6 +935,43 @@
   - **Contrôles qualité globaux :**
     - `./scripts/dev.ps1 check` : 100% vert (190 tests backend passants, 15 tests web passants, 0 erreur ruff, 0 erreur mypy sur 141 fichiers).
 - Statut : **DONE**.
+
+### [2026-10-07T10:45:00Z] Démarrage de T9.2 : Intégration des anomalies dans les alertes
+- **Mini-plan T9.2 :**
+  1. Implémenter `backend/src/ketrika/ml/anomalies.py` : détection d'anomalies de prix basée sur le z-score robuste (`|z| > 3`) et variation relative (`chg_1m`).
+  2. Modéliser `PriceAnomaly` et persistance des runs d'anomalies dans `ml.model_run` (`task="anomaly"`, métriques de comptage).
+  3. Relier la détection des anomalies dans `ketrika.alerts.rules` pour alimenter directement `PRICE_SPIKE` (`z > 3` et `chg_1m > 0.15`) et `PRICE_DROP` (`z < -3` et `chg_1m < -0.15`).
+  4. Mettre à jour `ketrika.ml.__init__.py` pour exporter les utilitaires d'anomalies.
+  5. Écrire des tests unitaires dédiés dans `tests/unit/test_ml_anomalies.py`.
+  6. Écrire un test d'intégration complet dans `tests/integration/test_price_anomalies.py` avec injection d'un pic (`|z| > 3`) et d'une chute sur une série synthétique vérifiant le cycle complet jusqu'à la création d'alertes en base.
+  7. Vérifier avec `./scripts/dev.ps1 check`, consigner les preuves et committer `feat(T9.2): price anomaly detection in alerts`.
+- **Réalisations T9.2 :**
+  - **Moteur d'anomalies statistiques (`ketrika.ml.anomalies`) :**
+    - `detect_price_anomalies` interroge la couche Gold (`gold.price_changes` et `gold.price_monthly`) pour identifier les points où `abs(z_score_robust) > 3.0` ;
+    - Typage précis : `PRICE_SPIKE` (`z > 3.0` et `chg_1m > 0.15`), `PRICE_DROP` (`z < -3.0` et `chg_1m < -0.15`), et `OUTLIER` (`|z| > 3.0` sans franchissement directionnel) ;
+    - Calcul de sévérité multi-sources : `high` pour les flambées confirmées par $\ge 2$ sources distinctes le même mois, sinon `medium` ;
+    - `record_anomaly_model_run` persiste l'exécution dans `ml.model_run` (`task="anomaly"`, modèle `robust_zscore`, métriques `total_anomalies`, `spikes_count`, `drops_count`, `outliers_count`).
+  - **Intégration transparente dans les règles d'alerte (`ketrika.alerts.rules`) :**
+    - `evaluate_price_spike_rules` et `evaluate_price_drop_rules` sont désormais directement alimentées par `detect_price_anomalies`.
+  - **Preuve par test d'intégration sur données synthétiques (`tests/integration/test_price_anomalies.py`) :**
+    - Injection d'un pic de prix sur le riz (2 sources, $P=5500$ vs base $\sim 2800$, $\Delta_{1m} > 15\%$, $z > 3$) $\rightarrow$ déclenchement certifié d'une alerte `PRICE_SPIKE` avec sévérité `high` et `state="open"` ;
+    - Injection d'une chute de prix sur le maïs ($P=800$ vs base $\sim 1800$, $\Delta_{1m} < -15\%$, $z < -3$) $\rightarrow$ déclenchement certifié d'une alerte `PRICE_DROP` avec sévérité `medium` et `state="open"` ;
+    - Enregistrement validé du run d'anomalie dans `ml.model_run`.
+  - **Contrôles qualité globaux :**
+    - `./scripts/dev.ps1 check` : 100% vert (193 tests backend passants, 15 tests web passants, 0 erreur ruff, 0 erreur mypy sur 144 fichiers).
+- Statut : **DONE**.
+
+### [2026-10-07T11:15:00Z] Gate de fin de Phase 9 (Intelligence : prévisions et anomalies de prix)
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** Le sous-système complet de Machine Learning et d'intelligence prédictive/anomalies (SPECS §17 & §18) :
+    1. Pipeline de prévision univariée de prix (`ketrika.ml.forecast`, `models.py`, `series.py`) couvrant 13 séries Gold (h=1,2,3 -> 39 prévisions), modèles SeasonalNaive, AutoETS et AutoARIMA optimisé pas-à-pas ;
+    2. Backtest rolling-origin sur 6 fenêtres avec sélection automatique au plus faible WAPE (WAPE moyen 0.85%, couverture 80% respectée à 79.5%) et étanchéité temporelle stricte anti-fuite prouvée ;
+    3. Persistance dans `ml.model_run`, `ml.forecast`, vue matérialisée `gold.forecast_latest` et asset Dagster `ml__price_forecast` ;
+    4. Moteur de détection d'anomalies de prix (`ketrika.ml.anomalies`) alimentant directement les alertes `PRICE_SPIKE` et `PRICE_DROP` avec confirmation multi-source et journalisation des runs ;
+    5. Suite de tests unitaires et d'intégration dédiée (4 tests forecast, 2 tests anomalies, 1 intégration complète pic/chute synthétique).
+  - **Chiffres clés :** 13 séries prévues, 39 prévisions, WAPE 0.85%, 193 tests backend passants, 15 tests front passants, 0 erreur lint/typecheck.
+  - **Dettes :** T9.3 (`chirps` SHOULD) différé après les tâches MUST conformément à AGENTS.md §3.
+  - **Risques :** Aucun.
 
 
 
