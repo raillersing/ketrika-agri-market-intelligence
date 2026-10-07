@@ -29,7 +29,7 @@
 | **T3.4** | MUST | 3 | Connecteur NASA POWER Climat | T2.6, T1.4 | **DONE** | CC1, CC3-CC6 validés (108 obs, 100% districts couverts, cohérence physique prouvée, rebuild stable, dev.ps1 check vert) |
 | **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | **DONE** | CC1-CC6 validés (189 obs, en-têtes dynamiques XLSX/CSV, série alimentation sur 5,25 ans, rebuild stable, check vert) |
 | **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | **DONE** | b0b0842 (CC1-CC6 validés, 180 obs, 3 bulletins, golden 100%, 0 ND/NA converti en 0, rebuild stable, check vert) |
-| **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | TODO | — |
+| **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | **IN_PROGRESS** | En cours d'implémentation |
 | **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | TODO | — |
 | **T4.4** | COULD | 4 | Connecteur Événements (PICM, FEWS NET) | T2.6 | TODO | — |
 | **T5.1** | MUST | 5 | Vues matérialisées Gold | T3.1–T3.5, T4.1–T4.3 | TODO | — |
@@ -501,6 +501,20 @@
   - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='miasa_odr')`), comptes d'observations strictement préservés (180 observations). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès.
   - `./scripts/dev.ps1 check` 100% vert (141 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
 - Statut : **DONE**.
+
+### [2026-10-07T04:25:00Z] Démarrage de T4.2 : Connecteur MinCC Prix & Stocks PPN
+- **Mini-plan T4.2 :**
+  1. Préparer 10 fixtures réelles/représentatives de publications régionales MinCC (HTML tabulaires et communiqués texte en français et malgache couvrant ≥ 5 régions : Analamanga, Atsinanana, Boeny, Vakinankaratra, Atsimo-Andrefana).
+  2. Établir les golden datasets attendus dans `backend/tests/golden/mincc_ppn/` (≥ 60 valeurs au total, incluant prix et stocks avec `coverage_days`).
+  3. Enregistrer les fixtures LLM replay correspondantes pour les communiqués textuels bilingues (FR/MG).
+  4. Implémenter `MinccPpnConnector` dans `backend/src/ketrika/connectors/mincc_ppn.py` (découverte paginée, parsing déterministe HTML/CSV, extraction LLM avec preuve pour textes narratifs, production de `PriceRecord` et `StockRecord`).
+  5. Enregistrer `mincc_ppn` dans `backend/src/ketrika/connectors/registry.py`.
+  6. Écrire les tests unitaires et le test golden dans `backend/tests/unit/test_mincc_ppn.py` (CC1, CC2 avec exactitude ≥ 99% sur ≥ 60 valeurs, validation ≥ 1 StockRecord sur ≥ 3 régions).
+  7. Écrire le test d'intégration cycle de vie dans `backend/tests/integration/test_mincc_ppn.py` (backfill 10 publications, insertion dans `obs.price_observation` et `obs.stock_observation`, idempotence, checks DQ CC4, rebuild offline stable CC6).
+  8. Mettre à jour la fiche descriptive `docs/sources/mincc_ppn.md` (statut `active`, description des formats et double couverture prix/stocks).
+  9. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
+  10. Mettre à jour PROGRESS.md et committer `feat(T4.2): mincc ppn price and stock connector`.
+
 
 
 
