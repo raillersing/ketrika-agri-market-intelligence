@@ -33,7 +33,7 @@
 | **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | **DONE** | CC1-CC6 validés (36 obs, golden 100%, cycle de révision 1 supersédé vérifié SQL, rebuild stable, check vert) |
 | **T4.4** | COULD | 4 | Connecteur Événements (PICM, FEWS NET) | T2.6 | TODO | — |
 | **T5.1** | MUST | 5 | Vues matérialisées Gold | T3.1–T3.5, T4.1–T4.3 | **DONE** | 12 vues Gold (Alembic 0002), tests SQL synthétiques 100%, arbitrage priorité validé, refresh topologique, rebuild ok |
-| **T5.2** | MUST | 5 | Indicateurs et KPI Gold | T5.1 | TODO | — |
+| **T5.2** | MUST | 5 | Indicateurs et KPI Gold | T5.1 | **DONE** | Formules SPECS §16, Market Health Score (0-100), règle coverage < 0.5 -> NULL validée, 6 tests passants |
 | **T5.3** | MUST | 5 | Cockpit Data Quality (DQ) | T5.1 | TODO | — |
 | **T6.1** | MUST | 6 | API FastAPI /v1 | T5.2 | TODO | — |
 | **T6.2** | MUST | 6 | Tests de charge et robustesse API | T6.1 | TODO | — |
@@ -592,9 +592,33 @@
   - **Test dédié d'arbitrage de priorité (`gold.price_monthly_best`) :** Validé dans `test_price_monthly_best_priority_order` prouvant le respect strict de l'ordre normatif :
     - Mois 2024-02 (ODR P0 observé, WFP P1 observé, WB P1 imputé) -> retient `miasa_odr` (P0 observé) ;
     - Mois 2024-03 (WFP P1 observé, WB P1 imputé) -> retient `wfp_hdx_mdg` (P1 observé > P1 imputé).
-  - **Rebuild offline :** `./scripts/dev.ps1 rebuild` validé sans erreur réseau avec rafraîchissement topologique des 12 vues Gold.
-  - `./scripts/dev.ps1 check` 100% vert (154 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
+### [2026-10-07T05:32:00Z] Démarrage de T5.2 : Indicateurs et KPI Gold
+- **Mini-plan T5.2 :**
+  1. Implémenter les formules normatives de SPECS §16 dans `backend/src/ketrika/gold/kpi.py` (variation m/m, 3m, 12m ; volatilité robuste MAD/médiane ; z-score robuste ; ratio de dépendance aux importations IDR).
+  2. Implémenter le Market Health Score (0-100) avec pondération dynamique des 4 composantes (stabilité 0.30, accessibilité 0.25, disponibilité 0.25, climat 0.20), calcul de coverage et renormalisation.
+  3. Gérer la règle stricte : coverage < 0.50 -> composite_score = NULL.
+  4. Écrire la suite de tests unitaires dans `backend/tests/unit/test_gold_kpi.py` avec valeurs calculées à la main (≥ 3 cas par KPI).
+  5. Écrire le test dédié vérifiant le comportement `coverage < 0.5 -> NULL`.
+  6. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
+  7. Mettre à jour PROGRESS.md et committer `feat(T5.2): gold kpi and market health score`.
+- **Validation acceptation :**
+  - **Formules normatives SPECS §16 implémentées dans `ketrika.gold.kpi` :**
+    - `calculate_variation` : variation relative $P_t / P_{t-k} - 1$ avec gestion des valeurs nulles/positives ;
+    - `calculate_robust_volatility` : volatilité robuste $\text{MAD} / \text{médiane}$ sur séries temporelles avec support optionnel des log-prix ;
+    - `calculate_robust_z_score` : z-score robuste $(P_t - \text{med}) / (1.4826 \times \text{MAD})$ ;
+    - `calculate_import_dependency_ratio` : ratio IDR $=\text{imports} / (\text{production} + \text{imports} - \text{exports})$ en tonnes.
+  - **Market Health Score (0-100) et composantes :**
+    - Stabilité des prix $S_p = 100 \times (1 - \min(\text{vol}_{12} / 0.30, 1))$ (poids 0.30) ;
+    - Accessibilité $A_f = 100 \times (1 - \min(\max(\text{chg}_{12}, 0) / 0.40, 1))$ (poids 0.25) ;
+    - Disponibilité $A_v$ : ordinal vers score (sufficient=100, tight=50, shortage=0) (poids 0.25) ;
+    - Risque climatique $R_c = 100 \times (1 - \min(\max(-\text{anom}, 0) / 0.50, 1))$ (poids 0.20) ;
+    - Renormalisation dynamique sur la somme des poids des composantes présentes ($\text{coverage}$).
+  - **Tests unitaires sur valeurs calculées à la main (≥ 3 cas par KPI) :** Validés dans `backend/tests/unit/test_gold_kpi.py` (6 tests unitaires passants) couvrant toutes les fourchettes, cas limites et distributions connues.
+  - **Règle stricte testée : $\text{coverage} < 0.5 \rightarrow \text{score NULL}$ :** Prouvée par tests dédiés avec composantes isolées (poids 0.30, 0.25, 0.20 < 0.50 produisant `composite_score is None`), et succès à coverage ≥ 0.50 (0.50 -> 80.0, 0.55 -> 77.27, 1.00 -> 74.00).
+  - `./scripts/dev.ps1 check` 100% vert (160 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
+  - `./scripts/dev.ps1 rebuild` 100% vert.
 - Statut : **DONE**.
+
 
 
 
