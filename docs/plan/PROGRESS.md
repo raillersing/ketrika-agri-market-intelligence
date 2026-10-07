@@ -35,7 +35,7 @@
 | **T5.1** | MUST | 5 | Vues matérialisées Gold | T3.1–T3.5, T4.1–T4.3 | **DONE** | 12 vues Gold (Alembic 0002), tests SQL synthétiques 100%, arbitrage priorité validé, refresh topologique, rebuild ok |
 | **T5.2** | MUST | 5 | Indicateurs et KPI Gold | T5.1 | **DONE** | Formules SPECS §16, Market Health Score (0-100), règle coverage < 0.5 -> NULL validée, 6 tests passants |
 | **T5.3** | MUST | 5 | Cockpit Data Quality (DQ) | T5.1 | **DONE** | gold.source_health (fraîcheur/SLA), checks asset ops.dq_result, alerte DATA_STALE et cycle open->resolved validés test e2e, rebuild stable |
-| **T6.1** | MUST | 6 | API FastAPI /v1 | T5.2 | TODO | — |
+| **T6.1** | MUST | 6 | API FastAPI /v1 | T5.2 | **DONE** | API REST v1 complète (13 routers, auth JWT/API key, RFC 7807, CSV, openapi.json, typage TS, provenance presigned Bronze, 3 tests d'intégration passants, check 100% vert) |
 | **T6.2** | MUST | 6 | Tests de charge et robustesse API | T6.1 | TODO | — |
 | **T7.1** | MUST | 7 | Fondations frontend Next.js | T6.1 | TODO | — |
 | **T7.2** | MUST | 7 | Pages et vues analytiques web | T7.1 | TODO | — |
@@ -649,6 +649,34 @@
   - **Dettes :** Aucune dette non tracée.
   - **Risques :** Aucun risque bloquant résiduel.
   - **Tag :** `phase-5-done`.
+
+### [2026-10-07T06:00:00Z] Démarrage de T6.1 : API FastAPI /v1
+- **Mini-plan T6.1 :**
+  1. Implémenter le module de sécurité et auth (`ketrika.api.auth`) : hash mots de passe argon2/bcrypt, tokens JWT en cookie/Bearer, clés `X-API-Key`, rôles admin/client, dépendances FastAPI.
+  2. Implémenter les gestionnaires d'erreurs normatifs RFC 7807 (`application/problem+json`) et la pagination cursor/limit (`ketrika.api.errors`, `ketrika.api.pagination`).
+  3. Définir les schémas Pydantic de réponse (`ketrika.api.schemas`) avec métadonnées obligatoires (`value_kind: observed|imputed|forecast|composite`, `sources`).
+  4. Implémenter les routers de ressources : `/v1/auth`, `/v1/products`, `/v1/locations` (avec option GeoJSON), `/v1/prices` (avec `format=csv`), `/v1/prices/latest`, `/v1/observations/{id}` (avec lien Bronze signé 15 min).
+  5. Implémenter les routers analytiques et ops : `/v1/stocks`, `/v1/trade`, `/v1/weather/anomalies`, `/v1/kpis/market-health`, `/v1/forecasts`, `/v1/alerts` (GET/PATCH), `/v1/bulletins`, `/v1/sources` (+ `/health`), `/v1/admin/review`, `/v1/admin/api-keys`.
+  6. Exporter le schéma OpenAPI mis à jour dans `web/src/lib/api/openapi.json`.
+  7. Écrire la suite de tests d'intégration `httpx` (`backend/tests/integration/test_api_v1.py`) couvrant chaque route (200, 401, 403, 422, lien Bronze signé, value_kind).
+  8. Valider `./scripts/dev.ps1 check` et committer `feat(T6.1): fastapi v1 api endpoints and auth`.
+- **Validation acceptation :**
+  - **API FastAPI /v1 complète selon SPECS §19 :**
+    - 13 routers modulaires dans `backend/src/ketrika/api/routers/` : `auth`, `products`, `locations`, `prices`, `stocks`, `trade`, `weather`, `kpis`, `forecasts`, `alerts`, `bulletins`, `sources`, `admin`, `copilot`.
+    - Authentification et sécurité (`ketrika.api.auth`) : Argon2id pour les mots de passe utilisateurs, tokens de session JWT sécurisés (cookie HttpOnly ou en-tête Bearer), clés d'API permanentes `ketrika_live_<32chars>` (`X-API-Key` ou Bearer) avec hachage sha256 en base (`auth.api_key`), gestion des rôles `admin` et `client`, initialisation automatique du compte `admin@ketrika.local` au démarrage.
+    - Gestion d'erreurs normatives RFC 7807 (`application/problem+json`) via `ketrika.api.errors` (`ProblemDetailException`, handlers 400, 401, 403, 404, 422, 500).
+    - Pagination limit/offset (limit ≤ 1000) et export CSV dynamique (`?format=csv` pour prix, stocks, flux douaniers).
+    - Métadonnée obligatoire `value_kind` (`observed`, `imputed`, `forecast`, `composite`) et tableau `sources` présents sur toutes les réponses de valeurs analytiques.
+    - Provenance complète sur `/v1/observations/{id}` : retour des champs `natural_key`, `evidence`, `source_url`, `parser_version` et d'une URL présignée Bronze S3 valide (expiration 15 minutes, générée via `BronzeStore.presign_get_url`).
+    - Schéma OpenAPI exporté vers `web/src/lib/api/openapi.json` et types TypeScript synchronisés et compilés sans erreur dans `web/src/lib/api/schema.d.ts` via `openapi-typescript`.
+  - **Suite de tests d'intégration (`backend/tests/integration/test_api_v1.py`) :**
+    - `test_api_auth_roles_and_status_codes` : login, cookie JWT, 401 sur requête non authentifiée, 403 sur endpoint admin avec rôle client, 422 sur payload invalide, création et utilisation de clé d'API admin, résolution d'élément de revue, approbation de bulletin, acquittement d'alerte.
+    - `test_api_public_and_analytical_endpoints_200` : vérification 200 OK sur toutes les routes publiques/analytiques (health, products, locations GeoJSON, prices JSON & CSV, prices/latest, stocks, trade, weather/anomalies, forecasts, sources, source health).
+    - `test_observation_provenance_and_presigned_bronze_url` : insertion d'un artefact Bronze et d'une observation, vérification de la présence de la preuve, de l'URL source, de la version du parser et de la validité de l'URL présignée MinIO.
+  - `./scripts/dev.ps1 check` : 100% vert (165 tests backend passants, 1 test web vitest passant, 0 erreur ruff check/format, 0 erreur mypy sur 123 fichiers).
+  - `./scripts/dev.ps1 rebuild` : 100% vert (rejeu offline de 12 vues Gold et 827 observations).
+- Statut : **DONE**.
+
 
 
 

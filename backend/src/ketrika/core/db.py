@@ -63,6 +63,16 @@ def transaction() -> Generator[Session, None, None]:
         yield session
 
 
+def get_db() -> Generator[Session, None, None]:
+    """FastAPI dependency yielding an open database session."""
+    factory = get_sessionmaker()
+    session = factory()
+    try:
+        yield session
+    finally:
+        session.close()
+
+
 def check_db_connection() -> bool:
     """Check connectivity to PostgreSQL."""
     try:
