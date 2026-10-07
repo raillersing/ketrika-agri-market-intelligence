@@ -19,18 +19,17 @@ WITH latest_run AS (
         ROW_NUMBER() OVER (PARTITION BY ir.source_id ORDER BY ir.started_at DESC) AS rn
     FROM meta.ingestion_run ir
 ),
-latest_records_30d AS (
+all_time_records AS (
     SELECT
         sr.source_id,
-        count(*)::integer AS n_records_30d,
         max(sr.fetched_at) AS last_fetched_at,
+        count(CASE WHEN sr.fetched_at >= (now() - interval '30 days') THEN 1 END)::integer AS n_records_30d,
         round(
             (count(CASE WHEN sr.extraction_status = 'parsed' THEN 1 END)::numeric /
             NULLIF(count(*), 0)::numeric)::numeric,
             4
         ) AS parse_success_rate
     FROM meta.source_record sr
-    WHERE sr.fetched_at >= (now() - interval '30 days')
     GROUP BY sr.source_id
 ),
 open_reviews AS (
@@ -51,20 +50,20 @@ SELECT
     lr.latest_run_status,
     lr.started_at AS last_run_started_at,
     lr.finished_at AS last_run_finished_at,
-    COALESCE(r30.n_records_30d, 0) AS n_records_30d,
-    r30.last_fetched_at,
-    EXTRACT(DAY FROM (now() - r30.last_fetched_at))::integer AS freshness_days,
+    COALESCE(atr.n_records_30d, 0) AS n_records_30d,
+    atr.last_fetched_at,
+    EXTRACT(DAY FROM (now() - atr.last_fetched_at))::integer AS freshness_days,
     CASE
-        WHEN s.spec->>'freshness_sla_days' IS NOT NULL AND r30.last_fetched_at IS NOT NULL
-        THEN (EXTRACT(DAY FROM (now() - r30.last_fetched_at)) > (s.spec->>'freshness_sla_days')::integer)
-        WHEN r30.last_fetched_at IS NULL THEN true
+        WHEN s.spec->>'freshness_sla_days' IS NOT NULL AND atr.last_fetched_at IS NOT NULL
+        THEN (EXTRACT(DAY FROM (now() - atr.last_fetched_at)) > (s.spec->>'freshness_sla_days')::integer)
+        WHEN atr.last_fetched_at IS NULL THEN true
         ELSE false
     END AS is_stale,
-    COALESCE(r30.parse_success_rate, 1.0) AS parse_success_rate,
+    COALESCE(atr.parse_success_rate, 1.0) AS parse_success_rate,
     COALESCE(rev.open_review_items, 0) AS open_review_items
 FROM meta.source s
 LEFT JOIN latest_run lr ON s.source_id = lr.source_id AND lr.rn = 1
-LEFT JOIN latest_records_30d r30 ON s.source_id = r30.source_id
+LEFT JOIN all_time_records atr ON s.source_id = atr.source_id
 LEFT JOIN open_reviews rev ON s.source_id = rev.source_id;
 
 CREATE INDEX idx_gold_source_health_source

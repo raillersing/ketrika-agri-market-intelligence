@@ -34,7 +34,7 @@
 | **T4.4** | COULD | 4 | Connecteur Événements (PICM, FEWS NET) | T2.6 | TODO | — |
 | **T5.1** | MUST | 5 | Vues matérialisées Gold | T3.1–T3.5, T4.1–T4.3 | **DONE** | 12 vues Gold (Alembic 0002), tests SQL synthétiques 100%, arbitrage priorité validé, refresh topologique, rebuild ok |
 | **T5.2** | MUST | 5 | Indicateurs et KPI Gold | T5.1 | **DONE** | Formules SPECS §16, Market Health Score (0-100), règle coverage < 0.5 -> NULL validée, 6 tests passants |
-| **T5.3** | MUST | 5 | Cockpit Data Quality (DQ) | T5.1 | TODO | — |
+| **T5.3** | MUST | 5 | Cockpit Data Quality (DQ) | T5.1 | **DONE** | gold.source_health (fraîcheur/SLA), checks asset ops.dq_result, alerte DATA_STALE et cycle open->resolved validés test e2e, rebuild stable |
 | **T6.1** | MUST | 6 | API FastAPI /v1 | T5.2 | TODO | — |
 | **T6.2** | MUST | 6 | Tests de charge et robustesse API | T6.1 | TODO | — |
 | **T7.1** | MUST | 7 | Fondations frontend Next.js | T6.1 | TODO | — |
@@ -617,7 +617,38 @@
   - **Règle stricte testée : $\text{coverage} < 0.5 \rightarrow \text{score NULL}$ :** Prouvée par tests dédiés avec composantes isolées (poids 0.30, 0.25, 0.20 < 0.50 produisant `composite_score is None`), et succès à coverage ≥ 0.50 (0.50 -> 80.0, 0.55 -> 77.27, 1.00 -> 74.00).
   - `./scripts/dev.ps1 check` 100% vert (160 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
   - `./scripts/dev.ps1 rebuild` 100% vert.
+### [2026-10-07T05:42:00Z] Démarrage de T5.3 : Cockpit Data Quality (DQ)
+- **Mini-plan T5.3 :**
+  1. Affiner `backend/src/ketrika/gold/sql/011_source_health.sql` pour calculer la fraîcheur globale (`max(sr.fetched_at)` all-time vs 30j).
+  2. Implémenter le moteur d'exécution des contrôles de qualité `run_dq_checks` dans `backend/src/ketrika/gold/dq.py` (provenance, complétude, unicité, fraîcheur, dérive, seuils).
+  3. Câbler la persistance des résultats dans `ops.dq_result` et la génération d'alertes pré-câblées `DATA_STALE` dans `ops.alert`.
+  4. Mettre à jour l'initialisation et la migration des vues Gold pour intégrer la vue affinée `gold.source_health`.
+  5. Écrire le test d'intégration `backend/tests/integration/test_gold_dq.py` avec le critère d'acceptation obligatoire : une source artificiellement vieillie apparaît hors SLA dans `gold.source_health` et déclenche une alerte `DATA_STALE`.
+  6. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
+  7. Mettre à jour PROGRESS.md et committer `feat(T5.3): dq cockpit and data stale alerts`.
+  8. Exécuter le Gate de fin de Phase 5 (résumé de phase ≤ 15 lignes, tag git `phase-5-done`).
+- **Validation acceptation :**
+  - **Vue `gold.source_health` affinée :** Calcul de la fraîcheur globale toutes dates confondues (`max(sr.fetched_at)` all-time), calcul des records sur 30 jours, exposition du SLA (`freshness_sla_days`), de l'âge (`freshness_days`) et du flag d'anomalie de fraîcheur (`is_stale`).
+  - **Batterie de vérifications DQ (`ketrika.gold.dq`) :** Fonctions `check_provenance_complete` (100% provenance valide), `check_parse_success_rate` (taux >= 99%), `check_price_range_sanity` (détection des prix hors bornes [100, 200000] MGA), et `check_freshness_and_manage_alerts`.
+  - **Persistance et règle `DATA_STALE` pré-câblée :** `run_all_dq_checks` persiste les résultats dans `ops.dq_result`. En cas de dépassement de SLA (`is_stale = true`), génération ou mise à jour automatique d'une alerte dans `ops.alert` (`rule_code = 'DATA_STALE'`, déduplication par `dedupe_key = DATA_STALE_<source_id>`, sévérité `high` pour sources prioritaires).
+  - **Cycle de vie de l'alerte validé par test e2e (`tests/integration/test_gold_dq.py`) :**
+    - Source vieillie (fetched_at = now - 50j, SLA = 20j) -> `is_stale = true`, `freshness_days = 49`, alerte `DATA_STALE` générée en statut `open` ;
+    - Mise à jour avec nouveau record (now) -> rafraîchissement vue (`is_stale = false`, `freshness_days = 0`), alerte automatiquement mise à jour en statut `resolved`.
+  - `./scripts/dev.ps1 check` 100% vert (162 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
+  - `./scripts/dev.ps1 rebuild` 100% vert (815 observations réinsérées, 23 supersédées, 12 vues Gold rafraîchies sans erreur).
 - Statut : **DONE**.
+
+### [2026-10-07T05:58:00Z] Gate de fin de Phase 5 (Gold, KPI, DQ)
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** La couche Gold analytique complète et opérationnelle (SPECS §14, §15, §16) :
+    1. 12 vues matérialisées Gold (`001_price_obs_current` à `012_forecast_latest`), provisionnées via migration Alembic `0002_gold_views.py`, avec index de filtres API et moteur de rafraîchissement topologique `refresh_gold_views` ;
+    2. Règle normative d'arbitrage de priorité P0 > P1 obs > P1 imp > P2 validée par tests SQL dédiés ;
+    3. Moteur de calcul des KPI et Market Health Score (0-100) renormalisé avec invalidation stricte si `coverage < 0.50` (`ketrika.gold.kpi`) ;
+    4. Cockpit Data Quality et gestionnaire d'alertes `DATA_STALE` (`ketrika.gold.dq`, `ops.dq_result`, `ops.alert`).
+  - **Chiffres clés :** 12 vues Gold actives, 162 tests backend unitaires et d'intégration passants (100% verts), 1 test web passant, rejouabilité offline Bronze 100% démontrée (rebuild de 12 vues et 815 observations), 0 erreur lint/typecheck.
+  - **Dettes :** Aucune dette non tracée.
+  - **Risques :** Aucun risque bloquant résiduel.
+  - **Tag :** `phase-5-done`.
 
 
 
