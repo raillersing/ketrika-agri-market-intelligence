@@ -1,0 +1,54 @@
+{
+  "cache_key": "22b627de5e4a07b9754e3b3b7c46d7defcb0af53f8ca1ace14a894016ba71bae",
+  "data": {
+    "prices": [
+      {
+        "product_raw": "Farine de blé",
+        "location_raw": "Atsinanana",
+        "actor_level": "wholesale",
+        "price_raw": "3 550",
+        "price_value": 3550.0,
+        "unit_raw": "kg",
+        "currency_raw": "MGA",
+        "evidence_text": "Le prix de gros officiel s'établit à 3 550 Ar/kg"
+      },
+      {
+        "product_raw": "Riz blanc importé",
+        "location_raw": "Atsinanana",
+        "actor_level": "retail",
+        "price_raw": "2 680",
+        "price_value": 2680.0,
+        "unit_raw": "kg",
+        "currency_raw": "MGA",
+        "evidence_text": "pour le riz blanc importé (25% brisures), le prix au détail est de 2 680 Ar/kg"
+      }
+    ],
+    "stocks": [
+      {
+        "product_raw": "Farine de blé",
+        "location_raw": "Atsinanana",
+        "quantity_raw": "1 450 tonnes",
+        "quantity_value": 1450.0,
+        "unit_raw": "tonne",
+        "stock_status": "sufficient",
+        "coverage_days": 42.0,
+        "evidence_text": "stock de farine de blé en magasin s'élève à 1 450 tonnes (couverture estimée à 42 jours, situation normale)"
+      },
+      {
+        "product_raw": "Riz blanc importé",
+        "location_raw": "Atsinanana",
+        "quantity_raw": "5 200 tonnes",
+        "quantity_value": 5200.0,
+        "unit_raw": "tonne",
+        "stock_status": "sufficient",
+        "coverage_days": 100.0,
+        "evidence_text": "stocks disponibles dans les silos portuaires s'élèvent à 5 200 tonnes, assurant 100 jours de couverture"
+      }
+    ]
+  },
+  "usage": {
+    "input_tokens": 420,
+    "output_tokens": 150,
+    "cost_usd": 0.00012
+  }
+}

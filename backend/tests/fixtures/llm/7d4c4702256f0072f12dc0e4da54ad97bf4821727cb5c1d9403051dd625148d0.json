@@ -1,0 +1,54 @@
+{
+  "cache_key": "7d4c4702256f0072f12dc0e4da54ad97bf4821727cb5c1d9403051dd625148d0",
+  "data": {
+    "prices": [
+      {
+        "product_raw": "Riz blanc local",
+        "location_raw": "Vakinankaratra",
+        "actor_level": "retail",
+        "price_raw": "2 750",
+        "price_value": 2750.0,
+        "unit_raw": "kg",
+        "currency_raw": "MGA",
+        "evidence_text": "vary gasy fotsy (riz blanc local) dia amidy 2 750 Ar ny kilao amin'ny antsinjarany"
+      },
+      {
+        "product_raw": "Farine de blé",
+        "location_raw": "Vakinankaratra",
+        "actor_level": "retail",
+        "price_raw": "3 800",
+        "price_value": 3800.0,
+        "unit_raw": "kg",
+        "currency_raw": "MGA",
+        "evidence_text": "lafarinina varimbazaha (farine de blé) kosa dia mitentina 3 800 Ar ny kilao amin'ny antsinjarany"
+      }
+    ],
+    "stocks": [
+      {
+        "product_raw": "Riz blanc local",
+        "location_raw": "Vakinankaratra",
+        "quantity_raw": "2 900 tonnes",
+        "quantity_value": 2900.0,
+        "unit_raw": "tonne",
+        "stock_status": "sufficient",
+        "coverage_days": 70.0,
+        "evidence_text": "tahiry ao an-toerana dia 2 900 taona (tonnes), ampy ho an'ny 70 andro"
+      },
+      {
+        "product_raw": "Farine de blé",
+        "location_raw": "Vakinankaratra",
+        "quantity_raw": "680 tonnes",
+        "quantity_value": 680.0,
+        "unit_raw": "tonne",
+        "stock_status": "sufficient",
+        "coverage_days": 30.0,
+        "evidence_text": "tahiry voarakitra dia 680 taona (tonnes), ampy ho an'ny 30 andro"
+      }
+    ]
+  },
+  "usage": {
+    "input_tokens": 420,
+    "output_tokens": 150,
+    "cost_usd": 0.00012
+  }
+}

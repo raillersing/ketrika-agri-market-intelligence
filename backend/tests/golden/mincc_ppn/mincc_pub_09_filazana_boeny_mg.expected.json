@@ -1,0 +1,63 @@
+{
+  "doc_id": "mincc_pub_09_filazana_boeny_mg",
+  "source_id": "mincc_ppn",
+  "region": "Boeny",
+  "published_at": "2024-02-17T08:00:00Z",
+  "period_start": "2024-02-08",
+  "period_end": "2024-02-15",
+  "records_count": 4,
+  "prices_count": 2,
+  "stocks_count": 2,
+  "records": [
+    {
+      "record_type": "price",
+      "product_raw": "Sucre blanc",
+      "actor_level": "retail",
+      "location_raw": "Boeny",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "price_raw": "4 350",
+      "price_value": 4350.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Huile alimentaire vrac",
+      "actor_level": "retail",
+      "location_raw": "Boeny",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "price_raw": "7 650",
+      "price_value": 7650.0,
+      "unit_raw": "litre",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Sucre blanc",
+      "location_raw": "Boeny",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "quantity_raw": "580 tonnes",
+      "quantity_value": 580.0,
+      "unit_raw": "tonne",
+      "stock_status": "tight",
+      "coverage_days": 18.0
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Huile alimentaire vrac",
+      "location_raw": "Boeny",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "quantity_raw": "390 tonnes",
+      "quantity_value": 390.0,
+      "unit_raw": "tonne",
+      "stock_status": "tight",
+      "coverage_days": 16.0
+    }
+  ]
+}

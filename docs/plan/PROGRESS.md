@@ -29,7 +29,7 @@
 | **T3.4** | MUST | 3 | Connecteur NASA POWER Climat | T2.6, T1.4 | **DONE** | CC1, CC3-CC6 validés (108 obs, 100% districts couverts, cohérence physique prouvée, rebuild stable, dev.ps1 check vert) |
 | **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | **DONE** | CC1-CC6 validés (189 obs, en-têtes dynamiques XLSX/CSV, série alimentation sur 5,25 ans, rebuild stable, check vert) |
 | **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | **DONE** | b0b0842 (CC1-CC6 validés, 180 obs, 3 bulletins, golden 100%, 0 ND/NA converti en 0, rebuild stable, check vert) |
-| **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | **IN_PROGRESS** | En cours d'implémentation |
+| **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | **DONE** | CC1-CC6 validés (64 obs, 10 pubs, golden 100%, 6 régions stocks, rebuild stable, check vert) |
 | **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | TODO | — |
 | **T4.4** | COULD | 4 | Connecteur Événements (PICM, FEWS NET) | T2.6 | TODO | — |
 | **T5.1** | MUST | 5 | Vues matérialisées Gold | T3.1–T3.5, T4.1–T4.3 | TODO | — |
@@ -514,6 +514,19 @@
   8. Mettre à jour la fiche descriptive `docs/sources/mincc_ppn.md` (statut `active`, description des formats et double couverture prix/stocks).
   9. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
   10. Mettre à jour PROGRESS.md et committer `feat(T4.2): mincc ppn price and stock connector`.
+- **Validation acceptation :**
+  - **CC1 (Unit tests) :** Découverte de 10 publications régionales opérationnelle. Parsing déterministe validé sur 6 tables HTML (`mincc_pub_01` à `06`, 48 records au total : 24 prix + 24 stocks). Extraction LLM validée sur 4 communiqués textuels narratifs bilingues en français et malgache (`mincc_pub_07` à `10`, 16 records au total : 8 prix + 8 stocks) avec vérification mécanique obligatoire de preuve textuelle (`verify_evidence`).
+  - **CC2 (Golden tests) :** Validés sur l'ensemble des 10 golden sets sous `tests/golden/mincc_ppn/` (64 observations de référence annotées ≥ 60) : exactitude = 100% (≥ 99%) et rappel = 100% (≥ 98%).
+  - **CC3 (Backfill & Silver loading) :** Intégration complète via `execute_connector_pipeline` insérant 64 observations actives dans Silver (32 dans `obs.price_observation` et 32 dans `obs.stock_observation`). Idempotence validée (seconde exécution : 0 inséré, 64 ignorés).
+  - **CC4 (DQ checks & Règle stricte régionale) :**
+    - `provenance_complete` : 100% des observations ont un `source_record_id` Bronze valide ;
+    - `price_range_sanity` : prix PPN entre 1 000 et 10 000 MGA (sucre, huile, farine, riz) ;
+    - `stock_sanity` : quantités positives, statuts ordinaux conformes (`sufficient`, `tight`, `shortage`) et `coverage_days` renseignés ;
+    - **Règle absolue T4.2 (≥ 1 StockRecord pour ≥ 3 régions) :** Validée par requête SQL directe sur `obs.stock_observation` démontrant la présence de stocks sur 6 régions distinctes (Analamanga, Atsinanana, Boeny, Vakinankaratra, Atsimo-Andrefana, Diana ≥ 3).
+  - **CC5 (Documentation) :** Fiche descriptive `docs/sources/mincc_ppn.md` mise à jour avec statut `active`, description des formats tabulaires/textuels bilingues et mapping Silver.
+  - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='mincc_ppn')`), comptes d'observations strictement préservés (32 prix et 32 stocks). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès sur l'ensemble de la base.
+  - `./scripts/dev.ps1 check` 100% vert (147 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
+- Statut : **DONE**.
 
 
 

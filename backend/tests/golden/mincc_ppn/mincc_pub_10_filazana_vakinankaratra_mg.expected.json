@@ -1,0 +1,63 @@
+{
+  "doc_id": "mincc_pub_10_filazana_vakinankaratra_mg",
+  "source_id": "mincc_ppn",
+  "region": "Vakinankaratra",
+  "published_at": "2024-02-18T08:00:00Z",
+  "period_start": "2024-02-08",
+  "period_end": "2024-02-15",
+  "records_count": 4,
+  "prices_count": 2,
+  "stocks_count": 2,
+  "records": [
+    {
+      "record_type": "price",
+      "product_raw": "Riz blanc local",
+      "actor_level": "retail",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "price_raw": "2 750",
+      "price_value": 2750.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Farine de blé",
+      "actor_level": "retail",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "price_raw": "3 800",
+      "price_value": 3800.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Riz blanc local",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "quantity_raw": "2 900 tonnes",
+      "quantity_value": 2900.0,
+      "unit_raw": "tonne",
+      "stock_status": "sufficient",
+      "coverage_days": 70.0
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Farine de blé",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "quantity_raw": "680 tonnes",
+      "quantity_value": 680.0,
+      "unit_raw": "tonne",
+      "stock_status": "sufficient",
+      "coverage_days": 30.0
+    }
+  ]
+}

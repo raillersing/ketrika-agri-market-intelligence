@@ -1,0 +1,54 @@
+{
+  "cache_key": "05fb78f4ab8e6e67bbc76d2d3bc51f0d1c3c692062e6b21f958c4fb783945ceb",
+  "data": {
+    "prices": [
+      {
+        "product_raw": "Sucre blanc",
+        "location_raw": "Analamanga",
+        "actor_level": "retail",
+        "price_raw": "4 250",
+        "price_value": 4250.0,
+        "unit_raw": "kg",
+        "currency_raw": "MGA",
+        "evidence_text": "cours moyen au détail constaté sur les principaux marchés d'Antananarivo s'établit à 4 250 Ar/kg"
+      },
+      {
+        "product_raw": "Huile alimentaire vrac",
+        "location_raw": "Analamanga",
+        "actor_level": "retail",
+        "price_raw": "7 450",
+        "price_value": 7450.0,
+        "unit_raw": "litre",
+        "currency_raw": "MGA",
+        "evidence_text": "Pour l'huile alimentaire en vrac, le prix au détail est surveillé à 7 450 Ar/L"
+      }
+    ],
+    "stocks": [
+      {
+        "product_raw": "Sucre blanc",
+        "location_raw": "Analamanga",
+        "quantity_raw": "1 350 tonnes",
+        "quantity_value": 1350.0,
+        "unit_raw": "tonne",
+        "stock_status": "sufficient",
+        "coverage_days": 48.0,
+        "evidence_text": "volume global de 1 350 tonnes, garantissant une couverture de 48 jours d'approvisionnement normal"
+      },
+      {
+        "product_raw": "Huile alimentaire vrac",
+        "location_raw": "Analamanga",
+        "quantity_raw": "920 tonnes",
+        "quantity_value": 920.0,
+        "unit_raw": "tonne",
+        "stock_status": "sufficient",
+        "coverage_days": 28.0,
+        "evidence_text": "niveau des stocks disponibles atteint 920 tonnes, ce qui correspond à une durée de couverture estimée à 28 jours"
+      }
+    ]
+  },
+  "usage": {
+    "input_tokens": 420,
+    "output_tokens": 150,
+    "cost_usd": 0.00012
+  }
+}

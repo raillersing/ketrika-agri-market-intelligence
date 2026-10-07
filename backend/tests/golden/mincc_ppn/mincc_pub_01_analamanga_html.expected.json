@@ -1,0 +1,113 @@
+{
+  "doc_id": "mincc_pub_01_analamanga_html",
+  "source_id": "mincc_ppn",
+  "region": "Analamanga",
+  "published_at": "2024-02-05T08:00:00Z",
+  "period_start": "2024-02-01",
+  "period_end": "2024-02-07",
+  "records_count": 8,
+  "prices_count": 4,
+  "stocks_count": 4,
+  "records": [
+    {
+      "record_type": "price",
+      "product_raw": "Sucre blanc",
+      "actor_level": "retail",
+      "location_raw": "Analamanga",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "4 200",
+      "price_value": 4200.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Sucre blanc",
+      "location_raw": "Analamanga",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "1 200 tonnes",
+      "quantity_value": 1200.0,
+      "unit_raw": "tonne",
+      "stock_status": "sufficient",
+      "coverage_days": 45.0
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Huile alimentaire vrac",
+      "actor_level": "retail",
+      "location_raw": "Analamanga",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "7 500",
+      "price_value": 7500.0,
+      "unit_raw": "litre",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Huile alimentaire vrac",
+      "location_raw": "Analamanga",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "850 tonnes",
+      "quantity_value": 850.0,
+      "unit_raw": "tonne",
+      "stock_status": "tight",
+      "coverage_days": 25.0
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Farine de blé",
+      "actor_level": "wholesale",
+      "location_raw": "Analamanga",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "3 600",
+      "price_value": 3600.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Farine de blé",
+      "location_raw": "Analamanga",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "1 100 tonnes",
+      "quantity_value": 1100.0,
+      "unit_raw": "tonne",
+      "stock_status": "sufficient",
+      "coverage_days": 35.0
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Riz blanc local",
+      "actor_level": "retail",
+      "location_raw": "Analamanga",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "2 800",
+      "price_value": 2800.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Riz blanc local",
+      "location_raw": "Analamanga",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "2 400 tonnes",
+      "quantity_value": 2400.0,
+      "unit_raw": "tonne",
+      "stock_status": "sufficient",
+      "coverage_days": 60.0
+    }
+  ]
+}

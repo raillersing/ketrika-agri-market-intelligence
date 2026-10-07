@@ -1,0 +1,54 @@
+{
+  "cache_key": "cfa4f169d8f474bea0fb1cabba293c0531483e7eb06e32ddee769f96f4d1f28c",
+  "data": {
+    "prices": [
+      {
+        "product_raw": "Sucre blanc",
+        "location_raw": "Boeny",
+        "actor_level": "retail",
+        "price_raw": "4 350",
+        "price_value": 4350.0,
+        "unit_raw": "kg",
+        "currency_raw": "MGA",
+        "evidence_text": "vidiny antsinjarany ara-dalàna eny an-tsena dia 4 350 Ar isaky ny kilao"
+      },
+      {
+        "product_raw": "Huile alimentaire vrac",
+        "location_raw": "Boeny",
+        "actor_level": "retail",
+        "price_raw": "7 650",
+        "price_value": 7650.0,
+        "unit_raw": "litre",
+        "currency_raw": "MGA",
+        "evidence_text": "Ho an'ny menaka fihinana vrac (huile alimentaire), ny vidiny antsinjarany dia 7 650 Ar isaky ny litatra"
+      }
+    ],
+    "stocks": [
+      {
+        "product_raw": "Sucre blanc",
+        "location_raw": "Boeny",
+        "quantity_raw": "580 tonnes",
+        "quantity_value": 580.0,
+        "unit_raw": "tonne",
+        "stock_status": "tight",
+        "coverage_days": 18.0,
+        "evidence_text": "tahiry voaangona any amin'ny tranom-barotra lehibe dia mahatratra 580 taona (tonnes), ampy ho an'ny 18 andro"
+      },
+      {
+        "product_raw": "Huile alimentaire vrac",
+        "location_raw": "Boeny",
+        "quantity_raw": "390 tonnes",
+        "quantity_value": 390.0,
+        "unit_raw": "tonne",
+        "stock_status": "tight",
+        "coverage_days": 16.0,
+        "evidence_text": "tahiry misy kosa dia 390 taona (tonnes), ampy ho an'ny 16 andro, ka mampiseho fahasahiranana"
+      }
+    ]
+  },
+  "usage": {
+    "input_tokens": 420,
+    "output_tokens": 150,
+    "cost_usd": 0.00012
+  }
+}

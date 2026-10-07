@@ -1,0 +1,113 @@
+{
+  "doc_id": "mincc_pub_04_vakinankaratra_html",
+  "source_id": "mincc_ppn",
+  "region": "Vakinankaratra",
+  "published_at": "2024-02-08T08:00:00Z",
+  "period_start": "2024-02-01",
+  "period_end": "2024-02-07",
+  "records_count": 8,
+  "prices_count": 4,
+  "stocks_count": 4,
+  "records": [
+    {
+      "record_type": "price",
+      "product_raw": "Sucre blanc",
+      "actor_level": "retail",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "4 250",
+      "price_value": 4250.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Sucre blanc",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "800 tonnes",
+      "quantity_value": 800.0,
+      "unit_raw": "tonne",
+      "stock_status": "sufficient",
+      "coverage_days": 30.0
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Huile alimentaire vrac",
+      "actor_level": "wholesale",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "7 200",
+      "price_value": 7200.0,
+      "unit_raw": "litre",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Huile alimentaire vrac",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "600 tonnes",
+      "quantity_value": 600.0,
+      "unit_raw": "tonne",
+      "stock_status": "tight",
+      "coverage_days": 22.0
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Farine de blé",
+      "actor_level": "retail",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "3 850",
+      "price_value": 3850.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Farine de blé",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "720 tonnes",
+      "quantity_value": 720.0,
+      "unit_raw": "tonne",
+      "stock_status": "sufficient",
+      "coverage_days": 32.0
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Riz blanc local",
+      "actor_level": "wholesale",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "2 650",
+      "price_value": 2650.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Riz blanc local",
+      "location_raw": "Vakinankaratra",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "3 100 tonnes",
+      "quantity_value": 3100.0,
+      "unit_raw": "tonne",
+      "stock_status": "sufficient",
+      "coverage_days": 75.0
+    }
+  ]
+}

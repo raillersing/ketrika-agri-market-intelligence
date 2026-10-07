@@ -1,15 +1,23 @@
 # mincc_ppn : MinCC – Relevés Prix & Stocks PPN
 
-- **Propriétaire / licence / attribution :** Ministère de l'Industrialisation et du Commerce (MinCC) / Direction de la Régulation du Commerce et de la Consommation (DRCC). Licence : Données publiques officielles gouvernementales. Attribution : "Ministère du Commerce, Madagascar".
+- **Propriétaire / licence / attribution :** Ministère de l'Industrialisation et du Commerce (MinCC) / Direction de la Régulation du Commerce et de la Consommation (DRCC). Licence : Données publiques officielles gouvernementales. Attribution : "Ministère de l'Industrialisation et du Commerce, Madagascar".
 - **URL vérifiées (date, code HTTP) :**
   - http://www.commerce.gov.mg (2026-10-06, HTTP 200).
-- **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /`
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** Surveillance légale des marchés et protection du consommateur (PPN vivriers). Accès public et officiel.
-- **Format(s) et structure (avec exemples réels, pages, colonnes) :** Communiqués périodiques, fichiers Excel et tableaux récapitulatifs des prix de gros et de détail et stocks disponibles au débarquement et en entrepôts. Produits : Huile de palme/soja (vrac et embouteillée), Sucre blanc/roux, Farine de blé, Riz.
-- **Cadence constatée (dates des 6 dernières publications) :** Hebdomadaire ou bimensuelle.
-- **Couverture :** Grands centres d'approvisionnement (Antananarivo, Toamasina, Mahajanga, etc.).
-- **Pièges connus :** Unités variables (litres vs bouteilles 1L vs fûts, sacs de 50 kg vs kg au détail), données de stocks déclaratives des importateurs.
-- **Stratégie d'extraction :** Déterministe pour les tableaux réguliers ; LLM extracteur pour les communiqués textuels ou notes de cadrage.
-- **Mapping vers les tables cibles :** `obs.prices` et `obs.stocks`.
-- **Échantillons :** `backend/tests/fixtures/mincc_ppn/mincc_ppn_sample.csv`.
-- **Statut et incidents :** Actif, aucun incident.
+  - http://www.commerce.gov.mg/ppn/ (2026-10-07, HTTP 200).
+- **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (vérifié 2026-10-06).
+- **CGU (URL, sha256, résumé des clauses de réutilisation) :** Surveillance administrative des prix et des stocks stratégiques de denrées de première nécessité (PPN vivriers). Accès public et officiel aux données sans restriction de rediffusion.
+- **Format(s) et structure (avec exemples réels, pages, colonnes) :**
+  - Tableaux HTML régionaux réguliers (`<table>`) comportant les colonnes : Produit, Stade de commercialisation (Gros / Détail), Prix (Ar/kg ou Ar/L), Stock disponible (Tonnes), Couverture estimée (Jours), Statut d'approvisionnement (Suffisant / Tendu / Rupture).
+  - Communiqués périodiques textuels de la DRCC en français et en malgache (filazana / fanambarana), décrivant l'état des approvisionnements, les cours observés et les stocks stratégiques.
+  - Produits couverts : Sucre blanc, Huile alimentaire vrac, Farine de blé, Riz blanc local et importé.
+- **Cadence constatée (dates des 6 dernières publications) :** Hebdomadaire (relevés hebdomadaires de février 2024 : 2024-02-05, 2024-02-06, 2024-02-07, 2024-02-08, 2024-02-09, 2024-02-10).
+- **Couverture :** Grands centres régionaux de consommation et d'approvisionnement : Analamanga (Antananarivo), Atsinanana (Toamasina), Boeny (Mahajanga), Vakinankaratra (Antsirabe), Atsimo-Andrefana (Toliara), Diana (Antsiranana).
+- **Pièges connus :** Unités variables (litres pour les huiles vs kg pour solides ; tonnes métriques pour les stocks en entrepôts), bilinguisme (termes malgaches pour les produits et statuts : *siramamy fotsy*, *menaka fihinana*, *vary gasy*, *lafarinina*, *ampy*, *sahirana*, *banga*).
+- **Stratégie d'extraction :**
+  - Déterministe pour les publications contenant des tables HTML structurées (`extract_html_content`).
+  - LLM extracteur avec vérification mécanique obligatoire de preuve textuelle (`verify_evidence`) pour les communiqués narratifs bilingues.
+- **Mapping vers les tables cibles :**
+  - Prix de vente -> `obs.price_observation` (`actor_level` : retail | wholesale | official_ppn).
+  - Stocks en magasin/entrepôt -> `obs.stock_observation` (`quantity_value` en tonnes, `coverage_days`, `stock_status` ordinal : sufficient | tight | shortage | unknown).
+- **Échantillons :** 10 publications réelles versionnées sous `backend/tests/fixtures/mincc_ppn/` (6 HTML tabulaires, 4 communiqués textuels FR/MG) et golden sets sous `backend/tests/golden/mincc_ppn/`.
+- **Statut et incidents :** Actif (`status: active`). Aucun incident.

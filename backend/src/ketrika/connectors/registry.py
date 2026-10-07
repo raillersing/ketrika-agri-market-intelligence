@@ -9,6 +9,7 @@ from ketrika.connectors.dummy_csv import DummyCsvConnector
 from ketrika.connectors.faostat import FaostatConnector
 from ketrika.connectors.instat_nipc import InstatNipcConnector
 from ketrika.connectors.miasa_odr import MiasaOdrConnector
+from ketrika.connectors.mincc_ppn import MinccPpnConnector
 from ketrika.connectors.nasa_power import NasaPowerConnector
 from ketrika.connectors.wb_rtfp_mdg import WbRtfpMdgConnector
 from ketrika.connectors.wfp_hdx_mdg import WfpHdxMdgConnector
@@ -26,6 +27,7 @@ _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "nasa_power": NasaPowerConnector,
     "instat_nipc": InstatNipcConnector,
     "miasa_odr": MiasaOdrConnector,
+    "mincc_ppn": MinccPpnConnector,
 }
 
 

@@ -1,0 +1,113 @@
+{
+  "doc_id": "mincc_pub_05_atsimo_andrefana_html",
+  "source_id": "mincc_ppn",
+  "region": "Atsimo-Andrefana",
+  "published_at": "2024-02-09T08:00:00Z",
+  "period_start": "2024-02-01",
+  "period_end": "2024-02-07",
+  "records_count": 8,
+  "prices_count": 4,
+  "stocks_count": 4,
+  "records": [
+    {
+      "record_type": "price",
+      "product_raw": "Sucre blanc",
+      "actor_level": "retail",
+      "location_raw": "Atsimo-Andrefana",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "4 400",
+      "price_value": 4400.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Sucre blanc",
+      "location_raw": "Atsimo-Andrefana",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "350 tonnes",
+      "quantity_value": 350.0,
+      "unit_raw": "tonne",
+      "stock_status": "tight",
+      "coverage_days": 12.0
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Huile alimentaire vrac",
+      "actor_level": "retail",
+      "location_raw": "Atsimo-Andrefana",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "7 800",
+      "price_value": 7800.0,
+      "unit_raw": "litre",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Huile alimentaire vrac",
+      "location_raw": "Atsimo-Andrefana",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "280 tonnes",
+      "quantity_value": 280.0,
+      "unit_raw": "tonne",
+      "stock_status": "shortage",
+      "coverage_days": 10.0
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Farine de blé",
+      "actor_level": "wholesale",
+      "location_raw": "Atsimo-Andrefana",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "3 900",
+      "price_value": 3900.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Farine de blé",
+      "location_raw": "Atsimo-Andrefana",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "410 tonnes",
+      "quantity_value": 410.0,
+      "unit_raw": "tonne",
+      "stock_status": "tight",
+      "coverage_days": 15.0
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Riz blanc local",
+      "actor_level": "retail",
+      "location_raw": "Atsimo-Andrefana",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "price_raw": "3 100",
+      "price_value": 3100.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Riz blanc local",
+      "location_raw": "Atsimo-Andrefana",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-07",
+      "quantity_raw": "950 tonnes",
+      "quantity_value": 950.0,
+      "unit_raw": "tonne",
+      "stock_status": "tight",
+      "coverage_days": 25.0
+    }
+  ]
+}

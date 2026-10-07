@@ -1,0 +1,63 @@
+{
+  "doc_id": "mincc_pub_08_communique_atsinanana_fr",
+  "source_id": "mincc_ppn",
+  "region": "Atsinanana",
+  "published_at": "2024-02-16T08:00:00Z",
+  "period_start": "2024-02-08",
+  "period_end": "2024-02-15",
+  "records_count": 4,
+  "prices_count": 2,
+  "stocks_count": 2,
+  "records": [
+    {
+      "record_type": "price",
+      "product_raw": "Farine de blé",
+      "actor_level": "wholesale",
+      "location_raw": "Atsinanana",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "price_raw": "3 550",
+      "price_value": 3550.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "price",
+      "product_raw": "Riz blanc importé",
+      "actor_level": "retail",
+      "location_raw": "Atsinanana",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "price_raw": "2 680",
+      "price_value": 2680.0,
+      "unit_raw": "kg",
+      "currency_raw": "MGA",
+      "observed_or_imputed": "observed"
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Farine de blé",
+      "location_raw": "Atsinanana",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "quantity_raw": "1 450 tonnes",
+      "quantity_value": 1450.0,
+      "unit_raw": "tonne",
+      "stock_status": "sufficient",
+      "coverage_days": 42.0
+    },
+    {
+      "record_type": "stock",
+      "product_raw": "Riz blanc importé",
+      "location_raw": "Atsinanana",
+      "period_start": "2024-02-08",
+      "period_end": "2024-02-15",
+      "quantity_raw": "5 200 tonnes",
+      "quantity_value": 5200.0,
+      "unit_raw": "tonne",
+      "stock_status": "sufficient",
+      "coverage_days": 100.0
+    }
+  ]
+}
