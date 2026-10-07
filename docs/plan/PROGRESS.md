@@ -30,7 +30,7 @@
 | **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | **DONE** | CC1-CC6 validés (189 obs, en-têtes dynamiques XLSX/CSV, série alimentation sur 5,25 ans, rebuild stable, check vert) |
 | **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | **DONE** | b0b0842 (CC1-CC6 validés, 180 obs, 3 bulletins, golden 100%, 0 ND/NA converti en 0, rebuild stable, check vert) |
 | **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | **DONE** | 80c46fc (CC1-CC6 validés, 64 obs, 10 pubs, golden 100%, 6 régions stocks, rebuild stable, check vert) |
-| **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | TODO | — |
+| **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | **IN_PROGRESS** | En cours d'implémentation |
 | **T4.4** | COULD | 4 | Connecteur Événements (PICM, FEWS NET) | T2.6 | TODO | — |
 | **T5.1** | MUST | 5 | Vues matérialisées Gold | T3.1–T3.5, T4.1–T4.3 | TODO | — |
 | **T5.2** | MUST | 5 | Indicateurs et KPI Gold | T5.1 | TODO | — |
@@ -527,6 +527,20 @@
   - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='mincc_ppn')`), comptes d'observations strictement préservés (32 prix et 32 stocks). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès sur l'ensemble de la base.
   - `./scripts/dev.ps1 check` 100% vert (147 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
 - Statut : **DONE**.
+
+### [2026-10-07T04:55:00Z] Démarrage de T4.3 : Connecteur Douanes Statistiques
+- **Mini-plan T4.3 :**
+  1. Préparer les fixtures CSV douanières : jeu principal mensuel multi-produits (`douanes_stats_2024.csv`, ≥ 36 flux imports/exports PPN) et paire de snapshots de révision (`douanes_snapshot_v1.csv` et `douanes_snapshot_v2.csv` avec 1 flux révisé).
+  2. Établir le golden dataset attendu dans `backend/tests/golden/douanes_stats/douanes_stats_2024.expected.json` (≥ 30 valeurs vérifiées de référence CC2).
+  3. Implémenter `DouanesStatsConnector` dans `backend/src/ketrika/connectors/douanes_stats.py` (ingestion déterministe CSV/XLSX des flux d'import et export, extraction des codes SH6/SH8, pays partenaires, poids net et valeur CAF/FOB en MGA, dérivation des dates de début/fin de mois).
+  4. Enregistrer `douanes_stats` dans `backend/src/ketrika/connectors/registry.py`.
+  5. Écrire les tests unitaires et le golden test dans `backend/tests/unit/test_douanes_stats.py` (CC1, CC2 avec exactitude ≥ 99% et rappel ≥ 98%).
+  6. Écrire le test d'intégration cycle de vie dans `backend/tests/integration/test_douanes_stats.py` (backfill dans `obs.trade_flow`, idempotence, checks DQ CC4, test de révision prouvant 1 `superseded_by` et valeur courante mise à jour, rebuild offline stable CC6).
+  7. Mettre à jour la fiche descriptive `docs/sources/douanes_stats.md` (statut `active`, description des flux et gestion de la supersession).
+  8. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
+  9. Mettre à jour PROGRESS.md et committer `feat(T4.3): douanes stats connector`.
+  10. Exécuter le Gate de fin de Phase 4 (rebuild complet, résumé de phase ≤ 15 lignes, tag git `phase-4-done`).
+
 
 
 
