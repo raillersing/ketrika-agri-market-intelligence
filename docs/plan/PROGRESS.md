@@ -37,7 +37,7 @@
 | **T5.3** | MUST | 5 | Cockpit Data Quality (DQ) | T5.1 | **DONE** | gold.source_health (fraîcheur/SLA), checks asset ops.dq_result, alerte DATA_STALE et cycle open->resolved validés test e2e, rebuild stable |
 | **T6.1** | MUST | 6 | API FastAPI /v1 | T5.2 | **DONE** | API REST v1 complète (13 routers, auth JWT/API key, RFC 7807, CSV, openapi.json, typage TS, provenance presigned Bronze, 3 tests d'intégration passants, check 100% vert) |
 | **T6.2** | MUST | 6 | Tests de charge et robustesse API | T6.1 | **DONE** | Rate limiter in-memory (60 req/min, 61e -> 429 RFC 7807), benchmarks ≥200 reqs/endpoint agrégé (P95 < 25ms << 1s), check 100% vert |
-| **T7.1** | MUST | 7 | Fondations frontend Next.js | T6.1 | TODO | — |
+| **T7.1** | MUST | 7 | Fondations frontend Next.js | T6.1 | **DONE** | Fondations web (shadcn/ui, tokens de design, formateurs fr-FR 14 tests, openapi-fetch, auth middleware, Sidebar, GlobalFilters, KpiCard, PriceChart, ChoroplethMap, typecheck/lint/build 100% verts) |
 | **T7.2** | MUST | 7 | Pages et vues analytiques web | T7.1 | TODO | — |
 | **T7.3** | MUST | 7 | Tests e2e web (Playwright) | T7.2 | TODO | — |
 | **T8.1** | MUST | 8 | Moteur d'alertes | T5.2 | TODO | — |
@@ -716,6 +716,41 @@
   - **Dettes :** Aucune.
   - **Risques :** Aucun.
   - **Tag :** `phase-6-done`.
+
+### [2026-10-07T07:35:00Z] Démarrage de T7.1 : Fondations frontend Next.js
+- **Mini-plan T7.1 :**
+  1. Configurer la palette sobre et professionnelle, thème CSS et design system shadcn/ui avec variables CSS (`globals.css`, `tailwind.config.ts`, `lib/utils.ts`).
+  2. Implémenter le module de formatage normatif `fr-FR` (`src/lib/formatters.ts`) : prix (`2 850 Ar/kg`), devises, nombres avec espace fine, pourcentages, dates (`MMM yyyy`), badges `value_kind`.
+  3. Écrire la suite de tests unitaires Vitest pour les formateurs (`src/lib/formatters.test.ts`).
+  4. Configurer le client API typé `openapi-fetch` (`src/lib/api/client.ts`) synchronisé avec `schema.d.ts` et gestion JWT/cookies.
+  5. Implémenter le middleware Next.js (`src/middleware.ts`) pour l'authentification et redirection `/login` sur routes protégées.
+  6. Développer les composants d'infrastructure : `Sidebar` avec navigation, logotype textuel « Ketrika », `GlobalFilters` avec persistance d'état dans l'URL (produit, région, niveau d'acteur).
+  7. Implémenter les composants UI clés : `KpiCard`, `ValueKindBadge`, `SourceBadge`, `ProvenanceLink`, `PriceChart` (ECharts avec bandes p10-p90 et tooltip provenance), `ChoroplethMap` (MapLibre GeoJSON).
+  8. Valider `pnpm typecheck`, `pnpm lint`, `pnpm build` et `vitest run` dans le conteneur Docker `web`.
+  9. Valider `./scripts/dev.ps1 check` et committer `feat(T7.1): web frontend foundations and core components`.
+- **Validation acceptation :**
+  - **Design system et charte graphique professionnelle (`globals.css`, `tailwind.config.ts`, `lib/utils.ts`) :** Palette sobre et élégante (tons émeraude/ardoise pour l'intelligence agricole), variables CSS HSL compatibles shadcn/ui, mode clair et sombre, logotype textuel « Ketrika » avec sous-titre officiel.
+  - **Formateurs normatifs `fr-FR` (`src/lib/formatters.ts`) :** Formatage numérique avec espace fine et virgule décimale (`formatNumber`), affichage des prix en Ariary (`2 850 Ar/kg` via `formatPrice`), pourcentages signés (`+5,2 %` via `formatPercent`), dates `MMM yyyy` (`formatMonthYear`), cartographie exhaustive des statuts `ValueKind` (Observé, Imputé, Prévision, Composite).
+  - **Suite de tests Vitest (`src/lib/formatters.test.ts`) :** 14 tests unitaires passants validant 100% des cas nominaux et cas limites des formateurs (15 tests web au total).
+  - **Client API typé `openapi-fetch` (`src/lib/api/client.ts`) :** Connecté au schéma OpenAPI exporté et typé avec `schema.d.ts`, gestion duale client (port hôte) et SSR interne (réseau Docker).
+  - **Middleware d'authentification (`src/middleware.ts`) :** Détection du cookie de session `ketrika_token`, protection des routes analytiques et redirection vers `/login`, bypass pour `/login`, assets statiques et healthcheck.
+  - **Composants d'infrastructure et filtres :**
+    - `Sidebar` (`src/components/layout/Sidebar.tsx`) : Navigation complète vers les 10 routes métier de SPECS §22, déconnexion avec vidage de cookie ;
+    - `GlobalFilters` (`src/components/layout/GlobalFilters.tsx`) : Sélecteurs de produit PPN, de région (23 régions administratives) et de niveau d'acteur avec persistance dynamique dans les paramètres d'URL (`searchParams`) et bouton de réinitialisation ;
+    - `AppShell` (`src/components/layout/AppShell.tsx`) : Structure unifiée intégrant la sidebar, l'en-tête de filtres et le conteneur principal.
+  - **Composants d'affichage analytique :**
+    - `KpiCard` (`src/components/ui/KpiCard.tsx`) : Cartes d'indicateurs avec variation m/m ou a/a, badge `ValueKindBadge`, attribution `SourceBadge` et lien de traçabilité `ProvenanceLink` ;
+    - `ValueKindBadge` (`src/components/ui/ValueKindBadge.tsx`) : Badges distinctifs pour Observed, Imputed, Forecast, Composite ;
+    - `PriceChart` (`src/components/charts/PriceChart.tsx`) : Graphique ECharts interactif avec courbe de prix médian, zone de confiance (P10-P90 / Min-Max), infobulles détaillées et gestion des clics pour la traçabilité ;
+    - `ChoroplethMap` (`src/components/maps/ChoroplethMap.tsx`) : Carte de disparités territoriales régionales avec légende, échelle colorimétrique et infobulles.
+  - **Contrôles qualité web exécutés avec succès dans Docker :**
+    - `pnpm typecheck` : 0 erreur TypeScript ;
+    - `pnpm lint` : 0 avertissement ou erreur ESLint ;
+    - `pnpm build` : compilation Next.js de production réussie avec génération des pages statiques (`/` et `/login`) et middleware ;
+    - `pnpm test` (Vitest) : 15 tests passants.
+  - `./scripts/dev.ps1 check` : 100% vert (167 tests backend, 15 tests web, 0 erreur ruff, 0 erreur mypy).
+- Statut : **DONE**.
+
 
 
 
