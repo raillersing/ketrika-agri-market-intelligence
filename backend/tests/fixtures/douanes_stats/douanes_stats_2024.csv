@@ -1,0 +1,37 @@
+annee,mois,flux,code_sh,designation_produit,pays_partenaire,code_iso3_pays,poids_net_kg,valeur_caf_fob_mga,valeur_usd
+2024,01,import,10063000,Riz semi-blanchi ou blanchi,Inde,IND,25000000.0,75000000000.00,16666666.00
+2024,01,import,10063000,Riz semi-blanchi ou blanchi,Pakistan,PAK,12000000.0,36000000000.00,8000000.00
+2024,01,import,15119000,Huile de palme et fractions,Malaisie,MYS,8000000.0,48000000000.00,10666666.00
+2024,01,import,15119000,Huile de palme et fractions,Indonésie,IDN,6500000.0,39000000000.00,8666666.00
+2024,01,import,17019900,Sucre de canne ou de betterave raffiné,Maurice,MUS,5000000.0,18000000000.00,4000000.00
+2024,01,import,17019900,Sucre de canne ou de betterave raffiné,Brésil,BRA,7000000.0,24500000000.00,5444444.00
+2024,01,import,11010000,Farine de froment ou de méteil,Turquie,TUR,9000000.0,29700000000.00,6600000.00
+2024,01,import,11010000,Farine de froment ou de méteil,Égypte,EGY,4500000.0,14850000000.00,3300000.00
+2024,01,import,10059000,Maïs en grains,Afrique du Sud,ZAF,3500000.0,7700000000.00,1711111.00
+2024,01,export,07133300,Haricots secs communs,Inde,IND,1200000.0,5400000000.00,1200000.00
+2024,01,export,07133300,Haricots secs communs,Maurice,MUS,850000.0,3825000000.00,850000.00
+2024,01,export,10059000,Maïs en grains,Réunion (France),FRA,450000.0,1125000000.00,250000.00
+2024,02,import,10063000,Riz semi-blanchi ou blanchi,Inde,IND,26250000.0,78750000000.00,17499999.30
+2024,02,import,10063000,Riz semi-blanchi ou blanchi,Pakistan,PAK,12600000.0,37800000000.00,8400000.00
+2024,02,import,15119000,Huile de palme et fractions,Malaisie,MYS,8400000.0,50400000000.00,11199999.30
+2024,02,import,15119000,Huile de palme et fractions,Indonésie,IDN,6825000.0,40950000000.00,9099999.30
+2024,02,import,17019900,Sucre de canne ou de betterave raffiné,Maurice,MUS,5250000.0,18900000000.00,4200000.00
+2024,02,import,17019900,Sucre de canne ou de betterave raffiné,Brésil,BRA,7350000.0,25725000000.00,5716666.20
+2024,02,import,11010000,Farine de froment ou de méteil,Turquie,TUR,9450000.0,31185000000.00,6930000.00
+2024,02,import,11010000,Farine de froment ou de méteil,Égypte,EGY,4725000.0,15592500000.00,3465000.00
+2024,02,import,10059000,Maïs en grains,Afrique du Sud,ZAF,3675000.0,8085000000.00,1796666.55
+2024,02,export,07133300,Haricots secs communs,Inde,IND,1260000.0,5670000000.00,1260000.00
+2024,02,export,07133300,Haricots secs communs,Maurice,MUS,892500.0,4016250000.00,892500.00
+2024,02,export,10059000,Maïs en grains,Réunion (France),FRA,472500.0,1181250000.00,262500.00
+2024,03,import,10063000,Riz semi-blanchi ou blanchi,Inde,IND,27500000.0,82500000000.00,18333332.60
+2024,03,import,10063000,Riz semi-blanchi ou blanchi,Pakistan,PAK,13200000.0,39600000000.00,8800000.00
+2024,03,import,15119000,Huile de palme et fractions,Malaisie,MYS,8800000.0,52800000000.00,11733332.60
+2024,03,import,15119000,Huile de palme et fractions,Indonésie,IDN,7150000.0,42900000000.00,9533332.60
+2024,03,import,17019900,Sucre de canne ou de betterave raffiné,Maurice,MUS,5500000.0,19800000000.00,4400000.00
+2024,03,import,17019900,Sucre de canne ou de betterave raffiné,Brésil,BRA,7700000.0,26950000000.00,5988888.40
+2024,03,import,11010000,Farine de froment ou de méteil,Turquie,TUR,9900000.0,32670000000.00,7260000.00
+2024,03,import,11010000,Farine de froment ou de méteil,Égypte,EGY,4950000.0,16335000000.00,3630000.00
+2024,03,import,10059000,Maïs en grains,Afrique du Sud,ZAF,3850000.0,8470000000.00,1882222.10
+2024,03,export,07133300,Haricots secs communs,Inde,IND,1320000.0,5940000000.00,1320000.00
+2024,03,export,07133300,Haricots secs communs,Maurice,MUS,935000.0,4207500000.00,935000.00
+2024,03,export,10059000,Maïs en grains,Réunion (France),FRA,495000.0,1237500000.00,275000.00

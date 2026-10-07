@@ -30,7 +30,7 @@
 | **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | **DONE** | CC1-CC6 validés (189 obs, en-têtes dynamiques XLSX/CSV, série alimentation sur 5,25 ans, rebuild stable, check vert) |
 | **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | **DONE** | b0b0842 (CC1-CC6 validés, 180 obs, 3 bulletins, golden 100%, 0 ND/NA converti en 0, rebuild stable, check vert) |
 | **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | **DONE** | 80c46fc (CC1-CC6 validés, 64 obs, 10 pubs, golden 100%, 6 régions stocks, rebuild stable, check vert) |
-| **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | **IN_PROGRESS** | En cours d'implémentation |
+| **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | **DONE** | CC1-CC6 validés (36 obs, golden 100%, cycle de révision 1 supersédé vérifié SQL, rebuild stable, check vert) |
 | **T4.4** | COULD | 4 | Connecteur Événements (PICM, FEWS NET) | T2.6 | TODO | — |
 | **T5.1** | MUST | 5 | Vues matérialisées Gold | T3.1–T3.5, T4.1–T4.3 | TODO | — |
 | **T5.2** | MUST | 5 | Indicateurs et KPI Gold | T5.1 | TODO | — |
@@ -540,6 +540,30 @@
   8. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
   9. Mettre à jour PROGRESS.md et committer `feat(T4.3): douanes stats connector`.
   10. Exécuter le Gate de fin de Phase 4 (rebuild complet, résumé de phase ≤ 15 lignes, tag git `phase-4-done`).
+- **Validation acceptation :**
+  - **CC1 (Unit tests) :** Parsing déterministe validé sur CSV des flux douaniers (`douanes_stats_2024.csv`, 36 records extraits, 0 issue). Dérivation exacte des bornes mensuelles calendaires (`period_start`, `period_end`), distinction import/export, codes SH, pays partenaires et valeurs CAF/FOB.
+  - **CC2 (Golden test) :** Validé sur `backend/tests/golden/douanes_stats/douanes_stats_2024.expected.json` (36 flux de référence annotés ≥ 30) : exactitude des champs = 100% (≥ 99%) et rappel des enregistrements = 100% (≥ 98%).
+  - **CC3 (Backfill & Silver loading) :** Intégration complète via `execute_connector_pipeline` insérant 36 observations actives dans `obs.trade_flow` (27 importations, 9 exportations sur 3 mois calendaires et 8 pays partenaires). Idempotence validée (seconde exécution : 0 inséré, 36 ignorés).
+  - **CC4 (DQ checks & Règle stricte de révision) :**
+    - `provenance_complete` : 100% des flux ont un `source_record_id` Bronze valide ;
+    - `weight_sanity` & `value_sanity` : poids nets et valeurs MGA/USD strictement positifs pour tous les flux ;
+    - **Test de révision validé (critère d'acceptation T4.3) :** Ingestion séquentielle de `douanes_snapshot_v1.csv` (4 flux insérés) puis `douanes_snapshot_v2.csv` (3 flux identiques ignorés de façon idempotente, 1 flux révisé sur le riz d'Inde avec poids et valeur mis à jour). Résultat vérifié par requêtes SQL directes : exactement 1 enregistrement porte `superseded_by IS NOT NULL`, et la vue active (`superseded_by IS NULL`) renvoie la valeur actualisée (`weight_kg = 26500000.0`, `value_mga = 79500000000.0`).
+  - **CC5 (Documentation) :** Fiche descriptive `docs/sources/douanes_stats.md` mise à jour avec statut `active`, documentation de la nomenclature SH6/SH8, des flux SYDONIAWorld et de la gestion de la supersession.
+  - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='douanes_stats')`), conservation exacte des états actifs et révisés (40 insérés, 1 supersédé, 3 ignorés). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès sur l'ensemble de la base.
+  - `./scripts/dev.ps1 check` 100% vert (152 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
+- Statut : **DONE**.
+
+### [2026-10-07T05:10:00Z] Gate de fin de Phase 4 (Connecteurs officiels)
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** Les 3 connecteurs officiels majeurs et différenciants de Phase 4 entièrement implémentés et testés :
+    1. `miasa_odr` (bulletins riz ODR, détection tabulaire multi-formats et double extraction LLM avec preuve, préservation stricte des mentions ND/NA sans conversion à 0, 180 observations actives) ;
+    2. `mincc_ppn` (prix et stocks PPN, parsing HTML déterministe et extraction bilingue FR/MG avec preuve, 64 observations réparties sur 6 régions pour les stocks) ;
+    3. `douanes_stats` (statistiques douanières SYDONIAWorld d'imports et exports PPN, cycle complet de révision rétroactive géré par supersession, 36 flux mensuels). Note : T4.4 est classée COULD (hors MVP).
+  - **Chiffres clés :** 3 connecteurs officiels opérationnels, 152 tests backend unitaires et d'intégration passants (100% verts), 1 test web passant, 0 erreur lint/typecheck, rejouabilité offline Bronze 100% démontrée.
+  - **Dettes :** Aucune dette non tracée.
+  - **Risques :** Taux de disponibilité variable des serveurs gouvernementaux anticipé et couvert par le mode offline/replay et la politesse de scraping (max_rps ≤ 0,2).
+  - **Tag :** `phase-4-done`.
+
 
 
 

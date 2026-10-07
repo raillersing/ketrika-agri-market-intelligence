@@ -1,15 +1,32 @@
 # douanes_stats : Douanes Malagasy – Statistiques du Commerce Extérieur
 
-- **Propriétaire / licence / attribution :** Direction Générale des Douanes de Madagascar (DGD). Licence : Données publiques officielles gouvernementales. Attribution : "Direction Générale des Douanes, Madagascar".
+- **Propriétaire / licence / attribution :** Direction Générale des Douanes de Madagascar (DGD) / Ministère de l'Économie et des Finances. Licence : Données publiques officielles gouvernementales. Attribution : "Direction Générale des Douanes, Madagascar".
 - **URL vérifiées (date, code HTTP) :**
   - https://www.douanes.gov.mg (2026-10-06, HTTP 200).
 - **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /`
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://www.douanes.gov.mg/mentions-legales. Publications statistiques officielles du commerce extérieur malagasy.
-- **Format(s) et structure (avec exemples réels, pages, colonnes) :** Fichiers mensuels CSV / Excel des flux déclarés dans SYDONIAWorld. Colonnes : année, mois, code SH (Système Harmonisé à 6 ou 8 chiffres), libellé tarifaire, pays de provenance / destination, poids net (kg/tonnes), valeur CAF (Coût, Assurance, Fret) en Ariary ou devises.
-- **Cadence constatée (dates des 6 dernières publications) :** Mensuelle avec consolidations trimestrielles.
-- **Couverture :** Ensemble des bureaux des douanes (Toamasina, Mahajanga, Ivato, Antsiranana, etc.).
-- **Pièges connus :** Codes SH à 8 chiffres spécifiques à Madagascar dont seuls les 6 premiers correspondent à la nomenclature internationale du SH ; révisions rétroactives lors des apurements de déclarations douanières.
-- **Stratégie d'extraction :** Déterministe (Polars / DuckDB / pandas).
-- **Mapping vers les tables cibles :** `obs.trade` rattaché à `ref.products` via les codes SH6.
-- **Échantillons :** `backend/tests/fixtures/douanes_stats/douanes_stats_sample.csv`.
-- **Statut et incidents :** Actif, aucun incident.
+- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://www.douanes.gov.mg/mentions-legales. Publications statistiques officielles du commerce extérieur malagasy issues de SYDONIAWorld.
+- **Format(s) et structure (avec exemples réels, pages, colonnes) :**
+  - Fichiers mensuels tabulaires CSV / XLSX structurés par flux déclarés au cordon douanier.
+  - Colonnes principales :
+    - `annee`, `mois` : Période calendaire de la déclaration douanière.
+    - `flux` : Type de flux (`import` pour importations / mises à la consommation, `export` pour exportations).
+    - `code_sh` : Nomenclature tarifaire SH (Système Harmonisé à 6 ou 8 chiffres, ex: `10063000` pour riz blanchi, `15119000` pour huile de palme, `17019900` pour sucre raffiné, `11010000` pour farine de froment, `07133300` pour haricots secs, `10059000` pour maïs).
+    - `designation_produit` : Libellé officiel du produit PPN.
+    - `pays_partenaire`, `code_iso3_pays` : Pays d'origine ou de destination (ex: Inde `IND`, Pakistan `PAK`, Malaisie `MYS`, Maurice `MUS`, Turquie `TUR`).
+    - `poids_net_kg` : Poids net en kilogrammes.
+    - `valeur_caf_fob_mga` : Valeur statistique en Francs Malgaches/Ariary (valeur CAF à l'importation, valeur FOB à l'exportation).
+    - `valeur_usd` : Contre-valeur statistique en USD.
+- **Cadence constatée :** Mensuelle avec consolidations trimestrielles et annuelles.
+- **Gestion des révisions (SPECS §8.1) :**
+  - Les apurements des déclarations SYDONIAWorld entraînent des révisions rétroactives des tonnages et valeurs déclarés.
+  - Le connecteur ré-interroge une fenêtre glissante des 12 derniers mois.
+  - Clé naturelle : `sha256(source_id|flow|product_raw|partner_raw|period_start|period_end)`.
+  - En cas de révision, l'enregistrement existant dans `obs.trade_flow` est marqué avec `superseded_by = <nouvel_id>`, et le nouvel enregistrement est inséré avec `superseded_by = NULL`.
+- **Couverture géographique :** Nationale (ensemble des bureaux des douanes malagasy : Toamasina, Mahajanga, Ivato, Antsiranana, Toliara).
+- **Stratégie d'extraction :** Déterministe (`DouanesStatsConnector`), sans appel LLM requis.
+- **Mapping vers les tables cibles :** `obs.trade_flow` avec rattachement aux codes SH et pays partenaires.
+- **Fixtures et Golden :**
+  - `backend/tests/fixtures/douanes_stats/douanes_stats_2024.csv` (36 flux mensuels PPN).
+  - `backend/tests/golden/douanes_stats/douanes_stats_2024.expected.json` (36 flux de référence).
+  - `backend/tests/fixtures/douanes_stats/douanes_snapshot_v1.csv` & `douanes_snapshot_v2.csv` (cycle de révision prouvé).
+- **Statut et incidents :** Actif (`status: active`), aucun incident.

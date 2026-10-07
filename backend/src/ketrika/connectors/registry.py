@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+from ketrika.connectors.douanes_stats import DouanesStatsConnector
 from ketrika.connectors.dummy_csv import DummyCsvConnector
 from ketrika.connectors.faostat import FaostatConnector
 from ketrika.connectors.instat_nipc import InstatNipcConnector
@@ -28,6 +29,7 @@ _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "instat_nipc": InstatNipcConnector,
     "miasa_odr": MiasaOdrConnector,
     "mincc_ppn": MinccPpnConnector,
+    "douanes_stats": DouanesStatsConnector,
 }
 
 
