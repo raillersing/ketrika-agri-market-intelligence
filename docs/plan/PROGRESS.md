@@ -32,7 +32,7 @@
 | **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | **DONE** | 80c46fc (CC1-CC6 validés, 64 obs, 10 pubs, golden 100%, 6 régions stocks, rebuild stable, check vert) |
 | **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | **DONE** | CC1-CC6 validés (36 obs, golden 100%, cycle de révision 1 supersédé vérifié SQL, rebuild stable, check vert) |
 | **T4.4** | COULD | 4 | Connecteur Événements (PICM, FEWS NET) | T2.6 | TODO | — |
-| **T5.1** | MUST | 5 | Vues matérialisées Gold | T3.1–T3.5, T4.1–T4.3 | TODO | — |
+| **T5.1** | MUST | 5 | Vues matérialisées Gold | T3.1–T3.5, T4.1–T4.3 | **DONE** | 12 vues Gold (Alembic 0002), tests SQL synthétiques 100%, arbitrage priorité validé, refresh topologique, rebuild ok |
 | **T5.2** | MUST | 5 | Indicateurs et KPI Gold | T5.1 | TODO | — |
 | **T5.3** | MUST | 5 | Cockpit Data Quality (DQ) | T5.1 | TODO | — |
 | **T6.1** | MUST | 6 | API FastAPI /v1 | T5.2 | TODO | — |
@@ -562,7 +562,40 @@
   - **Chiffres clés :** 3 connecteurs officiels opérationnels, 152 tests backend unitaires et d'intégration passants (100% verts), 1 test web passant, 0 erreur lint/typecheck, rejouabilité offline Bronze 100% démontrée.
   - **Dettes :** Aucune dette non tracée.
   - **Risques :** Taux de disponibilité variable des serveurs gouvernementaux anticipé et couvert par le mode offline/replay et la politesse de scraping (max_rps ≤ 0,2).
-  - **Tag :** `phase-4-done`.
+### [2026-10-07T05:15:00Z] Démarrage de T5.1 : Vues matérialisées Gold
+- **Mini-plan T5.1 :**
+  1. Définir les scripts SQL des 12 vues Gold de SPECS §15 dans `backend/src/ketrika/gold/sql/` (001_price_obs_current à 012_forecast_latest) avec index de filtre API.
+  2. Créer la migration Alembic `0002_gold_views.py` pour provisionner les vues matérialisées et index en base avec droits d'accès copilot_ro.
+  3. Implémenter le moteur de rafraîchissement `refresh_gold_views(session)` dans `backend/src/ketrika/gold/refresh.py`.
+  4. Créer l'asset Dagster `gold__refresh` dans le pipeline de données.
+  5. Préparer un jeu de données synthétique déterministe dans `backend/tests/e2e_data/`.
+  6. Écrire les tests SQL d'intégration `backend/tests/integration/test_gold_views.py` vérifiant les calculs attendus pour chaque vue.
+  7. Écrire le test dédié d'ordre de priorité pour `gold.price_monthly_best` (P0 obs > P1 obs > P1 imp > P2).
+  8. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
+  9. Mettre à jour PROGRESS.md et committer `feat(T5.1): gold materialized views`.
+- **Validation acceptation :**
+  - **12 vues matérialisées Gold créées (SPECS §15) :** Scripts SQL versionnés dans `backend/src/ketrika/gold/sql/` (`001_price_obs_current.sql` à `012_forecast_latest.sql`), provisionnés via la migration Alembic `0002_gold_views.py` avec index sur toutes les colonnes de filtre API et permissions `SELECT` garanties pour `copilot_ro` et `ketrika_app`.
+  - **Moteur de rafraîchissement topologique :** Module `ketrika.gold.refresh` implémentant `refresh_gold_views` dans l'ordre strict des dépendances (de `price_obs_current` à `forecast_latest`). Intégré dans l'asset Dagster `gold__refresh` et dans le pipeline `rebuild`.
+  - **Tests SQL sur jeu de données synthétique déterministe (`tests/e2e_data/synthetic_gold_dataset.py`) :** Validé dans `backend/tests/integration/test_gold_views.py::test_gold_views_sql_e2e_synthetic` couvrant les 12 vues avec des valeurs calculées à la main :
+    - `gold.price_obs_current` : 18 observations actives converties avec traçabilité complète ;
+    - `gold.price_monthly` : médiane (3000.0), min, max, n_obs, part imputée ;
+    - `gold.price_monthly_best` : sélection unique par produit × lieu × stade × mois ;
+    - `gold.price_changes` : variations m/m (+1,69%), 3m (+3,45%), a/a (+20,00% exact), volatilité robuste MAD/médiane > 0 ;
+    - `gold.stock_latest` : statut `sufficient`, 25 jours de couverture, tendance `improving` ;
+    - `gold.trade_monthly` : 10 000 t imports, 1 000 t exports ;
+    - `gold.import_dependency` : production 50 000 t, dispo nette 59 000 t, ratio de dépendance aux importations = 16,95% (0.1695) exact ;
+    - `gold.weather_monthly` : totaux de pluie (120 mm, 150 mm) et moyennes thermiques concordants ;
+    - `gold.cpi_food` : indice 100.0 puis 105.0 (+5,00% m/m) ;
+    - `gold.market_health` : coverage ≥ 0.50 et composite score pondéré calculé entre 0 et 100 ;
+    - `gold.source_health` : SLA, fraîcheur, runs et éléments de revue ouverts répertoriés ;
+    - `gold.forecast_latest` : horizons 1 et 2 avec quantiles p10/p50/p90 du dernier run AutoARIMA.
+  - **Test dédié d'arbitrage de priorité (`gold.price_monthly_best`) :** Validé dans `test_price_monthly_best_priority_order` prouvant le respect strict de l'ordre normatif :
+    - Mois 2024-02 (ODR P0 observé, WFP P1 observé, WB P1 imputé) -> retient `miasa_odr` (P0 observé) ;
+    - Mois 2024-03 (WFP P1 observé, WB P1 imputé) -> retient `wfp_hdx_mdg` (P1 observé > P1 imputé).
+  - **Rebuild offline :** `./scripts/dev.ps1 rebuild` validé sans erreur réseau avec rafraîchissement topologique des 12 vues Gold.
+  - `./scripts/dev.ps1 check` 100% vert (154 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
+- Statut : **DONE**.
+
 
 
 

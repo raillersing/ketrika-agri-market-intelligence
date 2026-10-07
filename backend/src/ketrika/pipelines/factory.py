@@ -127,3 +127,14 @@ def build_source_assets(connector_cls: type[Connector]) -> SourceAssets:
         schedule=schedule,
         sensor=None,
     )
+
+
+@asset(name="gold__refresh", group_name="gold", compute_kind="refresh")
+def gold_refresh_asset(context) -> dict[str, Any]:
+    """Dagster asset triggering topological refresh of all Gold materialized views."""
+    from ketrika.gold.refresh import refresh_gold_views
+
+    with get_session() as session:
+        res = refresh_gold_views(session)
+        session.commit()
+    return res

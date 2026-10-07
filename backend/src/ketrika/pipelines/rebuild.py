@@ -20,6 +20,7 @@ from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import get_session
 from ketrika.core.models.db import SourceRecord
 from ketrika.core.policy import PolicyEngine
+from ketrika.gold.refresh import refresh_gold_views
 
 logger = logging.getLogger("ketrika.rebuild")
 
@@ -61,19 +62,12 @@ def wipe_silver_gold_tables(session: Session) -> dict[str, int]:
     for tbl in gold_tables:
         session.execute(text(f"TRUNCATE TABLE gold.{tbl} CASCADE;"))
 
-    gold_matviews = list(
-        session.execute(text("SELECT matviewname FROM pg_matviews WHERE schemaname = 'gold'"))
-        .scalars()
-        .all()
-    )
-    for mv in gold_matviews:
-        session.execute(text(f"REFRESH MATERIALIZED VIEW gold.{mv};"))
-
+    refresh_res = refresh_gold_views(session)
     session.flush()
-    logger.info("Successfully wiped Silver and Gold tables.")
+    logger.info("Successfully wiped Silver and refreshed Gold tables.")
     return {
         "gold_tables_truncated": len(gold_tables),
-        "gold_matviews_refreshed": len(gold_matviews),
+        "gold_matviews_refreshed": refresh_res["count"],
     }
 
 
@@ -177,6 +171,10 @@ def rebuild_database(
                 stats["source_records_skipped"] += 1
 
         s.commit()
+        # Refresh Gold views to reflect replayed records
+        gold_refresh = refresh_gold_views(s)
+        s.commit()
+        stats["gold_views_refreshed"] = gold_refresh["count"]
         logger.info(
             "Rebuild complete! Replayed %d records: %d inserted, %d superseded, %d skipped",
             stats["source_records_replayed"],

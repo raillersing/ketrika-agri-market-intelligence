@@ -1,0 +1,64 @@
+-- 012_forecast_latest.sql
+-- Grain: série × horizon
+-- Contenu: dernier model_run pour chaque série
+
+DROP MATERIALIZED VIEW IF EXISTS gold.forecast_latest CASCADE;
+
+CREATE MATERIALIZED VIEW gold.forecast_latest AS
+WITH latest_runs AS (
+    SELECT
+        f.forecast_id,
+        f.series_key,
+        f.product_id,
+        p.product_code,
+        p.canonical_name_fr AS product_name,
+        f.location_id,
+        loc.pcode AS location_pcode,
+        loc.name AS location_name,
+        f.actor_level,
+        f.target_period,
+        f.horizon,
+        f.p10,
+        f.p50,
+        f.p90,
+        f.generated_at,
+        mr.model_run_id,
+        mr.model_name,
+        mr.model_version,
+        mr.data_cutoff,
+        mr.trained_at,
+        ROW_NUMBER() OVER (
+            PARTITION BY f.series_key, f.horizon, f.target_period
+            ORDER BY mr.trained_at DESC, f.generated_at DESC
+        ) AS rn
+    FROM ml.forecast f
+    JOIN ml.model_run mr ON f.model_run_id = mr.model_run_id
+    LEFT JOIN ref.product p ON f.product_id = p.product_id
+    LEFT JOIN ref.location loc ON f.location_id = loc.location_id
+)
+SELECT
+    forecast_id,
+    model_run_id,
+    series_key,
+    product_id,
+    product_code,
+    product_name,
+    location_id,
+    location_pcode,
+    location_name,
+    actor_level,
+    target_period,
+    horizon,
+    p10,
+    p50,
+    p90,
+    model_name,
+    model_version,
+    data_cutoff,
+    trained_at,
+    generated_at
+FROM latest_runs
+WHERE rn = 1;
+
+CREATE INDEX idx_gold_forecast_latest_series
+ON gold.forecast_latest (series_key, target_period);
