@@ -49,8 +49,8 @@
 | **T11.1** | MUST | 11 | Observabilité et supervision | Phases 8–10 | **DONE** | 24b0329 (Logs JSON contextualisés, sensor Dagster échec -> Mailpit, API /v1/sources & page /sources statut failed, 3 tests intégration passants) |
 | **T11.2** | MUST | 11 | Revue de sécurité et audits | T11.1 | **DONE** | d57635c (Gitleaks 0 secret sur 48 commits, pip-audit 0 vulnérabilité, pnpm audit mitigé, conteneurs non-root, en-têtes HTTP sécurité, docs/SECURITY_REVIEW.md rédigé) |
 | **T11.3** | MUST | 11 | Procédures de sauvegarde et restauration | T11.1 | **DONE** | 5082de1 (deploy/backup.sh & restore.sh shellcheck 0/eol lf, dev.ps1 backup/restore, test dump->truncate->restore 100% comptes identiques, docs/runbooks/restore.md) |
-| **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | **DONE** | docker-compose.prod.yml validé, deploy/Caddyfile, deploy/bootstrap-vps.sh (shellcheck 0), docs/runbooks/deploy.md & rotate-secrets.md rédigés |
-| **T11.5** | MUST | 11 | Documentation finale et runbooks | T11.4 | TODO | — |
+| **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | **DONE** | d0504cb (docker-compose.prod.yml validé, deploy/Caddyfile, deploy/bootstrap-vps.sh shellcheck 0, docs/runbooks/deploy.md & rotate-secrets.md) |
+| **T11.5** | MUST | 11 | Documentation finale et runbooks | T11.4 | **DONE** | README.md exhaustif, 10 fiches sources vérifiées, 4 runbooks opérationnels, 4 modèles de partenariat dans docs/outreach/ (non envoyés - H7) |
 | **T11.6** | MUST | 11 | Test d'acceptation final du MVP | T11.1–T11.5 | TODO | — |
 
 ---
@@ -1161,6 +1161,31 @@
     - `rotate-secrets.md` : protocoles stricts de rotation pour PostgreSQL, rôle `copilot_ro`, secret JWT, clés Cloudflare R2, clés LLM et SMTP.
   - **Contrôles qualité :**
     - `./scripts/dev.ps1 check` : 100% vert (215 tests backend passants, 15 tests web passants, 0 erreur ruff, 0 erreur mypy sur 151 fichiers).
+
+### [2026-10-07T17:25:00Z] Exécution de T11.5 : Documentation finale et runbooks
+- **Mini-plan T11.5 :**
+  1. Rédiger un `README.md` exhaustif conforme à SPECS §3 : proposition de valeur, architecture de données, principes de non-négociabilité, galerie de captures d'écran UI, quickstart local, dictionnaire des commandes dev runner, guide de déploiement production, runbooks et charte éthique.
+  2. Vérifier les 10 fiches documentaires de sources dans `docs/sources/`.
+  3. Rédiger les modèles de demandes de partenariat de données dans `docs/outreach/` pour MiASA/ODR, MinCC, INSTAT et Tantsah (brouillons conservés locaux, non envoyés conformément au Gate H7 et à la règle 8.6).
+  4. Vérifier la conformité de l'arborescence documentaire et des liens.
+  5. Valider avec `git status`, consigner et committer `docs(T11.5): final documentation and outreach templates`.
+- **Réalisations T11.5 :**
+  - **`README.md` exhaustif :**
+    - Présentation synthétique du projet et des filières PPN couvertes (riz blanc local, riz importé, maïs, manioc, huile, sucre, farine, légumineuses) ;
+    - Diagramme d'architecture des données (Bronze S3 immuable $\rightarrow$ Silver PostGIS auditée $\rightarrow$ Gold analytique $\rightarrow$ API/Web/Copilote) ;
+    - Rappel des 5 principes fondateurs non-négociables (provenance totale, Bronze immuable, append-only, rebuildabilité offline, zéro hallucination LLM) ;
+    - Galerie visuelle des 12 captures d'écran de l'interface utilisateur (`docs/screenshots/`) ;
+    - Procédure détaillée de démarrage local avec ports hôte isolés sans conflit ;
+    - Tableau récapitulatif complet des 11 commandes du runner de développement `scripts/dev.ps1` et `scripts/dev.sh` ;
+    - Résumé du déploiement VPS durci et liens vers les runbooks d'exploitation.
+  - **Modèles de partenariat institutionnel (`docs/outreach/`) :**
+    - `miasa_odr_outreach.md` : proposition de partenariat avec l'Observatoire du Riz (accès séries brutes, corrélation climat/importations) ;
+    - `mincc_outreach.md` : suivi des prix plafonnés et des stocks régionaux de denrées de première nécessité ;
+    - `instat_outreach.md` : accord de coopération sur les séries du NIPC, pondérations et méthodologies d'inflation alimentaire ;
+    - `tantsah_outreach.md` : proposition de partenariat technologique B2B respectant la politique « permission d'abord » (Gate H4) sans aucun scraping unilatéral.
+    - Tous les modèles sont marqués comme brouillons et non expédiés (Gate H7 respecté).
+  - **Fiches descriptives des sources vérifiées :**
+    - 10 fiches complètes à jour dans `docs/sources/` (`miasa_odr.md`, `mincc_ppn.md`, `douanes_stats.md`, `wfp_hdx_mdg.md`, `wb_rtfp_mdg.md`, `faostat.md`, `instat_nipc.md`, `nasa_power.md`, `chirps.md`, `ocha_codab_mdg.md`).
 - Statut : **DONE**.
 
 
