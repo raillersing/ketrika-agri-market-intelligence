@@ -143,7 +143,12 @@ switch ($Command) {
     }
     "e2e" {
         Write-Host "Running web E2E tests..." -ForegroundColor Cyan
-        docker compose exec -T web pnpm e2e
+        $e2eScript = Join-Path $PSScriptRoot "run_e2e.mjs"
+        if (Test-Path $e2eScript) {
+            node $e2eScript
+        } else {
+            docker compose exec -T web pnpm e2e
+        }
         exit $LASTEXITCODE
     }
     "bulletin" {

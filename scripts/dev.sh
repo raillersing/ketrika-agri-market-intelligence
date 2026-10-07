@@ -90,7 +90,11 @@ case "$COMMAND" in
     docker compose exec -T -e HTTP_OFFLINE=1 api python -m ketrika.pipelines.rebuild
     ;;
   e2e)
-    docker compose exec -T web pnpm e2e
+    if [ -f "scripts/run_e2e.mjs" ] && command -v node >/dev/null 2>&1; then
+      node scripts/run_e2e.mjs
+    else
+      docker compose exec -T web pnpm e2e
+    fi
     ;;
   bulletin)
     docker compose exec -T api python -m ketrika.bulletin.writer

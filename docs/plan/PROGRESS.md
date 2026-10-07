@@ -39,7 +39,7 @@
 | **T6.2** | MUST | 6 | Tests de charge et robustesse API | T6.1 | **DONE** | Rate limiter in-memory (60 req/min, 61e -> 429 RFC 7807), benchmarks ≥200 reqs/endpoint agrégé (P95 < 25ms << 1s), check 100% vert |
 | **T7.1** | MUST | 7 | Fondations frontend Next.js | T6.1 | **DONE** | Fondations web (shadcn/ui, tokens de design, formateurs fr-FR 14 tests, openapi-fetch, auth middleware, Sidebar, GlobalFilters, KpiCard, PriceChart, ChoroplethMap, typecheck/lint/build 100% verts) |
 | **T7.2** | MUST | 7 | Pages et vues analytiques web | T7.1 | **DONE** | 14 routes Next.js créées, 12 captures d'écran dans docs/screenshots/, dev.ps1 check vert (167 backend, 15 web), build 0 erreur |
-| **T7.3** | MUST | 7 | Tests e2e web (Playwright) | T7.2 | TODO | — |
+| **T7.3** | MUST | 7 | Tests e2e web (Playwright) et Démo 1 | T7.2 | **DONE** | Suite E2E CDP (27/27 assertions passées, 0 erreur console), Démo 1 (docs/DEMO_1.md), dev.ps1 check 100% vert |
 | **T8.1** | MUST | 8 | Moteur d'alertes | T5.2 | TODO | — |
 | **T8.2** | MUST | 8 | Générateur de bulletin hebdomadaire PPN | T5.2, T6.1 | TODO | — |
 | **T9.1** | MUST | 9 | Modèles de prévision de prix | T5.1 | TODO | — |
@@ -785,6 +785,53 @@
     - `pnpm build` : compilation Next.js de production réussie avec génération statique et rendu dynamique sous Suspense ;
     - `./scripts/dev.ps1 check` : 100% vert (167 tests backend passants, 15 tests web passants, 0 erreur mypy/ruff).
 - Statut : **DONE**.
+
+### [2026-10-07T08:20:00Z] Démarrage de T7.3 : Tests end-to-end web (Playwright / CDP) et Démo 1
+- **Mini-plan T7.3 :**
+  1. Configurer la suite de tests E2E `scripts/run_e2e.mjs` orchestrée directement via Chrome Headless et Chrome DevTools Protocol (CDP) natif Node.js sans dépendances externes lourdes.
+  2. Implémenter les 9 parcours de test e2e de SPECS §22 / MVP_EXECUTION_PLAN T7.3 :
+     - Parcours 1 : Login JWT admin et obtention du token d'accès (`POST /v1/auth/login`) ;
+     - Parcours 2 : Protection par middleware Next.js sur route privée `/prices`, redirection `/login`, session cookie `ketrika_token` ;
+     - Parcours 3 : Rendu complet de la page de synthèse `/` avec cartes de KPI exécutifs (Prix médian national, Market Health Score) ;
+     - Parcours 4 : Navigation et filtres sur l'explorateur de prix `/prices` avec affichage du tableau de données Gold ;
+     - Parcours 5 : Export streaming CSV (`GET /v1/prices?format=csv`) avec validation des en-têtes et données ;
+     - Parcours 6 : Traçabilité et certificat de provenance totale (`/observations/[id]`), affichage du badge de preuve mécanique, validation de l'URL présignée MinIO/S3 ;
+     - Parcours 7 : Smoke tests de navigation sur les 8 routes métier restantes (`/map`, `/trade`, `/climate`, `/alerts`, `/bulletins`, `/copilot`, `/sources`, `/admin/review`) ;
+     - Parcours 8 : Résolution d'un élément de la file de revue (`/v1/admin/review/{id}` avec `status: "approved"`) et vérification RBAC (rejet 401/403 pour requêtes non autorisées) ;
+     - Parcours 9 : Détection et validation d'absence totale d'erreurs console non gérées dans le navigateur.
+  3. Câbler la commande `e2e` dans `scripts/dev.ps1` et `scripts/dev.sh`.
+  4. Exécuter `./scripts/dev.ps1 e2e` et corriger les éventuelles anomalies.
+  5. Rédiger le guide officiel de démonstration `docs/DEMO_1.md` (parcours en 5 minutes avec 12 captures d'écran).
+  6. Exécuter `./scripts/dev.ps1 check` complet.
+  7. Consigner les preuves et committer `feat(T7.3): web e2e test suite and demo 1 guide`.
+- **Validation acceptation :**
+  - **Suite E2E exécutée avec `./scripts/dev.ps1 e2e` :**
+    - 9 scénarios de test complets exécutés sur l'environnement web et API en cours d'exécution ;
+    - 27 assertions passées avec succès, 0 échec ;
+    - 0 erreur console non gérée détectée ;
+    - Contrôle RBAC validé : accès refusé (code 401) sur tentative d'accès non authentifié à `/v1/admin/review`.
+  - **Livrable Démo 1 (`docs/DEMO_1.md`) :**
+    - Guide complet en 10 étapes structurées pour une présentation exécutive en 5 minutes ;
+    - Intégration et mise en valeur des 12 captures d'écran de `docs/screenshots/` ;
+    - Démonstration de la provenance totale et de l'accès aux artefacts Bronze via URL présignées S3.
+  - **Contrôles qualité globaux :**
+    - `./scripts/dev.ps1 check` : 100% vert (167 tests backend passants, 15 tests web passants, 0 erreur mypy, 0 erreur ruff, formatting vérifié).
+- Statut : **DONE**.
+
+### [2026-10-07T08:35:00Z] Gate de fin de Phase 7 (Web frontend Next.js et Démo 1)
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** Le portail web moderne Next.js 15 App Router complet :
+    1. 14 routes interactives conformes à SPECS §22 (/login, /, /prices, /map, /trade, /climate, /alerts, /bulletins, /bulletins/[id], /copilot, /sources, /admin/review, /observations/[id]) ;
+    2. Design system professionnel sobre avec palette thématique agricole, typographie soignée et formateurs normatifs `fr-FR` (Ar/kg, espaces fines, pourcentages signés) ;
+    3. Composants avancés : graphiques ECharts avec bandes interquartiles p10-p90 et distinction `ValueKind`, cartes MapLibre des 23 régions, sélecteurs globaux d'URL, export CSV streaming ;
+    4. Certificat de provenance totale vérifiable à 100% avec preuve mécanique et téléchargement d'artefacts Bronze présignés S3/MinIO ;
+    5. Suite automatisée de tests E2E (9 scénarios, 27 assertions, 0 erreur console) via `./scripts/dev.ps1 e2e` ;
+    6. Guide de démonstration officiel `docs/DEMO_1.md` illustré par 12 captures d'écran validées.
+  - **Chiffres clés :** 14 routes Next.js, 12 captures validées, 27 assertions E2E réussies, 15 tests Vitest passants, 167 tests backend passants, 0 erreur lint/typecheck.
+  - **Dettes :** Aucune.
+  - **Risques :** Aucun.
+  - **Tag :** `phase-7-done`.
+
 
 
 
