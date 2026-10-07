@@ -3,13 +3,23 @@
 - **Propriétaire / licence / attribution :** Institut National de la Statistique de Madagascar (INSTAT). Licence : Données publiques officielles gouvernementales. Attribution : "INSTAT Madagascar".
 - **URL vérifiées (date, code HTTP) :**
   - https://www.instat.mg (2026-10-06, HTTP 200).
-- **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /`
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://www.instat.mg/mentions-legales. Publications de statistiques nationales officielles en accès public.
-- **Format(s) et structure (avec exemples réels, pages, colonnes) :** Fichiers Excel (XLS/XLSX) et tableaux mensuels publiés sur le portail institutionnel. Indices nationaux et par agglomération, décomposition par fonctions de consommation (COICOP : 01 Produits alimentaires et boissons non alcoolisées).
-- **Cadence constatée (dates des 6 dernières publications) :** Mensuelle (parution vers le 20 du mois M+1).
-- **Couverture :** Territoire national, agglomération d'Antananarivo et grands centres urbains de province.
-- **Pièges connus :** Changements d'années de base de l'indice (base 100), cellules fusionnées dans les tableaux Excel, retards de publication occasionnels.
-- **Stratégie d'extraction :** Déterministe (Calamine / openpyxl / pandas).
-- **Mapping vers les tables cibles :** `obs.cpi`.
-- **Échantillons :** `backend/tests/fixtures/instat_nipc/nipc_sample.csv`.
-- **Statut et incidents :** Actif, aucun incident.
+- **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (vérifié 2026-10-06).
+- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://www.instat.mg/mentions-legales. Publications de statistiques nationales officielles en libre accès public.
+- **Format(s) et structure :** Tableaux Excel (XLSX) et CSV publiés mensuellement.
+  - Structure variable selon les années : colonnes identifiées dynamiquement via détection de mots-clés (`période`, `mois`, `date`, `ensemble`, `produits alimentaires`, `riz`).
+- **Séries extraites et normalisées :**
+  - `cpi_total` : Indice Général Ensemble (base 2016=100) ;
+  - `cpi_food` : Indice des Produits alimentaires et boissons non alcoolisées (COICOP 01) ;
+  - `cpi_rice` : Indice du Riz de consommation.
+- **Cadence constatée :** Mensuelle (parution vers le 20 du mois M+1).
+- **Couverture validée :**
+  - Série « alimentation » (`cpi_food`) disponible sur ≥ 5 années consécutives (2019-01 à 2024-03, 63 mois).
+  - Couverture géographique : Moyenne nationale (`geo_scope = 'national'`).
+- **Stratégie d'extraction :** Déterministe (`InstatNipcConnector`) avec scanner d'en-tête dynamique résistant aux préambules et changements de présentation.
+- **Mapping vers la table cible :** `obs.cpi_observation` avec supersession et clé naturelle déterministe `(series_code, geo_scope, period_start, period_end)`.
+- **Fixtures et tests :**
+  - Fixtures : `backend/tests/fixtures/instat_nipc/nipc_sample.csv` et `nipc_sample.xlsx` (63 mois, 189 enregistrements).
+  - Golden set : `backend/tests/golden/instat_nipc/nipc_sample.expected.json`.
+  - Tests unitaires et golden test : `backend/tests/unit/test_instat_nipc.py`.
+  - Test d'intégration cycle de vie et backfill : `backend/tests/integration/test_instat_nipc.py`.
+- **Statut :** `active` (validé CC1–CC6 dans le cadre de T3.5).

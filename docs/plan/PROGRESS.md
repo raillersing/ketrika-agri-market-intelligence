@@ -27,7 +27,7 @@
 | **T3.2** | MUST | 3 | Connecteur Banque Mondiale RTFP | T2.6 | **DONE** | CC1-CC6 validés (36 obs, 24 obs / 12 imp, part 33.33%, 0 imputé marqué observé, rebuild stable, dev.ps1 check vert) |
 | **T3.3** | MUST | 3 | Connecteur FAOSTAT | T2.6 | **DONE** | CC1-CC6 validés (36 obs, 28 prod / 8 trade, 20 ans riz paddy, flags A vs E/I, rebuild stable, dev.ps1 check vert) |
 | **T3.4** | MUST | 3 | Connecteur NASA POWER Climat | T2.6, T1.4 | **DONE** | CC1, CC3-CC6 validés (108 obs, 100% districts couverts, cohérence physique prouvée, rebuild stable, dev.ps1 check vert) |
-| **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | TODO | — |
+| **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | **DONE** | CC1-CC6 validés (189 obs, en-têtes dynamiques XLSX/CSV, série alimentation sur 5,25 ans, rebuild stable, check vert) |
 | **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | TODO | — |
 | **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | TODO | — |
 | **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | TODO | — |
@@ -436,8 +436,47 @@
     - **Règle T3.4 :** 100 % des districts ont des données.
   - **CC5 (Documentation) :** Fiche descriptive `docs/sources/nasa_power.md` mise à jour avec statut `active`, mapping des variables et débit poli ≤ 0,5 req/s.
   - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='nasa_power')`), comptes strictement préservés (108 observations météo dans Silver couvrant 100 % des districts). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès sur l'ensemble de la base.
-  - `./scripts/dev.ps1 check` 100 % vert (129 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy, couverture 88 %).
 - Statut : **DONE**.
+
+### [2026-10-07T03:20:00Z] Démarrage de T3.5 : Connecteur INSTAT NIPC
+- **Mini-plan T3.5 :**
+  1. Construire les fixtures `backend/tests/fixtures/instat_nipc/nipc_sample.csv` et `nipc_sample.xlsx` avec en-têtes dynamiques précédés de lignes de titre/métadonnées et une couverture de la série « alimentation » sur ≥ 5 ans (2019-01 à 2024-03, 63 mois).
+  2. Établir le golden dataset `backend/tests/golden/instat_nipc/nipc_sample.expected.json` (≥ 30 valeurs vérifiées de référence, métadonnées CC2).
+  3. Implémenter `InstatNipcConnector` dans `backend/src/ketrika/connectors/instat_nipc.py` (support XLSX via openpyxl et CSV, détection dynamique des en-têtes sans position fixe, normalisation COICOP alimentation/ensemble/riz, calcul des bornes mensuelles).
+  4. Enregistrer `instat_nipc` dans `backend/src/ketrika/connectors/registry.py`.
+  5. Écrire les tests unitaires et le golden test dans `backend/tests/unit/test_instat_nipc.py` (CC1, CC2, série alimentation ≥ 5 ans, tolérance aux lignes d'en-tête variables).
+  6. Écrire le test d'intégration cycle de vie dans `backend/tests/integration/test_instat_nipc.py` (backfill dans `obs.cpi_observation`, idempotence, checks DQ CC4, rebuild offline stable CC6).
+  7. Mettre à jour la fiche source `docs/sources/instat_nipc.md` (statut `active`, description des séries et détection dynamique).
+  8. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
+  9. Mettre à jour PROGRESS.md et committer `feat(T3.5): instat nipc cpi connector`.
+  10. Exécuter le Gate de fin de Phase 3 (rebuild complet, résumé de phase ≤ 15 lignes, tag git `phase-3-done`).
+- **Validation acceptation :**
+  - **CC1 (Unit tests) :** Parsing déterministe validé sur CSV et XLSX (`tests/fixtures/instat_nipc/nipc_sample.csv` et `.xlsx`, 189 records extraits, 0 issue). Détection dynamique d'en-tête validée sur tableau avec lignes de titre arbitraires. Série « alimentation » (`cpi_food`) présente sur 63 mois consécutifs (2019-01 à 2024-03, soit 5,25 années ≥ 5 ans).
+  - **CC2 (Golden test) :** Validé sur `backend/tests/golden/instat_nipc/nipc_sample.expected.json` (189 observations de référence annotées) avec exactitude des champs = 100% (≥ 99%) et rappel des enregistrements = 100% (≥ 98%).
+  - **CC3 (Backfill & Silver loading) :** Intégration complète via `execute_connector_pipeline` insérant 189 observations actives dans `obs.cpi_observation`. Idempotence validée (seconde exécution : 0 inséré, 189 ignorés).
+  - **CC4 (DQ checks) :**
+    - `provenance_complete` : 100% des observations ont un `source_record_id` valide référençant le Bronze ;
+    - `cpi_range_sanity` : tous les indices dans la fourchette réaliste [50, 300] avec base `2016=100` ;
+    - **Règle T3.5 :** Série « alimentation » disponible sur ≥ 5 ans démontrée (63 mois de 2019 à 2024).
+  - **CC5 (Documentation) :** Fiche descriptive `docs/sources/instat_nipc.md` mise à jour avec statut `active` et spécifications de détection dynamique d'en-têtes.
+  - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='instat_nipc')`), comptes strictement préservés (189 observations CPI dans Silver). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès sur l'ensemble de la base.
+  - `./scripts/dev.ps1 check` 100 % vert (134 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy, couverture 88 %).
+- Statut : **DONE**.
+
+### [2026-10-07T03:35:00Z] Gate de fin de Phase 3 (Connecteurs « gains rapides »)
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** Les 5 connecteurs « gains rapides » de Phase 3 entièrement automatisés et testés :
+    1. `wfp_hdx_mdg` (prix vivriers de détail et de gros sur Anosibe, Bazar Be, Asabotsy avec filtrage HXL `#`) ;
+    2. `wb_rtfp_mdg` (prix Banque Mondiale en temps réel avec traçabilité stricte : 0 valeur imputée marquée observée) ;
+    3. `faostat` (séries longues FAOSTAT production QCL et commerce TM, riz paddy sur 20 années consécutives) ;
+    4. `nasa_power` (agro-météorologie quotidienne par centroïde de district, 100 % des districts couverts, cohérence physique) ;
+    5. `instat_nipc` (indices des prix à la consommation avec détection dynamique d'en-tête XLSX/CSV, série alimentation sur 5,25 ans).
+  - **Chiffres clés :** 5 connecteurs opérationnels, 134 tests unitaires et d'intégration backend passants, 1 test web passant, 0 erreur lint/typecheck, couverture globale des modules normatifs 88 %, rejouabilité offline Bronze 100 % démontrée sans réseau.
+  - **Dettes :** Aucune dette non tracée.
+  - **Risques :** Débit poli (max_rps ≤ 0,2 req/s) à maintenir lors de la Phase 4 pour les serveurs institutionnels malgaches.
+  - **Tag :** `phase-3-done`.
+
+
 
 
 
