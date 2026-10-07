@@ -1,0 +1,165 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN=${DOMAIN:-localhost}
+      - ACME_EMAIL=${ACME_EMAIL:-admin@ketrika.ai}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+
+  db:
+    image: postgis/postgis:17-3.5
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ketrika}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-ketrika}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-ketrika} -d $${POSTGRES_DB:-ketrika}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: ketrika-backend:prod
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - APP_ENV=prod
+      - DATABASE_URL=${DATABASE_URL:-postgresql+psycopg://ketrika:change-me@db:5432/ketrika}
+      - POSTGRES_USER=${POSTGRES_USER:-ketrika}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-change-me}
+      - POSTGRES_DB=${POSTGRES_DB:-ketrika}
+      - S3_ENDPOINT_URL=${S3_ENDPOINT_URL}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET_BRONZE=${S3_BUCKET_BRONZE:-bronze}
+      - S3_REGION=${S3_REGION:-auto}
+      - JWT_SECRET=${JWT_SECRET:-change-me-long-random}
+      - COPILOT_DB_PASSWORD=${COPILOT_DB_PASSWORD:-change-me-ro}
+      - BOT_USER_AGENT=${BOT_USER_AGENT:-KetrikaAgriBot/0.1 (+https://ketrika.ai/bot)}
+      - BOT_CONTACT_EMAIL=${BOT_CONTACT_EMAIL:-contact@example.com}
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://market.ketrika.ai,https://ketrika.ai}
+      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - LLM_MODEL_EXTRACT=${LLM_MODEL_EXTRACT:-gemini-2.5-flash}
+      - LLM_MODEL_REASON=${LLM_MODEL_REASON:-gemini-2.5-flash}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - SMTP_HOST=${SMTP_HOST:-smtp.resend.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_FROM=${SMTP_FROM:-bulletin@ketrika.ai}
+      - EXTERNAL_SEND_ENABLED=0
+      - PYTHONPATH=/app/src
+      - KETRIKA_REPO_ROOT=/workspace
+    volumes:
+      - ./docker/dagster:/opt/dagster/dagster_home:ro
+      - ./:/workspace:ro
+    command: ["uvicorn", "ketrika.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dagster-webserver:
+    image: ketrika-backend:prod
+    restart: unless-stopped
+    environment:
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - DATABASE_URL=${DATABASE_URL:-postgresql+psycopg://ketrika:change-me@db:5432/ketrika}
+      - POSTGRES_USER=${POSTGRES_USER:-ketrika}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-change-me}
+      - POSTGRES_DB=${POSTGRES_DB:-ketrika}
+      - S3_ENDPOINT_URL=${S3_ENDPOINT_URL}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET_BRONZE=${S3_BUCKET_BRONZE:-bronze}
+      - S3_REGION=${S3_REGION:-auto}
+      - PYTHONPATH=/app/src
+      - KETRIKA_REPO_ROOT=/workspace
+    volumes:
+      - ./docker/dagster:/opt/dagster/dagster_home:ro
+      - ./:/workspace:ro
+    command: ["dagster-webserver", "-h", "0.0.0.0", "-p", "3001", "-w", "/opt/dagster/dagster_home/workspace.yaml"]
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/server_info || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dagster-daemon:
+    image: ketrika-backend:prod
+    restart: unless-stopped
+    environment:
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - DATABASE_URL=${DATABASE_URL:-postgresql+psycopg://ketrika:change-me@db:5432/ketrika}
+      - POSTGRES_USER=${POSTGRES_USER:-ketrika}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-change-me}
+      - POSTGRES_DB=${POSTGRES_DB:-ketrika}
+      - S3_ENDPOINT_URL=${S3_ENDPOINT_URL}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET_BRONZE=${S3_BUCKET_BRONZE:-bronze}
+      - S3_REGION=${S3_REGION:-auto}
+      - PYTHONPATH=/app/src
+      - KETRIKA_REPO_ROOT=/workspace
+    volumes:
+      - ./docker/dagster:/opt/dagster/dagster_home:ro
+      - ./:/workspace:ro
+    command: ["dagster-daemon", "run", "-w", "/opt/dagster/dagster_home/workspace.yaml"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: ketrika-web:prod
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL:-/v1}
+      - API_INTERNAL_URL=http://api:8000
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    command: ["pnpm", "start"]
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
+
+networks:
+  default:
+    name: ketrika-prod-net

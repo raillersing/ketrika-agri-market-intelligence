@@ -49,7 +49,7 @@
 | **T11.1** | MUST | 11 | Observabilité et supervision | Phases 8–10 | **DONE** | 24b0329 (Logs JSON contextualisés, sensor Dagster échec -> Mailpit, API /v1/sources & page /sources statut failed, 3 tests intégration passants) |
 | **T11.2** | MUST | 11 | Revue de sécurité et audits | T11.1 | **DONE** | d57635c (Gitleaks 0 secret sur 48 commits, pip-audit 0 vulnérabilité, pnpm audit mitigé, conteneurs non-root, en-têtes HTTP sécurité, docs/SECURITY_REVIEW.md rédigé) |
 | **T11.3** | MUST | 11 | Procédures de sauvegarde et restauration | T11.1 | **DONE** | 5082de1 (deploy/backup.sh & restore.sh shellcheck 0/eol lf, dev.ps1 backup/restore, test dump->truncate->restore 100% comptes identiques, docs/runbooks/restore.md) |
-| **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | TODO | — |
+| **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | **DONE** | docker-compose.prod.yml validé, deploy/Caddyfile, deploy/bootstrap-vps.sh (shellcheck 0), docs/runbooks/deploy.md & rotate-secrets.md rédigés |
 | **T11.5** | MUST | 11 | Documentation finale et runbooks | T11.4 | TODO | — |
 | **T11.6** | MUST | 11 | Test d'acceptation final du MVP | T11.1–T11.5 | TODO | — |
 
@@ -1128,6 +1128,41 @@
       - `gold.source_health` : 183 (100% restauré)
       - **Égalité stricte prouvée sur 100% des tables**.
 - Statut : **DONE**.
+
+### [2026-10-07T16:40:00Z] Démarrage de T11.4 : Paquet de déploiement VPS
+- **Mini-plan T11.4 :**
+  1. Rédiger `docker-compose.prod.yml` (production sans MinIO ni Mailpit, stockage R2, Caddy TLS automatique, healthchecks, ports restreints).
+  2. Rédiger `deploy/Caddyfile` (reverse proxy `web` et `api`, TLS automatique, compression zstd/gzip, en-têtes HSTS).
+  3. Rédiger `deploy/bootstrap-vps.sh` (Ubuntu 24.04, Docker, utilisateur deploy, ufw 22/80/443, fail2ban, unattended-upgrades).
+  4. Rédiger le runbook `docs/runbooks/deploy.md` (déploiement pas-à-pas, checklist pré-requis humains H2).
+  5. Rédiger le runbook `docs/runbooks/rotate-secrets.md` (rotation des clés LLM, JWT secret, mots de passe DB).
+  6. Valider la syntaxe et configuration compose avec `docker compose -f docker-compose.prod.yml config`.
+  7. Valider tous les scripts shell avec `shellcheck` (image Docker).
+  8. Valider avec `./scripts/dev.ps1 check`, consigner et committer `feat(T11.4): vps deployment package and operational runbooks`.
+- **Réalisations T11.4 :**
+  - **Composition de production (`docker-compose.prod.yml`) :**
+    - Services : `caddy` (reverse proxy HTTPS automatique ports 80/443), `db` (PostGIS 17-3.5), `api` (FastAPI production workers, R2 S3), `web` (Next.js production), `dagster-daemon`, `dagster-webserver` (isolé en réseau privé interne) ;
+    - MinIO et Mailpit exclus du profil de production au profit de Cloudflare R2 et SMTP transactionnel ;
+    - Configuration validée : `docker compose -f docker-compose.prod.yml config` exécuté avec succès (code 0).
+  - **Configuration Reverse Proxy (`deploy/Caddyfile`) :**
+    - Terminaison TLS automatique Let's Encrypt / ACME ;
+    - Compression moderne zstd & gzip ;
+    - En-têtes HTTP HSTS, nosniff, DENY, strict-origin-when-cross-origin ;
+    - Routage sécurisé : `/v1/*` et documentation `/docs` vers `api:8000`, toutes les autres requêtes vers `web:3000`.
+  - **Script de déploiement automatique VPS (`deploy/bootstrap-vps.sh`) :**
+    - Cible Ubuntu 24.04 LTS ;
+    - Configuration de l'utilisateur applicatif dédié `deploy` ;
+    - Installation officielle Docker CE & Docker Compose plugin ;
+    - Pare-feu UFW verrouillé (ports 22, 80, 443 autorisés, tout le reste bloqué) ;
+    - Déploiement de fail2ban et configuration des mises à jour de sécurité automatiques (`unattended-upgrades`) ;
+    - `shellcheck` officiel Docker (`koalaman/shellcheck:stable`) passé avec succès (0 avertissement) ; fins de ligne `eol: lf` vérifiées.
+  - **Runbooks opérationnels (`docs/runbooks/deploy.md` & `docs/runbooks/rotate-secrets.md`) :**
+    - `deploy.md` : guide complet d'installation pas-à-pas, checklist des pré-requis humains H2 (VPS, DNS, bucket R2, SMTP, clés LLM H1), tunnel SSH pour Dagster, cron de sauvegarde `deploy/backup.sh` ;
+    - `rotate-secrets.md` : protocoles stricts de rotation pour PostgreSQL, rôle `copilot_ro`, secret JWT, clés Cloudflare R2, clés LLM et SMTP.
+  - **Contrôles qualité :**
+    - `./scripts/dev.ps1 check` : 100% vert (215 tests backend passants, 15 tests web passants, 0 erreur ruff, 0 erreur mypy sur 151 fichiers).
+- Statut : **DONE**.
+
 
 
 
