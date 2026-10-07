@@ -42,6 +42,8 @@ def wipe_silver_gold_tables(session: Session) -> dict[str, int]:
             "obs.weather_observation, "
             "obs.cpi_observation, "
             "obs.event, "
+            "ops.review_item, "
+            "ops.dq_result, "
             "ml.forecast, "
             "ml.model_run "
             "CASCADE;"

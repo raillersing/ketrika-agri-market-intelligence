@@ -24,7 +24,8 @@ class PriceRecord(RecordBase):
 
     product_raw: str
     location_raw: str | None = None
-    actor_level: str = "retail"  # retail | wholesale | farmgate
+    variety: str | None = None
+    actor_level: str = "retail"  # retail | wholesale | farmgate | producer
     period_start: date
     period_end: date
     price_raw: str
@@ -33,6 +34,7 @@ class PriceRecord(RecordBase):
     currency_raw: str = "MGA"
     observed_or_imputed: str = "observed"  # observed | imputed
     value_kind: str = "point"  # point | min | max | avg
+    missing_code: str | None = None  # ND | NA | None
     published_at: datetime | None = None
 
 

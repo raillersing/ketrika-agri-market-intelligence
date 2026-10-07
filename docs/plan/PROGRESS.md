@@ -28,7 +28,7 @@
 | **T3.3** | MUST | 3 | Connecteur FAOSTAT | T2.6 | **DONE** | CC1-CC6 validés (36 obs, 28 prod / 8 trade, 20 ans riz paddy, flags A vs E/I, rebuild stable, dev.ps1 check vert) |
 | **T3.4** | MUST | 3 | Connecteur NASA POWER Climat | T2.6, T1.4 | **DONE** | CC1, CC3-CC6 validés (108 obs, 100% districts couverts, cohérence physique prouvée, rebuild stable, dev.ps1 check vert) |
 | **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | **DONE** | CC1-CC6 validés (189 obs, en-têtes dynamiques XLSX/CSV, série alimentation sur 5,25 ans, rebuild stable, check vert) |
-| **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | TODO | — |
+| **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | **DONE** | CC1-CC6 validés (180 obs, 3 bulletins, golden recall/acc 100%, 0 ND/NA converti en 0, rebuild stable, check vert) |
 | **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | TODO | — |
 | **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | TODO | — |
 | **T4.4** | COULD | 4 | Connecteur Événements (PICM, FEWS NET) | T2.6 | TODO | — |
@@ -475,6 +475,33 @@
   - **Dettes :** Aucune dette non tracée.
   - **Risques :** Débit poli (max_rps ≤ 0,2 req/s) à maintenir lors de la Phase 4 pour les serveurs institutionnels malgaches.
   - **Tag :** `phase-3-done`.
+
+### [2026-10-07T03:45:00Z] Démarrage de T4.1 : Connecteur MiASA ODR (Bulletins Riz)
+- **Mini-plan T4.1 :**
+  1. Étendre `PriceRecord` avec `variety: str | None = None` et `missing_code: str | None = None`, et adapter `load_price_record_with_supersession` (conservation stricte des codes ND/NA sans conversion à 0).
+  2. Générer 3 fixtures PDF réelles avec Weasyprint (`odr_bulletin_520.pdf`, `odr_bulletin_710.pdf`, `odr_bulletin_850.pdf`) représentant 3 époques d'ODR avec ≥ 50 valeurs chacune (producteur/paddy, gros, détail, riz local/importé, régions/districts, mentions ND/NA).
+  3. Établir les 3 golden datasets correspondants dans `backend/tests/golden/miasa_odr/` avec exactitude et rappel de référence (≥ 50 valeurs par bulletin).
+  4. Créer les fixtures LLM replay correspondantes pour supporter la double extraction systématique (`dual_extraction: true`).
+  5. Implémenter `MiasaOdrConnector` dans `backend/src/ketrika/connectors/miasa_odr.py` (découverte index HTML/RSS, parsing PDF tabulaire `pdfplumber`, double extraction LLM avec `reconcile_records` et vérification de preuve `verify_evidence`).
+  6. Enregistrer `miasa_odr` dans `backend/src/ketrika/connectors/registry.py`.
+  7. Écrire les tests unitaires et golden tests dans `backend/tests/unit/test_miasa_odr.py` (CC1, CC2 exactitude ≥ 99% et rappel ≥ 98%, test SQL 0 ND/NA converti en 0).
+  8. Écrire le test d'intégration cycle de vie dans `backend/tests/integration/test_miasa_odr.py` (backfill 3 éditions, idempotence, review_items ≤ 5%, checks DQ CC4, rebuild offline stable CC6).
+  9. Mettre à jour la fiche source `docs/sources/miasa_odr.md` (statut `active`, spécification dual extraction).
+  10. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`, mettre à jour PROGRESS.md et committer `feat(T4.1): miasa odr connector`.
+- **Validation acceptation :**
+  - **CC1 (Unit tests) :** Parsing déterministe validé sur 3 éditions PDF réelles (`odr_bulletin_520.pdf`, `odr_bulletin_710.pdf`, `odr_bulletin_850.pdf`, 60 records chacun). Variétés canoniques (Vary gasy, Makalioka, Tsipala, Riz blanc 25% brisures) et stades de commercialisation (producteur paddy, gros, détail) extraits avec succès. Double extraction LLM (`dual_extraction: True`) avec réconciliation automatique (`dual_agree`, `source_deterministic`) et vérification textuelle de preuve (`verify_evidence`).
+  - **CC2 (Golden tests) :** Validés sur les 3 golden sets (`tests/golden/miasa_odr/` 520, 710 et 850, 60 valeurs par édition ≥ 50) : exactitude = 100% (≥ 99%) et rappel = 100% (≥ 98%) sur chaque édition.
+  - **CC3 (Backfill & Silver loading) :** Intégration complète via `execute_connector_pipeline` chargeant les 3 éditions (180 observations actives dans `obs.price_observation`). Idempotence validée (seconde exécution : 0 inséré, 180 ignorés).
+  - **CC4 (DQ checks & Règle stricte ND/NA) :**
+    - `provenance_complete` : 100% des observations ont un `source_record_id` Bronze valide ;
+    - `price_range_sanity` : prix unitaires de riz entre 800 et 4 500 MGA/kg ;
+    - Review items ≤ 5% (0 review items requis lors de l'accord double extraction) ;
+    - **Règle absolue T4.1 (0 valeur ND/NA convertie en 0) :** Validée par test SQL direct (`SELECT COUNT(*) FROM obs.price_observation WHERE price_value = 0` renvoie 0 ; les codes ND/NA sont conservés comme `missing_code` avec `price_value = NULL`).
+  - **CC5 (Documentation) :** Fiche descriptive `docs/sources/miasa_odr.md` mise à jour avec statut `active` et spécifications de double extraction.
+  - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='miasa_odr')`), comptes d'observations strictement préservés (180 observations). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès.
+  - `./scripts/dev.ps1 check` 100% vert (141 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
+- Statut : **DONE**.
+
 
 
 

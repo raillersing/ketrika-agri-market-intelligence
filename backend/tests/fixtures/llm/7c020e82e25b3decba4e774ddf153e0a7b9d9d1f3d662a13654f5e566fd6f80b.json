@@ -1,0 +1,171 @@
+{
+  "data": {
+    "items": [
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "retail",
+        "location_raw": "Vakinankaratra",
+        "price_raw": "3280",
+        "price_value": 3280.0,
+        "missing_code": null,
+        "evidence_text": "Vakinankaratra 3280"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "retail",
+        "location_raw": "Vakinankaratra",
+        "price_raw": "3480",
+        "price_value": 3480.0,
+        "missing_code": null,
+        "evidence_text": "Vakinankaratra 3480"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "retail",
+        "location_raw": "Vakinankaratra",
+        "price_raw": "3220",
+        "price_value": 3220.0,
+        "missing_code": null,
+        "evidence_text": "Vakinankaratra 3220"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "retail",
+        "location_raw": "Vakinankaratra",
+        "price_raw": "3150",
+        "price_value": 3150.0,
+        "missing_code": null,
+        "evidence_text": "Vakinankaratra 3150"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "retail",
+        "location_raw": "Boeny",
+        "price_raw": "3320",
+        "price_value": 3320.0,
+        "missing_code": null,
+        "evidence_text": "Boeny 3320"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "retail",
+        "location_raw": "Boeny",
+        "price_raw": "3520",
+        "price_value": 3520.0,
+        "missing_code": null,
+        "evidence_text": "Boeny 3520"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "retail",
+        "location_raw": "Boeny",
+        "price_raw": "3280",
+        "price_value": 3280.0,
+        "missing_code": null,
+        "evidence_text": "Boeny 3280"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "retail",
+        "location_raw": "Boeny",
+        "price_raw": "3080",
+        "price_value": 3080.0,
+        "missing_code": null,
+        "evidence_text": "Boeny 3080"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "retail",
+        "location_raw": "Diana",
+        "price_raw": "3400",
+        "price_value": 3400.0,
+        "missing_code": null,
+        "evidence_text": "Diana 3400"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "retail",
+        "location_raw": "Diana",
+        "price_raw": "3600",
+        "price_value": 3600.0,
+        "missing_code": null,
+        "evidence_text": "Diana 3600"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "retail",
+        "location_raw": "Diana",
+        "price_raw": "3350",
+        "price_value": 3350.0,
+        "missing_code": null,
+        "evidence_text": "Diana 3350"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "retail",
+        "location_raw": "Diana",
+        "price_raw": "3120",
+        "price_value": 3120.0,
+        "missing_code": null,
+        "evidence_text": "Diana 3120"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "retail",
+        "location_raw": "Atsimo-Andrefana",
+        "price_raw": "3380",
+        "price_value": 3380.0,
+        "missing_code": null,
+        "evidence_text": "Atsimo-Andrefana 3380"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "retail",
+        "location_raw": "Atsimo-Andrefana",
+        "price_raw": "3580",
+        "price_value": 3580.0,
+        "missing_code": null,
+        "evidence_text": "Atsimo-Andrefana 3580"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "retail",
+        "location_raw": "Atsimo-Andrefana",
+        "price_raw": "3320",
+        "price_value": 3320.0,
+        "missing_code": null,
+        "evidence_text": "Atsimo-Andrefana 3320"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "retail",
+        "location_raw": "Atsimo-Andrefana",
+        "price_raw": "ND",
+        "price_value": null,
+        "missing_code": "ND",
+        "evidence_text": "Atsimo-Andrefana ND"
+      }
+    ]
+  },
+  "usage": {
+    "input_tokens": 500,
+    "output_tokens": 250,
+    "cost_usd": 0.001
+  }
+}

@@ -63,7 +63,8 @@ def reconcile_records(
     }
     llm_map: dict[str, RecordBase] = {r.compute_natural_key(source_id): r for r in llm_records}
 
-    all_keys = set(det_map.keys()).union(set(llm_map.keys()))
+    # Preserve insertion order (deterministic document order first, then remaining LLM keys)
+    all_keys = list(det_map.keys()) + [k for k in llm_map.keys() if k not in det_map]
 
     accepted: list[RecordBase] = []
     reviews: list[ReviewProposal] = []
@@ -77,8 +78,19 @@ def reconcile_records(
             val_det = _get_record_numeric_value(det_rec)
             val_llm = _get_record_numeric_value(llm_rec)
 
-            if val_det is not None and val_llm is not None and abs(val_det - val_llm) < 1e-4:
-                # Case 1: Exact numerical agreement -> dual_agree, confidence 0.99
+            missing_det = getattr(det_rec, "missing_code", None)
+            missing_llm = getattr(llm_rec, "missing_code", None)
+            both_missing = (
+                val_det is None
+                and val_llm is None
+                and missing_det is not None
+                and missing_det == missing_llm
+            )
+
+            if (
+                val_det is not None and val_llm is not None and abs(val_det - val_llm) < 1e-4
+            ) or both_missing:
+                # Case 1: Exact numerical agreement or matching missing code -> dual_agree, confidence 0.99
                 res_rec = copy.deepcopy(det_rec)
                 res_rec.extraction_method = "dual_agree"
                 res_rec.confidence = 0.99

@@ -30,6 +30,7 @@ from ketrika.core.models.db import (
     Location,
     PriceObservation,
     ProductionObservation,
+    ReviewItem,
     Source,
     SourceRecord,
     StockObservation,
@@ -125,7 +126,13 @@ def load_price_record_with_supersession(
     current_obs = session.execute(stmt).scalar_one_or_none()
 
     price_val = record.price_value
-    if price_val is None:
+    missing_code = record.missing_code
+    price_raw_clean = str(record.price_raw).strip().upper()
+    if missing_code or price_raw_clean in ("ND", "NA", "-", "N.D.", "N.A.", "", "NONE"):
+        price_val = None
+        if not missing_code:
+            missing_code = price_raw_clean if price_raw_clean in ("ND", "NA") else "ND"
+    elif price_val is None:
         try:
             clean_str = record.price_raw.replace(" ", "").replace(",", ".")
             price_val = float(clean_str)
@@ -139,6 +146,7 @@ def load_price_record_with_supersession(
             source_record_id=source_record_id,
             natural_key=nk,
             product_raw=record.product_raw,
+            variety=record.variety,
             location_raw=record.location_raw,
             actor_level=record.actor_level,
             period_start=record.period_start,
@@ -150,6 +158,7 @@ def load_price_record_with_supersession(
             currency_raw=record.currency_raw,
             conversion_status="exact",
             observed_or_imputed=record.observed_or_imputed,
+            missing_code=missing_code,
             extraction_method=record.extraction_method,
             evidence=record.evidence,
             confidence=record.confidence,
@@ -167,6 +176,8 @@ def load_price_record_with_supersession(
         and current_val == price_val
         and current_obs.unit_raw == record.unit_raw
         and current_obs.observed_or_imputed == record.observed_or_imputed
+        and current_obs.missing_code == missing_code
+        and current_obs.variety == record.variety
     ):
         return "idempotent_skipped", current_obs.observation_id
 
@@ -186,6 +197,7 @@ def load_price_record_with_supersession(
         source_record_id=source_record_id,
         natural_key=nk,
         product_raw=record.product_raw,
+        variety=record.variety,
         location_raw=record.location_raw,
         actor_level=record.actor_level,
         period_start=record.period_start,
@@ -197,6 +209,7 @@ def load_price_record_with_supersession(
         currency_raw=record.currency_raw,
         conversion_status="exact",
         observed_or_imputed=record.observed_or_imputed,
+        missing_code=missing_code,
         extraction_method=record.extraction_method,
         evidence=record.evidence,
         confidence=record.confidence,
@@ -680,6 +693,17 @@ def execute_connector_pipeline(
                 else:
                     stats["n_skipped"] += 1
 
+            for issue in parse_res.issues:
+                review_item = ReviewItem(
+                    review_id=uuid.uuid4(),
+                    kind=issue.get("kind", "extraction_conflict"),
+                    source_record_id=s_rec_id,
+                    payload=issue.get("payload", issue),
+                    status="open",
+                )
+                session.add(review_item)
+                stats["n_review"] = stats.get("n_review", 0) + 1
+
             # Mark source_record parsed
             mark_stmt = (
                 update(SourceRecord)
@@ -693,6 +717,7 @@ def execute_connector_pipeline(
         ingestion_run.n_fetched = stats["n_fetched"]
         ingestion_run.n_new_artifacts = stats["n_new_artifacts"]
         ingestion_run.n_records = stats["n_inserted"] + stats["n_superseded"]
+        ingestion_run.n_review = stats.get("n_review", 0)
         session.flush()
 
         return stats

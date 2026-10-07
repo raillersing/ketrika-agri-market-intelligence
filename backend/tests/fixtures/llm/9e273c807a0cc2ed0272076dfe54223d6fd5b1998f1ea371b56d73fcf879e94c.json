@@ -1,0 +1,451 @@
+{
+  "data": {
+    "items": [
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Alaotra Mangoro (Ambatondrazaka)",
+        "price_raw": "1650",
+        "price_value": 1650.0,
+        "missing_code": null,
+        "evidence_text": "Alaotra Mangoro (Ambatondrazaka) 1650"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Alaotra Mangoro (Amparafaravola)",
+        "price_raw": "1620",
+        "price_value": 1620.0,
+        "missing_code": null,
+        "evidence_text": "Alaotra Mangoro (Amparafaravola) 1620"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Boeny (Marovoay)",
+        "price_raw": "1700",
+        "price_value": 1700.0,
+        "missing_code": null,
+        "evidence_text": "Boeny (Marovoay) 1700"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Boeny (Ambato Boeny)",
+        "price_raw": "1680",
+        "price_value": 1680.0,
+        "missing_code": null,
+        "evidence_text": "Boeny (Ambato Boeny) 1680"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Vakinankaratra (Antsirabe II)",
+        "price_raw": "1750",
+        "price_value": 1750.0,
+        "missing_code": null,
+        "evidence_text": "Vakinankaratra (Antsirabe II) 1750"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Vakinankaratra (Betafo)",
+        "price_raw": "1720",
+        "price_value": 1720.0,
+        "missing_code": null,
+        "evidence_text": "Vakinankaratra (Betafo) 1720"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Itasy (Miarinarivo)",
+        "price_raw": "1710",
+        "price_value": 1710.0,
+        "missing_code": null,
+        "evidence_text": "Itasy (Miarinarivo) 1710"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Itasy (Soavinandriana)",
+        "price_raw": "1690",
+        "price_value": 1690.0,
+        "missing_code": null,
+        "evidence_text": "Itasy (Soavinandriana) 1690"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Menabe (Miandrivazo)",
+        "price_raw": "1640",
+        "price_value": 1640.0,
+        "missing_code": null,
+        "evidence_text": "Menabe (Miandrivazo) 1640"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Menabe (Mahabo)",
+        "price_raw": "NA",
+        "price_value": null,
+        "missing_code": "NA",
+        "evidence_text": "Menabe (Mahabo) NA"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Sofia (Port-Berg\u00e9)",
+        "price_raw": "1600",
+        "price_value": 1600.0,
+        "missing_code": null,
+        "evidence_text": "Sofia (Port-Berg\u00e9) 1600"
+      },
+      {
+        "product_raw": "Riz paddy",
+        "variety": null,
+        "actor_level": "producer",
+        "location_raw": "Atsinanana (Brickaville)",
+        "price_raw": "1670",
+        "price_value": 1670.0,
+        "missing_code": null,
+        "evidence_text": "Atsinanana (Brickaville) 1670"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "wholesale",
+        "location_raw": "Analamanga (Anosibe)",
+        "price_raw": "3150",
+        "price_value": 3150.0,
+        "missing_code": null,
+        "evidence_text": "Analamanga (Anosibe) 3150"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "wholesale",
+        "location_raw": "Analamanga (Anosibe)",
+        "price_raw": "3350",
+        "price_value": 3350.0,
+        "missing_code": null,
+        "evidence_text": "Analamanga (Anosibe) 3350"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "wholesale",
+        "location_raw": "Analamanga (Anosibe)",
+        "price_raw": "3100",
+        "price_value": 3100.0,
+        "missing_code": null,
+        "evidence_text": "Analamanga (Anosibe) 3100"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "wholesale",
+        "location_raw": "Analamanga (Anosibe)",
+        "price_raw": "2950",
+        "price_value": 2950.0,
+        "missing_code": null,
+        "evidence_text": "Analamanga (Anosibe) 2950"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "wholesale",
+        "location_raw": "Atsinanana (Bazar Be Toamasina)",
+        "price_raw": "3200",
+        "price_value": 3200.0,
+        "missing_code": null,
+        "evidence_text": "Atsinanana (Bazar Be Toamasina) 3200"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "wholesale",
+        "location_raw": "Atsinanana (Bazar Be Toamasina)",
+        "price_raw": "3400",
+        "price_value": 3400.0,
+        "missing_code": null,
+        "evidence_text": "Atsinanana (Bazar Be Toamasina) 3400"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "wholesale",
+        "location_raw": "Atsinanana (Bazar Be Toamasina)",
+        "price_raw": "3150",
+        "price_value": 3150.0,
+        "missing_code": null,
+        "evidence_text": "Atsinanana (Bazar Be Toamasina) 3150"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "wholesale",
+        "location_raw": "Atsinanana (Bazar Be Toamasina)",
+        "price_raw": "2900",
+        "price_value": 2900.0,
+        "missing_code": null,
+        "evidence_text": "Atsinanana (Bazar Be Toamasina) 2900"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "wholesale",
+        "location_raw": "Vakinankaratra (Antsirabe Asabotsy)",
+        "price_raw": "3100",
+        "price_value": 3100.0,
+        "missing_code": null,
+        "evidence_text": "Vakinankaratra (Antsirabe Asabotsy) 3100"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "wholesale",
+        "location_raw": "Vakinankaratra (Antsirabe Asabotsy)",
+        "price_raw": "3300",
+        "price_value": 3300.0,
+        "missing_code": null,
+        "evidence_text": "Vakinankaratra (Antsirabe Asabotsy) 3300"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "wholesale",
+        "location_raw": "Vakinankaratra (Antsirabe Asabotsy)",
+        "price_raw": "3050",
+        "price_value": 3050.0,
+        "missing_code": null,
+        "evidence_text": "Vakinankaratra (Antsirabe Asabotsy) 3050"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "wholesale",
+        "location_raw": "Vakinankaratra (Antsirabe Asabotsy)",
+        "price_raw": "3000",
+        "price_value": 3000.0,
+        "missing_code": null,
+        "evidence_text": "Vakinankaratra (Antsirabe Asabotsy) 3000"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "wholesale",
+        "location_raw": "Boeny (Mahajanga Tsaramandroso)",
+        "price_raw": "3180",
+        "price_value": 3180.0,
+        "missing_code": null,
+        "evidence_text": "Boeny (Mahajanga Tsaramandroso) 3180"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "wholesale",
+        "location_raw": "Boeny (Mahajanga Tsaramandroso)",
+        "price_raw": "3380",
+        "price_value": 3380.0,
+        "missing_code": null,
+        "evidence_text": "Boeny (Mahajanga Tsaramandroso) 3380"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "wholesale",
+        "location_raw": "Boeny (Mahajanga Tsaramandroso)",
+        "price_raw": "3120",
+        "price_value": 3120.0,
+        "missing_code": null,
+        "evidence_text": "Boeny (Mahajanga Tsaramandroso) 3120"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "wholesale",
+        "location_raw": "Boeny (Mahajanga Tsaramandroso)",
+        "price_raw": "2920",
+        "price_value": 2920.0,
+        "missing_code": null,
+        "evidence_text": "Boeny (Mahajanga Tsaramandroso) 2920"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "wholesale",
+        "location_raw": "Diana (Antsiranana Bazar)",
+        "price_raw": "3250",
+        "price_value": 3250.0,
+        "missing_code": null,
+        "evidence_text": "Diana (Antsiranana Bazar) 3250"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "wholesale",
+        "location_raw": "Diana (Antsiranana Bazar)",
+        "price_raw": "3450",
+        "price_value": 3450.0,
+        "missing_code": null,
+        "evidence_text": "Diana (Antsiranana Bazar) 3450"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "wholesale",
+        "location_raw": "Diana (Antsiranana Bazar)",
+        "price_raw": "3200",
+        "price_value": 3200.0,
+        "missing_code": null,
+        "evidence_text": "Diana (Antsiranana Bazar) 3200"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "wholesale",
+        "location_raw": "Diana (Antsiranana Bazar)",
+        "price_raw": "2980",
+        "price_value": 2980.0,
+        "missing_code": null,
+        "evidence_text": "Diana (Antsiranana Bazar) 2980"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "wholesale",
+        "location_raw": "Atsimo-Andrefana (Toliara Bazar)",
+        "price_raw": "3220",
+        "price_value": 3220.0,
+        "missing_code": null,
+        "evidence_text": "Atsimo-Andrefana (Toliara Bazar) 3220"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "wholesale",
+        "location_raw": "Atsimo-Andrefana (Toliara Bazar)",
+        "price_raw": "ND",
+        "price_value": null,
+        "missing_code": "ND",
+        "evidence_text": "Atsimo-Andrefana (Toliara Bazar) ND"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "wholesale",
+        "location_raw": "Atsimo-Andrefana (Toliara Bazar)",
+        "price_raw": "3180",
+        "price_value": 3180.0,
+        "missing_code": null,
+        "evidence_text": "Atsimo-Andrefana (Toliara Bazar) 3180"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "wholesale",
+        "location_raw": "Atsimo-Andrefana (Toliara Bazar)",
+        "price_raw": "3020",
+        "price_value": 3020.0,
+        "missing_code": null,
+        "evidence_text": "Atsimo-Andrefana (Toliara Bazar) 3020"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "retail",
+        "location_raw": "Analamanga",
+        "price_raw": "3300",
+        "price_value": 3300.0,
+        "missing_code": null,
+        "evidence_text": "Analamanga 3300"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "retail",
+        "location_raw": "Analamanga",
+        "price_raw": "3500",
+        "price_value": 3500.0,
+        "missing_code": null,
+        "evidence_text": "Analamanga 3500"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "retail",
+        "location_raw": "Analamanga",
+        "price_raw": "3250",
+        "price_value": 3250.0,
+        "missing_code": null,
+        "evidence_text": "Analamanga 3250"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "retail",
+        "location_raw": "Analamanga",
+        "price_raw": "3100",
+        "price_value": 3100.0,
+        "missing_code": null,
+        "evidence_text": "Analamanga 3100"
+      },
+      {
+        "product_raw": "Riz blanc local (Vary gasy)",
+        "variety": "Vary gasy",
+        "actor_level": "retail",
+        "location_raw": "Atsinanana",
+        "price_raw": "3350",
+        "price_value": 3350.0,
+        "missing_code": null,
+        "evidence_text": "Atsinanana 3350"
+      },
+      {
+        "product_raw": "Riz blanc local (Makalioka)",
+        "variety": "Makalioka",
+        "actor_level": "retail",
+        "location_raw": "Atsinanana",
+        "price_raw": "3550",
+        "price_value": 3550.0,
+        "missing_code": null,
+        "evidence_text": "Atsinanana 3550"
+      },
+      {
+        "product_raw": "Riz blanc local (Tsipala)",
+        "variety": "Tsipala",
+        "actor_level": "retail",
+        "location_raw": "Atsinanana",
+        "price_raw": "3300",
+        "price_value": 3300.0,
+        "missing_code": null,
+        "evidence_text": "Atsinanana 3300"
+      },
+      {
+        "product_raw": "Riz import\u00e9 (25% brisures)",
+        "variety": "25% brisures",
+        "actor_level": "retail",
+        "location_raw": "Atsinanana",
+        "price_raw": "3050",
+        "price_value": 3050.0,
+        "missing_code": null,
+        "evidence_text": "Atsinanana 3050"
+      }
+    ]
+  },
+  "usage": {
+    "input_tokens": 500,
+    "output_tokens": 250,
+    "cost_usd": 0.001
+  }
+}
