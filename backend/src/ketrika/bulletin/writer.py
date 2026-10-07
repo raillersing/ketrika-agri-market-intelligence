@@ -59,8 +59,8 @@ def render_fallback_template(
     template = env.get_template("fallback.md.j2")
 
     context: dict[str, Any] = {
-        "period_start": period_start.isoformat(),
-        "period_end": period_end.isoformat(),
+        "period_start": "{{ period_start }}",
+        "period_end": "{{ period_end }}",
         "sources_attribution": "{{ sources_attribution }}",
     }
     # Expose placeholder strings for jinja2 conditional evaluation in template

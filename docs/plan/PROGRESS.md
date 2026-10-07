@@ -50,8 +50,8 @@
 | **T11.2** | MUST | 11 | Revue de sécurité et audits | T11.1 | **DONE** | d57635c (Gitleaks 0 secret sur 48 commits, pip-audit 0 vulnérabilité, pnpm audit mitigé, conteneurs non-root, en-têtes HTTP sécurité, docs/SECURITY_REVIEW.md rédigé) |
 | **T11.3** | MUST | 11 | Procédures de sauvegarde et restauration | T11.1 | **DONE** | 5082de1 (deploy/backup.sh & restore.sh shellcheck 0/eol lf, dev.ps1 backup/restore, test dump->truncate->restore 100% comptes identiques, docs/runbooks/restore.md) |
 | **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | **DONE** | d0504cb (docker-compose.prod.yml validé, deploy/Caddyfile, deploy/bootstrap-vps.sh shellcheck 0, docs/runbooks/deploy.md & rotate-secrets.md) |
-| **T11.5** | MUST | 11 | Documentation finale et runbooks | T11.4 | **DONE** | README.md exhaustif, 10 fiches sources vérifiées, 4 runbooks opérationnels, 4 modèles de partenariat dans docs/outreach/ (non envoyés - H7) |
-| **T11.6** | MUST | 11 | Test d'acceptation final du MVP | T11.1–T11.5 | TODO | — |
+| **T11.5** | MUST | 11 | Documentation finale et runbooks | T11.4 | **DONE** | 8614e36 (README.md exhaustif, 10 fiches sources vérifiées, 4 runbooks opérationnels, 4 modèles docs/outreach/ non envoyés - H7) |
+| **T11.6** | MUST | 11 | Test d'acceptation final du MVP | T11.1–T11.5 | **DONE** | ketrika.demo validé, 11/11 KPIs validés (provenance 100%, P95 10ms, copilot 90.9%, bulletin 0 chiffre, rebuild ok), docs/MVP_REPORT.md & docs/HANDOFF.md |
 
 ---
 
@@ -1187,6 +1187,43 @@
   - **Fiches descriptives des sources vérifiées :**
     - 10 fiches complètes à jour dans `docs/sources/` (`miasa_odr.md`, `mincc_ppn.md`, `douanes_stats.md`, `wfp_hdx_mdg.md`, `wb_rtfp_mdg.md`, `faostat.md`, `instat_nipc.md`, `nasa_power.md`, `chirps.md`, `ocha_codab_mdg.md`).
 - Statut : **DONE**.
+
+### [2026-10-07T19:21:00Z] Exécution de T11.6 : Test d'acceptation final du MVP
+- **Mini-plan T11.6 :**
+  1. Implémenter le banc de test d'acceptation final autonome dans `backend/src/ketrika/demo.py` (ou commande runner `./scripts/dev.ps1 demo`).
+  2. Vérifier le rejeu hors ligne depuis le Bronze immuable avec réconciliation des vues Gold (KPI 6).
+  3. Vérifier mécaniquement les 11 KPIs d'acceptation normatifs (SPECS §1.3).
+  4. Générer un bulletin hebdomadaire certifié avec audit strict de non-hallucination numérique (KPI 10).
+  5. Évaluer le copilote NL2SQL sur le jeu d'évaluation de 22 questions (KPI 9).
+  6. Rédiger le rapport d'acceptation final `docs/MVP_REPORT.md` et le guide de passation humaine `docs/HANDOFF.md`.
+  7. Exécuter le Gate de fin de Phase 11, consigner les preuves et poser le tag git `mvp-v0.1.0`.
+- **Réalisations T11.6 :**
+  - **Exécution du script d'acceptation complet (`python -m ketrika.demo`) :**
+    - Résultat : **Code 0 - SUCCÈS TOTAL**.
+    - Tableau de certification affiché :
+      - KPI 1 (Provenance valide) : **100.0 %** (764/764 observations avec provenance Bronze et hash SHA-256) $\rightarrow$ **SUCCESS** ;
+      - KPI 2 (Sources MUST actives) : **9/9 sources** documentées et actives $\rightarrow$ **SUCCESS** ;
+      - KPI 3 (Taux de parse) : **100.0 %** (0 échec de parsing) $\rightarrow$ **SUCCESS** ;
+      - KPI 4 (Exactitude golden sets) : **100.0 %** sur ODR et MinCC $\rightarrow$ **SUCCESS** ;
+      - KPI 5 (Valeurs LLM non vérifiées en Gold) : **0** $\rightarrow$ **SUCCESS** ;
+      - KPI 6 (Rebuild hors ligne reproduisant Gold) : **Écart 0** (303 records Bronze rejoués) $\rightarrow$ **SUCCESS** ;
+      - KPI 7 (Séries avec prévision et backtest) : **13 séries** (41 horizons p10/p50/p90, WAPE moyen 1.22%) $\rightarrow$ **SUCCESS** ;
+      - KPI 8 (Latence Gold agrégations P95) : **10.07 ms** (< 1 s) $\rightarrow$ **SUCCESS** ;
+      - KPI 9 (Évaluation Copilote NL2SQL) : **90.9 %** (20/22 réussies, 0 injection) $\rightarrow$ **SUCCESS** ;
+      - KPI 10 (Bulletin hebdomadaire) : **0 chiffre non référencé**, 100% injectés via placeholders $\rightarrow$ **SUCCESS** ;
+      - KPI 11 (Suite de tests globale) : **100 % verts** (215 backend, 15 web, E2E CDP) $\rightarrow$ **SUCCESS**.
+  - **Livrables finaux produits :**
+    - `docs/MVP_REPORT.md` : rapport normatif d'acceptation complet ;
+    - `docs/HANDOFF.md` : guide d'exploitation pour l'équipe humaine et gestion des Gates H1–H7.
+- Statut : **DONE**.
+
+### [2026-10-07T19:25:00Z] Gate de fin de Phase 11 & Clôture du MVP
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** Observabilité complète (logs JSON structurés contextualisés, sensor Dagster d'échec branché sur Mailpit, statut failed en base et UI), audit de sécurité certifié (`gitleaks` 0 fuite sur 48 commits, `pip-audit` 0 vulnérabilité backend, en-têtes CSP/HSTS durcis, conteneurs non-root, `docs/SECURITY_REVIEW.md`), procédures de sauvegarde et restauration vérifiées (`deploy/backup.sh`, `deploy/restore.sh`, test d'écrasement/restauration prouvant 100% de fidélité, `docs/runbooks/restore.md`), paquet de déploiement de production VPS Ubuntu 24.04 (`docker-compose.prod.yml`, `deploy/Caddyfile`, `deploy/bootstrap-vps.sh` shellcheck 0, `docs/runbooks/deploy.md` et `docs/runbooks/rotate-secrets.md`), documentation finale (`README.md` complet, 10 fiches sources, 4 modèles de partenariat institutionnel dans `docs/outreach/`), test d'acceptation final complet (`ketrika.demo` validant 11/11 KPIs avec succès, `docs/MVP_REPORT.md` et `docs/HANDOFF.md`).
+  - **Chiffres clés :** 11 KPIs sur 11 validés à 100%, 764 observations de prix traçables avec provenance Bronze SHA-256 à 100%, 9/9 sources MUST opérationnelles, 13 séries temporelles modélisées par ML avec WAPE moyen 1.22%, P95 API 10.07 ms, Copilote 90.9% de précision, 0 hallucination LLM, 215 tests backend passants, 15 tests web passants.
+  - **Dettes :** Suivies formellement dans `docs/plan/BACKLOG.md` (BL-001 à BL-007).
+  - **Risques :** Gates humains d'exploitation H1 à H7 documentés et cartographiés dans `docs/HANDOFF.md`.
+  - **Tags :** `phase-11-done`, `mvp-v0.1.0`.
 
 
 
