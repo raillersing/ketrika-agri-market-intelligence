@@ -25,9 +25,12 @@ show_help() {
   echo "  e2e                - Run Playwright end-to-end tests"
   echo "  bulletin           - Generate a weekly PPN bulletin draft"
   echo "  demo               - Execute the final MVP acceptance scenario (T11.6)"
+  echo "  backup             - Dump PostgreSQL database to ./backups"
+  echo "  restore [file]     - Restore database from backup and refresh Gold views"
   echo "  logs <service>     - Follow Docker logs for a specific service"
   echo "  validate-registry  - Validate registry/sources.yaml against Pydantic schema"
 }
+
 
 case "$COMMAND" in
   help)
@@ -65,10 +68,8 @@ case "$COMMAND" in
     ;;
   check)
     echo "=== Running Backend Quality Checks ==="
-    NET_ARG=""
     if docker network ls --filter "name=aiagent_default" -q | grep -q .; then
-      NET_ARG="--network aiagent_default"
-      docker run --rm $NET_ARG -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
+      docker run --rm --network aiagent_default -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
     else
       docker run --rm -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network and not integration'"
     fi
@@ -101,6 +102,32 @@ case "$COMMAND" in
     ;;
   demo)
     docker compose exec -T api python -m ketrika.demo
+    ;;
+  backup)
+    mkdir -p ./backups
+    docker compose exec -T db pg_dump -U ketrika -d ketrika -Fc -f /tmp/backup.dump
+    TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
+    docker compose cp db:/tmp/backup.dump "./backups/ketrika_backup_${TIMESTAMP}.dump"
+    cp -f "./backups/ketrika_backup_${TIMESTAMP}.dump" "./backups/ketrika_backup_latest.dump"
+    docker compose exec -T db rm -f /tmp/backup.dump
+    echo "Backup created at ./backups/ketrika_backup_${TIMESTAMP}.dump"
+    ;;
+  restore)
+    BACKUP_FILE="${1:-./backups/ketrika_backup_latest.dump}"
+    if [ ! -f "$BACKUP_FILE" ]; then
+      echo "Error: Backup file not found: $BACKUP_FILE" >&2
+      exit 1
+    fi
+    docker compose cp "$BACKUP_FILE" db:/tmp/restore.dump
+    docker compose exec -T db pg_restore -U ketrika -d ketrika --clean --if-exists --no-owner --no-privileges /tmp/restore.dump || true
+    docker compose exec -T db rm -f /tmp/restore.dump
+    docker compose exec -T api python -c "from ketrika.core.db import get_session; from ketrika.gold.refresh import refresh_gold_views;
+with get_session() as s:
+    refresh_gold_views(s)
+    s.commit()
+"
+    echo "Restoration complete."
+
     ;;
   logs)
     docker compose logs -f "${1:-}"

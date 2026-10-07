@@ -33,9 +33,12 @@ function Show-Help {
     Write-Host "  e2e                - Run Playwright end-to-end tests"
     Write-Host "  bulletin           - Generate a weekly PPN bulletin draft"
     Write-Host "  demo               - Execute the final MVP acceptance scenario (T11.6)"
+    Write-Host "  backup             - Dump PostgreSQL database to ./backups"
+    Write-Host "  restore [file]     - Restore database from backup and refresh Gold views"
     Write-Host "  logs <service>     - Follow Docker logs for a specific service"
     Write-Host "  validate-registry  - Validate registry/sources.yaml against Pydantic schema"
 }
+
 
 switch ($Command) {
     "help" {
@@ -160,6 +163,43 @@ switch ($Command) {
         Write-Host "Executing MVP acceptance test scenario..." -ForegroundColor Cyan
         docker compose exec -T api python -m ketrika.demo
         exit $LASTEXITCODE
+    }
+    "backup" {
+        Write-Host "Creating database backup..." -ForegroundColor Cyan
+        $backupDir = Join-Path $PSScriptRoot "..\backups"
+        if (!(Test-Path $backupDir)) { New-Item -ItemType Directory -Path $backupDir | Out-Null }
+        $timestamp = (Get-Date).ToUniversalTime().ToString("yyyyMMdd_HHmmss")
+        $backupFile = "ketrika_backup_$timestamp.dump"
+        $latestFile = "ketrika_backup_latest.dump"
+        $backupPath = Join-Path $backupDir $backupFile
+        $latestPath = Join-Path $backupDir $latestFile
+
+        docker compose exec -T db pg_dump -U ketrika -d ketrika -Fc -f /tmp/backup.dump
+        docker compose cp db:/tmp/backup.dump $backupPath
+        docker compose exec -T db rm -f /tmp/backup.dump
+        Copy-Item -Force $backupPath $latestPath
+        $size = (Get-Item $backupPath).Length
+        Write-Host "Database backup successfully created: $backupPath ($size bytes)" -ForegroundColor Green
+        exit 0
+    }
+    "restore" {
+        $backupPath = if ($ArgsList) { $ArgsList[0] } else { Join-Path $PSScriptRoot "..\backups\ketrika_backup_latest.dump" }
+        if (!(Test-Path $backupPath)) {
+            Write-Error "Backup file not found: $backupPath"
+            exit 1
+        }
+        Write-Host "Restoring database from $backupPath..." -ForegroundColor Cyan
+        docker compose cp $backupPath db:/tmp/restore.dump
+        docker compose exec -T db pg_restore -U ketrika -d ketrika --clean --if-exists --no-owner --no-privileges /tmp/restore.dump
+        docker compose exec -T db rm -f /tmp/restore.dump
+        Write-Host "Refreshing Gold analytical views post-restore..." -ForegroundColor Cyan
+        docker compose exec -T api python -c "from ketrika.core.db import get_session; from ketrika.gold.refresh import refresh_gold_views;
+with get_session() as s:
+    refresh_gold_views(s)
+    s.commit()
+"
+        Write-Host "Restoration complete." -ForegroundColor Green
+        exit 0
     }
     "logs" {
         $service = if ($ArgsList) { $ArgsList[0] } else { "" }

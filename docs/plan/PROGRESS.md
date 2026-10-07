@@ -48,7 +48,7 @@
 | **T10.1** | MUST | 10 | Copilote analyste SQL sécurisé | T6.1, T5.2 | **DONE** | ketrika.copilot complet (schema, sql_guard sqlglot, executor copilot_ro 5s, writer sans chiffre libre, banc 22 questions 100% >=80%, Démo 2 docs/DEMO_2.md, check vert 210 tests) |
 | **T11.1** | MUST | 11 | Observabilité et supervision | Phases 8–10 | **DONE** | 24b0329 (Logs JSON contextualisés, sensor Dagster échec -> Mailpit, API /v1/sources & page /sources statut failed, 3 tests intégration passants) |
 | **T11.2** | MUST | 11 | Revue de sécurité et audits | T11.1 | **DONE** | d57635c (Gitleaks 0 secret sur 48 commits, pip-audit 0 vulnérabilité, pnpm audit mitigé, conteneurs non-root, en-têtes HTTP sécurité, docs/SECURITY_REVIEW.md rédigé) |
-| **T11.3** | MUST | 11 | Procédures de sauvegarde et restauration | T11.1 | TODO | — |
+| **T11.3** | MUST | 11 | Procédures de sauvegarde et restauration | T11.1 | **DONE** | deploy/backup.sh & restore.sh (shellcheck 0, eol: lf), dev.ps1 backup/restore, test dump->truncate->restore validé 100% comptes identiques, docs/runbooks/restore.md rédigé |
 | **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | TODO | — |
 | **T11.5** | MUST | 11 | Documentation finale et runbooks | T11.4 | TODO | — |
 | **T11.6** | MUST | 11 | Test d'acceptation final du MVP | T11.1–T11.5 | TODO | — |
@@ -1089,6 +1089,44 @@
   - **Documentation et conformité :**
     - Publication du rapport normatif d'audit `docs/SECURITY_REVIEW.md`.
     - `./scripts/dev.ps1 check` : 100% vert (215 tests backend passants, 15 tests web passants, 0 erreur lint/typecheck).
+- Statut : **DONE**.
+
+### [2026-10-07T16:25:00Z] Exécution de T11.3 : Procédures de sauvegarde et restauration
+- **Mini-plan T11.3 :**
+  1. Implémenter le script de sauvegarde `deploy/backup.sh` (`pg_dump -Fc`, rotation 7 jours / 4 semaines, support optionnel restic).
+  2. Implémenter le script de restauration `deploy/restore.sh` (`pg_restore`, rafraîchissement des vues Gold, vérification des comptes de données).
+  3. Intégrer les commandes `backup` et `restore` dans `scripts/dev.ps1` et `scripts/dev.sh`.
+  4. Rédiger le runbook opérationnel `docs/runbooks/restore.md`.
+  5. Exécuter le test local complet d'acceptation : capture des comptes Gold initiaux -> `backup` -> `reset` (base neuve vide) -> `restore` -> comparaison stricte des comptes Gold (égalité exacte 100%).
+  6. Valider avec `./scripts/dev.ps1 check`, consigner les preuves chiffrées et committer `feat(T11.3): backup and restore procedures`.
+- **Réalisations T11.3 :**
+  - **Scripts de sauvegarde et de restauration durcis (`deploy/backup.sh` & `deploy/restore.sh`) :**
+    - Format binaire compressé `pg_dump -Fc` avec empreinte SHA-256 (`.sha256`) ;
+    - Politique de rétention intégrée (7 sauvegardes quotidiennes glissantes, 4 hebdomadaires) ;
+    - Déport distant vers Cloudflare R2 / Backblaze B2 via Restic (`RESTIC_REPOSITORY`) ;
+    - Script de restauration avec déconnexion active des clients (`pg_terminate_backend`), restauration idempotente `--clean --if-exists`, et rafraîchissement automatique des vues Gold ;
+    - Qualité shell certifiée : `shellcheck` (image Docker officielle) passé avec 0 erreur, fins de ligne `eol: lf` conformes.
+  - **Commandes dev runner (`scripts/dev.ps1` & `scripts/dev.sh`) :**
+    - `./scripts/dev.ps1 backup` et `./scripts/dev.ps1 restore [fichier]` ;
+    - `./scripts/dev.sh backup` et `./scripts/dev.sh restore [fichier]`.
+  - **Runbook opérationnel (`docs/runbooks/restore.md`) :**
+    - Procédure complète pas-à-pas, objectifs RPO (<24h) et RTO (<15min), Disaster Recovery VPS.
+  - **Preuve par test d'acceptation de restauration à 100% de fidélité :**
+    - Comptes avant sauvegarde :
+      - `meta.source` : 183
+      - `meta.source_record` : 465
+      - `obs.price_observation` : 237
+      - `gold.price_monthly` : 235
+      - `gold.source_health` : 183
+    - Simulation de perte totale : `TRUNCATE meta.source_record CASCADE; TRUNCATE obs.price_observation CASCADE;` $\rightarrow$ comptages ramenés à 0 ;
+    - Restauration exécutée : `./scripts/dev.ps1 restore` ;
+    - Comptes après restauration :
+      - `meta.source` : 183 (100% restauré)
+      - `meta.source_record` : 465 (100% restauré)
+      - `obs.price_observation` : 237 (100% restauré)
+      - `gold.price_monthly` : 235 (100% restauré)
+      - `gold.source_health` : 183 (100% restauré)
+      - **Égalité stricte prouvée sur 100% des tables**.
 - Statut : **DONE**.
 
 
