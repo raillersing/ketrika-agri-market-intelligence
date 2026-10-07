@@ -9,3 +9,5 @@
 | BL-003 | 2026-10-05 | Cadrage | Intégration raster satellite Sentinel-2 / Landsat haute résolution (30m) | Geo / ML | Low |
 | BL-004 | 2026-10-05 | Cadrage | Alertes et diffusion via canal WhatsApp / SMS | Diffusion | High |
 | BL-005 | 2026-10-05 | Cadrage | Modélisation des prévisions au niveau commune | ML | Medium |
+| BL-006 | 2026-10-07 | T11.2 | Migration majeure Next.js 15+ / React 19 pour alignement sur les derniers patchs d'amont | Security / Web | Medium |
+| BL-007 | 2026-10-07 | T11.2 | Migration majeure MapLibre GL JS vers 6.5+ après validation de compatibilité des couches vectorielles | Security / Geo | Low |

@@ -47,7 +47,7 @@
 | **T9.3** | SHOULD | 9 | Connecteur CHIRPS v3 | T5.1, T1.4 | TODO | — |
 | **T10.1** | MUST | 10 | Copilote analyste SQL sécurisé | T6.1, T5.2 | **DONE** | ketrika.copilot complet (schema, sql_guard sqlglot, executor copilot_ro 5s, writer sans chiffre libre, banc 22 questions 100% >=80%, Démo 2 docs/DEMO_2.md, check vert 210 tests) |
 | **T11.1** | MUST | 11 | Observabilité et supervision | Phases 8–10 | **DONE** | 24b0329 (Logs JSON contextualisés, sensor Dagster échec -> Mailpit, API /v1/sources & page /sources statut failed, 3 tests intégration passants) |
-| **T11.2** | MUST | 11 | Revue de sécurité et audits | T11.1 | TODO | — |
+| **T11.2** | MUST | 11 | Revue de sécurité et audits | T11.1 | **DONE** | Gitleaks 0 secret sur 48 commits, pip-audit 0 vulnérabilité, pnpm audit analysé & mitigé, conteneurs non-root, en-têtes HTTP de sécurité, docs/SECURITY_REVIEW.md rédigé |
 | **T11.3** | MUST | 11 | Procédures de sauvegarde et restauration | T11.1 | TODO | — |
 | **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | TODO | — |
 | **T11.5** | MUST | 11 | Documentation finale et runbooks | T11.4 | TODO | — |
@@ -1055,6 +1055,40 @@
     - Le sensor Dagster réagit sur simulation d'échec de job et délivre un email de notification.
   - **Contrôles qualité :**
     - 3 tests d'intégration passés (`test_observability.py`), 6 tests unitaires passés (`test_core_time_logging.py`), 0 erreur ruff, 0 erreur mypy (151 fichiers), 0 erreur web (15 tests vitest, typecheck réussi).
+- Statut : **DONE**.
+
+### [2026-10-07T15:50:00Z] Exécution de T11.2 : Revue de sécurité et audits
+- **Mini-plan T11.2 :**
+  1. Exécuter `gitleaks detect` (image Docker `zricethezav/gitleaks`) sur l'historique complet git du dépôt.
+  2. Exécuter l'audit de vulnérabilité backend via `pip-audit` dans le conteneur `api`.
+  3. Exécuter l'audit de vulnérabilité frontend `pnpm audit --prod` dans le conteneur `web`.
+  4. Vérifier les directives de sécurité non-root dans `backend/Dockerfile` et `web/Dockerfile`.
+  5. Vérifier les en-têtes HTTP de sécurité (CSP, HSTS, X-Content-Type-Options, Frame-Options) dans l'API FastAPI et le serveur Next.js.
+  6. Rédiger le document normatif `docs/SECURITY_REVIEW.md` synthétisant tous les résultats.
+  7. Consigner toute dépendance avec avertissement dans `docs/plan/BACKLOG.md`.
+  8. Valider avec `./scripts/dev.ps1 check`, consigner et committer `feat(T11.2): security review and audit report`.
+- **Réalisations T11.2 :**
+  - **Audit de fuite de secrets Git (`gitleaks`) :**
+    - `zricethezav/gitleaks:latest` exécuté sur l'intégralité des 48 commits de l'historique avec fichier de configuration `.gitleaks.toml` ;
+    - **0 secret détecté** (`no leaks found`).
+  - **Audit des dépendances Python backend (`pip-audit`) :**
+    - `pip-audit` exécuté dans l'environnement d'exécution conteneurisé du backend ;
+    - Mise à niveau de l'outillage `pip` vers 26.2.1 ;
+    - **0 vulnérabilité connue** sur l'ensemble des dépendances applicatives et analytiques du backend.
+  - **Audit et atténuation frontend Node.js (`pnpm audit`) :**
+    - Analyse complète des dépendances de production Next.js / React / MapLibre ;
+    - Désactivation de l'endpoint d'optimisation d'image AVIF vulnérable via `images: { unoptimized: true }` et suppression de `X-Powered-By` dans `next.config.mjs` ;
+    - Enregistrement des montées de version majeures futures (Next 15+ / React 19 et MapLibre 6.5+) dans `docs/plan/BACKLOG.md` (BL-006, BL-007).
+  - **Conteneurs non-root et isolation :**
+    - `backend/Dockerfile` configure l'utilisateur applicatif non-privilégié `app` (UID 1000) ;
+    - `web/Dockerfile` exécute les processus sous utilisateur non-root `node` (UID 1000).
+  - **En-têtes HTTP de sécurité :**
+    - Middleware de sécurité FastAPI injectant `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, et HSTS en production ;
+    - Configuration `headers()` dans `web/next.config.mjs` renforçant le serveur web ;
+    - Couvert par test d'intégration `test_api_security_headers` dans `backend/tests/integration/test_api_v1.py`.
+  - **Documentation et conformité :**
+    - Publication du rapport normatif d'audit `docs/SECURITY_REVIEW.md`.
+    - `./scripts/dev.ps1 check` : 100% vert (215 tests backend passants, 15 tests web passants, 0 erreur lint/typecheck).
 - Statut : **DONE**.
 
 

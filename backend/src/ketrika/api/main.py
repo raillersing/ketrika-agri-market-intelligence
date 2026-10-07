@@ -73,6 +73,20 @@ app.add_middleware(
 )
 app.add_middleware(RateLimitMiddleware)
 
+
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    """Inject standard security headers into all responses (SPECS §23)."""
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "geolocation=(), camera=(), microphone=()"
+    if settings.app_env == "prod":
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
+
+
 # Exception handlers complying with RFC 7807 Problem Details
 app.add_exception_handler(ProblemDetailException, problem_exception_handler)
 app.add_exception_handler(HTTPException, http_exception_handler)

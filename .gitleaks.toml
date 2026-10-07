@@ -1,0 +1,12 @@
+# .gitleaks.toml
+# Gitleaks configuration and false-positive allowlist for Ketrika
+
+[allowlist]
+description = "Allowlist for deterministic cache hashes, partition identifiers, and replay fixtures"
+paths = [
+    '''backend/tests/fixtures/llm/.*''',
+]
+regexes = [
+    '''odr_bulletin_\d+''',
+    '''"cache_key": "[a-f0-9]{64}"''',
+]

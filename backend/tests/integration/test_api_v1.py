@@ -440,3 +440,14 @@ def test_api_auth_roles_and_status_codes(
     )
     assert r_patch_al.status_code == 200
     assert r_patch_al.json()["state"] == "acknowledged"
+
+
+@pytest.mark.integration
+def test_api_security_headers(client: httpx.Client):
+    """Verify standard security headers are injected into HTTP responses (SPECS §23, T11.2)."""
+    resp = client.get("/v1/health")
+    assert resp.status_code == 200
+    assert resp.headers.get("X-Content-Type-Options") == "nosniff"
+    assert resp.headers.get("X-Frame-Options") == "DENY"
+    assert resp.headers.get("Referrer-Policy") == "strict-origin-when-cross-origin"
+    assert "geolocation=()" in resp.headers.get("Permissions-Policy", "")
