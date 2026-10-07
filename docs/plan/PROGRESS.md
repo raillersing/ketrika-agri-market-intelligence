@@ -38,7 +38,7 @@
 | **T6.1** | MUST | 6 | API FastAPI /v1 | T5.2 | **DONE** | API REST v1 complète (13 routers, auth JWT/API key, RFC 7807, CSV, openapi.json, typage TS, provenance presigned Bronze, 3 tests d'intégration passants, check 100% vert) |
 | **T6.2** | MUST | 6 | Tests de charge et robustesse API | T6.1 | **DONE** | Rate limiter in-memory (60 req/min, 61e -> 429 RFC 7807), benchmarks ≥200 reqs/endpoint agrégé (P95 < 25ms << 1s), check 100% vert |
 | **T7.1** | MUST | 7 | Fondations frontend Next.js | T6.1 | **DONE** | Fondations web (shadcn/ui, tokens de design, formateurs fr-FR 14 tests, openapi-fetch, auth middleware, Sidebar, GlobalFilters, KpiCard, PriceChart, ChoroplethMap, typecheck/lint/build 100% verts) |
-| **T7.2** | MUST | 7 | Pages et vues analytiques web | T7.1 | TODO | — |
+| **T7.2** | MUST | 7 | Pages et vues analytiques web | T7.1 | **DONE** | 14 routes Next.js créées, 12 captures d'écran dans docs/screenshots/, dev.ps1 check vert (167 backend, 15 web), build 0 erreur |
 | **T7.3** | MUST | 7 | Tests e2e web (Playwright) | T7.2 | TODO | — |
 | **T8.1** | MUST | 8 | Moteur d'alertes | T5.2 | TODO | — |
 | **T8.2** | MUST | 8 | Générateur de bulletin hebdomadaire PPN | T5.2, T6.1 | TODO | — |
@@ -749,6 +749,41 @@
     - `pnpm build` : compilation Next.js de production réussie avec génération des pages statiques (`/` et `/login`) et middleware ;
     - `pnpm test` (Vitest) : 15 tests passants.
   - `./scripts/dev.ps1 check` : 100% vert (167 tests backend, 15 tests web, 0 erreur ruff, 0 erreur mypy).
+- Statut : **DONE**.
+
+### [2026-10-07T07:55:00Z] Démarrage de T7.2 : Pages et vues analytiques web
+- **Mini-plan T7.2 :**
+  1. Implémenter `/prices` : explorateur multi-séries (filtres, graphique ECharts comparatif, tableau détaillé avec pagination, bouton export CSV branché sur `/v1/prices?format=csv`).
+  2. Implémenter `/map` : carte plein écran des 23 régions, sélecteur produit/mois, chargement GeoJSON (`/v1/locations?geometry=true`), infobulles détaillées avec lien de provenance.
+  3. Implémenter `/trade` : balances commerciales, imports/exports mensuels en tonnes/Ar, dépendance aux importations (IDR).
+  4. Implémenter `/climate` : cartes et graphiques d'anomalies pluviométriques par district, calendrier cultural interactif (cycles hosy/vakiambiaty/asara).
+  5. Implémenter `/alerts` : liste des alertes de marché actives et résolues, filtres de sévérité/règle, panneau latéral de détail avec preuves et bouton d'acquittement admin.
+  6. Implémenter `/bulletins` et `/bulletins/[id]` : liste des bulletins hebdomadaires, visionneuse PDF/Markdown, bouton d'approbation admin (`/v1/bulletins/{id}/approve`).
+  7. Implémenter `/copilot` : interface conversationnelle avec chat analyste, citation cliquable des observations, SQL généré repliable et métadonnées `value_kind`.
+  8. Implémenter `/observations/[id]` : page de provenance complète (valeurs brutes, unités, conversions, preuve d'extraction page+extrait, méthode, parser, lien source, lien de téléchargement Bronze S3).
+  9. Implémenter `/sources` (cockpit DataOps `gold.source_health`) et `/admin/review` (file de revue des alias/anomalies).
+  10. Valider `pnpm typecheck`, `pnpm lint`, `pnpm build`, `./scripts/dev.ps1 check`, générer les captures d'écran et committer `feat(T7.2): analytical web pages and provenance view`.
+- **Validation acceptation :**
+  - **14 routes Next.js créées et conformes à SPECS §22 :**
+    - `/login` : Connexion administrateur / analyste (`admin@ketrika.local`) ;
+    - `/` : Vue d'ensemble avec 4 KPI cards (Prix médian, Market Health Score, Alertes actives, Disponibilité des stocks) et carte régionale de dispersion ;
+    - `/prices` : Explorateur de prix vivriers multi-séries, tableau paginé avec badges `ValueKind` et bouton d'export CSV streaming ;
+    - `/map` : Carte choroplèthe plein écran des 23 régions avec sélecteurs de produit/mois ;
+    - `/trade` : Balance commerciale, flux d'imports/exports mensuels et indice de dépendance (IDR) ;
+    - `/climate` : Indicateurs d'anomalies pluviométriques par district et calendrier cultural dynamique (cycles Hosy, Vakiambiaty, Asara) ;
+    - `/alerts` : Signaux de marché et cockpit d'alertes avec volet latéral d'inspection des preuves de déclenchement ;
+    - `/bulletins` et `/bulletins/[id]` : Gestion et consultation des bulletins hebdomadaires certifiés sans hallucination numérique, bouton d'approbation officiel ;
+    - `/copilot` : Copilote analyste interactif avec questions pré-remplies, affichage de requêtes SQL repliables et citations d'observations ;
+    - `/sources` : Cockpit DataOps surveillant les SLA de fraîcheur des 10 sources officielles connectées ;
+    - `/admin/review` : File de revue humaine pour les alias et anomalies en attente de validation ;
+    - `/observations/[id]` : Certificat de provenance totale (100% vérifiable) affichant les données brutes Bronze, la valeur standardisée Silver/Gold, la preuve d'extraction mécanique (page/extrait/row_index) et le lien de téléchargement Bronze présigné S3/MinIO.
+  - **12 captures d'écran générées et validées dans `docs/screenshots/` :**
+    - `01_login.png`, `02_overview.png`, `03_prices.png`, `04_map.png`, `05_trade.png`, `06_climate.png`, `07_alerts.png`, `08_bulletins.png`, `09_copilot.png`, `10_sources.png`, `11_admin_review.png`, `12_observation_provenance.png`.
+  - **Contrôles qualité :**
+    - `pnpm typecheck` : 0 erreur TypeScript sur l'ensemble du front ;
+    - `pnpm lint` : 0 avertissement ou erreur ESLint ;
+    - `pnpm build` : compilation Next.js de production réussie avec génération statique et rendu dynamique sous Suspense ;
+    - `./scripts/dev.ps1 check` : 100% vert (167 tests backend passants, 15 tests web passants, 0 erreur mypy/ruff).
 - Statut : **DONE**.
 
 

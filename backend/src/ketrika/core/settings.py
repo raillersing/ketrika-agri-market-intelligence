@@ -55,7 +55,7 @@ class Settings(BaseSettings):
     jwt_ttl_minutes: int = 720
     demo_admin_email: str = "admin@ketrika.local"
     demo_admin_password: str = "change-me"
-    cors_origins: str = "http://localhost:3000"
+    cors_origins: str = "http://localhost:3000,http://localhost:3005"
 
     # Notifications
     smtp_host: str = "mailpit"

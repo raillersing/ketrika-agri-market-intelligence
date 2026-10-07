@@ -79,6 +79,7 @@ services:
       - S3_SECRET_KEY=${S3_SECRET_KEY:-minioadmin}
       - S3_BUCKET_BRONZE=${S3_BUCKET_BRONZE:-bronze}
       - S3_REGION=${S3_REGION:-auto}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,http://localhost:3005}
       - PYTHONPATH=/app/src
       - KETRIKA_REPO_ROOT=/workspace
     volumes:
