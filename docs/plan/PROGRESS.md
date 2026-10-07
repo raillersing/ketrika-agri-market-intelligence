@@ -41,7 +41,7 @@
 | **T7.2** | MUST | 7 | Pages et vues analytiques web | T7.1 | **DONE** | 14 routes Next.js créées, 12 captures d'écran dans docs/screenshots/, dev.ps1 check vert (167 backend, 15 web), build 0 erreur |
 | **T7.3** | MUST | 7 | Tests e2e web (Playwright) et Démo 1 | T7.2 | **DONE** | Suite E2E CDP (27/27 assertions passées, 0 erreur console), Démo 1 (docs/DEMO_1.md), dev.ps1 check 100% vert |
 | **T8.1** | MUST | 8 | Moteur d'alertes | T5.2 | **DONE** | Moteur idempotent 5 règles SPECS §18, déduplication, auto-résolution après 2 cycles, sévérité high 2 sources, SMTP Mailpit vérifié, garde H3 Telegram validé, 10 tests passants (couv 96%), check 100% vert |
-| **T8.2** | MUST | 8 | Générateur de bulletin hebdomadaire PPN | T5.2, T6.1 | TODO | — |
+| **T8.2** | MUST | 8 | Générateur de bulletin hebdomadaire PPN | T5.2, T6.1 | **DONE** | Générateur SPECS §20 (facts Gold, writer placeholders, rejet chiffres libres avec repli, rendu HTML+PDF WeasyPrint, S3 MinIO, tests audit 100% nombres, dev.ps1 bulletin validé, check vert) |
 | **T9.1** | MUST | 9 | Modèles de prévision de prix | T5.1 | TODO | — |
 | **T9.2** | MUST | 9 | Intégration des anomalies dans les alertes | T9.1, T8.1 | TODO | — |
 | **T9.3** | SHOULD | 9 | Connecteur CHIRPS v3 | T5.1, T1.4 | TODO | — |
@@ -863,6 +863,47 @@
   - **Contrôles qualité globaux :**
     - `./scripts/dev.ps1 check` : 100% vert (177 tests backend passants, 15 tests web passants, 0 erreur ruff, 0 erreur mypy sur 130 fichiers).
 - Statut : **DONE**.
+
+### [2026-10-07T09:12:00Z] Démarrage de T8.2 : Générateur de bulletin hebdomadaire PPN
+- **Mini-plan T8.2 :**
+  1. Implémenter `backend/src/ketrika/bulletin/facts.py` calculant le dictionnaire de faits Gold avec traçabilité (`observation_ids`, `display`, format fr-FR, attributions).
+  2. Implémenter `backend/src/ketrika/bulletin/writer.py` (requête LLM sans chiffres, validation regex stricte zéro chiffre hors placeholders `{{fXXX}}`, repli sur gabarit déterministe `templates/fallback.md.j2`).
+  3. Implémenter `backend/src/ketrika/bulletin/render.py` (substitution exacte des placeholders, rendu HTML Jinja2 et PDF WeasyPrint, stockage S3 MinIO dans `bulletins/`).
+  4. Créer les gabarits normatifs Jinja2 (`backend/src/ketrika/bulletin/templates/bulletin.html.j2` et `fallback.md.j2`).
+  5. Implémenter le point d'entrée CLI et orchestrateur `generate_weekly_bulletin` câblé sur `scripts/dev.ps1 bulletin`.
+  6. Écrire la suite de tests (`tests/unit/test_bulletin.py`) validant : rejet de sortie LLM avec chiffres libres (ex: « 2850 ») déclenchant le repli, audit de 100% des nombres vers les faits et observations, déterminisme en mode replay.
+  7. Valider DoD et `./scripts/dev.ps1 check`.
+  8. Consigner les preuves et committer `feat(T8.2): weekly ppn bulletin generator`.
+- **Validation acceptation :**
+  - **Génération de bulletin validée (`./scripts/dev.ps1 bulletin`) :**
+    - Production de brouillon complet avec ID persistant dans `ops.bulletin` (`status='draft'`) ;
+    - Génération et stockage dans S3/MinIO des deux artefacts : HTML (`bulletins/<id>/bulletin.html`) et PDF WeasyPrint (`bulletins/<id>/bulletin.pdf`, 22 805 octets).
+  - **Règle absolue d'interdiction de chiffres libres (anti-hallucination) :**
+    - Test unitaire validant le rejet systématique d'une sortie LLM contenant « 2850 » avec déclenchement du repli déterministe (`fallback.md.j2`) ;
+    - Validation stricte : 0 chiffre en dehors des placeholders `{{fXXX}}`.
+  - **Audit mécanique des nombres dans le PDF :**
+    - 100% des nombres apparaissant dans le document PDF correspondent à un fait Gold certifié dont les `observation_ids` existent en base (test d'audit validé).
+  - **Couverture et tests :**
+    - Couverture sur le module `ketrika.bulletin` : **87%** (supérieure au seuil de 80%) ;
+    - 9 tests (8 unitaires, 1 intégration complète) validés à 100%.
+  - **Contrôles qualité globaux :**
+    - `./scripts/dev.ps1 check` : 100% vert (186 tests backend passants, 15 tests web passants, 0 erreur ruff, 0 erreur mypy sur 136 fichiers).
+- Statut : **DONE**.
+
+### [2026-10-07T09:40:00Z] Gate de fin de Phase 8 (Alertes et bulletin PPN)
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** Le système complet d'intelligence et de diffusion d'alertes & bulletins :
+    1. Moteur d'alertes déterministe (`ketrika.alerts`) couvrant les 5 règles normatives (PRICE_SPIKE avec sévérité renforcée si >= 2 sources, PRICE_DROP, STOCKOUT_RISK, CLIMATE_RISK avec calendrier cultural, DATA_STALE) ;
+    2. Gestion idempotente du cycle de vie des alertes avec déduplication stricte et résolution automatique après 2 cycles consécutifs sans condition ;
+    3. Multi-canal de notification avec envoi SMTP vers Mailpit et neutralisation rigoureuse de Telegram selon le garde H3 (EXTERNAL_SEND_ENABLED=0) ;
+    4. Asset Dagster `alerts__evaluate` connecté en aval de `gold__refresh` ;
+    5. Générateur de bulletin hebdomadaire PPN (`ketrika.bulletin`) avec extraction de faits Gold, prose sans chiffres libres (placeholders stricts), rendu HTML et PDF WeasyPrint certifié, stockage S3 MinIO et commande `./scripts/dev.ps1 bulletin`.
+  - **Chiffres clés :** 5 règles d'alerte, 19 tests dédiés validés (10 alertes, 9 bulletin), couverture alerts 96%, couverture bulletin 87%, 186 tests backend passants, 0 erreur lint/typecheck.
+  - **Dettes :** Aucune.
+  - **Risques :** Aucun.
+  - **Tag :** `phase-8-done`.
+
+
 
 
 

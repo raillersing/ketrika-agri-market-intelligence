@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Bulletin Hebdomadaire des Marchés Vivriers — Ketrika</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 20mm 15mm 20mm 15mm;
+      @bottom-right {
+        content: "Page " counter(page) " sur " counter(pages);
+        font-size: 9pt;
+        color: #64748b;
+      }
+      @bottom-left {
+        content: "Ketrika Agri Market Intelligence Madagascar • Données 100% vérifiables";
+        font-size: 8pt;
+        color: #94a3b8;
+      }
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      line-height: 1.5;
+      font-size: 10.5pt;
+    }
+    .header {
+      border-bottom: 2px solid #047857;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .brand {
+      font-size: 20pt;
+      font-weight: 800;
+      color: #064e3b;
+      letter-spacing: -0.5px;
+    }
+    .subtitle {
+      font-size: 10pt;
+      color: #047857;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+    .period-box {
+      margin-top: 8px;
+      font-size: 9.5pt;
+      color: #475569;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      float: right;
+    }
+    h1, h2, h3 {
+      color: #0f172a;
+      page-break-after: avoid;
+    }
+    h2 {
+      font-size: 13pt;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 4px;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      color: #064e3b;
+    }
+    p {
+      margin-bottom: 8px;
+    }
+    ul {
+      margin-top: 4px;
+      margin-bottom: 12px;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+    strong {
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .facts-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      margin-bottom: 16px;
+      font-size: 9pt;
+      page-break-inside: avoid;
+    }
+    .facts-table th {
+      background: #f1f5f9;
+      color: #334155;
+      text-align: left;
+      padding: 6px 10px;
+      border: 1px solid #cbd5e1;
+      font-weight: 600;
+    }
+    .facts-table td {
+      padding: 5px 10px;
+      border: 1px solid #e2e8f0;
+    }
+    .footer-note {
+      margin-top: 24px;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-left: 3px solid #047857;
+      font-size: 8.5pt;
+      color: #475569;
+      page-break-inside: avoid;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="badge">Données Certifiées Gold</span>
+    <div class="brand">KETRIKA</div>
+    <div class="subtitle">Agri Market Intelligence Madagascar</div>
+    <div class="period-box">
+      <strong>Bulletin de Veille PPN Vivriers</strong> • Période du {{ period_start }} au {{ period_end }}
+    </div>
+  </div>
+
+  <div class="content">
+    {{ html_body | safe }}
+  </div>
+
+  <h2>Tableau Récapitulatif des Faits Certifiés</h2>
+  <table class="facts-table">
+    <thead>
+      <tr>
+        <th style="width: 12%;">Code</th>
+        <th style="width: 58%;">Indicateur de Marché</th>
+        <th style="width: 30%;">Valeur Observée (Display)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for k, f in facts.items() %}
+      {% if k != "sources_attribution" %}
+      <tr>
+        <td><code>{{ k }}</code></td>
+        <td>{{ f.label }}</td>
+        <td><strong>{{ f.display }}</strong></td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="footer-note">
+    <strong>Garantie de Traçabilité Totale :</strong> Aucun chiffre présenté dans cette publication n'a été produit librement par une intelligence artificielle. 100 % des valeurs proviennent des séries Gold officielles (ODR, MinCC, INSTAT, WFP, Douanes).
+  </div>
+</body>
+</html>
