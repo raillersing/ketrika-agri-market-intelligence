@@ -51,7 +51,7 @@
 | **T11.3** | MUST | 11 | Procédures de sauvegarde et restauration | T11.1 | **DONE** | 5082de1 (deploy/backup.sh & restore.sh shellcheck 0/eol lf, dev.ps1 backup/restore, test dump->truncate->restore 100% comptes identiques, docs/runbooks/restore.md) |
 | **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | **DONE** | d0504cb (docker-compose.prod.yml validé, deploy/Caddyfile, deploy/bootstrap-vps.sh shellcheck 0, docs/runbooks/deploy.md & rotate-secrets.md) |
 | **T11.5** | MUST | 11 | Documentation finale et runbooks | T11.4 | **DONE** | 8614e36 (README.md exhaustif, 10 fiches sources vérifiées, 4 runbooks opérationnels, 4 modèles docs/outreach/ non envoyés - H7) |
-| **T11.6** | MUST | 11 | Test d'acceptation final du MVP | T11.1–T11.5 | **DONE** | ketrika.demo validé, 11/11 KPIs validés (provenance 100%, P95 10ms, copilot 90.9%, bulletin 0 chiffre, rebuild ok), docs/MVP_REPORT.md & docs/HANDOFF.md |
+| **T11.6** | MUST | 11 | Test d'acceptation final du MVP | T11.1–T11.5 | **DONE** | b06a687 (ketrika.demo validé, 11/11 KPIs validés, docs/MVP_REPORT.md & docs/HANDOFF.md) |
 
 ---
 
