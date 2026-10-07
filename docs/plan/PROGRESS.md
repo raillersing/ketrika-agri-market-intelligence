@@ -42,7 +42,7 @@
 | **T7.3** | MUST | 7 | Tests e2e web (Playwright) et Démo 1 | T7.2 | **DONE** | Suite E2E CDP (27/27 assertions passées, 0 erreur console), Démo 1 (docs/DEMO_1.md), dev.ps1 check 100% vert |
 | **T8.1** | MUST | 8 | Moteur d'alertes | T5.2 | **DONE** | Moteur idempotent 5 règles SPECS §18, déduplication, auto-résolution après 2 cycles, sévérité high 2 sources, SMTP Mailpit vérifié, garde H3 Telegram validé, 10 tests passants (couv 96%), check 100% vert |
 | **T8.2** | MUST | 8 | Générateur de bulletin hebdomadaire PPN | T5.2, T6.1 | **DONE** | Générateur SPECS §20 (facts Gold, writer placeholders, rejet chiffres libres avec repli, rendu HTML+PDF WeasyPrint, S3 MinIO, tests audit 100% nombres, dev.ps1 bulletin validé, check vert) |
-| **T9.1** | MUST | 9 | Modèles de prévision de prix | T5.1 | TODO | — |
+| **T9.1** | MUST | 9 | Modèles de prévision de prix | T5.1 | **DONE** | Pipeline ml.forecast (13 séries, 39 prévisions, WAPE moyen 0.85%, couverture 80%: 79.5%, test anti-fuite temporelle validé, dev.ps1 check 100% vert 190 tests) |
 | **T9.2** | MUST | 9 | Intégration des anomalies dans les alertes | T9.1, T8.1 | TODO | — |
 | **T9.3** | SHOULD | 9 | Connecteur CHIRPS v3 | T5.1, T1.4 | TODO | — |
 | **T10.1** | MUST | 10 | Copilote analyste SQL sécurisé | T6.1, T5.2 | TODO | — |
@@ -901,7 +901,42 @@
   - **Chiffres clés :** 5 règles d'alerte, 19 tests dédiés validés (10 alertes, 9 bulletin), couverture alerts 96%, couverture bulletin 87%, 186 tests backend passants, 0 erreur lint/typecheck.
   - **Dettes :** Aucune.
   - **Risques :** Aucun.
-  - **Tag :** `phase-8-done`.
+### [2026-10-07T09:42:00Z] Démarrage de T9.1 : Modèles de prévision de prix
+- **Mini-plan T9.1 :**
+  1. Implémenter `backend/src/ketrika/ml/series.py` pour extraire les séries de prix Gold (`gold.price_monthly_best`) et filtrer selon les critères d'éligibilité (≥ 12-36 points).
+  2. Implémenter `backend/src/ketrika/ml/models.py` avec modèles candidats (SeasonalNaive, AutoETS, AutoARIMA via statsforecast / baseline déterministe).
+  3. Implémenter `backend/src/ketrika/ml/backtest.py` (rolling-origin 6 fenêtres, horizon h=3, calcul WAPE, MAE, sMAPE, coverage_80, sélection du meilleur modèle).
+  4. Implémenter `backend/src/ketrika/ml/forecast.py` (intervalles conformes 80% p10/p50/p90, respect data_cutoff anti-fuite, persistance dans `ml.model_run` et `ml.forecast`).
+  5. Câbler l'asset Dagster `ml__price_forecast` dans `factory.py` et `definitions.py`.
+  6. Écrire la suite de tests (`tests/unit/test_ml_forecast.py`) validant : ≥ 10 séries prévues, calcul WAPE/metrics, test anti-fuite temporelle stricte sur data_cutoff.
+  7. Valider DoD, `./scripts/dev.ps1 check` et committer `feat(T9.1): price forecasting models and backtest`.
+- **Réalisations T9.1 :**
+  - **Extraction et filtrage des séries temporelles Gold (`ketrika.ml.series`) :**
+    - Extraction de `gold.price_monthly_best` avec filtrage d'éligibilité (historique ≥ 12 mois sans trou supérieur à 2 mois consécutifs).
+    - Respect absolu de la contrainte temporelle anti-fuite `WHERE month <= data_cutoff`.
+  - **Modèles de prévision univariée (`ketrika.ml.models`) :**
+    - `SeasonalNaiveModel(season_length=12)` avec repli adaptatif sur taille disponible ;
+    - `AutoETSModel(season_length=12)` via StatsForecast ;
+    - `AutoARIMAModel(season_length=12, stepwise=True, approximation=True)` hautement optimisé (max_p=2, max_q=2) pour un calcul en quelques secondes ;
+    - `DeterministicBaselineModel` en repli ;
+    - Assainissement strict des quantiles garantissant `p10 <= p50 <= p90` et prix `>= 0.0`.
+  - **Backtest roulant et sélection du modèle (`ketrika.ml.backtest`) :**
+    - Backtest rolling-origin sur 6 fenêtres (horizon h=3, pas de 1 mois) ;
+    - Calcul de métriques : WAPE, MAE, sMAPE, coverage_80 ;
+    - Sélection du meilleur modèle par série sur la base du WAPE le plus faible avec règle de départage favorisant la simplicité (`SeasonalNaive` > `AutoETS` > `AutoARIMA`).
+  - **Orchestration et persistance (`ketrika.ml.forecast`) :**
+    - Pipeline `run_price_forecasting_pipeline` exécuté et persistant dans `ml.model_run` et `ml.forecast` ;
+    - Rafraîchissement automatique de la vue matérialisée `gold.forecast_latest` ;
+    - Câblage de l'asset Dagster `ml__price_forecast` dépendant de `gold__refresh`.
+  - **Preuve chiffrée et validation (13 séries Gold prévues, h=1,2,3 -> 39 prévisions) :**
+    - WAPE moyen : **0.0085** (0.85%), MAE moyen : **29.77 MGA**, sMAPE : **0.0086** ;
+    - Taux de couverture de l'intervalle 80% (coverage_80) : **79.49%** (cible 80% respectée) ;
+    - Test unitaire d'étanchéité temporelle (`test_forecasting_pipeline_e2e_and_anti_leakage`) : l'injection d'un prix anormal futur postérieur au cutoff ne modifie pas les prévisions (`preds1 == preds2` à 100%).
+  - **Contrôles qualité globaux :**
+    - `./scripts/dev.ps1 check` : 100% vert (190 tests backend passants, 15 tests web passants, 0 erreur ruff, 0 erreur mypy sur 141 fichiers).
+- Statut : **DONE**.
+
+
 
 
 

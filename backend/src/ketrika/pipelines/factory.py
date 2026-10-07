@@ -154,3 +154,22 @@ def alerts_evaluate_asset(context) -> dict[str, Any]:
         active = evaluate_alerts(session, send_notifications=True)
         session.commit()
     return {"active_alerts_count": len(active)}
+
+
+@asset(
+    name="ml__price_forecast",
+    group_name="ml",
+    compute_kind="forecasting",
+    deps=[gold_refresh_asset],
+)
+def ml_price_forecast_asset(context) -> dict[str, Any]:
+    """Dagster asset executing monthly price forecasting pipeline (SPECS §17)."""
+    from datetime import date
+
+    from ketrika.ml.forecast import run_price_forecasting_pipeline
+
+    today = date.today()
+    with get_session() as session:
+        result = run_price_forecasting_pipeline(session=session, data_cutoff=today)
+        session.commit()
+    return result

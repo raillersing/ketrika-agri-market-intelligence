@@ -135,3 +135,8 @@ markers = [
     "golden: golden dataset validation tests",
     "slow: tests taking > 5s to run",
 ]
+filterwarnings = [
+    "ignore::SyntaxWarning:statsforecast.*",
+    "ignore::UserWarning:statsforecast.*",
+    "ignore::RuntimeWarning:statsforecast.*",
+]

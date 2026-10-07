@@ -62,6 +62,86 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
         )
         session.add(p_maize)
 
+    extra_products_spec = [
+        (
+            "cassava_fresh",
+            "Manioc frais",
+            "tuber",
+            "kg",
+            ["071410"],
+            ["125"],
+            uuid.UUID("55555555-5555-5555-5555-555555555555"),
+        ),
+        (
+            "oil_edible",
+            "Huile alimentaire",
+            "oil",
+            "l",
+            ["151219"],
+            ["257"],
+            uuid.UUID("66666666-6666-6666-6666-666666666666"),
+        ),
+        (
+            "sugar",
+            "Sucre roux",
+            "sugar",
+            "kg",
+            ["170114"],
+            ["158"],
+            uuid.UUID("77777777-7777-7777-7777-777777777777"),
+        ),
+        (
+            "dry_beans",
+            "Haricots secs",
+            "pulse_oilseed",
+            "kg",
+            ["071333"],
+            ["176"],
+            uuid.UUID("88888888-8888-8888-8888-888888888888"),
+        ),
+        (
+            "rice_imported",
+            "Riz importé",
+            "cereal",
+            "kg",
+            ["100630"],
+            ["2805"],
+            uuid.UUID("99999999-9999-9999-9999-999999999999"),
+        ),
+        (
+            "flour_wheat",
+            "Farine de blé",
+            "cereal",
+            "kg",
+            ["110100"],
+            ["16"],
+            uuid.UUID("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+        ),
+        (
+            "cassava_dry",
+            "Manioc sec (Cossettes)",
+            "tuber",
+            "kg",
+            ["071410"],
+            ["125"],
+            uuid.UUID("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+        ),
+    ]
+    for p_code, p_name, p_cat, p_unit, hs6, fao, p_uuid in extra_products_spec:
+        p_obj = session.get(Product, p_uuid)
+        if not p_obj:
+            p_obj = Product(
+                product_id=p_uuid,
+                product_code=p_code,
+                canonical_name_fr=p_name,
+                category=p_cat,
+                base_unit=p_unit,
+                hs6_codes=hs6,
+                faostat_item_codes=fao,
+                verified=True,
+            )
+            session.add(p_obj)
+
     # 2. Location
     loc = session.get(Location, LOCATION_ANALAMANGA_ID)
     if not loc:
@@ -73,6 +153,24 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
             boundary_version="2024.1",
         )
         session.add(loc)
+
+    extra_locs_spec = [
+        ("MG12", "Vakinankaratra", uuid.UUID("33333333-3333-3333-3333-333333333312")),
+        ("MG31", "Atsinanana", uuid.UUID("33333333-3333-3333-3333-333333333331")),
+        ("MG41", "Boeny", uuid.UUID("33333333-3333-3333-3333-333333333341")),
+        ("MG51", "Atsimo-Andrefana", uuid.UUID("33333333-3333-3333-3333-333333333351")),
+    ]
+    for l_pcode, l_name, l_uuid in extra_locs_spec:
+        l_obj = session.get(Location, l_uuid)
+        if not l_obj:
+            l_obj = Location(
+                location_id=l_uuid,
+                admin_level=1,
+                pcode=l_pcode,
+                name=l_name,
+                boundary_version="2024.1",
+            )
+            session.add(l_obj)
 
     # 3. Sources
     sources_spec = [
@@ -256,6 +354,191 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
         )
         session.add(p_arb)
         counts["price"] += 1
+
+    # D) Additional 12 distinct commodity and regional series for ML forecasting (SPECS §17)
+    # Each series covers 18 consecutive months (2022-10 to 2024-03)
+    extra_series_configs = [
+        (
+            "maize",
+            PRODUCT_MAIZE_ID,
+            "Maïs grain",
+            "Analamanga",
+            LOCATION_ANALAMANGA_ID,
+            "retail",
+            1600.0,
+            15.0,
+        ),
+        (
+            "maize",
+            PRODUCT_MAIZE_ID,
+            "Maïs grain",
+            "Vakinankaratra",
+            uuid.UUID("33333333-3333-3333-3333-333333333312"),
+            "wholesale",
+            1450.0,
+            12.0,
+        ),
+        (
+            "cassava_fresh",
+            uuid.UUID("55555555-5555-5555-5555-555555555555"),
+            "Manioc frais",
+            "Analamanga",
+            LOCATION_ANALAMANGA_ID,
+            "retail",
+            900.0,
+            8.0,
+        ),
+        (
+            "cassava_fresh",
+            uuid.UUID("55555555-5555-5555-5555-555555555555"),
+            "Manioc frais",
+            "Atsimo-Andrefana",
+            uuid.UUID("33333333-3333-3333-3333-333333333351"),
+            "retail",
+            850.0,
+            7.0,
+        ),
+        (
+            "oil_edible",
+            uuid.UUID("66666666-6666-6666-6666-666666666666"),
+            "Huile alimentaire",
+            "Analamanga",
+            LOCATION_ANALAMANGA_ID,
+            "retail",
+            7500.0,
+            40.0,
+        ),
+        (
+            "oil_edible",
+            uuid.UUID("66666666-6666-6666-6666-666666666666"),
+            "Huile alimentaire",
+            "Atsinanana",
+            uuid.UUID("33333333-3333-3333-3333-333333333331"),
+            "retail",
+            7200.0,
+            35.0,
+        ),
+        (
+            "sugar",
+            uuid.UUID("77777777-7777-7777-7777-777777777777"),
+            "Sucre roux",
+            "Analamanga",
+            LOCATION_ANALAMANGA_ID,
+            "retail",
+            4200.0,
+            25.0,
+        ),
+        (
+            "dry_beans",
+            uuid.UUID("88888888-8888-8888-8888-888888888888"),
+            "Haricots secs",
+            "Vakinankaratra",
+            uuid.UUID("33333333-3333-3333-3333-333333333312"),
+            "retail",
+            4800.0,
+            30.0,
+        ),
+        (
+            "rice_imported",
+            uuid.UUID("99999999-9999-9999-9999-999999999999"),
+            "Riz importé",
+            "Analamanga",
+            LOCATION_ANALAMANGA_ID,
+            "retail",
+            3200.0,
+            20.0,
+        ),
+        (
+            "rice_imported",
+            uuid.UUID("99999999-9999-9999-9999-999999999999"),
+            "Riz importé",
+            "Atsinanana",
+            uuid.UUID("33333333-3333-3333-3333-333333333331"),
+            "retail",
+            3100.0,
+            18.0,
+        ),
+        (
+            "flour_wheat",
+            uuid.UUID("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+            "Farine de blé",
+            "Analamanga",
+            LOCATION_ANALAMANGA_ID,
+            "retail",
+            3800.0,
+            20.0,
+        ),
+        (
+            "cassava_dry",
+            uuid.UUID("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+            "Manioc sec (Cossettes)",
+            "Atsimo-Andrefana",
+            uuid.UUID("33333333-3333-3333-3333-333333333351"),
+            "retail",
+            1200.0,
+            10.0,
+        ),
+    ]
+
+    months_18 = [
+        (2022, 10),
+        (2022, 11),
+        (2022, 12),
+        (2023, 1),
+        (2023, 2),
+        (2023, 3),
+        (2023, 4),
+        (2023, 5),
+        (2023, 6),
+        (2023, 7),
+        (2023, 8),
+        (2023, 9),
+        (2023, 10),
+        (2023, 11),
+        (2023, 12),
+        (2024, 1),
+        (2024, 2),
+        (2024, 3),
+    ]
+
+    import math
+
+    for p_code, p_uuid, p_raw, loc_raw, loc_uuid, act_lvl, base_p, slope in extra_series_configs:
+        unit_str = "l" if p_code == "oil_edible" else "kg"
+        for idx_m, (y, m) in enumerate(months_18):
+            # Calculate price with trend + seasonal oscillation
+            seasonal = math.sin(m * math.pi / 6.0) * (base_p * 0.03)
+            pval = round(base_p + (idx_m * slope) + seasonal, 2)
+            p_start = date(y, m, 1)
+            p_end = date(y, m, 28)
+            p_extra = PriceObservation(
+                observation_id=uuid.uuid5(
+                    SOURCE_RECORD_ID_BASE, f"extra_{p_code}_{loc_raw}_{act_lvl}_{y}_{m}"
+                ),
+                source_record_id=src_rec_mincc.source_record_id,
+                natural_key=f"nk_extra_{p_code}_{loc_raw}_{act_lvl}_{y}_{m}",
+                product_raw=p_raw,
+                product_id=p_uuid,
+                location_raw=loc_raw,
+                location_id=loc_uuid,
+                actor_level=act_lvl,
+                period_start=p_start,
+                period_end=p_end,
+                price_raw=str(pval),
+                price_value=pval,
+                currency_raw="MGA",
+                unit_raw=unit_str,
+                price_mga_per_base=pval,
+                base_unit=unit_str,
+                conversion_status="exact",
+                observed_or_imputed="observed",
+                extraction_method="deterministic",
+                confidence=1.0,
+                review_status="accepted",
+                superseded_by=None,
+            )
+            session.add(p_extra)
+            counts["price"] += 1
 
     # 6. Stock observations (3 sequential observations showing improving trend)
     stocks_seq = [
