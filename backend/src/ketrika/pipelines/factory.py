@@ -81,8 +81,8 @@ def build_source_assets(connector_cls: type[Connector]) -> SourceAssets:
         return artifacts
 
     # 2. Silver Asset
-    @asset(name=silver_name, group_name="silver", compute_kind="normalize")
-    def silver_asset(context, bronze_artifacts: list[RawArtifact]) -> dict[str, Any]:
+    @asset(name=silver_name, group_name="silver", compute_kind="normalize", deps=[bronze_asset])
+    def silver_asset(context) -> dict[str, Any]:
         connector = connector_cls()
         ctx = RunContext(
             source_id=source_id,
@@ -138,3 +138,19 @@ def gold_refresh_asset(context) -> dict[str, Any]:
         res = refresh_gold_views(session)
         session.commit()
     return res
+
+
+@asset(
+    name="alerts__evaluate",
+    group_name="alerts",
+    compute_kind="evaluation",
+    deps=[gold_refresh_asset],
+)
+def alerts_evaluate_asset(context) -> dict[str, Any]:
+    """Dagster asset evaluating alert rules on Gold views and dispatching notifications."""
+    from ketrika.alerts.engine import evaluate_alerts
+
+    with get_session() as session:
+        active = evaluate_alerts(session, send_notifications=True)
+        session.commit()
+    return {"active_alerts_count": len(active)}

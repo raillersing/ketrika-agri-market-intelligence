@@ -3,9 +3,9 @@
 from dagster import Definitions
 
 from ketrika.connectors.registry import list_registered_connectors
-from ketrika.pipelines.factory import build_source_assets, gold_refresh_asset
+from ketrika.pipelines.factory import alerts_evaluate_asset, build_source_assets, gold_refresh_asset
 
-all_assets = [gold_refresh_asset]
+all_assets = [gold_refresh_asset, alerts_evaluate_asset]
 all_checks = []
 all_schedules = []
 

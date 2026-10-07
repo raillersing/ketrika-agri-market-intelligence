@@ -40,7 +40,7 @@
 | **T7.1** | MUST | 7 | Fondations frontend Next.js | T6.1 | **DONE** | Fondations web (shadcn/ui, tokens de design, formateurs fr-FR 14 tests, openapi-fetch, auth middleware, Sidebar, GlobalFilters, KpiCard, PriceChart, ChoroplethMap, typecheck/lint/build 100% verts) |
 | **T7.2** | MUST | 7 | Pages et vues analytiques web | T7.1 | **DONE** | 14 routes Next.js créées, 12 captures d'écran dans docs/screenshots/, dev.ps1 check vert (167 backend, 15 web), build 0 erreur |
 | **T7.3** | MUST | 7 | Tests e2e web (Playwright) et Démo 1 | T7.2 | **DONE** | Suite E2E CDP (27/27 assertions passées, 0 erreur console), Démo 1 (docs/DEMO_1.md), dev.ps1 check 100% vert |
-| **T8.1** | MUST | 8 | Moteur d'alertes | T5.2 | TODO | — |
+| **T8.1** | MUST | 8 | Moteur d'alertes | T5.2 | **DONE** | Moteur idempotent 5 règles SPECS §18, déduplication, auto-résolution après 2 cycles, sévérité high 2 sources, SMTP Mailpit vérifié, garde H3 Telegram validé, 10 tests passants (couv 96%), check 100% vert |
 | **T8.2** | MUST | 8 | Générateur de bulletin hebdomadaire PPN | T5.2, T6.1 | TODO | — |
 | **T9.1** | MUST | 9 | Modèles de prévision de prix | T5.1 | TODO | — |
 | **T9.2** | MUST | 9 | Intégration des anomalies dans les alertes | T9.1, T8.1 | TODO | — |
@@ -831,6 +831,40 @@
   - **Dettes :** Aucune.
   - **Risques :** Aucun.
   - **Tag :** `phase-7-done`.
+
+### [2026-10-07T08:58:00Z] Démarrage de T8.1 : Moteur d'alertes
+- **Mini-plan T8.1 :**
+  1. Implémenter `backend/src/ketrika/alerts/rules.py` avec les règles normatives de SPECS §18 (PRICE_SPIKE, PRICE_DROP, STOCKOUT_RISK, CLIMATE_RISK, DATA_STALE).
+  2. Implémenter `backend/src/ketrika/alerts/notifier.py` pour SMTP (Mailpit) et Telegram avec garde strict H3 EXTERNAL_SEND_ENABLED.
+  3. Implémenter `backend/src/ketrika/alerts/engine.py` (évaluation sur vues Gold, déduplication sur dedupe_key, transitions open/acknowledged/resolved après 2 cycles sans condition, notifications).
+  4. Brancher l'asset Dagster `alerts__evaluate` dans `backend/src/ketrika/pipelines/factory.py` et `definitions.py`.
+  5. Écrire la suite de tests (`tests/unit/test_alerts.py`, `tests/integration/test_alerts_engine.py`) couvrant scénarios synthétiques, sévérité 2 sources, cycle resolved, email Mailpit et garde H3.
+  6. Valider DoD et `./scripts/dev.ps1 check`.
+  7. Consigner les preuves et committer `feat(T8.1): alerts engine and notifications`.
+- **Validation acceptation :**
+  - **Moteur d'alertes 5 règles normatives (SPECS §18) :**
+    - `PRICE_SPIKE` : `z > 3` et `chg_1m > 0.15`, sévérité `high` si confirmé par >= 2 sources distinctes dans le mois, sinon `medium` ;
+    - `PRICE_DROP` : `z < -3` et `chg_1m < -0.15`, sévérité `medium` ;
+    - `STOCKOUT_RISK` : dégradation consécutive de stock ('tight' ou 'shortage') sur 2 observations et `chg_1m > 0`, sévérité `high` si dernier statut `shortage`, sinon `medium` ;
+    - `CLIMATE_RISK` : anomalie de précipitations < -30% pendant fenêtre sensible selon `crop_calendar.yaml`, sévérité `high` si < -50% ;
+    - `DATA_STALE` : source prioritaire P0 hors SLA de fraîcheur, sévérité `low`.
+  - **Idempotence et cycle de vie des alertes :**
+    - Upsert déterministe sur `dedupe_key` sans duplication de lignes en base ;
+    - Mise à jour de `last_seen_at` lors des ré-occurrences ;
+    - Transition automatique vers `resolved` après 2 évaluations consécutives où la condition n'est plus vérifiée (`miss_count >= 2`).
+  - **Notifications multi-canaux et garde H3 :**
+    - Notifications SMTP vers Mailpit validées par inspection d'API HTTP (`http://mailpit:8025/api/v1/messages`) ;
+    - Garde H3 strict (AGENTS.md §5.3 / §8.6) : lorsque `EXTERNAL_SEND_ENABLED=0`, aucun appel réseau vers Telegram n'est effectué (neutralisation vérifiée par test unitaire).
+  - **Intégration Dagster :**
+    - Asset Dagster `alerts__evaluate` déclaré avec dépendance vers `gold__refresh` et validé dans le graphe d'assets (`ketrika.pipelines.definitions`).
+  - **Couverture de tests :**
+    - Couverture sur le module `ketrika.alerts` : **96%** (exigence DoD >= 80% respectée) ;
+    - 10 tests dédiés (unitaires et intégration) validés à 100%.
+  - **Contrôles qualité globaux :**
+    - `./scripts/dev.ps1 check` : 100% vert (177 tests backend passants, 15 tests web passants, 0 erreur ruff, 0 erreur mypy sur 130 fichiers).
+- Statut : **DONE**.
+
+
 
 
 
