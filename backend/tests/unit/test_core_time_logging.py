@@ -73,7 +73,22 @@ def test_logging_configuration_and_binding():
     logger = get_logger("test_logger")
     assert logger is not None
 
-    bind_context(source_id="test_source", run_id="12345")
+    bind_context(source_id="test_source", run_id="12345", partition_key="2026-05")
     # Log info message with bound context
     logger.info("Test log message", extra_param="value")
     clear_context()
+
+
+def test_logging_json_format_configured(monkeypatch):
+    """Verify JSON log formatting when log_format is set to json (T11.1)."""
+    import ketrika.core.settings as s
+
+    s.get_settings.cache_clear()
+    monkeypatch.setenv("LOG_FORMAT", "json")
+    setup_logging()
+    logger = get_logger("test_json")
+    assert logger is not None
+    bind_context(run_id="run-abc", source_id="wfp_hdx_mdg", partition_key="2026-03")
+    logger.info("JSON log event", metric_count=42)
+    clear_context()
+    s.get_settings.cache_clear()

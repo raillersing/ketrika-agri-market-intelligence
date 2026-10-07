@@ -46,7 +46,7 @@
 | **T9.2** | MUST | 9 | Intégration des anomalies dans les alertes | T9.1, T8.1 | **DONE** | ketrika.ml.anomalies & rules.py (test synthétique injection pic z>3 / chute z<-3, feeds PRICE_SPIKE/DROP, multi-source high, model_run, check vert 193 tests) |
 | **T9.3** | SHOULD | 9 | Connecteur CHIRPS v3 | T5.1, T1.4 | TODO | — |
 | **T10.1** | MUST | 10 | Copilote analyste SQL sécurisé | T6.1, T5.2 | **DONE** | ketrika.copilot complet (schema, sql_guard sqlglot, executor copilot_ro 5s, writer sans chiffre libre, banc 22 questions 100% >=80%, Démo 2 docs/DEMO_2.md, check vert 210 tests) |
-| **T11.1** | MUST | 11 | Observabilité et supervision | Phases 8–10 | TODO | — |
+| **T11.1** | MUST | 11 | Observabilité et supervision | Phases 8–10 | **DONE** | Logs JSON (run_id/source_id/partition_key), sensor Dagster échec -> email Mailpit, API /v1/sources & page /sources avec statut failed, 3 tests d'intégration passants |
 | **T11.2** | MUST | 11 | Revue de sécurité et audits | T11.1 | TODO | — |
 | **T11.3** | MUST | 11 | Procédures de sauvegarde et restauration | T11.1 | TODO | — |
 | **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | TODO | — |
@@ -1025,6 +1025,37 @@
   - **Chiffres clés :** 22 questions d'évaluation réussies (100%), 17 tests copilote dédiés, 210 tests backend passants, 15 tests front passants, 0 erreur lint/typecheck.
   - **Dettes :** Aucune.
   - **Risques :** Aucun.
+
+### [2026-10-07T15:20:00Z] Exécution de T11.1 : Observabilité et supervision
+- **Mini-plan T11.1 :**
+  1. Configurer `Settings.log_format` ("console" | "json") et formateur JSON structuré dans `ketrika.core.logging`.
+  2. Lier systématiquement le contexte d'exécution (`run_id`, `source_id`, `partition_key`) dans `ketrika.connectors.runner`.
+  3. Implémenter l'alerte d'échec de pipeline SMTP `send_pipeline_failure_email` dans `ketrika.alerts.notifier`.
+  4. Créer le sensor Dagster `@run_failure_sensor` (`pipeline_failure_email_sensor`) dans `ketrika.pipelines.definitions`.
+  5. Étendre l'endpoint `/v1/sources` (`ketrika.api.routers.sources`) pour joindre `gold.source_health` et `latest_run_status`.
+  6. Mettre à jour la page web `/sources` pour afficher les statuts (`failed`, `success`, SLA, fraîcheur).
+  7. Écrire des tests unitaires et d'intégration validant le logging JSON, l'échec simulé avec email Mailpit et le statut `failed` dans `/sources`.
+  8. Valider avec `./scripts/dev.ps1 check`, consigner les preuves et committer `feat(T11.1): observability structured logs and failure sensor`.
+- **Réalisations T11.1 :**
+  - **Logs structurés JSON et contexte opérationnel (`ketrika.core.logging`) :**
+    - `Settings.log_format` configurable (`console` par défaut, `json` en production ou sur variable d'environnement `LOG_FORMAT=json`) ;
+    - Contexte structuré injecté (`bind_context(run_id=..., source_id=..., partition_key=...)`) et nettoyé proprement en bloc `finally` ;
+    - Validé par tests unitaires `test_logging_configuration_and_binding` et `test_logging_json_format_configured`.
+  - **Supervision des échecs de pipeline et notifications SMTP (`ketrika.alerts.notifier` & `ketrika.pipelines.definitions`) :**
+    - Dispatcher `send_pipeline_failure_email` générant des emails HTML/texte vers Mailpit avec ID de run, job, et traceback ;
+    - Sensor Dagster `@run_failure_sensor` (`pipeline_failure_email_sensor` & `handle_pipeline_failure`) capturant les échecs Dagster ;
+    - Runner de connecteurs (`execute_connector_pipeline`) expédiant une notification d'échec dès la capture d'une exception non gérée.
+  - **API `/v1/sources` et cockpit web enrichis (`ketrika.api.routers.sources` & `web/src/app/sources/page.tsx`) :**
+    - Requête SQL enrichie sur `meta.source` joignant `gold.source_health` et le dernier statut de `meta.ingestion_run` (`latest_run_status`, `is_stale`, `freshness_days`) ;
+    - Interface utilisateur Next.js `/sources` avec badge dynamique rouge sur statut `failed`, badge ambre sur `running` et vert sur `success` / `active`.
+  - **Validation des critères d'acceptation normatifs (`backend/tests/integration/test_observability.py`) :**
+    - Un connecteur forcé en échec (`FailingConnector`) produit un run en statut `failed` dans PostgreSQL ;
+    - Un email d'alerte critique est capturé dans Mailpit (`http://mailpit:8025/api/v1/messages`) ;
+    - L'API `/v1/sources` renvoie immédiatement `latest_run_status="failed"` pour la source défaillante ;
+    - Le sensor Dagster réagit sur simulation d'échec de job et délivre un email de notification.
+  - **Contrôles qualité :**
+    - 3 tests d'intégration passés (`test_observability.py`), 6 tests unitaires passés (`test_core_time_logging.py`), 0 erreur ruff, 0 erreur mypy (151 fichiers), 0 erreur web (15 tests vitest, typecheck réussi).
+- Statut : **DONE**.
 
 
 

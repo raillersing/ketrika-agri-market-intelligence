@@ -9,6 +9,7 @@ from typing import Any
 from sqlalchemy import or_, select, update
 from sqlalchemy.orm import Session
 
+from ketrika.alerts.notifier import send_pipeline_failure_email
 from ketrika.connectors.base import (
     Connector,
     ParseResult,
@@ -24,6 +25,7 @@ from ketrika.connectors.records import (
     TradeFlowRecord,
     WeatherRecord,
 )
+from ketrika.core.logging import bind_context, clear_context
 from ketrika.core.models.db import (
     CpiObservation,
     IngestionRun,
@@ -638,6 +640,7 @@ def execute_connector_pipeline(
     """Execute full Bronze -> Silver lifecycle for a connector."""
     source_id = connector.source_id
     ingestion_run = ensure_ingestion_run_started(session, source_id)
+    bind_context(run_id=str(ingestion_run.run_id), source_id=source_id)
 
     stats: dict[str, int] = {
         "n_fetched": 0,
@@ -654,6 +657,8 @@ def execute_connector_pipeline(
 
         artifacts: list[tuple[RawArtifact, uuid.UUID]] = []
         for item in discovered:
+            if item.partition_key:
+                bind_context(partition_key=str(item.partition_key))
             raw_art = connector.fetch(item, ctx)
             db_record, is_new = record_bronze_artifact(
                 session=session,
@@ -727,4 +732,12 @@ def execute_connector_pipeline(
         ingestion_run.finished_at = datetime.now(UTC)
         ingestion_run.error = str(e)
         session.flush()
+        # Dispatch failure notification email to Mailpit (T11.1)
+        send_pipeline_failure_email(
+            job_name=f"connector_{source_id}",
+            run_id=str(ingestion_run.run_id),
+            error_message=str(e),
+        )
         raise
+    finally:
+        clear_context()

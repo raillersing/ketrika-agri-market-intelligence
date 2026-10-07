@@ -258,13 +258,17 @@ class BulletinItem(BaseModel):
 
 
 class SourceItem(BaseModel):
-    """Data source registry item."""
+    """Data source registry item with DataOps health indicators."""
 
     source_id: str
     name: str
     priority: str
     status: str
     freshness_sla_days: int | None = None
+    freshness_days: int | None = None
+    is_stale: bool | None = None
+    latest_run_status: str | None = None
+    last_run_started_at: datetime | None = None
 
 
 class SourceHealthItem(BaseModel):

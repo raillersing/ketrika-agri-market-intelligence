@@ -43,7 +43,7 @@ export default function SourcesPage() {
           freshnessSlaDays: s.freshness_sla_days || 30,
           freshnessDays: s.freshness_days,
           isStale: s.is_stale,
-          status: s.status || "active",
+          status: s.latest_run_status || s.status || "active",
         }));
         setSources(items);
       } catch (err: any) {
@@ -123,7 +123,15 @@ export default function SourcesPage() {
                       {s.freshnessSlaDays} jours
                     </td>
                     <td className="px-4 py-3">
-                      <span className="inline-flex px-2 py-0.5 rounded text-[11px] font-semibold uppercase bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                      <span
+                        className={`inline-flex px-2 py-0.5 rounded text-[11px] font-semibold uppercase ${
+                          s.status.toLowerCase() === "failed" || s.status.toLowerCase() === "error"
+                            ? "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"
+                            : s.status.toLowerCase() === "running"
+                            ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+                            : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                        }`}
+                      >
                         {s.status}
                       </span>
                     </td>

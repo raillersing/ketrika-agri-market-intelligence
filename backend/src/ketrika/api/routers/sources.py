@@ -3,33 +3,58 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import select, text
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from ketrika.api.errors import NotFoundException
 from ketrika.api.schemas import SourceHealthItem, SourceItem
 from ketrika.core.db import get_db
-from ketrika.core.models.db import Source
 
 router = APIRouter(prefix="/v1/sources", tags=["sources"])
 
 
 @router.get("", response_model=list[SourceItem])
 def list_sources(session: Session = Depends(get_db)) -> list[SourceItem]:
-    """List all registered data sources and their priority / freshness SLAs."""
-    stmt = select(Source).order_by(Source.source_id)
-    sources = list(session.execute(stmt).scalars().all())
+    """List all registered data sources and their priority / freshness SLAs and health."""
+    sql = text(
+        """
+        SELECT
+            s.source_id,
+            COALESCE(s.spec->>'name', s.source_id) AS name,
+            COALESCE(s.spec->>'priority', 'P1') AS priority,
+            s.status,
+            (s.spec->>'freshness_sla_days')::integer AS freshness_sla_days,
+            sh.freshness_days,
+            sh.is_stale,
+            COALESCE(sh.latest_run_status, lr.latest_run_status) AS latest_run_status,
+            COALESCE(sh.last_run_started_at, lr.started_at) AS last_run_started_at
+        FROM meta.source s
+        LEFT JOIN gold.source_health sh ON s.source_id = sh.source_id
+        LEFT JOIN LATERAL (
+            SELECT status AS latest_run_status, started_at
+            FROM meta.ingestion_run ir
+            WHERE ir.source_id = s.source_id
+            ORDER BY ir.started_at DESC
+            LIMIT 1
+        ) lr ON true
+        ORDER BY s.source_id;
+        """
+    )
+    rows = session.execute(sql).fetchall()
 
     items: list[SourceItem] = []
-    for s in sources:
-        spec = s.spec or {}
+    for r in rows:
         items.append(
             SourceItem(
-                source_id=s.source_id,
-                name=spec.get("name", s.source_id),
-                priority=spec.get("priority", "P1"),
-                status=s.status,
-                freshness_sla_days=spec.get("freshness_sla_days"),
+                source_id=r[0],
+                name=r[1],
+                priority=r[2],
+                status=r[3],
+                freshness_sla_days=r[4],
+                freshness_days=r[5],
+                is_stale=r[6],
+                latest_run_status=r[7],
+                last_run_started_at=r[8],
             )
         )
     return items

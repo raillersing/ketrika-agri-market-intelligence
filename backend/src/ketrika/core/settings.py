@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     app_env: str = "dev"
     tz_business: str = "Indian/Antananarivo"
     log_level: str = "INFO"
+    log_format: str = "console"
 
     # Database
     postgres_user: str = "ketrika"

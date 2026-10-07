@@ -172,3 +172,65 @@ def dispatch_alert_notifications(
         "telegram": send_telegram_alert(alert, settings=cfg),
     }
     return results
+
+
+def send_pipeline_failure_email(
+    job_name: str,
+    run_id: str,
+    error_message: str,
+    recipient: str | None = None,
+    settings: Settings | None = None,
+) -> bool:
+    """Send pipeline failure notification via SMTP (Mailpit in local dev)."""
+    cfg = settings or get_settings()
+    dest = recipient or cfg.demo_admin_email
+
+    msg = EmailMessage()
+    msg["Subject"] = f"[KETRIKA PIPELINE ÉCHEC] {job_name} ({run_id[:8]})"
+    msg["From"] = cfg.smtp_from
+    msg["To"] = dest
+
+    text_body = f"""[KETRIKA PIPELINE ÉCHEC]
+Job / Connecteur : {job_name}
+Run ID : {run_id}
+Erreur : {error_message}
+
+Consultez Dagster : http://localhost:3010/runs/{run_id}
+Consultez le cockpit sources : http://localhost:3005/sources
+"""
+    html_body = f"""<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; padding: 20px;">
+  <div style="border: 1px solid #e11d48; border-radius: 8px; padding: 20px; max-width: 600px;">
+    <h2 style="color: #e11d48; margin-top: 0;">Échec d'exécution du pipeline</h2>
+    <p><strong>Job / Connecteur :</strong> {job_name}</p>
+    <p><strong>Run ID :</strong> <code>{run_id}</code></p>
+    <p><strong>Détail de l'erreur :</strong></p>
+    <pre style="background: #f1f5f9; padding: 10px; border-radius: 4px; overflow-x: auto;">{error_message}</pre>
+    <p><a href="http://localhost:3010/runs/{run_id}">Voir dans Dagster</a> | <a href="http://localhost:3005/sources">Cockpit Sources</a></p>
+  </div>
+</body>
+</html>"""
+    msg.set_content(text_body)
+    msg.add_alternative(html_body, subtype="html")
+
+    try:
+        with smtplib.SMTP(cfg.smtp_host, cfg.smtp_port, timeout=10) as server:
+            server.send_message(msg)
+        logger.info(
+            "pipeline_failure_email_sent",
+            job_name=job_name,
+            run_id=run_id,
+            recipient=dest,
+            host=cfg.smtp_host,
+            port=cfg.smtp_port,
+        )
+        return True
+    except Exception as exc:
+        logger.error(
+            "pipeline_failure_email_failed",
+            job_name=job_name,
+            run_id=run_id,
+            error=str(exc),
+        )
+        return False

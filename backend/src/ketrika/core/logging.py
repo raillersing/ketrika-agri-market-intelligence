@@ -30,7 +30,7 @@ def setup_logging() -> None:
     ]
 
     formatter: structlog.types.Processor
-    if settings.app_env == "prod":
+    if settings.app_env == "prod" or getattr(settings, "log_format", "console") == "json":
         formatter = structlog.processors.JSONRenderer()
     else:
         formatter = structlog.dev.ConsoleRenderer(colors=True)
