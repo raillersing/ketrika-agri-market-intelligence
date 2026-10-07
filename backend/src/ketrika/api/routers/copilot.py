@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ketrika.api.auth import require_client
+from ketrika.copilot.agent import CopilotAgent
 from ketrika.core.db import get_db
 from ketrika.core.models.db import UserAccount
 
@@ -31,19 +32,31 @@ class CopilotAskResponse(BaseModel):
     value_kinds: list[str]
 
 
+_copilot_agent: CopilotAgent | None = None
+
+
+def get_copilot_agent() -> CopilotAgent:
+    """Singleton getter for CopilotAgent."""
+    global _copilot_agent
+    if _copilot_agent is None:
+        _copilot_agent = CopilotAgent()
+    return _copilot_agent
+
+
 @router.post("/ask", response_model=CopilotAskResponse)
 def ask_copilot(
     payload: CopilotAskRequest,
     user: UserAccount = Depends(require_client),
     session: Session = Depends(get_db),
+    agent: CopilotAgent = Depends(get_copilot_agent),
 ) -> CopilotAskResponse:
     """Ask natural language question to Ketrika market analyst copilot (SPECS §19, §21)."""
-    # Baseline deterministic answer structure for T6.1 (full LLM copilot agent developed in Phase 10)
     question = payload.question.strip()
+    result = agent.ask(question)
     return CopilotAskResponse(
-        answer_markdown=f"Analyse de marché pour: {question}",
-        sql="SELECT product_code, month, median_price FROM gold.price_monthly_best LIMIT 10;",
-        rows_preview=[],
-        citations=[{"source_id": "miasa_odr", "type": "official"}],
-        value_kinds=["observed"],
+        answer_markdown=result["answer_markdown"],
+        sql=result["sql"],
+        rows_preview=result["rows_preview"],
+        citations=result["citations"],
+        value_kinds=result["value_kinds"],
     )

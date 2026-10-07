@@ -1,0 +1,141 @@
+# tests/copilot_eval.yaml
+# Evaluation benchmark dataset: 22 realistic market intelligence questions for Madagascar PPN (SPECS §21, T10.1).
+
+version: "1.0"
+eval_criteria:
+  min_accuracy_pct: 80.0
+  max_forbidden_queries: 0
+  max_unreferenced_digits: 0
+
+questions:
+  - id: "q01"
+    question: "Quel est le dernier prix médian du riz blanc au détail à Analamanga ?"
+    expected_target_view: "gold.price_monthly_best"
+    category: "price_latest"
+    expected_columns: ["product_name", "location_name", "median_price"]
+
+  - id: "q02"
+    question: "Quelle est la variation sur un an du prix du riz blanc à Analamanga ?"
+    expected_target_view: "gold.price_changes"
+    category: "price_variation"
+    expected_columns: ["chg_12m", "median_price"]
+
+  - id: "q03"
+    question: "Quelles régions connaissent actuellement une flambée des prix ?"
+    expected_target_view: "gold.price_changes"
+    category: "anomalies_spike"
+    expected_columns: ["z_score_robust", "chg_1m", "location_name"]
+
+  - id: "q04"
+    question: "Quel est le statut actuel des stocks de riz à Atsimo-Andrefana ?"
+    expected_target_view: "gold.stock_latest"
+    category: "stock_status"
+    expected_columns: ["latest_status", "trend_direction"]
+
+  - id: "q05"
+    question: "Quels sont les volumes d'importation de riz enregistrés par les douanes ?"
+    expected_target_view: "gold.trade_monthly"
+    category: "trade_flows"
+    expected_columns: ["flow", "weight_tons", "value_mga"]
+
+  - id: "q06"
+    question: "Quel est le taux de dépendance aux importations pour le riz ?"
+    expected_target_view: "gold.import_dependency"
+    category: "import_dependency"
+    expected_columns: ["idr_pct", "import_tons", "production_tons"]
+
+  - id: "q07"
+    question: "Quelle est l'anomalie de précipitations en pourcentage à Analamanga ?"
+    expected_target_view: "gold.weather_monthly"
+    category: "weather_anomalies"
+    expected_columns: ["precip_total_mm", "rain_anom_pct"]
+
+  - id: "q08"
+    question: "Quel est le score de santé du marché (Market Health Score) pour le riz à Analamanga ?"
+    expected_target_view: "gold.market_health"
+    category: "market_health"
+    expected_columns: ["market_health_score", "score_price_stability"]
+
+  - id: "q09"
+    question: "Quelles sont les prévisions de prix pour le riz au détail à Analamanga pour les 3 prochains mois ?"
+    expected_target_view: "gold.forecast_latest"
+    category: "forecasting"
+    expected_columns: ["horizon", "p50", "model_name"]
+
+  - id: "q10"
+    question: "Quel est l'intervalle de confiance p10 - p90 de la prévision du riz pour les mois futurs ?"
+    expected_target_view: "gold.forecast_latest"
+    category: "forecasting_intervals"
+    expected_columns: ["p10", "p90", "p50"]
+
+  - id: "q11"
+    question: "Quelles sources de données sont actuellement en retard par rapport à leur SLA de fraîcheur ?"
+    expected_target_view: "gold.source_health"
+    category: "dataops_freshness"
+    expected_columns: ["source_id", "freshness_days", "is_stale"]
+
+  - id: "q12"
+    question: "Quel est le prix actuel du maïs en grain à Analamanga ?"
+    expected_target_view: "gold.price_monthly_best"
+    category: "price_latest"
+    expected_columns: ["median_price", "product_name"]
+
+  - id: "q13"
+    question: "Quelle est l'évolution de l'inflation mensuelle du prix du maïs ?"
+    expected_target_view: "gold.price_changes"
+    category: "price_variation"
+    expected_columns: ["chg_1m", "median_price"]
+
+  - id: "q14"
+    question: "Y a-t-il eu une baisse ou une chute anormale des prix ce mois-ci ?"
+    expected_target_view: "gold.price_changes"
+    category: "anomalies_drop"
+    expected_columns: ["z_score_robust", "chg_1m"]
+
+  - id: "q15"
+    question: "Quelle est la volatilité sur 12 mois du prix du riz blanc ?"
+    expected_target_view: "gold.price_changes"
+    category: "volatility"
+    expected_columns: ["vol_12", "med_12", "mad_12"]
+
+  - id: "q16"
+    question: "Quel est l'indice des prix à la consommation IPC alimentaire officiel ?"
+    expected_target_view: "gold.cpi_food"
+    category: "cpi_inflation"
+    expected_columns: ["index_value", "chg_1m", "chg_12m"]
+
+  - id: "q17"
+    question: "Quel est le prix du riz blanc selon la source de collecte ?"
+    expected_target_view: "gold.price_monthly"
+    category: "price_by_source"
+    expected_columns: ["source_id", "median_price", "n_obs"]
+
+  - id: "q18"
+    question: "Quels produits connaissent une rupture ou une tension sur les stocks ?"
+    expected_target_view: "gold.stock_latest"
+    category: "stock_shortage"
+    expected_columns: ["latest_status", "trend_direction"]
+
+  - id: "q19"
+    question: "Quels sont les volumes d'importations enregistrés pour le maïs ?"
+    expected_target_view: "gold.trade_monthly"
+    category: "trade_flows"
+    expected_columns: ["flow", "weight_tons"]
+
+  - id: "q20"
+    question: "Quel est le cumul des précipitations par rapport à la normale climatique ?"
+    expected_target_view: "gold.weather_monthly"
+    category: "weather"
+    expected_columns: ["precip_total_mm", "baseline_precip_mm"]
+
+  - id: "q21"
+    question: "Quel est le niveau de dépendance aux importations de maïs ?"
+    expected_target_view: "gold.import_dependency"
+    category: "import_dependency"
+    expected_columns: ["idr_pct", "import_tons"]
+
+  - id: "q22"
+    question: "Quel est le score global de stabilité des prix et de santé du marché ?"
+    expected_target_view: "gold.market_health"
+    category: "market_health"
+    expected_columns: ["market_health_score", "score_price_stability"]
