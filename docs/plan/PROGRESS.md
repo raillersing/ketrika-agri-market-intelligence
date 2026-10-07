@@ -28,7 +28,7 @@
 | **T3.3** | MUST | 3 | Connecteur FAOSTAT | T2.6 | **DONE** | CC1-CC6 validés (36 obs, 28 prod / 8 trade, 20 ans riz paddy, flags A vs E/I, rebuild stable, dev.ps1 check vert) |
 | **T3.4** | MUST | 3 | Connecteur NASA POWER Climat | T2.6, T1.4 | **DONE** | CC1, CC3-CC6 validés (108 obs, 100% districts couverts, cohérence physique prouvée, rebuild stable, dev.ps1 check vert) |
 | **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | **DONE** | CC1-CC6 validés (189 obs, en-têtes dynamiques XLSX/CSV, série alimentation sur 5,25 ans, rebuild stable, check vert) |
-| **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | **DONE** | CC1-CC6 validés (180 obs, 3 bulletins, golden recall/acc 100%, 0 ND/NA converti en 0, rebuild stable, check vert) |
+| **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | **DONE** | b0b0842 (CC1-CC6 validés, 180 obs, 3 bulletins, golden 100%, 0 ND/NA converti en 0, rebuild stable, check vert) |
 | **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | TODO | — |
 | **T4.3** | MUST | 4 | Connecteur Douanes Statistiques | T2.6 | TODO | — |
 | **T4.4** | COULD | 4 | Connecteur Événements (PICM, FEWS NET) | T2.6 | TODO | — |
