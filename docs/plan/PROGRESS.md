@@ -25,7 +25,7 @@
 | **T2.6** | MUST | 2 | Commande rebuild et runbook connecteur | T2.3–T2.5 | **DONE** | rebuild CLI offline vérifié (comptes identiques), runbook 9 sections, 116 tests pytest (88% cov) |
 | **T3.1** | MUST | 3 | Connecteur WFP Food Prices HDX | T2.6 | **DONE** | CC1-CC6 validés (36 obs, Golden set recall/acc 100%, DQ passants, offline rebuild stable, dev.ps1 check vert) |
 | **T3.2** | MUST | 3 | Connecteur Banque Mondiale RTFP | T2.6 | **DONE** | CC1-CC6 validés (36 obs, 24 obs / 12 imp, part 33.33%, 0 imputé marqué observé, rebuild stable, dev.ps1 check vert) |
-| **T3.3** | MUST | 3 | Connecteur FAOSTAT | T2.6 | TODO | — |
+| **T3.3** | MUST | 3 | Connecteur FAOSTAT | T2.6 | **DONE** | CC1-CC6 validés (36 obs, 28 prod / 8 trade, 20 ans riz paddy, flags A vs E/I, rebuild stable, dev.ps1 check vert) |
 | **T3.4** | MUST | 3 | Connecteur NASA POWER Climat | T2.6, T1.4 | TODO | — |
 | **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | TODO | — |
 | **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | TODO | — |
@@ -390,4 +390,30 @@
   - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='wb_rtfp_mdg')`), comptes strictement préservés (36 observations dans Silver). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès sur l'ensemble de la base.
   - `./scripts/dev.ps1 check` 100 % vert (122 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy).
 - Statut : **DONE**.
+
+### [2026-10-07T02:48:00Z] Démarrage de T3.3 : Connecteur FAOSTAT
+- **Mini-plan T3.3 :**
+  1. Construire la fixture `backend/tests/fixtures/faostat/faostat_sample.json` (≥ 35 enregistrements, incluant ≥ 20 années consécutives 2004-2023 de production de riz paddy, maïs, manioc, et flux d'importation trade TM).
+  2. Créer le golden dataset `backend/tests/golden/faostat/faostat_sample.expected.json` (≥ 30 valeurs de référence, métadonnées CC2).
+  3. Implémenter `FaostatConnector` dans `backend/src/ketrika/connectors/faostat.py` (parsing JSON API FAOSTAT, mapping QCL -> `ProductionRecord` et TM/TCL -> `TradeFlowRecord`, conservation `flag_raw`, dérivation `observed_or_imputed` : A/P/X -> observed, E/I/F/T -> imputed).
+  4. Enregistrer `faostat` dans `backend/src/ketrika/connectors/registry.py`.
+  5. Écrire les tests unitaires et le golden test dans `backend/tests/unit/test_faostat.py` (CC1, CC2, vérification ≥ 20 années de production de riz paddy, règles de flags).
+  6. Écrire le test d'intégration cycle de vie dans `backend/tests/integration/test_faostat.py` (backfill initial, idempotence, checks DQ CC4, offline rebuild stable CC6).
+  7. Mettre à jour la fiche source `docs/sources/faostat.md` (statut `active`, métriques de couverture).
+  8. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
+  9. Mettre à jour PROGRESS.md et committer `feat(T3.3): faostat connector`.
+- **Validation acceptation :**
+  - **CC1 (Unit tests) :** Parsing déterministe validé sur `tests/fixtures/faostat/faostat_sample.json` (36 records, 28 production, 8 trade, 0 issue). Couverture riz paddy sur 20 années consécutives (2004–2023 : min 2004, max 2023), maïs et manioc. Mapping des flags vérifié : 'A', '', 'P', 'X' -> `observed`, 'E', 'I', 'F', 'T', 'M' -> `imputed` (25 observés, 3 imputés dans la production). Conversion en kilogrammes des flux d'importation validée (`weight_kg = 550_000_000.0` pour 550 000 t).
+  - **CC2 (Golden test) :** Validé sur `backend/tests/golden/faostat/faostat_sample.expected.json` (36 observations de référence annotées) avec exactitude des champs = 100% (≥ 99%) et rappel des enregistrements = 100% (≥ 98%).
+  - **CC3 (Backfill & Silver loading) :** Intégration complète via `execute_connector_pipeline` insérant 36 observations actives (28 dans `obs.production_observation`, 8 dans `obs.trade_flow`). Idempotence validée (seconde exécution : 0 inséré, 36 ignorés).
+  - **CC4 (DQ checks) :**
+    - `provenance_complete` : 100% des observations de production et de commerce ont un `source_record_id` valide référençant le Bronze ;
+    - `production_range_sanity` : toutes les valeurs de production > 0 avec unité `t` et `element = 'production_t'` ;
+    - `trade_range_sanity` : tous les poids > 0 avec `flow = 'import'` ;
+    - **Règle T3.3 :** Production de riz paddy disponible sur ≥ 20 années démontrée (2004 à 2023).
+  - **CC5 (Documentation) :** Fiche descriptive `docs/sources/faostat.md` mise à jour avec statut `active`, description des règles de flags et métriques de backfill.
+  - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='faostat')`), comptes strictement préservés (28 productions et 8 flux de commerce dans Silver). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès sur l'ensemble de la base.
+  - `./scripts/dev.ps1 check` 100 % vert (125 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy, couverture 88 %).
+- Statut : **DONE**.
+
 

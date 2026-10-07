@@ -6,11 +6,21 @@
   - https://fenixservices.fao.org/faostat/api/v1/en/data/QCL (2026-10-06, HTTP 200).
 - **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` pour l'API et les données publiques.
 - **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://www.fao.org/contact-us/terms/en/. Données ouvertes pour usage analytique et non commercial direct sans altération de l'intégrité statistique.
-- **Format(s) et structure (avec exemples réels, pages, colonnes) :** API REST JSON et CSV téléchargeables. Domaines : QCL (Crops and livestock products), FBS (Food Balance Sheets), TM (Detailed trade matrix). Champs : `AreaCode` (129 pour Madagascar), `ItemCode`, `ElementCode` (5510 Production, 5610 Importations), `Year`, `Unit`, `Value`, `Flag`.
-- **Cadence constatée (dates des 6 dernières publications) :** Annuelle avec révisions consolidées.
-- **Couverture :** Séries longues de bilans agricoles, productions et importations pour Madagascar.
-- **Pièges connus :** Décalage temporel (T-1 ou T-2 pour les consolidations finales), codes d'items FAOSTAT à mapper explicitement vers notre taxonomie via `ref.products`.
-- **Stratégie d'extraction :** Déterministe (Client HTTP / API JSON FAOSTAT).
-- **Mapping vers les tables cibles :** `obs.production` et `obs.trade`.
-- **Échantillons :** `backend/tests/fixtures/faostat/faostat_qcl_sample.json`.
-- **Statut et incidents :** Actif, aucun incident.
+- **Format(s) et structure :** API REST JSON et CSV téléchargeables.
+  - Domaines : `QCL` (Crops and livestock products), `FBS` (Food Balance Sheets), `TM` (Detailed trade matrix).
+  - Champs : `AreaCode` (129 pour Madagascar), `Area`, `DomainCode`, `ItemCode`, `Item`, `ElementCode` (5510 Production, 5610 Importations, 5910 Exportations), `Element`, `Year`, `Unit`, `Value`, `Flag`.
+- **Règles de dérivation des flags (`observed_or_imputed`) :**
+  - **Observé (`observed`)** : Drapeaux officiels et vérifiés `A` (Official figure), `P` (Provisional), `X` (International reliable source), ou absence de drapeau `""` (donnée officielle standard).
+  - **Imputé (`imputed`)** : Drapeaux d'estimation ou d'imputation `E` (Estimated value), `I` (Imputed value), `F` (FAO estimate), `T` (Trend calculation), `M` (Data not available / proxy).
+- **Cadence constatée :** Annuelle avec révisions consolidées.
+- **Couverture validée :**
+  - Production agricole : ≥ 20 années consécutives (2004–2023) de production de riz paddy pour Madagascar, séries maïs et manioc.
+  - Commerce international : flux d'importation de riz, farine de blé, sucre et huile de palme convertis en kilogrammes (`weight_kg = value_t * 1000.0`).
+- **Stratégie d'extraction :** Déterministe via l'API JSON FAOSTAT (`FaostatConnector`).
+- **Mapping vers les tables cibles :**
+  - Production agricole (`ElementCode = 5510`) → `obs.production_observation` (`element = 'production_t'`).
+  - Flux de commerce extérieur (`ElementCode = 5610` import, `5910` export) → `obs.trade_flow`.
+- **Fixtures et Golden Dataset :**
+  - Fixture : `backend/tests/fixtures/faostat/faostat_sample.json` (36 enregistrements).
+  - Golden set : `backend/tests/golden/faostat/faostat_sample.expected.json` (36 observations annotées).
+- **Statut :** `active` (validé CC1–CC6 dans le cadre de T3.3).
