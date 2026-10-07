@@ -46,7 +46,7 @@
 | **T9.2** | MUST | 9 | Intégration des anomalies dans les alertes | T9.1, T8.1 | **DONE** | ketrika.ml.anomalies & rules.py (test synthétique injection pic z>3 / chute z<-3, feeds PRICE_SPIKE/DROP, multi-source high, model_run, check vert 193 tests) |
 | **T9.3** | SHOULD | 9 | Connecteur CHIRPS v3 | T5.1, T1.4 | TODO | — |
 | **T10.1** | MUST | 10 | Copilote analyste SQL sécurisé | T6.1, T5.2 | **DONE** | ketrika.copilot complet (schema, sql_guard sqlglot, executor copilot_ro 5s, writer sans chiffre libre, banc 22 questions 100% >=80%, Démo 2 docs/DEMO_2.md, check vert 210 tests) |
-| **T11.1** | MUST | 11 | Observabilité et supervision | Phases 8–10 | **DONE** | Logs JSON (run_id/source_id/partition_key), sensor Dagster échec -> email Mailpit, API /v1/sources & page /sources avec statut failed, 3 tests d'intégration passants |
+| **T11.1** | MUST | 11 | Observabilité et supervision | Phases 8–10 | **DONE** | 24b0329 (Logs JSON contextualisés, sensor Dagster échec -> Mailpit, API /v1/sources & page /sources statut failed, 3 tests intégration passants) |
 | **T11.2** | MUST | 11 | Revue de sécurité et audits | T11.1 | TODO | — |
 | **T11.3** | MUST | 11 | Procédures de sauvegarde et restauration | T11.1 | TODO | — |
 | **T11.4** | MUST | 11 | Paquet de déploiement VPS | T11.2 | TODO | — |
