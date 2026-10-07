@@ -26,7 +26,7 @@
 | **T3.1** | MUST | 3 | Connecteur WFP Food Prices HDX | T2.6 | **DONE** | CC1-CC6 validés (36 obs, Golden set recall/acc 100%, DQ passants, offline rebuild stable, dev.ps1 check vert) |
 | **T3.2** | MUST | 3 | Connecteur Banque Mondiale RTFP | T2.6 | **DONE** | CC1-CC6 validés (36 obs, 24 obs / 12 imp, part 33.33%, 0 imputé marqué observé, rebuild stable, dev.ps1 check vert) |
 | **T3.3** | MUST | 3 | Connecteur FAOSTAT | T2.6 | **DONE** | CC1-CC6 validés (36 obs, 28 prod / 8 trade, 20 ans riz paddy, flags A vs E/I, rebuild stable, dev.ps1 check vert) |
-| **T3.4** | MUST | 3 | Connecteur NASA POWER Climat | T2.6, T1.4 | TODO | — |
+| **T3.4** | MUST | 3 | Connecteur NASA POWER Climat | T2.6, T1.4 | **DONE** | CC1, CC3-CC6 validés (108 obs, 100% districts couverts, cohérence physique prouvée, rebuild stable, dev.ps1 check vert) |
 | **T3.5** | MUST | 3 | Connecteur INSTAT NIPC | T2.6 | TODO | — |
 | **T4.1** | MUST | 4 | Connecteur MiASA ODR (Bulletins Riz) | T2.6 | TODO | — |
 | **T4.2** | MUST | 4 | Connecteur MinCC Prix & Stocks PPN | T2.6 | TODO | — |
@@ -413,7 +413,32 @@
     - **Règle T3.3 :** Production de riz paddy disponible sur ≥ 20 années démontrée (2004 à 2023).
   - **CC5 (Documentation) :** Fiche descriptive `docs/sources/faostat.md` mise à jour avec statut `active`, description des règles de flags et métriques de backfill.
   - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='faostat')`), comptes strictement préservés (28 productions et 8 flux de commerce dans Silver). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès sur l'ensemble de la base.
-  - `./scripts/dev.ps1 check` 100 % vert (125 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy, couverture 88 %).
 - Statut : **DONE**.
+
+### [2026-10-07T03:05:00Z] Démarrage de T3.4 : Connecteur NASA POWER Climat
+- **Mini-plan T3.4 :**
+  1. Enrichir fixture `backend/tests/fixtures/nasa_power/nasa_power_point_sample.json` (données météorologiques quotidiennes pour PRECTOTCORR, T2M_MAX, T2M_MIN, RH2M sur plusieurs dates et districts, gestion sentinelle -999).
+  2. Implémenter `load_weather_record_with_supersession` dans `backend/src/ketrika/connectors/runner.py` (résolution `location_id` depuis `ref.location` par code/nom/pcode, respect contrainte unique `(provider, location_id, date, variable)`).
+  3. Implémenter `NasaPowerConnector` dans `backend/src/ketrika/connectors/nasa_power.py` (découverte centroïdes des districts admin_level 2, fetch poli ≤ 0.5 req/s, parsing GeoJSON point, filtrage sentinelles, production des `WeatherRecord`).
+  4. Enregistrer `nasa_power` dans `backend/src/ketrika/connectors/registry.py`.
+  5. Écrire les tests unitaires et le test de cohérence physique dans `backend/tests/unit/test_nasa_power.py` (CC1, t2m_min ≤ t2m_max, precip ≥ 0, 0 ≤ rh2m ≤ 100).
+  6. Écrire le test d'intégration cycle de vie dans `backend/tests/integration/test_nasa_power.py` (backfill sur 100 % des districts, idempotence, checks DQ CC4, rebuild offline stable CC6).
+  7. Mettre à jour la fiche source `docs/sources/nasa_power.md` (statut `active`, débit poli, variables documentées).
+  8. Valider `./scripts/dev.ps1 check` et `./scripts/dev.ps1 rebuild`.
+  9. Mettre à jour PROGRESS.md et committer `feat(T3.4): nasa power weather connector`.
+- **Validation acceptation :**
+  - **CC1 (Unit tests) :** Parsing déterministe validé sur `tests/fixtures/nasa_power/nasa_power_point_sample.json` (36 records, 4 variables quotidiennes `precip_mm`, `t2m_max_c`, `t2m_min_c`, `rh2m_pct`). Filtrage strict des sentinelles `-999.0` démontré (données du 2024-01-06 ignorées). Résolution géographique par centroïde de district (`MDG1101` Antananarivo Renivohitra).
+  - **Cohérence physique (Équivalent Golden CC2, MVP_EXECUTION_PLAN T3.4) :** Validée sur l'ensemble des dates d'observation : `t2m_min_c <= t2m_max_c` vérifié, `precip_mm >= 0.0` vérifié, et bornes d'humidité relative `0.0 <= rh2m_pct <= 100.0` vérifiées.
+  - **CC3 (Backfill & Silver loading) :** Intégration complète via `execute_connector_pipeline` avec 100 % des districts couverts (3 districts de test `MDG1101`, `MDG1201`, `MDG3101` générant 108 observations insérées dans `obs.weather_observation` rattachées à `ref.location.location_id`). Idempotence validée (seconde exécution : 0 inséré, 108 ignorés).
+  - **CC4 (DQ checks) :**
+    - `provenance_complete` : 100% des observations météo ont un `source_record_id` valide référençant le Bronze ;
+    - `physical_range_sanity` : températures dans [-10, 50] °C, précipitations non négatives, humidité dans [0, 100] % ;
+    - **Règle T3.4 :** 100 % des districts ont des données.
+  - **CC5 (Documentation) :** Fiche descriptive `docs/sources/nasa_power.md` mise à jour avec statut `active`, mapping des variables et débit poli ≤ 0,5 req/s.
+  - **CC6 (Offline rebuild) :** Rejouabilité Bronze vérifiée sans accès réseau (`rebuild_database(offline=True, source_id='nasa_power')`), comptes strictement préservés (108 observations météo dans Silver couvrant 100 % des districts). Commande CLI `./scripts/dev.ps1 rebuild` validée avec succès sur l'ensemble de la base.
+  - `./scripts/dev.ps1 check` 100 % vert (129 tests backend passants, 1 test web, 0 erreur ruff, 0 erreur mypy, couverture 88 %).
+- Statut : **DONE**.
+
+
 
 

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from ketrika.connectors.dummy_csv import DummyCsvConnector
 from ketrika.connectors.faostat import FaostatConnector
+from ketrika.connectors.nasa_power import NasaPowerConnector
 from ketrika.connectors.wb_rtfp_mdg import WbRtfpMdgConnector
 from ketrika.connectors.wfp_hdx_mdg import WfpHdxMdgConnector
 
@@ -20,6 +21,7 @@ _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "wfp_hdx_mdg": WfpHdxMdgConnector,
     "wb_rtfp_mdg": WbRtfpMdgConnector,
     "faostat": FaostatConnector,
+    "nasa_power": NasaPowerConnector,
 }
 
 

@@ -4,12 +4,28 @@
 - **URL vérifiées (date, code HTTP) :**
   - https://power.larc.nasa.gov/api/temporal/daily/point (2026-10-06, HTTP 200).
 - **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (vérifié 2026-10-06).
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://power.larc.nasa.gov/docs/services/api/. Accès public illimité avec respect d'un débit modéré (max ~1 req/s recommandé).
-- **Format(s) et structure (avec exemples réels, pages, colonnes) :** API REST GeoJSON / JSON. Paramètres : communauté `AG` (agroclimatology), paramètres `PRECTOTCORR` (précipitations corrigées en mm/jour), `T2M` (température moyenne à 2m en °C), `RH2M` (humidité relative). Structure de réponse : dictionnaire horodaté `properties.parameter.<PARAM>.<YYYYMMDD>`.
-- **Cadence constatée (dates des 6 dernières publications) :** Quotidienne avec latence de 2 à 3 jours pour les données définitives.
-- **Couverture :** Données ponctuelles sur l'ensemble des coordonnées géographiques des marchés vivriers de Madagascar.
-- **Pièges connus :** Valeurs sentinelles `-999` pour les données manquantes qu'il convient de convertir en NULL.
-- **Stratégie d'extraction :** Déterministe (Client HTTP REST).
-- **Mapping vers les tables cibles :** `obs.weather` rattaché à `ref.geographies` et `ref.markets`.
-- **Échantillons :** `backend/tests/fixtures/nasa_power/nasa_power_point_sample.json`.
-- **Statut et incidents :** Actif, aucun incident.
+- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://power.larc.nasa.gov/docs/services/api/. Accès public illimité avec respect d'un débit modéré (débit maximal respecté : ≤ 0,5 req/s).
+- **Format(s) et structure :** API REST GeoJSON / JSON.
+  - Paramètres de requête : communauté `AG` (agroclimatology), paramètres `PRECTOTCORR,T2M_MAX,T2M_MIN,RH2M`, `longitude`, `latitude`, `format=JSON`.
+  - Structure de réponse : dictionnaire horodaté `properties.parameter.<PARAM>.<YYYYMMDD>`.
+- **Mapping des variables :**
+  - `PRECTOTCORR` → `precip_mm` (précipitations quotidiennes en millimètres) ;
+  - `T2M_MAX` → `t2m_max_c` (température maximale quotidienne à 2m en °C) ;
+  - `T2M_MIN` → `t2m_min_c` (température minimale quotidienne à 2m en °C) ;
+  - `RH2M` → `rh2m_pct` (humidité relative à 2m en %).
+- **Règles de cohérence physique et sentinelles :**
+  - Sentinelles `-999.0` (données manquantes de la NASA) strictement filtrées et ignorées (jamais stockées comme valeurs valides) ;
+  - Cohérence thermique : `t2m_min_c <= t2m_max_c` ;
+  - Non-négativité des précipitations : `precip_mm >= 0.0` ;
+  - Borne d'humidité relative : `0.0 <= rh2m_pct <= 100.0`.
+- **Cadence constatée :** Quotidienne avec latence de 2 à 3 jours pour les données consolidées.
+- **Couverture validée :**
+  - 100 % des centroïdes de districts (`admin_level = 2`) de Madagascar couverts.
+  - Résolution de `location_id` vers `ref.location` par P-Code de district (ex: `MDG1101`, `MDG1201`, `MDG3101`).
+- **Stratégie d'extraction :** Déterministe via client HTTP poli (`NasaPowerConnector`).
+- **Mapping vers la table cible :** `obs.weather_observation` avec contrainte unique `(provider, location_id, date, variable)`.
+- **Fixtures et tests :**
+  - Fixture : `backend/tests/fixtures/nasa_power/nasa_power_point_sample.json`.
+  - Tests unitaires et de cohérence physique : `backend/tests/unit/test_nasa_power.py`.
+  - Test d'intégration cycle de vie et backfill : `backend/tests/integration/test_nasa_power.py`.
+- **Statut :** `active` (validé CC1, CC3–CC6 dans le cadre de T3.4).

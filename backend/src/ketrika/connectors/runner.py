@@ -6,7 +6,7 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import select, update
+from sqlalchemy import or_, select, update
 from sqlalchemy.orm import Session
 
 from ketrika.connectors.base import (
@@ -22,16 +22,19 @@ from ketrika.connectors.records import (
     RecordBase,
     StockRecord,
     TradeFlowRecord,
+    WeatherRecord,
 )
 from ketrika.core.models.db import (
     CpiObservation,
     IngestionRun,
+    Location,
     PriceObservation,
     ProductionObservation,
     Source,
     SourceRecord,
     StockObservation,
     TradeFlow,
+    WeatherObservation,
 )
 
 
@@ -529,6 +532,66 @@ def load_cpi_record_with_supersession(
     return "superseded", new_id
 
 
+def load_weather_record_with_supersession(
+    session: Session,
+    record: WeatherRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    """Load WeatherRecord into obs.weather_observation respecting unique constraint (provider, location_id, date, variable)."""
+    loc_stmt = select(Location).where(
+        or_(
+            Location.pcode == record.location_raw,
+            Location.name == record.location_raw,
+        )
+    )
+    location = session.execute(loc_stmt).scalars().first()
+    if location is None:
+        try:
+            loc_uuid = uuid.UUID(record.location_raw)
+            location = session.get(Location, loc_uuid)
+        except ValueError:
+            pass
+
+    if location is None:
+        raise ValueError(
+            f"Could not resolve location_id for weather record location_raw='{record.location_raw}'"
+        )
+
+    stmt = select(WeatherObservation).where(
+        WeatherObservation.provider == record.provider,
+        WeatherObservation.location_id == location.location_id,
+        WeatherObservation.date == record.date,
+        WeatherObservation.variable == record.variable,
+    )
+    current_obs = session.execute(stmt).scalar_one_or_none()
+
+    if current_obs is None:
+        new_obs = WeatherObservation(
+            observation_id=uuid.uuid4(),
+            source_record_id=source_record_id,
+            location_id=location.location_id,
+            date=record.date,
+            variable=record.variable,
+            value=record.value,
+            method=record.method,
+            provider=record.provider,
+        )
+        session.add(new_obs)
+        session.flush()
+        return "inserted", new_obs.observation_id
+
+    curr_val = float(current_obs.value) if current_obs.value is not None else None
+    if curr_val == record.value and current_obs.method == record.method:
+        return "idempotent_skipped", current_obs.observation_id
+
+    current_obs.value = record.value
+    current_obs.method = record.method
+    current_obs.source_record_id = source_record_id
+    session.flush()
+    return "superseded", current_obs.observation_id
+
+
 def load_record_with_supersession(
     session: Session,
     record: RecordBase,
@@ -548,6 +611,8 @@ def load_record_with_supersession(
         )
     elif isinstance(record, CpiRecord):
         return load_cpi_record_with_supersession(session, record, source_id, source_record_id)
+    elif isinstance(record, WeatherRecord):
+        return load_weather_record_with_supersession(session, record, source_id, source_record_id)
     else:
         raise ValueError(f"Unsupported record type: {type(record)}")
 
