@@ -17,6 +17,7 @@ from ketrika.api.errors import (
     problem_exception_handler,
     validation_exception_handler,
 )
+from ketrika.api.rate_limit import RateLimitMiddleware
 from ketrika.api.routers import (
     admin,
     alerts,
@@ -70,6 +71,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(RateLimitMiddleware)
 
 # Exception handlers complying with RFC 7807 Problem Details
 app.add_exception_handler(ProblemDetailException, problem_exception_handler)

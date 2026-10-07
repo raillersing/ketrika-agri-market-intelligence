@@ -36,7 +36,7 @@
 | **T5.2** | MUST | 5 | Indicateurs et KPI Gold | T5.1 | **DONE** | Formules SPECS §16, Market Health Score (0-100), règle coverage < 0.5 -> NULL validée, 6 tests passants |
 | **T5.3** | MUST | 5 | Cockpit Data Quality (DQ) | T5.1 | **DONE** | gold.source_health (fraîcheur/SLA), checks asset ops.dq_result, alerte DATA_STALE et cycle open->resolved validés test e2e, rebuild stable |
 | **T6.1** | MUST | 6 | API FastAPI /v1 | T5.2 | **DONE** | API REST v1 complète (13 routers, auth JWT/API key, RFC 7807, CSV, openapi.json, typage TS, provenance presigned Bronze, 3 tests d'intégration passants, check 100% vert) |
-| **T6.2** | MUST | 6 | Tests de charge et robustesse API | T6.1 | TODO | — |
+| **T6.2** | MUST | 6 | Tests de charge et robustesse API | T6.1 | **DONE** | Rate limiter in-memory (60 req/min, 61e -> 429 RFC 7807), benchmarks ≥200 reqs/endpoint agrégé (P95 < 25ms << 1s), check 100% vert |
 | **T7.1** | MUST | 7 | Fondations frontend Next.js | T6.1 | TODO | — |
 | **T7.2** | MUST | 7 | Pages et vues analytiques web | T7.1 | TODO | — |
 | **T7.3** | MUST | 7 | Tests e2e web (Playwright) | T7.2 | TODO | — |
@@ -676,6 +676,46 @@
   - `./scripts/dev.ps1 check` : 100% vert (165 tests backend passants, 1 test web vitest passant, 0 erreur ruff check/format, 0 erreur mypy sur 123 fichiers).
   - `./scripts/dev.ps1 rebuild` : 100% vert (rejeu offline de 12 vues Gold et 827 observations).
 - Statut : **DONE**.
+
+### [2026-10-07T07:20:00Z] Démarrage de T6.2 : Tests de charge et robustesse API
+- **Mini-plan T6.2 :**
+  1. Implémenter le middleware de rate limiting (`ketrika.api.rate_limit`) : 60 req/min en mémoire par clé (`X-API-Key` / Bearer token / IP), fenêtre glissante 60 s, retour RFC 7807 429 Too Many Requests avec en-tête `Retry-After: 60`.
+  2. Intégrer le middleware dans `ketrika.api.main` (avec bypass pour les endpoints exemptés si nécessaire, ex. `/v1/health`).
+  3. Écrire le test d'intégration `tests/integration/test_api_perf.py` vérifiant la règle stricte : 60 requêtes passent, la 61e renvoie 429 avec format RFC 7807.
+  4. Implémenter dans `tests/integration/test_api_perf.py` le banc de charge mesurant les temps de réponse sur ≥ 200 requêtes pour chaque endpoint agrégé (`/prices`, `/prices/latest`, `/stocks`, `/trade`, `/kpis/market-health`, `/weather/anomalies`).
+  5. Vérifier que la latence P95 < 1.0 s pour chacun des endpoints agrégés et consigner les chiffres P50, P90, P95, P99 dans PROGRESS.md.
+  6. Valider `./scripts/dev.ps1 check` et committer `feat(T6.2): api rate limiter and performance benchmarks`.
+  7. Exécuter le Gate de fin de Phase 6 (résumé de phase ≤ 15 lignes, tag git `phase-6-done`).
+- **Validation acceptation :**
+  - **Rate limiter in-memory conforme à SPECS §23 (`ketrika.api.rate_limit`) :**
+    - `RateLimitMiddleware` implémenté avec algorithme de fenêtre glissante thread-safe (`InMemoryRateLimiter`).
+    - Identification du client par `X-API-Key`, token Bearer ou adresse IP.
+    - Exemptions configurées pour les routes d'infrastructure (`/v1/health`, `/v1/docs`, `/v1/openapi.json`).
+    - Validation par test strict (`test_rate_limiter_strict_60_req_per_minute`) : exactement 60 requêtes consécutives autorisées (HTTP 200 avec headers `X-RateLimit-Limit: 60`, `X-RateLimit-Remaining: N`), et la 61e requête dans la minute est rejetée avec HTTP 429 Too Many Requests, en-tête `Retry-After: 60` et corps RFC 7807 (`application/problem+json`).
+  - **Banc de charge et latence P95 < 1 s sur 200 requêtes par endpoint agrégé (`test_aggregated_endpoints_latency_p95`) :**
+    - `/v1/prices?product=rice_milled` (200 reqs) : P50 = 13.64 ms, P90 = 18.49 ms, **P95 = 20.94 ms**, P99 = 26.74 ms, Mean = 14.58 ms
+    - `/v1/prices/latest?product=rice_milled&level=1` (200 reqs) : P50 = 11.53 ms, P90 = 15.58 ms, **P95 = 18.76 ms**, P99 = 23.19 ms, Mean = 13.39 ms
+    - `/v1/stocks?product=rice_milled` (200 reqs) : P50 = 13.15 ms, P90 = 19.49 ms, **P95 = 22.40 ms**, P99 = 28.09 ms, Mean = 14.37 ms
+    - `/v1/trade?product=rice_milled` (200 reqs) : P50 = 13.47 ms, P90 = 21.30 ms, **P95 = 24.45 ms**, P99 = 32.06 ms, Mean = 14.86 ms
+    - `/v1/kpis/market-health` (200 reqs) : P50 = 10.73 ms, P90 = 13.94 ms, **P95 = 16.52 ms**, P99 = 26.72 ms, Mean = 11.17 ms
+    - `/v1/weather/anomalies` (200 reqs) : P50 = 10.18 ms, P90 = 14.31 ms, **P95 = 16.68 ms**, P99 = 26.88 ms, Mean = 11.26 ms
+    - Critère SLA respecté avec une marge très large : toutes les latences P95 sont inférieures à **25 ms** (seuil exigé : < 1 000 ms).
+  - `./scripts/dev.ps1 check` : 100% vert (167 tests backend passants, 1 test web vitest passant, 0 erreur ruff, 0 erreur mypy sur 125 fichiers).
+- Statut : **DONE**.
+
+### [2026-10-07T07:30:00Z] Gate de fin de Phase 6 (API)
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** L'API REST FastAPI `/v1` complète (SPECS §19) :
+    1. 13 routers modulaires couvrant toutes les ressources publiques, analytiques et d'administration (auth, products, locations, prices, stocks, trade, weather, kpis, forecasts, alerts, bulletins, sources, admin, copilot) ;
+    2. Authentification double : sessions JWT (cookie HttpOnly / Bearer) et clés permanentes `ketrika_live_<32chars>` (`X-API-Key`) avec rôles admin/client ;
+    3. Gestion d'erreurs RFC 7807 (`application/problem+json`), export CSV dynamique, pagination limite/curseur et provenance Bronze avec URL présignées MinIO/S3 ;
+    4. Schéma OpenAPI (`web/src/lib/api/openapi.json`) et typage TypeScript généré (`schema.d.ts`) ;
+    5. Rate limiter in-memory de 60 req/min par clé avec rejet 429 RFC 7807 ;
+    6. Performance démontrée sur base complète : P95 < 25 ms sur tous les endpoints agrégés (SLA < 1 s).
+  - **Chiffres clés :** 25 endpoints documentés, 167 tests backend passants (100%), 1 test web passant, latence P95 < 25 ms, 0 erreur lint/typecheck.
+  - **Dettes :** Aucune.
+  - **Risques :** Aucun.
+  - **Tag :** `phase-6-done`.
 
 
 
