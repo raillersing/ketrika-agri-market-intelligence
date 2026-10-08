@@ -9,6 +9,7 @@ import {
   ArrowLeftRight,
   CheckSquare,
   CloudSun,
+  Cpu,
   FileText,
   LayoutDashboard,
   LogOut,
@@ -35,6 +36,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Copilote analyste", href: "/copilot", icon: Sparkles },
   { label: "Sources & DataOps", href: "/sources", icon: Activity, role: "admin" },
   { label: "File de revue", href: "/admin/review", icon: CheckSquare, role: "admin" },
+  { label: "Architecture & Système", href: "/system", icon: Cpu },
 ];
 
 export function Sidebar() {
