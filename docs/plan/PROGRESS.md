@@ -64,7 +64,7 @@
 | R0.1 | MUST | DONE | 2026-10-09T06:28:03Z | 2026-10-09T09:16:32Z | b684528f223164e62fee1c85ef847f9f70c98e2c | docs/evidence/R0.1/README.md : check Windows code 0, 275 backend / 15 web | B-R001 / B-R002 résolus |
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
-| R0.4 | MUST | IN_PROGRESS | 2026-10-09T19:33:57Z | — | — | Check Windows renouvelé 39003 code 0, 411/35 verts ; QA courante 41954, préservation/secrets et commit à conclure | B-R009/010 replis ; B-R011/012/013 réception renouvelée reçue |
+| R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
 | R0.5 | MUST | TODO | — | — | — | — | — |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
@@ -213,6 +213,16 @@
 
 - Gitleaks staged Docker code 0, 764716 octets scannés, aucune fuite ; diff staged check code 0. Le rapport rouge XML initial avait des espaces de traceback : archivé en gzip sans modifier ses octets, décompression identique vérifiée (SHA original 4c85cd7c76e2706c3205247e268d1d2d4872be1f75d27fa51b3e39b4c36eb22c). Le scan précédent du XML non compressé était également vert.
 - Tous critères R0.4 et check Windows complet code 0 reçus ; seules clôture avec hash du commit et synchronisation DONE restent à effectuer. Aucun code fonctionnel changé depuis le check, aucun tag/push ni action externe.
+
+### [2026-10-09T21:21:58Z] R0.4 — clôture logicielle et corpus authentique borné
+
+- Commit atomique vert 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482, feat(R0.4), 42 fichiers ; code réceptionné inchangé. PROGRESS et miroir du plan synchronisés DONE, aucune phase/tag final anticipés, aucun push.
+- Inventaire 65 fichiers / 507483 octets, 44 synthetic / 19 unverified / deux authentic ; un document officiel WDI de deux années de PIB et dix cellules annotées indépendamment. H5 false, publication initiale inconnue ; aucun prix PPN ou météo authentique qualifiés.
+- Check Windows courant 39003 code final 0 : 411 backend / 1403,60 s, 35 web / 5,96 s, 35 intégrations union, couvertures 92,646297/86,376812/84,855234 %, build 154768 ms. QA courante 41954 code 0 : 72 / 35,66 s, une intégration et zéro skip/échec/erreur.
+- Gitleaks staged Docker code 0, 764716 octets, aucune fuite ; diff check code 0. Rapport rouge conservé sans perte en gzip, précédents reçus conservés, perte du code du premier run non maquillée.
+- Actif préservé : 482 sources / 764 prix, MD5 identiques ; Bronze 674 versions / 1377481 octets / zéro delete marker / SHA identique. Design tiers conservé ; tests Docker isolés, LLM replay et aucun envoi externe.
+- B-R009/010 reportent les refus HDX/NASA à R1.3/R1.7 ; BL-010 runtime status/robots encore à corriger, aucune protection déjà revendiquée. Pas de collecte continue, modèle marché, humain, déploiement ni CI distante qualifiés.
+- Prochaine MUST éligible R0.5 ; reprendre la boucle documentaire, ADR/SPECS avant extension de contrat. Aucun mi-r0-qualified avant R0.9 et son gate réel.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 

@@ -1,6 +1,8 @@
 # R0.4 — authenticité du corpus
 
-État : IN_PROGRESS. Aucun DONE, commit ni tag de qualification de cette tâche.
+État : DONE logiciel et corpus local borné, 2026-10-09T21:21:58Z.
+Commit : 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482, feat(R0.4).
+Aucun tag de phase, qualification réelle de prix/météo ou performance de marché.
 
 ## Preuves intermédiaires
 
@@ -64,7 +66,8 @@ conformément à la reprise AGENTS §3.1 ; résultats de cette relance ci-dessou
   Le XML rouge est compressé sans perte, pas nettoyé : 11215 octets originaux,
   SHA 4c85cd7c76e2706c3205247e268d1d2d4872be1f75d27fa51b3e39b4c36eb22c ;
   archive 2921 octets, SHA cac5a736b1d8e9c9c89b497ed7ed9054f392e2dd767154dce1eb1794528d1eb3.
-  Décompression identique vérifiée dans Docker. Commit vert encore à consigner avant DONE.
+  Décompression identique vérifiée dans Docker. Scan final staged code 0 : 764716 octets,
+  aucune fuite ; diff staged check code 0. Commit vert consigné en tête et dans PROGRESS.
 
 ## Commandes et périmètre
 
