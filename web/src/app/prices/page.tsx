@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Download, RefreshCw, Table, TrendingUp } from "lucide-react";
+import { Download, RefreshCw, Search, Table, TrendingUp } from "lucide-react";
 import { formatMonthYear, formatPrice } from "@/lib/formatters";
 import { ValueKindBadge } from "@/components/ui/ValueKindBadge";
 import { SourceBadge } from "@/components/ui/SourceBadge";
@@ -32,13 +32,14 @@ function PricesContent() {
   const [error, setError] = useState<string | null>(null);
   const [chartData, setChartData] = useState<PriceDataPoint[]>([]);
   const [tableData, setTableData] = useState<PriceRow[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     async function fetchPrices() {
       setLoading(true);
       setError(null);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
+        const apiUrl = "/api";
         const params = new URLSearchParams();
         if (product) params.set("product", product);
         if (region) params.set("location", region);
@@ -87,7 +88,7 @@ function PricesContent() {
   }, [product, region, actor]);
 
   const handleExportCsv = () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
+    const apiUrl = "/api";
     const params = new URLSearchParams();
     if (product) params.set("product", product);
     if (region) params.set("location", region);
@@ -96,32 +97,43 @@ function PricesContent() {
     window.open(`${apiUrl}/v1/prices?${params.toString()}`, "_blank");
   };
 
+  const filteredTableData = tableData.filter((row) =>
+    row.locationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    row.month.includes(searchTerm) ||
+    row.actorLevel.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-emerald-600" />
-            Explorateur des prix vivriers
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Historique mensuel des prix nominaux, fourchettes de dispersion et traçabilité par source.
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
+              <TrendingUp className="w-6 h-6 text-emerald-400" />
+              Explorateur des prix vivriers
+            </h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+              {tableData.length} observations
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
+            Historique mensuel des prix nominaux, dispersion géographique et traçabilité certifiée.
           </p>
         </div>
 
         <button
           onClick={handleExportCsv}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-md shadow-sm transition-colors self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-emerald-950/40 transition-all hover:scale-102 self-start sm:self-auto"
         >
           <Download className="w-4 h-4" />
-          Exporter les données (CSV)
+          Exporter CSV
         </button>
       </div>
 
       {/* Error state */}
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs flex items-center justify-between">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs flex items-center justify-between">
           <span>{error}</span>
         </div>
       )}
@@ -134,57 +146,73 @@ function PricesContent() {
       />
 
       {/* Data Table */}
-      <div className="bg-card border border-border rounded-lg overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-border flex items-center justify-between">
+      <div className="glass-card rounded-2xl overflow-hidden">
+        <div className="p-4 border-b border-white/[0.07] flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Table className="w-4 h-4 text-emerald-600" />
-            <h2 className="text-sm font-semibold text-foreground">
+            <Table className="w-4 h-4 text-emerald-400" />
+            <h2 className="text-sm font-bold text-white">
               Tableau des observations mensuelles
             </h2>
           </div>
-          <span className="text-xs text-muted-foreground">
-            {tableData.length} enregistrements
-          </span>
+
+          <div className="flex items-center gap-3">
+            {/* Search inside table */}
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+              <input
+                type="text"
+                placeholder="Filtrer lieu, date..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="text-xs bg-slate-900 border border-white/[0.08] rounded-lg pl-8 pr-3 py-1.5 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 w-44 sm:w-56"
+              />
+            </div>
+            <span className="text-xs font-mono text-slate-400">
+              {filteredTableData.length} lignes
+            </span>
+          </div>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-            <RefreshCw className="w-4 h-4 animate-spin text-emerald-600" />
+          <div className="p-16 text-center text-xs text-slate-400 flex items-center justify-center gap-2 font-mono">
+            <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
             Chargement des observations...
           </div>
-        ) : tableData.length === 0 ? (
-          <div className="p-12 text-center text-sm text-muted-foreground">
-            Aucun enregistrement ne correspond aux filtres sélectionnés.
+        ) : filteredTableData.length === 0 ? (
+          <div className="p-16 text-center text-xs text-slate-400 font-mono">
+            Aucun enregistrement ne correspond aux critères sélectionnés.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-muted/50 text-muted-foreground border-b border-border uppercase font-semibold">
+              <thead className="bg-slate-950/60 text-slate-400 border-b border-white/[0.06] uppercase font-mono text-[10px] tracking-wider">
                 <tr>
                   <th className="px-4 py-3">Mois</th>
                   <th className="px-4 py-3">Région / Marché</th>
                   <th className="px-4 py-3">Niveau d&apos;acteur</th>
-                  <th className="px-4 py-3">Prix médian</th>
-                  <th className="px-4 py-3">Fourchette (Min - Max)</th>
+                  <th className="px-4 py-3 text-right">Prix médian</th>
+                  <th className="px-4 py-3 text-right">Fourchette</th>
                   <th className="px-4 py-3">Nature</th>
                   <th className="px-4 py-3">Source</th>
                   <th className="px-4 py-3">Traçabilité</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
-                {tableData.map((row, idx) => (
-                  <tr key={`${row.month}-${row.locationName}-${idx}`} className="hover:bg-muted/30">
-                    <td className="px-4 py-2.5 font-medium text-foreground">
+              <tbody className="divide-y divide-white/[0.04]">
+                {filteredTableData.map((row, idx) => (
+                  <tr key={`${row.month}-${row.locationName}-${idx}`} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="px-4 py-2.5 font-medium text-white">
                       {formatMonthYear(row.month)}
                     </td>
-                    <td className="px-4 py-2.5 text-foreground">{row.locationName}</td>
-                    <td className="px-4 py-2.5 capitalize text-muted-foreground">
-                      {row.actorLevel}
+                    <td className="px-4 py-2.5 text-slate-200">{row.locationName}</td>
+                    <td className="px-4 py-2.5 capitalize text-slate-400">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-800 text-slate-300 border border-white/[0.05]">
+                        {row.actorLevel}
+                      </span>
                     </td>
-                    <td className="px-4 py-2.5 font-bold text-foreground">
+                    <td className="px-4 py-2.5 text-right font-mono font-bold text-emerald-400">
                       {formatPrice(row.medianPrice, "kg")}
                     </td>
-                    <td className="px-4 py-2.5 text-muted-foreground">
+                    <td className="px-4 py-2.5 text-right text-slate-400 font-mono text-[11px]">
                       {row.minPrice && row.maxPrice
                         ? `${formatPrice(row.minPrice, "kg")} – ${formatPrice(row.maxPrice, "kg")}`
                         : "—"}
@@ -213,8 +241,8 @@ export default function PricesPage() {
   return (
     <React.Suspense
       fallback={
-        <div className="p-12 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-          <RefreshCw className="w-4 h-4 animate-spin text-emerald-600" />
+        <div className="p-16 text-center text-xs text-slate-400 flex items-center justify-center gap-2 font-mono">
+          <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
           Chargement des prix vivriers...
         </div>
       }

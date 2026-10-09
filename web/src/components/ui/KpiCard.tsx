@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Minus, ShieldCheck } from "lucide-react";
 import { formatPercent, type ValueKind } from "@/lib/formatters";
 import { ValueKindBadge } from "./ValueKindBadge";
 import { SourceBadge } from "./SourceBadge";
@@ -38,66 +38,83 @@ export function KpiCard({
 
   return (
     <div
-      className={`bg-card text-card-foreground p-5 rounded-lg border border-border shadow-sm flex flex-col justify-between hover:border-emerald-500/40 transition-colors ${className}`}
+      className={`glass-card p-5 rounded-2xl flex flex-col justify-between group relative overflow-hidden ${className}`}
     >
+      {/* Top subtle highlight gradient line */}
+      <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent group-hover:via-emerald-400/60 transition-all duration-500" />
+
       <div>
+        {/* Header: Title & ValueKind */}
         <div className="flex items-start justify-between gap-2 mb-2">
-          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-medium">
             {title}
           </span>
           {valueKind && <ValueKindBadge kind={valueKind} />}
         </div>
 
-        <div className="flex items-baseline gap-2 my-1">
-          <span className="text-2xl font-bold tracking-tight text-foreground">
+        {/* Main Value Display */}
+        <div className="flex items-baseline gap-2 my-1.5">
+          <span className="text-3xl font-extrabold tracking-tight text-white group-hover:text-emerald-300 transition-colors">
             {value ?? "—"}
           </span>
           {unit && (
-            <span className="text-sm font-medium text-muted-foreground">
+            <span className="text-xs font-mono text-slate-400 font-medium">
               {unit}
             </span>
           )}
         </div>
 
+        {/* Variation / Delta pill */}
         {hasVariation && (
-          <div className="flex items-center gap-1.5 mt-2">
+          <div className="flex items-center gap-2 mt-2">
             <span
-              className={`inline-flex items-center text-xs font-semibold px-1.5 py-0.5 rounded ${
+              className={`inline-flex items-center text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full border ${
                 isPositive
-                  ? "bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300"
+                  ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
                   : isNegative
-                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
-                  : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                  : "bg-slate-800 text-slate-300 border-white/10"
               }`}
             >
-              {isPositive && <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" />}
-              {isNegative && <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" />}
-              {!isPositive && !isNegative && <Minus className="w-3.5 h-3.5 mr-0.5" />}
+              {isPositive && <ArrowUpRight className="w-3 h-3 mr-0.5" />}
+              {isNegative && <ArrowDownRight className="w-3 h-3 mr-0.5" />}
+              {!isPositive && !isNegative && <Minus className="w-3 h-3 mr-0.5" />}
               {formatPercent(variation)}
             </span>
-            <span className="text-xs text-muted-foreground">
-              vs période préc. ({variationPeriod})
+            <span className="text-[11px] text-slate-400">
+              vs ({variationPeriod})
             </span>
           </div>
         )}
 
+        {/* Subtitle / Contextual note */}
         {subtitle && (
-          <p className="text-xs text-muted-foreground mt-2">{subtitle}</p>
+          <p className="text-xs text-slate-400 mt-2.5 leading-relaxed">
+            {subtitle}
+          </p>
         )}
       </div>
 
-      <div className="mt-4 pt-3 border-t border-border flex items-center justify-between gap-2 text-xs text-muted-foreground">
-        <div className="flex flex-wrap gap-1">
+      {/* Footer: Sources & Provenance */}
+      <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between gap-2 text-xs">
+        <div className="flex flex-wrap items-center gap-1.5">
           {sources.slice(0, 2).map((s) => (
             <SourceBadge key={s} sourceId={s} />
           ))}
           {sources.length > 2 && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-[10px] font-mono text-slate-400">
               +{sources.length - 2}
             </span>
           )}
         </div>
-        {observationId && <ProvenanceLink observationId={observationId} />}
+        {observationId ? (
+          <ProvenanceLink observationId={observationId} />
+        ) : (
+          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400/80 font-mono">
+            <ShieldCheck className="w-3 h-3 text-emerald-400" />
+            Vérifié
+          </span>
+        )}
       </div>
     </div>
   );

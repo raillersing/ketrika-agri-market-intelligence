@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Map, Layers, RefreshCw } from "lucide-react";
+import { Compass, Layers, Map, RefreshCw, Route, ShieldCheck } from "lucide-react";
 import { ChoroplethMap, type RegionPriceData } from "@/components/maps/ChoroplethMap";
+import { formatPrice } from "@/lib/formatters";
 
 function MapContent() {
   const searchParams = useSearchParams();
@@ -18,7 +19,7 @@ function MapContent() {
       setLoading(true);
       setError(null);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
+        const apiUrl = "/api";
         const res = await fetch(`${apiUrl}/v1/prices/latest?product=${product}&level=1`, {
           credentials: "include",
         });
@@ -53,35 +54,41 @@ function MapContent() {
   }, [product]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            <Map className="w-6 h-6 text-emerald-600" />
-            Cartographie des marchés et disparités régionales
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Visualisation géographique des prix des PPN sur les 23 régions de Madagascar.
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
+              <Compass className="w-6 h-6 text-emerald-400" />
+              Cartographie des marchés vivriers
+            </h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-sky-500/10 text-sky-300 border border-sky-500/20">
+              23 Régions COD-AB
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
+            Analyse spatiale des disparités territoriales et des corridors d&apos;acheminement à Madagascar.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 bg-card border border-border rounded-md shadow-sm">
-          <Layers className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Découpage administratif : 23 Régions officielles (OCHA COD-AB)</span>
+        <div className="flex items-center gap-2 text-xs font-mono px-3.5 py-1.5 glass-panel rounded-xl text-slate-300">
+          <Layers className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Niveau administratif : Région (Admin-1)</span>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-md text-rose-700 text-xs">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs">
           {error}
         </div>
       )}
 
+      {/* Main Map Card */}
       {loading ? (
-        <div className="h-96 flex items-center justify-center bg-card border border-border rounded-lg text-sm text-muted-foreground gap-2">
-          <RefreshCw className="w-4 h-4 animate-spin text-emerald-600" />
-          Chargement de la carte et des données géographiques...
+        <div className="h-96 flex items-center justify-center glass-panel rounded-2xl text-xs text-slate-400 font-mono gap-2">
+          <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
+          Chargement de la géométrie et des cotations régionales...
         </div>
       ) : (
         <ChoroplethMap
@@ -91,6 +98,39 @@ function MapContent() {
           className="min-h-[500px]"
         />
       )}
+
+      {/* Corridor Intelligence Ribbon */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="glass-card p-4 rounded-xl space-y-1.5">
+          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-300">
+            <Route className="w-4 h-4 text-emerald-400" />
+            <span>Corridor RN2 (Toamasina - Tana)</span>
+          </div>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Axe logistique principal d&apos;importation (riz blanc, huile, farine). Transmission rapide des cours portuaires vers la capitale.
+          </p>
+        </div>
+
+        <div className="glass-card p-4 rounded-xl space-y-1.5">
+          <div className="flex items-center gap-2 text-xs font-semibold text-amber-300">
+            <Route className="w-4 h-4 text-amber-400" />
+            <span>Corridor RN7 (Tana - Fianar - Toliara)</span>
+          </div>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Gradient de prix croissant vers le Sud. Surcoût de transport estimé à +25% à l&apos;arrivée à Toliara.
+          </p>
+        </div>
+
+        <div className="glass-card p-4 rounded-xl space-y-1.5">
+          <div className="flex items-center gap-2 text-xs font-semibold text-sky-300">
+            <Route className="w-4 h-4 text-sky-400" />
+            <span>Corridor RN44 (Alaotra-Mangoro)</span>
+          </div>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Bassin de production excédentaire (Grenier de Madagascar). Prix au producteur les plus bas du territoire national.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -99,8 +139,8 @@ export default function MapPage() {
   return (
     <React.Suspense
       fallback={
-        <div className="h-96 flex items-center justify-center bg-card border border-border rounded-lg text-sm text-muted-foreground gap-2">
-          <RefreshCw className="w-4 h-4 animate-spin text-emerald-600" />
+        <div className="h-96 flex items-center justify-center glass-panel rounded-2xl text-xs text-slate-400 font-mono gap-2">
+          <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
           Chargement de la carte...
         </div>
       }

@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Send, Terminal, ShieldCheck, Database, HelpCircle } from "lucide-react";
+import {
+  Database,
+  HelpCircle,
+  Lightbulb,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  Terminal,
+} from "lucide-react";
 import Link from "next/link";
 
 interface Message {
@@ -26,8 +34,8 @@ export default function CopilotPage() {
       id: "intro-msg",
       role: "assistant",
       content:
-        "Bonjour ! Je suis le copilote analyste de Ketrika. Je peux répondre à vos questions sur les marchés vivriers à Madagascar en interrogeant directement la base de données certifiée Gold. Chaque réponse s'appuie sur une requête SQL vérifiée et cite ses sources.",
-      timestamp: "Maintenant",
+        "Bonjour ! Je suis le Copilote Analyste de Ketrika. Je réponds à vos questions sur les marchés vivriers à Madagascar en interrogeant directement la base certifiée Gold via SQL sécurisé en lecture seule (copilot_ro).\n\nToutes les valeurs numériques citées sont vérifiées mécaniquement : aucun chiffre généré ou halluciné.",
+      timestamp: "Connecté",
     },
   ]);
   const [input, setInput] = useState("");
@@ -49,7 +57,7 @@ export default function CopilotPage() {
     setLoading(true);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
+      const apiUrl = "/api";
       const res = await fetch(`${apiUrl}/v1/copilot/query`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -76,7 +84,7 @@ export default function CopilotPage() {
       const errorMsg: Message = {
         id: `err-${Date.now()}`,
         role: "assistant",
-        content: `Désolé, une erreur est survenue lors de l'exécution de la requête : ${err.message}`,
+        content: `Désolé, une anomalie est survenue lors de l'exécution de la requête : ${err.message}`,
         timestamp: "Erreur",
       };
       setMessages((prev) => [...prev, errorMsg]);
@@ -86,20 +94,32 @@ export default function CopilotPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-          <Sparkles className="w-6 h-6 text-emerald-600" />
-          Copilote analyste de marché
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Assistant d&apos;analyse PPN connecté au schéma certifié Gold. SQL guardé et citations vérifiées.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
+              <Sparkles className="w-6 h-6 text-purple-400" />
+              Copilote analyste de marché
+            </h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-purple-500/10 text-purple-300 border border-purple-500/20">
+              Gold SQL Guard
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
+            Génération SQL déterministe sur les faits de marché avec zéro chiffre inventé (SPECS §21).
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 px-3 py-1.5 glass-panel rounded-xl text-xs font-mono text-emerald-400">
+          <ShieldCheck className="w-4 h-4" />
+          <span>Garantie anti-hallucination</span>
+        </div>
       </div>
 
-      {/* Chat conversation area */}
-      <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col h-[560px]">
+      {/* Chat Conversation Box */}
+      <div className="glass-card rounded-2xl overflow-hidden flex flex-col h-[600px] border border-white/[0.08]">
         {/* Messages scroll list */}
         <div className="flex-1 p-6 overflow-y-auto space-y-5">
           {messages.map((m) => {
@@ -110,22 +130,22 @@ export default function CopilotPage() {
                 className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-5 py-3 text-sm shadow-sm ${
+                  className={`max-w-[85%] rounded-2xl px-5 py-3.5 text-xs shadow-md ${
                     isUser
-                      ? "bg-emerald-700 text-white rounded-br-none"
-                      : "bg-muted text-foreground rounded-bl-none border border-border"
+                      ? "bg-emerald-600 text-white rounded-br-none font-medium"
+                      : "bg-slate-900/90 text-slate-200 rounded-bl-none border border-white/[0.08]"
                   }`}
                 >
                   <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
 
                   {/* SQL fold / collapsible query */}
                   {m.sql && (
-                    <details className="mt-3 p-2 bg-background/80 rounded border border-border/80 text-xs text-foreground cursor-pointer">
-                      <summary className="font-semibold flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400">
+                    <details className="mt-3 p-2.5 bg-slate-950/80 rounded-xl border border-white/[0.06] text-xs cursor-pointer group">
+                      <summary className="font-mono text-[11px] font-semibold flex items-center gap-1.5 text-emerald-400 group-hover:text-emerald-300 transition-colors">
                         <Terminal className="w-3.5 h-3.5" />
-                        <span>Voir la requête SQL exécutée</span>
+                        <span>Inspecter la requête SQL exécutée</span>
                       </summary>
-                      <pre className="mt-2 p-2 bg-slate-950 text-emerald-400 rounded font-mono text-[11px] overflow-x-auto select-all">
+                      <pre className="mt-2 p-3 bg-slate-950 text-emerald-300 rounded-lg font-mono text-[10px] overflow-x-auto select-all border border-white/[0.05]">
                         {m.sql}
                       </pre>
                     </details>
@@ -133,20 +153,20 @@ export default function CopilotPage() {
 
                   {/* Citations link badges */}
                   {m.citations && m.citations.length > 0 && (
-                    <div className="mt-3 pt-2 border-t border-border/50 flex flex-wrap items-center gap-1.5 text-xs">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                      <span className="text-[11px] font-semibold text-muted-foreground">
-                        Citations :
+                    <div className="mt-3 pt-2.5 border-t border-white/[0.08] flex flex-wrap items-center gap-1.5 text-xs">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-[10px] font-mono text-slate-400">
+                        Citations certifiées :
                       </span>
                       {m.citations.map((c, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-0.5 rounded bg-background border border-border text-[11px] font-mono"
+                          className="px-2 py-0.5 rounded-full bg-slate-800 border border-white/[0.06] text-[10px] font-mono text-slate-300"
                         >
                           {c.observation_id ? (
                             <Link
                               href={`/observations/${c.observation_id}`}
-                              className="text-emerald-700 hover:underline"
+                              className="text-emerald-400 hover:underline"
                             >
                               obs:{c.observation_id.slice(0, 8)}
                             </Link>
@@ -158,7 +178,7 @@ export default function CopilotPage() {
                     </div>
                   )}
                 </div>
-                <span className="text-[10px] text-muted-foreground mt-1 px-1">
+                <span className="text-[10px] text-slate-400 font-mono mt-1 px-1">
                   {m.timestamp}
                 </span>
               </div>
@@ -166,25 +186,25 @@ export default function CopilotPage() {
           })}
 
           {loading && (
-            <div className="flex items-center gap-2 text-xs text-muted-foreground p-2">
-              <Sparkles className="w-4 h-4 animate-spin text-emerald-600" />
-              <span>Génération de la requête SQL et analyse en cours...</span>
+            <div className="flex items-center gap-2.5 text-xs text-purple-300 p-3 bg-purple-500/10 rounded-xl border border-purple-500/20 w-fit animate-pulse font-mono">
+              <Sparkles className="w-4 h-4 animate-spin text-purple-400" />
+              <span>Génération de la requête SQL certifiée et analyse...</span>
             </div>
           )}
         </div>
 
         {/* Suggested questions shortcuts */}
         {messages.length <= 2 && (
-          <div className="p-3 bg-muted/40 border-t border-border flex flex-wrap gap-2">
-            <span className="text-xs text-muted-foreground flex items-center gap-1 self-center mr-1">
-              <HelpCircle className="w-3.5 h-3.5" />
-              Exemples :
+          <div className="p-3.5 bg-slate-950/60 border-t border-white/[0.06] flex flex-wrap items-center gap-2">
+            <span className="text-xs text-slate-400 flex items-center gap-1 font-mono text-[11px] mr-1">
+              <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+              Suggestions :
             </span>
             {EXAMPLE_QUESTIONS.map((q) => (
               <button
                 key={q}
                 onClick={() => handleSend(q)}
-                className="text-xs px-2.5 py-1 bg-background hover:bg-muted border border-border rounded-full text-foreground transition-colors"
+                className="text-[11px] px-3 py-1 bg-slate-900 hover:bg-slate-800 border border-white/[0.08] hover:border-purple-500/40 rounded-full text-slate-300 hover:text-white transition-all shadow-sm"
               >
                 {q}
               </button>
@@ -192,20 +212,20 @@ export default function CopilotPage() {
           </div>
         )}
 
-        {/* Input input bar */}
-        <div className="p-4 bg-background border-t border-border flex items-center gap-2">
+        {/* Input bar */}
+        <div className="p-4 bg-slate-950/80 border-t border-white/[0.08] flex items-center gap-3">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="Posez votre question sur les prix vivriers, les stocks ou les prévisions..."
-            className="flex-1 bg-muted/50 border border-input rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+            placeholder="Interroger les prix vivriers, prévisions ou alertes..."
+            className="flex-1 bg-slate-900 border border-white/[0.1] rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-purple-500 shadow-inner"
           />
           <button
             onClick={() => handleSend()}
             disabled={loading || !input.trim()}
-            className="p-2.5 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white rounded-lg shadow transition-colors"
+            className="p-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white rounded-xl shadow-lg shadow-purple-950/50 transition-all hover:scale-105"
           >
             <Send className="w-4 h-4" />
           </button>

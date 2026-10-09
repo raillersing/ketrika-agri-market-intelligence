@@ -1,7 +1,17 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, CheckCircle, Clock, Filter, RefreshCw, ShieldAlert } from "lucide-react";
+import {
+  AlertOctagon,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Copy,
+  Filter,
+  RefreshCw,
+  ShieldAlert,
+  ShieldCheck,
+} from "lucide-react";
 import { formatMonthYear } from "@/lib/formatters";
 
 interface AlertItem {
@@ -23,12 +33,13 @@ export default function AlertsPage() {
   const [selectedAlert, setSelectedAlert] = useState<AlertItem | null>(null);
   const [stateFilter, setStateFilter] = useState<string>("");
   const [actionLoading, setActionLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const fetchAlerts = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
+      const apiUrl = "/api";
       const params = new URLSearchParams();
       if (stateFilter) params.set("state", stateFilter);
 
@@ -69,7 +80,7 @@ export default function AlertsPage() {
   const handleUpdateState = async (alertId: string, newState: "acknowledged" | "resolved") => {
     setActionLoading(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
+      const apiUrl = "/api";
       const res = await fetch(`${apiUrl}/v1/alerts/${alertId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -95,51 +106,68 @@ export default function AlertsPage() {
     }
   };
 
+  const copyEvidence = () => {
+    if (selectedAlert) {
+      navigator.clipboard.writeText(JSON.stringify(selectedAlert.evidence, null, 2));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const highCount = alerts.filter((a) => a.severity === "high").length;
+  const mediumCount = alerts.filter((a) => a.severity === "medium").length;
+  const resolvedCount = alerts.filter((a) => a.state === "resolved").length;
+
   const getSeverityBadge = (sev: string) => {
     switch (sev) {
       case "high":
-        return "bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-950 dark:text-rose-300";
+        return "bg-rose-500/10 text-rose-400 border-rose-500/20";
       case "medium":
-        return "bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950 dark:text-amber-300";
+        return "bg-amber-500/10 text-amber-400 border-amber-500/20";
       default:
-        return "bg-slate-100 text-slate-800 border-slate-300 dark:bg-slate-800 dark:text-slate-300";
+        return "bg-slate-800 text-slate-300 border-white/10";
     }
   };
 
   const getStateBadge = (st: string) => {
     switch (st) {
       case "open":
-        return "bg-rose-50 text-rose-700 border-rose-200";
+        return "bg-rose-500/15 text-rose-300 border-rose-500/30";
       case "acknowledged":
-        return "bg-blue-50 text-blue-700 border-blue-200";
+        return "bg-sky-500/15 text-sky-300 border-sky-500/30";
       case "resolved":
-        return "bg-emerald-50 text-emerald-700 border-emerald-200";
+        return "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
       default:
-        return "bg-slate-50 text-slate-700 border-slate-200";
+        return "bg-slate-800 text-slate-400 border-white/10";
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            <AlertTriangle className="w-6 h-6 text-rose-600" />
-            Alertes et signaux de tension de marché
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Détection automatique de flambées de prix, disparités anormales et ruptures d&apos;approvisionnement.
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
+              <AlertTriangle className="w-6 h-6 text-amber-400" />
+              Centre d&apos;alertes & Détection de tensions
+            </h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-rose-500/10 text-rose-300 border border-rose-500/20">
+              {alerts.length} signaux
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
+            Détection algorithmique idempotente des pics de prix, ruptures d&apos;approvisionnement et anomalies spatiales.
           </p>
         </div>
 
         {/* State filters */}
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-muted-foreground" />
+          <Filter className="w-3.5 h-3.5 text-slate-400" />
           <select
             value={stateFilter}
             onChange={(e) => setStateFilter(e.target.value)}
-            className="text-xs bg-card border border-input rounded-md px-2.5 py-1.5 shadow-sm"
+            className="text-xs bg-slate-900 border border-white/[0.1] rounded-xl px-3 py-1.5 text-white shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
           >
             <option value="">Tous les états</option>
             <option value="open">Ouvertes (Open)</option>
@@ -149,8 +177,28 @@ export default function AlertsPage() {
         </div>
       </div>
 
+      {/* KPI Severity Ribbon */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="glass-panel p-3.5 rounded-xl border border-white/[0.08]">
+          <span className="text-[10px] font-mono uppercase text-slate-400">Total Alertes</span>
+          <div className="text-xl font-bold font-mono text-white mt-0.5">{alerts.length}</div>
+        </div>
+        <div className="glass-panel p-3.5 rounded-xl border border-rose-500/20 bg-rose-500/5">
+          <span className="text-[10px] font-mono uppercase text-rose-400">Sévérité Haute</span>
+          <div className="text-xl font-bold font-mono text-rose-300 mt-0.5">{highCount}</div>
+        </div>
+        <div className="glass-panel p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/5">
+          <span className="text-[10px] font-mono uppercase text-amber-400">Sévérité Moyenne</span>
+          <div className="text-xl font-bold font-mono text-amber-300 mt-0.5">{mediumCount}</div>
+        </div>
+        <div className="glass-panel p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
+          <span className="text-[10px] font-mono uppercase text-emerald-400">Résolues</span>
+          <div className="text-xl font-bold font-mono text-emerald-300 mt-0.5">{resolvedCount}</div>
+        </div>
+      </div>
+
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-md text-rose-700 text-xs">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs">
           {error}
         </div>
       )}
@@ -158,64 +206,65 @@ export default function AlertsPage() {
       {/* Main Grid: List + Detail */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* List of alerts */}
-        <div className="lg:col-span-2 bg-card border border-border rounded-lg overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-border flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-foreground">
-              Alertes détectées ({alerts.length})
+        <div className="lg:col-span-2 glass-card rounded-2xl overflow-hidden flex flex-col justify-between">
+          <div className="p-4 border-b border-white/[0.07] flex items-center justify-between">
+            <h2 className="text-sm font-bold text-white flex items-center gap-2">
+              <AlertOctagon className="w-4 h-4 text-emerald-400" />
+              Signaux de marché en cours ({alerts.length})
             </h2>
             <button
               onClick={fetchAlerts}
-              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+              className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 transition-colors font-mono"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-emerald-400" : ""}`} />
               Actualiser
             </button>
           </div>
 
           {loading ? (
-            <div className="p-12 text-center text-sm text-muted-foreground">
-              Chargement des alertes...
+            <div className="p-16 text-center text-xs text-slate-400 font-mono">
+              Chargement des alertes de marché...
             </div>
           ) : alerts.length === 0 ? (
-            <div className="p-12 text-center text-sm text-muted-foreground">
+            <div className="p-16 text-center text-xs text-slate-400 font-mono">
               Aucune alerte active ne correspond à ce filtre.
             </div>
           ) : (
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-white/[0.04] max-h-[500px] overflow-y-auto">
               {alerts.map((al) => {
                 const isSelected = selectedAlert?.alertId === al.alertId;
                 return (
                   <button
                     key={al.alertId}
                     onClick={() => setSelectedAlert(al)}
-                    className={`w-full p-4 text-left transition-colors flex items-start justify-between gap-4 ${
+                    className={`w-full p-4 text-left transition-all flex items-start justify-between gap-4 ${
                       isSelected
-                        ? "bg-muted/40 border-l-4 border-l-emerald-600"
-                        : "hover:bg-muted/20"
+                        ? "bg-emerald-500/10 border-l-4 border-l-emerald-400"
+                        : "hover:bg-white/[0.02]"
                     }`}
                   >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-1.5 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${getSeverityBadge(
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase border ${getSeverityBadge(
                             al.severity
                           )}`}
                         >
                           {al.severity}
                         </span>
-                        <span className="font-semibold text-sm text-foreground">
+                        <span className="font-semibold text-sm text-white truncate">
                           {al.title}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="font-mono">{al.ruleCode}</span>
+                      <div className="flex items-center gap-3 text-xs text-slate-400 font-mono">
+                        <span className="text-emerald-400">{al.ruleCode}</span>
                         <span>•</span>
                         <span>Vu le {formatMonthYear(al.lastSeenAt)}</span>
                       </div>
                     </div>
 
                     <span
-                      className={`px-2 py-0.5 rounded text-xs font-medium border capitalize ${getStateBadge(
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold border capitalize shrink-0 ${getStateBadge(
                         al.state
                       )}`}
                     >
@@ -229,69 +278,93 @@ export default function AlertsPage() {
         </div>
 
         {/* Alert Detail Panel */}
-        <div className="bg-card border border-border rounded-lg p-5 shadow-sm space-y-4">
-          <h2 className="text-sm font-semibold text-foreground border-b border-border pb-2 flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 text-emerald-600" />
-            Détail de l&apos;alerte
-          </h2>
-
-          {selectedAlert ? (
-            <div className="space-y-4 text-xs">
-              <div>
-                <span className="text-muted-foreground block mb-1">Titre de l&apos;alerte :</span>
-                <span className="font-bold text-sm text-foreground">
-                  {selectedAlert.title}
+        <div className="glass-card rounded-2xl p-5 space-y-4 flex flex-col justify-between">
+          <div>
+            <h2 className="text-sm font-bold text-white border-b border-white/[0.07] pb-3 flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-emerald-400" />
+                Dossier d&apos;alerte
+              </span>
+              {selectedAlert && (
+                <span className="text-[10px] font-mono text-slate-400">
+                  {selectedAlert.alertId.slice(0, 8)}...
                 </span>
-              </div>
+              )}
+            </h2>
 
-              <div className="grid grid-cols-2 gap-2 py-2 border-y border-border">
+            {selectedAlert ? (
+              <div className="space-y-4 text-xs mt-3">
                 <div>
-                  <span className="text-muted-foreground block">Règle :</span>
-                  <span className="font-mono font-semibold text-foreground">
-                    {selectedAlert.ruleCode}
+                  <span className="text-[11px] font-mono text-slate-400 block mb-1">
+                    Événement détecté :
+                  </span>
+                  <span className="font-bold text-sm text-white">
+                    {selectedAlert.title}
                   </span>
                 </div>
+
+                <div className="grid grid-cols-2 gap-2 py-2.5 border-y border-white/[0.06] font-mono text-[11px]">
+                  <div>
+                    <span className="text-slate-400 block text-[10px]">Règle SPECS §18 :</span>
+                    <span className="font-semibold text-emerald-400">
+                      {selectedAlert.ruleCode}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[10px]">Statut :</span>
+                    <span className="font-semibold uppercase text-white">
+                      {selectedAlert.state}
+                    </span>
+                  </div>
+                </div>
+
                 <div>
-                  <span className="text-muted-foreground block">Statut actuel :</span>
-                  <span className="font-semibold uppercase text-foreground">
-                    {selectedAlert.state}
-                  </span>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[11px] font-mono text-slate-400">
+                      Preuves & métriques déclenchantes :
+                    </span>
+                    <button
+                      onClick={copyEvidence}
+                      className="text-[10px] text-slate-400 hover:text-white flex items-center gap-1 font-mono"
+                    >
+                      <Copy className="w-3 h-3" />
+                      {copied ? "Copié !" : "Copier JSON"}
+                    </button>
+                  </div>
+                  <pre className="p-3 bg-slate-950/80 border border-white/[0.06] rounded-xl font-mono text-[10px] overflow-x-auto text-emerald-300 max-h-48">
+                    {JSON.stringify(selectedAlert.evidence, null, 2)}
+                  </pre>
                 </div>
               </div>
+            ) : (
+              <p className="text-xs text-slate-400 py-8 text-center font-mono">
+                Sélectionnez une alerte pour afficher ses détails et preuves.
+              </p>
+            )}
+          </div>
 
-              <div>
-                <span className="text-muted-foreground block mb-1">Preuve et métriques déclenchantes :</span>
-                <pre className="p-3 bg-muted rounded font-mono text-[11px] overflow-x-auto text-foreground">
-                  {JSON.stringify(selectedAlert.evidence, null, 2)}
-                </pre>
-              </div>
-
-              {/* Action buttons (admin) */}
-              <div className="pt-2 border-t border-border flex gap-2">
-                {selectedAlert.state === "open" && (
-                  <button
-                    disabled={actionLoading}
-                    onClick={() => handleUpdateState(selectedAlert.alertId, "acknowledged")}
-                    className="flex-1 py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-medium transition-colors"
-                  >
-                    Acquitter l&apos;alerte
-                  </button>
-                )}
-                {selectedAlert.state !== "resolved" && (
-                  <button
-                    disabled={actionLoading}
-                    onClick={() => handleUpdateState(selectedAlert.alertId, "resolved")}
-                    className="flex-1 py-1.5 px-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded text-xs font-medium transition-colors"
-                  >
-                    Marquer résolue
-                  </button>
-                )}
-              </div>
+          {/* Action buttons (admin) */}
+          {selectedAlert && (
+            <div className="pt-3 border-t border-white/[0.07] flex gap-2">
+              {selectedAlert.state === "open" && (
+                <button
+                  disabled={actionLoading}
+                  onClick={() => handleUpdateState(selectedAlert.alertId, "acknowledged")}
+                  className="flex-1 py-2 px-3 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-semibold transition-all hover:scale-102"
+                >
+                  Acquitter l&apos;alerte
+                </button>
+              )}
+              {selectedAlert.state !== "resolved" && (
+                <button
+                  disabled={actionLoading}
+                  onClick={() => handleUpdateState(selectedAlert.alertId, "resolved")}
+                  className="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition-all hover:scale-102"
+                >
+                  Marquer résolue
+                </button>
+              )}
             </div>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              Sélectionnez une alerte pour afficher ses détails et preuves.
-            </p>
           )}
         </div>
       </div>

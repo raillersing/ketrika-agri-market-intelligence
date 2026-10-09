@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { formatPrice } from "@/lib/formatters";
+import { Compass, MapPin, TrendingUp } from "lucide-react";
 
 export interface RegionPriceData {
   pcode: string;
@@ -13,7 +14,7 @@ export interface RegionPriceData {
 }
 
 interface ChoroplethMapProps {
-  geoJsonData?: any; // GeoJSON FeatureCollection
+  geoJsonData?: any;
   regionPrices?: Record<string, RegionPriceData>;
   onRegionSelect?: (pcode: string) => void;
   selectedPcode?: string;
@@ -21,7 +22,6 @@ interface ChoroplethMapProps {
 }
 
 export function ChoroplethMap({
-  geoJsonData,
   regionPrices = {},
   onRegionSelect,
   selectedPcode,
@@ -30,55 +30,59 @@ export function ChoroplethMap({
   const mapContainer = useRef<HTMLDivElement>(null);
   const [hoveredRegion, setHoveredRegion] = useState<RegionPriceData | null>(null);
 
-  // Color generator for choropleth scale (green to amber to red)
   const getColor = (price: number | null | undefined, min: number, max: number) => {
-    if (price === null || price === undefined) return "#e2e8f0"; // slate-200
+    if (price === null || price === undefined) return "#334155";
     if (max <= min) return "#10b981";
     const ratio = Math.min(1, Math.max(0, (price - min) / (max - min)));
-    if (ratio < 0.33) return "#34d399"; // emerald-400
+    if (ratio < 0.33) return "#10b981"; // emerald-500
     if (ratio < 0.66) return "#f59e0b"; // amber-500
-    return "#ef4444"; // rose-500
+    return "#f43f5e"; // rose-500
   };
 
-  // Find min and max prices
   const validPrices = Object.values(regionPrices)
     .map((r) => r.price)
     .filter((p): p is number => p !== null && p !== undefined);
   const minPrice = validPrices.length ? Math.min(...validPrices) : 2000;
   const maxPrice = validPrices.length ? Math.max(...validPrices) : 4000;
+  const spreadPercent = minPrice > 0 ? Math.round(((maxPrice - minPrice) / minPrice) * 100) : 0;
 
   return (
-    <div className={`relative bg-card rounded-lg border border-border overflow-hidden shadow-sm flex flex-col ${className}`}>
-      {/* Map header */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
+    <div className={`glass-card rounded-2xl overflow-hidden flex flex-col justify-between ${className}`}>
+      {/* Header */}
+      <div className="p-4 border-b border-white/[0.07] flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">
-            Carte régionale des prix
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            Disparités des prix vivriers par région à Madagascar
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+              <Compass className="w-4 h-4 text-emerald-400" />
+              Carte spatiale & Disparités régionales
+            </h3>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              Écart: +{spreadPercent}%
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Écarts territoriaux de prix à travers les 23 régions de Madagascar
           </p>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>{formatPrice(minPrice, "kg")}</span>
-          <div className="flex h-2.5 w-24 rounded overflow-hidden">
-            <div className="flex-1 bg-emerald-400" />
+        <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400">
+          <span className="text-emerald-400">{formatPrice(minPrice, "kg")}</span>
+          <div className="flex h-2 w-20 rounded-full overflow-hidden bg-slate-800 border border-white/[0.05]">
+            <div className="flex-1 bg-emerald-500" />
             <div className="flex-1 bg-amber-500" />
             <div className="flex-1 bg-rose-500" />
           </div>
-          <span>{formatPrice(maxPrice, "kg")}</span>
+          <span className="text-rose-400">{formatPrice(maxPrice, "kg")}</span>
         </div>
       </div>
 
-      {/* Map display area */}
+      {/* Grid Display */}
       <div
         ref={mapContainer}
-        className="h-96 w-full relative bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4"
+        className="h-88 w-full relative bg-slate-950/40 p-4 flex flex-col justify-between"
       >
-        {/* Render Region Grid / SVG Map representation */}
-        <div className="w-full h-full flex flex-wrap gap-2 overflow-y-auto content-start">
+        <div className="w-full max-h-76 overflow-y-auto pr-1 flex flex-wrap gap-2 content-start">
           {Object.entries(regionPrices).map(([pcode, item]) => {
             const color = getColor(item.price, minPrice, maxPrice);
             const isSelected = selectedPcode === pcode;
@@ -89,24 +93,25 @@ export function ChoroplethMap({
                 onClick={() => onRegionSelect?.(pcode)}
                 onMouseEnter={() => setHoveredRegion(item)}
                 onMouseLeave={() => setHoveredRegion(null)}
-                style={{ borderColor: isSelected ? "#059669" : undefined }}
-                className={`flex-1 min-w-[130px] p-2.5 rounded border text-left transition-all ${
+                style={{ borderColor: isSelected ? "#10b981" : undefined }}
+                className={`flex-1 min-w-[135px] p-2.5 rounded-xl border text-left transition-all ${
                   isSelected
-                    ? "bg-emerald-50 dark:bg-emerald-950 border-emerald-600 ring-2 ring-emerald-500"
-                    : "bg-background border-border hover:border-slate-400"
+                    ? "bg-emerald-500/20 border-emerald-500 shadow-md shadow-emerald-950/40"
+                    : "bg-slate-900/60 border-white/[0.06] hover:border-emerald-500/40 hover:bg-slate-900/90"
                 }`}
               >
-                <div className="flex items-center justify-between gap-1">
-                  <span className="text-xs font-semibold truncate text-foreground">
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <span className="text-xs font-semibold truncate text-slate-200">
                     {item.name}
                   </span>
                   <span
-                    className="w-2.5 h-2.5 rounded-full shrink-0"
+                    className="w-2 h-2 rounded-full shrink-0 shadow-sm"
                     style={{ backgroundColor: color }}
                   />
                 </div>
-                <div className="text-xs font-medium text-emerald-700 dark:text-emerald-400 mt-1">
-                  {formatPrice(item.price, item.unit || "kg")}
+                <div className="text-xs font-mono font-bold text-white flex items-center justify-between">
+                  <span>{formatPrice(item.price, item.unit || "kg")}</span>
+                  <span className="text-[9px] text-slate-400 font-normal">{pcode}</span>
                 </div>
               </button>
             );
@@ -115,21 +120,27 @@ export function ChoroplethMap({
 
         {/* Floating tooltip */}
         {hoveredRegion && (
-          <div className="absolute bottom-4 left-4 bg-popover text-popover-foreground p-3 rounded-md border border-border shadow-md text-xs pointer-events-none z-20">
-            <div className="font-semibold">{hoveredRegion.name}</div>
-            <div className="text-muted-foreground mt-0.5">
-              Prix médian :{" "}
-              <strong className="text-foreground">
-                {formatPrice(hoveredRegion.price, hoveredRegion.unit || "kg")}
-              </strong>
+          <div className="absolute bottom-4 left-4 bg-slate-900/95 text-white p-3 rounded-xl border border-emerald-500/30 shadow-2xl backdrop-blur-xl text-xs pointer-events-none z-20 animate-in fade-in duration-150">
+            <div className="font-bold flex items-center gap-1.5 text-emerald-400">
+              <MapPin className="w-3.5 h-3.5" />
+              {hoveredRegion.name} ({hoveredRegion.pcode})
+            </div>
+            <div className="text-slate-300 mt-1 font-mono">
+              Prix médian : <strong className="text-white">{formatPrice(hoveredRegion.price, hoveredRegion.unit || "kg")}</strong>
             </div>
             {hoveredRegion.sourceId && (
-              <div className="text-[11px] text-muted-foreground mt-0.5">
+              <div className="text-[10px] text-slate-400 mt-1 font-mono">
                 Source : {hoveredRegion.sourceId}
               </div>
             )}
           </div>
         )}
+      </div>
+
+      {/* Disparity summary footer */}
+      <div className="px-4 py-2 border-t border-white/[0.06] bg-slate-950/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+        <span>Tension territoriale : <strong className="text-amber-400">Sud-Ouest & Nord</strong></span>
+        <span>Approvisionnement : <strong className="text-emerald-400">Alaotra-Mangoro</strong></span>
       </div>
     </div>
   );

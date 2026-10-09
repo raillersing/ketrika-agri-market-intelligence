@@ -44,16 +44,16 @@ export function PriceChart({
 
   if (!mounted) {
     return (
-      <div className={`h-80 flex items-center justify-center bg-card border border-border rounded-lg text-muted-foreground text-sm ${className}`}>
-        Chargement du graphique...
+      <div className={`h-88 flex items-center justify-center glass-panel rounded-2xl text-slate-400 text-xs font-mono ${className}`}>
+        Initialisation du visualiseur analytique...
       </div>
     );
   }
 
   if (!data || data.length === 0) {
     return (
-      <div className={`h-80 flex items-center justify-center bg-card border border-border rounded-lg text-muted-foreground text-sm ${className}`}>
-        Aucune donnée de prix disponible pour ces filtres.
+      <div className={`h-88 flex items-center justify-center glass-panel rounded-2xl text-slate-400 text-xs font-mono ${className}`}>
+        Aucune donnée de prix disponible pour la sélection actuelle.
       </div>
     );
   }
@@ -62,7 +62,6 @@ export function PriceChart({
   const categories = sortedData.map((d) => formatMonthYear(d.month));
   const medianPrices = sortedData.map((d) => d.medianPrice);
 
-  // Band lower and upper bounds (using p10/p90 or min/max)
   const hasBand = sortedData.some((d) => (d.p10Price ?? d.minPrice) !== undefined);
   const bandBase = sortedData.map((d) => d.p10Price ?? d.minPrice ?? d.medianPrice);
   const bandRange = sortedData.map((d) => {
@@ -72,68 +71,82 @@ export function PriceChart({
   });
 
   const option = {
+    backgroundColor: "transparent",
     title: {
       text: title,
-      subtext: `${productName} (Ar/${unit})`,
-      left: "2%",
-      top: "2%",
-      textStyle: { fontSize: 14, fontWeight: "600", color: "#1e293b" },
-      subtextStyle: { fontSize: 12, color: "#64748b" },
+      subtext: `${productName} • En Ariary (Ar/${unit})`,
+      left: "16",
+      top: "16",
+      textStyle: { fontSize: 13, fontWeight: "700", color: "#f8fafc", fontFamily: "inherit" },
+      subtextStyle: { fontSize: 11, color: "#94a3b8", fontFamily: "inherit" },
     },
     tooltip: {
       trigger: "axis",
+      backgroundColor: "rgba(15, 23, 42, 0.95)",
+      borderColor: "rgba(255, 255, 255, 0.1)",
+      borderWidth: 1,
+      padding: [12, 14],
+      textStyle: { color: "#f8fafc", fontSize: 12 },
+      extraCssText: "box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); backdrop-filter: blur(12px); border-radius: 12px;",
       formatter: (params: any) => {
         const idx = params[0]?.dataIndex;
         if (idx === undefined || !sortedData[idx]) return "";
         const item = sortedData[idx];
         const kindInfo = getValueKindInfo(item.valueKind);
-        const sourceLabel = item.sourceId ? `Source: ${item.sourceId}` : "";
+        const sourceLabel = item.sourceId ? `Source : ${item.sourceId}` : "";
 
         return `
-          <div style="font-family: inherit; font-size: 12px; padding: 4px;">
-            <div style="font-weight: 600; margin-bottom: 4px; color: #0f172a;">${formatMonthYear(item.month)}</div>
-            <div style="margin-bottom: 2px;">
-              <strong>Prix médian :</strong> ${formatPrice(item.medianPrice, unit)}
+          <div style="font-family: inherit; font-size: 11px;">
+            <div style="font-weight: 700; margin-bottom: 6px; color: #34d399; font-size: 12px;">${formatMonthYear(item.month)}</div>
+            <div style="margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
+              <span style="color: #94a3b8;">Prix médian :</span>
+              <strong style="color: #ffffff; font-family: monospace;">${formatPrice(item.medianPrice, unit)}</strong>
             </div>
-            ${item.minPrice && item.maxPrice ? `<div style="color: #64748b; margin-bottom: 2px;">Fourchette : ${formatPrice(item.minPrice, unit)} – ${formatPrice(item.maxPrice, unit)}</div>` : ""}
-            <div style="margin-top: 4px; display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #059669;"></span>
-              <span>Statut : <strong>${kindInfo.label}</strong></span>
+            ${item.minPrice && item.maxPrice ? `
+            <div style="color: #64748b; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
+              <span>Fourchette (Min - Max) :</span>
+              <span style="font-family: monospace;">${formatPrice(item.minPrice, unit)} – ${formatPrice(item.maxPrice, unit)}</span>
+            </div>` : ""}
+            <div style="margin-top: 8px; pt-2; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+              <span style="color: #38bdf8; font-size: 10px;">● ${kindInfo.label}</span>
+              ${sourceLabel ? `<span style="color: #94a3b8; font-size: 10px; font-family: monospace;">${sourceLabel}</span>` : ""}
             </div>
-            ${sourceLabel ? `<div style="color: #64748b; font-size: 11px; margin-top: 2px;">${sourceLabel}</div>` : ""}
           </div>
         `;
       },
     },
     grid: {
-      top: "18%",
-      left: "4%",
-      right: "4%",
-      bottom: "10%",
+      left: "45",
+      right: "25",
+      top: "75",
+      bottom: "35",
       containLabel: true,
     },
     xAxis: {
       type: "category",
       data: categories,
       boundaryGap: false,
-      axisLine: { lineStyle: { color: "#cbd5e1" } },
-      axisLabel: { color: "#64748b", fontSize: 11 },
+      axisLine: { lineStyle: { color: "rgba(255, 255, 255, 0.1)" } },
+      axisTick: { show: false },
+      axisLabel: { color: "#94a3b8", fontSize: 11, fontFamily: "inherit" },
     },
     yAxis: {
       type: "value",
+      scale: true,
       axisLine: { show: false },
+      splitLine: { lineStyle: { color: "rgba(255, 255, 255, 0.05)", type: "dashed" } },
       axisLabel: {
-        color: "#64748b",
-        formatter: (val: number) => `${val.toLocaleString("fr-FR")} Ar`,
+        color: "#94a3b8",
+        fontSize: 10,
+        fontFamily: "monospace",
+        formatter: (val: number) => `${val.toLocaleString("fr-FR")}`,
       },
-      splitLine: { lineStyle: { color: "#f1f5f9" } },
     },
     series: [
-      // Transparent baseline for the band
       ...(hasBand
         ? [
             {
-              name: "Plage basse",
+              name: "Base fourchette",
               type: "line",
               data: bandBase,
               lineStyle: { opacity: 0 },
@@ -141,17 +154,16 @@ export function PriceChart({
               symbol: "none",
             },
             {
-              name: "Intervalle (P10-P90 / Min-Max)",
+              name: "Intervalle de variation",
               type: "line",
               data: bandRange,
               lineStyle: { opacity: 0 },
-              areaStyle: { color: "rgba(16, 185, 129, 0.15)" },
+              areaStyle: { color: "rgba(16, 185, 129, 0.08)" },
               stack: "confidence-band",
               symbol: "none",
             },
           ]
         : []),
-      // Primary median price line
       {
         name: "Prix médian",
         type: "line",
@@ -159,27 +171,46 @@ export function PriceChart({
         smooth: true,
         symbol: "circle",
         symbolSize: 6,
-        itemStyle: { color: "#059669" },
-        lineStyle: { width: 3, color: "#059669" },
+        itemStyle: {
+          color: "#10b981",
+          borderColor: "#064e3b",
+          borderWidth: 2,
+        },
+        lineStyle: {
+          width: 3,
+          color: "#10b981",
+          shadowColor: "rgba(16, 185, 129, 0.4)",
+          shadowBlur: 10,
+        },
+        areaStyle: {
+          color: {
+            type: "linear",
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: "rgba(16, 185, 129, 0.3)" },
+              { offset: 1, color: "rgba(16, 185, 129, 0.0)" },
+            ],
+          },
+        },
       },
     ],
   };
 
-  const onEvents = {
-    click: (params: any) => {
-      const idx = params?.dataIndex;
-      if (idx !== undefined && sortedData[idx] && onPointClick) {
-        onPointClick(sortedData[idx]);
-      }
-    },
-  };
-
   return (
-    <div className={`bg-card p-4 rounded-lg border border-border shadow-sm ${className}`}>
+    <div className={`glass-card p-2 rounded-2xl relative overflow-hidden ${className}`}>
       <ReactECharts
         option={option}
         style={{ height: "340px", width: "100%" }}
-        onEvents={onEvents}
+        onEvents={{
+          click: (params: any) => {
+            if (params.dataIndex !== undefined && sortedData[params.dataIndex] && onPointClick) {
+              onPointClick(sortedData[params.dataIndex]);
+            }
+          },
+        }}
       />
     </div>
   );

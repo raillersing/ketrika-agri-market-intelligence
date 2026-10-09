@@ -1,7 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { CloudSun, Droplets, Calendar, RefreshCw } from "lucide-react";
+import {
+  Calendar,
+  CloudRain,
+  CloudSun,
+  Droplets,
+  Layers,
+  RefreshCw,
+  Sun,
+  Thermometer,
+} from "lucide-react";
 import { formatNumber } from "@/lib/formatters";
 import { ValueKindBadge } from "@/components/ui/ValueKindBadge";
 import { SourceBadge } from "@/components/ui/SourceBadge";
@@ -62,7 +71,7 @@ export default function ClimatePage() {
       setLoading(true);
       setError(null);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
+        const apiUrl = "/api";
         const res = await fetch(`${apiUrl}/v1/weather/anomalies`, {
           credentials: "include",
         });
@@ -94,43 +103,52 @@ export default function ClimatePage() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-          <CloudSun className="w-6 h-6 text-emerald-600" />
-          Climat, anomalies pluviométriques et calendrier cultural
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Surveillance des précipitations, détection du stress hydrique et stades végétatifs des cultures PPN.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
+              <CloudSun className="w-6 h-6 text-sky-400" />
+              Agroclimatologie & Suivi des cultures
+            </h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-sky-500/10 text-sky-300 border border-sky-500/20">
+              NASA POWER & CHIRPS
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
+            Détection précoce du stress hydrique, précipitations décadaires et calendrier cultural des PPN à Madagascar.
+          </p>
+        </div>
+
+        <SourceBadge sourceId="nasa_power_mdg" />
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-md text-rose-700 text-xs">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs">
           {error}
         </div>
       )}
 
       {/* Crop Calendar Section */}
-      <div className="bg-card border border-border rounded-lg overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-border flex items-center justify-between">
+      <div className="glass-card rounded-2xl overflow-hidden">
+        <div className="p-4 border-b border-white/[0.07] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-emerald-600" />
-            <h2 className="text-sm font-semibold text-foreground">
+            <Calendar className="w-4 h-4 text-emerald-400" />
+            <h2 className="text-sm font-bold text-white">
               Calendrier cultural de référence (Madagascar)
             </h2>
           </div>
-          <span className="text-xs text-muted-foreground">
-            Sources : FAO GIEWS &amp; FEWS NET
+          <span className="text-[11px] font-mono text-slate-400">
+            Source : FAO GIEWS & FEWS NET
           </span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
-            <thead className="bg-muted/50 text-muted-foreground border-b border-border uppercase font-semibold">
+            <thead className="bg-slate-950/60 text-slate-400 border-b border-white/[0.06] uppercase font-mono text-[10px] tracking-wider">
               <tr>
-                <th className="px-4 py-3">Culture / Cycle</th>
+                <th className="px-4 py-3">Culture / Variété</th>
                 <th className="px-4 py-3">Bassins de production</th>
                 <th className="px-4 py-3">Semis / Pépinière</th>
                 <th className="px-4 py-3">Repiquage</th>
@@ -138,20 +156,20 @@ export default function ClimatePage() {
                 <th className="px-4 py-3">Régime cultural</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-white/[0.04]">
               {CROP_CALENDAR.map((c) => (
-                <tr key={c.culture} className="hover:bg-muted/30">
-                  <td className="px-4 py-3 font-semibold text-foreground">
+                <tr key={c.culture} className="hover:bg-white/[0.02] transition-colors">
+                  <td className="px-4 py-3 font-semibold text-white">
                     {c.culture}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">{c.zones}</td>
-                  <td className="px-4 py-3 text-foreground">{c.semis}</td>
-                  <td className="px-4 py-3 text-foreground">{c.repiquage}</td>
-                  <td className="px-4 py-3 font-medium text-emerald-700 dark:text-emerald-400">
+                  <td className="px-4 py-3 text-slate-300">{c.zones}</td>
+                  <td className="px-4 py-3 text-slate-200 font-mono text-[11px]">{c.semis}</td>
+                  <td className="px-4 py-3 text-slate-200 font-mono text-[11px]">{c.repiquage}</td>
+                  <td className="px-4 py-3 font-semibold text-emerald-400 font-mono text-[11px]">
                     {c.recolte}
                   </td>
                   <td className="px-4 py-3">
-                    <span className="inline-flex px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                    <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-800 text-slate-300 border border-white/[0.06]">
                       {c.statut}
                     </span>
                   </td>
@@ -163,68 +181,80 @@ export default function ClimatePage() {
       </div>
 
       {/* Rainfall Anomalies Table */}
-      <div className="bg-card border border-border rounded-lg overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-border flex items-center justify-between">
+      <div className="glass-card rounded-2xl overflow-hidden">
+        <div className="p-4 border-b border-white/[0.07] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Droplets className="w-4 h-4 text-emerald-600" />
-            <h2 className="text-sm font-semibold text-foreground">
+            <Droplets className="w-4 h-4 text-sky-400" />
+            <h2 className="text-sm font-bold text-white">
               Anomalies pluviométriques mensuelles par région
             </h2>
           </div>
-          <SourceBadge sourceId="nasa_power_mdg" />
+          <span className="text-[11px] font-mono text-slate-400">
+            {anomalies.length} relevés régionaux
+          </span>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-            <RefreshCw className="w-4 h-4 animate-spin text-emerald-600" />
-            Chargement des données agroclimatiques...
+          <div className="p-16 text-center text-xs text-slate-400 flex items-center justify-center gap-2 font-mono">
+            <RefreshCw className="w-4 h-4 animate-spin text-sky-400" />
+            Chargement des séries agroclimatiques...
           </div>
         ) : anomalies.length === 0 ? (
-          <div className="p-12 text-center text-sm text-muted-foreground">
+          <div className="p-16 text-center text-xs text-slate-400 font-mono">
             Aucune anomalie pluviométrique disponible pour cette période.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-muted/50 text-muted-foreground border-b border-border uppercase font-semibold">
+              <thead className="bg-slate-950/60 text-slate-400 border-b border-white/[0.06] uppercase font-mono text-[10px] tracking-wider">
                 <tr>
                   <th className="px-4 py-3">Région</th>
                   <th className="px-4 py-3">Période</th>
-                  <th className="px-4 py-3">Pluie totale (mm)</th>
-                  <th className="px-4 py-3">Écart à la normale (mm)</th>
-                  <th className="px-4 py-3">Z-Score climatique</th>
+                  <th className="px-4 py-3 text-right">Cumul Pluie</th>
+                  <th className="px-4 py-3 text-right">Écart Normale</th>
+                  <th className="px-4 py-3 text-center">Z-Score</th>
                   <th className="px-4 py-3">Nature</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-white/[0.04]">
                 {anomalies.map((a, idx) => (
-                  <tr key={`${a.locationPcode}-${idx}`} className="hover:bg-muted/30">
-                    <td className="px-4 py-2.5 font-semibold text-foreground">
+                  <tr key={`${a.locationPcode}-${idx}`} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="px-4 py-2.5 font-semibold text-white">
                       {a.locationName}
                     </td>
-                    <td className="px-4 py-2.5 text-muted-foreground">
+                    <td className="px-4 py-2.5 text-slate-400 font-mono text-[11px]">
                       {a.periodMonth}
                     </td>
-                    <td className="px-4 py-2.5 font-bold text-foreground">
+                    <td className="px-4 py-2.5 text-right font-mono font-bold text-white">
                       {formatNumber(a.precipTotalMm, 1)} mm
                     </td>
-                    <td className="px-4 py-2.5">
+                    <td className="px-4 py-2.5 text-right font-mono">
                       <span
                         className={`font-semibold ${
                           a.anomalyMm < -20
-                            ? "text-rose-600"
+                            ? "text-rose-400"
                             : a.anomalyMm > 20
-                            ? "text-blue-600"
-                            : "text-muted-foreground"
+                            ? "text-sky-400"
+                            : "text-slate-400"
                         }`}
                       >
                         {a.anomalyMm > 0 ? `+${formatNumber(a.anomalyMm, 1)}` : formatNumber(a.anomalyMm, 1)} mm
                       </span>
                     </td>
-                    <td className="px-4 py-2.5 font-mono text-muted-foreground">
-                      {a.zScore !== null && a.zScore !== undefined
-                        ? formatNumber(a.zScore, 2)
-                        : "—"}
+                    <td className="px-4 py-2.5 text-center font-mono">
+                      <span
+                        className={`px-2 py-0.5 rounded text-[10px] ${
+                          (a.zScore ?? 0) < -1.5
+                            ? "bg-rose-500/15 text-rose-300 border border-rose-500/20"
+                            : (a.zScore ?? 0) > 1.5
+                            ? "bg-sky-500/15 text-sky-300 border border-sky-500/20"
+                            : "text-slate-400"
+                        }`}
+                      >
+                        {a.zScore !== null && a.zScore !== undefined
+                          ? formatNumber(a.zScore, 2)
+                          : "—"}
+                      </span>
                     </td>
                     <td className="px-4 py-2.5">
                       <ValueKindBadge kind={a.valueKind} />

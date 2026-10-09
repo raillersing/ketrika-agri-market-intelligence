@@ -2,7 +2,16 @@
 
 import React, { useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Filter, RotateCcw } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  Filter,
+  MapPin,
+  RotateCcw,
+  Tag,
+  Users,
+  Wheat,
+} from "lucide-react";
 
 const PRODUCTS = [
   { code: "rice_milled", label: "Riz blanc local (makalioka/tsipala)" },
@@ -42,7 +51,7 @@ const REGIONS = [
 ];
 
 const ACTORS = [
-  { code: "", label: "Tous niveaux" },
+  { code: "", label: "Tous niveaux (Agrégé)" },
   { code: "retail", label: "Détail (Consommateur)" },
   { code: "wholesale", label: "Gros / Demi-gros" },
   { code: "producer", label: "Producteur (Bord champ)" },
@@ -78,64 +87,88 @@ export function GlobalFilters() {
     });
   };
 
+  const isCustom = currentProduct !== "rice_milled" || currentRegion !== "" || currentActor !== "";
+
   return (
-    <div className="bg-card border-b border-border px-6 py-3 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-10 backdrop-blur-sm bg-card/95">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground mr-1">
-          <Filter className="w-3.5 h-3.5 text-emerald-600" />
+    <div className="bg-slate-950/60 border-b border-white/[0.07] px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 sticky top-16 z-10 backdrop-blur-md">
+      <div className="flex flex-wrap items-center gap-2.5">
+        {/* Label */}
+        <div className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-slate-400 mr-1">
+          <Filter className="w-3.5 h-3.5 text-emerald-400" />
           <span>Filtres :</span>
         </div>
 
-        {/* Produit selector */}
-        <select
-          value={currentProduct}
-          onChange={(e) => updateParam("product", e.target.value)}
-          disabled={isPending}
-          className="text-xs font-medium bg-background text-foreground border border-input rounded-md px-2.5 py-1.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-        >
-          {PRODUCTS.map((p) => (
-            <option key={p.code} value={p.code}>
-              {p.label}
-            </option>
-          ))}
-        </select>
+        {/* Produit Selector Pill */}
+        <div className="relative inline-flex items-center">
+          <Wheat className="w-3.5 h-3.5 text-emerald-400 absolute left-3 pointer-events-none" />
+          <select
+            value={currentProduct}
+            onChange={(e) => updateParam("product", e.target.value)}
+            disabled={isPending}
+            className="text-xs font-medium bg-slate-900/90 text-slate-200 border border-white/[0.1] hover:border-emerald-500/40 rounded-xl pl-8 pr-7 py-1.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer transition-all appearance-none"
+          >
+            {PRODUCTS.map((p) => (
+              <option key={p.code} value={p.code} className="bg-slate-900 text-slate-200">
+                {p.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="w-3 h-3 text-slate-400 absolute right-2.5 pointer-events-none" />
+        </div>
 
-        {/* Région selector */}
-        <select
-          value={currentRegion}
-          onChange={(e) => updateParam("region", e.target.value)}
-          disabled={isPending}
-          className="text-xs font-medium bg-background text-foreground border border-input rounded-md px-2.5 py-1.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-        >
-          {REGIONS.map((r) => (
-            <option key={r.pcode} value={r.pcode}>
-              {r.label}
-            </option>
-          ))}
-        </select>
+        {/* Région Selector Pill */}
+        <div className="relative inline-flex items-center">
+          <MapPin className="w-3.5 h-3.5 text-sky-400 absolute left-3 pointer-events-none" />
+          <select
+            value={currentRegion}
+            onChange={(e) => updateParam("region", e.target.value)}
+            disabled={isPending}
+            className="text-xs font-medium bg-slate-900/90 text-slate-200 border border-white/[0.1] hover:border-sky-500/40 rounded-xl pl-8 pr-7 py-1.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer transition-all appearance-none"
+          >
+            {REGIONS.map((r) => (
+              <option key={r.pcode} value={r.pcode} className="bg-slate-900 text-slate-200">
+                {r.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="w-3 h-3 text-slate-400 absolute right-2.5 pointer-events-none" />
+        </div>
 
-        {/* Niveau d'acteur selector */}
-        <select
-          value={currentActor}
-          onChange={(e) => updateParam("actor", e.target.value)}
-          disabled={isPending}
-          className="text-xs font-medium bg-background text-foreground border border-input rounded-md px-2.5 py-1.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-        >
-          {ACTORS.map((a) => (
-            <option key={a.code} value={a.code}>
-              {a.label}
-            </option>
-          ))}
-        </select>
+        {/* Niveau Acteur Selector Pill */}
+        <div className="relative inline-flex items-center">
+          <Users className="w-3.5 h-3.5 text-purple-400 absolute left-3 pointer-events-none" />
+          <select
+            value={currentActor}
+            onChange={(e) => updateParam("actor", e.target.value)}
+            disabled={isPending}
+            className="text-xs font-medium bg-slate-900/90 text-slate-200 border border-white/[0.1] hover:border-purple-500/40 rounded-xl pl-8 pr-7 py-1.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-purple-500 cursor-pointer transition-all appearance-none"
+          >
+            {ACTORS.map((a) => (
+              <option key={a.code} value={a.code} className="bg-slate-900 text-slate-200">
+                {a.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="w-3 h-3 text-slate-400 absolute right-2.5 pointer-events-none" />
+        </div>
+
+        {/* Loading indicator */}
+        {isPending && (
+          <span className="text-[11px] text-emerald-400 flex items-center gap-1.5 animate-pulse pl-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            Actualisation...
+          </span>
+        )}
       </div>
 
+      {/* Right: Reset Action */}
       <div className="flex items-center gap-2">
-        {(currentRegion || currentActor || currentProduct !== "rice_milled") && (
+        {isCustom && (
           <button
             onClick={resetFilters}
             disabled={isPending}
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded"
-            title="Réinitialiser les filtres"
+            className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-white px-2.5 py-1 rounded-lg hover:bg-white/[0.06] transition-colors"
+            title="Réinitialiser tous les filtres"
           >
             <RotateCcw className="w-3 h-3" />
             <span>Réinitialiser</span>

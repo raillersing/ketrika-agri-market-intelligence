@@ -1,8 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Activity, AlertCircle, CheckCircle, Database, RefreshCw } from "lucide-react";
-import { formatMonthYear } from "@/lib/formatters";
+import {
+  Activity,
+  AlertCircle,
+  CheckCircle,
+  Database,
+  ExternalLink,
+  Layers,
+  RefreshCw,
+  Server,
+  ShieldCheck,
+} from "lucide-react";
 
 interface SourceItem {
   sourceId: string;
@@ -25,7 +34,7 @@ export default function SourcesPage() {
       setLoading(true);
       setError(null);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
+        const apiUrl = "/api";
         const res = await fetch(`${apiUrl}/v1/sources`, {
           credentials: "include",
         });
@@ -57,92 +66,119 @@ export default function SourcesPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-          <Activity className="w-6 h-6 text-emerald-600" />
-          Cockpit DataOps et SLA des sources de collecte
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Surveillance en temps réel de la santé des collecteurs, SLA de fraîcheur et alertes de retard.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
+              <Activity className="w-6 h-6 text-emerald-400" />
+              Cockpit DataOps & Surveillance des sources
+            </h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+              10 sources officielles
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 mt-1">
+            Monitoring en temps réel de la fraîcheur, des SLAs d&apos;ingestion et de l&apos;immuabilité Bronze (MinIO).
+          </p>
+        </div>
+
+        <a
+          href="http://localhost:3010"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 text-xs font-semibold rounded-xl shadow-lg shadow-purple-950/40 transition-all self-start sm:self-auto"
+        >
+          <Server className="w-4 h-4" />
+          <span>Ouvrir Dagster Cockpit</span>
+          <ExternalLink className="w-3.5 h-3.5 ml-0.5" />
+        </a>
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-md text-rose-700 text-xs">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs">
           {error}
         </div>
       )}
 
       {/* Sources Table */}
-      <div className="bg-card border border-border rounded-lg overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-border flex items-center justify-between">
+      <div className="glass-card rounded-2xl overflow-hidden">
+        <div className="p-4 border-b border-white/[0.07] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Database className="w-4 h-4 text-emerald-600" />
-            <h2 className="text-sm font-semibold text-foreground">
-              Registre des 10 sources officielles connectées
+            <Database className="w-4 h-4 text-emerald-400" />
+            <h2 className="text-sm font-bold text-white">
+              Registre des connecteurs de collecte
             </h2>
           </div>
-          <span className="text-xs text-muted-foreground">
-            {sources.length} sources actives
+          <span className="text-[11px] font-mono text-slate-400">
+            {sources.length} connecteurs configurés
           </span>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
-            <RefreshCw className="w-4 h-4 animate-spin text-emerald-600" />
-            Vérification de la santé des connecteurs...
+          <div className="p-16 text-center text-xs text-slate-400 flex items-center justify-center gap-2 font-mono">
+            <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
+            Contrôle des connecteurs et de la fraîcheur...
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-muted/50 text-muted-foreground border-b border-border uppercase font-semibold">
+              <thead className="bg-slate-950/60 text-slate-400 border-b border-white/[0.06] uppercase font-mono text-[10px] tracking-wider">
                 <tr>
-                  <th className="px-4 py-3">Identifiant</th>
-                  <th className="px-4 py-3">Intitulé de la source</th>
-                  <th className="px-4 py-3">Organisme émetteur</th>
-                  <th className="px-4 py-3">Fréquence</th>
-                  <th className="px-4 py-3">SLA Fraîcheur</th>
-                  <th className="px-4 py-3">État du collecteur</th>
-                  <th className="px-4 py-3">Conformité SLA</th>
+                  <th className="px-5 py-3">Identifiant</th>
+                  <th className="px-5 py-3">Intitulé de la source</th>
+                  <th className="px-5 py-3">Organisme émetteur</th>
+                  <th className="px-5 py-3">Fréquence</th>
+                  <th className="px-5 py-3 text-right">SLA Fraîcheur</th>
+                  <th className="px-5 py-3">État du collecteur</th>
+                  <th className="px-5 py-3">Conformité SLA</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-white/[0.04]">
                 {sources.map((s) => (
-                  <tr key={s.sourceId} className="hover:bg-muted/30">
-                    <td className="px-4 py-3 font-mono font-bold text-foreground">
+                  <tr key={s.sourceId} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="px-5 py-3.5 font-mono font-bold text-white">
                       {s.sourceId}
                     </td>
-                    <td className="px-4 py-3 font-medium text-foreground">{s.name}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{s.institution}</td>
-                    <td className="px-4 py-3 capitalize text-muted-foreground">
+                    <td className="px-5 py-3.5 font-medium text-slate-200">{s.name}</td>
+                    <td className="px-5 py-3.5 text-slate-400">{s.institution}</td>
+                    <td className="px-5 py-3.5 capitalize text-slate-300 font-mono text-[11px]">
                       {s.frequency}
                     </td>
-                    <td className="px-4 py-3 font-mono text-foreground">
-                      {s.freshnessSlaDays} jours
+                    <td className="px-5 py-3.5 font-mono text-right text-slate-300">
+                      {s.freshnessSlaDays}j
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3.5">
                       <span
-                        className={`inline-flex px-2 py-0.5 rounded text-[11px] font-semibold uppercase ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold uppercase border ${
                           s.status.toLowerCase() === "failed" || s.status.toLowerCase() === "error"
-                            ? "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"
+                            ? "bg-rose-500/15 text-rose-300 border-rose-500/25"
                             : s.status.toLowerCase() === "running"
-                            ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
-                            : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                            ? "bg-amber-500/15 text-amber-300 border-amber-500/25"
+                            : "bg-emerald-500/15 text-emerald-300 border-emerald-500/25"
                         }`}
                       >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            s.status.toLowerCase() === "failed" || s.status.toLowerCase() === "error"
+                              ? "bg-rose-400"
+                              : s.status.toLowerCase() === "running"
+                              ? "bg-amber-400 animate-spin"
+                              : "bg-emerald-400"
+                          }`}
+                        />
                         {s.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3.5">
                       {s.isStale ? (
-                        <span className="inline-flex items-center gap-1 text-rose-700 dark:text-rose-400 font-semibold">
+                        <span className="inline-flex items-center gap-1.5 text-rose-400 font-mono text-[11px]">
                           <AlertCircle className="w-3.5 h-3.5" />
                           Retard (DATA_STALE)
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-semibold">
+                        <span className="inline-flex items-center gap-1.5 text-emerald-400 font-mono text-[11px]">
                           <CheckCircle className="w-3.5 h-3.5" />
                           Conforme SLA
                         </span>

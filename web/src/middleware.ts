@@ -14,7 +14,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get("ketrika_token")?.value;
+  const token =
+    request.cookies.get("session_token")?.value ||
+    request.cookies.get("ketrika_token")?.value;
 
   // If visiting /login with existing token, redirect to home
   if (pathname === "/login") {
