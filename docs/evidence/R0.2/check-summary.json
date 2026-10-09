@@ -1,0 +1,61 @@
+{
+  "task": "R0.2",
+  "scope": "isolated local software checks and read-only historical inventory",
+  "functional_commit": null,
+  "overall_check_exit": 0,
+  "environment": {
+    "project": "ketrika-qualification",
+    "database": "ketrika_qualification",
+    "bucket": "ketrika-qa-bronze",
+    "network_internal": true,
+    "published_ports": 0,
+    "llm_provider": "replay",
+    "backend_tooling_image": "55b466bf2dad",
+    "web_tooling_image": "94f7411a5d7c"
+  },
+  "backend": {
+    "lint_and_format_files": 160,
+    "typechecked_files": 159,
+    "tests_passed": 290,
+    "integration_by_layout_or_marker": 32,
+    "other_tests_by_layout": 258,
+    "classification_note": "Other tests are in unit directories; some also use the database",
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "pytest_duration_seconds": 2360.00,
+    "junit_duration_seconds": 2359.969,
+    "coverage_percent": {
+      "core": 91.57064887810795,
+      "extraction": 86.3768115942029,
+      "normalize": 84.85523385300668
+    },
+    "covered_statements": 2189,
+    "statements": 2443,
+    "coverage_report_sha256": "17aa0ded412c9cdaa36f12563b544ea92449aa17a286477d6f47156525c85247"
+  },
+  "frontend": {
+    "lint_passed": true,
+    "types_passed": true,
+    "test_files_passed": 2,
+    "tests_passed": 15,
+    "production_build_passed": true
+  },
+  "active_preservation": {
+    "source_record_count_before_and_after": 482,
+    "source_record_digest_before_and_after": "47b4402859acc41e3ae91fdb128e56c6",
+    "price_count_before_and_after": 764,
+    "price_digest_before_and_after": "4b2586cb8e422f11c4873ad513d66bc1",
+    "bronze_versions_before_and_after": 674,
+    "bronze_total_version_bytes_before_and_after": 1377481,
+    "bronze_versions_manifest_sha256_before_and_after": "83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c"
+  },
+  "not_qualified": [
+    "authenticity of historical market observations",
+    "live collection and complete source-record-to-Bronze byte provenance",
+    "market forecast performance",
+    "browser E2E and human usage",
+    "fresh tooling image rebuild and remote CI",
+    "deployment"
+  ]
+}

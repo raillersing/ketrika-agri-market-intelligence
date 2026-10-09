@@ -62,7 +62,7 @@
 | ID | Priorité | Statut | Début UTC | Fin UTC | Commit | Preuve | Incident |
 |---|---|---|---|---|---|---|
 | R0.1 | MUST | DONE | 2026-10-09T06:28:03Z | 2026-10-09T09:16:32Z | b684528f223164e62fee1c85ef847f9f70c98e2c | docs/evidence/R0.1/README.md : check Windows code 0, 275 backend / 15 web | B-R001 / B-R002 résolus |
-| R0.2 | MUST | TODO | — | — | — | — | — |
+| R0.2 | MUST | IN_PROGRESS | 2026-10-09T09:17:39Z | — | — | Inventaire en lecture seule et réception de l'isolation | — |
 | R0.3 | MUST | TODO | — | — | — | — | — |
 | R0.4 | MUST | TODO | — | — | — | — | — |
 | R0.5 | MUST | TODO | — | — | — | — | — |
@@ -135,6 +135,43 @@
 | R6.9 | MUST | TODO | — | — | — | — | — |
 | R6.10 | MUST | TODO | — | — | — | — | — |
 | R6.11 | MUST | TODO | — | — | — | — | — |
+
+### [2026-10-09T10:13:51Z] R0.2 — réception complète verte avant commit
+
+- Check Windows via socket système WSL : code 0 ; 290 backend passés en 2360,00 s (32 intégration par dossier/marqueur, 258 autres), zéro erreur/échec/skip ; lint/format 160 fichiers et mypy 159 fichiers verts. Couvertures core 91,57 %, extraction 86,38 %, normalize 84,86 % ; rapport SHA256 17aa0ded412c9cdaa36f12563b544ea92449aa17a286477d6f47156525c85247.
+- Front : lint/types codes 0, 15 tests / 2 fichiers, build 15 routes code 0. B-R003 résolu. Profil exclusivement dédié, LLM replay ; limites images locales existantes, pas d'E2E navigateur/collecte live/usage humain/modèle marché/déploiement/CI distante qualifiés.
+- Préservation finale read-only : 482 source_record / 764 prix et digests initiaux identiques ; 674 versions Bronze / 1377481 octets, digest initial identique. Aucune donnée historique modifiée, mise à l'écart proposée seulement. Preuves, SQL et runbook dans docs/evidence/R0.2 et docs/runbooks/qualification.md.
+- R0.2 reste IN_PROGRESS jusqu'au commit atomique vert puis hash et clôture synchronisée dans les deux tables.
+
+### [2026-10-09T09:37:46Z] R0.2 — contrôles préparatoires verts, backtest en calcul
+
+- Réception Windows stabilisée : lint/format 160 fichiers, mypy 159 fichiers, gouvernance 74 tâches verts ; 290 tests collectés. Les tests d'intégration et les nouveaux tests d'isolation/inventaire passent jusqu'au scénario ML anti-fuite temporelle encore en calcul. Aucun succès global présumé.
+- Refus Windows `qa-isolated production` et `demo` : code 1 attendu. Demo charge seulement le module retiré du bind mount actuel et ne construit aucun client de données.
+- Gitleaks staged : code 0, 24810 octets, zéro fuite ; premier appel `--source` non supporté code 126, corrigé avec l'aide locale (`git --staged /repo`). Diffs staged/worktree : codes 0. Aucun commit R0.2 avant réception finale ; pas de modification du code pendant le check.
+
+### [2026-10-09T09:25:31Z] R0.2 — correction du transport Windows
+
+- Deux lancements échouent avant le script ; socket d'interop de session défaillant. Avec `env WSL_INTEROP=/run/WSL/2_interop powershell.exe`, probe PowerShell 5.1 code 0. Réception Windows complète relancée par cette voie, sans modifier le code du runner.
+- Diagnostic Linux stoppé volontairement dans le seul conteneur QA api-run-9a335e682ec8 pour éviter deux suites concurrentes ; ce check interrompu n'est pas vert. Services actifs et volumes Bronze conservés. B-R003 en réception.
+- Second inventaire S3 code 0 : mêmes 674 versions, octets et digest avant/après modifications. Le check final reste obligatoire.
+
+### [2026-10-09T09:23:55Z] R0.2 — inventaire et réception
+
+- ADR-009/SPECS avant code : runner historique retiré, commande demo en refus explicite sans clients DB/S3 ; seed et imports tests hors code applicatif. Tests négatifs sur session mock protégée et inventaire S3 simulé ajoutés.
+- Inventaire actif read-only : 482 références, dont 227 IDs test/dummy, 466 URL locales/fictives et 129 SHA256 mal formés ; 764 prix, dont 246 liés à IDs test et 552 à URL de test. Zéro orphelin, 750 déclarés observés / 14 imputés ; aucun chiffre qualifié comme donnée actuelle du marché. SQL, risques et proposition non destructive dans docs/evidence/R0.2.
+- S3 avant : 674 versions/objets, 1377481 octets, zéro marqueur ; digest 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c. GET/list uniquement, code 0. DB digests identiques à R0.1.
+- Tests ciblés initiaux 66 passed / code 0 en 11,32 s avant renforcement des comptes et ajout du test d'inventaire. Ne remplacent pas la réception complète finale. Refus CLI Linux production : code 1 attendu avant initialisation.
+- Premier lancement check Windows : interop WSL code 1 avant script (B-R003), pas un test vert ni un défaut applicatif identifié ; relance. R0.2 demeure IN_PROGRESS.
+
+### [2026-10-09T09:17:39Z] Démarrage R0.2 — isolation et inventaire
+
+1. Revérifier les contrats et gardes du bootstrap ; distinguer réel, test et démonstration.
+2. Enregistrer les empreintes DB/S3 actives en lecture seule, versions comprises.
+3. Retirer le seed synthétique et l'import tests du runner de démonstration ; ne pas présenter ses KPI historiques comme qualification.
+4. Tester le refus de seeds sur sessions protégées avant toute requête/écriture.
+5. Produire l'inventaire de contamination avec SQL inspectable et critères de mise à l'écart sans suppression.
+6. Documenter la réhydratation d'archives authentiques autorisées dans une destination dédiée.
+7. Exécuter les critères et le check Windows complet, comparer les empreintes, committer vert puis synchroniser les statuts.
 
 ### [2026-10-09T09:16:32Z] Clôture R0.1
 

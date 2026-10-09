@@ -38,8 +38,11 @@ def test_actual_profile_and_environment():
         "KETRIKA_QUALIFICATION",
         "KETRIKA_DATASET_MODE",
         "POSTGRES_DB",
+        "POSTGRES_PASSWORD",
         "S3_BUCKET_BRONZE",
         "S3_ENDPOINT_URL",
+        "S3_ACCESS_KEY",
+        "S3_SECRET_KEY",
         "LLM_PROVIDER",
         "EXTERNAL_SEND_ENABLED",
         "SMTP_HOST",
@@ -55,10 +58,11 @@ def test_missing_safety_setting_is_rejected(key):
 @pytest.mark.parametrize(
     "url",
     [
-        "postgresql+psycopg://ketrika:fixture@db:5432/ketrika",
-        "postgresql+psycopg://ketrika:fixture@localhost:5432/ketrika_qualification",
-        "postgresql+psycopg://other:fixture@db:5432/ketrika_qualification",
-        "postgresql+psycopg://ketrika:fixture@db:5434/ketrika_qualification",
+        "postgresql+psycopg://ketrika:qa-local-only@db:5432/ketrika",
+        "postgresql+psycopg://ketrika:qa-local-only@localhost:5432/ketrika_qualification",
+        "postgresql+psycopg://other:qa-local-only@db:5432/ketrika_qualification",
+        "postgresql+psycopg://ketrika:qa-local-only@db:5434/ketrika_qualification",
+        "postgresql+psycopg://ketrika:foreign@db:5432/ketrika_qualification",
         "sqlite:///ketrika_qualification",
         "",
     ],
@@ -77,6 +81,17 @@ def test_bound_session_is_checked(monkeypatch):
     for host, database in [("db", "ketrika"), ("localhost", "ketrika_qualification"), (None, None)]:
         with pytest.raises(QualificationSafetyError):
             require_synthetic_test_database(host, database)
+
+
+@pytest.mark.parametrize(
+    "service,key",
+    [("minio", "MINIO_ROOT_USER"), ("minio", "MINIO_ROOT_PASSWORD"), ("db", "POSTGRES_PASSWORD")],
+)
+def test_foreign_account_rejected(service, key):
+    spec = compose_spec()
+    spec["services"][service]["environment"][key] = "foreign-account"
+    with pytest.raises(QualificationSafetyError):
+        validate_compose(yaml.safe_dump(spec))
 
 
 @pytest.mark.parametrize("case", range(15))

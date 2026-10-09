@@ -147,7 +147,7 @@ Le runner `./scripts/dev.ps1` (ou `./scripts/dev.sh`) constitue le point d'entr�
 | `./scripts/dev.ps1 bulletin` | Génère un projet de bulletin hebdomadaire PDF certifié et vérifie l'exactitude des chiffres. |
 | `./scripts/dev.ps1 backup` | Génère un dump binaire scellé de la base PostGIS (`deploy/backup.sh`). |
 | `./scripts/dev.ps1 restore [fichier]` | Restaure la base à partir d'une sauvegarde et rafraîchit les vues Gold (`deploy/restore.sh`). |
-| `./scripts/dev.ps1 demo` | Exécute le scénario d'acceptation de référence de bout en bout (KPIs, audit, copilote). |
+| `./scripts/dev.ps1 demo` | Refuse le runner historique synthétique (ADR-009) sans mutation ; qualification mesurée à livrer en R0.7. |
 
 ---
 
@@ -158,6 +158,8 @@ Le plan courant est `docs/plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md` ; les stat
 `check` utilise exclusivement `docker-compose.qualification.yml` et les entrées publiques `scripts/qualification.env`, jamais `.env`. Le projet `ketrika-qualification` a sa propre base `ketrika_qualification`, son bucket `ketrika-qa-bronze`, ses volumes nommés et un réseau interne sans port publié. Les sources hôte sont montées en lecture seule ; backend et front sont copiés dans leurs volumes dédiés pour éviter les accès répétés au système de fichiers Windows pendant les contrôles. Le backend ne copie ni `.env` ni dépendances hôte. Les threads numériques de test sont bornés à 1, les caches restent dans les volumes dédiés ; aucun modèle/test n'est retiré. Les identifiants de ce profil sont des fixtures publiques et ne doivent pas être utilisés en production.
 
 Les gardes refusent les destinations actives, les ressources Docker étrangères, les seeds synthétiques sur une session non dédiée et les skips sélectionnés dans la suite de qualification. Aucun `down -v`, reset ou nettoyage du Bronze n'est nécessaire. Les tests hors réseau qualifient le logiciel, pas une source live, un modèle économique ni un usage humain. `qa` et `qualify` restent refusés tant que leur moteur n'est pas implémenté et qualifié.
+
+Voir [le runbook de qualification](docs/runbooks/qualification.md) pour séparer tests, historique contaminé et archives authentiques. L'inventaire R0.2 est en lecture seule ; aucune purge n'est autorisée ou exécutée.
 
 ## 6. Déploiement en production (VPS Ubuntu 24.04)
 

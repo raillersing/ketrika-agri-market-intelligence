@@ -29,8 +29,11 @@ def validate_environment(environment: Mapping[str, str]) -> None:
         "KETRIKA_QUALIFICATION": "1",
         "KETRIKA_DATASET_MODE": "test",
         "POSTGRES_DB": DATABASE,
+        "POSTGRES_PASSWORD": "qa-local-only",
         "S3_BUCKET_BRONZE": BUCKET,
         "S3_ENDPOINT_URL": "http://minio:9000",
+        "S3_ACCESS_KEY": "qualification-admin",
+        "S3_SECRET_KEY": "qualification-local-only",
         "LLM_PROVIDER": "replay",
         "EXTERNAL_SEND_ENABLED": "0",
         "SMTP_HOST": "mailpit",
@@ -45,6 +48,7 @@ def validate_environment(environment: Mapping[str, str]) -> None:
         or target.port != 5432
         or target.path != f"/{DATABASE}"
         or target.username != "ketrika"
+        or target.password != "qa-local-only"
     ):
         raise QualificationSafetyError("Database destination is not the dedicated test database")
 
@@ -115,6 +119,14 @@ def validate_compose(document: str) -> None:
     validate_environment({str(key): str(value) for key, value in environment.items()})
     if services["db"].get("environment", {}).get("POSTGRES_DB") != DATABASE:
         raise QualificationSafetyError("Database service is not dedicated")
+    if services["db"].get("environment", {}).get("POSTGRES_PASSWORD") != "qa-local-only":
+        raise QualificationSafetyError("Database account is not the public test account")
+    minio_environment = services["minio"].get("environment", {})
+    if minio_environment != {
+        "MINIO_ROOT_USER": "qualification-admin",
+        "MINIO_ROOT_PASSWORD": "qualification-local-only",
+    }:
+        raise QualificationSafetyError("Object storage account is not dedicated to qualification")
 
 
 def validate_coverage(report: Mapping[str, object]) -> dict[str, float]:

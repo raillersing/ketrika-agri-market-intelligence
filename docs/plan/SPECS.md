@@ -132,6 +132,8 @@ Image multi-stage `python:3.12-slim`. Dépendances système : `libpq`, `gdal` (s
 
 ### 3.3 `scripts/dev.ps1` : commandes obligatoires
 
+R0.2 / ADR-009 : le runner historique `ketrika.demo` est retiré de l'exécution de réception ; la commande échoue explicitement sans connexion ni mutation jusqu'au remplacement mesuré R0.7. Aucun import `tests` dans le code applicatif ; seed synthétique exclusivement sur le profil test dédié, contrôlant la session effectivement liée avant tout SQL. Les archives authentiques ne sont pas injectées dans la base de tests ; leur réhydratation s'effectue sur une destination distincte autorisée (runbook qualification), jamais via restore/rebuild actif.
+
 Pour le programme R, `check`/`test` utilisent exclusivement le profil Compose de qualification dédié et contrôlé, sans reprendre `.env` actif. Initialisation non destructive ; Python/Node dans Docker ; réseau identifié par la configuration du projet et pas par `aiagent_default`. Intégration obligatoire, contrôles front lint/types/tests/build ; suite requise vide/skippée ou dépendance absente = échec, pas fallback vert. Les volumes de dépendances sont nommés. `qa-isolated <commande>` choisit une cible dédiée et refuse les cibles protégées ; `qa <task_id>` contrôle un manifeste de tests ; `qualify <phase|all>` publie des mesures. Les deux dernières commandes sont livrées dans les tâches R correspondantes, et échouent explicitement avant leur disponibilité.
 
 | Commande | Effet |
