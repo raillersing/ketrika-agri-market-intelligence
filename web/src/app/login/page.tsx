@@ -7,7 +7,7 @@ import { ArrowRight, CheckCircle2, Lock, Mail, ShieldCheck, Sparkles } from "luc
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("admin@ketrika.local");
-  const [password, setPassword] = useState("admin-secret-password-123");
+  const [password, setPassword] = useState("change-me");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -32,11 +32,6 @@ export default function LoginPage() {
 
       const data = await res.json();
       if (typeof data.token !== "string" || !data.token) throw new Error("Réponse de connexion invalide");
-      
-      // Compatibility: Set cookie if not httpOnly in some dev environments
-      document.cookie = `session_token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
-      document.cookie = `ketrika_token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
-
       router.push("/");
       router.refresh();
     } catch (err: any) {
@@ -134,8 +129,10 @@ export default function LoginPage() {
 
         {/* Demo credentials helper pill */}
         <div className="mt-8 pt-5 border-t border-white/[0.08] text-center text-[11px] text-slate-400 font-mono">
-          <span>Identifiants démonstration : </span>
+          <span>Identifiants démo : </span>
           <span className="text-emerald-400 font-semibold">admin@ketrika.local</span>
+          <span className="text-slate-500 mx-1.5">•</span>
+          <span className="text-emerald-400 font-semibold">change-me</span>
         </div>
       </div>
     </div>
