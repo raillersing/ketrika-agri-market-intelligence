@@ -31,10 +31,10 @@ from ketrika.copilot.sql_guard import SqlGuardError, validate_and_sanitize_sql
 from ketrika.core.db import get_session
 from ketrika.core.logging import get_logger
 from ketrika.core.registry import load_sources
-from ketrika.ml.forecast import run_price_forecasting_pipeline
-from tests.e2e_data.synthetic_gold_dataset import seed_synthetic_gold_data
 from ketrika.gold.refresh import refresh_gold_views
+from ketrika.ml.forecast import run_price_forecasting_pipeline
 from ketrika.pipelines.rebuild import rebuild_database
+from tests.e2e_data.synthetic_gold_dataset import seed_synthetic_gold_data
 
 logger = get_logger("ketrika.demo")
 
@@ -110,10 +110,19 @@ class DemoRunner:
     def check_rebuild(self) -> bool:
         start_time = time.time()
         with get_session() as session:
-            obs_count = session.execute(text("SELECT count(*) FROM obs.price_observation;")).scalar() or 0
-            fc_count = session.execute(text("SELECT count(DISTINCT series_key) FROM ml.forecast;")).scalar() or 0
+            obs_count = (
+                session.execute(text("SELECT count(*) FROM obs.price_observation;")).scalar() or 0
+            )
+            fc_count = (
+                session.execute(
+                    text("SELECT count(DISTINCT series_key) FROM ml.forecast;")
+                ).scalar()
+                or 0
+            )
             if obs_count > 0 and fc_count >= 10:
-                print(f"Base de données déjà initialisée avec {obs_count} observations et {fc_count} séries prévisionnelles.")
+                print(
+                    f"Base de données déjà initialisée avec {obs_count} observations et {fc_count} séries prévisionnelles."
+                )
                 self.kpi_results["KPI_6_REBUILD"] = {
                     "name": "Rebuild hors-ligne reproduisant Gold",
                     "target": "Écart 0",
@@ -128,11 +137,16 @@ class DemoRunner:
             print("Enrichissement avec séries de référence et calcul des prévisions ML...")
             seed_synthetic_gold_data(session)
             refresh_gold_views(session)
-            max_month = session.execute(text("SELECT max(month) FROM gold.price_monthly_best;")).scalar()
+            max_month = session.execute(
+                text("SELECT max(month) FROM gold.price_monthly_best;")
+            ).scalar()
             if max_month is None:
                 from datetime import date
+
                 max_month = date.today()
-            run_price_forecasting_pipeline(session=session, data_cutoff=max_month, horizon=3, min_points=6)
+            run_price_forecasting_pipeline(
+                session=session, data_cutoff=max_month, horizon=3, min_points=6
+            )
             session.commit()
 
             elapsed = time.time() - start_time
@@ -142,7 +156,7 @@ class DemoRunner:
             print(f" - Records supersédés : {stats['records_superseded']}")
             print(f" - Vues Gold rafraîchies : {stats['gold_views_refreshed']}")
 
-            passed = stats["source_records_replayed"] > 0 and stats["records_inserted"] > 0
+            passed = bool(stats["source_records_replayed"] > 0 and stats["records_inserted"] > 0)
             self.kpi_results["KPI_6_REBUILD"] = {
                 "name": "Rebuild hors-ligne reproduisant Gold",
                 "target": "Écart 0",
@@ -153,15 +167,23 @@ class DemoRunner:
 
     def check_provenance(self) -> bool:
         with get_session() as session:
-            total_obs = session.execute(
-                text("SELECT count(*) FROM obs.price_observation;")
-            ).scalar() or 0
-            unlinked_obs = session.execute(
-                text("SELECT count(*) FROM obs.price_observation WHERE source_record_id IS NULL;")
-            ).scalar() or 0
-            null_proofs = session.execute(
-                text("SELECT count(*) FROM meta.source_record WHERE content_sha256 IS NULL;")
-            ).scalar() or 0
+            total_obs = (
+                session.execute(text("SELECT count(*) FROM obs.price_observation;")).scalar() or 0
+            )
+            unlinked_obs = (
+                session.execute(
+                    text(
+                        "SELECT count(*) FROM obs.price_observation WHERE source_record_id IS NULL;"
+                    )
+                ).scalar()
+                or 0
+            )
+            null_proofs = (
+                session.execute(
+                    text("SELECT count(*) FROM meta.source_record WHERE content_sha256 IS NULL;")
+                ).scalar()
+                or 0
+            )
 
         pct = 100.0 if total_obs > 0 and unlinked_obs == 0 else 0.0
         print(f"Observations de prix en base : {total_obs}")
@@ -183,7 +205,9 @@ class DemoRunner:
             s for s in sources if getattr(s.priority, "value", str(s.priority)) in ("P0", "P1")
         ]
         active_sources = [
-            s for s in must_sources if getattr(s.status, "value", str(s.status)) in ("active", "planned")
+            s
+            for s in must_sources
+            if getattr(s.status, "value", str(s.status)) in ("active", "planned")
         ]
 
         for s in must_sources:
@@ -211,12 +235,15 @@ class DemoRunner:
         print("Contrôle de conformité des golden sets ODR et MinCC...")
         with get_session() as session:
             # Zero unverified LLM values in Gold (extraction_method='llm' without valid evidence or rejected)
-            gold_unverified = session.execute(
-                text(
-                    "SELECT count(*) FROM obs.price_observation "
-                    "WHERE extraction_method = 'llm' AND (evidence IS NULL OR review_status = 'rejected');"
-                )
-            ).scalar() or 0
+            gold_unverified = (
+                session.execute(
+                    text(
+                        "SELECT count(*) FROM obs.price_observation "
+                        "WHERE extraction_method = 'llm' AND (evidence IS NULL OR review_status = 'rejected');"
+                    )
+                ).scalar()
+                or 0
+            )
 
         print(f"Valeurs LLM non vérifiées en Gold : {gold_unverified}")
         passed_golden = True
@@ -238,12 +265,15 @@ class DemoRunner:
 
     def check_forecasts(self) -> bool:
         with get_session() as session:
-            series_count = session.execute(
-                text("SELECT count(DISTINCT series_key) FROM ml.forecast;")
-            ).scalar() or 0
-            forecast_count = session.execute(
-                text("SELECT count(*) FROM ml.forecast;")
-            ).scalar() or 0
+            series_count = (
+                session.execute(
+                    text("SELECT count(DISTINCT series_key) FROM ml.forecast;")
+                ).scalar()
+                or 0
+            )
+            forecast_count = (
+                session.execute(text("SELECT count(*) FROM ml.forecast;")).scalar() or 0
+            )
 
         print(f"Séries avec prévisions ML persistées : {series_count}")
         print(f"Total des points de prévision (p10/p50/p90) : {forecast_count}")
@@ -283,7 +313,9 @@ class DemoRunner:
     def check_copilot(self) -> bool:
         eval_path = Path("/app/tests/copilot_eval.yaml")
         if not eval_path.exists():
-            eval_path = Path(__file__).resolve().parent.parent.parent / "tests" / "copilot_eval.yaml"
+            eval_path = (
+                Path(__file__).resolve().parent.parent.parent / "tests" / "copilot_eval.yaml"
+            )
 
         with eval_path.open("r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
@@ -329,6 +361,7 @@ class DemoRunner:
 
         # Audit digits outside placeholders
         from ketrika.bulletin.writer import generate_bulletin_prose
+
         facts_dict = bulletin.facts or {}
         prose_template, is_fallback = generate_bulletin_prose(
             facts_dict, bulletin.period_start, bulletin.period_end
@@ -343,7 +376,9 @@ class DemoRunner:
         print(f"PDF artifact: {bulletin.pdf_object_key}")
         print(f"Validation anti-chiffres littéraux : {'SUCCÈS' if valid else 'ÉCHEC: ' + reason}")
 
-        passed = valid and bulletin.html_object_key is not None and bulletin.pdf_object_key is not None
+        passed = (
+            valid and bulletin.html_object_key is not None and bulletin.pdf_object_key is not None
+        )
         self.kpi_results["KPI_10_BULLETIN_DIGITS"] = {
             "name": "Bulletin : chiffres non référencés",
             "target": "0",

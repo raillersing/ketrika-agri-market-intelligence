@@ -4,6 +4,8 @@
 > Chaque tâche se lit ainsi : **ID · Priorité · Dépendances · Objectif · Étapes · Livrables · Acceptation**.
 > Un critère d'acceptation est soit une **commande** dont le résultat attendu est donné, soit une **assertion vérifiable** dans un fichier.
 
+> Programme successeur autorisé le 2026-10-09 : [plan R0–R6](MARKET_INTELLIGENCE_EXECUTION_PLAN.md), ADR-008. Les statuts T restent historiques ; leur succès ne recertifie pas les sources et capacités actuelles. L'agent exécute désormais les tâches R, jusqu'à R6.11 ou passation prescrite par AGENTS. Les seuils du MVP restent applicables sauf évolution explicite par ADR/SPECS.
+
 ---
 
 ## 1. Définition du MVP
@@ -92,6 +94,8 @@ flowchart LR
 ### 2.3 Gate de fin de phase (obligatoire)
 
 À la fin de chaque phase, l'agent **DOIT** :
+
+**Sécurité prioritaire :** les opérations historiques `reset`/`rebuild` ci-dessous ne sont jamais exécutées sur la stack active pour les tâches R. `reset` supprimant le volume Bronze, son utilisation est suspendue ; les gates R utilisent une initialisation isolée non destructive et des clones Silver/Gold, conformément à AGENTS et ADR-008. Les tags T historiques ne sont pas recréés.
 
 1. exécuter `./scripts/dev.ps1 reset`, puis `./scripts/dev.ps1 check` et `./scripts/dev.ps1 test` : tout doit être vert ;
 2. à partir de la phase 3, exécuter `./scripts/dev.ps1 rebuild` : les comptes Silver et Gold doivent être identiques avant et après (consigner les comptes) ;

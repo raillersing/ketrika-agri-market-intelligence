@@ -11,13 +11,15 @@ Construire, de façon autonome, le **MVP de Ketrika Agri Market Intelligence** :
 
 Le MVP est **terminé** quand toutes les tâches `MUST` de [`docs/plan/MVP_EXECUTION_PLAN.md`](docs/plan/MVP_EXECUTION_PLAN.md) sont `DONE` et que le **test d'acceptation final (T11.6)** passe.
 
+Depuis l'autorisation explicite du 2026-10-09, poursuivre par le **programme R0–R6** de [`docs/plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md`](docs/plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md) : requalification du MVP, observatoire économique/agroclimatique, prix et approvisionnement, aide à la décision. Les statuts et tags T sont conservés comme historique, pas comme preuve actuelle. Le programme est terminé seulement selon R6.11, pas au premier résultat T11.6. Les extensions de contrats exigent ADR et SPECS avant leur implémentation ; aucun interdit ni gate H1–H7 n'est levé.
+
 ---
 
 ## 2. Hiérarchie documentaire (ordre de priorité en cas de conflit)
 
 1. `AGENTS.md` (ce fichier) : règles de conduite.
 2. `docs/plan/SPECS.md` : contrats techniques (stack, schémas, interfaces, règles métier).
-3. `docs/plan/MVP_EXECUTION_PLAN.md` : tâches, dépendances, critères d'acceptation.
+3. `docs/plan/MVP_EXECUTION_PLAN.md` : tâches et contrats de réception du MVP T ; `docs/plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md` : tâches R autorisées, dépendances et réception du programme. Le plan R régit uniquement son programme ; un écart aux contrats existants exige ADR et mise à jour explicite de SPECS/plan, jamais une dérogation implicite.
 4. `docs/plan/DECISIONS.md` : décisions d'architecture (ADR) prises en cours de route.
 5. `deep-research-report.md` : contexte et justification. **Informatif, non normatif.**
 
@@ -31,20 +33,25 @@ L'agent **DOIT** répéter la boucle suivante jusqu'à une condition d'arrêt (�
 
 ```text
 1. LIRE    AGENTS.md, docs/plan/PROGRESS.md, docs/plan/BLOCKERS.md
-           (et SPECS.md / MVP_EXECUTION_PLAN.md pour les sections concernées)
+           (et SPECS.md / les plans T et R pour les sections concernées)
 2. CHOISIR la tâche TODO de plus petit identifiant dont :
            - toutes les dépendances sont DONE,
            - le statut n'est pas BLOCKED,
-           - la priorité est MUST (puis SHOULD, puis COULD une fois tous les MUST terminés).
-3. MARQUER la tâche IN_PROGRESS dans PROGRESS.md (horodatage ISO 8601).
+           - dans le programme R autorisé : MUST éligibles d'abord, puis SHOULD et COULD
+             seulement si aucun MUST n'est éligible (un MUST bloqué reste non terminé).
+           - indices numériques : R1.9 précède R1.10 ; dépendances conditionnelles
+             et statut de qualification de la capacité restent obligatoires.
+3. MARQUER la tâche IN_PROGRESS dans PROGRESS.md (horodatage ISO 8601 UTC)
+           et synchroniser le miroir des statuts du plan R.
 4. PLANIFIER un mini-plan de 10 lignes maximum dans le journal de PROGRESS.md.
 5. IMPLÉMENTER par petits incréments, avec un commit atomique à chaque incrément vert.
 6. VÉRIFIER : exécuter TOUS les critères d'acceptation de la tâche, puis `./scripts/dev.ps1 check`.
 7. CONCLURE :
      - succès : statut DONE, preuve (commandes + résultats chiffrés), hash du commit ;
      - échec  : appliquer le protocole de blocage (§6).
-8. FIN DE PHASE : exécuter le gate de phase (MVP_EXECUTION_PLAN §2.3), écrire un résumé
-   de phase de 15 lignes maximum dans PROGRESS.md, puis créer le tag git `phase-<N>-done`.
+8. FIN DE PHASE : exécuter le gate applicable (plan T §2.3, ou gate R isolé),
+   écrire un résumé de 15 lignes maximum dans PROGRESS.md, puis créer le tag prévu
+   seulement si le gate est vert, sans déplacer les tags historiques.
 9. RECOMMENCER à l'étape 1.
 ```
 
@@ -52,10 +59,13 @@ L'agent **DOIT** répéter la boucle suivante jusqu'à une condition d'arrêt (�
 
 L'agent peut être interrompu à tout moment. `PROGRESS.md` est **la seule mémoire fiable**. Il **DOIT** donc permettre à un nouvel agent, sans aucun autre contexte, de reprendre le travail. Une tâche `IN_PROGRESS` trouvée au démarrage **DOIT** être revérifiée depuis le début de son étape 6.
 
+Pour R, tenir après chaque incrément et clôture les statuts du plan et PROGRESS cohérents. PROGRESS reste canonique ; une divergence impose une vérification, pas un choix opportuniste. Chaque preuve indique commit, commandes/codes, environnement isolé, effectifs et limites. Logiciel testé, source live, modèle validé et usage humain sont des qualifications distinctes ; aucune fixture ne peut prouver une collecte live ou une performance de marché.
+
 ### 3.2 Conditions d'arrêt
 
-- **Arrêt nominal :** T11.6 passe. Rédiger `docs/MVP_REPORT.md`, puis s'arrêter.
-- **Arrêt bloquant :** toutes les tâches restantes dépendent d'un gate humain bloquant (§5.3). Rédiger `docs/HANDOFF.md`, qui liste précisément les actions humaines attendues, puis s'arrêter.
+- **Arrêt nominal du MVP T seul :** T11.6 passe, rédiger `docs/MVP_REPORT.md`. Cela ne termine pas le programme R désormais autorisé.
+- **Arrêt nominal du programme R :** tous les MUST R et critères R6.11 passent ; rédiger `docs/MARKET_INTELLIGENCE_REPORT.md`, mettre à jour HANDOFF, puis s'arrêter. Le rapport local ne revendique pas un déploiement ni un essai humain non réalisé.
+- **Arrêt avec passation R :** après épuisement des travaux sûrs et indépendants, toutes les tâches restantes nécessitent exclusivement une intervention humaine (gate bloquant, document/accord de données autorisé ou corpus de validation absent). Rédiger rapport PARTIAL et `docs/HANDOFF.md` avec action, tâche, format, droits et critères de déblocage précis ; conserver BLOCKED, sans tag final. Une absence H1/H2/H5 ne justifie pas cet arrêt tant que leur repli permet d'avancer. Un incident technique suit §6, pas un arrêt humain artificiel.
 - L'agent **NE DOIT PAS** s'arrêter pour demander une confirmation sur un sujet qu'il est autorisé à trancher (§5.1).
 
 ---
@@ -129,11 +139,13 @@ Une tâche est **bloquée** après **3 tentatives de correction infructueuses su
 ## 7. Journalisation et traçabilité
 
 - **`docs/plan/PROGRESS.md`** : statut de chaque tâche, journal horodaté, preuves, résumés de phase.
+- **Plan R** : miroir des 74 statuts synchronisé après chaque réalisation ; PROGRESS est la mémoire canonique. Portées de commits R autorisées, par exemple `feat(R0.2): isolated qualification runner`.
 - **`docs/plan/DECISIONS.md`** : ADR au format `ADR-NNN | date | contexte | décision | alternatives | conséquences`.
 - **`docs/plan/BLOCKERS.md`** : incidents et replis.
 - **`docs/plan/BACKLOG.md`** : idées hors périmètre et dettes techniques. Aucun `TODO` ni `FIXME` dans le code sans entrée correspondante ici.
 - **Commits :** Conventional Commits, avec l'ID de tâche en portée : `feat(T3.1): connecteur WFP HDX`, `fix(T4.1): …`, `docs(T1.1): …`, `test(…)`, `chore(…)`. Un commit = une intention. **Jamais** de commit avec des tests rouges sur `main`.
 - **Tags :** `phase-<N>-done` à la fin de chaque phase, `mvp-v0.1.0` à la fin.
+- **Tags R :** `mi-r<N>-qualified` après gate réellement vert et `mi-v0.2.0-local-qualified` après R6.11 ; ne jamais déplacer/réutiliser un tag publié.
 
 ---
 
@@ -163,6 +175,7 @@ L'agent **NE DOIT JAMAIS** :
   - `node_modules` et `.venv` vivent dans des **volumes nommés**, jamais dans un bind mount.
 - **Fins de ligne :** `.gitattributes` impose `* text=auto eol=lf`. Les scripts `.sh` **DOIVENT** être en LF.
 - **Point d'entrée unique :** `./scripts/dev.ps1 <commande>` (SPECS §3.3), avec un équivalent `scripts/dev.sh` pour Linux/VPS.
+- **Qualification R :** profil Compose distinct, DB/compte S3/bucket/réseau/volumes dédiés ; aucune suppression de volume Bronze, aucun `reset`, `restore` ou `rebuild` de test sur destination active. Les vérifications négatives d'objets utilisent un store simulé. Les contrôles Python/Node/Playwright restent dans Docker ; les échecs/skips obligatoires ne deviennent pas des succès.
 - **Fuseau horaire métier :** `Indian/Antananarivo` (UTC+3). Stockage en **UTC** (`TIMESTAMPTZ`).
 
 ---

@@ -23,6 +23,7 @@ from ketrika.core.models.db import (
     TradeFlow,
     WeatherObservation,
 )
+from ketrika.core.qualification import require_synthetic_test_database
 
 # Deterministic UUIDs
 PRODUCT_RICE_ID = uuid.UUID("11111111-1111-1111-1111-111111111111")
@@ -33,6 +34,8 @@ SOURCE_RECORD_ID_BASE = uuid.UUID("44444444-4444-4444-4444-444444444444")
 
 def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
     """Seed a clean, deterministic dataset for end-to-end SQL validation of all Gold views."""
+    target = session.get_bind().engine.url
+    require_synthetic_test_database(target.host, target.database)
     # 1. Products
     p_rice = session.get(Product, PRODUCT_RICE_ID)
     if not p_rice:

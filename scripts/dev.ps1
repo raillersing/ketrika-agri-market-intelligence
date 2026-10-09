@@ -14,6 +14,53 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+$RepoRoot = Split-Path -Parent $PSScriptRoot
+$QaComposeArgs = @("compose", "--env-file", (Join-Path $RepoRoot "scripts/qualification.env"), "--project-name", "ketrika-qualification", "-f", (Join-Path $RepoRoot "docker-compose.qualification.yml"))
+
+function Invoke-QaDocker {
+    param([string[]]$DockerArgs)
+    & docker @DockerArgs
+    if ($LASTEXITCODE -ne 0) { throw "Qualification Docker step failed (exit $LASTEXITCODE)" }
+}
+
+function Test-QaResourceOwnership {
+    param([string]$Kind, [string]$Name)
+    & docker $Kind inspect $Name *> $null
+    if ($LASTEXITCODE -eq 0) {
+        $labelJson = & docker $Kind inspect --format '{{json .Labels}}' $Name
+        if ($LASTEXITCODE -ne 0) { throw "Cannot inspect qualification labels" }
+        $labels = $labelJson | ConvertFrom-Json
+        if ($labels.'ketrika.scope' -ne "qualification" -or $labels.'com.docker.compose.project' -ne "ketrika-qualification") {
+            throw "Refusing foreign qualification resource: $Name"
+        }
+    }
+}
+
+function Invoke-QaIsolated {
+    param([string]$Action, [string[]]$RemainingArgs = @())
+    if ($Action -notin @("check", "test", "governance", "prepare")) {
+        throw "Unsupported isolated command; protected targets are never implicit"
+    }
+    Invoke-QaDocker -DockerArgs @("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:test", "python", "-m", "ketrika.core.qualification", "compose", "/workspace/docker-compose.qualification.yml")
+    Test-QaResourceOwnership -Kind "network" -Name "ketrika_qualification_network"
+    foreach ($suffix in @("pgdata", "bronze", "backend_venv", "backend_source", "web_source", "web_node_modules", "web_next")) {
+        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_$suffix"
+    }
+    Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("config", "--quiet"))
+    Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("up", "-d", "--wait", "--wait-timeout", "120", "db", "minio", "mailpit"))
+    Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "minio-init"))
+    Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "prepare"))
+    switch ($Action) {
+        "check" {
+            Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "check"))
+            Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "web", "sh", "/workspace/scripts/qa-web.sh", "check"))
+        }
+        "test" { Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "test") + $RemainingArgs) }
+        "governance" { Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "governance")) }
+        "prepare" { Write-Host "Dedicated qualification environment ready; no live source/model qualified" }
+    }
+}
+
 function Show-Help {
     Write-Host "Ketrika Agri Market Intelligence - Dev Runner" -ForegroundColor Cyan
     Write-Host ""
@@ -22,7 +69,7 @@ function Show-Help {
     Write-Host "Commands:"
     Write-Host "  up                 - Start Docker development services and await healthchecks"
     Write-Host "  down               - Stop Docker development services"
-    Write-Host "  reset              - Reset Docker volumes, restart, migrate and seed"
+    Write-Host "  reset              - Refused: immutable Bronze must never be deleted"
     Write-Host "  migrate            - Run Alembic database migrations"
     Write-Host "  seed               - Seed sources, taxonomy, units, geo and demo users"
     Write-Host "  check              - Run lint, format, typecheck and unit tests (backend & web)"
@@ -37,6 +84,7 @@ function Show-Help {
     Write-Host "  restore [file]     - Restore database from backup and refresh Gold views"
     Write-Host "  logs <service>     - Follow Docker logs for a specific service"
     Write-Host "  validate-registry  - Validate registry/sources.yaml against Pydantic schema"
+    Write-Host "  qa-isolated <cmd>  - Dedicated profile: check, test, governance, prepare"
 }
 
 
@@ -62,12 +110,8 @@ switch ($Command) {
         exit $LASTEXITCODE
     }
     "reset" {
-        Write-Host "Resetting dev environment (wiping dev volumes)..." -ForegroundColor Red
-        docker compose down -v
-        & $PSCommandPath up
-        & $PSCommandPath migrate
-        & $PSCommandPath seed
-        exit $LASTEXITCODE
+        Write-Error "Reset refused: it would delete immutable Bronze volumes. Use qa-isolated prepare."
+        exit 1
     }
     "migrate" {
         Write-Host "Running Alembic migrations..." -ForegroundColor Cyan
@@ -92,41 +136,26 @@ switch ($Command) {
         }
     }
     "check" {
-        Write-Host "=== Running Backend Quality Checks ===" -ForegroundColor Cyan
-        $backendExit = 0
-        try {
-            $netCheck = docker network ls --filter "name=aiagent_default" -q
-            if ($netCheck) {
-                docker run --rm --network aiagent_default -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
-            } else {
-                docker run --rm -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network and not integration'"
-            }
-            $backendExit = $LASTEXITCODE
-        } catch {
-            $backendExit = 1
-        }
-
-        Write-Host "=== Running Web Quality Checks ===" -ForegroundColor Cyan
-        $webExit = 0
-        try {
-            docker run --rm -v "${PWD}/web:/app" -v /app/node_modules -w /app ketrika-web:dev pnpm test
-            $webExit = $LASTEXITCODE
-        } catch {
-            $webExit = 1
-        }
-
-        if ($backendExit -ne 0 -or $webExit -ne 0) {
-            Write-Error "Quality checks failed: backend exit code $backendExit, web exit code $webExit"
-            exit 1
-        }
-
-        Write-Host "All checks passed successfully!" -ForegroundColor Green
+        Invoke-QaIsolated -Action "check"
         exit 0
     }
     "test" {
-        Write-Host "Running backend tests..." -ForegroundColor Cyan
-        docker compose exec -T api pytest
-        exit $LASTEXITCODE
+        Invoke-QaIsolated -Action "test" -RemainingArgs $ArgsList
+        exit 0
+    }
+    "qa-isolated" {
+        $action = if ($ArgsList) { $ArgsList[0] } else { "" }
+        $remaining = if ($ArgsList.Count -gt 1) { $ArgsList[1..($ArgsList.Count - 1)] } else { @() }
+        Invoke-QaIsolated -Action $action -RemainingArgs $remaining
+        exit 0
+    }
+    "qa" {
+        Write-Error "Command not yet qualified; no implicit success. See the R0 task status."
+        exit 1
+    }
+    "qualify" {
+        Write-Error "Command not yet qualified; no implicit success. See the R0 task status."
+        exit 1
     }
     "test-network" {
         Write-Host "Running live network tests..." -ForegroundColor Cyan

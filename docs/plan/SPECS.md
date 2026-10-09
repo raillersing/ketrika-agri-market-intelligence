@@ -3,6 +3,8 @@
 > Normatif. Tout écart **DOIT** faire l'objet d'un ADR (`AGENTS.md` §5.2).
 > Les valeurs marquées `verified: false` sont des **amorces à vérifier** par l'agent. Ce ne sont pas des vérités.
 
+> Programme R0–R6 autorisé le 2026-10-09 (ADR-008). Les contrats métier ci-dessous restent normatifs. Les qualifications de capacités sont distinctes des tâches : `NOT_EVALUATED`, `OFFLINE_TESTED`, `LIVE_VERIFIED`, `PARTIAL`, `UNAVAILABLE` ; prévisions `experimental`, `validated`, `abstained`. Ces états sont d'abord des résultats de preuve ; leur persistance API/DB sera spécifiée en R2.1, pas ajoutée implicitement aux observations.
+
 ## Sommaire
 
 1. Stack et versions · 2. Structure du dépôt · 3. Services Docker, ports, commandes · 4. Variables d'environnement · 5. Registre des sources · 6. Taxonomie produits · 7. Unités · 8. Schéma de base de données · 9. Interface Connector · 10. Layout Bronze · 11. Extraction (déterministe et LLM) · 12. Politique HTTP · 13. Normalisation · 14. Qualité des données · 15. Couche Gold · 16. KPI · 17. Prévisions et anomalies · 18. Alertes · 19. API · 20. Bulletin · 21. Copilote · 22. Web · 23. Sécurité · 24. Observabilité · 25. Déploiement
@@ -130,14 +132,16 @@ Image multi-stage `python:3.12-slim`. Dépendances système : `libpq`, `gdal` (s
 
 ### 3.3 `scripts/dev.ps1` : commandes obligatoires
 
+Pour le programme R, `check`/`test` utilisent exclusivement le profil Compose de qualification dédié et contrôlé, sans reprendre `.env` actif. Initialisation non destructive ; Python/Node dans Docker ; réseau identifié par la configuration du projet et pas par `aiagent_default`. Intégration obligatoire, contrôles front lint/types/tests/build ; suite requise vide/skippée ou dépendance absente = échec, pas fallback vert. Les volumes de dépendances sont nommés. `qa-isolated <commande>` choisit une cible dédiée et refuse les cibles protégées ; `qa <task_id>` contrôle un manifeste de tests ; `qualify <phase|all>` publie des mesures. Les deux dernières commandes sont livrées dans les tâches R correspondantes, et échouent explicitement avant leur disponibilité.
+
 | Commande | Effet |
 |---|---|
 | `up` | `docker compose up -d --build` puis attente des healthchecks |
 | `down` | `docker compose down` |
-| `reset` | `down -v` (efface les volumes **de développement**) puis `up`, `migrate`, `seed` |
+| `reset` | Refus explicite : la suppression de volumes contenant le Bronze est interdite ; initialiser le profil dédié via `qa-isolated prepare` sans suppression |
 | `migrate` | `alembic upgrade head` dans `api` |
 | `seed` | Charge le registre, la taxonomie, les unités, la géographie et les utilisateurs de démo |
-| `check` | Backend : `ruff check`, `ruff format --check`, `mypy`, `pytest -m "not network"`. Web : `pnpm lint`, `pnpm typecheck`, `pnpm build` |
+| `check` | Profil dédié : backend `ruff check`, `ruff format --check`, `mypy`, `pytest -m "not network"` avec intégration obligatoire et couverture ≥ 80 % pour chacun de core/extraction/normalize ; web `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` |
 | `test` | Tests complets, y compris l'intégration DB |
 | `test-network` | Tests marqués `network` (accès réel aux sources) |
 | `backfill <source_id\|all>` | Lance les backfills Dagster de la source |

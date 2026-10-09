@@ -9,6 +9,8 @@
 
 Plateforme souveraine de veille de marché et d'intelligence économique sur les **Produits de Première Nécessité (PPN) et denrées vivrières à Madagascar** (riz blanc local Vary Gasy, Makalioka, Tsipala, riz importé, maïs, manioc, huile alimentaire, sucre, farine de blé, légumineuses) avec traçabilité et **provenance vérifiable à 100 %**.
 
+État au 2026-10-09 : requalification R0–R6 en cours. Les capacités décrites ci-dessous sont des objectifs et des livrables historiques, pas une certification actuelle de collecte live, de performance prédictive, de déploiement ou d'usage humain. Consulter le plan R et PROGRESS pour les preuves courantes.
+
 ---
 
 ## 1. Vue d'ensemble et proposition de valeur
@@ -136,9 +138,10 @@ Le runner `./scripts/dev.ps1` (ou `./scripts/dev.sh`) constitue le point d'entr�
 |---|---|
 | `./scripts/dev.ps1 up` | Démarre la stack Docker complète et attend que les healthchecks soient sains. |
 | `./scripts/dev.ps1 down` | Arrête l'ensemble des conteneurs sans détruire les données. |
-| `./scripts/dev.ps1 reset` | Réinitialise l'environnement : purge les volumes dev, remonte la stack, applique les migrations et réinjecte les seeds. |
-| `./scripts/dev.ps1 check` | Exécute la suite complète de contrôle qualité (ruff, mypy, pytest unitaire/intégration, vitest, typecheck web). |
-| `./scripts/dev.ps1 test` | Exécute les 215 tests backend (unitaires et intégration PostGIS/MinIO). |
+| `./scripts/dev.ps1 reset` | Refusé : supprimer les volumes violerait l'immutabilité du Bronze. |
+| `./scripts/dev.ps1 check` | Contrôles complets dans le profil isolé : lint, format, types, tests backend/intégration, couverture par package, lint/types/tests/build web. |
+| `./scripts/dev.ps1 test` | Tests backend dans la base et le stockage de qualification dédiés ; aucun effectif historique n'est une preuve actuelle. |
+| `./scripts/dev.ps1 qa-isolated prepare` | Initialise les ressources dédiées sans supprimer de volume ni modifier la stack active. |
 | `./scripts/dev.ps1 rebuild` | Purge les schémas Silver/Gold et rejoue l'intégralité des pipelines depuis le Bronze en **mode 100% hors-ligne**. |
 | `./scripts/dev.ps1 backfill <source_id\|all>` | Lance les backfills d'ingestion Dagster pour une source ou pour toutes. |
 | `./scripts/dev.ps1 bulletin` | Génère un projet de bulletin hebdomadaire PDF certifié et vérifie l'exactitude des chiffres. |
@@ -147,6 +150,14 @@ Le runner `./scripts/dev.ps1` (ou `./scripts/dev.sh`) constitue le point d'entr�
 | `./scripts/dev.ps1 demo` | Exécute le scénario d'acceptation de référence de bout en bout (KPIs, audit, copilote). |
 
 ---
+
+### Qualification du programme R
+
+Le plan courant est `docs/plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md` ; les statuts canoniques sont dans `docs/plan/PROGRESS.md`. Les tags et résultats T sont historiques, sans requalification implicite.
+
+`check` utilise exclusivement `docker-compose.qualification.yml` et les entrées publiques `scripts/qualification.env`, jamais `.env`. Le projet `ketrika-qualification` a sa propre base `ketrika_qualification`, son bucket `ketrika-qa-bronze`, ses volumes nommés et un réseau interne sans port publié. Les sources hôte sont montées en lecture seule ; backend et front sont copiés dans leurs volumes dédiés pour éviter les accès répétés au système de fichiers Windows pendant les contrôles. Le backend ne copie ni `.env` ni dépendances hôte. Les threads numériques de test sont bornés à 1, les caches restent dans les volumes dédiés ; aucun modèle/test n'est retiré. Les identifiants de ce profil sont des fixtures publiques et ne doivent pas être utilisés en production.
+
+Les gardes refusent les destinations actives, les ressources Docker étrangères, les seeds synthétiques sur une session non dédiée et les skips sélectionnés dans la suite de qualification. Aucun `down -v`, reset ou nettoyage du Bronze n'est nécessaire. Les tests hors réseau qualifient le logiciel, pas une source live, un modèle économique ni un usage humain. `qa` et `qualify` restent refusés tant que leur moteur n'est pas implémenté et qualifié.
 
 ## 6. Déploiement en production (VPS Ubuntu 24.04)
 

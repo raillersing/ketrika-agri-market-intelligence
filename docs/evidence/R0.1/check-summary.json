@@ -1,0 +1,58 @@
+{
+  "task": "R0.1",
+  "qualification_scope": "isolated local software checks, not market-data certification",
+  "functional_commit": null,
+  "overall_check_exit": 0,
+  "environment": {
+    "project": "ketrika-qualification",
+    "database": "ketrika_qualification",
+    "bucket": "ketrika-qa-bronze",
+    "network_internal": true,
+    "published_ports": 0,
+    "backend_tooling_image": "55b466bf2dad",
+    "web_tooling_image": "94f7411a5d7c",
+    "backend_tooling_user": "0",
+    "llm_provider": "replay"
+  },
+  "backend": {
+    "lint_and_format_files": 158,
+    "typechecked_files": 157,
+    "tests_passed": 275,
+    "unit_tests": 243,
+    "integration_tests": 32,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "test_duration_seconds": 1761.11,
+    "covered_statements": 2183,
+    "statements": 2438,
+    "coverage_percent": {
+      "core": 91.48418491484185,
+      "extraction": 86.3768115942029,
+      "normalize": 84.85523385300668
+    },
+    "coverage_report_sha256": "b0c72c48f4a0df6d60ab7cd0e65ae963088bf7b0f5c3076039dd338ded950ae7"
+  },
+  "frontend": {
+    "lint_passed": true,
+    "types_passed": true,
+    "test_files_passed": 2,
+    "tests_passed": 15,
+    "production_build_passed": true
+  },
+  "active_database_preservation": {
+    "source_record_count_before_and_after": 482,
+    "source_record_digest_before_and_after": "47b4402859acc41e3ae91fdb128e56c6",
+    "price_count_before_and_after": 764,
+    "price_digest_before_and_after": "4b2586cb8e422f11c4873ad513d66bc1"
+  },
+  "not_qualified": [
+    "live source collection",
+    "authentic corpus and complete Bronze byte provenance",
+    "market forecast performance",
+    "human analyst usage",
+    "deployment",
+    "fresh tooling image rebuild and non-root equivalence",
+    "remote CI execution"
+  ]
+}

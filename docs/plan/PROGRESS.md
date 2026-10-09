@@ -55,7 +55,163 @@
 
 ---
 
+## 1.1 Programme Market Intelligence R0–R6
+
+> Programme autorisé le 2026-10-09. Les statuts T ci-dessus sont historiques, pas requalifiés. Les tâches R suivent [le plan détaillé](MARKET_INTELLIGENCE_EXECUTION_PLAN.md). Les preuves concernent uniquement les vérifications réellement exécutées.
+
+| ID | Priorité | Statut | Début UTC | Fin UTC | Commit | Preuve | Incident |
+|---|---|---|---|---|---|---|
+| R0.1 | MUST | IN_PROGRESS | 2026-10-09T06:28:03Z | — | — | docs/evidence/R0.1/README.md : check Windows complet relancé | B-R001 / B-R002 |
+| R0.2 | MUST | TODO | — | — | — | — | — |
+| R0.3 | MUST | TODO | — | — | — | — | — |
+| R0.4 | MUST | TODO | — | — | — | — | — |
+| R0.5 | MUST | TODO | — | — | — | — | — |
+| R0.6 | MUST | TODO | — | — | — | — | — |
+| R0.7 | MUST | TODO | — | — | — | — | — |
+| R0.8 | MUST | TODO | — | — | — | — | — |
+| R0.9 | MUST | TODO | — | — | — | — | — |
+| R1.1 | MUST | TODO | — | — | — | — | — |
+| R1.2 | MUST | TODO | — | — | — | — | — |
+| R1.3 | MUST | TODO | — | — | — | — | — |
+| R1.4 | MUST | TODO | — | — | — | — | — |
+| R1.5 | MUST | TODO | — | — | — | — | — |
+| R1.6 | MUST | TODO | — | — | — | — | — |
+| R1.7 | MUST | TODO | — | — | — | — | — |
+| R1.8 | MUST | TODO | — | — | — | — | — |
+| R1.9 | MUST | TODO | — | — | — | — | — |
+| R1.10 | MUST | TODO | — | — | — | — | — |
+| R1.11 | MUST | TODO | — | — | — | — | — |
+| R1.12 | MUST | TODO | — | — | — | — | — |
+| R1.13 | MUST | TODO | — | — | — | — | — |
+| R2.1 | MUST | TODO | — | — | — | — | — |
+| R2.2 | MUST | TODO | — | — | — | — | — |
+| R2.3 | MUST | TODO | — | — | — | — | — |
+| R2.4 | MUST | TODO | — | — | — | — | — |
+| R2.5 | MUST | TODO | — | — | — | — | — |
+| R2.6 | MUST | TODO | — | — | — | — | — |
+| R2.7 | MUST | TODO | — | — | — | — | — |
+| R2.8 | MUST | TODO | — | — | — | — | — |
+| R2.9 | MUST | TODO | — | — | — | — | — |
+| R2.10 | MUST | TODO | — | — | — | — | — |
+| R2.11 | MUST | TODO | — | — | — | — | — |
+| R3.1 | MUST | TODO | — | — | — | — | — |
+| R3.2 | MUST | TODO | — | — | — | — | — |
+| R3.3 | MUST | TODO | — | — | — | — | — |
+| R3.4 | MUST | TODO | — | — | — | — | — |
+| R3.5 | MUST | TODO | — | — | — | — | — |
+| R3.6 | SHOULD | TODO | — | — | — | — | — |
+| R3.7 | MUST | TODO | — | — | — | — | — |
+| R3.8 | MUST | TODO | — | — | — | — | — |
+| R3.9 | MUST | TODO | — | — | — | — | — |
+| R4.1 | MUST | TODO | — | — | — | — | — |
+| R4.2 | MUST | TODO | — | — | — | — | — |
+| R4.3 | MUST | TODO | — | — | — | — | — |
+| R4.4 | MUST | TODO | — | — | — | — | — |
+| R4.5 | MUST | TODO | — | — | — | — | — |
+| R4.6 | MUST | TODO | — | — | — | — | — |
+| R4.7 | MUST | TODO | — | — | — | — | — |
+| R4.8 | SHOULD | TODO | — | — | — | — | — |
+| R4.9 | SHOULD | TODO | — | — | — | — | — |
+| R4.10 | SHOULD | TODO | — | — | — | — | — |
+| R4.11 | MUST | TODO | — | — | — | — | — |
+| R4.12 | MUST | TODO | — | — | — | — | — |
+| R5.1 | MUST | TODO | — | — | — | — | — |
+| R5.2 | MUST | TODO | — | — | — | — | — |
+| R5.3 | MUST | TODO | — | — | — | — | — |
+| R5.4 | MUST | TODO | — | — | — | — | — |
+| R5.5 | SHOULD | TODO | — | — | — | — | — |
+| R5.6 | MUST | TODO | — | — | — | — | — |
+| R5.7 | MUST | TODO | — | — | — | — | — |
+| R5.8 | MUST | TODO | — | — | — | — | — |
+| R5.9 | MUST | TODO | — | — | — | — | — |
+| R6.1 | MUST | TODO | — | — | — | — | — |
+| R6.2 | MUST | TODO | — | — | — | — | — |
+| R6.3 | MUST | TODO | — | — | — | — | — |
+| R6.4 | MUST | TODO | — | — | — | — | — |
+| R6.5 | MUST | TODO | — | — | — | — | — |
+| R6.6 | MUST | TODO | — | — | — | — | — |
+| R6.7 | MUST | TODO | — | — | — | — | — |
+| R6.8 | MUST | TODO | — | — | — | — | — |
+| R6.9 | MUST | TODO | — | — | — | — | — |
+| R6.10 | MUST | TODO | — | — | — | — | — |
+| R6.11 | MUST | TODO | — | — | — | — | — |
+
+### [2026-10-09T09:12:32Z] R0.1 — réception verte avant commit
+
+- `powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 check` : code 0, profil Docker dédié `ketrika-qualification`, DB/bucket/volumes isolés, LLM replay. Backend : 275 tests réussis (243 unitaires, 32 intégration), zéro échec/erreur/skip, 1761,11 s ; lint/format 158 fichiers et mypy 157 fichiers verts. Couvertures core 91,48 %, extraction 86,38 %, normalize 84,86 %.
+- Front : lint, types, 15 tests / 2 fichiers et build de production verts. Contrôles complémentaires : actionlint, shellcheck, syntaxe PowerShell et diff codes 0 ; gitleaks staged 226101 octets, zéro fuite.
+- Préservation : 43 lignes T identiques à HEAD et 13 tags historiques conservés ; base active avant/après : source_record 482 / digest 47b4402859acc41e3ae91fdb128e56c6 ; prix 764 / digest 4b2586cb8e422f11c4873ad513d66bc1. Aucun reset ni modification Bronze.
+- B-R001/B-R002 résolus par le check complet final. Preuves détaillées : docs/evidence/R0.1/README.md et check-summary.json. Limites : logiciel local seulement, pas de collecte live, performance marché, E2E navigateur, essai humain, déploiement, images reconstruites ou CI distante qualifiés. R0.1 reste IN_PROGRESS jusqu'au commit vert et à l'enregistrement du hash.
+
+### [2026-10-09T06:28:03Z] Démarrage R0.1 — gouvernance et bootstrap sûr
+
+Mini-plan :
+1. Préserver l'historique T, les tags et les changements de documentation de la session précédente.
+2. Intégrer les règles du programme R dans AGENTS/SPECS/plan MVP et enregistrer ADR-008.
+3. Ajouter les 74 statuts R dans PROGRESS et leur miroir dans le plan demandé.
+4. Construire un validateur des tâches/dépendances/statuts/reprises avec tests négatifs.
+5. Bootstrap minimal de R0.2/R0.3 : Docker de qualification dédié, aucun reset ni accès de tests à la base active.
+6. Exécuter les contrôles complets backend/intégration/front et couverture ; consigner chaque résultat réel.
+7. Committer l'incrément uniquement s'il est vert ; clore R0.1 puis revérifier R0.2.
+
+Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2/R0.3 DONE. Aucun scraping, envoi ni provisionnement externe autorisé.
+
+### [2026-10-09T06:58:11Z] R0.1 — reprise et vérifications du bootstrap
+
+- Reprise après interruption : critères revérifiés, aucun résultat précédent présumé vert ; R0.1 reste IN_PROGRESS dans les deux tables.
+- Profil `ketrika-qualification` initialisé : DB dédiée, migrations 0001/0002, référentiels 10 sources / 15 produits / 30 lieux / 2 utilisateurs de test ; bucket dédié versionné, réseau interne sans ports publiés. Aucun reset ni suppression de volume.
+- Gardes : configuration Compose et environnement explicites, refus des ressources étrangères ; session SQL effectivement liée vérifiée avant seed synthétique. Ajout des tests négatifs de configuration, cibles SQL et couverture.
+- `bash scripts/dev.sh check` : premier passage code 1 sur formatage préexistant de `demo.py` (imports puis format corrigés sans changement métier). Ce résultat n'est pas une réception.
+- Recontrôle backend en Docker : ruff vert, 158 fichiers formatés ; mypy/tests/couverture encore en cours. Front lint/types/tests/build en cours dans ses volumes dédiés. Aucun commit ni DONE à ce stade.
+- Empreinte active avant qualification, relevée en lecture seule : source_record 482 / `47b4402859acc41e3ae91fdb128e56c6` ; prix 764 / `4b2586cb8e422f11c4873ad513d66bc1`. Comparaison après contrôle encore requise.
+- Limites : tests logiciels hors réseau seulement ; `qa`/`qualify` non livrés refusent explicitement. Les tâches R0.2/R0.3 restent TODO jusqu'à leurs critères complets.
+
+### [2026-10-09T07:08:18Z] R0.1 — contrôles Windows et corrections de réception
+
+- Mypy a détecté un retour `Any` préexistant dans une fonction booléenne de `demo.py` ; conversion booléenne explicite, sans abaisser le critère métier. Passage précédent code 1, non réceptionné.
+- Analyse syntaxique PowerShell via Parser.ParseFile : code 0. Essai réel `scripts/dev.ps1 check` : défaut de guillemets natifs dans le template Docker des labels, code 1 ; remplacement par inspection JSON et relance du point d'entrée Windows.
+- `scripts/dev.sh reset`, `scripts/dev.ps1 reset` et `scripts/dev.sh qa-isolated production` : code 1 attendu, refus avant écriture/destruction.
+- Front isolé : lint et types verts, Vitest 2 fichiers / 15 tests passés ; compilation Next réussie, build complet encore en cours.
+- Empreinte active après tests intermédiaires : 482 source_records et 764 prix, digests strictement identiques au relevé initial. Aucun accès de test à ces données.
+- Cache de typage déplacé dans le volume nommé de dépendances du profil de qualification pour les reprises ; aucun cache ni environnement Python/Node écrit sur l'hôte.
+- Toujours aucun commit ni tâche R DONE. Résultats unitaires des nouveaux gardes, intégration complète, couverture et réception globale Windows encore requis.
+
+### [2026-10-09T07:29:31Z] R0.1 — réception complète en cours
+
+- Nouveaux validateurs : 60 tests passés en 28.61 s, code 0, aucun skip. Profil `qa-isolated prepare` : réception code 0 confirmée.
+- Front isolé : lint/types/test/build tous verts, code 0 ; Vitest 15 tests, build Next 15 routes. Ceci ne prouve pas un parcours navigateur/API persistant.
+- Relance Windows `scripts/dev.ps1 check` : lint/format backend verts sur 158 fichiers, mypy vert sur 157 fichiers ; validateur 74 tâches / 69 MUST / 5 SHOULD, miroirs cohérents.
+- Suite backend : 275 tests collectés ; les intégrations et premiers tests unitaires sont passés, backtest logiciel de prévision sur 13 séries synthétiques encore en cours. Aucune performance économique live revendiquée.
+- CI raccordée au même `scripts/dev.sh check` et au profil dédié, cible Docker `base` réellement existante ; actionlint code 0. Aucun déclenchement/qualification de CI distante, pas de push.
+- Shellcheck des deux nouveaux scripts Docker QA : code 0. Gitleaks sur changements préparés avec règles par défaut explicitement étendues : code 0, 212723 octets scannés, zéro fuite détectée (les credentials QA sont des fixtures publiques).
+- Attributs git des runners sh/ps1 : LF. Réception globale, couverture par package et comparaison finale de l'actif toujours requises avant commit vert/DONE.
+
 ## 2. Journal d'exécution
+
+### [2026-10-09T07:59:06Z] R0.1 — diagnostic B-R001 et reprise du check
+
+- Check Windows non réceptionné : interruption contrôlée du seul pytest dans le conteneur QA, après 183 tests passés / 275 collectés et 2621.97 s ; aucune suite complète, couverture ni commit vert acquis.
+- Premier backtest synthétique terminé : 13 séries / 39 prévisions ; second passage anti-fuite temporelle resté longtemps dans `scipy.optimize._optimize.py:196`. Ces valeurs ne sont pas une performance de marché qualifiée.
+- Diagnostic numérique : NumPy/OpenBLAS démarre avec 8 threads ; cause présumée à confirmer, pas une conclusion. B-R001 INVESTIGATING, première tentative uniquement.
+- Mini-plan correctif : (1) borner les threads numériques du profil dédié à 1 ; (2) persister le cache Numba dans le volume de dépendances ; (3) relancer les 4 tests de prévision avec `faulthandler_timeout=120` et `--full-trace` ; (4) analyser l'éventuelle trace ; (5) relancer le check complet sans retirer modèle, test, fixture ni critère.
+- Image de test existante user 0, image applicative user app : limite explicite de cette réception locale ; rebuild frais/non-root restent à qualifier en R0.3/R6. CI syntaxiquement valide, non exécutée à distance.
+- R0.1 demeure IN_PROGRESS dans les deux tables. Rien n'est BLOCKED à ce stade : aucune cause racine n'a atteint 3 corrections infructueuses.
+
+### [2026-10-09T08:26:08Z] R0.1 — fin du diagnostic ciblé et relance globale
+
+- Relance ciblée avec threads à 1 : les 4 tests de prévision passent en 1123.43 s, dont 13 séries / 39 prévisions pour chacun des deux runs et comparaison anti-fuite temporelle. Pas de certification de marché.
+- Le processus de test est vert mais le runner a quitté code 1 : modification du script sh par l'agent pendant son exécution. B-R002 consigne cette cause distincte, sans compter un succès de commande.
+- Snapshot du runner sh dans /tmp avant exécution ; snapshot backend dans le volume `ketrika_qualification_backend_source`, source hôte RO, copie explicite src/tests/alembic/config/lock sans .env ni dépendances hôte. Plugins pytest limités aux quatre déclarés pour ces suites ; aucun test/modèle retiré.
+- Nouveau profil : governance code 0, 74 statuts cohérents ; les 60 tests des validateurs passent en 9.35 s, code 0. Compose config et shellcheck verts.
+- NUMBA_DISABLE_JIT absent, config.DISABLE_JIT=0 : compilation activée ; ce n'était pas la cause. Trace faulthandler : AutoARIMA / CSS / BFGS. Le réglage des threads réduit le temps mesuré, sans conclusion causale exhaustive.
+- `scripts/dev.ps1 check` complet relancé depuis Windows ; rapports couverture/JUnit persistés dans le volume nommé de dépendances. Aucun fichier de rapport à créer sur l'hôte par Python/Node.
+- Empreinte active après interruption toujours 482 / 764 et digests initiaux identiques. R0.1 IN_PROGRESS, B-R001/B-R002 en réception ; aucune tâche BLOCKED ou DONE prématurée.
+
+### [2026-10-09T08:29:09Z] R0.1 — runner figé et nouvelle réception
+
+- Le check démarré avant le snapshot du runner a encore lu une fin de fichier décalée (`ft: not found`, backend exit 127 / PowerShell exit 1) après migrations/seed. Deuxième manifestation de B-R002, pas une troisième correction infructueuse après snapshot stable.
+- Runners backend/frontend désormais copiés dans /tmp avant exécution ; aucune modification de code/script pendant la nouvelle réception. Shellcheck code 0 sur les deux versions stabilisées.
+- Check complet Windows relancé sur cette version. Les 4 tests de prévision du diagnostic sont passés mais leur commande précédente code 1 ne devient pas un succès global. Rapports locaux, incident et miroir restent cohérents ; aucun commit ni DONE.
 
 ### [2026-10-05T20:55:00Z] Exécution de T0.1 : Initialiser le dépôt et la gouvernance
 - Vérification environnement (git, docker, compose, uv).
@@ -1224,6 +1380,22 @@
   - **Dettes :** Suivies formellement dans `docs/plan/BACKLOG.md` (BL-001 à BL-007).
   - **Risques :** Gates humains d'exploitation H1 à H7 documentés et cartographiés dans `docs/HANDOFF.md`.
   - **Tags :** `phase-11-done`, `mvp-v0.1.0`.
+
+### [2026-10-08T22:55:58Z] Recherche et audit préalables à l'élargissement de Ketrika
+
+- Demande : recherche approfondie des pratiques de collecte et de veille, puis analyse du projet pour une intelligence de marché agricole, économique et climatique à Madagascar.
+- Livrable : [rapport de recherche et audit statique](../research/2026-10-09-market-intelligence-audit.md), benchmark de huit systèmes, sources publiques candidates, seize constats de code et feuille de route proposée R0–R6.
+- Preuves : documentation primaire consultée et chemins de code consignés dans le rapport ; erreurs d'accès et limites de couverture explicitement distinguées des sources qualifiées.
+- Limite : aucune vérification runtime, aucun rejeu ni test d'acceptation exécuté dans cet audit documentaire ; les résultats historiques du MVP ne sont pas requalifiés.
+- Périmètre : documentation uniquement ; aucun code applicatif, donnée Bronze/Silver/Gold, statut de tâche ou tag modifié. Les recommandations ne constituent pas des décisions adoptées ni une exécution de R0–R6.
+
+### [2026-10-09T04:18:45Z] Planification détaillée du programme R0–R6
+
+- Demande : détailler chaque réalisation pour un agent d'exécution et fournir un fichier autonome de directives.
+- Livrable : [MARKET_INTELLIGENCE_EXECUTION_PLAN.md](MARKET_INTELLIGENCE_EXECUTION_PLAN.md), 74 tâches distinctes (69 MUST, 5 SHOULD), dépendances, périmètres, instructions, acceptation, preuves, sept gates et gabarit de reprise.
+- Gouvernance : intégration normative prévue en R0.1 avant implémentation ; aucune permission H1–H7 élargie, aucune suppression de Bronze, aucun reset de la stack active autorisé.
+- Vérification documentaire : 74 IDs uniques, toutes dépendances obligatoires définies, graphe sans cycle ; contrôles de format et cohérence avec les seize constats d'audit.
+- Limite : planification seulement ; aucune tâche R démarrée ou marquée DONE, aucun code applicatif ni base modifié, aucun test runtime relancé, aucun tag créé.
 
 
 

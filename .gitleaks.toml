@@ -1,6 +1,9 @@
 # .gitleaks.toml
 # Gitleaks configuration and false-positive allowlist for Ketrika
 
+[extend]
+useDefault = true
+
 [allowlist]
 description = "Allowlist for deterministic cache hashes, partition identifiers, and replay fixtures"
 paths = [

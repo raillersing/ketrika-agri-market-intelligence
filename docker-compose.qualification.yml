@@ -1,0 +1,145 @@
+# Public local test credentials only; this profile never reads the active .env.
+# Bronze volumes are retained. No published ports and no external network.
+name: ketrika-qualification
+
+x-test-environment: &test-environment
+  APP_ENV: test
+  KETRIKA_QUALIFICATION: "1"
+  KETRIKA_DATASET_MODE: test
+  POSTGRES_USER: ketrika
+  POSTGRES_DB: ketrika_qualification
+  POSTGRES_PASSWORD: qa-local-only
+  DATABASE_URL: postgresql+psycopg://ketrika:qa-local-only@db:5432/ketrika_qualification
+  COPILOT_DB_PASSWORD: change-me-ro
+  S3_ENDPOINT_URL: http://minio:9000
+  S3_ACCESS_KEY: qualification-admin
+  S3_SECRET_KEY: qualification-local-only
+  S3_BUCKET_BRONZE: ketrika-qa-bronze
+  S3_REGION: auto
+  LLM_PROVIDER: replay
+  EXTERNAL_SEND_ENABLED: "0"
+  SMTP_HOST: mailpit
+  SMTP_PORT: "1025"
+  PYTHONPATH: /app/src
+  KETRIKA_REPO_ROOT: /workspace
+  PYTHONDONTWRITEBYTECODE: "1"
+  RUFF_CACHE_DIR: /tmp/ruff-cache
+  MYPY_CACHE_DIR: /app/.venv/.mypy-cache
+  COVERAGE_FILE: /tmp/ketrika-qa.coverage
+  PYTEST_ADDOPTS: -o cache_dir=/tmp/pytest-cache
+  OPENBLAS_NUM_THREADS: "1"
+  OMP_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMBA_NUM_THREADS: "1"
+  NUMBA_CACHE_DIR: /app/.venv/.numba-cache
+
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_USER: ketrika
+      POSTGRES_PASSWORD: qa-local-only
+      POSTGRES_DB: ketrika_qualification
+    volumes:
+      - qa_pgdata:/var/lib/postgresql/data
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    networks: [qualification]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U ketrika -d ketrika_qualification]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: qualification-admin
+      MINIO_ROOT_PASSWORD: qualification-local-only
+    volumes: [qa_bronze:/data]
+    networks: [qualification]
+    healthcheck:
+      test: [CMD-SHELL, curl -f http://localhost:9000/minio/health/live]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  minio-init:
+    image: minio/minio:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks: [qualification]
+    entrypoint: [/bin/sh, -ec]
+    command:
+      - >-
+        /usr/bin/mc alias set qa http://minio:9000 qualification-admin qualification-local-only &&
+        /usr/bin/mc mb --ignore-existing qa/ketrika-qa-bronze &&
+        /usr/bin/mc version enable qa/ketrika-qa-bronze
+
+  mailpit:
+    image: axllent/mailpit:latest
+    networks: [qualification]
+
+  api:
+    image: ketrika-backend:test
+    environment: *test-environment
+    working_dir: /app
+    volumes:
+      - qa_backend_source:/app
+      - ./:/workspace:ro
+      - qa_backend_venv:/app/.venv
+    networks: [qualification]
+    depends_on:
+      db:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    command: [sh, /workspace/scripts/qa-backend.sh, serve]
+
+  web:
+    image: ketrika-web:dev
+    working_dir: /app
+    environment:
+      APP_ENV: test
+      KETRIKA_QUALIFICATION: "1"
+      NEXT_PUBLIC_API_BASE_URL: http://api:8000
+      API_INTERNAL_URL: http://api:8000
+      NEXT_TELEMETRY_DISABLED: "1"
+    volumes:
+      - ./:/workspace:ro
+      - qa_web_source:/app
+      - qa_web_node_modules:/app/node_modules
+      - qa_web_next:/app/.next
+    networks: [qualification]
+    command: [sh, /workspace/scripts/qa-web.sh, dev]
+
+networks:
+  qualification:
+    name: ketrika_qualification_network
+    internal: true
+    labels:
+      ketrika.scope: qualification
+
+volumes:
+  qa_pgdata:
+    name: ketrika_qualification_pgdata
+    labels: {ketrika.scope: qualification}
+  qa_bronze:
+    name: ketrika_qualification_bronze
+    labels: {ketrika.scope: qualification}
+  qa_backend_venv:
+    name: ketrika_qualification_backend_venv
+    labels: {ketrika.scope: qualification}
+  qa_backend_source:
+    name: ketrika_qualification_backend_source
+    labels: {ketrika.scope: qualification}
+  qa_web_source:
+    name: ketrika_qualification_web_source
+    labels: {ketrika.scope: qualification}
+  qa_web_node_modules:
+    name: ketrika_qualification_web_node_modules
+    labels: {ketrika.scope: qualification}
+  qa_web_next:
+    name: ketrika_qualification_web_next
+    labels: {ketrika.scope: qualification}

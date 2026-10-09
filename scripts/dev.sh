@@ -6,6 +6,56 @@ set -euo pipefail
 COMMAND="${1:-help}"
 shift || true
 
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+qa_compose() {
+  docker compose --env-file "$REPO_ROOT/scripts/qualification.env" --project-name ketrika-qualification -f "$REPO_ROOT/docker-compose.qualification.yml" "$@"
+}
+
+qa_owned_resource() {
+  resource_kind="$1"
+  resource_name="$2"
+  if docker "$resource_kind" inspect "$resource_name" >/dev/null 2>&1; then
+    resource_scope="$(docker "$resource_kind" inspect --format '{{index .Labels "ketrika.scope"}}' "$resource_name")"
+    resource_project="$(docker "$resource_kind" inspect --format '{{index .Labels "com.docker.compose.project"}}' "$resource_name")"
+    if [ "$resource_scope" != "qualification" ] || [ "$resource_project" != "ketrika-qualification" ]; then
+      echo "Refusing foreign qualification resource: $resource_name" >&2
+      exit 1
+    fi
+  fi
+}
+
+qa_prepare() {
+  docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:test python -m ketrika.core.qualification compose /workspace/docker-compose.qualification.yml
+  qa_owned_resource network ketrika_qualification_network
+  for qa_volume in pgdata bronze backend_venv backend_source web_source web_node_modules web_next; do
+    qa_owned_resource volume "ketrika_qualification_$qa_volume"
+  done
+  qa_compose config --quiet
+  qa_compose up -d --wait --wait-timeout 120 db minio mailpit
+  qa_compose run --rm --no-deps minio-init
+  qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh prepare
+}
+
+qa_isolated() {
+  qa_action="${1:-}"
+  [ "$#" -gt 0 ] && shift
+  case "$qa_action" in
+    check|test|governance|prepare) ;;
+    *) echo "Unsupported isolated command; protected targets are never implicit" >&2; exit 1 ;;
+  esac
+  qa_prepare
+  case "$qa_action" in
+    check)
+      qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh check
+      qa_compose run --rm --no-deps web sh /workspace/scripts/qa-web.sh check
+      ;;
+    test) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh test "$@" ;;
+    governance) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh governance ;;
+    prepare) echo "Dedicated qualification environment ready; no live source/model qualified" ;;
+  esac
+}
+
 show_help() {
   echo "Ketrika Agri Market Intelligence - Dev Runner (Linux)"
   echo ""
@@ -14,7 +64,7 @@ show_help() {
   echo "Commands:"
   echo "  up                 - Start Docker development services and await healthchecks"
   echo "  down               - Stop Docker development services"
-  echo "  reset              - Reset Docker volumes, restart, migrate and seed"
+  echo "  reset              - Refused: immutable Bronze must never be deleted"
   echo "  migrate            - Run Alembic database migrations"
   echo "  seed               - Seed sources, taxonomy, units, geo and demo users"
   echo "  check              - Run lint, format, typecheck and unit tests (backend & web)"
@@ -29,6 +79,7 @@ show_help() {
   echo "  restore [file]     - Restore database from backup and refresh Gold views"
   echo "  logs <service>     - Follow Docker logs for a specific service"
   echo "  validate-registry  - Validate registry/sources.yaml against Pydantic schema"
+  echo "  qa-isolated <cmd>  - Dedicated profile: check, test, governance, prepare"
 }
 
 
@@ -47,10 +98,8 @@ case "$COMMAND" in
     docker compose down
     ;;
   reset)
-    docker compose down -v
-    "$0" up
-    "$0" migrate
-    "$0" seed
+    echo "Reset refused: it would delete immutable Bronze volumes. Use qa-isolated prepare." >&2
+    exit 1
     ;;
   migrate)
     if docker compose exec -T api test -f /app/alembic.ini 2>/dev/null; then
@@ -67,18 +116,17 @@ case "$COMMAND" in
     fi
     ;;
   check)
-    echo "=== Running Backend Quality Checks ==="
-    if docker network ls --filter "name=aiagent_default" -q | grep -q .; then
-      docker run --rm --network aiagent_default -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network'"
-    else
-      docker run --rm -v "${PWD}/backend:/app" -v "${PWD}:/workspace" -w /app ketrika-backend:test sh -c "ruff check src tests && ruff format --check src tests && mypy src tests && pytest -m 'not network and not integration'"
-    fi
-    echo "=== Running Web Quality Checks ==="
-    docker run --rm -v "${PWD}/web:/app" -v /app/node_modules -w /app ketrika-web:dev pnpm test
-    echo "All checks passed successfully!"
+    qa_isolated check
     ;;
   test)
-    docker compose exec -T api pytest
+    qa_isolated test "$@"
+    ;;
+  qa-isolated)
+    qa_isolated "$@"
+    ;;
+  qa|qualify)
+    echo "Command not yet qualified; no implicit success. See the R0 task status." >&2
+    exit 1
     ;;
   test-network)
     docker compose exec -T api pytest -m "network"
