@@ -2,6 +2,41 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-013 : R0.3 — délai de build borné et timeout machine explicite
+
+- **Date :** 2026-10-09 ; accepté avant implémentation.
+- **Contexte :** B-R008 : deux builds refusés à 900 s ; le second compile et génère 15/15 pages, mais termine sa collecte de traces après cette limite. CPU partagé some avg60 76,98 %, pas d'OOM, espace disponible. La durée totale nécessaire et la cause racine restent non établies.
+- **Décision :** délai maximal frontend build 1800 s, autres commandes frontend 900 s ; aucun contrôle, test ni seuil de couverture supprimé. Le reçu expose error_code, signal et timed_out ; une erreur spawn refuse le succès même si status vaut 0. CI reste bornée à 150 minutes pour images/check/QA/négatif/E2E, sans revendiquer une exécution distante.
+- **Alternatives :** arrêter les services tiers, ignorer build/traces, considérer Compiled successfully comme succès complet (rejetés) ; attente illimitée (rejetée) ; abandon immédiat sans repli autorisé (non retenu).
+- **Conséquences :** repli technique réversible, pas validation métier ; régressions de délai et timeout réel en copie requises, réception frontend puis check complet à refaire. Si le nouveau délai est atteint, code non nul et protocole de blocage conservé.
+
+## ADR-012 : R0.3 — intégrations mesurées par dossier et marqueur JUnit
+
+- **Date :** 2026-10-09 ; accepté.
+- **Contexte :** check courant : 337 tests verts, puis refus du minimum 32 car JUnit compte seulement 31 cas sous tests/integration ; le test ML marqué integration réside sous tests/unit. Aucun test n'est absent, mais le rapport ne conservait pas ce marqueur.
+- **Décision :** enregistrer le marqueur integration de chaque item dans user_properties JUnit (ketrika.integration=true), après garde d'environnement. Le lecteur mesure séparément integration_by_layout, integration_by_marker et leur union integration_tests, sans double compte. Le minimum global reste 32 ; zéro échec/erreur/skip et rapport cohérent restent obligatoires. Aucun nom de fonction n'est utilisé comme preuve de marqueur et aucun ancien XML n'est réécrit.
+- **Alternatives :** abaisser le minimum à 31 ou ajouter une constante pour ML (rejetés), déplacer le test sans corriger la perte générale de métadonnées (non retenu).
+- **Conséquences :** rapports JSON étendus additivement ; lecteur JUnit propre accepte properties (pas de validation par schéma externe), conformément à la documentation pytest. Tests de compteur/dédoublonnage et vrai subprocess pytest à marqueur hors dossier requis ; toute réception complète doit être refaite sur cette version.
+- **Référence :** [pytest, marqueurs vers JUnit](https://docs.pytest.org/en/stable/how-to/output.html#record-property), consulté le 2026-10-09.
+
+## ADR-011 : R0.3 — authentification navigateur same-origin vérifiée
+
+- **Date :** 2026-10-09.
+- **Contexte :** le login web lisait `access_token` alors que l'API renvoie `token`, écrivait un cookie JS distinct du cookie HttpOnly API, et ciblait localhost Windows ; aucun E2E Docker authentifié réel ne peut qualifier ce chemin.
+- **Décision :** proxy Next same-origin `/api/v1/*` vers l'API interne configurée, forwarding borné des méthodes/headers et cookies HttpOnly. Login utilise le contrat `token` sans écrire de JWT en JavaScript ; middleware utilise le cookie `session_token` existant de l'API ; logout passe par l'API et attend son succès. Les endpoints et schémas backend restent inchangés.
+- **Alternatives :** injecter un token/cookie manuel dans le navigateur pour contourner le login (rejeté), cookie JS/non-HttpOnly (non conforme), dépendre du port Windows ou CORS large (rejeté).
+- **Conséquences :** corriger les défauts nécessaires au vrai parcours E2E dans R0.3 ; ne pas déclarer un essai humain ni un déploiement. Les droits restent contrôlés par l'API, pas par la seule présence d'un cookie dans le middleware.
+
+## ADR-010 : R0.3 — qualification machine, lockfiles et navigateur isolé
+
+- **Date :** 2026-10-09.
+- **Contexte :** dépendances Docker installées sans lock garanti, E2E hôte, aucun manifeste QA mesuré et réception locale sur images anciennes/root.
+- **Décision :** installer depuis les lockfiles vérifiés, uv version figée compatible avec leur format ; garder les versions applicatives verrouillées pour cette requalification (pas approbation de sécurité production, revue R6.7). Ajouter le stage optionnel `backend-browser`, Playwright et Chromium de même version, utilisateur app non-root, réseau QA interne uniquement, sans port ni accès Docker socket. Les init de permissions concernent seulement les volumes QA identifiés ; Bronze ne participe jamais à un nettoyage. Les tests négatifs opèrent dans des copies temporaires.
+- **Contrat QA :** manifeste version 1 de suites livrées, sélection par ID exact, chemins tests relatifs bornés, minimums de tests et rapports JUnit ; ID absent/non livré, suite vide, erreur/échec/skip obligatoire ou rapport incomplet = code non nul. Reçus JSON mesurent codes, durées et effectifs ; chaque exécution est séparée pour ne pas réutiliser un succès ancien. `qa` qualifie un sous-ensemble logiciel, pas automatiquement le DONE ni source/modèle/usage ; `qualify` reste R0.7.
+- **Alternatives :** installation flottante avec repli (rejeté), E2E Chrome Windows/CDP sur actif (rejeté), tout marquer vert via constantes/fixtures (rejeté), mettre à niveau des majeures applicatives implicitement (rejeté).
+- **Références :** https://playwright.dev/docs/docker ; https://docs.astral.sh/uv/guides/integration/docker/ ; https://docs.astral.sh/uv/concepts/projects/sync/ (consultées le 2026-10-09). L'image navigateur teste uniquement le site de confiance dédié, jamais des sites tiers. Pas de `privileged`, SYS_ADMIN ou IPC hôte.
+- **Conséquences :** nouvelles preuves locales obligatoires, CI même runner ; les tâches sans suite livrée échouent explicitement. L'E2E démontre le workflow logiciel sur données de test, pas authenticité des marchés.
+
 ## ADR-009 : R0.2 — retrait du runner de certification synthétique
 
 - **Date :** 2026-10-09.

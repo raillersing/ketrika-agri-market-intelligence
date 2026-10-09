@@ -13,7 +13,7 @@ jobs:
   quality-checks:
     name: Isolated backend, integration and frontend checks
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 150
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,16 +21,17 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build backend tooling image
-        run: |
-          docker build --target base -t ketrika-backend:test backend
-
-      - name: Build web image
-        run: |
-          docker build -t ketrika-web:dev web
+      - name: Build all locked qualification images through the local entrypoint
+        run: bash scripts/dev.sh qa-build
 
       - name: Run the same isolated check as local development
         run: bash scripts/dev.sh check
+
+      - name: Execute task manifest and actual browser authentication
+        run: |
+          bash scripts/dev.sh qa R0.3
+          bash scripts/dev.sh qa-isolated negative-build
+          bash scripts/dev.sh e2e
 
       - name: Show qualification service state on failure
         if: failure()

@@ -94,7 +94,7 @@ def test_foreign_account_rejected(service, key):
         validate_compose(yaml.safe_dump(spec))
 
 
-@pytest.mark.parametrize("case", range(15))
+@pytest.mark.parametrize("case", range(17))
 def test_unsafe_compose_rejected(case):
     spec = deepcopy(compose_spec())
     if case == 0:
@@ -125,6 +125,10 @@ def test_unsafe_compose_rejected(case):
         spec["services"]["api"]["volumes"] = [{"source": "foreign", "target": "/app"}]
     elif case == 13:
         spec["services"]["api"]["environment"] = []
+    elif case == 15:
+        spec["services"]["browser"]["cap_add"] = ["SYS_ADMIN"]
+    elif case == 16:
+        spec["services"]["browser"]["ipc"] = "host"
     else:
         spec["services"]["db"]["environment"]["POSTGRES_DB"] = "ketrika"
     with pytest.raises(QualificationSafetyError):

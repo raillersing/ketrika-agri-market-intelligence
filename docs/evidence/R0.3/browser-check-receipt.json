@@ -1,0 +1,20 @@
+{
+  "scope": "Docker browser software, synthetic QA environment",
+  "passed": true,
+  "prices_status": 200,
+  "unauthenticated_status": 401,
+  "duration_seconds": 100.37,
+  "browser_errors": [],
+  "completed_checks": [
+    "protected UI redirects without a session",
+    "form login establishes HttpOnly session",
+    "reload retains authentication",
+    "protected profile authenticates the browser session",
+    "authenticated same-origin prices API",
+    "price explorer renders",
+    "UI logout removes session",
+    "API rejects access after logout",
+    "UI remains protected after logout"
+  ],
+  "checks": 9
+}

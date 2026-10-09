@@ -26,12 +26,15 @@ qa_owned_resource() {
 }
 
 qa_prepare() {
-  docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:test python -m ketrika.core.qualification compose /workspace/docker-compose.qualification.yml
+  docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-r03 python -m ketrika.core.qualification compose /workspace/docker-compose.qualification.yml
   qa_owned_resource network ketrika_qualification_network
-  for qa_volume in pgdata bronze backend_venv backend_source web_source web_node_modules web_next; do
+  for qa_volume in pgdata bronze backend_venv_r03 backend_source_r03 web_source_r03 web_node_modules_r03 web_next_r03 browser_venv_r03; do
     qa_owned_resource volume "ketrika_qualification_$qa_volume"
   done
   qa_compose config --quiet
+  if [ "${1:-}" = check ]; then
+    qa_compose stop api web
+  fi
   qa_compose up -d --wait --wait-timeout 120 db minio mailpit
   qa_compose run --rm --no-deps minio-init
   qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh prepare
@@ -41,10 +44,18 @@ qa_isolated() {
   qa_action="${1:-}"
   [ "$#" -gt 0 ] && shift
   case "$qa_action" in
-    check|test|governance|prepare) ;;
+    check|test|governance|prepare|qa|e2e|negative-build) ;;
     *) echo "Unsupported isolated command; protected targets are never implicit" >&2; exit 1 ;;
   esac
-  qa_prepare
+  case "$qa_action" in
+    test|qa) ;;
+    *) [ "$#" -eq 0 ] || { echo "Unexpected isolated command arguments" >&2; exit 1; } ;;
+  esac
+  if [ "$qa_action" = qa ]; then
+    [ "$#" -eq 1 ] || { echo "QA requires exactly one configured task ID" >&2; exit 1; }
+    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-r03 python -m ketrika.core.qa_manifest "$1" --validate-only
+  fi
+  qa_prepare "$qa_action"
   case "$qa_action" in
     check)
       qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh check
@@ -52,6 +63,12 @@ qa_isolated() {
       ;;
     test) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh test "$@" ;;
     governance) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh governance ;;
+    qa) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh qa "$@" ;;
+    negative-build) qa_compose run --rm --no-deps web sh /workspace/scripts/qa-web.sh negative-build ;;
+    e2e)
+      qa_compose up -d --no-deps --force-recreate api web
+      qa_compose run --rm --no-deps browser
+      ;;
     prepare) echo "Dedicated qualification environment ready; no live source/model qualified" ;;
   esac
 }
@@ -80,6 +97,8 @@ show_help() {
   echo "  logs <service>     - Follow Docker logs for a specific service"
   echo "  validate-registry  - Validate registry/sources.yaml against Pydantic schema"
   echo "  qa-isolated <cmd>  - Dedicated profile: check, test, governance, prepare"
+  echo "  qa-build           - Build locked backend, web and browser QA images"
+  echo "  qa <task_id>       - Run a declared measured software subset"
 }
 
 
@@ -124,7 +143,15 @@ case "$COMMAND" in
   qa-isolated)
     qa_isolated "$@"
     ;;
-  qa|qualify)
+  qa-build)
+    docker build --target base -t ketrika-backend:qa-r03 "$REPO_ROOT/backend"
+    docker build -t ketrika-web:qa-r03 "$REPO_ROOT/web"
+    docker build --target backend-browser -t ketrika-backend:qa-browser-r03 "$REPO_ROOT/backend"
+    ;;
+  qa)
+    qa_isolated qa "$@"
+    ;;
+  qualify)
     echo "Command not yet qualified; no implicit success. See the R0 task status." >&2
     exit 1
     ;;
@@ -139,11 +166,7 @@ case "$COMMAND" in
     docker compose exec -T -e HTTP_OFFLINE=1 api python -m ketrika.pipelines.rebuild
     ;;
   e2e)
-    if [ -f "scripts/run_e2e.mjs" ] && command -v node >/dev/null 2>&1; then
-      node scripts/run_e2e.mjs
-    else
-      docker compose exec -T web pnpm e2e
-    fi
+    qa_isolated e2e
     ;;
   bulletin)
     docker compose exec -T api python -m ketrika.bulletin.writer

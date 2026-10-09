@@ -1,0 +1,35 @@
+{
+  "task": "R0.3",
+  "execution_id": "2305b7e8c762461e8c2f45b8459d664f",
+  "scope": "software subset only; not task DONE or market certification",
+  "pytest_exit": 0,
+  "command": [
+    "pytest",
+    "-p",
+    "pytest_asyncio.plugin",
+    "-p",
+    "pytest_cov.plugin",
+    "-p",
+    "_hypothesis_pytestplugin",
+    "-p",
+    "pytest_httpserver.pytest_plugin",
+    "-m",
+    "not network",
+    "tests/unit/test_qa_manifest.py",
+    "tests/unit/test_quality_failures.py",
+    "tests/unit/test_dataset_isolation.py",
+    "tests/integration/test_db_permissions.py",
+    "--junitxml=/app/.venv/qa-results/2305b7e8c762461e8c2f45b8459d664f/tests.xml"
+  ],
+  "passed": true,
+  "counts": {
+    "tests": 58,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "integration_by_layout": 4,
+    "integration_by_marker": 0,
+    "integration_tests": 4
+  },
+  "duration_seconds": 62.689
+}

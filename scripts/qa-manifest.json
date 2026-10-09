@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "scope": "software subsets; never automatic task, source, model or human certification",
+  "tasks": {
+    "R0.1": {
+      "tests": ["tests/unit/test_execution_plan.py"],
+      "minimum_tests": 19,
+      "minimum_integration_tests": 0
+    },
+    "R0.2": {
+      "tests": ["tests/unit/test_qualification.py", "tests/unit/test_dataset_isolation.py", "tests/unit/test_bronze_inventory.py", "tests/integration/test_gold_views.py"],
+      "minimum_tests": 58,
+      "minimum_integration_tests": 2
+    },
+    "R0.3": {
+      "tests": ["tests/unit/test_qa_manifest.py", "tests/unit/test_quality_failures.py", "tests/unit/test_dataset_isolation.py", "tests/integration/test_db_permissions.py"],
+      "minimum_tests": 58,
+      "minimum_integration_tests": 4
+    }
+  }
+}

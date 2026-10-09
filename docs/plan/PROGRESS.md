@@ -63,7 +63,7 @@
 |---|---|---|---|---|---|---|
 | R0.1 | MUST | DONE | 2026-10-09T06:28:03Z | 2026-10-09T09:16:32Z | b684528f223164e62fee1c85ef847f9f70c98e2c | docs/evidence/R0.1/README.md : check Windows code 0, 275 backend / 15 web | B-R001 / B-R002 résolus |
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
-| R0.3 | MUST | TODO | — | — | — | — | — |
+| R0.3 | MUST | IN_PROGRESS | 2026-10-09T10:24:19Z | — | — | Front ADR-013 35 tests/build verts ; check Windows complet courant relancé | B-R008 repli testé ; réception globale requise ; B-R005 non reproduit |
 | R0.4 | MUST | TODO | — | — | — | — | — |
 | R0.5 | MUST | TODO | — | — | — | — | — |
 | R0.6 | MUST | TODO | — | — | — | — | — |
@@ -135,6 +135,177 @@
 | R6.9 | MUST | TODO | — | — | — | — | — |
 | R6.10 | MUST | TODO | — | — | — | — | — |
 | R6.11 | MUST | TODO | — | — | — | — | — |
+
+### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
+
+- Session Windows 36386 toujours active, conteneur backend ketrika-qualification-api-run-1e14829bf0d8. Lint/format/types et cohérence des 74 statuts codes 0 ; 340 cas collectés.
+- Toutes les intégrations par dossier passent, dont performances API, droits DB, ODR/rejeux, WB et WFP. B-R005 non reproduit, cause initiale toujours inconnue.
+- Suite unitaire au test de prévision de bout en bout/anti-fuite temporelle (~55 %), processus CPU actif. Aucun échec signalé, mais aucun résultat global/couverture/frontend de ce run encore reçu.
+- Code fonctionnel figé ; ne pas lancer un second check concurrent ni substituer le frontend ciblé vert au résultat global. R0.3 IN_PROGRESS, aucun commit/tag ; finaliser réception et préservation avant clôture.
+
+### [2026-10-09T19:01:06Z] R0.3 — check global Windows et QA ciblée courants verts
+
+- Check Windows session 36386 code final 0 : 340 backend / 3556,99 s, 35 frontend / 5,08 s ; zéro échec/erreur/skip, 35 intégrations union, couvertures core 91,974957 %, extraction 86,376812 %, normalize 84,855234 %.
+- Front reçu c77c9881-dabf-45d5-a366-010b8711080e : lint 13345 ms, types 16803 ms, tests 9198 ms, build 169177 ms ; tous codes 0, aucun error_code/signal/timeout. Rapports backend-check et frontend-check exportés.
+- QA Windows renouvelée session 46885 code 0 : 58 passed / 55,30 s, union intégration 4, reçu 2305b7e8c762461e8c2f45b8459d664f / 62,689 s ; rapports distincts qa-check-task exportés.
+- Build volontairement invalide courant session 10855 lancé ; E2E renouvelé, préservation finale, gitleaks et commit restent à recevoir. R0.3 IN_PROGRESS jusqu'à ces derniers critères et commit vert ; aucun tag.
+
+### [2026-10-09T19:15:30Z] R0.3 — tous critères logiciels reçus, commit en préparation
+
+- Check Windows code 0 : 340 backend, 35 frontend, couvertures 91,97/86,38/84,86 %, build complet 169177 ms ; QA 58 code 0 ; contrôle négatif code 0 constate vrai build invalide code 1.
+- E2E Windows session 50872 code 0 : 9 contrôles / 100,37 s, zéro erreur page, prix 200 et profil après logout 401. Reçu/capture 1ce4ed19a3af4a9c81087df570efb17d exportés ; trace de session non exportée.
+- Inspection visuelle : 16 lignes synthétiques et sonde 999999, aucune authenticité de prix revendiquée ; badges/graphe restent BL-009/R2.10, design tiers préservé.
+- Préservation après E2E : DB/S3 read-only codes 0, 482/764 lignes, MD5 inchangés ; Bronze 674 versions / 1377481 octets / zéro delete marker / SHA-256 inchangé.
+- Gitleaks staged Docker code 0, 1,13 Mo scanné, aucune fuite ; diff staged check code 0. B-R007 résolu, B-R008 repli testé ; B-R005 non reproduit, cause inconnue conservée.
+- Commit fonctionnel et hash de clôture encore requis : statut R0.3 IN_PROGRESS, aucun tag ; aucune collecte live/modèle de marché/usage humain/CI distante qualifiés.
+
+### [2026-10-09T18:54:11Z] R0.3 — backend complet courant vert, frontend du même check en finalisation
+
+- Session Windows 36386 : 340 passed / 3556,99 s, 5 avertissements de dépendances, zéro échec/erreur/skip. JUnit : 31 intégrations par dossier, 31 par marqueur, union 35 ; contrôles de rapports et minimums codes 0.
+- Couvertures validées : core 91,974957 %, extraction 86,376812 %, normalize 84,855234 %. Backend lint/format/types et cohérence documentaire codes 0.
+- Frontend du même check : lint/types codes 0, 35 tests / 4 fichiers verts en 5,08 s, reçu c77c9881-dabf-45d5-a366-010b8711080e ; build encore en cours. Rapports courants exportés distinctement des essais antérieurs.
+- Aucun succès global ni DONE avant build/code final, réception des autres critères et préservation ; code toujours figé, aucun commit/tag.
+
+### [2026-10-09T17:43:11Z] R0.3 — frontend courant complet vert, check final relancé
+
+- Diagnostic courant session 59728 code 0 : lint/types codes 0, 35 tests / 4 fichiers verts en 34,56 s ; vrai build complet code 0 / 922633 ms, 15 pages statiques et routes dynamiques. Aucun error_code/signal/timeout dans les quatre étapes.
+- Reçu 8158e316-307c-4eab-81b5-31185e49f81e : lint 65288 ms, types 76294 ms, tests 56773 ms, build 922633 ms ; le build dépasse effectivement l'ancienne borne 900 s, mais reste dans 1800 s. Repli ADR-013 testé, cause de lenteur non établie.
+- Actionlint Docker courant code 0. Check complet Windows session 36386 lancé via dev.ps1 ; code fonctionnel figé, 340 backend / 35 frontend attendus, aucune ancienne réception substituée.
+- R0.3 IN_PROGRESS ; résultat global, export courant, préservation finale, commit et synchronisation DONE restent requis. Aucun tag de phase avant R0.9.
+
+### [2026-10-09T17:24:00Z] R0.3 — second timeout, repli technique ADR-013
+
+- Diagnostic 23198 code 1 : lint/types verts, 32 tests verts / 28,47 s ; compilation et 15/15 pages générées, collecte de traces interrompue à 901509 ms. Aucun build réussi revendiqué.
+- ADR-013 et SPECS avant implémentation : build borné à 1800 s, autres commandes frontend à 900 s, CI bornée à 150 minutes. Contrôles/seuils inchangés, aucun service tiers arrêté.
+- Reçu étendu avec error_code/signal/timed_out ; échec spawn explicite malgré status zéro. Trois régressions ajoutées, dont vrai subprocess Node interrompu par timeout ; pas preuve d'un build applicatif.
+- Réception frontend courante session 59728 lancée, 35 tests attendus. Check complet courant encore requis après cette réception ; R0.3 IN_PROGRESS, aucun commit/tag.
+
+### [2026-10-09T17:18:00Z] R0.3 — diagnostic frontend ciblé en cours
+
+- Relance isolée `docker compose --env-file scripts/qualification.env --project-name ketrika-qualification -f docker-compose.qualification.yml run --rm --no-deps web sh /workspace/scripts/qa-web.sh check`, session 23198, même limite 900 s par commande et même code.
+- Lint/types codes 0, 32 tests / 4 fichiers verts en 28,47 s ; compilation Next affiche Compiled successfully, étapes finales encore en cours. Pas de succès de build ni de check global revendiqué.
+- Lecture de pression dans le conteneur : CPU some avg60 76,98 %, I/O some avg60 2,10 %, mémoire disponible 18984900 kB. Contention CPU possible, cause racine du timeout non établie ; aucun service partagé arrêté.
+- Reçu rouge et trace exacts archivés dans docs/evidence/R0.3 ; R0.3 IN_PROGRESS, R0.4 non démarrée.
+
+### [2026-10-09T17:02:24Z] R0.3 — check global rouge sur timeout de compilation frontend
+
+- Session Windows 22856 code final 1 : lint/types front codes 0, 32 tests / 4 fichiers verts, build ne termine pas en 900341 ms. Le runner refuse correctement le succès malgré status natif 0 accompagné d'une erreur spawn timeout ; aucun build complet qualifié.
+- B-R008 enregistré, cause non établie : pas d'OOM dans le conteneur, stockage 12 %, processus compilation actifs avec workers recréés. Aucun service tiers arrêté, aucune limite retirée.
+- Rapports backend/coverage/QA/front archivés ; 340 backend restent une preuve partielle, pas un succès global. Préservation DB/S3 read-only codes 0 et empreintes identiques. HEAD tiers 799f869 préservé.
+- Diagnostic ciblé de compilation puis correction et check complet requis ; R0.3 IN_PROGRESS, aucun commit ni tag.
+
+### [2026-10-09T16:42:00Z] R0.3 — backend complet courant vert, frontend en cours
+
+- Check Windows isolé, session 22856 : 340 passed / 4230,55 s, 5 avertissements de dépendances, zéro échec/erreur/skip. Lint, format et types backend codes 0.
+- JUnit réel : 31 intégrations par dossier, 31 par marqueur, union dédoublonnée 35 ; minimum 32 conservé et satisfait. Aucun nombre d'intégrations fixé artificiellement.
+- Couvertures validées : core 91,974957 %, extraction 86,376812 %, normalize 84,855234 %. Front lint code 0, types/tests/build encore en cours ; aucun succès global ni clôture revendiqué.
+- R0.3 demeure IN_PROGRESS ; réception finale, export des preuves, contrôle de préservation et commit vert restent nécessaires.
+
+### [2026-10-09T15:31:49Z] R0.3 — réception ADR-012 ciblée verte, check complet relancé
+
+- QA Windows corrigé code 0 : 58 passed / 52,57 s, reçu c2c0e10de62a449fa4678b601740aa1a, zéro erreur/échec/skip, union intégration 4. Le vrai subprocess de marqueur hors dossier passe ; pas de compteur ML constant.
+- E2E Windows répété sur cette version code 0 : 9 contrôles / 124,458 s, zéro erreur page ; prix 200, profil après logout 401. Les attentes 120 s sont par navigation/login, pas une limite totale du scénario. Même design, pas de jeton injecté.
+- Check complet Windows relancé, 340 cas minimum et 32 intégrations union exigés. Code figé ; R0.3 IN_PROGRESS. Résultats frontend et couvertures courants, empreintes finales et commit vert toujours requis.
+
+### [2026-10-09T15:22:10Z] R0.3 — pytest complet vert, défaut de compteur JUnit
+
+- Check courant Windows code 1 après 337 passed / 1922,33 s, 5 avertissements, couverture brute 2293/2549 lignes ; frontend non exécuté. Le minimum 32 échoue car seules 31 intégrations par dossier sont visibles, test ML marqué integration situé sous unit. B-R007 cause confirmée ; ce run n'est pas globalement vert.
+- ADR-012/SPECS avant correction : marqueur réel enregistré via user_properties JUnit, compteurs dossier/marqueur/union sans doublon ; minimum 32 conservé. 3 régressions ajoutées dont vrai subprocess hors dossier ; QA minimum 58, check minimum 340 cas. Aucun test retiré ou ancien XML modifié.
+- QA Windows courant relancé, check complet à reprendre après réception ciblée. Préservation read-only codes 0 : DB 482/764 hashes identiques ; Bronze 674 versions / 1377481 octets / hash 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c identique. R0.3 IN_PROGRESS, aucun commit/tag.
+
+### [2026-10-09T14:56:16Z] R0.3 — contrôles courants et collecte complète
+
+- Check final Windows : lint/format code 0 / 163 fichiers, mypy code 0 / 162 fichiers, cohérence documentaire code 0. Pytest collecte 337 cas ; intégration réellement démarrée, résultat/couverture/frontend encore inconnus.
+- Shellcheck Docker des trois runners shell et actionlint Docker : codes 0 sur sources courantes, mounts read-only / réseau none. CI distante non exécutée.
+- HEAD courant confirmé 65541c8, design tiers conservé ; corrections auth et scripts restent non committées jusqu'au check vert. Code figé, aucun tag ni DONE anticipé.
+
+### [2026-10-09T14:45:25Z] R0.3 — E2E réel vert, check global final
+
+- Windows e2e code 0 : 9 contrôles réellement complétés / 90,293 s, zéro erreur page ; prix API 200, profil après logout 401. Formulaire réel, session HttpOnly sans cookie JWT JS secondaire, reload, profil protégé, écran prix, logout et refus UI/API vérifiés. Pas de jeton injecté, aucune collecte live ni essai humain revendiqué.
+- B-R006 RESOLVED_FIXED : UI tierce conservée ; compilation proxy mesurée 47,6 s > ancienne attente 30 s, attentes navigation/login bornées 120 s. E2E recrée seulement api/web QA sans dépendances pour copier les sources courantes. Check arrête seulement ces serveurs QA avant build, après garde d'appartenance ; ni DB/bucket ni services actifs arrêtés.
+- Check Windows final lancé sur runner corrigé ; code fonctionnel figé pendant réception. R0.3 reste IN_PROGRESS jusqu'aux comptes/couvertures/build courants, préservation et commit vert. B-R005 initial non reproduit reste transparent, cause non établie.
+
+### [2026-10-09T12:59:48Z] R0.3 — build négatif vert, chevauchement UI et E2E
+
+- Windows negative-build code 0 : vrai Next build code 1, erreur de compilation détectée dans seule copie jetable. Windows E2E initial code 1 : timeout du sélecteur de bouton, 1 contrôle mesuré, zéro erreur page ; pas de succès navigateur.
+- HEAD a changé pendant réception : commit tiers 65541c8edcdc5d2d3c4efed502cd90270f446d6a (UI, 25 fichiers), préservé sans revert. Contrats de connexion/logout chevauchants ADR-011 rétablis par corrections ciblées, aucun changement de design. Sélecteur E2E vise le submit du formulaire et refuse le cookie JWT JS secondaire.
+- Seul frontend QA redémarré pour charger la copie source courante ; E2E Windows relancé. B-R006 enregistré, R0.3 IN_PROGRESS. Preuves antérieures ne qualifient pas le nouveau HEAD ; check final obligatoire après stabilisation.
+
+### [2026-10-09T12:44:25Z] R0.3 — intégrations répétées vertes, réception spécifique
+
+- Windows qa-isolated test tests/integration/test_wb_rtfp_mdg.py -vv --tb=long : code 0, 1 passed / 40,89 s. Puis tests/integration -vv --tb=long --maxfail=1 : code 0, 31 passed / 337,14 s, 5 avertissements, zéro skip/échec. B-R005 non reproduit ; cause initiale toujours inconnue, pas de diagnostic inventé ni purge des archives.
+- Runner check backend passe désormais --maxfail=1 : trace au premier échec, run rouge/incomplet, aucune suite ni assertion retirée. Un run vert doit toujours exécuter tous les cas requis et satisfaire les contrôles JUnit/couverture. Documentation synchronisée ; réception complète obligatoire sur cette version.
+- Windows qa R0.3 lancé sur manifeste courant (minimum 55 tests / 4 intégration). Restent build négatif, E2E Docker, check global final et préservation ; R0.3 IN_PROGRESS, aucun commit/tag.
+
+### [2026-10-09T12:30:33Z] R0.3 — check rouge, diagnostic ciblé
+
+- Test integration/test_wb_rtfp_mdg.py échoué dans le check courant ; pas de réception verte. Arrêt volontaire du seul conteneur ketrika-qualification-api-run-1a0f4ec0ee58 pendant le long test ML suivant : docker stop code 0, Docker check code 137, runner Windows code 1. Aucun rapport final de cette exécution ne vaut succès ; frontend non exécuté dans ce run.
+- Diagnostic ciblé Windows lancé avec -vv --tb=long sur le cas échoué, sans suppression de test ni objet Bronze. Les archives QA répétées sont une hypothèse, pas encore une cause confirmée.
+- Image navigateur construite code 0 : export 1708,5 s, unpack 320,8 s. E2E toujours non réceptionné. R0.3 IN_PROGRESS ; check complet à reprendre après correction.
+
+### [2026-10-09T12:23:11Z] R0.3 — intégration courante et image navigateur
+
+- Suite courante : 337 tests collectés, premières intégrations exécutées jusqu'au rebuild inclus sans échec signalé ; résultat final encore inconnu. Processus pytest actif (12 minutes écoulées, 6 minutes 29 de CPU) : pas de blocage établi ni interruption.
+- Image navigateur : export des couches terminé en 1708,5 s, manifest/config créés ; décompression encore en cours. Aucun E2E annoncé comme exécuté.
+- Code fonctionnel toujours figé ; R0.3 IN_PROGRESS, aucune donnée active modifiée, aucun commit ni tag créé.
+
+### [2026-10-09T12:12:31Z] R0.3 — types courants verts, tests démarrés
+
+- Check Windows courant : mypy code 0, 162 fichiers ; cohérence documentaire code 0, 74 tâches (2 DONE, 1 IN_PROGRESS, 71 TODO). Lint et format restent verts sur 163 fichiers.
+- Pytest réellement démarré sous Python 3.12.13 / pytest 9.1.1 dans le conteneur QA ; résultat global, couverture et effectifs encore inconnus. Aucun résultat intermédiaire ancien substitué.
+- Image navigateur toujours en export ; pas encore de réception E2E. R0.3 reste IN_PROGRESS, aucun commit ni tag de qualification créé.
+
+### [2026-10-09T12:07:50Z] R0.3 — bootstrap et premiers contrôles courants verts
+
+- Réception Windows corrigée : préparation code 0 (migrations/seed de référence), volumes source/dépendances non-root dédiés ; second conteneur check réellement démarré. B-R004 RESOLVED_FIXED pour sa cause bootstrap, pas DONE de tâche.
+- Backend : lint code 0 et format 163 fichiers vert ; mypy en cours avant les tests. Aucun compteur de tests courant ni couverture présumé.
+- Image navigateur téléchargée (PW/Chromium correspondants), export en cours ; les actions restantes sont check complet, sous-suite QA courante, défaut de build et E2E, préservation et commit vert. Code figé ; R0.3 reste IN_PROGRESS dans les deux tables.
+
+### [2026-10-09T12:00:09Z] R0.3 — réception en préparation, empreintes et permissions
+
+- Après correction B-R004, initialisation Windows passée jusqu'à DB saine, bucket QA versionné et création des volumes backend r03. Check complet encore en création du conteneur ; zéro test de cette réception annoncé comme réussi.
+- Probe Docker read-only sur seuls volumes QA déjà labellisés : code 0, propriétaires 1000:1000 de source/dépendances, pyvenv.cfg présent. Aucun chown ni écriture du probe. API active, historiques et Bronze intacts.
+- Préflights de tâche inconnue R0.99 Windows/Linux : codes 1 attendus. Syntaxe PowerShell et bash, git diff --check : codes 0. Images backend/web QA disponibles, utilisateurs app/node ; image navigateur en export, PW 1.63.0 / Chromium révision 1243 réellement téléchargés.
+- Disque Windows lu : 895 Go total, 38 Go disponibles (96 % utilisé), contre 47 Go au début des builds ; lenteurs observées sans cause exhaustive établie. BL-008 documente l'optimisation de copie initiale, non implémentée pendant le check. Aucun prune/suppression de cache partagé ni volume effectué.
+
+### [2026-10-09T11:42:20Z] R0.3 — correction du bootstrap Windows neuf
+
+- Check Windows code 1 après préflight Compose vert, avant toute migration/test : volume r03 absent déclenche NativeCommandError sous ErrorActionPreference Stop (B-R004). Ce lancement n'est pas vert.
+- Vérification d'appartenance corrigée : liste des noms (code exigé 0), puis inspect seulement si présence exacte. Ressource étrangère toujours refusée, absence normale laissée à Compose ; aucune suppression ni changement de destination.
+- Image backend fraîche construite code 0 ; Linux préflight tâche R0.99 code 1 attendu. Le premier long délai provenait de l'unpack/démarrage, sans erreur d'image ni preuve de tests. Réception complète relancée sur le runner corrigé.
+
+### [2026-10-09T11:26:29Z] Reprise R0.3 après interruption utilisateur
+
+- Constitution, PROGRESS, BLOCKERS et contrats R0.3 relus ; R0.3 IN_PROGRESS revérifiée depuis l'étape 6. Aucun commit R0.3 ni clôture sur les résultats intermédiaires.
+- Image backend QA disponible sha256:493523bfd299513b1287f6bf4a94cf2ae07ac14daa6da5c622735d8eb9e1d5a7, utilisateur app ; build encore en fin d'unpack au lancement. Check Windows complet relancé via socket système WSL, code courant en attente. Code fonctionnel figé pendant la réception.
+- Arguments supplémentaires refusés avant préparation : dev.ps1 qa-isolated prepare production, code 1 attendu. Refus de tâche inconnue en vérification ; suite courante, build négatif et E2E à réceptionner intégralement.
+- Préservation read-only avant réception : DB 482 source_record / 764 prix, digests R0.2 identiques ; Bronze 674 versions / 1377481 octets et sha256 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c identique, commandes codes 0. Aucun reset, restore ni suppression.
+
+### [2026-10-09T11:19:12Z] R0.3 — front complet vert et refus réel du build négatif
+
+- Contrôle front intermédiaire complet code 0 : lint/types, 32 tests / 4 fichiers, build Next vert ; reçu bb7f1bdc-e69e-4f2f-b700-4edc4c57f567. Images web fraîches non-root construites codes 0 ; images de base désormais fixées aux digests réellement résolus.
+- Docker QA web sur nouveaux volumes r03, negative-build : code 0 du vérificateur, code réel Next 1 et erreur de compilation détectée dans copie /tmp. Source hôte et Bronze non modifiés par l'injection.
+- actionlint et shellcheck : codes 0 ; syntaxe PowerShell et bash codes 0 sur runner courant. Ruff ciblé code 0 ; mypy manifeste code 0 / 1 fichier.
+- CLI préflight sans shell Python inline Windows : valide uniquement la sélection, zéro test annoncé. Manifeste renforcé : 55 tests minimum R0.3 avec 4 intégration ; nouveaux tests réels suite vide/skip/échec et timeout/reports. Réception finale de cette version toujours obligatoire.
+- Chromium en préparation, Playwright Python 1.63.0 installé depuis lock, correspondant au lock web. Premier timeout registre résolu à la relance. Build backend encore en export ; check Windows complet et E2E à lancer après disponibilité des images. Preuves intermédiaires docs/evidence/R0.3/README.md ; R0.3 reste IN_PROGRESS.
+
+### [2026-10-09T10:55:36Z] R0.3 — incréments et contrôles ciblés
+
+- ADR-010/011 et SPECS avant code : manifeste borné, rapports mesurés uniques, images verrouillées et proxy same-origin utilisant le contrat API token/session_token existant ; aucun contrat backend ni droit métier élargi.
+- Docker QA `./scripts/dev.sh qa-isolated test tests/unit/test_qa_manifest.py -q` : code 0, 29 tests en 1,93 s. Front : lint/types codes 0, Vitest 32 tests / 4 fichiers en 12,03 s ; build encore en cours, pas de réception globale présumée.
+- Première exécution front code 1 attendu comme incident : pnpm interprète outputFile ; correction par pnpm run test, nouveau reçu/exécution. Probe ruff read-only code 2 corrigée par cache /tmp ; deux défauts lint du script E2E corrigés, vérification restante.
+- Builds initiaux interrompus volontairement (seuls PID 88389/88428, images QA) après longues étapes chown ; copie possédée et installation sous utilisateur non-root remplace le chown récursif. Relances en cours avec lockfiles stricts, aucun service actif arrêté ni volume supprimé.
+- CLI qa R0.3 raccordée, scénarios négatifs en copies jetables et E2E Docker préparés ; ils restent à réceptionner. R0.3 demeure IN_PROGRESS, pas de commit avant check commun et tous ses critères.
+
+### [2026-10-09T10:24:19Z] Démarrage R0.3 — contrôles complets et E2E Docker
+
+1. Documenter ADR/SPECS du manifeste QA et des rapports machine fail-closed avant code.
+2. Utiliser les lockfiles sans repli d'installation ; qualifier les images fraîches et leurs utilisateurs/volumes dédiés.
+3. Créer `qa <task_id>` avec IDs connus, suites non vides, minimums et refus des skips/rapports incomplets ; capacités non implémentées explicitement refusées.
+4. Conserver tous les contrôles backend/front et produire des reçus machine par exécution.
+5. Remplacer l'E2E Node hôte par Playwright dans Docker, navigateur de version identique au lockfile, cible dédiée seulement.
+6. Tester les défauts lint/type/build/intégration sur copies isolées, jamais dans le checkout ni Bronze actif.
+7. Exécuter E2E et check Windows complet, conserver les preuves/limites ; committer vert puis synchroniser les statuts.
 
 ### [2026-10-09T10:15:59Z] Clôture R0.2
 

@@ -82,7 +82,7 @@ services:
     networks: [qualification]
 
   api:
-    image: ketrika-backend:test
+    image: ketrika-backend:qa-r03
     environment: *test-environment
     working_dir: /app
     volumes:
@@ -98,12 +98,11 @@ services:
     command: [sh, /workspace/scripts/qa-backend.sh, serve]
 
   web:
-    image: ketrika-web:dev
+    image: ketrika-web:qa-r03
     working_dir: /app
     environment:
       APP_ENV: test
       KETRIKA_QUALIFICATION: "1"
-      NEXT_PUBLIC_API_BASE_URL: http://api:8000
       API_INTERNAL_URL: http://api:8000
       NEXT_TELEMETRY_DISABLED: "1"
     volumes:
@@ -113,6 +112,21 @@ services:
       - qa_web_next:/app/.next
     networks: [qualification]
     command: [sh, /workspace/scripts/qa-web.sh, dev]
+
+  browser:
+    image: ketrika-backend:qa-browser-r03
+    environment:
+      <<: *test-environment
+      PLAYWRIGHT_BROWSERS_PATH: /opt/ketrika-browsers
+    working_dir: /app
+    init: true
+    shm_size: 1gb
+    volumes:
+      - ./:/workspace:ro
+      - qa_backend_source:/app
+      - qa_browser_venv:/app/.venv
+    networks: [qualification]
+    command: [python, /workspace/scripts/qa-e2e.py]
 
 networks:
   qualification:
@@ -129,17 +143,20 @@ volumes:
     name: ketrika_qualification_bronze
     labels: {ketrika.scope: qualification}
   qa_backend_venv:
-    name: ketrika_qualification_backend_venv
+    name: ketrika_qualification_backend_venv_r03
     labels: {ketrika.scope: qualification}
   qa_backend_source:
-    name: ketrika_qualification_backend_source
+    name: ketrika_qualification_backend_source_r03
     labels: {ketrika.scope: qualification}
   qa_web_source:
-    name: ketrika_qualification_web_source
+    name: ketrika_qualification_web_source_r03
     labels: {ketrika.scope: qualification}
   qa_web_node_modules:
-    name: ketrika_qualification_web_node_modules
+    name: ketrika_qualification_web_node_modules_r03
     labels: {ketrika.scope: qualification}
   qa_web_next:
-    name: ketrika_qualification_web_next
+    name: ketrika_qualification_web_next_r03
+    labels: {ketrika.scope: qualification}
+  qa_browser_venv:
+    name: ketrika_qualification_browser_venv_r03
     labels: {ketrika.scope: qualification}

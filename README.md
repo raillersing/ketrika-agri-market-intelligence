@@ -141,6 +141,10 @@ Le runner `./scripts/dev.ps1` (ou `./scripts/dev.sh`) constitue le point d'entr�
 | `./scripts/dev.ps1 reset` | Refusé : supprimer les volumes violerait l'immutabilité du Bronze. |
 | `./scripts/dev.ps1 check` | Contrôles complets dans le profil isolé : lint, format, types, tests backend/intégration, couverture par package, lint/types/tests/build web. |
 | `./scripts/dev.ps1 test` | Tests backend dans la base et le stockage de qualification dédiés ; aucun effectif historique n'est une preuve actuelle. |
+| `./scripts/dev.ps1 qa-build` | Construit les images QA verrouillées et non-root, y compris le navigateur dédié. |
+| `./scripts/dev.ps1 qa R0.3` | Sous-suite déclarée, minima et JUnit mesurés ; ne clôture pas automatiquement une tâche. |
+| `./scripts/dev.ps1 e2e` | Connexion via formulaire et session HttpOnly sur le web/API QA, Chromium dans Docker. |
+| `./scripts/dev.ps1 qa-isolated negative-build` | Vérifie qu'un défaut introduit uniquement dans une copie jetable fait échouer Next. |
 | `./scripts/dev.ps1 qa-isolated prepare` | Initialise les ressources dédiées sans supprimer de volume ni modifier la stack active. |
 | `./scripts/dev.ps1 rebuild` | Purge les schémas Silver/Gold et rejoue l'intégralité des pipelines depuis le Bronze en **mode 100% hors-ligne**. |
 | `./scripts/dev.ps1 backfill <source_id\|all>` | Lance les backfills d'ingestion Dagster pour une source ou pour toutes. |
@@ -157,7 +161,7 @@ Le plan courant est `docs/plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md` ; les stat
 
 `check` utilise exclusivement `docker-compose.qualification.yml` et les entrées publiques `scripts/qualification.env`, jamais `.env`. Le projet `ketrika-qualification` a sa propre base `ketrika_qualification`, son bucket `ketrika-qa-bronze`, ses volumes nommés et un réseau interne sans port publié. Les sources hôte sont montées en lecture seule ; backend et front sont copiés dans leurs volumes dédiés pour éviter les accès répétés au système de fichiers Windows pendant les contrôles. Le backend ne copie ni `.env` ni dépendances hôte. Les threads numériques de test sont bornés à 1, les caches restent dans les volumes dédiés ; aucun modèle/test n'est retiré. Les identifiants de ce profil sont des fixtures publiques et ne doivent pas être utilisés en production.
 
-Les gardes refusent les destinations actives, les ressources Docker étrangères, les seeds synthétiques sur une session non dédiée et les skips sélectionnés dans la suite de qualification. Aucun `down -v`, reset ou nettoyage du Bronze n'est nécessaire. Les tests hors réseau qualifient le logiciel, pas une source live, un modèle économique ni un usage humain. `qa` et `qualify` restent refusés tant que leur moteur n'est pas implémenté et qualifié.
+Les gardes refusent les destinations actives, les ressources Docker étrangères, les seeds synthétiques sur une session non dédiée et les skips sélectionnés dans la suite de qualification. Aucun `down -v`, reset ou nettoyage du Bronze n'est nécessaire. Les tests hors réseau qualifient le logiciel, pas une source live, un modèle économique ni un usage humain. `qa` utilise le manifeste R0.3 ; une tâche absente/non implémentée est refusée. `qualify` reste refusé avant livraison R0.7. La réception complète R0.3 est suivie dans PROGRESS ; la présence de commandes dans ce tableau n'est pas une preuve de succès.
 
 Voir [le runbook de qualification](docs/runbooks/qualification.md) pour séparer tests, historique contaminé et archives authentiques. L'inventaire R0.2 est en lecture seule ; aucune purge n'est autorisée ou exécutée.
 

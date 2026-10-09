@@ -32,7 +32,8 @@ case "${1:-check}" in
     ruff format --check src tests
     mypy src tests
     python -m ketrika.core.execution_plan --root /workspace
-    run_pytest -m 'not network' --cov=ketrika.core --cov=ketrika.extraction --cov=ketrika.normalize --cov-report=term-missing --cov-report=json:/app/.venv/qa-coverage.json --junitxml=/app/.venv/qa-tests.xml
+    run_pytest -m 'not network' --maxfail=1 --cov=ketrika.core --cov=ketrika.extraction --cov=ketrika.normalize --cov-report=term-missing --cov-report=json:/app/.venv/qa-coverage.json --junitxml=/app/.venv/qa-tests.xml
+    python -c 'from pathlib import Path; from ketrika.core.qa_manifest import Suite, read_junit; import json; print(json.dumps(read_junit(Path("/app/.venv/qa-tests.xml"), Suite((), 340, 32))))'
     python -m ketrika.core.qualification coverage /app/.venv/qa-coverage.json
     ;;
   test)
@@ -40,5 +41,9 @@ case "${1:-check}" in
     run_pytest -m 'not network' "$@"
     ;;
   governance) python -m ketrika.core.execution_plan --root /workspace ;;
+  qa)
+    [ "$#" -eq 2 ] || { echo "QA requires exactly one task ID" >&2; exit 1; }
+    python -m ketrika.core.qa_manifest "$2"
+    ;;
   *) echo "Unknown qualification backend command" >&2; exit 1 ;;
 esac

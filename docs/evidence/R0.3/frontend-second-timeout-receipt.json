@@ -1,0 +1,48 @@
+{
+  "execution_id": "493ff72f-4022-470a-a3aa-39ec1003a219",
+  "scope": "frontend software only",
+  "passed": false,
+  "steps": [
+    {
+      "command": [
+        "pnpm",
+        "lint"
+      ],
+      "exit_code": 0,
+      "duration_ms": 65006
+    },
+    {
+      "command": [
+        "pnpm",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "duration_ms": 82157
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "test",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=/app/node_modules/.qa-results/493ff72f-4022-470a-a3aa-39ec1003a219/vitest.json"
+      ],
+      "exit_code": 0,
+      "duration_ms": 51957
+    },
+    {
+      "command": [
+        "pnpm",
+        "build"
+      ],
+      "exit_code": 0,
+      "duration_ms": 901509
+    }
+  ],
+  "counts": {
+    "tests": 32,
+    "suites": 4
+  },
+  "reason": "Error: build did not complete successfully"
+}

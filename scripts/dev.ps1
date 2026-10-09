@@ -25,8 +25,9 @@ function Invoke-QaDocker {
 
 function Test-QaResourceOwnership {
     param([string]$Kind, [string]$Name)
-    & docker $Kind inspect $Name *> $null
-    if ($LASTEXITCODE -eq 0) {
+    $resourceNames = @(& docker $Kind ls --format '{{.Name}}')
+    if ($LASTEXITCODE -ne 0) { throw "Cannot list qualification resources" }
+    if ($resourceNames -contains $Name) {
         $labelJson = & docker $Kind inspect --format '{{json .Labels}}' $Name
         if ($LASTEXITCODE -ne 0) { throw "Cannot inspect qualification labels" }
         $labels = $labelJson | ConvertFrom-Json
@@ -38,15 +39,25 @@ function Test-QaResourceOwnership {
 
 function Invoke-QaIsolated {
     param([string]$Action, [string[]]$RemainingArgs = @())
-    if ($Action -notin @("check", "test", "governance", "prepare")) {
+    if ($Action -notin @("check", "test", "governance", "prepare", "qa", "e2e", "negative-build")) {
         throw "Unsupported isolated command; protected targets are never implicit"
     }
-    Invoke-QaDocker -DockerArgs @("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:test", "python", "-m", "ketrika.core.qualification", "compose", "/workspace/docker-compose.qualification.yml")
+    if ($Action -notin @("test", "qa") -and $RemainingArgs.Count -gt 0) {
+        throw "Unexpected isolated command arguments"
+    }
+    if ($Action -eq "qa") {
+        if ($RemainingArgs.Count -ne 1) { throw "QA requires exactly one configured task ID" }
+        Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-r03", "python", "-m", "ketrika.core.qa_manifest", $RemainingArgs[0], "--validate-only"))
+    }
+    Invoke-QaDocker -DockerArgs @("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-r03", "python", "-m", "ketrika.core.qualification", "compose", "/workspace/docker-compose.qualification.yml")
     Test-QaResourceOwnership -Kind "network" -Name "ketrika_qualification_network"
-    foreach ($suffix in @("pgdata", "bronze", "backend_venv", "backend_source", "web_source", "web_node_modules", "web_next")) {
+    foreach ($suffix in @("pgdata", "bronze", "backend_venv_r03", "backend_source_r03", "web_source_r03", "web_node_modules_r03", "web_next_r03", "browser_venv_r03")) {
         Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_$suffix"
     }
     Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("config", "--quiet"))
+    if ($Action -eq "check") {
+        Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("stop", "api", "web"))
+    }
     Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("up", "-d", "--wait", "--wait-timeout", "120", "db", "minio", "mailpit"))
     Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "minio-init"))
     Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "prepare"))
@@ -57,6 +68,12 @@ function Invoke-QaIsolated {
         }
         "test" { Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "test") + $RemainingArgs) }
         "governance" { Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "governance")) }
+        "qa" { Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "qa") + $RemainingArgs) }
+        "negative-build" { Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "web", "sh", "/workspace/scripts/qa-web.sh", "negative-build")) }
+        "e2e" {
+            Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("up", "-d", "--no-deps", "--force-recreate", "api", "web"))
+            Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "browser"))
+        }
         "prepare" { Write-Host "Dedicated qualification environment ready; no live source/model qualified" }
     }
 }
@@ -85,6 +102,8 @@ function Show-Help {
     Write-Host "  logs <service>     - Follow Docker logs for a specific service"
     Write-Host "  validate-registry  - Validate registry/sources.yaml against Pydantic schema"
     Write-Host "  qa-isolated <cmd>  - Dedicated profile: check, test, governance, prepare"
+    Write-Host "  qa-build           - Build locked backend, web and browser QA images"
+    Write-Host "  qa <task_id>       - Run a declared measured software subset"
 }
 
 
@@ -149,9 +168,15 @@ switch ($Command) {
         Invoke-QaIsolated -Action $action -RemainingArgs $remaining
         exit 0
     }
+    "qa-build" {
+        Invoke-QaDocker -DockerArgs @("build", "--target", "base", "-t", "ketrika-backend:qa-r03", (Join-Path $RepoRoot "backend"))
+        Invoke-QaDocker -DockerArgs @("build", "-t", "ketrika-web:qa-r03", (Join-Path $RepoRoot "web"))
+        Invoke-QaDocker -DockerArgs @("build", "--target", "backend-browser", "-t", "ketrika-backend:qa-browser-r03", (Join-Path $RepoRoot "backend"))
+        exit 0
+    }
     "qa" {
-        Write-Error "Command not yet qualified; no implicit success. See the R0 task status."
-        exit 1
+        Invoke-QaIsolated -Action "qa" -RemainingArgs $ArgsList
+        exit 0
     }
     "qualify" {
         Write-Error "Command not yet qualified; no implicit success. See the R0 task status."
@@ -174,14 +199,8 @@ switch ($Command) {
         exit $LASTEXITCODE
     }
     "e2e" {
-        Write-Host "Running web E2E tests..." -ForegroundColor Cyan
-        $e2eScript = Join-Path $PSScriptRoot "run_e2e.mjs"
-        if (Test-Path $e2eScript) {
-            node $e2eScript
-        } else {
-            docker compose exec -T web pnpm e2e
-        }
-        exit $LASTEXITCODE
+        Invoke-QaIsolated -Action "e2e"
+        exit 0
     }
     "bulletin" {
         Write-Host "Generating bulletin draft..." -ForegroundColor Cyan

@@ -132,6 +132,39 @@ Image multi-stage `python:3.12-slim`. Dépendances système : `libpq`, `gdal` (s
 
 ### 3.3 `scripts/dev.ps1` : commandes obligatoires
 
+ADR-011 / correction E2E R0.3 : les requêtes navigateur utilisent le proxy web
+same-origin `/api/v1/*`, backend interne uniquement (`API_INTERNAL_URL` puis
+`INTERNAL_API_URL`, défaut `http://api:8000`). Cookies `session_token` HttpOnly
+de l'API transmis, aucun JWT créé/écrit par JS ; login vérifie le champ `token`
+du contrat existant. Logout attend l'API. Le proxy n'est pas une nouvelle API
+métier et ne modifie aucun endpoint/backend ni règle de rôle.
+
+ADR-012 : le compteur integration_tests est l'union des dossiers intégration
+et des propriétés JUnit ketrika.integration=true enregistrées depuis le vrai
+marqueur pytest ; integration_by_layout et integration_by_marker restent
+visibles séparément. Pas de double compte ni de nom de fonction supposé ;
+minimum global 32 conservé, aucun XML ancien réécrit.
+
+R0.3 / ADR-013 : commandes frontend bornées à 900 s, sauf build à 1800 s
+sur l'environnement partagé. Les reçus incluent error_code, signal, timed_out ;
+une erreur spawn est toujours un échec même si status vaut 0. Aucun contrôle
+ni seuil retiré ; CI bornée à 150 minutes, qualification distante distincte.
+
+R0.3 / ADR-010 : `scripts/qa-manifest.json` version 1 déclare les suites QA
+livrées avec ID exact, fichiers backend sous `tests/`, minimum de tests. Une
+tâche non déclarée est indisponible, pas réussie. `qa <task_id>` refuse chemins
+absolus/traversée/flags arbitraires et résultats vides, échoués ou skippés ; JSON
+et JUnit consignent les effectifs réels. Rapports par exécution dans les volumes
+QA de dépendances/rapports ; aucun succès ancien ne vaut pour le run courant.
+Les images utilisent les lockfiles sans repli ; le navigateur est installé dans
+le seul stage `backend-browser` et exécuté non-root sur `http://web:3000` /
+`http://api:8000` du réseau QA. E2E entièrement Docker, jamais Node/Chrome hôte.
+La version de Playwright vient du lockfile, avec navigateur correspondant.
+`qa-build` construit uniquement les trois images dédiées ; `qa-isolated
+negative-build` exige un build réellement non nul sur une copie jetable.
+Réception locale sur versions applicatives verrouillées ; sécurité/déploiement
+et mises à niveau majeures nécessitent leur réception/ADR spécifiques.
+
 R0.2 / ADR-009 : le runner historique `ketrika.demo` est retiré de l'exécution de réception ; la commande échoue explicitement sans connexion ni mutation jusqu'au remplacement mesuré R0.7. Aucun import `tests` dans le code applicatif ; seed synthétique exclusivement sur le profil test dédié, contrôlant la session effectivement liée avant tout SQL. Les archives authentiques ne sont pas injectées dans la base de tests ; leur réhydratation s'effectue sur une destination distincte autorisée (runbook qualification), jamais via restore/rebuild actif.
 
 Pour le programme R, `check`/`test` utilisent exclusivement le profil Compose de qualification dédié et contrôlé, sans reprendre `.env` actif. Initialisation non destructive ; Python/Node dans Docker ; réseau identifié par la configuration du projet et pas par `aiagent_default`. Intégration obligatoire, contrôles front lint/types/tests/build ; suite requise vide/skippée ou dépendance absente = échec, pas fallback vert. Les volumes de dépendances sont nommés. `qa-isolated <commande>` choisit une cible dédiée et refuse les cibles protégées ; `qa <task_id>` contrôle un manifeste de tests ; `qualify <phase|all>` publie des mesures. Les deux dernières commandes sont livrées dans les tâches R correspondantes, et échouent explicitement avant leur disponibilité.

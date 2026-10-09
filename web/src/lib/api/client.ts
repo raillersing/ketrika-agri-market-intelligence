@@ -1,14 +1,13 @@
 import createClient from "openapi-fetch";
 import type { paths } from "./schema";
 
-// Determine base URL: inside Docker SSR uses internal API port 8000, browser uses host port 8090
+// Browser credentials stay on the web origin; SSR uses the internal API.
 const getBaseUrl = (): string => {
   if (typeof window !== "undefined") {
-    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090";
+    return "/api";
   }
   return (
-    process.env.INTERNAL_API_URL ||
-    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.API_INTERNAL_URL || process.env.INTERNAL_API_URL ||
     "http://api:8000"
   );
 };

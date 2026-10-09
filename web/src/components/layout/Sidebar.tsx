@@ -66,10 +66,12 @@ export function Sidebar() {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/v1/auth/logout", { method: "POST", credentials: "include" });
-    } catch {}
-    document.cookie = "session_token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie = "ketrika_token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      const response = await fetch("/api/v1/auth/logout", { method: "POST", credentials: "include" });
+      if (!response.ok) throw new Error("Déconnexion refusée");
+    } catch {
+      window.alert("La déconnexion a échoué. Votre session reste ouverte.");
+      return;
+    }
     window.location.href = "/login";
   };
 

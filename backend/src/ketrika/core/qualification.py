@@ -95,12 +95,19 @@ def validate_compose(document: str) -> None:
         "mailpit",
         "api",
         "web",
+        "browser",
     }:
         raise QualificationSafetyError("Unexpected qualification services")
     for name, service in services.items():
         if not isinstance(service, dict):
             raise QualificationSafetyError("Invalid qualification service")
-        if any(service.get(key) for key in ("ports", "env_file", "network_mode", "privileged")):
+        if (
+            any(
+                service.get(key)
+                for key in ("ports", "env_file", "network_mode", "privileged", "cap_add")
+            )
+            or service.get("ipc") == "host"
+        ):
             raise QualificationSafetyError(f"Unsafe network/environment privileges: {name}")
         if service.get("networks") != ["qualification"]:
             raise QualificationSafetyError(f"Non-isolated service network: {name}")

@@ -9,8 +9,8 @@
 refusée, jamais supprimée. Aucun port hôte ni `.env` actif n'est utilisé.
 L'équivalent Linux est `bash scripts/dev.sh qa-isolated prepare`.
 
-`check`, `test` et `governance` sont les seules autres actions actuellement
-acceptées. Un argument `production`, `restore`, `reset`, un bucket/base étranger
+`check`, `test`, `governance`, `qa`, `e2e` et `negative-build` sont les autres actions
+implémentées en R0.3 (réception finale requise dans PROGRESS). Un argument `production`, `restore`, `reset`, un bucket/base étranger
 ou un profil incomplet échoue avant écriture. Les variables publiques du profil
 ne sont pas des secrets d'exploitation ; ne jamais y substituer des clés réelles.
 
@@ -19,6 +19,47 @@ applicatif. Leur seed valide le mode test, toutes les destinations et l'URL de l
 session réellement liée avant le premier SQL. Un flag isolé ne constitue pas
 une autorisation. Aucun jeu réel n'est mélangé au dataset test. `demo` refuse
 explicitement la certification historique ; le moteur mesuré relève de R0.7.
+
+## Runners et preuves logicielles (R0.3)
+
+1. `./scripts/dev.ps1 qa-build` construit les trois images QA séparées de la
+   stack active. Les lockfiles sont obligatoires : uv sync --locked et pnpm
+   install --frozen-lockfile. Le navigateur utilise la version Playwright du
+   lock Python ; il n'est pas ajouté au runtime applicatif par défaut.
+2. `./scripts/dev.ps1 check` exécute lint/format/types, tous les tests backend
+   hors réseau et les seuils de couverture, puis lint/types/tests/build front.
+   Les dépendances, sources et builds vivent dans les volumes nommés suffixés
+   r03 ; les anciens volumes de qualification sont conservés, pas recyclés.
+   Le backend s'arrête au premier échec pour en conserver immédiatement la trace.
+   Ce run est rouge et incomplet ; seules toutes les suites requises exécutées
+   sans échec permettent le succès, jamais un sous-ensemble interrompu.
+   Avant ce contrôle, seuls les serveurs api/web du projet QA sont arrêtés
+   pour éviter les écritures concurrentes dans les volumes source/build.
+   ADR-013 : chaque commande frontend est bornée à 15 minutes, build à
+   30 minutes sur hôte partagé. Error/timeout refuse le succès même avec
+   un status natif nul ; error_code/signal/timed_out sont conservés au reçu.
+3. `./scripts/dev.ps1 qa R0.3` sélectionne les fichiers explicitement déclarés
+   dans scripts/qa-manifest.json. ID inconnu/non implémenté, fichier absent,
+   suite vide, résultat manquant, erreur/skip obligatoire ou minimum non atteint
+   échoue. Un succès de sous-suite ne clôture pas la tâche à lui seul.
+4. `./scripts/dev.ps1 qa-isolated negative-build` provoque une erreur de syntaxe
+   dans une copie jetable et exige le refus du vrai build Next. Les erreurs
+   lint/types/intégration sont injectées dans tmp_path par la sous-suite R0.3.
+5. `./scripts/dev.ps1 e2e` lance Chromium dans Docker, aucun Node/Chrome hôte.
+   Le scénario utilise le formulaire, jamais un cookie injecté ; il vérifie
+   session HttpOnly, reload, API same-origin et déconnexion/refus d'accès.
+   Ces deux serveurs QA sont recréés sans leurs dépendances pour recharger les
+   sources courantes ; aucune stack active n'est redémarrée. La navigation et
+   la connexion ont une attente bornée de 120 s pour la compilation à froid
+   du frontend de développement, sans changer les assertions de session.
+
+Chaque sous-suite et front crée un répertoire unique avec reçu JSON. Rapports
+backend : .venv/qa-results ; front : node_modules/.qa-results ; navigateur :
+.venv/qa-browser-results avec capture et trace. Ils restent dans les volumes QA.
+Le check backend expose aussi JUnit et coverage JSON. La CI utilise ces mêmes
+commandes ; un fichier CI préparé n'est pas une exécution distante certifiée.
+Ces preuves concernent le logiciel, pas les collectes live, les modèles validés
+ni un essai humain. Les équivalents Linux utilisent bash scripts/dev.sh.
 
 ## Réhydratation d'archives authentiques autorisées
 

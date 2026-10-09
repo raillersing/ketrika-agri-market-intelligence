@@ -16,6 +16,9 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
             validate_environment(os.environ)
         except QualificationSafetyError as exc:
             raise pytest.UsageError(f"Integration suite refused before execution: {exc}") from exc
+    for item in items:
+        if item.get_closest_marker("integration") is not None:
+            item.user_properties.append(("ketrika.integration", "true"))
 
 
 def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:

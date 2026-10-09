@@ -11,16 +11,14 @@ if [ "${KETRIKA_QUALIFICATION:-}" != "1" ]; then
   exit 1
 fi
 # Only the named source volume is written; host source is read-only.
-tar -C /workspace/web --exclude=node_modules --exclude=.next '--exclude=*.tsbuildinfo' -cf /tmp/ketrika-web-source.tar .
+tar -C /workspace/web --exclude=node_modules --exclude=.next '--exclude=*.tsbuildinfo' '--exclude=.env*' -cf /tmp/ketrika-web-source.tar .
 tar -C /app -xf /tmp/ketrika-web-source.tar
 cd /app
 case "${1:-check}" in
   check)
-    pnpm lint
-    pnpm typecheck
-    pnpm test
-    pnpm build
+    node scripts/qa-check.mjs
     ;;
   dev) exec pnpm dev ;;
+  negative-build) node scripts/qa-negative-build.mjs ;;
   *) echo "Unknown qualification web command" >&2; exit 1 ;;
 esac
