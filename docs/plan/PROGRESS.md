@@ -61,7 +61,7 @@
 
 | ID | Priorité | Statut | Début UTC | Fin UTC | Commit | Preuve | Incident |
 |---|---|---|---|---|---|---|
-| R0.1 | MUST | IN_PROGRESS | 2026-10-09T06:28:03Z | — | — | docs/evidence/R0.1/README.md : check Windows complet relancé | B-R001 / B-R002 |
+| R0.1 | MUST | DONE | 2026-10-09T06:28:03Z | 2026-10-09T09:16:32Z | b684528f223164e62fee1c85ef847f9f70c98e2c | docs/evidence/R0.1/README.md : check Windows code 0, 275 backend / 15 web | B-R001 / B-R002 résolus |
 | R0.2 | MUST | TODO | — | — | — | — | — |
 | R0.3 | MUST | TODO | — | — | — | — | — |
 | R0.4 | MUST | TODO | — | — | — | — | — |
@@ -135,6 +135,11 @@
 | R6.9 | MUST | TODO | — | — | — | — | — |
 | R6.10 | MUST | TODO | — | — | — | — | — |
 | R6.11 | MUST | TODO | — | — | — | — | — |
+
+### [2026-10-09T09:16:32Z] Clôture R0.1
+
+- Commit fonctionnel vert : b684528f223164e62fee1c85ef847f9f70c98e2c. Réception complète consignée ci-dessous et dans docs/evidence/R0.1 ; statut DONE synchronisé avec le plan R. Aucun tag de phase créé : R0.9 reste obligatoire.
+- Prochaine tâche éligible : R0.2 ; le bootstrap de son isolation ne constitue pas sa réception complète.
 
 ### [2026-10-09T09:12:32Z] R0.1 — réception verte avant commit
 

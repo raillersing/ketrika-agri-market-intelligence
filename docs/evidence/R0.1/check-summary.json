@@ -1,7 +1,7 @@
 {
   "task": "R0.1",
   "qualification_scope": "isolated local software checks, not market-data certification",
-  "functional_commit": null,
+  "functional_commit": "b684528f223164e62fee1c85ef847f9f70c98e2c",
   "overall_check_exit": 0,
   "environment": {
     "project": "ketrika-qualification",
