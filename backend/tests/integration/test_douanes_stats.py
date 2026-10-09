@@ -7,6 +7,7 @@ from datetime import UTC, datetime
 import pytest
 from sqlalchemy import create_engine, select, text
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import Select
 
 from ketrika.connectors.base import DiscoveredItem, RawArtifact, RunContext
 from ketrika.connectors.douanes_stats import DouanesStatsConnector
@@ -20,6 +21,7 @@ from ketrika.core.db import check_db_connection
 from ketrika.core.models.db import SourceRecord, TradeFlow
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.settings import get_settings
+from ketrika.pipelines import rebuild as rebuild_module
 from ketrika.pipelines.rebuild import rebuild_database, wipe_silver_gold_tables
 
 
@@ -40,7 +42,9 @@ def db_session():
 
 
 @pytest.mark.integration
-def test_douanes_stats_backfill_dq_rebuild_and_revision_cycle(db_session: Session):
+def test_douanes_stats_backfill_dq_rebuild_and_revision_cycle(
+    db_session: Session, monkeypatch: pytest.MonkeyPatch
+):
     """Verify CC3-CC6: backfill 36 flows, idempotence, DQ checks, supersession revision test, and offline rebuild."""
     # Ensure fresh Silver/Gold state
     wipe_silver_gold_tables(db_session)
@@ -209,9 +213,33 @@ def test_douanes_stats_backfill_dq_rebuild_and_revision_cycle(db_session: Sessio
     assert float(active_row[0]) == 26500000.0
     assert float(active_row[1]) == 79500000000.0
 
-    # 5. CC6: Offline Rebuild test
+    # 5. Bounded offline replay of this scenario, NOT a full QA-store rebuild.
+    # ADR-015: retain historical Bronze/metadata, including older CRLF variants.
+    current_ids = {
+        active_flows[0].source_record_id,
+        src_rec_v1.source_record_id,
+        src_rec_v2.source_record_id,
+    }
+    assert len(current_ids) == 3
+    source_ids_before = set(
+        db_session.execute(select(SourceRecord.source_record_id)).scalars().all()
+    )
+
+    def select_current_corpus(entity: type[SourceRecord]) -> Select[SourceRecord]:
+        assert entity is SourceRecord
+        return select(entity).where(entity.source_record_id.in_(current_ids))
+
+    # Temporary SQL projection only in this test; production rebuild is unchanged.
+    monkeypatch.setattr(rebuild_module, "select", select_current_corpus)
     rebuild_stats = rebuild_database(session=db_session, offline=True, source_id="douanes_stats")
     db_session.commit()
+    assert rebuild_stats["source_records_total"] == 3
+    assert rebuild_stats["source_records_replayed"] == 3
+    assert rebuild_stats["source_records_skipped"] == 0
+    assert (
+        set(db_session.execute(select(SourceRecord.source_record_id)).scalars().all())
+        == source_ids_before
+    )
 
     # Total replayed: 36 (initial) + 4 (v1) + 4 (v2) = 44 records processed
     # Inserted = 36 + 4 = 40, superseded = 1, skipped = 3

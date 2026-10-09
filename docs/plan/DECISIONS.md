@@ -2,6 +2,27 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-015 : R0.4 — périmètre explicite du test de rejeu douanier
+
+- **Date :** 2026-10-09 ; accepté avant correction.
+- **Contexte :** B-R011, check Windows rouge : 18 passed / 1 failed, supersessions 3 au lieu de 1. Lecture QA seule confirme trois anciennes versions CSV CRLF, leurs trois versions LF et un pseudo-artefact hérité d'un autre test. Bronze est conservé ; le test rejoue à tort tout l'historique QA pour une assertion portant sur ses trois fixtures.
+- **Décision :** dans ce seul test d'intégration, projeter explicitement la sélection SQL SourceRecord du module rebuild sur les trois UUID réellement ingérés par le scénario courant. Substitution temporaire pytest monkeypatch, déclarée dans le test ; aucune sélection implicite dans le runtime. Exiger 3 objets sélectionnés/rejoués, zéro ignoré, 40 inserts, 1 supersession, 3 skips d'observations et mêmes valeurs finales ; conserver toutes les lignes source_record avant/après et aucun objet Bronze supprimé.
+- **Alternatives :** purger Bronze/metadata, augmenter arbitrairement le résultat attendu à 3, revenir aux fins de ligne Windows incompatibles avec Git, ajouter un filtre silencieux au rebuild de production (rejetés).
+- **Conséquences :** ce test prouve le scénario borné et non un rebuild intégral ; R0.8 doit rejouer son corpus complet indépendant et ne peut reprendre cette projection pour masquer une anomalie. La commande rebuild et ses contrats restent inchangés. Réception ciblée puis check Windows complet renouvelés obligatoires ; incident rouge conservé.
+
+## ADR-014 : R0.4 — authenticité explicite et corpus indépendant
+
+- **Date :** 2026-10-09 ; accepté avant implémentation.
+- **Contexte :** des générateurs produisent les PDF ODR, HTML MinCC et CSV douaniers ainsi que leurs attendus. Les autres anciennes fixtures ne possèdent pas toutes de preuve d'acquisition ; une fiche déclarative ne prouve ni leurs octets ni leurs droits. Le catalogue HDX a répondu HTTP 403 via le lecteur web le 2026-10-09 : arrêt de cette acquisition, cause côté serveur ou transport non établie.
+- **Décision :** étendre C1 et SPECS §11.4 avec `authentic|synthetic|unverified`. Inventaire versionné JSON de tous les fichiers fixtures/golden/e2e et générateurs, SHA-256 recalculé, taille, type, origine, droits, annotateur et revue humaine. `unverified` n'affirme pas une fabrication ; seuls les documents authentiques avec acquisition et droits prouvés peuvent entrer dans le corpus réel. Les tests historiques restent des régressions logicielles. Les attendus authentiques sont transcrits indépendamment avec cellules ou pages, périmètre explicite, sans prétendre mesurer le rappel sur un extrait.
+- **Conservation :** les nouvelles réponses officielles brutes sous `tests/fixtures/authentic/` sont exclues de la normalisation Git des fins de ligne (`-text`) afin que leur SHA corresponde aux octets reçus ; aucune ancienne fixture, aucun Bronze ni schéma DB ne sont réécrits. Les manifestes et scripts restent LF.
+- **Repli :** aucun nouvel accès HDX après 403, aucun proxy ni Wayback de contournement. État d'acquisition local `disabled`, incident porté à R1.3 ; d'autres archives publiques officielles indépendantes peuvent avancer. Cela ne prétend pas que HDX est universellement indisponible, et ne supprime aucune donnée active.
+- **Alternatives :** qualifier les documents générés comme officiels, attribuer une licence inconnue, marquer toute origine inconnue synthetic ou réessayer le 403 (rejetés).
+- **Conséquences :** aucune fixture n'établit une collecte continue, une performance de marché ou une revue humaine. Les archives API peuvent constituer un corpus authentique sans PDF ; toute future annotation PDF exige lecture texte et contrôle visuel. Aucun droit de diffusion supposé à partir de la seule accessibilité HTTP.
+- **Précision avant acquisition indépendante :** NASA POWER robots refuse `/api/` (B-R010), donc aucun appel de données. Une réponse publique WDI Madagascar peut servir de corpus JSON macroéconomique pour R0.4, sans créer un connecteur ni registre DB avant R2.1/R2.2. Robots HTTP 404 explicitement consigné = absence de règles (RFC 9309 §2.3.1.3) ; 401/403/challenge restent interdits et 5xx/erreur réseau refusent l'acquisition. Les droits WDI doivent être prouvés séparément, pas déduits du statut 200.
+- **Fins de ligne des tests historiques :** quatre CSV non authentifiés sont physiquement CRLF/mixed malgré les blobs Git LF et `.gitattributes` LF. Archiver leur inventaire initial puis appliquer seulement la mise en conformité LF, sans changer de cellule ; recalculer les hashes après formatage. Cela ne touche aucun document authentique, PDF/XLSX, Bronze ou donnée active. Ne pas présenter ces CSV normalisés comme des originaux officiels.
+- **Registre :** HDX et NASA POWER sont marqués `disabled` dans le registre versionné ; leur acquisition de corpus est arrêtée et une requalification R1 est requise pour réactivation. Aucun seed ni UPDATE n'est lancé sur la DB active ; les parsers offline restent testables. Cela ne prouve pas un arrêt du runtime historique : la factory Dagster ignore actuellement status, correction/garde obligatoire R0.6/R1.2 (BL-010). Aucun accès interdit n'a été lancé par l'agent après les refus.
+
 ## ADR-013 : R0.3 — délai de build borné et timeout machine explicite
 
 - **Date :** 2026-10-09 ; accepté avant implémentation.

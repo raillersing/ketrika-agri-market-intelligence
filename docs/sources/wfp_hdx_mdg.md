@@ -1,5 +1,11 @@
 # wfp_hdx_mdg : WFP Food Prices – Madagascar (HDX)
 
+> Requalification R0.4, 2026-10-09 : le catalogue a répondu 403 via le lecteur web (B-R009),
+> acquisition arrêtée sans contournement. Les anciennes fixtures/attendus sont `unverified`
+> dans corpus-manifest.json : les affirmations de vérification ci-dessous sont historiques,
+> pas des preuves actuelles d'acquisition ni de performance sur prix réels. H5 non réalisé.
+> R1.3 doit établir disponibilité, droits et corpus authentique avant qualification live.
+
 - **Propriétaire / licence / attribution :** World Food Programme (WFP) / OCHA HDX. Licence : CC BY-IGO. Attribution obligatoire : "World Food Programme (WFP)".
 - **URL vérifiées (date, code HTTP) :**
   - https://data.humdata.org/dataset/wfp-food-prices-for-madagascar (2026-10-06, HTTP 200).

@@ -64,7 +64,7 @@
 | R0.1 | MUST | DONE | 2026-10-09T06:28:03Z | 2026-10-09T09:16:32Z | b684528f223164e62fee1c85ef847f9f70c98e2c | docs/evidence/R0.1/README.md : check Windows code 0, 275 backend / 15 web | B-R001 / B-R002 résolus |
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
-| R0.4 | MUST | TODO | — | — | — | — | — |
+| R0.4 | MUST | IN_PROGRESS | 2026-10-09T19:33:57Z | — | — | Check Windows renouvelé 39003 code 0, 411/35 verts ; QA courante 41954, préservation/secrets et commit à conclure | B-R009/010 replis ; B-R011/012/013 réception renouvelée reçue |
 | R0.5 | MUST | TODO | — | — | — | — | — |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
@@ -135,6 +135,84 @@
 | R6.9 | MUST | TODO | — | — | — | — | — |
 | R6.10 | MUST | TODO | — | — | — | — | — |
 | R6.11 | MUST | TODO | — | — | — | — | — |
+
+### [2026-10-09T19:33:57Z] Démarrage R0.4 — authenticité des fixtures
+
+1. Inventorier tous les fichiers fixtures/golden/e2e et leurs générateurs, origine, taille, SHA-256 et droits.
+2. Contractualiser tout état d'origine inconnue et manifeste avec ADR/SPECS avant code ; ne pas inventer une origine ou licence.
+3. Séparer les jeux synthétiques/non authentifiés de la qualification réelle ; conserver les régressions existantes.
+4. Acquérir uniquement des archives officielles publiques accessibles, avec politique HTTP et preuves C1, sans PII ni contournement.
+5. Transcrire un golden indépendamment du parseur, preuve document/page/cellule ; PDFs contrôlés visuellement, human_reviewed=false.
+6. Tester inventaire complet, hash recalculé, tailles 5/50 Mo, exclusions et refus de preuves manquantes/altérées ; manifester QA R0.4.
+7. Exécuter les critères puis check Windows intégral isolé ; préserver l'actif, documenter limites et committer seulement vert.
+8. Synchroniser PROGRESS/plan après chaque réalisation ; indisponibilité source portée à R1, pas assimilée à une collecte live.
+
+### [2026-10-09T19:59:11Z] R0.4 — corpus officiel borné, contrôles ciblés et gel pour réception
+
+- ADR-014/SPECS/C1 : authentic/synthetic/unverified, annotation JSON indépendante, droits et hashes ; pas d'extension DB/endpoint ni nouvelle dépendance.
+- Inventaire courant : 65 fichiers, 507483 octets ; 44 synthetic, 19 unverified, 2 authentic (un document et son annotation). Initial 63 fichiers conservé ; quatre CSV de test mis en LF conformément aux blobs Git existants, aucune cellule/Bronze modifiée.
+- Acquisition Docker WDI code 0 : 4 requêtes dans l'acquisition, HTTP 200, 510 octets SHA d7a21e6b8fe97bd21b2be7819df1dd8f5aab311e41612a9a8090e4642453f21a ; deux années de PIB, dix cellules transcrites indépendamment. Réponse originale -text Git, C1 séparé, droits CC BY 4.0 avec termes additionnels et attribution ; publication initiale inconnue, H5 false.
+- B-R009 : HDX 403 via web, acquisition stoppée immédiatement. B-R010 : robots NASA Disallow /api/, PolicyStop Docker avant données ; diagnostic robots seulement HTTP 200. Sources désactivées dans registre versionné avec ADR, aucune mutation de la DB active ni contournement ; reports R1.3/R1.7 obligatoires.
+- Windows qa R0.4 intermédiaire code 0, 71 passed / 22,14 s, zéro échec/erreur/skip, reçu 9877e7188036417ba436e180d0e3063c. Lint ciblé code 0 ; mypy ciblé code 0, 3 fichiers. Une assertion de périmètre et une classification LLM supplémentaires nécessitent réception courante.
+- Code désormais figé pour check global Windows, puis QA R0.4 renouvelée, preuves/preservation/secrets et commit vert. Aucun DONE/tag/CI distante, collecteur prix/météo live, modèle marché ou usage humain revendiqués.
+
+### [2026-10-09T20:10:39Z] R0.4 — check rouge, diagnostic confirmé et correction bornée
+
+- Check Windows session 97060 code 1 : lint/format 166 fichiers, types 165 fichiers et gouvernance verts ; pytest 18 passed / 1 failed / 219,39 s, frontend non exécuté. Douanes : records_superseded=3 au lieu de 1. Rapports rouges conservés, pas un DONE.
+- Lecture QA seule code 0 confirme anciens 3 CSV CRLF + nouveaux 3 LF, plus pseudo-artefact d'un autre test. Aucun objet Bronze/source_record supprimé ; le scénario testé sélectionnait tout l'historique QA.
+- ADR-015/SPECS avant correction : projection SQL temporaire pytest sur les 3 UUID réellement ingérés par ce scénario ; runtime rebuild inchangé. Exiger sélection/rejeu 3, zéro objet ignoré, mêmes 40 inserts / 1 supersession / 3 skips et valeurs finales, métadonnées conservées. Pas de seuil abaissé ; ne pas utiliser cette projection pour qualifier le rebuild complet R0.8.
+- QA R0.4 étendue à 72 tests / 1 intégration et lancée, session 22505 ; réception puis check intégral courant requis. R0.4 IN_PROGRESS, aucun commit/tag.
+- Préservation active read-only codes 0 avant ce check : 482 source_record MD5 47b4402859acc41e3ae91fdb128e56c6, 764 prix MD5 4b2586cb8e422f11c4873ad513d66bc1 ; Bronze 674 versions / 1377481 octets / hash 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c, inchangés.
+
+### [2026-10-09T20:13:20Z] R0.4 — correction reçue, check complet renouvelé
+
+- Windows qa R0.4 session 22505 code 0, 72 passed / 35,34 s, 1 intégration réelle, zéro échec/erreur/skip ; reçu 8319efc26dcc41cdba2ac26cab9cab28. Trois objets sélectionnés/rejoués, zéro ignoré, métadonnées conservées et 40/1/3 ainsi que valeurs finales vérifiés.
+- Check Windows courant lancé session 15670 ; code fonctionnel figé. B-R011 reste en réception globale ; le check rouge précédent n'est pas effacé ni transformé en succès.
+- Diagnostic mypy test isolé sans chemins de sources code 1 (imports installés sans stubs) ; relancé avec MYPYPATH correct. Ne pas le confondre avec le mypy global src/tests, déjà vert avant correction et encore requis sur la version courante.
+- R0.4 IN_PROGRESS ; rapports courants, couvertures, front/build, préservation finale, secret scan et commit vert restent obligatoires. Aucun tag ni qualification réelle de prix/météo/modèle/humain.
+
+### [2026-10-09T20:17:14Z] R0.4 — types du helper corrigés, check courant figé
+
+- Check session 15670 code 1 avant pytest : lint/format verts, mypy refuse Select[tuple[SourceRecord]] car la bibliothèque verrouillée renvoie Select[SourceRecord]. B-R012 est une cause de typage distincte, pas un nouvel échec du scénario de révision.
+- Correction d'une seule annotation, sans ignore. Docker mypy ciblé avec MYPYPATH code 0, 1 fichier ; QA runtime 72 précédente conservée comme preuve intermédiaire.
+- Check Windows intégral relancé session 93678, version fonctionnelle figée. Aucun résultat de cette relance encore qualifié ; R0.4 IN_PROGRESS jusqu'à réception finale/couvertures/front/build, préservation, secrets et commit.
+
+### [2026-10-09T20:45:00Z] R0.4 — backend complet reçu, build frontend en cours
+
+- Check Windows session 93678 : 411 passed / 1480,73 s, cinq avertissements de dépendances, zéro échec/erreur/skip ; intégrations par dossier 31, par marqueur 31, union 35. Rapports backend-check exportés.
+- Couvertures contrôlées : core 92,646297 %, extraction 86,376812 %, normalize 84,855234 %, toutes ≥80 % ; lint/format et types verts.
+- Frontend du même lancement : lint/types codes 0, 35 tests / quatre fichiers verts en 5,44 s ; build de production en cours, reçu ab7830f5-04a9-4129-b1fb-f0bcbcd21892 pas encore finalisé.
+- R0.4 reste IN_PROGRESS : aucun succès global, commit ou tag avant build/code final, QA courant, préservation et scan de secrets. Le code fonctionnel demeure figé.
+
+### [2026-10-09T20:48:34Z] R0.4 — reprise après interruption du serveur
+
+- Reçu frontend ab7830f5-04a9-4129-b1fb-f0bcbcd21892 exporté : passed=true, quatre étapes codes 0, 35 tests / quatre suites, build 194897 ms sans timeout/signal/erreur. Backend 411 et couvertures conservés.
+- Le serveur de conversation a redémarré ; session 93678 devenue inconnue, aucun conteneur de check encore actif. Code final Windows non récupérable : ne pas inventer un code 0 global, réception complète renouvelée selon AGENTS §3.1, sans modification fonctionnelle ni seconde exécution concurrente.
+- Préservation read-only codes 0 : 482 sources / 764 prix, MD5 identiques ; Bronze 674 versions, zéro delete marker, 1377481 octets et SHA global identiques. Diff check code 0.
+
+### [2026-10-09T21:07:51Z] R0.4 — réception renouvelée active, sans modification fonctionnelle
+
+- Session Windows 39003, conteneur ketrika-qualification-api-run-4e0a88cc2f22 : lint/format/types et gouvernance verts, 411 cas collectés ; intégrations et 67 contrôles du corpus déjà passés, calcul de prévision en cours. Inspection read-only : pytest 17 min 45 s elapsed, 15 min 09 s CPU, état Rl ; aucun échec nouveau signalé.
+- Vérification hors réseau du manifeste courant code 0 : 65 fichiers / 507483 octets, 44 synthetic / 19 unverified / 2 authentic, un document et une annotation indépendante, dix cellules relues.
+- B-R013 documente la perte du code final précédent ; rapports précédents conservés. R0.4 IN_PROGRESS et aucun commit/tag avant réception renouvelée complète ; R0.5 seulement lue pour préparer la suite, pas démarrée.
+
+### [2026-10-09T21:17:16Z] R0.4 — check Windows courant complet vert
+
+- Session 39003 code final 0 reçu : 411 backend / 1403,60 s, cinq avertissements de dépendances, zéro échec/erreur/skip, 35 intégrations union ; core 92,646297 %, extraction 86,376812 %, normalize 84,855234 %.
+- Frontend reçu fe8baa92-6924-4f33-9135-72d4245e7a10 : 35 tests / quatre suites / 5,96 s ; lint 9135 ms, types 16865 ms, tests 11161 ms, build 154768 ms, tous codes 0 sans timeout/signal/erreur. Rapports renewed-check exportés séparément des résultats précédents.
+- QA Windows R0.4 renouvelée session 41954. Préservation finale, scan de secrets et commit vert restent requis ; statut IN_PROGRESS jusqu'à clôture, aucun tag ni collecte prix/météo réelle qualifiée.
+
+### [2026-10-09T21:19:34Z] R0.4 — critères reçus, scan et commit en préparation
+
+- QA Windows courante session 41954 code 0 : 72 passed / 35,66 s, une intégration, zéro échec/erreur/skip ; reçu 4d4b0d2fd4914baf8a51bd3d4bcb3fdf / 45,023 s, rapports renouvelés exportés.
+- Check complet courant 39003 code final 0 : backend 411, frontend 35, couvertures 92,65/86,38/84,86 %, build 154768 ms ; aucune suite ni seuil retiré. Manifestes et annotation indépendante : 65 fichiers / dix cellules, exclusions effectives des 63 entrées non authentiques.
+- Préservation read-only codes 0 : sources 482 / prix 764 avec MD5 identiques ; Bronze 674 versions / 1377481 octets / zéro delete marker / SHA identique. Design concurrent antérieur préservé et index Git vide avant préparation.
+- B-R011/012/013 résolus par correction bornée/type et réception intégrale ; perte du code précédent reste explicitement inconnue. R0.4 IN_PROGRESS jusqu'au scan de secrets et commit vert, aucun tag/push ni qualification de marché.
+
+### [2026-10-09T21:21:24Z] R0.4 — diff et secrets reçus avant commit
+
+- Gitleaks staged Docker code 0, 764716 octets scannés, aucune fuite ; diff staged check code 0. Le rapport rouge XML initial avait des espaces de traceback : archivé en gzip sans modifier ses octets, décompression identique vérifiée (SHA original 4c85cd7c76e2706c3205247e268d1d2d4872be1f75d27fa51b3e39b4c36eb22c). Le scan précédent du XML non compressé était également vert.
+- Tous critères R0.4 et check Windows complet code 0 reçus ; seules clôture avec hash du commit et synchronisation DONE restent à effectuer. Aucun code fonctionnel changé depuis le check, aucun tag/push ni action externe.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 

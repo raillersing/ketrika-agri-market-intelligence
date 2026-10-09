@@ -34,7 +34,7 @@
   name: "WFP Food Prices – Madagascar (HDX)"
   owner: "World Food Programme / OCHA HDX"
   priority: P1
-  status: active
+  status: disabled
   access_method: file
   connector: ketrika.connectors.wfp_hdx_mdg:Connector
   cadence: monthly
@@ -133,7 +133,7 @@
   name: "NASA POWER Agroclimatology Daily Point API"
   owner: "NASA Langley Research Center"
   priority: P1
-  status: active
+  status: disabled
   access_method: api
   connector: ketrika.connectors.nasa_power:Connector
   cadence: daily

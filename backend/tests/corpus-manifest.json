@@ -1,0 +1,1307 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "path": "scripts/generate_douanes_fixtures.py",
+      "sha256": "5af4276feeb2271ce20bbd89da2769d2475006c25f269e99c91e8fb0aefbe5c6",
+      "size_bytes": 7658,
+      "artifact_type": "py",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_douanes_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "scripts/generate_mincc_fixtures.py",
+      "sha256": "c01be14108e64d40144481324ac964dda185fd99da5a5303d5dfd95b7fbf716e",
+      "size_bytes": 40767,
+      "artifact_type": "py",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "scripts/generate_odr_fixtures.py",
+      "sha256": "0026c9787ff18942a9b2272adb7365339691dded316798ee2a03785ff841f449",
+      "size_bytes": 14866,
+      "artifact_type": "py",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/e2e_data/synthetic_gold_dataset.py",
+      "sha256": "3bdc6284b2ade76e9ff2d7ba09c20b44cc9c689472bc08838095ffbb46721313",
+      "size_bytes": 25213,
+      "artifact_type": "py",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "tests/e2e_data/synthetic_gold_dataset.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/authentic/world_bank_wdi/wdi_mdg_gdp_2022_2023.json",
+      "sha256": "d7a21e6b8fe97bd21b2be7819df1dd8f5aab311e41612a9a8090e4642453f21a",
+      "size_bytes": 510,
+      "artifact_type": "json",
+      "authenticity": "authentic",
+      "origin": {
+        "kind": "official_acquisition",
+        "reference": "tests/corpus-evidence/world_bank_wdi/acquisition.json",
+        "limitations": "Two annual GDP records only, not PPN prices, predictive accuracy or human review."
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "CC BY 4.0 with World Bank additional dataset terms",
+        "evidence": "https://datacatalog.worldbank.org/public-licenses",
+        "redistribution_allowed": true,
+        "attribution": "World Bank, World Development Indicators, GDP (current US$), Madagascar; unmodified API response"
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/chirps/chirps_sample.txt",
+      "sha256": "daf0e646b9fa816af90156b2159d80acbb2ca1ee6b9887d061a90ed436bc1fff",
+      "size_bytes": 136,
+      "artifact_type": "txt",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/douanes_stats/douanes_snapshot_v1.csv",
+      "sha256": "3618ee1d4c10f831ff577c85a523f38f9b5ef5394f8b3607e686628ca774957a",
+      "size_bytes": 527,
+      "artifact_type": "csv",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_douanes_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/douanes_stats/douanes_snapshot_v2.csv",
+      "sha256": "ebf519cf5b3788228396f2d7f54546d360c438555fcd7a6f0881c103b7c53fff",
+      "size_bytes": 527,
+      "artifact_type": "csv",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_douanes_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/douanes_stats/douanes_stats_2024.csv",
+      "sha256": "b000bab4cf99c0a7fd5966b00281c27df60aacdd2195579b4b5a504512b8824a",
+      "size_bytes": 3742,
+      "artifact_type": "csv",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_douanes_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/douanes_stats/douanes_stats_sample.csv",
+      "sha256": "34ca228481ef141f8b3affa5f973597250dd3cccc2ce09dcc55b260b56af8e09",
+      "size_bytes": 376,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/faostat/faostat_qcl_sample.json",
+      "sha256": "91c362f568c35bc765b7910d236981a271ee1a111cb1ecec681329e91b3a2c71",
+      "size_bytes": 285,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/faostat/faostat_sample.json",
+      "sha256": "7d04a7ed3800e22defc099e53ebb7eddec8782c41fcf14d0952c852464d7946e",
+      "size_bytes": 8857,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/instat_nipc/nipc_sample.csv",
+      "sha256": "be6468da545c3483580424b398ef6cd18c56ebf3915552629eb2b1ae51e906b3",
+      "size_bytes": 2006,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/instat_nipc/nipc_sample.xlsx",
+      "sha256": "a46d23a3591cc2bc61bf48b4c3aee218d6d2f796e2bbb6f0557c9f31576a22a9",
+      "size_bytes": 6682,
+      "artifact_type": "xlsx",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/05fb78f4ab8e6e67bbc76d2d3bc51f0d1c3c692062e6b21f958c4fb783945ceb.json",
+      "sha256": "752b341ee0780b1adc1ab391408a52e2c83494e7cef6ef8f5e58fecba82851af",
+      "size_bytes": 1785,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/22b627de5e4a07b9754e3b3b7c46d7defcb0af53f8ca1ace14a894016ba71bae.json",
+      "sha256": "754b0d04590d3b618b893ec503eed36bbec1666c675088511f0a7442fb3669d5",
+      "size_bytes": 1741,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/3f12a5eb73c09b27a65da51c8923c60e38ff72413a53fc0029a3e2137945c9eb.json",
+      "sha256": "adaf385f7700dacc2193cb106ef5318cb52029afac060f3a9414a32c39c24fe0",
+      "size_bytes": 14668,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/7c020e82e25b3decba4e774ddf153e0a7b9d9d1f3d662a13654f5e566fd6f80b.json",
+      "sha256": "7ed03547fb8c9853352ea581c6192e9c3b87c742cabe0683ac894d0d7f058269",
+      "size_bytes": 5048,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/7d4c4702256f0072f12dc0e4da54ad97bf4821727cb5c1d9403051dd625148d0.json",
+      "sha256": "b1bddfe1589af033c7cf57382314501af32cc5c5bd005baaa32d31a9bc1d4764",
+      "size_bytes": 1707,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/87c8bb7e13d630df155bd4eec972efcbbbe30cc78192f0bc58d83ad9b4bec894.json",
+      "sha256": "77db29684e493ea0fbcf60e064d06d3f8eff1833e4c29dcebcd6e14e6cc50d53",
+      "size_bytes": 14644,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/9e273c807a0cc2ed0272076dfe54223d6fd5b1998f1ea371b56d73fcf879e94c.json",
+      "sha256": "a70c80adc9a9cac5ea0aad03568fbae1288546a997cee39b9f3b9d0dd13cbdbc",
+      "size_bytes": 14668,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/aa2a78f69cf4b577c131c1615fe571f336873ae6ff6b3466197d9bca47cc86bb.json",
+      "sha256": "66427453540f96cf2d1a2ae530fd5193e162419a08cf9e21988688d691fd56ca",
+      "size_bytes": 19587,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/cf2d7b523e39dd703eaf12d21d9a759a428b47c6e48f1b1eb5261528302edfba.json",
+      "sha256": "986e8ecbc1efbd40167327b4974cc4dc7877f8d8fe9613fcf63dff62a9f95a62",
+      "size_bytes": 19563,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/cfa4f169d8f474bea0fb1cabba293c0531483e7eb06e32ddee769f96f4d1f28c.json",
+      "sha256": "d631ad5bcb8b989b69c9a2cf63006e29fe1685fb658d87c00c4ca3c66988d7c4",
+      "size_bytes": 1732,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/e179f200a20db402ff2bf10c7caad27ecc4ac47fdb222aac8ba1b4e156f0623f.json",
+      "sha256": "ce0a80bb13031b977233936ad3c13a88793f78dbb050277b203470b2ab76040a",
+      "size_bytes": 5048,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/e452cb17fc6305239d4d81c74374ad3802bb76f6e9e2ce1cc3f3294f24de87d7.json",
+      "sha256": "15261dfe5a2cdc815778df1418c2050b38e23a2f8dffa95708e2ae3c18efef31",
+      "size_bytes": 19587,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/ee0ff15aed707a4841b0544bf6340f1174078b26db947e17f25a0a48a332311b.json",
+      "sha256": "420526ba55988775c4006e1996d74d7b2140d68c80fc16a925c07eb4360912f0",
+      "size_bytes": 5048,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/miasa_odr/odr_bulletin_520.pdf",
+      "sha256": "c5af414c280e4e0e1d59d80ab0b946f68e8aba9ded55e476e18a0ae7b86ae016",
+      "size_bytes": 21243,
+      "artifact_type": "pdf",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/miasa_odr/odr_bulletin_710.pdf",
+      "sha256": "68a857e5c80c4cac0b77f465a809f7a76d3d2450c43bfb15b0c87675b39da44a",
+      "size_bytes": 21153,
+      "artifact_type": "pdf",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/miasa_odr/odr_bulletin_850.pdf",
+      "sha256": "20a95c1b848a3bd64083727239f7a1cd43c9ae303bea38658d496d69d412a0a9",
+      "size_bytes": 21447,
+      "artifact_type": "pdf",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/miasa_odr/odr_bulletin_sample.txt",
+      "sha256": "7dc0ff276734c6f5cf48a69b912377e2d335cf336593a07ba70e8bcb50d3c9b8",
+      "size_bytes": 432,
+      "artifact_type": "txt",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_ppn_sample.csv",
+      "sha256": "59a37407e0cc1473deb3886864a9f0747cb551f7bbffed8dcde7f55aa571af92",
+      "size_bytes": 419,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_pub_01_analamanga_html.html",
+      "sha256": "aca3da17c20a61b2cf97862fc42b93b2dd59a9b789c254aaff30dd1ff3632456",
+      "size_bytes": 1323,
+      "artifact_type": "html",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_pub_02_atsinanana_html.html",
+      "sha256": "45b2d33e1df58005f03dccc7964c4362fe84a8851e6027791d9c67a45929b765",
+      "size_bytes": 1346,
+      "artifact_type": "html",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_pub_03_boeny_html.html",
+      "sha256": "353724192ec73bf3bedff112b807307ade39bc42d9bf868bdc26e1c190633a35",
+      "size_bytes": 1286,
+      "artifact_type": "html",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_pub_04_vakinankaratra_html.html",
+      "sha256": "ea3f5b30d3a54a975d18fc9f8ac70a85df6e708548fc37ba541971a7196f908e",
+      "size_bytes": 1286,
+      "artifact_type": "html",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_pub_05_atsimo_andrefana_html.html",
+      "sha256": "5b9799a17d3266b239e24f5061377756509b31d0286d955740780e76fc090c8f",
+      "size_bytes": 1275,
+      "artifact_type": "html",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_pub_06_diana_html.html",
+      "sha256": "49916b305cfed630604e3edf6569e77c9ea7b4a6328876e0242dd6655f7df7e8",
+      "size_bytes": 1290,
+      "artifact_type": "html",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_pub_07_communique_analamanga_fr.html",
+      "sha256": "761e91f0dead75aaa3b2114e93e4e2967dc436155eb3888b6cc724beff89f85a",
+      "size_bytes": 1521,
+      "artifact_type": "html",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_pub_08_communique_atsinanana_fr.html",
+      "sha256": "0c94a488aafde6ec01c6089e91909be363477ad2d941b56a826fefccc44a111b",
+      "size_bytes": 1320,
+      "artifact_type": "html",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_pub_09_filazana_boeny_mg.html",
+      "sha256": "2b74a5f448f7f82d2ffae58040b34e298aa171389d6849a269e4e538ed7ee764",
+      "size_bytes": 1312,
+      "artifact_type": "html",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_pub_10_filazana_vakinankaratra_mg.html",
+      "sha256": "768cf3150ccf60f0644d55b4177c40a9c1166a06adde4c8ca095111b87b46dcf",
+      "size_bytes": 1217,
+      "artifact_type": "html",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/nasa_power/nasa_power_point_sample.json",
+      "sha256": "c764be23fffd181a9e788b3a4cf12d896c20ffe413d2b87e8bc01df780cd8ed0",
+      "size_bytes": 1496,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/ocha_codab_mdg/admin_sample.geojson",
+      "sha256": "e21f3a1fd2ee68b4c96b064dc30abfcda27c638332ed07c6fb00a824f49fef8a",
+      "size_bytes": 580,
+      "artifact_type": "geojson",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/wb_rtfp_mdg/wb_rtfp_mdg_sample.csv",
+      "sha256": "6a2283b2194b54c18ad11623d0f300748b0179a63165db0268b5059d234ca93e",
+      "size_bytes": 3042,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/wfp_hdx_mdg/wfp_food_prices_mdg_sample.csv",
+      "sha256": "538910c2ff947c4e49da33df91073c755d3049acbd39c973e2a2b0ba7d7767de",
+      "size_bytes": 4802,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/authentic/world_bank_wdi/wdi_mdg_gdp_2022_2023.expected.json",
+      "sha256": "cf5e57957cc1ec52e034cfd28c3611749a6d6b47840a2b203c8e1c429b1899f1",
+      "size_bytes": 1800,
+      "artifact_type": "json",
+      "authenticity": "authentic",
+      "origin": {
+        "kind": "independent_annotation",
+        "reference": "tests/fixtures/authentic/world_bank_wdi/wdi_mdg_gdp_2022_2023.json",
+        "limitations": "Independent transcription of 10 cells from 2 annual records; not a parser-generated golden, pricing corpus or human review."
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "CC BY 4.0 with World Bank additional dataset terms",
+        "evidence": "https://datacatalog.worldbank.org/public-licenses",
+        "redistribution_allowed": true,
+        "attribution": "World Bank, World Development Indicators, GDP (current US$), Madagascar; unmodified API response"
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/douanes_stats/douanes_stats_2024.expected.json",
+      "sha256": "73748fb9188e2f6f9c693e5ff612d34c9c3d462a07a1bc896e0f2b412be59359",
+      "size_bytes": 12413,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_douanes_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/faostat/faostat_sample.expected.json",
+      "sha256": "7c20061893a8544c4c1795dd19bfe3455123e303ae01013e56d3e8c86f94d8cc",
+      "size_bytes": 7848,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/instat_nipc/nipc_sample.expected.json",
+      "sha256": "c8ebc14351fbfe8bc3141131d972e813d95b2d84181ace05974991c1b3970ce4",
+      "size_bytes": 46979,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/miasa_odr/odr_bulletin_520.expected.json",
+      "sha256": "0fa01387ebd6340cce5bd34f71312a6d2ba850f31222e114d31f766a4761de21",
+      "size_bytes": 22988,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/miasa_odr/odr_bulletin_710.expected.json",
+      "sha256": "0de765719359ed0133fc8d06e3a8bed38d44d22865f4984776ee785a8c50be89",
+      "size_bytes": 23004,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/miasa_odr/odr_bulletin_850.expected.json",
+      "sha256": "93b004c7eb5efcfdd28df5a752fe98876ce72019cf8562e7152a34d05700256b",
+      "size_bytes": 23004,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_odr_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_pub_01_analamanga_html.expected.json",
+      "sha256": "33056f0486680ea38f4f4ead22ea6befe7378eb348e147f880d16f38a7594395",
+      "size_bytes": 3169,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_pub_02_atsinanana_html.expected.json",
+      "sha256": "c157fc9221c4f2bb5b98bff5151353ab4ade2b08b96afe1977c90d6210087e97",
+      "size_bytes": 3180,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_pub_03_boeny_html.expected.json",
+      "sha256": "19faab4c30ce3d412649aa16a62616ff9f22cf81e606639b96c967d9a33ebe95",
+      "size_bytes": 3108,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_pub_04_vakinankaratra_html.expected.json",
+      "sha256": "1faa060e937ec90c6aad3197e06c29e6f290a496586647a7d21e96d498c789bc",
+      "size_bytes": 3206,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_pub_05_atsimo_andrefana_html.expected.json",
+      "sha256": "2d744db85632ff2269e2b237e5c53d2ad32f1dad1464a678b89541cfa368a3de",
+      "size_bytes": 3208,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_pub_06_diana_html.expected.json",
+      "sha256": "c7640f379a44b6dda59b6b01464cd3158d7ad88c84df0cbbf3f3a4b233447dd3",
+      "size_bytes": 3122,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_pub_07_communique_analamanga_fr.expected.json",
+      "sha256": "4bcc91190f8b0177465c6e569312f918819f1e4bde5cdfe11006e4a7faed44b3",
+      "size_bytes": 1742,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_pub_08_communique_atsinanana_fr.expected.json",
+      "sha256": "e5da9b13cc06df61ec6c04451c31373d4c74d00bebec70cdac82fdca32844d3b",
+      "size_bytes": 1744,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_pub_09_filazana_boeny_mg.expected.json",
+      "sha256": "54bcda70a9960883f326862898d43e74ff0b6bb47897e504e1ce35594eff592b",
+      "size_bytes": 1697,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_pub_10_filazana_vakinankaratra_mg.expected.json",
+      "sha256": "5515112000b7119d5bdad2ccd00c3da7f278a6253d8e8a8740ae1480589c1503",
+      "size_bytes": 1753,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_mincc_fixtures.py",
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/wb_rtfp_mdg/wb_rtfp_sample.expected.json",
+      "sha256": "46c296503a14d8e18c0b980e0a05693fd1f47de752a21324a67479a8e77190e9",
+      "size_bytes": 9409,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/wfp_hdx_mdg/wfp_sample.expected.json",
+      "sha256": "6e300ed2d82f5452d5c1b5e4caf8b1608e474f6e79764663949d015c9aea61ea",
+      "size_bytes": 9341,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    }
+  ]
+}

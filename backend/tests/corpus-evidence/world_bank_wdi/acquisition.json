@@ -1,0 +1,63 @@
+{
+  "url": "https://api.worldbank.org/v2/country/MDG/indicator/NY.GDP.MKTP.CD?date=2022:2023&format=json&source=2",
+  "http_status": 200,
+  "fetched_at": "2026-10-09T19:49:48.046199Z",
+  "sha256": "d7a21e6b8fe97bd21b2be7819df1dd8f5aab311e41612a9a8090e4642453f21a",
+  "size_bytes": 510,
+  "mime_type": "application/json;charset=utf-8",
+  "redirect_chain": [
+    "https://api.worldbank.org/v2/country/MDG/indicator/NY.GDP.MKTP.CD?date=2022:2023&format=json&source=2"
+  ],
+  "source_id": "world_bank_wdi_corpus",
+  "source_url": "https://api.worldbank.org/v2/country/MDG/indicator/NY.GDP.MKTP.CD?date=2022:2023&format=json&source=2",
+  "catalogue_url": "https://datacatalog.worldbank.org/public-licenses",
+  "discovered_at": "2026-10-09T19:49:46.719666Z",
+  "published_at": null,
+  "bronze_object_key": null,
+  "access_method": "api",
+  "allowed_hosts": [
+    "api.worldbank.org"
+  ],
+  "user_agent": "KetrikaAgriBot/0.1; contact@example.com",
+  "request_count": 4,
+  "max_rps": 0.2,
+  "robots": [
+    {
+      "url": "https://api.worldbank.org/robots.txt",
+      "http_status": 404,
+      "sha256": "3494d22a0b9ae1678a72df5841b7a6ec60e75499b91341f9763a556d6b8cb1f9",
+      "rules": "",
+      "interpretation": "RFC 9309: 404 has no rules; never ignore 401/403"
+    },
+    {
+      "url": "https://datacatalog.worldbank.org/robots.txt",
+      "http_status": 200,
+      "sha256": "6c1238d799b1602f8386835f85daaafff6c7b5c07a44a8fa792dd3218af1a5a1",
+      "rules": "Sitemap: https://datacatalog.worldbank.org/sitemap.xml",
+      "interpretation": "RFC 9309: 404 has no rules; never ignore 401/403"
+    }
+  ],
+  "documentation": [
+    {
+      "url": "https://datacatalog.worldbank.org/public-licenses",
+      "http_status": 200,
+      "fetched_at": "2026-10-09T19:49:46.719666Z",
+      "sha256": "c7c9b31441ea4a1fa27990f4b11f385587469c5c2bda4ec4fc7a6561db6d2422",
+      "size_bytes": 17119,
+      "mime_type": "text/html; charset=utf-8",
+      "redirect_chain": [
+        "https://datacatalog.worldbank.org/public-licenses"
+      ],
+      "verified_excerpt": "CC-BY 4.0 is the default license for World Bank-produced open datasets; attribution and additional terms apply.",
+      "excerpt_kind": "paraphrase of mechanically checked source clauses"
+    }
+  ],
+  "rights": {
+    "status": "verified",
+    "licence": "CC BY 4.0 with World Bank additional dataset terms",
+    "evidence": "https://datacatalog.worldbank.org/public-licenses",
+    "redistribution_allowed": true,
+    "attribution": "World Bank, World Development Indicators, GDP (current US$), Madagascar; unmodified API response"
+  },
+  "limitations": "Two annual GDP records only; not prices, agroclimate, a qualified connector, publication history, predictive accuracy or human review."
+}

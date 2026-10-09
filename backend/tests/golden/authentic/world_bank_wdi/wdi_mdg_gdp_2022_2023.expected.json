@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "source_id": "world_bank_wdi_corpus",
+    "document_path": "tests/fixtures/authentic/world_bank_wdi/wdi_mdg_gdp_2022_2023.json",
+    "document_sha256": "d7a21e6b8fe97bd21b2be7819df1dd8f5aab311e41612a9a8090e4642453f21a",
+    "annotator": "agent",
+    "human_reviewed": false,
+    "annotated_at": "2026-10-09T19:50:01Z",
+    "method": "independent_transcription",
+    "scope": "All 2 records of this bounded annual GDP response, 5 selected identity/value cells per record; not full API schema, market prices or historical publication timing.",
+    "records_in_document": 2,
+    "records_annotated": 2,
+    "value_semantics": "GDP (current US$), annual national accounts estimate; source unit field is empty, not a PPN price or MGA value.",
+    "publication_time": null,
+    "vintage_note": "API lastupdated is 2026-10-08; not assumed to be the first publication of the 2022/2023 estimates."
+  },
+  "cells": [
+    {"path": [1, 0, "indicator", "id"], "expected": "NY.GDP.MKTP.CD", "value_type": "text"},
+    {"path": [1, 0, "indicator", "value"], "expected": "GDP (current US$)", "value_type": "text"},
+    {"path": [1, 0, "countryiso3code"], "expected": "MDG", "value_type": "text"},
+    {"path": [1, 0, "date"], "expected": "2023", "value_type": "text"},
+    {"path": [1, 0, "value"], "expected": "16036707975.7567", "value_type": "number"},
+    {"path": [1, 1, "indicator", "id"], "expected": "NY.GDP.MKTP.CD", "value_type": "text"},
+    {"path": [1, 1, "indicator", "value"], "expected": "GDP (current US$)", "value_type": "text"},
+    {"path": [1, 1, "countryiso3code"], "expected": "MDG", "value_type": "text"},
+    {"path": [1, 1, "date"], "expected": "2022", "value_type": "text"},
+    {"path": [1, 1, "value"], "expected": "15342178598.2475", "value_type": "number"}
+  ]
+}

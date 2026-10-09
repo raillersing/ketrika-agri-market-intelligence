@@ -1,0 +1,34 @@
+{
+  "task": "R0.4",
+  "execution_id": "8319efc26dcc41cdba2ac26cab9cab28",
+  "scope": "software subset only; not task DONE or market certification",
+  "pytest_exit": 0,
+  "command": [
+    "pytest",
+    "-p",
+    "pytest_asyncio.plugin",
+    "-p",
+    "pytest_cov.plugin",
+    "-p",
+    "_hypothesis_pytestplugin",
+    "-p",
+    "pytest_httpserver.pytest_plugin",
+    "-m",
+    "not network",
+    "tests/unit/test_corpus.py",
+    "tests/authentic/test_corpus_wdi.py",
+    "tests/integration/test_douanes_stats.py",
+    "--junitxml=/app/.venv/qa-results/8319efc26dcc41cdba2ac26cab9cab28/tests.xml"
+  ],
+  "passed": true,
+  "counts": {
+    "tests": 72,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "integration_by_layout": 1,
+    "integration_by_marker": 1,
+    "integration_tests": 1
+  },
+  "duration_seconds": 45.054
+}

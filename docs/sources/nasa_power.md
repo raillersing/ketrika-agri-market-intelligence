@@ -1,5 +1,13 @@
 # nasa_power : NASA POWER Agroclimatology Daily Point API
 
+> Requalification R0.4, 2026-10-09 : robots.txt HTTP 200 interdit `/api/` (exception `/api/pages/`).
+> Acquisition Docker refusée par PolicyStop avant toute donnée API ; B-R010, aucun contournement.
+> La règle `Allow: /` et la couverture « 100 % » ci-dessous sont des affirmations historiques
+> non qualifiées actuellement. La fixture est `unverified`, H5 non réalisé ; R1.7 doit résoudre
+> légalement l'accès ou spécifier une alternative autorisée, sans appeler l'URL interdite.
+> POWER est une météorologie de grille/modelée, pas une observation de station locale
+> ([méthodologie officielle](https://power.larc.nasa.gov/docs/methodology/), consultée le 2026-10-09).
+
 - **Propriétaire / licence / attribution :** NASA Langley Research Center. Licence : Public Domain (US Government Open Data). Attribution : "NASA POWER Project, NASA Langley Research Center".
 - **URL vérifiées (date, code HTTP) :**
   - https://power.larc.nasa.gov/api/temporal/daily/point (2026-10-06, HTTP 200).

@@ -20,3 +20,6 @@
 *.geoparquet binary
 *.db binary
 *.sqlite binary
+
+# ADR-014: preserve the exact bytes of officially acquired corpus responses.
+backend/tests/fixtures/authentic/** -text
