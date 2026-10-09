@@ -1,7 +1,7 @@
 {
   "task": "R0.2",
   "scope": "isolated local software checks and read-only historical inventory",
-  "functional_commit": null,
+  "functional_commit": "6b4ad7feef184acff08cdbbf65b372d52019f2f8",
   "overall_check_exit": 0,
   "environment": {
     "project": "ketrika-qualification",

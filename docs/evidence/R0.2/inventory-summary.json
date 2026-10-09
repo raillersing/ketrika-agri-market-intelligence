@@ -1,6 +1,6 @@
 {
   "task": "R0.2",
-  "status": "IN_PROGRESS",
+  "status": "DONE",
   "scope": "local historical database inventory; not current market measurements",
   "query_path": "docs/evidence/R0.2/inventory.sql",
   "transaction": "REPEATABLE READ READ ONLY",
@@ -36,6 +36,6 @@
     "Overlapping populations: do not add test-source and test-URL counts",
     "Remaining sources are unqualified, not presumed authentic",
     "Database preservation digests are not Bronze byte provenance certification",
-    "Final complete check and preservation receipt pending"
+    "Complete check and preservation receipt recorded in check-summary.json; no market-data authenticity qualification"
   ]
 }

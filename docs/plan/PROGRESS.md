@@ -62,7 +62,7 @@
 | ID | Priorité | Statut | Début UTC | Fin UTC | Commit | Preuve | Incident |
 |---|---|---|---|---|---|---|
 | R0.1 | MUST | DONE | 2026-10-09T06:28:03Z | 2026-10-09T09:16:32Z | b684528f223164e62fee1c85ef847f9f70c98e2c | docs/evidence/R0.1/README.md : check Windows code 0, 275 backend / 15 web | B-R001 / B-R002 résolus |
-| R0.2 | MUST | IN_PROGRESS | 2026-10-09T09:17:39Z | — | — | Inventaire en lecture seule et réception de l'isolation | — |
+| R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | TODO | — | — | — | — | — |
 | R0.4 | MUST | TODO | — | — | — | — | — |
 | R0.5 | MUST | TODO | — | — | — | — | — |
@@ -135,6 +135,11 @@
 | R6.9 | MUST | TODO | — | — | — | — | — |
 | R6.10 | MUST | TODO | — | — | — | — | — |
 | R6.11 | MUST | TODO | — | — | — | — | — |
+
+### [2026-10-09T10:15:59Z] Clôture R0.2
+
+- Commit fonctionnel vert : 6b4ad7feef184acff08cdbbf65b372d52019f2f8 ; preuves et miroir synchronisés, statut DONE. Inventaire de qualité limité aux données historiques locales, exclusion proposée sans suppression ; logiciel isolé qualifié, pas données de marché authentifiées.
+- Prochaine tâche éligible : R0.3 ; E2E, images reconstruites et manifestes restent à livrer. Aucun tag de phase avant R0.9.
 
 ### [2026-10-09T10:13:51Z] R0.2 — réception complète verte avant commit
 

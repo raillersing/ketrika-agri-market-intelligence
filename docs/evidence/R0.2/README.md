@@ -1,7 +1,8 @@
 # R0.2 — réception logicielle verte
 
 Réception complète le 2026-10-09T10:13:51Z : check Windows code 0, empreintes
-actives inchangées. Statut IN_PROGRESS jusqu'au commit vert et son hash consigné.
+actives inchangées. Statut DONE ; commit fonctionnel vert
+`6b4ad7feef184acff08cdbbf65b372d52019f2f8`, clôture 2026-10-09T10:15:59Z.
 
 ## Réception finale
 
