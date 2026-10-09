@@ -1,8 +1,9 @@
-# R0.3 — réception logicielle locale (clôture en préparation)
+# R0.3 — réception logicielle locale DONE
 
-Le check global courant et le navigateur final sont verts. R0.3 reste
-IN_PROGRESS jusqu'au commit fonctionnel. Scan staged des secrets vert. Aucun tag
-de phase avant le gate R0.9 ; les échecs antérieurs restent consignés.
+Commit fonctionnel `4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6`, après check
+global Windows et tous critères verts ; secrets staged vérifiés sans fuite.
+DONE logiciel uniquement. Aucun tag de phase avant le gate R0.9 ; les échecs
+antérieurs restent consignés, notamment B-R005 non reproduit/cause inconnue.
 
 ## Réception finale Windows après ADR-013
 
@@ -35,7 +36,7 @@ de phase avant le gate R0.9 ; les échecs antérieurs restent consignés.
   logout avec suppression de session et refus ultérieur réellement vérifiés.
   Run `1ce4ed19a3af4a9c81087df570efb17d`, `browser-check-receipt.json`
   et `browser-check-prices.png`. Trace ZIP conservée dans le volume QA, jamais
-  exportée au dépôt (sessions possibles). Commit encore requis.
+  exportée au dépôt (sessions possibles).
   CI syntaxe actionlint Docker code 0, CI distante non exécutée.
   Inspection visuelle : 16 lignes synthétiques, dont la sonde future 999999
   explicitement introduite par test_ml_forecast.py ; aucun prix authentifié.

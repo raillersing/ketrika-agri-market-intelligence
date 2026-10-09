@@ -63,7 +63,7 @@
 |---|---|---|---|---|---|---|
 | R0.1 | MUST | DONE | 2026-10-09T06:28:03Z | 2026-10-09T09:16:32Z | b684528f223164e62fee1c85ef847f9f70c98e2c | docs/evidence/R0.1/README.md : check Windows code 0, 275 backend / 15 web | B-R001 / B-R002 résolus |
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
-| R0.3 | MUST | IN_PROGRESS | 2026-10-09T10:24:19Z | — | — | Front ADR-013 35 tests/build verts ; check Windows complet courant relancé | B-R008 repli testé ; réception globale requise ; B-R005 non reproduit |
+| R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | TODO | — | — | — | — | — |
 | R0.5 | MUST | TODO | — | — | — | — | — |
 | R0.6 | MUST | TODO | — | — | — | — | — |
@@ -158,6 +158,16 @@
 - Préservation après E2E : DB/S3 read-only codes 0, 482/764 lignes, MD5 inchangés ; Bronze 674 versions / 1377481 octets / zéro delete marker / SHA-256 inchangé.
 - Gitleaks staged Docker code 0, 1,13 Mo scanné, aucune fuite ; diff staged check code 0. B-R007 résolu, B-R008 repli testé ; B-R005 non reproduit, cause inconnue conservée.
 - Commit fonctionnel et hash de clôture encore requis : statut R0.3 IN_PROGRESS, aucun tag ; aucune collecte live/modèle de marché/usage humain/CI distante qualifiés.
+
+### [2026-10-09T19:21:39Z] R0.3 — clôture logicielle locale et commit vert
+
+- Commit atomique fonctionnel 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6, feat(R0.3), après tous critères et check global Windows code 0. Design tiers 65541c8/799f869 préservé, aucun push ni tag.
+- Réception : 340 backend / 3556,99 s, 35 frontend / 5,08 s, 35 intégrations union, couvertures 91,97/86,38/84,86 %, build complet 169177 ms ; QA 58 / 55,30 s, 4 intégrations ; contrôles réels lint/types/intégration/build invalides refusés dans copies.
+- E2E Docker Windows code 0, 9 contrôles / 100,37 s ; vrai login HttpOnly, reload, prix/API, logout et refus après logout. Rapports et capture inspectée dans docs/evidence/R0.3, aucune trace de session exportée.
+- Gitleaks du diff final staged code 0, 1130308 octets scannés, aucune fuite ; diff check code 0, actionlint/shellcheck codes 0. CI distante non exécutée.
+- Environnement QA non-root, DB/bucket/réseau/volumes dédiés, LLM replay ; actif préservé : 482/764 lignes et MD5 identiques, Bronze 674 versions / 1377481 octets / zéro delete marker / SHA identique.
+- DONE logiciel seulement : pas de collecte live, corpus authentique, performance de marché, revue humaine ou déploiement qualifiés. B-R005 cause inconnue/non reproduite conservée ; BL-008/009 suivis, aucune limite cachée.
+- Miroir du plan synchronisé à DONE. Prochaine tâche MUST éligible R0.4 : authenticité des fixtures ; ne pas créer mi-r0-qualified avant R0.9 et son gate complet.
 
 ### [2026-10-09T18:54:11Z] R0.3 — backend complet courant vert, frontend du même check en finalisation
 
