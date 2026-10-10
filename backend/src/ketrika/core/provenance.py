@@ -215,6 +215,12 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
             )
             if _decimal(actual, style) != _decimal(expected):
                 raise ProofError("value_mismatch")
+            if "raw_expected" in cell:
+                raw_expected = cell["raw_expected"]
+                if not isinstance(raw_expected, str):
+                    raise ProofError("invalid_expectation")
+                if not isinstance(actual, str) or actual != raw_expected:
+                    raise ProofError("raw_value_mismatch")
         elif cell.get("kind") == "text":
             if not isinstance(actual, str) or actual != expected:
                 raise ProofError(

@@ -1,0 +1,35 @@
+{
+  "task": "R0.5",
+  "execution_id": "6a8f5c06d0264327a09e78cce151185f",
+  "scope": "software subset only; not task DONE or market certification",
+  "pytest_exit": 0,
+  "command": [
+    "pytest",
+    "-p",
+    "pytest_asyncio.plugin",
+    "-p",
+    "pytest_cov.plugin",
+    "-p",
+    "_hypothesis_pytestplugin",
+    "-p",
+    "pytest_httpserver.pytest_plugin",
+    "-m",
+    "not network",
+    "tests/unit/test_provenance.py",
+    "tests/unit/test_provenance_audit.py",
+    "tests/authentic/test_provenance_wdi.py",
+    "tests/integration/test_provenance_audit.py",
+    "--junitxml=/app/.venv/qa-results/6a8f5c06d0264327a09e78cce151185f/tests.xml"
+  ],
+  "passed": true,
+  "counts": {
+    "tests": 104,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "integration_by_layout": 2,
+    "integration_by_marker": 2,
+    "integration_tests": 2
+  },
+  "duration_seconds": 15.779
+}

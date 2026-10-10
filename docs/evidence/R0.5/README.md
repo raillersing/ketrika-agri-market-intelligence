@@ -5,6 +5,37 @@ Base reçue : R0.4 commit 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482,
 clôture documentaire cd89d17 ; incrément pur reçu et commité :
 30d0a837bf666336ee802ecdf843dc810f75d639, ADR-016 avant implémentation.
 
+## Incrément 2 en cours, non commité
+
+ADR-017/SPECS avant liaison SQL/DQ. Auditeur des six tables, sans filtre silencieux,
+attentes issues des champs stockés, raw_expected lié au brut, résultat DQ transactionnel.
+Sélection incrémentale explicite table/UUID ; observations absentes incluses dans les échecs.
+Preuves météo absentes, formats non pris en charge et extractions LLM sans contrôle de
+page/extrait restent invalides. Pas de garde Gold, d'adaptateurs complets ni de validation
+des conversions économiques déjà livrés.
+
+Première cible Windows 37147 code 0 : 94 passed / 9,71 s, deux intégrations SQL.
+Mypy initial 6836 code 1 : MIME nullable dans SourceRecord ; corrigé en format vide
+explicitement invalide, aucun MIME valide supposé. Ce run précède neuf nouveaux cas unitaires
+et le scénario complet rendu indépendant des anciens enregistrements.
+QA courante 76144 code 0 : 104 passed / 8,65 s, deux intégrations, zéro failure/error/skip ;
+reçu 6a8f5c06d0264327a09e78cce151185f / 15,779 s, rapports increment-2-qa exportés.
+Mypy courant 36134 code 0 / trois fichiers. Check Windows intégral 88450 lancé
+le 2026-10-10T01:55:29Z, code final 0 reçu à 02:29:04Z : 515 backend / 1644,14 s,
+cinq avertissements, zéro failure/error/skip ; intégrations 33 par dossier / 33 par marqueur,
+union 37. Couvertures core 93,4887813462 %, extraction 86,3768115942 %,
+normalize 84,8552338530 % ; provenance_audit 115/116 statements, provenance 221/226.
+Lint/format 172 fichiers, types 171 et gouvernance codes 0.
+Frontend 35 tests / quatre suites / 7,04 s ; reçu 2f0a5a36-b8a8-45d2-9671-86788351e5cd,
+lint 11177 ms, types 15636 ms, tests 12165 ms, build 191499 ms, chaque étape code 0.
+Rapports increment-2-backend-check-* et increment-2-frontend-check-* exportés.
+Contrôle actif renouvelé à 02:27Z : DB/S3 codes 0, mêmes effectifs/empreintes que ci-dessous.
+
+Prototype de formats non intégré : /tmp/ketrika-r05-formats.OQ2It5, ADR-018/SPECS
+avant code dans ce worktree. Dernière cible 15285 : 113 passed / 12,86 s ; mypy 51746
+code 0 / trois fichiers, ruff 42216 code 0. Ces résultats ne qualifient pas encore son
+intégration dans le dépôt principal ni le prochain check Windows complet.
+
 ## Périmètre du premier incrément
 
 - Vérificateur hors réseau : référence/UUID, clé relative content-addressed, SHA réel,

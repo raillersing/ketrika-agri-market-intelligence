@@ -24,6 +24,21 @@ SHA = hashlib.sha256(CONTENT).hexdigest()
 KEY = f"test_source/2026/10/{SHA}.json"
 
 
+@pytest.mark.parametrize("raw_expected", [None, 123, True])
+def test_malformed_raw_expectation_is_not_ignored(raw_expected):
+    claim = proof()
+    claim["cells"][0]["raw_expected"] = raw_expected
+    with pytest.raises(ProofError, match="invalid_expectation"):
+        verify_cells(CONTENT, "application/json", claim)
+
+
+def test_numeric_json_token_does_not_prove_a_raw_string():
+    claim = proof()
+    claim["cells"][0]["raw_expected"] = "3000.1250"
+    with pytest.raises(ProofError, match="raw_value_mismatch"):
+        verify_cells(CONTENT, "application/json", claim)
+
+
 def proof() -> dict[str, Any]:
     return {
         "version": 1,

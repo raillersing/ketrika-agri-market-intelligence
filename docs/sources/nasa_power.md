@@ -3,7 +3,7 @@
 > Requalification R0.4, 2026-10-09 : robots.txt HTTP 200 interdit `/api/` (exception `/api/pages/`).
 > Acquisition Docker refusée par PolicyStop avant toute donnée API ; B-R010, aucun contournement.
 > La règle `Allow: /` et la couverture « 100 % » ci-dessous sont des affirmations historiques
-> non qualifiées actuellement. La fixture est `unverified`, H5 non réalisé ; R1.7 doit résoudre
+> non qualifiées actuellement. La fixture est `unverified`, H5 non réalisé ; R1.11 doit résoudre
 > légalement l'accès ou spécifier une alternative autorisée, sans appeler l'URL interdite.
 > POWER est une météorologie de grille/modelée, pas une observation de station locale
 > ([méthodologie officielle](https://power.larc.nasa.gov/docs/methodology/), consultée le 2026-10-09).

@@ -892,6 +892,10 @@ Preuve cellule v1 : `version=1`, `format=json|csv`, `cells` (chaque cellule port
 
 Les contrôles LLM relisent également la page/extrait selon §11.2 ; une étiquette `llm_verified` ou `dual_agree` ne remplace pas la vérification. Les formats PDF/HTML/XLSX non implémentés dans cet incrément échouent explicitement, sans recours réseau, avant tout usage de qualification.
 
+Raccordement SQL (ADR-017) : audit complet des six tables obs.price_observation/stock_observation/trade_flow/production_observation/weather_observation/cpi_observation, sans exclusion silencieuse ; audit incrémental sur couples table/UUID explicitement demandés, absences incluses dans les échecs. Preuve structurée evidence.provenance ; chaque attente est reconstruite depuis le champ SQL autorisé, jamais reprise du JSON. Valeurs non nulles et identités obligatoires selon le type, dates ISO littérales ; champ inconnu, preuve absente ou valeur manquante refusés. Cellule numérique : raw_expected optionnel, comparaison textuelle supplémentaire aux octets source, lié au champ brut SQL par l'auditeur. La météo sans preuve exploitable échoue, sans ajout implicite de colonne. Résultat persisté dans ops.dq_result, métrique NULL sur zéro observation, effectifs et résultats individuels sans URL/extrait/valeur ni exception ; flush sans commit imposé. Ce raccordement ne constitue pas encore la garde Gold ni un contrôle des conversions économiques.
+
+Le premier auditeur SQL ne prend en charge que extraction_method=deterministic ; les étiquettes llm_verified/dual_agree/inconnues échouent jusqu'au contrôle de page/extrait obligatoire. Les tokens JSON numériques ne démontrent pas un champ brut textuel exact ; raw_expected exige une cellule source textuelle, sans sérialisation inventée du token. Les adaptateurs complémentaires restent nécessaires avant qualification complète.
+
 Asset checks Dagster obligatoires, avec résultats écrits dans `ops.dq_result` :
 
 | Check | Seuil MVP | Bloquant pour Gold |

@@ -65,7 +65,7 @@
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
-| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | 30d0a837bf666336ee802ecdf843dc810f75d639 | Incrément pur : QA 68 et check Windows 479 backend / 35 web / build codes 0 ; SQL/DQ/Gold encore obligatoires | B-R014 résolu ; raccordement à poursuivre |
+| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | 30d0a837bf666336ee802ecdf843dc810f75d639 | Incrément 2 SQL/DQ : QA 104, check Windows 515 backend / 35 web / build codes 0 ; garde Gold/formats/LLM encore obligatoires | B-R015 résolu, commit de lot en préparation |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
@@ -270,6 +270,46 @@
 - Actif préservé : DB read-only 482 références et 764 prix, empreintes inchangées ; chaque version Bronze relue, 674 objets/versions, zéro delete marker, 1377481 octets, SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c identique. Aucun reset/rebuild/purge actif.
 - B-R014 résolu par correction ciblée et réception intégrale, sans ignore runtime. R0.5 IN_PROGRESS : sélection SQL exhaustive, persistance DQ, formats restants, LLM et blocage Gold restent obligatoires ; aucun tag/qualification complète.
 - Index borné aux 16 fichiers de ce lot ; diff staged check code 0, gitleaks staged Docker code 0, 284018 octets scannés, zéro fuite. Commit atomique de l'incrément vert, consigner hash puis poursuivre raccordement contractuel SQL/DQ/Gold.
+
+### [2026-10-10T01:46:05Z] R0.5 — incrément 1 commité, préparation incrément 2
+
+- Commit vert 30d0a837bf666336ee802ecdf843dc810f75d639 ; clôture documentaire efc0bc6. R0.5 demeure IN_PROGRESS, aucune garde Gold/qualification de tâche revendiquée.
+1. ADR-017/SPECS avant extension : attentes liées SQL, raw_expected, périmètres explicites et DQ transactionnel.
+2. Sélectionner six tables sans masquer lignes ; incrémental table/UUID explicite et absent compté comme échec.
+3. Construire attentes depuis champs autorisés et identités, sans exécuter le contenu ni accepter ses expected.
+4. Persister numérateur/dénominateur et résultats non sensibles ; aucune modification de valeur observée.
+5. Tester liaison falsifiée, orphelins simulés, sélection complète/incrémentale et relecture SQL des résultats DQ.
+6. QA ciblée puis check Windows intégral ; commit seulement vert, garde Gold/formats/LLM restant ensuite obligatoires.
+
+### [2026-10-10T01:56:31Z] R0.5 — incrément SQL/DQ reçu en cible, code figé pour check complet
+
+- ADR-017/SPECS avant code ; module provenance_audit sélectionne six tables sans exclusions, lie les valeurs/identités aux champs SQL autorisés et persiste ops.dq_result sans imposer commit. Cible explicite absente comptée comme échec ; zéro lot non certifié. Pas de migration, mise à jour observée ou opération Bronze.
+- Première cible Windows 37147 code 0, 94 passed / 9,71 s ; mypy initial 6836 code 1 sur MIME nullable, B-R015. Correction : format vide invalide, pas de MIME supposé ; neuf nouveaux cas unitaires, preuve LLM refusée jusqu'à contrôle page/extrait, test complet indépendant des anciennes lignes.
+- QA courante Windows 76144 code 0 : 104 passed / 8,65 s, deux intégrations SQL, zéro failure/error/skip ; reçu 6a8f5c06d0264327a09e78cce151185f / 15,779 s, rapports increment-2-qa exportés. Mypy courant 36134 code 0 / trois fichiers, ruff/format Docker verts.
+- Check Windows complet 88450 lancé 2026-10-10T01:55:29Z ; version fonctionnelle figée jusqu'à réception backend/couvertures/frontend/code final. Aucune relance concurrente, aucun commit du deuxième lot anticipé.
+- R0.5 IN_PROGRESS dans PROGRESS/plan : SQL/DQ écrit et ciblé testé, pas de garde Gold branchée, formats/adaptateurs complets ni contrôle LLM déjà reçus. Ne pas promouvoir l'audit en preuve de conversions, collecte réelle ou performance de marché.
+
+### [2026-10-10T02:03:23Z] R0.5 — contrôle global actif, correction des renvois documentaires
+
+- Check Windows 88450 : lint/format 172 fichiers, types 171 et gouvernance codes 0 ; 515 cas réellement collectés (pas estimation 512). Nouvelles deux intégrations SQL vertes dans le global ; suite restante/frontend/code final encore attendus. Code fonctionnel inchangé.
+- Relecture du plan : WFP/HDX = R1.7, NASA POWER = R1.11. Les renvois R1.3/R1.7 dans les anciens journaux R0.4 étaient erronés ; correction explicite du registre d'incidents, fiches sources et renvoi ADR-014. Les journaux historiques restent conservés, aucune permission/collecte/statut de source/DB modifié.
+- R0.5 IN_PROGRESS, deuxième incrément non commité ; continuer la réception puis préserver/scanner/committer avant garde Gold et formats restants.
+
+### [2026-10-10T02:10:11Z] R0.5 — préparation de formats isolée du code en réception
+
+- Check global 88450 poursuit son test ML historique, version fonctionnelle du dépôt principal inchangée. Les 515 cas collectés et intégrations reçues n'annoncent pas encore code final/couvertures/frontend.
+- Worktree détaché créé par git sur efc0bc6 : /tmp/ketrika-r05-formats.OQ2It5, exclusivement pour préparer le prochain incrément R0.5, sans sous-agent ni second check sur les volumes QA. Il ne contient pas encore l'incrément SQL/DQ courant.
+- ADR-018/SPECS écrits dans ce worktree avant code : tableaux PDF/HTML/XLSX à coordonnées exactes et bornées, aucune formule exécutée, nombres XML source exacts. Préparation non intégrée/non qualifiée ; transférer seulement après réception/commit du lot SQL/DQ, avec tests/contrats et nouvelle réception obligatoires.
+- PROGRESS principal reste canonique. Aucun statut DONE/tag, source live, actif DB/Bronze ou permission H1–H7 modifiés ; ne pas perdre cette préparation lors d'une reprise.
+
+### [2026-10-10T02:29:04Z] R0.5 — réception intégrale du deuxième incrément logiciel
+
+- Windows scripts/dev.ps1 check 88450 : code final 0 réellement reçu, 515 backend / 1644,14 s / cinq avertissements / zéro failure/error/skip ; intégrations 33 par dossier / 33 par marqueur, union 37. Lint/format 172 fichiers, types 171 et gouvernance codes 0.
+- Couvertures core 93,4887813462 %, extraction 86,3768115942 %, normalize 84,8552338530 % ; auditeur SQL 115/116 statements. QA courante 104 / deux intégrations / 8,65 s, code 0 ; B-R015 résolu, aucun contrôle retiré.
+- Frontend 35 / quatre suites / 7,04 s ; reçu 2f0a5a36-b8a8-45d2-9671-86788351e5cd : lint 11177 ms, types 15636 ms, tests 12165 ms, build 191499 ms, tous codes 0 sans signal/timeout/erreur. Rapports exportés docs/evidence/R0.5/increment-2-*.
+- Préservation renouvelée : DB read-only code 0, 482 références / 47b4402859acc41e3ae91fdb128e56c6, 764 prix / 4b2586cb8e422f11c4873ad513d66bc1 ; lecture des 674 versions Bronze code 0, zéro delete marker, 1377481 octets / SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c. Empreintes inchangées.
+- Relecture DQ QA après le check : aucune ligne résiduelle (les scénarios ultérieurs nettoient leurs tables QA) ; ne pas inventer un résultat actuel. Persistance réellement prouvée par relecture dans une nouvelle session au sein des deux intégrations. Capturer également leurs effectifs dans les prochains artefacts de test.
+- Prototype séparé : cible 15285 code 0 / 113 tests / 12,86 s, mypy 51746 et ruff 42216 codes 0 ; correction du répartiteur reçue en cible, pas encore transférée ni globalement qualifiée. Index borné aux 21 fichiers du lot SQL/DQ et sa documentation ; diff staged check code 0, gitleaks staged Docker code 0 / 297754 octets / zéro fuite. R0.5 IN_PROGRESS ; commit SQL/DQ puis intégration des formats et garde restante.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 
