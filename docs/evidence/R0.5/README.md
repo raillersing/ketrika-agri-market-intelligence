@@ -2,7 +2,8 @@
 
 État : IN_PROGRESS. Premier incrément pur, pas de tâche DONE ni de garde Gold livrée.
 Base reçue : R0.4 commit 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482,
-clôture documentaire cd89d17 ; code courant non commité, ADR-016 avant implémentation.
+clôture documentaire cd89d17 ; incrément pur reçu et commité :
+30d0a837bf666336ee802ecdf843dc810f75d639, ADR-016 avant implémentation.
 
 ## Périmètre du premier incrément
 
