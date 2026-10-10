@@ -884,6 +884,14 @@ Ordre : `parse → validate → product match → unit conversion → location m
 
 ## 14. Qualité des données
 
+### 14.1 Provenance vérifiable R0.5 (ADR-016)
+
+Vérificateur hors réseau : référence SourceRecord/UUID, clé relative `{source_id}/{yyyy}/{mm}/{sha256}.{ext}`, SHA-256 hexadécimal valide et recalculé depuis les octets lus. Cache par objet limité au contrôle courant, jamais un succès sur exception. Résultats sans URL, extrait collecté, exception brute ni secret ; effectifs d'observations valides/total et objets effectivement lus. Certification complète distincte d'un contrôle incrémental ; ensemble vide non certifié, pas de taux 100 % par défaut. Les états d'authenticité R0.4 sont indépendants de l'intégrité des octets.
+
+Preuve cellule v1 : `version=1`, `format=json|csv`, `cells` (chaque cellule porte un rôle `value|identity`, un nom de champ, une attente brute ou décimale et ses coordonnées). Une valeur et au moins une identité sont obligatoires, leurs attentes proviennent du caller/observation et non du document exécuté. JSON : `scope_path` non vide, tous chemins `path` ancrés sous ce même enregistrement, indices non négatifs et clés littérales, nombres décodés Decimal. CSV : `row` zéro-indexée hors en-tête, colonnes `column` nommées dans un en-tête unique, `delimiter` explicite ; identité et valeur viennent de cette même ligne. Aucune recherche libre du nombre dans le document ne remplace ces coordonnées. Format inconnu ou preuve absente refusés. Ce premier incrément ne fournit pas encore la garde Gold : R0.5 demeure non terminé jusqu'à persistance DQ, garde fail-closed et réception intégrale.
+
+Les contrôles LLM relisent également la page/extrait selon §11.2 ; une étiquette `llm_verified` ou `dual_agree` ne remplace pas la vérification. Les formats PDF/HTML/XLSX non implémentés dans cet incrément échouent explicitement, sans recours réseau, avant tout usage de qualification.
+
 Asset checks Dagster obligatoires, avec résultats écrits dans `ops.dq_result` :
 
 | Check | Seuil MVP | Bloquant pour Gold |

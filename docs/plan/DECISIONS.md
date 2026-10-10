@@ -2,6 +2,16 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-016 : R0.5 — vérification des octets et cellules, qualification non implicite
+
+- **Date :** 2026-10-09 ; accepté avant implémentation.
+- **Contexte :** le contrôle DQ historique vérifie uniquement une FK de prix et affiche 100 % sur zéro ligne. Des SourceRecord de tests portent des pseudo-hashes ; toutes les preuves historiques ne fournissent pas de cellule exacte. Le corpus WDI authentique R0.4 n'est pas un prix et n'est pas ingéré en Silver.
+- **Décision :** introduire un vérificateur hors réseau réutilisable, sans nouvelle dépendance ni migration. Contrat de preuve v1 : format explicite, cellule numérique/brute et cellules d'identité ancrées au même enregistrement. JSON : chemin de clés/indices et scope_path ; CSV : ligne de données zéro-indexée après en-tête et noms de colonnes, séparateur déclaré. Valeurs et identités attendues viennent de l'observation/appelant, jamais d'un texte collecté exécuté ni d'un LLM inventant les attentes. Comparaison décimale sans float. Un format absent/non pris en charge, une identité insuffisante ou une cellule discordante échouent ; le support PDF/HTML/XLSX exige ses coordonnées et contrôles avant qualification.
+- **Chaîne :** référence SourceRecord existante, UUID concordant, SHA hexadécimal 64 caractères, clé relative content-addressed source/année/mois/hash.extension, octets relus et SHA recalculé. Cache uniquement pour la durée d'une vérification, par clé objet ; une erreur de lecture n'est jamais un succès et les erreurs ne divulguent pas URL/texte/exception/secrets. Les comptes portent sur les observations vérifiées, pas le nombre d'objets partagés ; contrôle complet et incrémental restent distingués, zéro ligne n'est jamais certifié 100 %.
+- **Incréments :** commencer par vérificateur pur et preuves CSV/JSON, régressions simulées et cellules WDI originales sans créer de fausse observation GDP/prix. Persistance DQ et garde Gold viennent ensuite ; la tâche reste IN_PROGRESS tant que publication et tous critères ne sont pas reçus. Le marqueur extraction_method seul n'atteste aucune vérification LLM ; preuve mécanique obligatoire pour toute valeur publiée.
+- **Alternatives :** accepter un hash seulement non nul, un snippet contenant le même nombre sur une autre ligne, l'absence d'objet, un jeu vide ou une étiquette llm_verified comme preuve (rejetés). Modifier/purger des objets Bronze ou utiliser le WDI PIB comme prix PPN (interdits).
+- **Conséquences :** cette intégrité technique ne prouve ni authenticité, droits, disponibilité historique, conversion économique ni modèle de marché. R0.6 consommera les résultats mesurés ; R0.7 certifiera son périmètre complet. L'actif n'est pas modifié et les contrôles négatifs d'objets utilisent exclusivement un store simulé.
+
 ## ADR-015 : R0.4 — périmètre explicite du test de rejeu douanier
 
 - **Date :** 2026-10-09 ; accepté avant correction.

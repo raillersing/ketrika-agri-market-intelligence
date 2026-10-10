@@ -65,7 +65,7 @@
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
-| R0.5 | MUST | TODO | — | — | — | — | — |
+| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | — | Incrément pur : QA 68 et check Windows 479 backend / 35 web / build codes 0 ; SQL/DQ/Gold encore obligatoires | B-R014 résolu, premier commit en préparation |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
@@ -223,6 +223,53 @@
 - Actif préservé : 482 sources / 764 prix, MD5 identiques ; Bronze 674 versions / 1377481 octets / zéro delete marker / SHA identique. Design tiers conservé ; tests Docker isolés, LLM replay et aucun envoi externe.
 - B-R009/010 reportent les refus HDX/NASA à R1.3/R1.7 ; BL-010 runtime status/robots encore à corriger, aucune protection déjà revendiquée. Pas de collecte continue, modèle marché, humain, déploiement ni CI distante qualifiés.
 - Prochaine MUST éligible R0.5 ; reprendre la boucle documentaire, ADR/SPECS avant extension de contrat. Aucun mi-r0-qualified avant R0.9 et son gate réel.
+
+### [2026-10-09T21:23:10Z] Démarrage R0.5 — provenance mesurée de bout en bout
+
+1. Lire contrats §8/10/11/14, stockage, modèles, DQ et Gold ; inventorier preuves réellement disponibles sans mutation active.
+2. Inscrire ADR/SPECS avant extension de preuve ; distinguer intégrité technique, authenticité et validation économique.
+3. Implémenter vérificateur hors réseau : FK/référence, clé adressée par contenu, octets/SHA relus, cellules/identité numérique et erreurs fermées.
+4. Dédupliquer les lectures par objet ; séparer certification complète et contrôle incrémental, sans taux 100 % sur ensemble vide.
+5. Persister résultats/anomalies DQ sans données sensibles, puis bloquer publication Gold sur provenance/LLM non vérifiés.
+6. Tester objets absents/altérés simulés, pseudo-hash, mauvaise ligne/FK, déduplication et valeurs de l'archive WDI authentique sans la présenter comme prix.
+7. Vérifier suites ciblées et check Windows entier à chaque incrément vert ; préserver Bronze et données actives, aucun contournement de source.
+8. Consigner commandes/effectifs/limites et commits, synchroniser plan ; DONE seulement après tous critères, pas au premier module testé.
+
+### [2026-10-09T21:32:22Z] R0.5 — vérificateur pur, premier diagnostic et réception courante
+
+- ADR-016/SPECS §14.1 avant code : preuve CSV/JSON, attentes liées par le caller, identités dans le même enregistrement, SHA/clé/FK et lecture réelle, erreurs non sensibles ; aucune nouvelle dépendance, migration ni garde Gold déjà revendiquée.
+- Premier test Windows 95449 code 0 : 60 passed / 3,14 s, module provenance 96 % ; WDI original vérifié sans créer de faux prix/GDP Silver. Ce run précède les huit cas supplémentaires et corrections de types, pas une réception courante complète.
+- B-R014 : mypy ciblé initial code 1, deux inférences ; correction de noms/annotation, mypy courant code 0 / trois fichiers. Ruff initial code 2 avant lint (cache sur montage RO), relance --no-cache code 0 ; formatting Docker trois fichiers, aucun contrôle caché.
+- QA R0.5 enregistrée pour cet incrément logiciel : 68 tests minimum, zéro intégration SQL déclarée ; Windows session 71961 en cours. Persistance DQ, liaison exhaustive aux tables, LLM page/extrait et garde Gold restent obligatoires avant DONE ; pas de baisse de critères ni de qualification de marché.
+- R0.4 clôturée, gouvernance code 0 confirme quatre DONE et R0.5 seule MUST éligible ; statut R0.5 IN_PROGRESS, aucun commit de l'incrément avant check Windows intégral courant.
+
+### [2026-10-09T21:35:41Z] R0.5 — incrément pur reçu, code figé pour check complet
+
+- QA Windows courante session 71961 code 0 : 68 passed / 2,26 s, zéro échec/erreur/skip, zéro intégration SQL ; reçu f954154f0daa422cbdfdba0957688bfc / 8,984 s, rapports increment-1-qa exportés. Lint ciblé --no-cache code 0 ; mypy courant code 0 / trois fichiers.
+- Check Windows intégral session 7895 lancé, code fonctionnel figé ; aucune correction simultanée ni second check concurrent. Ne pas déclarer le lot vert global ou committer avant résultat complet/couvertures/frontend/préservation/secrets.
+- Ce lot ne fournit pas encore sélection exhaustive SQL, persistance DQ ni blocage Gold/LLM ; R0.5 reste IN_PROGRESS après un éventuel commit pur. Les 68 tests ne sont jamais une réception totale de tâche ou une mesure de marché.
+
+### [2026-10-10T01:24:15Z] R0.5 — check courant actif, pas de commit anticipé
+
+- Session Windows 7895 toujours connue, conteneur ketrika-qualification-api-run-cf2892a129ad : lint/format 169 fichiers, types 168 et gouvernance codes 0 ; 479 cas collectés. Toutes les intégrations ont passé, tests de prévision en cours, aucun échec nouveau signalé.
+- Inspection read-only : pytest elapsed 20 min 37 s / CPU 14 min 07 s / état Rl. Horloge UTC et durée du processus divergent du temps depuis lancement ; aucune cause de cette différence établie ni durée complète inventée.
+- Version fonctionnelle inchangée depuis QA 68 ; R0.5 IN_PROGRESS, sans commit de lot, sans persistance DQ/garde Gold déjà livrées. Attendre couverture/backend/frontend et code final du même lancement, puis préserver actif/scanner secrets avant commit.
+
+### [2026-10-10T01:34:35Z] R0.5 — préparation du raccordement, contrôle actif en lecture seule
+
+- Check Windows 7895 toujours en cours, code fonctionnel inchangé ; aucune réception globale ni commit anticipé. La durée CPU progresse dans le test ML historique, sans nouvel échec reçu.
+- Contrôle DB active code 0 : 482 source_record, empreinte 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix, empreinte 4b2586cb8e422f11c4873ad513d66bc1, identiques au contrôle R0.4. Lecture des versions Bronze lancée, résultat encore attendu.
+- Préparation du prochain incrément, sans implémentation simultanée : lier les attentes aux champs des observations SQL ; sélectionner sans masquer les orphelins ni les tables publiées ; persister effectifs et anomalies DQ ; bloquer Gold avant publication. Les preuves des fixtures doivent être réelles dans le store de test, jamais dispensées par APP_ENV=test.
+- Les formats PDF/HTML/XLSX et preuves LLM page/extrait restent non livrés ; toute extension de contrat doit précéder le code par ADR/SPECS. R0.5 reste IN_PROGRESS dans les deux registres.
+
+### [2026-10-10T01:44:46Z] R0.5 — réception du premier incrément logiciel
+
+- Commande Windows scripts/dev.ps1 check, session 7895 : code final 0 réellement reçu ; 479 backend / 2208,18 s, cinq avertissements, zéro failure/error/skip, union 35 intégrations. Lint/format 169 fichiers, types 168 et gouvernance codes 0.
+- Couvertures core 93,1659693166 %, extraction 86,3768115942 %, normalize 84,8552338530 % ; nouveau vérificateur 215/220 statements couverts. QA ciblée 68 / 2,26 s / zéro intégration SQL, code 0, demeure preuve de cet incrément seulement.
+- Frontend 35 / quatre suites / 4,54 s, reçu dc2ea94a-93df-4ba8-bf5a-363828b53435 : lint/types/tests/build codes 0, build 168382 ms, aucun timeout/signal/erreur. Rapports exportés dans docs/evidence/R0.5.
+- Actif préservé : DB read-only 482 références et 764 prix, empreintes inchangées ; chaque version Bronze relue, 674 objets/versions, zéro delete marker, 1377481 octets, SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c identique. Aucun reset/rebuild/purge actif.
+- B-R014 résolu par correction ciblée et réception intégrale, sans ignore runtime. R0.5 IN_PROGRESS : sélection SQL exhaustive, persistance DQ, formats restants, LLM et blocage Gold restent obligatoires ; aucun tag/qualification complète.
+- Index borné aux 16 fichiers de ce lot ; diff staged check code 0, gitleaks staged Docker code 0, 284018 octets scannés, zéro fuite. Commit atomique de l'incrément vert, consigner hash puis poursuivre raccordement contractuel SQL/DQ/Gold.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 
