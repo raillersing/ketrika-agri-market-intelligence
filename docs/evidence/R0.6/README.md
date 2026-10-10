@@ -89,3 +89,10 @@ Préservation finale reçue après check : SQL 77284 et Bronze 56901 codes 0,
 zéro marqueur, 1 377 481 octets, SHA identique au précheck/R0.5.
 Reçu increment-1-active-preservation-final.json ; aucun schéma actif ou usage
 humain qualifié. Diff/scan du snapshot final et commit encore requis.
+
+Incrément transport reçu et committé
+c63fe222832f76cc55feeba4f97def4ec296884d (41 fichiers, 1917 ajouts,
+136 suppressions). Diff staged 47800 code 0 ; scan configuré final 10594 code 0,
+440 194 octets / 7,04 s / aucune fuite, exception exacte de step UUID documentée.
+R0.6 reste IN_PROGRESS ; suite : définitions/inventaire/schedules désactivés,
+puis checks mesurés, ledger, normalisation, partitions et durabilité.
