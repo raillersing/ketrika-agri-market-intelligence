@@ -605,13 +605,17 @@ CREATE TABLE obs.production_observation (
   location_id UUID REFERENCES ref.location,
   period_start DATE NOT NULL, period_end DATE NOT NULL,
   element TEXT NOT NULL,         -- area_harvested_ha | production_t | yield_kg_ha | food_supply_kcal | ...
-  value NUMERIC(20,4), unit_raw TEXT, flag_raw TEXT,
+  value NUMERIC(20,4), value_raw TEXT, unit_raw TEXT, flag_raw TEXT,
   published_at TIMESTAMPTZ, ingested_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   observed_or_imputed TEXT NOT NULL,
   extraction_method TEXT NOT NULL, evidence JSONB, confidence NUMERIC(3,2) NOT NULL,
   superseded_by UUID REFERENCES obs.production_observation
 );
 CREATE UNIQUE INDEX prod_current_uk ON obs.production_observation (natural_key) WHERE superseded_by IS NULL;
+
+-- ADR-021 : value_raw ajouté nullable sans backfill ; aucun brut fabriqué depuis float.
+-- Le loader refuse valeurs non finies/hors NUMERIC(20,4)/arrondi implicite.
+-- Révision de source/preuve/brut : nouvelle ligne ; downgrade refuse un brut non NULL.
 
 CREATE TABLE obs.weather_observation (
   observation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

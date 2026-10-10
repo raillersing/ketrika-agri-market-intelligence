@@ -1,0 +1,23 @@
+{
+  "scope": "isolated QA migration preservation only; not source authenticity",
+  "environment": "ketrika_qualification",
+  "prepare_session": 31319,
+  "prepare_exit_code": 0,
+  "before": {
+    "revision": "0003_weather_provenance",
+    "production_rows": 1,
+    "old_columns_md5": "ff69eaea271319a5814b796fd8afb971"
+  },
+  "after": {
+    "revision": "0004_production_raw",
+    "production_rows": 1,
+    "old_columns_md5": "ff69eaea271319a5814b796fd8afb971",
+    "non_null_value_raw_rows": 0
+  },
+  "limitations": [
+    "MD5 is a diagnostic equality fingerprint, not provenance/authenticity",
+    "No historical raw value reconstructed",
+    "No migration applied to active database",
+    "Targeted and global tests still required before commit"
+  ]
+}

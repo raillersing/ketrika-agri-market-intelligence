@@ -65,7 +65,7 @@
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
-| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | c29acf2cffffabbabab9604e053a42abfe8d806b | Météo QA 212 et check Windows 613/35/build codes 0 ; migration QA préserve huit lignes ; garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 imports préparatoires corrigés |
+| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | ea6466accf8d51d9fb3394b632f6cb33cd15b1e5 | Production reçue 228 et check 629/35/build codes 0 ; garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 imports préparatoires corrigés |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
@@ -423,6 +423,66 @@
 - Frontend 35 / quatre suites / 11,42 s ; reçu f320be59-3759-4a69-9d1c-e2085a04280a : lint 19021 ms, types 22866 ms, tests 18104 ms, build 278980 ms, tous codes 0 sans signal/timeout/erreur. Rapports increment-5-backend-check/frontend-check exportés.
 - Préservation active relue codes 0 : 482 source_record / MD5 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix / MD5 4b2586cb8e422f11c4873ad513d66bc1, inchangés. Bronze 674 versions/objets, zéro delete marker, 1377481 octets / SHA-256 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c inchangé ; lecture effective des octets, aucune migration active.
 - R0.5 reste IN_PROGRESS ; logiciel météo synthétique testé, pas de qualification source live/géographique/économique. Bruts production, adaptateurs métier et garde Gold restent obligatoires ; aucun tag.
+
+### [2026-10-10T06:34:00Z] R0.5 — incrément météo commité, brut production engagé
+
+- Commit météo ea6466accf8d51d9fb3394b632f6cb33cd15b1e5 : 24 fichiers, 884 ajouts/36 retraits ; check Windows code 0, diff staged check code 0, gitleaks staged code 0 / 341345 octets / aucune fuite ; données actives inchangées. R0.5 IN_PROGRESS.
+- ADR-021/SPECS avant code ; mini-plan : (1) migration nullable sans backfill et refus downgrade destructif ; (2) conserver brut/preuve aux deux insertions ; (3) idempotence décimale et revisions source/preuve ; (4) tests unitaires/SQL, empreintes QA avant/après ; (5) QA puis check Windows complet et commit seulement vert.
+- Aucun changement de précision, d'authenticité, de source live ni de destination active autorisé par ce lot ; garde Gold toujours obligatoire.
+
+### [2026-10-10T06:40:53Z] R0.5 — brut production préparé et migration QA préservée
+
+- Unités production 13411 code 0 : 13 / 43,84 s ; lint 5645/1941 codes 0, types 41956 code 0 / cinq fichiers. Deux tests migration intent et scénario SQL/MinIO ajoutés, types complément 84247 et QA Windows 93155 en cours ; aucun résultat anticipé.
+- Préparation Windows 31319 code 0 : migration QA 0003 -> 0004, seed 10/15/30/2. SQL avant/après codes 0 : une production, MD5 anciennes colonnes ff69eaea271319a5814b796fd8afb971 inchangé ; value_raw NULL, pas de backfill. Reçu increment-6-migration-preservation.json.
+- Scénario SQL distingue historique/courant et brut révisé volontairement non conforme aux cellules : audit doit refuser cette ligne, pas certifier tout l'historique. Objets synthétiques réellement conservés au bucket QA, URLs verified=false/manual_upload, aucun HTTP acquis.
+- API active : sondes Docker expirées pendant reloads successifs sur fichiers tests, deux sondes directes timeouts puis dernière HTTP 200 / DB et storage connected. Cause exhaustive non démontrée ; BL-011 documente l'effet de surveillance, aucune reprise forcée ni migration active. Workflow production actif non qualifié.
+- R0.5 IN_PROGRESS ; après cible verte, contrôle global obligatoire avant commit de production. Garde Gold/adaptateurs restent non livrés.
+
+### [2026-10-10T06:45:39Z] R0.5 — sixième incrément ciblé reçu, check global figé
+
+- QA Windows 93155 code 0 : 228 / 128,94 s / sept intégrations, zéro failure/error/skip ; reçu 78d3547273b1421abd1df401b1e245fa / 144,65 s, XML/reçu exportés. Intégration production SQL/MinIO positive, deux versions conservées/une courante ; audit incremental 1/2 valide, failed sur brut volontairement divergent.
+- Types complémentaires 84247 code 0 / deux fichiers, lint 93148 code 0 ; API active HTTP 200 puis Docker healthy, aucun redémarrage forcé/migration active. Le refus de downgrade production est testé en mock ; ne pas le confondre avec une exécution SQL de downgrade.
+- Check Windows global 6321 lancé, code fonctionnel figé jusqu'à réception. R0.5 IN_PROGRESS, aucun commit du lot avant code final/backend/frontend/préservation/scan ; garde Gold et adaptateurs encore obligatoires.
+
+### [2026-10-10T06:54:21Z] R0.5 — contrôle production actif, garde Gold préparatoire séparée
+
+- Check Windows 6321 : lint/format 182 fichiers, mypy 181 et gouvernance codes 0 ; 629 cas collectés, intégrations en cours. Aucun changement fonctionnel principal depuis lancement.
+- Worktree conservé /tmp/ketrika-r05-formats.OQ2It5 : ADR-022/SPECS préparatoires avant prototype de garde, liste fixe vues/tables, audit frais des courantes, verrou transactionnel prévu, empty sans certification. Neuf unités / 22,99 s, lint et types deux fichiers codes 0 après B-R019 ; mocks, pas réception SQL/publication.
+- Préparation d'un générateur de sources synthétiques pour nouvelles observations seulement : objet QA réel/manual_upload, aucun retrofit d'une observation persistée, aucune archive officielle ou origine live revendiquée. Prototype non transféré ni qualifié ; conversions/valeurs Gold dérivées et lignée modèle restent explicitement hors preuve cellule seule.
+- R0.5 IN_PROGRESS ; finir réception 6321 puis commit production avant transfert éventuel. Aucun tag, pas de publication protégée déjà revendiquée.
+
+### [2026-10-10T07:13:22Z] R0.5 — global production en intégration, prototypes corrigés
+
+- Check Windows 6321 actif : 629 collectés, intégrations jusque test_rebuild vertes, WB en cours. Compteur/durée/couvertures finaux encore inconnus ; aucun commit de production anticipé, aucun deuxième check global sur volumes QA.
+- Prototypes Linux séparés : 3737 code 0 / 99 / 32,82 s (vérificateur existant, lexèmes JSON explicites, générateur et garde simulés), lint 78729 code 0. Types générateur/garde 77098 code 0 / trois fichiers ; lexèmes/types dédiés 97820 code 0 / deux fichiers. B-R020/021/022 résolus uniquement sur prototype ; anciens runs rouges conservés.
+- ADR-023/SPECS préparatoires avant extension JSON : option explicite json_number_lexeme, token original conservé, exposant/zéros/signe comparés exactement, aucune identité numérique convertie en texte, duplicate_json_key refusé ; sans option, refus historique du raw textuel sur nombre conservé. Aucun transfert/adaptateur natif reçu.
+- Limites du futur raccordement : valeurs Gold dérivées (prix MGA/base, quantité_base), conversions et lignée modèle ne sont pas certifiées par la seule valeur source ; fixtures générées et anciens parsers sans preuve ne deviennent pas des acquisitions officielles. R0.5 IN_PROGRESS, garde Gold toujours non livrée.
+
+### [2026-10-10T07:22:47Z] R0.5 — toutes intégrations production vertes, calcul ML actif
+
+- Check Windows 6321 actif, conteneur ketrika-qualification-api-run-38bc90ae7edc : toutes intégrations par dossier vertes ; unités jusque test_ml_forecast en cours. Le processus calcule encore, aucun code final reçu, aucun seuil supprimé ou source historique purgée pour accélérer.
+- Prototype CSV de test séparé : parser 1.0.1 et preuves v1 aux colonnes/ligne exactes, pas de cellule currency fabriquée depuis le défaut MGA. Unités 78847 code 0 / 89 / 40,05 s, types 59608 code 0 / deux fichiers et lint 96604 code 0 après B-R023. Ces unités simulent le type Decimal relu ; elles ne prouvent ni SQL natif ni Gold protégé.
+- API active healthy en lecture seule. R0.5 IN_PROGRESS ; lot production principal toujours figé/non commité en attente backend/frontend/préservation/scan. Prototypes conservés, pas encore transférés.
+
+### [2026-10-10T07:31:22Z] R0.5 — global ML actif, préparation JSON bornée reçue en unité
+
+- Check Windows 6321 toujours actif dans calcul test_ml_forecast ; processus CPU actif, toutes intégrations déjà vertes, aucune réception finale/backend/frontend inventée. API active healthy, code principal fonctionnel inchangé depuis 06:45:39Z.
+- Prototype ADR-023 précisé avant code : contenu 32 MiB, profondeur JSON 128 niveaux déterministe indépendante de Python, chaînes/échappements exclus, exposant non interprétable refusé. B-R024 observé puis corrigé sans modifier un seuil pour masquer l'échec.
+- Prototype corrigé 49024 code 0 / 108 / 35,31 s ; types 48021 code 0 / deux fichiers. Tests incluent limite/au-delà, crochets/quotes dans une chaîne, objets/clés, représentation numérique exacte et anciens refus. Aucun transfert principal ni réception SQL/publication Gold de ce prototype.
+- R0.5 IN_PROGRESS ; attendre final 6321, archiver preuves, préserver actif et scanner avant commit production, puis transférer le prochain lot borné par ADR/SPECS. Aucun tag.
+
+### [2026-10-10T07:56:12Z] R0.5 — backend production global reçu, frontend encore obligatoire
+
+- Check Windows 6321 backend vert : 629 / 3893,46 s, cinq avertissements, zéro failure/error/skip ; intégrations union 41 (dossier/marqueur 37). Test anti-fuite terminé et vert, aucun seuil retiré.
+- Couvertures core 93,4747798239 %, extraction 86,3768115942 %, normalize 84,8552338530 % ; provenance_audit 118/119 statements, modèle DB 387/387. Rapports increment-6-backend-check-tests.xml et coverage.json exportés avant tout autre check.
+- Frontend même lancement : lint vert, types en cours ; tests/build et code Windows final encore inconnus. Aucun commit de production avant fin réelle, préservation active et scan secrets ; code fonctionnel principal reste figé.
+- R0.5 IN_PROGRESS ; ces fixtures ne qualifient pas collecte live, modèle de marché ni usage humain. Prototypes séparés conservés, garde Gold encore non raccordée.
+
+### [2026-10-10T08:06:02Z] R0.5 — sixième incrément reçu intégralement
+
+- Check Windows 6321 code final 0 : backend 629 / 3893,46 s et frontend 35 / quatre suites / 13,13 s ; lint/types/build verts, build 357406 ms, reçu 159c8012-17d8-48ea-910b-bd09feb9da1b archivé. Couvertures et intégrations consignées ci-dessus.
+- Contrôle SQL actif en lecture seule à 07:59:09Z code 0 : 482 sources / MD5 47b4402859acc41e3ae91fdb128e56c6 et 764 prix / MD5 4b2586cb8e422f11c4873ad513d66bc1 inchangés. Lecture réelle de chaque version Bronze 29081 code 0 : 674 versions/objets, zéro delete marker, 1377481 octets ; SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c inchangé.
+- R0.5 IN_PROGRESS : garde de publication Gold, adaptateurs natifs et lignée des conversions restent obligatoires ; aucune performance de marché, collecte live ou qualification humaine revendiquée.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 

@@ -68,7 +68,7 @@ POLICIES: dict[str, BindingPolicy] = {
         ProductionObservation,
         ("value",),
         ("product_raw", "period_start", "element", "unit_raw"),
-        {},
+        {"value": "value_raw"},
     ),
     "weather_observation": BindingPolicy(
         WeatherObservation,

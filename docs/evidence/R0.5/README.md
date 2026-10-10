@@ -1,11 +1,36 @@
 # R0.5 — provenance mesurée
 
-État : IN_PROGRESS. Cinq incréments testés ; pas de tâche DONE ni de garde Gold livrée.
+État : IN_PROGRESS. Six incréments testés ; pas de tâche DONE ni de garde Gold livrée.
 Base reçue : R0.4 commit 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482,
 clôture documentaire cd89d17 ; incrément pur reçu et commité :
 30d0a837bf666336ee802ecdf843dc810f75d639, ADR-016 avant implémentation.
 
-## Incrément 5 testé : provenance/historique météo
+## Incrément 6 reçu : brut production
+
+ADR-021/SPECS avant code ; migration nullable sans backfill, brut/evidence conservés
+aux deux insertions, idempotence décimale et révisions de source/preuve/brut/statut.
+Précision NUMERIC(20,4) inchangée, arrondis implicites/non-finis refusés.
+Préparation Windows 31319 code 0, ancienne ligne QA inchangée ; reçu dédié.
+Unités 13411 code 0 / 13 / 43,84 s ; types 41956 / cinq et 84247 / deux fichiers
+codes 0, lint 5645/1941/93148 codes 0.
+QA Windows 93155 code 0 : 228 / 128,94 s / sept intégrations,
+zéro failure/error/skip, reçu 78d3547273b1421abd1df401b1e245fa / 144,65 s.
+SQL/MinIO : ancienne/nouvelle version conservées, brut divergent refusé par audit
+(1/2 valide, résultat failed), pas de qualification marché ou live.
+Check Windows 6321 lancé 2026-10-10T06:45:39Z, code fonctionnel figé.
+Code final Windows 0 reçu le 2026-10-10T08:06:02Z : 629 backend / 3893,46 s,
+cinq avertissements, zéro failure/error/skip ; intégrations union 41 (dossier/marqueur 37).
+Couvertures core 93,4747798239 %, extraction 86,3768115942 %, normalize 84,8552338530 %.
+Frontend 35 tests / quatre suites / 13,13 s ; reçu 159c8012-17d8-48ea-910b-bd09feb9da1b,
+lint 21882 ms, types 29603 ms, tests 24574 ms, build 357406 ms, toutes étapes code 0.
+Rapports increment-6-backend-check/frontend-check archivés ; pas de qualification live.
+API active de nouveau HTTP 200 et Docker healthy après reloads ; BL-011 documenté,
+aucune migration active et aucun workflow production actif qualifié.
+
+## Incrément 5 reçu : provenance/historique météo
+
+Commit ea6466accf8d51d9fb3394b632f6cb33cd15b1e5 ; diff staged check et gitleaks
+codes 0 / 341345 octets / aucune fuite. Empreintes actives SQL/Bronze inchangées.
 
 ADR-020/SPECS avant transfert. Migration 0003 QA prépare cinq colonnes nullable,
 sans backfill, remplace l'unicité globale par celle des courantes et ajoute le trigger
@@ -31,8 +56,8 @@ zéro failure/error/skip, intégrations union 40 (dossier/marqueur 36).
 Couvertures core 93,4721665999 %, extraction 86,3768115942 %, normalize 84,8552338530 %.
 Frontend 35 / quatre suites / 11,42 s ; reçu f320be59-3759-4a69-9d1c-e2085a04280a :
 lint/types/tests/build codes 0, build 278980 ms, aucun signal/timeout/erreur.
-Rapports increment-5-backend-check/frontend-check archivés ; préservation et scan
-encore obligatoires avant commit. L'heure de réception n'est pas la durée d'exécution.
+Rapports increment-5-backend-check/frontend-check archivés. L'heure de réception
+n'est pas la durée d'exécution. Aucun déploiement météo actif qualifié.
 
 ## Incrément 4 reçu : preuve LLM mécanique
 

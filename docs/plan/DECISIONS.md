@@ -2,6 +2,14 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-021 : R0.5 — brut de production conservé sans backfill
+
+- **Date :** 2026-10-10 ; accepté avant implémentation.
+- **Contexte :** ProductionRecord.value_raw existe mais les deux insertions du loader le perdent ; l'idempotence ne distingue pas une nouvelle preuve ou une révision source de même valeur.
+- **Décision :** migration additive 0004 ajoutant value_raw TEXT nullable sans backfill. Le loader conserve ce brut, copie evidence et compare valeur décimale, brut, preuve, méthode, statut observé/imputé et source_record_id avant skip. Une différence crée une révision append-only, jamais un remplacement destructif. NUMERIC(20,4) inchangé ; nouvelles valeurs non finies, hors capacité ou exigeant un arrondi refusées.
+- **Alternatives :** reconstruire le brut depuis float, renseigner artificiellement les anciennes lignes ou ignorer une preuve révisée (rejetées).
+- **Conséquences :** audit lie value_raw au lexème vérifié ; anciennes lignes sans brut ne deviennent pas qualifiées. Downgrade refuse de supprimer un brut non NULL. Migration et réception SQL uniquement QA, aucune migration active ; Gold/adaptateurs natifs restent à réaliser.
+
 ## ADR-020 : R0.5 — provenance météo et révisions ajout seules
 
 - **Date :** 2026-10-10 ; accepté avant transfert du prototype au dépôt principal.

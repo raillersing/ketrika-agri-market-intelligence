@@ -410,6 +410,7 @@ class ProductionObservation(Base):
     period_end: Mapped[date] = mapped_column(DATE, nullable=False)
     element: Mapped[str] = mapped_column(TEXT, nullable=False)
     value: Mapped[float | None] = mapped_column(NUMERIC(20, 4), nullable=True)
+    value_raw: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     unit_raw: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     flag_raw: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     published_at: Mapped[datetime | None] = mapped_column(nullable=True)

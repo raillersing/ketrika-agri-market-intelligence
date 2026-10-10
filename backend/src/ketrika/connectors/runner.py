@@ -410,6 +410,12 @@ def load_production_record_with_supersession(
     source_record_id: uuid.UUID,
 ) -> tuple[str, uuid.UUID]:
     """Load ProductionRecord into obs.production_observation with supersession."""
+    value = Decimal(str(record.value)) if record.value is not None else None
+    if value is not None:
+        if not value.is_finite() or abs(value) > Decimal("9999999999999999.9999"):
+            raise ValueError("production_value_not_representable")
+        if value.quantize(Decimal("0.0001")) != value:
+            raise ValueError("production_precision_not_supported")
     nk = record.compute_natural_key(source_id)
     stmt = select(ProductionObservation).where(
         ProductionObservation.natural_key == nk,
@@ -427,12 +433,13 @@ def load_production_record_with_supersession(
             period_start=record.period_start,
             period_end=record.period_end,
             published_at=record.published_at,
-            value=record.value,
+            value=value,
+            value_raw=record.value_raw,
             unit_raw=record.unit_raw,
             flag_raw=record.flag_raw,
             observed_or_imputed=record.observed_or_imputed,
             extraction_method=record.extraction_method,
-            evidence=record.evidence,
+            evidence=deepcopy(record.evidence),
             confidence=record.confidence,
             superseded_by=None,
         )
@@ -440,11 +447,15 @@ def load_production_record_with_supersession(
         session.flush()
         return "inserted", new_obs.observation_id
 
-    curr_val = float(current_obs.value) if current_obs.value is not None else None
     if (
         current_obs.unit_raw == record.unit_raw
-        and curr_val == record.value
+        and current_obs.value == value
         and current_obs.flag_raw == record.flag_raw
+        and current_obs.value_raw == record.value_raw
+        and current_obs.source_record_id == source_record_id
+        and current_obs.evidence == record.evidence
+        and current_obs.extraction_method == record.extraction_method
+        and current_obs.observed_or_imputed == record.observed_or_imputed
     ):
         return "idempotent_skipped", current_obs.observation_id
 
@@ -465,12 +476,13 @@ def load_production_record_with_supersession(
         period_start=record.period_start,
         period_end=record.period_end,
         published_at=record.published_at,
-        value=record.value,
+        value=value,
+        value_raw=record.value_raw,
         unit_raw=record.unit_raw,
         flag_raw=record.flag_raw,
         observed_or_imputed=record.observed_or_imputed,
         extraction_method=record.extraction_method,
-        evidence=record.evidence,
+        evidence=deepcopy(record.evidence),
         confidence=record.confidence,
         superseded_by=None,
     )
