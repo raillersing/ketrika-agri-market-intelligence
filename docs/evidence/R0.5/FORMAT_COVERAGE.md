@@ -2,7 +2,8 @@
 
 État du 2026-10-10 : incrément pur reçu dans 30d0a837 ; liaison SQL/DQ ciblée
 reçue dans 180cc77 (104 tests / deux intégrations, check Windows complet code 0,
-515 backend / 35 frontend / build). Les formats préparatoires restent hors dépôt principal.
+515 backend / 35 frontend / build). Les formats du troisième lot sont reçus :
+QA 149 / deux intégrations et check Windows 28765 code 0 / 560 backend / 35 frontend / build.
 Cette matrice n'est ni une réception totale R0.5 ni une qualification de marché.
 
 ## Formats
@@ -11,9 +12,9 @@ Cette matrice n'est ni une réception totale R0.5 ni une qualification de march�
 |---|---|---|
 | CSV | SHA réel, ligne zéro-indexée hors en-tête, colonnes nommées, identité et valeur dans la même ligne | Champs autorisés, dates ISO littérales ; autres représentations de période nécessitent un adaptateur testé |
 | JSON | SHA réel, scope_path, chemins littéraux sous le même enregistrement, Decimal | Attentes issues de SQL ; raw_expected exige une cellule textuelle, pas une sérialisation supposée d'un token numérique |
-| PDF | Non pris en charge, échec fermé | Page/tableau/ligne/cellule et métadonnées de période restent à implémenter |
-| HTML | Non pris en charge, échec fermé | Tableau/ligne/cellule et métadonnées restent à implémenter |
-| XLSX | Non pris en charge, échec fermé | Feuille/ligne/colonne, date et politique de formule restent à implémenter |
+| PDF | Lecteur page/tableau/ligne/colonne reçu comme logiciel synthétique | Métadonnées de période/en-têtes métier restent à lier ; scan/OCR non pris en charge |
+| HTML | Lecteur tableau/ligne/colonne reçu comme logiciel synthétique | Métadonnées métier restent à lier ; scripts/styles exclus, tables imbriquées refusées |
+| XLSX | Lecteur feuille/ligne/colonne et lexème XML reçu comme logiciel synthétique ; formules refusées | Date/format d'affichage non interprétés implicitement ; adaptateur de période restant |
 
 Le JSON WDI authentique vérifie les deux enregistrements macroéconomiques et leurs
 cellules indépendamment annotées dans le vérificateur pur. Il n'a pas été chargé

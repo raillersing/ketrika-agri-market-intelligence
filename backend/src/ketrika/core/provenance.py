@@ -11,7 +11,7 @@ import io
 import json
 import re
 import unicodedata
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal, InvalidOperation
@@ -153,20 +153,24 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
     if not isinstance(mime_type, str):
         raise ProofError("unsupported_format")
     mime = mime_type.split(";", 1)[0].strip().lower()
+    get_cell: Callable[[dict[str, Any]], tuple[tuple[Any, ...], Any]]
     try:
-        document = content.decode("utf-8-sig")
         if format_name == "json" and mime == "application/json":
+            document = content.decode("utf-8-sig")
             payload = json.loads(document, parse_float=Decimal, parse_constant=_reject_constant)
             scope = _path(proof.get("scope_path"))
             _at(payload, scope)
 
-            def get_cell(cell: dict[str, Any]) -> tuple[tuple[Any, ...], Any]:
+            def get_json_cell(cell: dict[str, Any]) -> tuple[tuple[Any, ...], Any]:
                 path = _path(cell.get("path"))
                 if len(path) <= len(scope) or path[: len(scope)] != scope:
                     raise ProofError("cell_outside_record")
                 return path, _at(payload, path)
 
+            get_cell = get_json_cell
+
         elif format_name == "csv" and mime in ("text/csv", "application/csv"):
+            document = content.decode("utf-8-sig")
             row_index = proof.get("row")
             delimiter = proof.get("delimiter")
             if (
@@ -184,11 +188,18 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
             if len(row) != len(headers):
                 raise ProofError("invalid_row")
 
-            def get_cell(cell: dict[str, Any]) -> tuple[tuple[Any, ...], Any]:
+            def get_csv_cell(cell: dict[str, Any]) -> tuple[tuple[Any, ...], Any]:
                 column = cell.get("column")
                 if not isinstance(column, str) or column not in headers:
                     raise ProofError("cell_missing")
                 return (row_index, column), row[headers.index(column)]
+
+            get_cell = get_csv_cell
+
+        elif format_name in ("pdf_table", "html_table", "xlsx_table"):
+            from ketrika.core.provenance_tables import table_cell_reader
+
+            get_cell = table_cell_reader(content, mime, proof)
 
         else:
             raise ProofError("unsupported_format")
@@ -211,7 +222,7 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
             raise ProofError("invalid_expectation")
         if cell.get("kind") == "number":
             style = (
-                proof.get("number_style", "decimal_dot") if format_name == "csv" else "decimal_dot"
+                proof.get("number_style", "decimal_dot") if format_name != "json" else "decimal_dot"
             )
             if _decimal(actual, style) != _decimal(expected):
                 raise ProofError("value_mismatch")

@@ -65,7 +65,7 @@
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
-| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | 180cc77c68185715689a6b69f6e98b7a68997489 | Incrément 2 SQL/DQ reçu : QA 104, check Windows 515 backend / 35 web / build codes 0 ; garde Gold/formats/LLM encore obligatoires | B-R015 résolu ; prototype de formats à intégrer |
+| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | 180cc77c68185715689a6b69f6e98b7a68997489 | Incrément 3 reçu : QA 149, check Windows 28765 code 0 / 560 backend / 35 web / build ; garde Gold/adaptateurs/LLM encore obligatoires | B-R016/017 résolus ; commit formats à consigner |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
@@ -310,6 +310,44 @@
 - Préservation renouvelée : DB read-only code 0, 482 références / 47b4402859acc41e3ae91fdb128e56c6, 764 prix / 4b2586cb8e422f11c4873ad513d66bc1 ; lecture des 674 versions Bronze code 0, zéro delete marker, 1377481 octets / SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c. Empreintes inchangées.
 - Relecture DQ QA après le check : aucune ligne résiduelle (les scénarios ultérieurs nettoient leurs tables QA) ; ne pas inventer un résultat actuel. Persistance réellement prouvée par relecture dans une nouvelle session au sein des deux intégrations. Capturer également leurs effectifs dans les prochains artefacts de test.
 - Prototype séparé : cible 15285 code 0 / 113 tests / 12,86 s, mypy 51746 et ruff 42216 codes 0 ; correction du répartiteur reçue en cible, pas encore transférée ni globalement qualifiée. Index borné aux 21 fichiers du lot SQL/DQ et sa documentation ; diff staged check code 0, gitleaks staged Docker code 0 / 297754 octets / zéro fuite. R0.5 IN_PROGRESS ; commit SQL/DQ puis intégration des formats et garde restante.
+
+### [2026-10-10T02:31:10Z] R0.5 — incrément 2 commité, transfert des formats
+
+- Commit vert SQL/DQ 180cc77c68185715689a6b69f6e98b7a68997489 ; code global 0, rapports et limites reçus, PROGRESS et plan synchronisés. Aucune garde Gold/qualification de tâche encore revendiquée.
+1. Intégrer ADR-018/SPECS avant transfert, conserver prototype et historique des deux diagnostics de types.
+2. Transférer lecteurs PDF/HTML/XLSX et tests du worktree, raccorder au vérificateur commun sans modifier octets Bronze.
+3. Ajouter aux rapports de tests les effectifs DQ réellement relus, sans valeurs/extraits/URL, pour survivre aux nettoyages QA ultérieurs.
+4. Vérifier tests ciblés combinés, lint/types et check Windows complet ; pas de commit avant réception complète.
+5. Actualiser matrice formats/statuts/empreintes ; garde Gold, adaptateurs métier et LLM restent obligatoires ensuite.
+
+### [2026-10-10T02:39:29Z] R0.5 — formats intégrés, première cible et DQ réelle de QA
+
+- ADR-018/SPECS intégrés avant code ; lecteurs/tests transférés par apply_patch depuis worktree, empreintes de fichiers identiques avant raccordement. Le prototype reste conservé ; pas de rebase/stash/réécriture d'historique ni sous-agent.
+- Première QA combinée Windows 2930 code 0 : 149 passed / 20,22 s / deux intégrations SQL-MinIO / zéro failure/error/skip ; reçu 5263c84659db457a8c16a82d6047647e / 28,953 s, rapports increment-3-initial-qa archivés. Ce run précède les assertions de types corrigées.
+- Lecture QA code 0 après cette cible : DQ incrémental 1/2 valide, passé=false, métrique 50 %, un objet lu ; complet 1/255 valide, passé=false, métrique 0,3921568627 %, un objet lu. Dataset synthétique avec anciens cas invalides ; aucun chiffre du marché actif ni qualification opérationnelle. Effets désormais aussi conservés comme propriétés JUnit après relecture SQL.
+- Ruff courant 33721 code 0 ; mypy initial 19587 code 1, sept Optional du test annoté, B-R017. Assertions non-null avant indexation et comptes SQL typés sans remplacer None par 0 ; runtime non changé. Mypy corrigé 65327 et QA renouvelée 21628 en cours ; check Windows complet encore requis avant commit du troisième lot.
+- Incrément 2 déjà reçu/commité 180cc77, clôture 485f773. R0.5 IN_PROGRESS dans les deux plans ; pas de garde Gold/adaptateurs métier/LLM encore livrés, aucun objet négatif supprimé/altéré en vrai store.
+
+### [2026-10-10T03:01:17Z] R0.5 — réception des formats active, preuve LLM préparée séparément
+
+- QA corrigée 21628 code 0 : 149 / 21,27 s / deux intégrations / zéro failure/error/skip ; mypy 65327 code 0 sur quatre fichiers. Réception globale Windows 28765 toujours active, aucun commit du lot formats anticipé.
+- Worktree préparatoire conservé /tmp/ketrika-r05-formats.OQ2It5 : ADR-019 et extension SPECS avant prototype LLM ; page/extrait relus après cellules exactes, valeurs et identité ancrées au texte. Aucun fournisseur, outil ou instruction provenant de la source exécuté.
+- Prototype non transféré, tests/type-check séparés en cours, aucune qualification LLM revendiquée. Main fonctionnel figé pendant son check ; R0.5 reste IN_PROGRESS dans les deux registres.
+
+### [2026-10-10T03:06:43Z] R0.5 — prototype LLM reçu en unité, réception principale inchangée
+
+- Worktree seulement : 40213 code 0 / 129 tests / 19,06 s, mypy 50382 code 0 ; après liaison SQL et refus des préfixes numériques, 41105 code 0 / 166 tests / 27,40 s, mypy 21563 code 0 sur cinq fichiers, ruff 32987 code 0.
+- Tests SQL/MinIO préparés pour trois méthodes (deterministic, llm_verified, dual_agree), pas exécutés sur les volumes occupés ; leur contrôle de types 31926 en cours. Aucun transfert/commit de ces changements préparatoires ni performance LLM revendiqués.
+- Check Windows principal 28765 : ML actif, aucun échec observé ni code final reçu. Diff check courant code 0 ; pas de commit anticipé, statut inchangé.
+
+### [2026-10-10T03:18:51Z] R0.5 — réception globale du troisième incrément logiciel
+
+- Check Windows 28765 code final 0 : lint/format 174 fichiers, types 173 fichiers, gouvernance quatre DONE / une IN_PROGRESS / 69 TODO ; backend 560 / 1772,10 s / cinq avertissements / zéro failure/error/skip. Intégrations dossier 33 / marqueur 33 / union 37.
+- Couvertures core 93,3360756890 %, extraction 86,3768115942 %, normalize 84,8552338530 % ; lecteurs tableaux 138/152 statements, auditeur SQL 115/116. QA 149 / deux intégrations / 21,27 s code 0, reçus et rapports backend/frontend increment-3-* archivés.
+- Frontend 35 / quatre suites / 5,42 s ; reçu 54b17cd3-0835-4ac7-9cf5-43e65ec2cad2 : lint 13898 ms, types 19847 ms, tests 11177 ms, build 212689 ms, tous codes 0 sans signal/timeout/erreur.
+- Préservation active relue codes 0 (92023/13530) : source_record 482 / MD5 47b4402859acc41e3ae91fdb128e56c6, prix 764 / MD5 4b2586cb8e422f11c4873ad513d66bc1 ; Bronze 674 versions/objets, zéro delete marker, 1377481 octets, SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c, inchangés.
+- B-R016/017 résolus par réception ciblée et globale, sans ignore/seuil retiré. Prototype LLM séparé : mypy 97938 code 0 / six fichiers ; derniers tests LLM 86221 code 0 / 28 / 10,52 s, sans integration SQL exécutée ni transfert.
+- R0.5 reste IN_PROGRESS ; ces formats synthétiques et octets SQL/MinIO ne qualifient ni source live, performance de marché, modèle ou revue humaine. Garde Gold, adaptateurs métier et contrôle LLM principal restent obligatoires. Scanner uniquement le lot reçu puis commit atomique ; aucun tag.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 

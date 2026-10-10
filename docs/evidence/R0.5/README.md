@@ -1,9 +1,41 @@
 # R0.5 — provenance mesurée
 
-État : IN_PROGRESS. Premier incrément pur, pas de tâche DONE ni de garde Gold livrée.
+État : IN_PROGRESS. Trois incréments reçus ; pas de tâche DONE ni de garde Gold livrée.
 Base reçue : R0.4 commit 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482,
 clôture documentaire cd89d17 ; incrément pur reçu et commité :
 30d0a837bf666336ee802ecdf843dc810f75d639, ADR-016 avant implémentation.
+
+## Incrément 3 reçu : formats et preuve SQL/MinIO
+
+ADR-018/SPECS intégrés avant transfert. Nouveaux lecteurs et tests copiés par apply_patch
+depuis le worktree, empreintes Git identiques ; répartiteur commun raccordé, source brute
+PDF/XLSX non décodée en UTF-8 avant son lecteur. Documents et nombres bornés, aucune
+formule/lien/macro exécuté. Ce lot ne fournit pas les adaptateurs métier ni la garde Gold.
+
+Intégration positive : objet réellement créé dans le seul bucket QA après vérification
+de destination, contenu synthétique/manual_upload, URL verified=false, zéro HTTP acquis.
+Les tests négatifs d'objets restent simulés ; aucune suppression/mutation Bronze.
+Effectifs DQ ajoutés comme propriétés JUnit, sans valeurs/extraits/URL ni exception,
+après relecture SQL ; un UUID/hash contenant accidentellement les mêmes chiffres qu'un
+prix ne doit pas provoquer un faux test de fuite (contrôle des clés de sortie à la place).
+
+QA initiale 2930 code 0 : 149 / 20,22 s / deux intégrations, rapports initial-qa conservés.
+Mypy initial 19587 code 1, Optional du test annoté ; assertions non-null corrigées,
+comptes SQL typés sans remplacer une absence par zéro, aucun changement runtime/ignore.
+QA corrigée 21628 code 0 : 149 passed / 21,27 s / deux intégrations / zéro failure/error/skip,
+reçu c1655be2579c4142b95f455a927f1beb / 30,21 s, rapports increment-3-qa exportés.
+Mypy corrigé 65327 code 0 / quatre fichiers, lint 33721 code 0.
+Check Windows global 28765 lancé 2026-10-10T02:42:43Z, code fonctionnel figé,
+code final 0 reçu 2026-10-10T03:18:51Z : 560 backend / 1772,10 s,
+zéro failure/error/skip, cinq avertissements ; intégrations union 37 (dossier/marqueur 33).
+Lint/format 174 fichiers, mypy 173, gouvernance codes 0.
+Couvertures core 93,3360756890 %, extraction 86,3768115942 %, normalize 84,8552338530 %.
+Frontend 35 / quatre suites / 5,42 s, reçu 54b17cd3-0835-4ac7-9cf5-43e65ec2cad2 :
+lint/types/tests/build codes 0 ; build 212689 ms, aucun signal/timeout/erreur.
+Rapports increment-3-backend-check-* et increment-3-frontend-check-* archivés.
+Préservation active contrôlée en lecture seule codes 0 : mêmes 482 source_record,
+764 prix, 674 versions/objets Bronze / zéro delete marker / 1377481 octets et empreintes
+décrites dans PROGRESS. Pas de qualification économique, source live, modèle ou usage humain.
 
 ## Incrément 2 reçu, sans garde Gold
 

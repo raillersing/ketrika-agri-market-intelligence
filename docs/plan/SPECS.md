@@ -896,6 +896,8 @@ Raccordement SQL (ADR-017) : audit complet des six tables obs.price_observation/
 
 Le premier auditeur SQL ne prend en charge que extraction_method=deterministic ; les étiquettes llm_verified/dual_agree/inconnues échouent jusqu'au contrôle de page/extrait obligatoire. Les tokens JSON numériques ne démontrent pas un champ brut textuel exact ; raw_expected exige une cellule source textuelle, sans sérialisation inventée du token. Les adaptateurs complémentaires restent nécessaires avant qualification complète.
 
+ADR-018 : preuve v1 étendue avec pdf_table/html_table (table/row/column zéro-indexés, en-têtes inclus ; page PDF 1-indexée), xlsx_table (sheet exact, row/column 1-indexés). Identité et valeur dans une même ligne. MIME explicite concordant, coordonnées entières sans bool, formule/cellule absente refusées ; nombres XLSX relus depuis XML sans arrondi float. Aucune interprétation implicite de date/format d'affichage, aucun lien/macro/formule/entité XML exécuté. Scripts/styles/noscript HTML écartés, tableaux imbriqués refusés. Bornes 32 MiB, PDF 512 pages, ZIP XLSX 4096 membres/128 MiB décompressés déclarés ; aucune extraction sur disque. Une réception de lecteurs synthétiques n'est pas une qualification de source, de conversions métier ou de preuves LLM.
+
 Asset checks Dagster obligatoires, avec résultats écrits dans `ops.dq_result` :
 
 | Check | Seuil MVP | Bloquant pour Gold |

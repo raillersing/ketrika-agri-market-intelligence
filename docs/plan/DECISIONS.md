@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-018 : R0.5 — coordonnées des tableaux PDF, HTML et XLSX
+
+- **Date :** 2026-10-10 ; contrat préparé dans un worktree isolé avant code, intégré avant le raccordement principal.
+- **Contexte :** les cellules CSV/JSON ne couvrent pas les publications PDF/tableurs ; trouver un nombre dans une page entière est insuffisant. Le prototype séparé passe 113 tests ciblés et lint/types, sans qualification globale.
+- **Décision :** formats pdf_table/html_table/xlsx_table. PDF : page 1-indexée, tableau/ligne/colonne zéro-indexés, en-têtes inclus. HTML : tableau/ligne/colonne zéro-indexés, aucun sélecteur/expression issu du document, scripts/styles/noscript écartés et tableaux imbriqués refusés. XLSX : feuille exacte et ligne/colonne 1-indexées ; toutes les cellules dans la même ligne. MIME explicite concordant, coordonnées entières sans bool, cellule absente et formule refusées même avec valeur cachée. La valeur numérique XLSX vient du lexème XML original, pas d'un float arrondi ; date/format d'affichage non interprétés implicitement. Structure OOXML/membres/relations contrôlés ; aucun lien, macro, formule ou entité XML exécuté.
+- **Bornes :** 32 MiB de contenu, 512 pages PDF ; XLSX au plus 4096 entrées ZIP et 128 MiB déclarés décompressés, jamais extraction sur disque. Les formats de scan/OCR restent non pris en charge et ne prouvent aucun chiffre.
+- **Alternatives :** recherche libre/fuzzy d'un nombre, page voisine, cellule calculée/cachée sans preuve et approximation flottante (rejetées).
+- **Conséquences :** deuxième incrément SQL/DQ reçu avant transfert des formats ; nouvelle QA/check Windows complète obligatoire. Le scénario positif SQL lit un vrai objet MinIO du bucket QA, créé par manual_upload synthétique (URL verified=false, aucun HTTP acquis, statut sidecar 0) ; effectifs DQ archivés dans JUnit avant nettoyages de fixtures. Les liaisons des périodes/en-têtes métier et preuves LLM restent distinctes ; les tableaux synthétiques ne qualifient aucune source authentique. Aucun ajout de dépendance ni changement de schéma, tâche toujours IN_PROGRESS.
+
 ## ADR-017 : R0.5 — liaison SQL et journal DQ, sans certification implicite
 
 - **Date :** 2026-10-10 ; accepté avant implémentation.
