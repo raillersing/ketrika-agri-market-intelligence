@@ -17,7 +17,8 @@ from ketrika.core.models.db import ProductionObservation, SourceRecord, TradeFlo
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.registry import find_repo_root
 from ketrika.core.settings import get_settings
-from ketrika.pipelines.rebuild import rebuild_database, wipe_silver_gold_tables
+from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.legacy_replay import rejected_legacy_rebuild
 
 FIXTURE_PATH = (
     find_repo_root() / "backend" / "tests" / "fixtures" / "faostat" / "faostat_sample.json"
@@ -145,7 +146,7 @@ def test_faostat_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, json_
     assert stats2["n_skipped"] == 36
 
     # 4. CC6: Rebuild stable verification
-    rebuild_stats = rebuild_database(session=db_session, offline=True, source_id="faostat")
+    rebuild_stats = rejected_legacy_rebuild(db_session, "faostat")
     assert rebuild_stats["source_records_replayed"] >= 1
 
     prod_after = list(db_session.execute(prod_stmt).scalars().all())

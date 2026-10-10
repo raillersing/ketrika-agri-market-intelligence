@@ -64,7 +64,8 @@ SELECT
     imputed_share,
     observed_or_imputed
 FROM ranked_prices
-WHERE rank_priority = 1;
+WHERE rank_priority = 1
+WITH NO DATA;
 
 CREATE UNIQUE INDEX idx_gold_price_monthly_best_pk
 ON gold.price_monthly_best (product_id, location_id, actor_level, month);

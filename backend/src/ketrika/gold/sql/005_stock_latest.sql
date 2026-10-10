@@ -62,7 +62,8 @@ SELECT
         ELSE 'stable'
     END AS trend
 FROM ranked_stocks
-WHERE rn = 1;
+WHERE rn = 1
+WITH NO DATA;
 
 CREATE INDEX idx_gold_stock_latest_lookup
 ON gold.stock_latest (product_id, location_id);

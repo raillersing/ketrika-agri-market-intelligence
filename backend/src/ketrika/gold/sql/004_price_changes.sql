@@ -91,7 +91,8 @@ LEFT JOIN LATERAL (
       AND p12.actor_level = lp.actor_level
       AND p12.month <= lp.month
       AND p12.month >= (lp.month - INTERVAL '11 months')::date
-) dev12 ON true;
+) dev12 ON true
+WITH NO DATA;
 
 CREATE INDEX idx_gold_price_changes_filter
 ON gold.price_changes (product_id, location_id, month);

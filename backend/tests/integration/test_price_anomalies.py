@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date
+from decimal import Decimal
 
 import pytest
 from sqlalchemy import create_engine, select, text
@@ -27,6 +28,7 @@ from ketrika.core.settings import get_settings
 from ketrika.gold.refresh import refresh_gold_views
 from ketrika.ml.anomalies import detect_price_anomalies, record_anomaly_model_run
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.e2e_data.source_backed_synthetic import attach_new_synthetic_proof
 from tests.e2e_data.synthetic_gold_dataset import (
     LOCATION_ANALAMANGA_ID,
     PRODUCT_MAIZE_ID,
@@ -85,7 +87,7 @@ def test_price_anomaly_spike_and_drop_pipeline(db_session: Session) -> None:
         period_start=date(2024, 3, 1),
         period_end=date(2024, 3, 31),
         price_raw="5500.0",
-        price_value=5500.0,
+        price_value=Decimal("5500.0"),
         currency_raw="MGA",
         unit_raw="kg",
         price_mga_per_base=5500.0,
@@ -109,7 +111,7 @@ def test_price_anomaly_spike_and_drop_pipeline(db_session: Session) -> None:
         period_start=date(2024, 3, 1),
         period_end=date(2024, 3, 31),
         price_raw="5600.0",
-        price_value=5600.0,
+        price_value=Decimal("5600.0"),
         currency_raw="MGA",
         unit_raw="kg",
         price_mga_per_base=5600.0,
@@ -121,6 +123,8 @@ def test_price_anomaly_spike_and_drop_pipeline(db_session: Session) -> None:
         review_status="accepted",
         superseded_by=None,
     )
+    attach_new_synthetic_proof(db_session, spike_obs_1)
+    attach_new_synthetic_proof(db_session, spike_obs_2)
     db_session.add_all([spike_obs_1, spike_obs_2])
 
     # 3. Inject PRICE DROP for Maize:
@@ -152,7 +156,7 @@ def test_price_anomaly_spike_and_drop_pipeline(db_session: Session) -> None:
             period_start=date(2023, m_idx, 1),
             period_end=date(2023, m_idx, 28),
             price_raw=str(base_p),
-            price_value=base_p,
+            price_value=Decimal(str(base_p)),
             currency_raw="MGA",
             unit_raw="kg",
             price_mga_per_base=base_p,
@@ -164,6 +168,7 @@ def test_price_anomaly_spike_and_drop_pipeline(db_session: Session) -> None:
             review_status="accepted",
             superseded_by=None,
         )
+        attach_new_synthetic_proof(db_session, p_m)
         db_session.add(p_m)
 
     # Injected sharp drop in 2024-01 for Maize (800 MGA vs 1800 baseline, -55% chg_1m, z < -3)
@@ -179,7 +184,7 @@ def test_price_anomaly_spike_and_drop_pipeline(db_session: Session) -> None:
         period_start=date(2024, 1, 1),
         period_end=date(2024, 1, 31),
         price_raw="800.0",
-        price_value=800.0,
+        price_value=Decimal("800.0"),
         currency_raw="MGA",
         unit_raw="kg",
         price_mga_per_base=800.0,
@@ -191,6 +196,7 @@ def test_price_anomaly_spike_and_drop_pipeline(db_session: Session) -> None:
         review_status="accepted",
         superseded_by=None,
     )
+    attach_new_synthetic_proof(db_session, drop_obs)
     db_session.add(drop_obs)
     db_session.commit()
 

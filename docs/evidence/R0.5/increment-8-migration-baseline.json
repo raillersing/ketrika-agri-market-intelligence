@@ -1,0 +1,26 @@
+{
+  "scope": "isolated qualification only; preservation, not source authenticity",
+  "head": "0004_production_raw",
+  "silver_metadata_full_row_md5": {
+    "source_record": [385, "0a8d07f9d3bdb5cc58c5f8989e0cf1ae"],
+    "price": [237, "a7e59a26791360479408e26bb8aaa2fa"],
+    "stock": [3, "fb831376fe34722948271e3f6d900d3c"],
+    "trade": [2, "ced631d6eff45d1d9afeaebfd8b49ceb"],
+    "production": [1, "7d6e7c0912ed19c782b6c18f72b4bc4d"],
+    "weather": [8, "695e39b824b970b027b147d9e1895097"],
+    "cpi": [2, "2d2bc3d3c7360a2aa2722c76d12166b1"]
+  },
+  "bronze": {
+    "bucket": "ketrika-qa-bronze",
+    "version_count": 567,
+    "current_objects": 567,
+    "delete_markers": 0,
+    "total_version_bytes": 1217311,
+    "sha256": "ddc0bf7c858d11b3006a9e524302594cd0217a3b5a5e6032fa5005a22e4f91fe"
+  },
+  "commands": [
+    "docker exec ketrika-qualification-db-1 psql: BEGIN READ ONLY; full-row sorted UUID counts and MD5; COMMIT",
+    "docker compose --env-file scripts/qualification.env --project-name ketrika-qualification -f docker-compose.qualification.yml run --rm --no-deps api python /workspace/scripts/bronze-fingerprint-readonly.py"
+  ],
+  "exit_codes": [0, 0]
+}

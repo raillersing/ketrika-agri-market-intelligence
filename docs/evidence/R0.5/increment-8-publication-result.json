@@ -1,0 +1,14 @@
+{
+  "source": "increment-8-qa.xml testcase user_properties ketrika.gold.publication",
+  "execution_id": "b818375d307d41798c7bc956ceff4cb0",
+  "dataset": "synthetic",
+  "published_source_observations": 250,
+  "validated_source_observations": 250,
+  "bad_provenance_rejected": true,
+  "partial_refresh_rolled_back": true,
+  "dependency_caches_refreshed": true,
+  "model_qualified": false,
+  "scope": "Source-cell integrity in isolated PostgreSQL/MinIO; not source authenticity, conversions, historical model lineage or human acceptance",
+  "read_command_exit": 0,
+  "limits": "Observation counts, not a count of individual cells. Real Bronze objects were never corrupted or deleted."
+}

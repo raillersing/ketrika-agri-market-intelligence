@@ -1,8 +1,9 @@
-"""Integration test for NASA POWER connector backfill, DQ and offline rebuild (CC3-CC6, T3.4)."""
+"""Legacy NASA fixture replay and mandatory refusal of unproven Gold publication."""
 
 import json
 import uuid
 from typing import Any
+from unittest.mock import patch
 
 import pytest
 from sqlalchemy import create_engine, select
@@ -18,6 +19,7 @@ from ketrika.core.models.db import Location, SourceRecord, WeatherObservation
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.registry import find_repo_root
 from ketrika.core.settings import get_settings
+from ketrika.gold.provenance_gate import GoldProvenanceRejected
 from ketrika.pipelines.rebuild import rebuild_database, wipe_silver_gold_tables
 
 FIXTURE_PATH = (
@@ -57,7 +59,7 @@ def sample_payload() -> dict[str, Any]:
 def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
     httpserver, db_session, sample_payload: dict, request: pytest.FixtureRequest
 ):
-    """Verify CC3-CC6: backfill covering 100% of districts, DQ checks, and offline rebuild."""
+    """Local fixture coverage/idempotence/replay; unproven Gold must be refused."""
     wipe_silver_gold_tables(db_session)
     db_session.commit()
 
@@ -162,9 +164,29 @@ def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
     assert stats2["n_inserted"] == 0
     assert stats2["n_skipped"] == expected_inserted
 
-    # 5. CC6: Offline rebuild stable verification
-    rebuild_stats = rebuild_database(session=db_session, offline=True, source_id="nasa_power")
-    assert rebuild_stats["source_records_replayed"] >= len(db_districts)
+    # Legacy Silver replay is real, but unsupported cell evidence must refuse Gold.
+    parsed_artifacts: list[str] = []
+    original_parse = NasaPowerConnector.parse
+
+    def track_real_parse(connector, artifact, context):
+        result = original_parse(connector, artifact, context)
+        if result.records:
+            assert context.offline
+            parsed_artifacts.append(artifact.source_record_id)
+        return result
+
+    with patch.object(NasaPowerConnector, "parse", autospec=True, side_effect=track_real_parse):
+        with pytest.raises(GoldProvenanceRejected) as rejected:
+            rebuild_database(session=db_session, offline=True, source_id="nasa_power")
+    assert len(parsed_artifacts) >= len(db_districts)
+    assert rejected.value.receipt.report.total == expected_inserted
+    assert rejected.value.receipt.report.valid == 0
+    assert not rejected.value.receipt.report.passed
+    replay_stats = rejected.value.replay_stats
+    assert replay_stats is not None
+    assert replay_stats["source_records_replayed"] >= len(db_districts)
+    assert replay_stats["gold_views_refreshed"] == 0
+    assert replay_stats["gold_publication_state"] == "refused"
 
     obs_after = list(db_session.execute(obs_stmt).scalars().all())
     assert len(obs_after) == expected_inserted
@@ -190,7 +212,8 @@ def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
                     "history_rows": len(history),
                     "current_rows": len(obs_after),
                     "superseded_rows": superseded,
-                    "source_records_replayed": rebuild_stats["source_records_replayed"],
+                    "source_records_replayed": len(parsed_artifacts),
+                    "gold_publication_refused": True,
                     "scope": "software fixtures; not live source or complete R0.8 certification",
                 }
             ),

@@ -14,7 +14,9 @@ from ketrika.core.bronze import get_s3_client
 from ketrika.core.db import check_db_connection
 from ketrika.core.models.db import Bulletin
 from ketrika.core.settings import get_settings
-from ketrika.gold.refresh import init_gold_views
+from ketrika.gold.refresh import init_gold_views, refresh_gold_views
+from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.e2e_data.synthetic_gold_dataset import seed_synthetic_gold_data
 
 
 @pytest.fixture
@@ -27,6 +29,9 @@ def db_session():
     session = Session(engine)
     try:
         init_gold_views(session)
+        wipe_silver_gold_tables(session)
+        seed_synthetic_gold_data(session)
+        refresh_gold_views(session)
         session.commit()
         yield session
     finally:

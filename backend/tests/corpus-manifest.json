@@ -63,14 +63,34 @@
     },
     {
       "path": "tests/e2e_data/synthetic_gold_dataset.py",
-      "sha256": "3bdc6284b2ade76e9ff2d7ba09c20b44cc9c689472bc08838095ffbb46721313",
-      "size_bytes": 25213,
+      "sha256": "a3da2a1231c59de6566d403f85615b71b0110f14597fb9f75b7b551da537e816",
+      "size_bytes": 27347,
       "artifact_type": "py",
       "authenticity": "synthetic",
       "origin": {
         "kind": "repository_generator",
         "reference": "tests/e2e_data/synthetic_gold_dataset.py",
         "limitations": "Not evidence of official acquisition or market accuracy."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/e2e_data/source_backed_synthetic.py",
+      "sha256": "19c0f45795d259040e2a0ab0c03865fccac79712bc6831788d4bcc2250b0dabd",
+      "size_bytes": 5189,
+      "artifact_type": "py",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "tests/e2e_data/source_backed_synthetic.py",
+        "limitations": "Synthetic source bytes only; never official acquisition, real raw reconstruction or model qualification."
       },
       "rights": {
         "status": "internal_test_only",

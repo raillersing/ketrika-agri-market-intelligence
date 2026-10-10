@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date
+from decimal import Decimal
 
 import numpy as np
 import pytest
@@ -26,6 +27,7 @@ from ketrika.ml.models import (
     get_default_candidate_models,
 )
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.e2e_data.source_backed_synthetic import attach_new_synthetic_proof
 from tests.e2e_data.synthetic_gold_dataset import (
     PRODUCT_RICE_ID,
     seed_synthetic_gold_data,
@@ -209,7 +211,7 @@ def test_forecasting_pipeline_e2e_and_anti_leakage():
             period_start=date(2024, 6, 1),
             period_end=date(2024, 6, 30),
             price_raw="999999.0",
-            price_value=999999.0,
+            price_value=Decimal("999999.0"),
             currency_raw="MGA",
             unit_raw="kg",
             price_mga_per_base=999999.0,
@@ -220,6 +222,7 @@ def test_forecasting_pipeline_e2e_and_anti_leakage():
             confidence=1.0,
             review_status="accepted",
         )
+        attach_new_synthetic_proof(session, future_obs)
         session.add(future_obs)
         session.commit()
         refresh_gold_views(session)

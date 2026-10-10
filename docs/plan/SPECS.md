@@ -901,6 +901,22 @@ Ordre : `parse → validate → product match → unit conversion → location m
 
 ## 14. Qualité des données
 
+### 14.0a Publication source-cell et initialisation non publiée (ADR-023–029)
+
+Avant REFRESH : liste statique des vues/tables, audit fresh des lignes réellement consommées sous LOCK SHARE/meta.source_record et tables obs, lock_timeout transactionnel 5 s. Prix courants accepted et price_mga_per_base non NULL ; stocks courants avec produit/lieu (LAG inclus) ; production courante element=production_t ; autres tables courantes sans filtre source/status. Audit complet historique séparé. Empty/metadata_only ne constituent pas 100 % ; aucun cache de succès ni bypass test.
+
+Reader de preuves Bronze : GET existant borné à 32 MiB + sentinelle, flux fermé sur tous chemins, taille déclarée utilisée seulement pour refuser ; SHA réel recalculé. Vérificateur groupe par clé validée, prévalide doublons dans ordre d'entrée, libère octets par objet et restitue résultats dans cet ordre ; aucune observation ignorée pour mémoire/taux.
+
+Gold statique WITH NO DATA : init et migration ne publient pas implicitement. Migration 0005 recrée uniquement vues/permissions, caches non certifiés invalidés ; aucune écriture Bronze/Silver/ML. Refresh allowlist/topologique, absence de vue = erreur ; lot sous savepoint global, retry concurrent sous savepoint local puis erreur stable si échec. Scope retourné source_cells_not_authenticity_conversions_or_model, provenance_state, source_cell_dq_id, effectifs/rate (NULL sur empty) explicites. Durabilité d'une erreur après rollback du caller et erreurs Dagster restent réception R0.6.
+
+Toute sélection de vues inclut automatiquement ses ancêtres Gold (allowlist statique), audités et rafraîchis dans le même lot ; count/views_refreshed représentent cette clôture effective, jamais un cache dépendant ancien implicitement certifié. Le parseur NASA historique sans preuve complète peut rejouer Silver mais ne peut pas publier Gold ; ses fixtures prouvent le refus, pas une capacité source qualifiée (R1.11) ni un rebuild complet (R0.8).
+
+ADR-030 : sur refus de provenance au refresh final du rebuild, l'exception GoldProvenanceRejected reste propagée et peut exposer replay_stats mesurées, gold_views_refreshed=0 et gold_publication_state=refused. Ce sont des diagnostics Silver, pas un résultat de rebuild réussi. La CLI reste non-zéro. Le test positif CSV possède un corpus source_id borné ; les tests de parseurs historiques non qualifiés conservent leurs contrôles Silver et exigent le refus Gold, sans qualification R1/R0.8 implicite.
+
+ADR-031 : refresh sur ensemble vide exposé comme empty, effectifs 0/0, source_cell_rate=NULL, jamais 100 % ni source certifiée. Rebuild reporte l'état/scope/effectifs réellement obtenus. Les scénarios historiques explicitement autorisés à recevoir empty vérifient toutes les vues numériques réellement vides et conservent leurs assertions Silver ; ils ne qualifient pas le raccordement de normalisation absent du loader brut. Les preuves CSV natives sont vérifiées séparément de cette publication vide.
+
+Fixtures : nouvelles observations transient uniquement dans QA réellement gardée, JSON synthetic/verified=false et nouvelles références SHA/clé exactes avant insertion, contrôle mécanique avant écriture d'observation. Anciennes références/objets jamais réparés ou supprimés. Literals du générateur représentés Decimal, aucune invention de brut de données réelles ; auxiliaire sous tests/e2e_data inventorié. Ceci ne qualifie ni acquisition officielle, droits, conversions ou modèle.
+
 ### 14.0 Lexèmes JSON et coordonnées natives (ADR-022)
 
 Cellule number JSON : raw_encoding=json_number_lexeme autorise seulement un token numérique original conservé par le décodeur, jamais str(float/Decimal). Sans option, le refus historique raw_expected sur un nombre JSON est maintenu. Option inconnue, chaîne JSON sous cette option, bool/non-fini et clés dupliquées refusés. Identités numériques non implicitement transformées en texte. Contenu limité à 32 MiB avant parsing ; profondeur JSON limitée à 128 niveaux indépendamment de Python, chaînes/échappements exclus du compteur ; exposant non interprétable refusé avec code stable.

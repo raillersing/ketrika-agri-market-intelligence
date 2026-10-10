@@ -16,7 +16,8 @@ from ketrika.core.models.db import CpiObservation, SourceRecord
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.registry import find_repo_root
 from ketrika.core.settings import get_settings
-from ketrika.pipelines.rebuild import rebuild_database, wipe_silver_gold_tables
+from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.legacy_replay import rejected_legacy_rebuild
 
 FIXTURE_PATH = (
     find_repo_root() / "backend" / "tests" / "fixtures" / "instat_nipc" / "nipc_sample.csv"
@@ -116,7 +117,7 @@ def test_instat_nipc_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, c
     assert stats2["n_skipped"] == 189
 
     # 4. CC6: Offline rebuild stable verification
-    rebuild_stats = rebuild_database(session=db_session, offline=True, source_id="instat_nipc")
+    rebuild_stats = rejected_legacy_rebuild(db_session, "instat_nipc")
     assert rebuild_stats["source_records_replayed"] >= 1
 
     obs_after = list(db_session.execute(stmt).scalars().all())

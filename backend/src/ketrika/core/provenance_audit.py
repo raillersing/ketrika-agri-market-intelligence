@@ -1,7 +1,7 @@
 """Explicit SQL binding and transactional DQ receipts (ADR-017).
 
-This audit does not yet publish or gate Gold, validate conversions, or discover
-sources. Legacy rows without supported evidence fail rather than disappear.
+The Gold publication gate uses this audit. It does not validate conversions or
+discover sources. Legacy rows without supported evidence fail rather than disappear.
 """
 
 from __future__ import annotations

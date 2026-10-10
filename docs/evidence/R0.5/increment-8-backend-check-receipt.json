@@ -1,0 +1,20 @@
+{
+  "received_at_utc": "2026-10-10T17:27:54Z",
+  "command": "scripts/dev.ps1 check",
+  "session": 21289,
+  "environment": "ketrika-qualification, isolated DB/S3/network/volumes; LLM replay",
+  "final_exit_code": 0,
+  "backend": {
+    "tests": 718, "failures": 0, "errors": 0, "skipped": 0,
+    "warnings": 5, "duration_seconds": 2223.69,
+    "integration_by_layout": 40, "integration_by_marker": 40, "integration_union": 44,
+    "coverage_percent": {
+      "core": 93.59968968192398,
+      "extraction": 86.3768115942029,
+      "normalize": 84.85523385300668
+    },
+    "format_files": 198, "typed_files": 197
+  },
+  "frontend_receipt": "84bc6869-c602-4f04-95c9-c82e3408bdc4",
+  "scope": "software reception only; not live source, market-model, human-use or active-schema qualification"
+}

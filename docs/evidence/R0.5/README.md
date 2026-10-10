@@ -1,9 +1,66 @@
 # R0.5 — provenance mesurée
 
-État : IN_PROGRESS. Sept incréments reçus ; pas de tâche DONE ni de garde Gold livrée.
+État : IN_PROGRESS. Huitième incrément reçu globalement, scan et commit encore requis.
 Base reçue : R0.4 commit 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482,
 clôture documentaire cd89d17 ; incrément pur reçu et commité :
 30d0a837bf666336ee802ecdf843dc810f75d639, ADR-016 avant implémentation.
+
+## Incrément 8 en qualification : publication source-cell
+
+ADR-023–027/SPECS avant transfert. Lecture Bronze bornée, groupement sans cache
+cumulatif, fixtures nouvelles source-backed, init non peuplée et refresh atomique.
+113 tests ciblés / 76,67 s, lint et types sept fichiers codes 0 ; format complet
+196 fichiers code 0 après correction du cache temporaire du diagnostic read-only.
+Migration Windows 99199 code 0 ; SQL et Bronze préservés selon les deux reçus
+increment-8-migration-*. PostgreSQL/MinIO réel Windows 57268 code 0 : 1 test /
+111,64 s, publication positive, refus de dommage simulé en mémoire, rollback
+partiel et DQ relus. Aucun objet réel endommagé.
+QA complète Windows 19891 code 1 : 304 passed / 1 failed / 164,37 s ; reçu
+2636387056d54746b5b92d782514af3d archivé increment-8-qa-first-red.
+NASA historique sans cellules doit désormais refuser Gold tout en conservant
+les contrôles réels de rejeu Silver (ADR-029). Clôture des dépendances Gold
+adoptée avant code (ADR-028), avec régression SQL de fraîcheur des ancêtres.
+Réception corrigée Windows 9804 code 0 : 308 passed / 162,63 s, dix intégrations,
+zéro failure/error/skip ; reçu b818375d307d41798c7bc956ceff4cb0 / 176,614 s,
+rapports increment-8-qa archivés. Types 27059 code 0 / sept fichiers.
+Check complet Windows 18162 code 1 : 709 collectés, 6 passed / 1 failed /
+189,15 s ; ancien test d'alertes sur vues non peuplées, frontend non exécuté.
+Run rouge archivé increment-8-global-first-red. Cible corrigée Windows 45625
+code 0 : 2 passed / 88,28 s, candidats high/medium effectivement requis.
+ADR-030 avant code : statistiques Silver attachées au refus Gold toujours propagé,
+jamais transformé en succès. Quatre unités du helper / 39,73 s ; anciens parseurs
+non qualifiés gardent leurs comptes/valeurs de rejeu et exigent le refus Gold.
+CSV positif source_id borné, sans revendication de rebuild complet R0.8.
+QA courante élargie Windows 15540 lancée à 2026-10-10T16:18:02Z,
+minimum 322 tests / 20 intégrations ; nouveau check global obligatoire.
+Cette réception élargie est rouge : 318 passed / 4 failed / 322,97 s,
+reçu 0071f5289e2a44c0a531354c4bb565fa, rapports increment-8-qa-expanded-red.
+Quatre sources prix n'ont aucune observation éligible Gold ; la normalisation
+du loader brut manque (BL-013, R0.6/R2.1). ADR-031 distingue empty 0/0/taux NULL
+d'un refus ou de cells_verified, avec contrôle réel des onze vues numériques.
+Neuf unités / 41,70 s vertes ; cible Windows 27459 code 0 : cinq tests /
+91,97 s. Types 27667 code 0 / quatre fichiers. Les assertions
+Silver restent inchangées et le CSV vérifie trois preuves natives séparément
+du Gold vide. Nouveau minimum 327/20 ; aucune certification d'ensemble vide.
+QA courante Windows 94546 code final 0 : 327 passed / 332,67 s, quatre
+avertissements, vingt intégrations, zéro failure/error/skip ; reçu
+95241682d1be4234990838e307335fbc / 347,085 s, rapports increment-8-qa-final.
+Check complet Windows 21289 lancé à 2026-10-10T16:43:57Z, code figé ;
+backend/frontend/build/couvertures, préservation finale et commit encore requis.
+Backend courant reçu : 718 passed / 2223,69 s, cinq avertissements, aucun
+failure/error/skip ; intégrations 40 par dossier / 40 par marqueur / union 44.
+Couvertures core 93,59968968192398 %, extraction 86,3768115942029 %,
+normalize 84,85523385300668 % ; rapports increment-8-backend-check-* exportés.
+Frontend/build et code final Windows reçus à 2026-10-10T17:27:54Z : session
+21289 code 0 ; 35 tests / quatre suites / 7,13 s, reçu
+84bc6869-c602-4f04-95c9-c82e3408bdc4. Lint 15292 ms, types 24086 ms,
+tests 14338 ms, build 214764 ms, chaque étape code 0 sans timeout/signal/erreur.
+Préservation active finale SQL/Bronze codes 0 : mêmes effectifs/empreintes que
+l'incrément 7, reçu increment-8-active-preservation-final. Scan et commit restent requis.
+Les trois XML rouges ont uniquement leurs espaces de fin de ligne supprimés
+pour le contrôle git ; assertions, résultats, traces et reçus restent conservés.
+Check global, préservation active finale et commit encore requis ; aucune
+qualification de source live, conversion, lignée historique de modèle ou usage humain.
 
 ## Incrément 7 reçu : preuves natives CSV/JSON
 

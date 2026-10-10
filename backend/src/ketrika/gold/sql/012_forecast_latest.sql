@@ -58,7 +58,8 @@ SELECT
     trained_at,
     generated_at
 FROM latest_runs
-WHERE rn = 1;
+WHERE rn = 1
+WITH NO DATA;
 
 CREATE INDEX idx_gold_forecast_latest_series
 ON gold.forecast_latest (series_key, target_period);

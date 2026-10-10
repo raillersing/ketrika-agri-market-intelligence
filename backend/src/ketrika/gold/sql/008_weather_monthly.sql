@@ -63,7 +63,8 @@ SELECT
         )::numeric,
         4
     ) AS rain_anom_3m
-FROM with_climatology wc;
+FROM with_climatology wc
+WITH NO DATA;
 
 CREATE INDEX idx_gold_weather_monthly_filter
 ON gold.weather_monthly (location_id, month);

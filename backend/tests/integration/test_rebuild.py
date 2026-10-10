@@ -22,6 +22,8 @@ from ketrika.core.db import check_db_connection
 from ketrika.core.http import PoliteHttpClient
 from ketrika.core.models.db import PriceObservation, SourceRecord
 from ketrika.core.policy import OfflineError, PolicyEngine
+from ketrika.core.provenance_audit import ObservationTarget, audit_observation_provenance
+from ketrika.core.provenance_bronze import BronzeProofReader
 from ketrika.core.settings import get_settings
 from ketrika.pipelines.rebuild import rebuild_database
 
@@ -101,8 +103,10 @@ def test_rebuild_preserves_exact_counts_offline(httpserver, db_session):
             os.environ.pop("HTTP_OFFLINE", None)
 
     # 3. Execute rebuild_database
-    rebuild_stats = rebuild_database(session=db_session, offline=True)
+    # Qualified CSV cells only; not a full historical-store R0.8 certification.
+    rebuild_stats = rebuild_database(session=db_session, offline=True, source_id=source_id)
     assert rebuild_stats["source_records_replayed"] >= 1
+    assert rebuild_stats["gold_views_refreshed"] == 12
 
     # 4. Check count after rebuild
     obs_after = list(db_session.execute(stmt).scalars().all())
@@ -111,6 +115,17 @@ def test_rebuild_preserves_exact_counts_offline(httpserver, db_session):
     # Strict equality requirement: counts before and after rebuild are identical
     assert count_after == count_before
     assert count_after == 3
+    assert rebuild_stats["gold_publication_state"] == "empty"
+    assert rebuild_stats["source_observations_total"] == 0
+    assert rebuild_stats["source_cell_rate"] is None
+    receipt = audit_observation_provenance(
+        db_session,
+        BronzeProofReader(bronze_store),
+        mode="incremental",
+        targets=[ObservationTarget("price_observation", row.observation_id) for row in obs_after],
+    )
+    assert receipt.report.valid == receipt.report.total == 3
+    assert receipt.report.objects_read == 1 and receipt.report.passed
 
     # Verify attributes preserved
     prices_after = sorted([float(o.price_value) for o in obs_after if o.price_value is not None])

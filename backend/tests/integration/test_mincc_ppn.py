@@ -15,7 +15,8 @@ from ketrika.core.models.db import PriceObservation, SourceRecord, StockObservat
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.settings import get_settings
 from ketrika.extraction.llm.replay import ReplayClient
-from ketrika.pipelines.rebuild import rebuild_database, wipe_silver_gold_tables
+from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.legacy_replay import rejected_legacy_rebuild
 
 
 @pytest.fixture
@@ -131,7 +132,7 @@ def test_mincc_ppn_backfill_dq_and_rebuild_lifecycle(db_session: Session):
     assert stats2["n_skipped"] == 64
 
     # 4. CC6: Offline Rebuild test
-    rebuild_stats = rebuild_database(session=db_session, offline=True, source_id="mincc_ppn")
+    rebuild_stats = rejected_legacy_rebuild(db_session, "mincc_ppn", allow_empty=True)
     db_session.commit()
 
     assert rebuild_stats["records_inserted"] == 64

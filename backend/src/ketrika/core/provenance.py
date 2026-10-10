@@ -339,7 +339,7 @@ def _validate_reference(reference: ArtifactReference) -> str:
 
 
 class ProvenanceVerifier:
-    """Verify one batch; cache is discarded between complete/incremental calls."""
+    """One read per object per batch; never retain bytes of the complete corpus."""
 
     def __init__(
         self, reader: ArtifactReader, references: Mapping[UUID, ArtifactReference]
@@ -354,12 +354,12 @@ class ProvenanceVerifier:
     ) -> VerificationReport:
         if mode not in ("complete", "incremental"):
             raise ValueError("Unsupported verification mode")
-        cache: dict[str, tuple[bytes | None, str]] = {}
         seen: set[UUID] = set()
-        results = []
+        results: dict[int, VerificationResult] = {}
+        groups: dict[str, list[tuple[int, ObservationClaim, ArtifactReference, str]]] = {}
         attempts = 0
         reads = 0
-        for claim in claims:
+        for index, claim in enumerate(claims):
             reference = (
                 self.references.get(claim.source_record_id) if claim.source_record_id else None
             )
@@ -371,29 +371,40 @@ class ProvenanceVerifier:
                     raise ProofError("source_record_missing")
                 digest = _validate_reference(reference)
                 key = reference.object_key
-                if key not in cache:
-                    attempts += 1
-                    try:
-                        content = self.reader.get(key)
-                        if not isinstance(content, bytes):
-                            raise TypeError("Artifact must contain bytes")
-                    except Exception:
-                        cache[key] = (None, "object_unavailable")
-                    else:
-                        reads += 1
-                        cache[key] = (content, hashlib.sha256(content).hexdigest())
-                cached_content, measured = cache[key]
-                if cached_content is None:
-                    raise ProofError("object_unavailable")
-                if measured != digest:
-                    raise ProofError("sha256_mismatch")
-                verify_cells(cached_content, reference.mime_type, claim.proof)
-                result = VerificationResult(
-                    claim.observation_id, claim.source_record_id, True, None, key, digest
-                )
+                groups.setdefault(key, []).append((index, claim, reference, digest))
             except ProofError as exc:
-                result = VerificationResult(
+                results[index] = VerificationResult(
                     claim.observation_id, claim.source_record_id, False, str(exc)
                 )
-            results.append(result)
-        return VerificationReport(mode, tuple(results), reads, attempts)
+
+        for key, group in groups.items():
+            attempts += 1
+            content: bytes | None = None
+            measured = ""
+            try:
+                content = self.reader.get(key)
+                if not isinstance(content, bytes):
+                    raise TypeError("Artifact must contain bytes")
+            except Exception:
+                content = None
+            else:
+                reads += 1
+                measured = hashlib.sha256(content).hexdigest()
+            for index, claim, reference, digest in group:
+                try:
+                    if content is None:
+                        raise ProofError("object_unavailable")
+                    if measured != digest:
+                        raise ProofError("sha256_mismatch")
+                    verify_cells(content, reference.mime_type, claim.proof)
+                    results[index] = VerificationResult(
+                        claim.observation_id, claim.source_record_id, True, None, key, digest
+                    )
+                except ProofError as exc:
+                    results[index] = VerificationResult(
+                        claim.observation_id, claim.source_record_id, False, str(exc)
+                    )
+            del content
+        return VerificationReport(
+            mode, tuple(results[index] for index in range(len(claims))), reads, attempts
+        )

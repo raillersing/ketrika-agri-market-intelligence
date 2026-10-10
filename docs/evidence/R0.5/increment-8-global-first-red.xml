@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="7" time="187.986" timestamp="2026-10-10T16:07:56.281226+00:00" hostname="74076fd6c6fa"><testcase classname="tests.authentic.test_corpus_wdi" name="test_authentic_document_and_annotation" time="12.514" /><testcase classname="tests.authentic.test_corpus_wdi" name="test_golden_is_independent_and_bounded" time="0.110" /><testcase classname="tests.authentic.test_corpus_wdi" name="test_unverified_sources_excluded" time="12.265" /><testcase classname="tests.authentic.test_corpus_wdi" name="test_authentic_annotation_refuses_generated_source" time="0.024" /><testcase classname="tests.authentic.test_provenance_wdi" name="test_original_wdi_numeric_cells_and_record_identity" time="0.058" /><testcase classname="tests.integration.test_alerts_engine" name="test_alerts_engine_lifecycle_and_notifications" time="4.442"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_alerts_engine" name="test_multi_source_severity_rule" time="0.405"><properties><property name="ketrika.integration" value="true" /></properties><failure message="sqlalchemy.exc.OperationalError: (psycopg.errors.ObjectNotInPrerequisiteState) materialized view &quot;price_monthly&quot; has not been populated&#10;HINT:  Use the REFRESH MATERIALIZED VIEW command.&#10;[SQL: &#10;        WITH anomaly_points AS (&#10;            SELECT&#10;                pc.product_id,&#10;                pc.product_code,&#10;                pc.product_name,&#10;                pc.location_id,&#10;                pc.location_pcode,&#10;                pc.location_name,&#10;                pc.month,&#10;                pc.median_price,&#10;                pc.chg_1m,&#10;                pc.z_score_robust,&#10;                pc.chosen_source_id&#10;            FROM gold.price_changes pc&#10;            WHERE abs(pc.z_score_robust) &gt; %(z_thresh)s&#10;              &#10;        ),&#10;        source_counts AS (&#10;            SELECT&#10;                pm.product_id,&#10;                pm.location_id,&#10;                pm.month,&#10;                count(DISTINCT pm.source_id) AS n_sources,&#10;                array_agg(DISTINCT pm.source_id) AS sources&#10;            FROM gold.price_monthly pm&#10;            GROUP BY pm.product_id, pm.location_id, pm.month&#10;        )&#10;        SELECT&#10;            ap.product_id,&#10;            ap.product_code,&#10;            ap.product_name,&#10;            ap.location_id,&#10;            ap.location_pcode,&#10;            ap.location_name,&#10;            ap.month,&#10;            ap.median_price,&#10;            ap.chg_1m,&#10;            ap.z_score_robust,&#10;            ap.chosen_source_id,&#10;            COALESCE(src.n_sources, 1) AS n_sources,&#10;            COALESCE(src.sources, ARRAY[ap.chosen_source_id]::text[]) AS sources&#10;        FROM anomaly_points ap&#10;        LEFT JOIN source_counts src&#10;          ON ap.product_id = src.product_id&#10;         AND ap.location_id = src.location_id&#10;         AND ap.month = src.month&#10;        ORDER BY ap.month DESC, abs(ap.z_score_robust) DESC;&#10;        ]&#10;[parameters: {'z_thresh': 3.0}]&#10;(Background on this error at: https://sqlalche.me/e/21/e3q8)">self = &lt;sqlalchemy.engine.base.Connection object at 0x755a6d7ccb90&gt;
+dialect = &lt;sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x755a6d7cc7d0&gt;
+context = &lt;sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x755a6d7cd0a0&gt;
+statement = &lt;sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x755a6d7ccb60&gt;
+parameters = [{'z_thresh': 3.0}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Unpack[TupleAny]]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+
+        effective_parameters: Optional[_AnyExecuteParams]
+
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+
+        evt_handled: bool = False
+        try:
+            if self._has_events or self.engine._has_events:
+                for fn in self.dispatch.before_cursor_execute:
+                    str_statement, effective_parameters = fn(
+                        self,
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                        context.executemany,
+                    )
+
+            if self._echo:
+                self._log_info(str_statement)
+
+                stats = context._get_cache_stats()
+
+                if not self.engine.hide_parameters:
+                    self._log_info(
+                        "[%s] %r",
+                        stats,
+                        sql_util._repr_params(
+                            effective_parameters,
+                            batches=10,
+                            ismulti=context.executemany,
+                        ),
+                    )
+                else:
+                    self._log_info(
+                        "[%s] [SQL parameters hidden due to "
+                        "hide_parameters=True]",
+                        stats,
+                    )
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1943:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py:1192: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;psycopg.Cursor [closed] [INERROR] (host=db user=ketrika database=ketrika_qualification) at 0x755a6f332390&gt;
+query = '\n        WITH anomaly_points AS (\n            SELECT\n                pc.product_id,\n                pc.product_co...location_id\n         AND ap.month = src.month\n        ORDER BY ap.month DESC, abs(ap.z_score_robust) DESC;\n        '
+params = {'z_thresh': 3.0}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -&gt; Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+&gt;           raise ex.with_traceback(None)
+E           psycopg.errors.ObjectNotInPrerequisiteState: materialized view "price_monthly" has not been populated
+E           HINT:  Use the REFRESH MATERIALIZED VIEW command.
+
+.venv/lib/python3.12/site-packages/psycopg/cursor.py:117: ObjectNotInPrerequisiteState
+
+The above exception was the direct cause of the following exception:
+
+db_session = &lt;sqlalchemy.orm.session.Session object at 0x755a6e33ad20&gt;
+
+    @pytest.mark.integration
+    def test_multi_source_severity_rule(db_session: Session) -&gt; None:
+        """Verify that PRICE_SPIKE gets severity 'high' when &gt;= 2 sources confirm, and 'medium' with 1 source."""
+        from ketrika.alerts.rules import evaluate_price_spike_rules
+
+        # Execute against current database state
+&gt;       candidates = evaluate_price_spike_rules(db_session)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_alerts_engine.py:149:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/ketrika/alerts/rules.py:72: in evaluate_price_spike_rules
+    anomalies = detect_price_anomalies(session, z_threshold=3.0, chg_threshold=0.15)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/ketrika/ml/anomalies.py:111: in detect_price_anomalies
+    rows = session.execute(query, params).fetchall()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py:2473: in execute
+    return self._execute_internal(
+.venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py:2373: in _execute_internal
+    result = conn.execute(
+.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1448: in execute
+    return meth(
+.venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:533: in _execute_on_connection
+    return connection._execute_clauseelement(
+.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1668: in _execute_clauseelement
+    ret = self._execute_context(
+.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1822: in _execute_context
+    return self._exec_single_context(
+.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1962: in _exec_single_context
+    self._handle_dbapi_exception(
+.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2332: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1943: in _exec_single_context
+    self.dialect.do_execute(
+.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py:1192: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;psycopg.Cursor [closed] [INERROR] (host=db user=ketrika database=ketrika_qualification) at 0x755a6f332390&gt;
+query = '\n        WITH anomaly_points AS (\n            SELECT\n                pc.product_id,\n                pc.product_co...location_id\n         AND ap.month = src.month\n        ORDER BY ap.month DESC, abs(ap.z_score_robust) DESC;\n        '
+params = {'z_thresh': 3.0}, prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -&gt; Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+&gt;           raise ex.with_traceback(None)
+E           sqlalchemy.exc.OperationalError: (psycopg.errors.ObjectNotInPrerequisiteState) materialized view "price_monthly" has not been populated
+E           HINT:  Use the REFRESH MATERIALIZED VIEW command.
+E           [SQL:
+E                   WITH anomaly_points AS (
+E                       SELECT
+E                           pc.product_id,
+E                           pc.product_code,
+E                           pc.product_name,
+E                           pc.location_id,
+E                           pc.location_pcode,
+E                           pc.location_name,
+E                           pc.month,
+E                           pc.median_price,
+E                           pc.chg_1m,
+E                           pc.z_score_robust,
+E                           pc.chosen_source_id
+E                       FROM gold.price_changes pc
+E                       WHERE abs(pc.z_score_robust) &gt; %(z_thresh)s
+E
+E                   ),
+E                   source_counts AS (
+E                       SELECT
+E                           pm.product_id,
+E                           pm.location_id,
+E                           pm.month,
+E                           count(DISTINCT pm.source_id) AS n_sources,
+E                           array_agg(DISTINCT pm.source_id) AS sources
+E                       FROM gold.price_monthly pm
+E                       GROUP BY pm.product_id, pm.location_id, pm.month
+E                   )
+E                   SELECT
+E                       ap.product_id,
+E                       ap.product_code,
+E                       ap.product_name,
+E                       ap.location_id,
+E                       ap.location_pcode,
+E                       ap.location_name,
+E                       ap.month,
+E                       ap.median_price,
+E                       ap.chg_1m,
+E                       ap.z_score_robust,
+E                       ap.chosen_source_id,
+E                       COALESCE(src.n_sources, 1) AS n_sources,
+E                       COALESCE(src.sources, ARRAY[ap.chosen_source_id]::text[]) AS sources
+E                   FROM anomaly_points ap
+E                   LEFT JOIN source_counts src
+E                     ON ap.product_id = src.product_id
+E                    AND ap.location_id = src.location_id
+E                    AND ap.month = src.month
+E                   ORDER BY ap.month DESC, abs(ap.z_score_robust) DESC;
+E                   ]
+E           [parameters: {'z_thresh': 3.0}]
+E           (Background on this error at: https://sqlalche.me/e/21/e3q8)
+
+.venv/lib/python3.12/site-packages/psycopg/cursor.py:117: OperationalError</failure></testcase></testsuite></testsuites>

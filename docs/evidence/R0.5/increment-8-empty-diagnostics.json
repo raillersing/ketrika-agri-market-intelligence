@@ -1,0 +1,22 @@
+{
+  "dataset": "synthetic; historical fixtures not source qualified",
+  "scope": "isolated qualification, empty Gold is not certification",
+  "unit_command": "Docker pytest tests/unit/test_legacy_replay.py --maxfail=1",
+  "unit_session": 81097,
+  "unit_exit_code": 0,
+  "unit_tests": 9,
+  "unit_seconds": 41.70,
+  "sql_command": "Windows scripts/dev.ps1 qa-isolated test tests/integration/test_rebuild.py tests/integration/test_miasa_odr.py tests/integration/test_mincc_ppn.py tests/integration/test_wb_rtfp_mdg.py tests/integration/test_wfp_hdx_mdg.py --maxfail=1",
+  "sql_session": 27459,
+  "sql_exit_code": 0,
+  "sql_tests": 5,
+  "sql_seconds": 91.97,
+  "csv_raw_provenance": {"valid": 3, "total": 3, "objects_read": 1},
+  "gold_numeric_observations": 0,
+  "gold_source_cell_rate": null,
+  "historical_silver_assertions_preserved": true,
+  "numeric_gold_views_verified_empty": 11,
+  "normalization_gap": "BL-013; raw connector loader does not yet normalize price_mga_per_base",
+  "source_model_human_qualified": false,
+  "global_check_required": true
+}

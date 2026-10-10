@@ -16,7 +16,8 @@ from ketrika.core.models.db import PriceObservation, SourceRecord
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.registry import find_repo_root
 from ketrika.core.settings import get_settings
-from ketrika.pipelines.rebuild import rebuild_database, wipe_silver_gold_tables
+from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.legacy_replay import rejected_legacy_rebuild
 
 FIXTURE_PATH = (
     find_repo_root() / "backend" / "tests" / "fixtures" / "wb_rtfp_mdg" / "wb_rtfp_mdg_sample.csv"
@@ -127,7 +128,7 @@ def test_wb_rtfp_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, csv_c
     assert stats2["n_skipped"] == 36
 
     # 4. CC6: Rebuild stable verification
-    rebuild_stats = rebuild_database(session=db_session, offline=True, source_id="wb_rtfp_mdg")
+    rebuild_stats = rejected_legacy_rebuild(db_session, "wb_rtfp_mdg", allow_empty=True)
     assert rebuild_stats["source_records_replayed"] >= 1
 
     obs_after_rebuild = list(db_session.execute(stmt).scalars().all())

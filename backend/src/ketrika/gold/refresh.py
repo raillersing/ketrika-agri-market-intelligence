@@ -7,7 +7,13 @@ from pathlib import Path
 from typing import Any
 
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+
+from ketrika.core.bronze import BronzeStore
+from ketrika.core.provenance import ArtifactReader
+from ketrika.core.provenance_bronze import BronzeProofReader
+from ketrika.gold.provenance_gate import require_gold_provenance, tables_for_views
 
 logger = logging.getLogger("ketrika.gold")
 
@@ -27,6 +33,26 @@ ORDERED_GOLD_VIEWS: list[str] = [
     "forecast_latest",
 ]
 
+GOLD_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    "price_monthly": ("price_obs_current",),
+    "price_monthly_best": ("price_monthly",),
+    "price_changes": ("price_monthly_best",),
+    "market_health": ("price_changes", "stock_latest", "weather_monthly"),
+}
+
+
+def publication_views(requested: list[str]) -> list[str]:
+    """Include every consumed Gold cache; no stale dependency certification."""
+    tables_for_views(requested)
+    selected = set(requested)
+    pending = list(requested)
+    while pending:
+        for dependency in GOLD_DEPENDENCIES.get(pending.pop(), ()):
+            if dependency not in selected:
+                selected.add(dependency)
+                pending.append(dependency)
+    return [view for view in ORDERED_GOLD_VIEWS if view in selected]
+
 
 def get_sql_dir() -> Path:
     """Find directory containing Gold view SQL definitions."""
@@ -40,14 +66,19 @@ def get_sql_dir() -> Path:
 
 
 def init_gold_views(session: Session) -> dict[str, int]:
-    """Execute all SQL scripts in numerical order to create or replace Gold materialized views."""
+    """Create unpopulated views only; never implicitly publish source values."""
     sql_dir = get_sql_dir()
     sql_files = sorted(sql_dir.glob("*.sql"))
+    expected_files = [f"{index:03d}_{view}.sql" for index, view in enumerate(ORDERED_GOLD_VIEWS, 1)]
+    if [file.name for file in sql_files] != expected_files:
+        raise ValueError("gold_schema_definition_missing")
+    definitions = [file.read_text(encoding="utf-8") for file in sql_files]
+    if any("WITH NO DATA;" not in definition for definition in definitions):
+        raise ValueError("gold_schema_requires_unpopulated_views")
     logger.info("Initializing %d Gold materialized views from %s...", len(sql_files), sql_dir)
 
     executed = 0
-    for f in sql_files:
-        sql_content = f.read_text(encoding="utf-8")
+    for f, sql_content in zip(sql_files, definitions, strict=True):
         logger.debug("Executing Gold SQL file: %s", f.name)
         session.execute(text(sql_content))
         executed += 1
@@ -63,55 +94,59 @@ def init_gold_views(session: Session) -> dict[str, int]:
         )
     )
     session.flush()
-    logger.info("Successfully initialized all Gold views.")
-    return {"views_initialized": executed}
+    logger.info("Created %d unpopulated Gold views; no source-cell certification.", executed)
+    return {"views_initialized": executed, "views_populated": 0}
 
 
 def refresh_gold_views(
     session: Session,
     concurrently: bool = False,
     views: list[str] | None = None,
+    *,
+    reader: ArtifactReader | None = None,
 ) -> dict[str, Any]:
-    """Refresh Gold materialized views in strict topological order."""
-    target_views = views or ORDERED_GOLD_VIEWS
+    """Fresh cell check and atomic publication; no model/conversion qualification."""
+    requested = ORDERED_GOLD_VIEWS if views is None else views
+    target_views = publication_views(requested)
     logger.info("Refreshing %d Gold materialized views...", len(target_views))
 
     refreshed: list[str] = []
-    errors: dict[str, str] = {}
-
-    for view_name in target_views:
-        # Check if materialized view exists
-        exists = session.execute(
-            text("SELECT 1 FROM pg_matviews WHERE schemaname = 'gold' AND matviewname = :mv"),
-            {"mv": view_name},
-        ).scalar()
-
-        if not exists:
-            logger.warning("Materialized view gold.%s does not exist. Skipping.", view_name)
-            continue
-
-        prefix = "CONCURRENTLY " if concurrently else ""
-        try:
-            session.execute(text(f"REFRESH MATERIALIZED VIEW {prefix}gold.{view_name};"))
-            refreshed.append(view_name)
-            logger.debug("Refreshed gold.%s", view_name)
-        except Exception as e:
-            logger.error("Failed to refresh gold.%s: %s", view_name, e)
-            errors[view_name] = str(e)
-            # If concurrent failed, retry without concurrently
-            if concurrently:
-                try:
+    try:
+        for view_name in target_views:
+            exists = session.execute(
+                text("SELECT 1 FROM pg_matviews WHERE schemaname = 'gold' AND matviewname = :mv"),
+                {"mv": view_name},
+            ).scalar()
+            if not exists:
+                raise ValueError("gold_view_missing")
+        proof_reader = reader if reader is not None else BronzeProofReader(BronzeStore())
+        check = require_gold_provenance(session, proof_reader, target_views)
+        with session.begin_nested():
+            for view_name in target_views:
+                if concurrently:
+                    try:
+                        with session.begin_nested():
+                            session.execute(
+                                text(f"REFRESH MATERIALIZED VIEW CONCURRENTLY gold.{view_name};")
+                            )
+                    except SQLAlchemyError:
+                        session.execute(text(f"REFRESH MATERIALIZED VIEW gold.{view_name};"))
+                else:
                     session.execute(text(f"REFRESH MATERIALIZED VIEW gold.{view_name};"))
-                    refreshed.append(view_name)
-                    del errors[view_name]
-                except Exception as retry_err:
-                    errors[view_name] = str(retry_err)
-                    raise
+                refreshed.append(view_name)
+    except SQLAlchemyError:
+        raise ValueError("gold_publication_failed") from None
 
     session.flush()
     logger.info("Successfully refreshed %d Gold materialized views.", len(refreshed))
     return {
         "views_refreshed": refreshed,
-        "errors": errors,
+        "errors": {},
         "count": len(refreshed),
+        "provenance_state": check.state,
+        "source_cell_dq_id": str(check.receipt.dq_id) if check.receipt else None,
+        "provenance_scope": "source_cells_not_authenticity_conversions_or_model",
+        "source_observations_total": check.receipt.report.total if check.receipt else 0,
+        "source_observations_valid": check.receipt.report.valid if check.receipt else 0,
+        "source_cell_rate": str(check.receipt.report.rate) if check.receipt else None,
     }

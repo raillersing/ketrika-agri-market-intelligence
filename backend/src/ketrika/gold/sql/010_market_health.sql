@@ -97,7 +97,8 @@ SELECT
         THEN round((weighted_sum / coverage)::numeric, 2)
         ELSE NULL
     END AS market_health_score
-FROM combined;
+FROM combined
+WITH NO DATA;
 
 CREATE INDEX idx_gold_market_health_filter
 ON gold.market_health (product_id, location_id, month);

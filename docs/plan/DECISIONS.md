@@ -2,6 +2,68 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-031 : R0.5 — distinguer Gold vide du refus et de la certification
+
+- **Date :** 2026-10-10 ; accepté avant implémentation.
+- **Contexte :** QA élargie 318 passed / 4 failed : quatre scénarios prix n'ont aucune observation éligible Gold. Relecture WFP : 36 accepted/exact, mais 36 price_mga_per_base NULL et zéro ligne Gold. Le loader brut de connectors/runner.py ne normalise pas ces prix ; le raccordement Silver/normalisation reste à corriger en R0.6. Exiger une exception de preuve sur un ensemble vide était une mauvaise attente de test.
+- **Décision :** rebuild expose le véritable état/effectifs/taux/scope du refresh ; empty=0/0 et taux NULL ne deviennent jamais 100 % ou source qualifiée. Quatre tests prix peuvent autoriser explicitement cet état, uniquement après vérification réelle que toutes les vues numériques sont vides ; succès cells_verified inattendu, compteur manquant/non nul ou taux fabriqué restent refusés par le helper. Les contrôles Silver originaux restent inchangés.
+- **CSV borné :** vérifier trois preuves natives sur observations rejouées/objet Bronze, séparément du Gold vide dû au loader non normalisant. Aucune revendication de publication numérique positive dans ce scénario.
+- **Conséquences :** pas de bypass ni réparation rétroactive ; diagnostics sans qualification du rebuild complet R0.8. Lacune de normalisation et fausse étiquette exact consignées pour R0.6/R2.1.
+
+## ADR-030 : R0.5 — statistiques de rejeu sur refus explicite de publication
+
+- **Date :** 2026-10-10 ; accepté avant implémentation.
+- **Contexte :** les anciens tests de connecteurs vérifient les effectifs Silver après rebuild, mais leurs parseurs ne fournissent pas encore les preuves de cellules. Le refus Gold ne doit ni perdre ces diagnostics ni devenir un succès de rebuild.
+- **Décision :** enrichir uniquement l'exception GoldProvenanceRejected propagée par rebuild avec les statistiques réellement mesurées avant publication, gold_views_refreshed=0 et gold_publication_state=refused. Aucun catch silencieux, retour réussi, exemption, ajout de preuves persistées ou collecte externe. Les tests historiques gardent leurs assertions Silver/revisions et exigent explicitement ce refus lorsqu'ils utilisent un parseur non qualifié ; leur helper échoue sur réussite inattendue, reçu invalide ou statistiques absentes.
+- **Rejeu positif :** le CSV de test possède désormais des cellules natives ; son test de rebuild se limite explicitement à son source_id existant et conserve valeurs/effectifs, en ajoutant la publication vérifiée. Ce corpus borné n'est pas le rebuild complet R0.8.
+- **Conséquences :** un rejeu Silver peut réussir avant un refus Gold sans qualifier la capacité source. La CLI continue de sortir en erreur et n'affiche aucun succès global. Qualification native et rebuild complet restent obligatoires selon R1 et R0.8 ; aucun ancien tag T recertifié.
+
+## ADR-028 : R0.5 — clôture des dépendances de publication Gold
+
+- **Date :** 2026-10-10 ; accepté avant implémentation.
+- **Contexte :** price_monthly, price_monthly_best, price_changes et market_health lisent des caches Gold ; une sélection partielle peut réutiliser des caches anciens malgré un audit Silver frais.
+- **Décision :** étendre toute sélection à ses ancêtres Gold via allowlist statique, puis auditer et rafraîchir cette clôture en ordre topologique dans le même savepoint. price_changes inclut ses quatre niveaux prix ; market_health inclut aussi stock_latest/weather_monthly. Les vues indépendantes le restent.
+- **Alternatives :** refuser toute sélection partielle ; accepter les caches anciens (rejeté).
+- **Conséquences :** count/views_refreshed décrivent le lot effectif, possiblement plus large que demandé ; tests de fraîcheur et rollback requis. Aucune certification rétroactive, aucun scope économique/modèle élargi.
+
+## ADR-029 : R0.5 — NASA historique sans preuve ne publie plus
+
+- **Date :** 2026-10-10 ; accepté avant adaptation du test historique.
+- **Contexte :** QA courante 304 passed / 1 failed : le parseur NASA historique n'émet pas de coordonnées de preuve complètes ; son ancien test supposait une publication Gold sur la seule présence d'une FK. La nouvelle garde refuse correctement ce résultat. Source publique toujours disabled, aucune acquisition externe tentée.
+- **Décision :** conserver les contrôles réels de collecte locale, couverture, idempotence et rejeu Silver ; mesurer les appels au vrai parseur pendant le rejeu, puis exiger le refus Gold et son reçu DQ négatif. Aucun ajout de preuve artificielle aux observations persistées ni exemption du verrou. Adapter les parseurs natifs/requalifier les données NASA reste R1.11 ; R0.8 reste une réception de rejeu distincte, non satisfaite par cette fixture.
+- **Alternatives :** rétablir publication non vérifiée (interdit) ; inventer des cellules source pour les identités dérivées (rejeté).
+- **Conséquences :** l'ancien succès T3.4 n'est pas recertifié ; la capacité NASA reste non qualifiée. Le test doit prouver effectivement les mêmes nombres Silver et un échec de publication, pas masquer une erreur de rejeu ni déclarer un rebuild complet réussi.
+
+## ADR-023 : R0.5 — garde de publication des cellules source
+
+- **Date :** 2026-10-10 ; accepté avant transfert du prototype au principal.
+- **Décision :** contrôler fraîchement les observations consommées avant REFRESH, sous verrous SHARE transactionnels des tables et références, lock_timeout local 5 s. Vues/tables allowlist statique ; prix courants accepted et convertis non NULL ; stocks courants avec produit/lieu, historique LAG inclus ; production courante production_t ; autres tables courantes sans filtre source/statut. Audit complet historique distinct, pas de cache de réussite ni bypass APP_ENV/test. Empty et metadata_only ne deviennent pas 100 %.
+- **Limites :** scope source_cells seulement, pas authenticité/droits, conversions économiques ou validation de modèle ; les champs calculés et les sources natives restent à qualifier selon tâches R pertinentes. Critères R0.5 et réception SQL restent obligatoires, statut non terminé pendant transfert.
+
+## ADR-024 : R0.5 — nouvelles fixtures Gold réellement sourcées
+
+- **Date :** 2026-10-10 ; accepté avant transfert.
+- **Décision :** uniquement pour nouvelles observations transient dans la DB/bucket QA gardés : créer octets JSON synthetic/verified=false et références content-addressed réelles ; vérifier cellules avant insertion. Représenter les literals du générateur en Decimal ; aucune reconstitution de brut réel, réparation d'ancienne observation ou assouplissement du binder. Anciennes références/objets conservés. Générateur auxiliaire sous tests/e2e_data et inventaire corpus recalculé ; mêmes valeurs analytiques, quantités/unités de stock explicitement générées.
+- **Limites :** source synthétique, pas acquisition officielle ni modèle validé. Autorisation H5 et droits de sources réelles inchangés ; pas de collecte depuis ces faux URL déclarés verified=false.
+
+## ADR-025 : R0.5 — lecture Bronze bornée des preuves
+
+- **Date :** 2026-10-10 ; accepté avant transfert.
+- **Décision :** reader dédié GET existant, au plus 32 MiB + sentinelle, flux fermé dans tous les cas ; ContentLength ne peut que refuser, jamais prouver l'intégrité. Refus de taille incohérente/non entière, contenu non bytes ou surdimensionné. SHA réel reste obligatoire, jamais ETag. Store historique et objets inchangés ; négatifs sur flux simulés.
+- **Limites :** durée transport et mémoire du parsing distinctes, pas garanties par cette borne ; aucune nouvelle dépendance.
+
+## ADR-026 : R0.5 — groupement sans rétention des octets du corpus entier
+
+- **Date :** 2026-10-10 ; accepté avant transfert.
+- **Décision :** prévalider références/doublons dans ordre d'entrée, grouper par clé validée, GET une fois par groupe, vérifier puis libérer octets avant suivant. Résultats rendus dans ordre original, comptes/erreurs conservés ; chaque nouveau lot relit les objets. Aucune omission pour économiser mémoire ou obtenir un taux vert.
+- **Limites :** claims/résultats proportionnels au lot, parsing à la taille d'un objet ; réception SQL obligatoire en plus des mocks.
+
+## ADR-027 : R0.5 — initialisation non publiée et refresh atomique
+
+- **Date :** 2026-10-10 ; accepté avant transfert.
+- **Décision :** scripts statiques WITH NO DATA, donc pas de chiffres implicitement publiés à init/migration. Migration 0005 après 0004 invalide seulement les 12 caches Gold et recrée leurs permissions, sans toucher Bronze/Silver/ML. Downgrade n'effectue aucune repopulation non auditée. Refresh : allowlist/ordre topologique, vue absente refusée, garde fresh puis savepoint global ; concurrent retry après rollback du savepoint local, seconde erreur propagée en code stable. Aucun succès partiel, empty jamais 100 %. Résultat expose provenance_state/source_cell_dq_id/effectifs/scope non modèle/non conversions.
+- **Limites :** aucune migration active ; preservation SQL QA et scénarios négatifs/rollback réels requis avant réception. Échecs de pipeline et leur durabilité après rollback externe restent R0.6 ; une preuve source-cell ne qualifie pas toute la sémantique Gold.
+
 ## ADR-022 : R0.5 — lexèmes numériques JSON et coordonnées CSV natives
 
 - **Date :** 2026-10-10 ; accepté avant transfert au principal (prototype nommé ADR-023 dans son worktree, non normatif).

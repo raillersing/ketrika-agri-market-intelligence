@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import json
 import uuid
 from datetime import UTC, date, datetime
+from decimal import Decimal
 
+from sqlalchemy import Numeric, inspect
 from sqlalchemy.orm import Session
 
+from ketrika.core.bronze import BronzeStore
 from ketrika.core.models.db import (
     CpiObservation,
     Forecast,
@@ -24,6 +28,7 @@ from ketrika.core.models.db import (
     WeatherObservation,
 )
 from ketrika.core.qualification import require_synthetic_test_database
+from tests.e2e_data.source_backed_synthetic import attach_new_synthetic_proof
 
 # Deterministic UUIDs
 PRODUCT_RICE_ID = uuid.UUID("11111111-1111-1111-1111-111111111111")
@@ -36,6 +41,19 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
     """Seed a clean, deterministic dataset for end-to-end SQL validation of all Gold views."""
     target = session.get_bind().engine.url
     require_synthetic_test_database(target.host, target.database)
+    reader = BronzeStore()
+    if reader.bucket != "ketrika-qa-bronze":
+        raise ValueError("synthetic_bronze_destination_refused")
+
+    def add_observation(observation) -> None:
+        # Explicit synthetic-generator inputs, never recovered real source values.
+        for column in inspect(type(observation)).columns:
+            value = getattr(observation, column.key)
+            if isinstance(column.type, Numeric) and type(value) is float:
+                setattr(observation, column.key, Decimal(str(value)))
+        attach_new_synthetic_proof(session, observation, reader)
+        session.add(observation)
+
     # 1. Products
     p_rice = session.get(Product, PRODUCT_RICE_ID)
     if not p_rice:
@@ -191,28 +209,58 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
         if not s:
             s = Source(
                 source_id=s_id,
-                spec={"name": s_name, "priority": prio, "freshness_sla_days": sla},
+                spec={
+                    "name": s_name,
+                    "priority": prio,
+                    "freshness_sla_days": sla,
+                    "authenticity": "synthetic",
+                    "verified": False,
+                },
                 status="active",
             )
             session.add(s)
         else:
-            s.spec = {"name": s_name, "priority": prio, "freshness_sla_days": sla}
+            s.spec = {
+                "name": s_name,
+                "priority": prio,
+                "freshness_sla_days": sla,
+                "authenticity": "synthetic",
+                "verified": False,
+            }
 
     session.flush()
 
     # 4. Source Records
     def make_src_rec(s_id: str, offset: int = 0) -> SourceRecord:
-        rec_id = uuid.uuid5(SOURCE_RECORD_ID_BASE, f"{s_id}_{offset}")
+        rec_id = uuid.uuid5(SOURCE_RECORD_ID_BASE, f"synthetic-generator-v2:{s_id}_{offset}")
         rec = session.get(SourceRecord, rec_id)
         if not rec:
+            artifact = reader.put(
+                source_id=s_id,
+                content=json.dumps(
+                    {
+                        "generator_source": s_id,
+                        "offset": offset,
+                        "authenticity": "synthetic",
+                        "verified": False,
+                    },
+                    sort_keys=True,
+                ).encode(),
+                mime_type="application/json",
+                url="https://example.invalid/synthetic-gold-generator",
+                retrieved_via="manual_upload",
+                fetched_at=datetime(2024, 3, 1, 10, 0, tzinfo=UTC),
+                http_status=0,
+                http_headers={"x-ketrika-dataset": "synthetic; verified=false"},
+            )
             rec = SourceRecord(
                 source_record_id=rec_id,
                 source_id=s_id,
-                source_url=f"https://example.com/{s_id}",
-                retrieved_via="direct",
-                object_key=f"bronze/{s_id}/artifact.csv",
-                content_sha256=f"sha_{s_id}_{offset}",
-                mime_type="text/csv",
+                source_url="https://example.invalid/synthetic-gold-generator",
+                retrieved_via="manual_upload",
+                object_key=artifact.object_key,
+                content_sha256=artifact.content_sha256,
+                mime_type="application/json",
                 fetched_at=datetime(2024, 3, 1, 10, 0, tzinfo=UTC),
                 parser_version="1.0.0",
                 extraction_status="parsed",
@@ -285,7 +333,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
             review_status="accepted",
             superseded_by=None,
         )
-        session.add(p_obs)
+        add_observation(p_obs)
         counts["price"] += 1
 
     # B) Priority arbitration test records for Month 2024-02:
@@ -322,7 +370,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
             review_status="accepted",
             superseded_by=None,
         )
-        session.add(p_arb)
+        add_observation(p_arb)
         counts["price"] += 1
 
     # C) Priority test for Month 2024-03:
@@ -355,7 +403,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
             review_status="accepted",
             superseded_by=None,
         )
-        session.add(p_arb)
+        add_observation(p_arb)
         counts["price"] += 1
 
     # D) Additional 12 distinct commodity and regional series for ML forecasting (SPECS §17)
@@ -540,7 +588,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
                 review_status="accepted",
                 superseded_by=None,
             )
-            session.add(p_extra)
+            add_observation(p_extra)
             counts["price"] += 1
 
     # 6. Stock observations (3 sequential observations showing improving trend)
@@ -561,6 +609,9 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
             period_start=p_start,
             period_end=p_end,
             published_at=datetime(2024, 2, 16, 8, 0, tzinfo=UTC),
+            quantity_raw=str(cov * 100.0),
+            quantity_value=cov * 100.0,
+            unit_raw="tonne",
             quantity_base=cov * 100.0,
             base_unit="tonne",
             stock_status=status,
@@ -570,7 +621,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
             review_status="accepted",
             superseded_by=None,
         )
-        session.add(s_obs)
+        add_observation(s_obs)
         counts["stock"] += 1
 
     # 7. Trade flows for 2024-01:
@@ -596,7 +647,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
         review_status="accepted",
         superseded_by=None,
     )
-    session.add(tf_import)
+    add_observation(tf_import)
     counts["trade"] += 1
 
     tf_export = TradeFlow(
@@ -619,7 +670,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
         review_status="accepted",
         superseded_by=None,
     )
-    session.add(tf_export)
+    add_observation(tf_export)
     counts["trade"] += 1
 
     # 8. Production observation:
@@ -641,7 +692,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
         confidence=1.0,
         superseded_by=None,
     )
-    session.add(prod_obs)
+    add_observation(prod_obs)
     counts["production"] += 1
 
     # 9. Weather observations:
@@ -662,12 +713,13 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
             source_record_id=src_rec_nasa.source_record_id,
             location_id=LOCATION_ANALAMANGA_ID,
             date=wdate,
+            location_raw="Analamanga",
             variable=var,
             value=val,
             method="point_centroid",
             provider="nasa_power",
         )
-        session.add(w_obs)
+        add_observation(w_obs)
         counts["weather"] += 1
 
     # 10. CPI observations:
@@ -692,7 +744,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
             confidence=1.0,
             superseded_by=None,
         )
-        session.add(c_obs)
+        add_observation(c_obs)
         counts["cpi"] += 1
 
     # 11. ML Model Run and Forecast

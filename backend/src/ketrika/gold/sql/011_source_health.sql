@@ -64,7 +64,8 @@ SELECT
 FROM meta.source s
 LEFT JOIN latest_run lr ON s.source_id = lr.source_id AND lr.rn = 1
 LEFT JOIN all_time_records atr ON s.source_id = atr.source_id
-LEFT JOIN open_reviews rev ON s.source_id = rev.source_id;
+LEFT JOIN open_reviews rev ON s.source_id = rev.source_id
+WITH NO DATA;
 
 CREATE INDEX idx_gold_source_health_source
 ON gold.source_health (source_id);

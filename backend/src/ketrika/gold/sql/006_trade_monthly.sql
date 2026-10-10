@@ -23,7 +23,8 @@ GROUP BY
     p.product_code,
     p.canonical_name_fr,
     tf.flow,
-    date_trunc('month', tf.period_start)::date;
+    date_trunc('month', tf.period_start)::date
+WITH NO DATA;
 
 CREATE INDEX idx_gold_trade_monthly_filter
 ON gold.trade_monthly (product_id, flow, month);

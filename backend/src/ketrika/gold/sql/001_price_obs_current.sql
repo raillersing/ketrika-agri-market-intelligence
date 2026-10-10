@@ -48,7 +48,8 @@ LEFT JOIN ref.product p ON po.product_id = p.product_id
 LEFT JOIN ref.location loc ON po.location_id = loc.location_id
 WHERE po.superseded_by IS NULL
   AND po.review_status = 'accepted'
-  AND po.price_mga_per_base IS NOT NULL;
+  AND po.price_mga_per_base IS NOT NULL
+WITH NO DATA;
 
 CREATE INDEX idx_gold_price_obs_current_lookup
 ON gold.price_obs_current (product_id, location_id, period_start);

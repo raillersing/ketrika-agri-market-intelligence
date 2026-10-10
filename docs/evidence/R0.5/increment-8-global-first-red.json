@@ -1,0 +1,18 @@
+{
+  "command": "scripts/dev.ps1 check via Windows PowerShell",
+  "session": 18162,
+  "started_at": "2026-10-10T16:05:42Z",
+  "exit_code": 1,
+  "collected": 709,
+  "passed": 6,
+  "failed": 1,
+  "seconds": 189.15,
+  "warnings": 5,
+  "lint": "passed",
+  "format_files": 196,
+  "typed_files": 195,
+  "governance": "passed",
+  "failure": "test_multi_source_severity_rule read unpopulated price_monthly after explicit WITH NO DATA initialization",
+  "frontend": "not executed",
+  "scope": "partial failing software run; no global qualification or commit"
+}

@@ -56,7 +56,8 @@ SELECT
     END AS import_dependency_ratio
 FROM combined_keys ck
 LEFT JOIN yearly_production yp ON ck.product_id = yp.product_id AND ck.year = yp.year
-LEFT JOIN yearly_trade yt ON ck.product_id = yt.product_id AND ck.year = yt.year;
+LEFT JOIN yearly_trade yt ON ck.product_id = yt.product_id AND ck.year = yt.year
+WITH NO DATA;
 
 CREATE INDEX idx_gold_import_dependency_filter
 ON gold.import_dependency (product_id, year);

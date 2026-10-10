@@ -16,7 +16,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.2 | MUST | DONE | 6b4ad7f : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés |
 | R0.3 | MUST | DONE | 4f8d7e2 : check Windows 340/35, QA 58, E2E 9, préservation et secrets verts |
 | R0.4 | MUST | DONE | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 ; 65 fichiers / dix cellules, check 411/35 et QA 72 codes 0, données actives préservées |
-| R0.5 | MUST | IN_PROGRESS | ca4e33f : natifs JSON/CSV reçus 258 et check 659/35/build codes 0 ; garde Gold/adaptateurs encore obligatoires |
+| R0.5 | MUST | IN_PROGRESS | ca4e33f : sept incréments reçus ; garde Gold 8 en qualification, QA élargie 327/20 puis check global requis |
 | R0.6 | MUST | TODO | — |
 | R0.7 | MUST | TODO | — |
 | R0.8 | MUST | TODO | — |

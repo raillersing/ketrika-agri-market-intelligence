@@ -37,7 +37,8 @@ GROUP BY
     actor_level,
     month,
     source_id,
-    priority;
+    priority
+WITH NO DATA;
 
 CREATE INDEX idx_gold_price_monthly_filter
 ON gold.price_monthly (product_id, location_id, month);

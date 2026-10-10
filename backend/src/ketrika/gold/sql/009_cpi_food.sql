@@ -42,7 +42,8 @@ SELECT
         THEN round(((index_value / prev_index_12m) - 1.0)::numeric, 4)
         ELSE NULL
     END AS chg_12m
-FROM ordered_cpi;
+FROM ordered_cpi
+WITH NO DATA;
 
 CREATE INDEX idx_gold_cpi_food_filter
 ON gold.cpi_food (series_code, month);

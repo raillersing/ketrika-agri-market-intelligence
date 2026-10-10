@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from datetime import date
+from decimal import Decimal
 from typing import Any
 from unittest.mock import patch
+from uuid import uuid4
 
 import httpx
 import pytest
@@ -13,9 +16,16 @@ from sqlalchemy.orm import Session
 from ketrika.alerts.engine import evaluate_alerts
 from ketrika.alerts.rules import AlertCandidate
 from ketrika.core.db import check_db_connection
-from ketrika.core.models.db import Alert, Location, Product
+from ketrika.core.models.db import Alert, Location, PriceObservation, Product, SourceRecord
 from ketrika.core.settings import get_settings
-from ketrika.gold.refresh import init_gold_views
+from ketrika.gold.refresh import init_gold_views, refresh_gold_views
+from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.e2e_data.source_backed_synthetic import attach_new_synthetic_proof
+from tests.e2e_data.synthetic_gold_dataset import (
+    LOCATION_ANALAMANGA_ID,
+    PRODUCT_RICE_ID,
+    seed_synthetic_gold_data,
+)
 
 
 @pytest.fixture
@@ -145,8 +155,47 @@ def test_multi_source_severity_rule(db_session: Session) -> None:
     """Verify that PRICE_SPIKE gets severity 'high' when >= 2 sources confirm, and 'medium' with 1 source."""
     from ketrika.alerts.rules import evaluate_price_spike_rules
 
-    # Execute against current database state
+    # Explicit source-backed synthetic publication, never incidental old Gold data.
+    wipe_silver_gold_tables(db_session)
+    seed_synthetic_gold_data(db_session)
+    for source_id, month, raw in (
+        ("miasa_odr", 3, "5500.0"),
+        ("wfp_hdx_mdg", 3, "5600.0"),
+        ("miasa_odr", 4, "10000.0"),
+    ):
+        reference = db_session.scalars(
+            select(SourceRecord).where(SourceRecord.source_id == source_id)
+        ).first()
+        assert reference is not None
+        observation = PriceObservation(
+            observation_id=uuid4(),
+            source_record_id=reference.source_record_id,
+            natural_key=uuid4().hex,
+            product_raw="Riz blanc",
+            product_id=PRODUCT_RICE_ID,
+            location_raw="Analamanga",
+            location_id=LOCATION_ANALAMANGA_ID,
+            actor_level="retail",
+            period_start=date(2024, month, 1),
+            period_end=date(2024, month, 28),
+            price_raw=raw,
+            price_value=Decimal(raw),
+            currency_raw="MGA",
+            unit_raw="kg",
+            price_mga_per_base=Decimal(raw),
+            base_unit="kg",
+            conversion_status="exact",
+            observed_or_imputed="observed",
+            extraction_method="deterministic",
+            confidence=1,
+            review_status="accepted",
+        )
+        attach_new_synthetic_proof(db_session, observation)
+        db_session.add(observation)
+    refresh_gold_views(db_session)
+    db_session.commit()
     candidates = evaluate_price_spike_rules(db_session)
+    assert {candidate.severity for candidate in candidates} == {"high", "medium"}
     for cand in candidates:
         n_sources = cand.evidence.get("n_sources", 1)
         if n_sources >= 2:

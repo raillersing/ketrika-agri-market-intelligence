@@ -20,6 +20,7 @@ from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import get_session
 from ketrika.core.models.db import SourceRecord
 from ketrika.core.policy import PolicyEngine
+from ketrika.gold.provenance_gate import GoldProvenanceRejected
 from ketrika.gold.refresh import refresh_gold_views
 
 logger = logging.getLogger("ketrika.rebuild")
@@ -172,9 +173,22 @@ def rebuild_database(
 
         s.commit()
         # Refresh Gold views to reflect replayed records
-        gold_refresh = refresh_gold_views(s)
+        try:
+            gold_refresh = refresh_gold_views(s)
+        except GoldProvenanceRejected as exc:
+            exc.replay_stats = {
+                **stats,
+                "gold_views_refreshed": 0,
+                "gold_publication_state": "refused",
+            }
+            raise
         s.commit()
         stats["gold_views_refreshed"] = gold_refresh["count"]
+        stats["gold_publication_state"] = gold_refresh["provenance_state"]
+        stats["source_observations_total"] = gold_refresh["source_observations_total"]
+        stats["source_observations_valid"] = gold_refresh["source_observations_valid"]
+        stats["source_cell_rate"] = gold_refresh["source_cell_rate"]
+        stats["provenance_scope"] = gold_refresh["provenance_scope"]
         logger.info(
             "Rebuild complete! Replayed %d records: %d inserted, %d superseded, %d skipped",
             stats["source_records_replayed"],
@@ -218,6 +232,8 @@ def main() -> None:
         print(f"  Observations inserted:   {stats['records_inserted']}")
         print(f"  Observations superseded: {stats['records_superseded']}")
         print(f"  Observations skipped:    {stats['records_skipped']}")
+        print(f"  Gold source-cell state: {stats['gold_publication_state']}")
+        print("  Empty/fixtures do not qualify a live source, model or complete R0.8 rebuild.")
         sys.exit(0)
     except Exception as exc:
         print(f"Rebuild failed: {exc}", file=sys.stderr)

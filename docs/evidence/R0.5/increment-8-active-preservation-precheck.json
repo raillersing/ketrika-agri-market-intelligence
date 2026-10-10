@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-10-10T16:08:20Z",
+  "scope": "active stack read-only; no migration, rebuild or reset",
+  "source_record": {"count": 482, "md5": "47b4402859acc41e3ae91fdb128e56c6"},
+  "price_observation": {"count": 764, "md5": "4b2586cb8e422f11c4873ad513d66bc1"},
+  "bronze": {
+    "bucket": "bronze",
+    "version_count": 674,
+    "current_objects": 674,
+    "delete_markers": 0,
+    "total_version_bytes": 1377481,
+    "sha256": "83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c"
+  },
+  "commands": [
+    "docker exec aiagent-db-1 psql: BEGIN READ ONLY; source reference and full price row sorted UUID fingerprints; COMMIT",
+    "docker exec -i aiagent-api-1 python - < scripts/bronze-fingerprint-readonly.py"
+  ],
+  "exit_codes": [0, 0],
+  "unchanged_from_increment_7": true,
+  "limits": "Preservation only, not active schema migration or business workflow qualification. Final post-check verification remains required."
+}
