@@ -5,7 +5,9 @@ Base reçue : R0.4 commit 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482,
 clôture documentaire cd89d17 ; incrément pur reçu et commité :
 30d0a837bf666336ee802ecdf843dc810f75d639, ADR-016 avant implémentation.
 
-## Incrément 2 en cours, non commité
+## Incrément 2 reçu, sans garde Gold
+
+Commit 180cc77c68185715689a6b69f6e98b7a68997489 ; tâche globale toujours IN_PROGRESS.
 
 ADR-017/SPECS avant liaison SQL/DQ. Auditeur des six tables, sans filtre silencieux,
 attentes issues des champs stockés, raw_expected lié au brut, résultat DQ transactionnel.

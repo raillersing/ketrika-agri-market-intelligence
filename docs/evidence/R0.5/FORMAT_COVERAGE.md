@@ -1,7 +1,8 @@
 # R0.5 — couverture et limites de provenance
 
 État du 2026-10-10 : incrément pur reçu dans 30d0a837 ; liaison SQL/DQ ciblée
-reçue (104 tests / deux intégrations), contrôle global du deuxième lot encore en cours.
+reçue dans 180cc77 (104 tests / deux intégrations, check Windows complet code 0,
+515 backend / 35 frontend / build). Les formats préparatoires restent hors dépôt principal.
 Cette matrice n'est ni une réception totale R0.5 ni une qualification de marché.
 
 ## Formats
