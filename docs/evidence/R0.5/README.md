@@ -7,6 +7,9 @@ clôture documentaire cd89d17 ; incrément pur reçu et commité :
 
 ## Incrément 4 reçu : preuve LLM mécanique
 
+Commit c29acf2cffffabbabab9604e053a42abfe8d806b ; diff staged check code 0,
+gitleaks staged Docker code 0 / 318571 octets / aucune fuite. Tâche IN_PROGRESS.
+
 ADR-019/SPECS avant transfert par apply_patch depuis le prototype conservé.
 Cellules et attentes SQL vérifiées avant page/extrait ; PDF page identique, HTML
 page logique 1, ancrage normalisé §11.2 et tous les tokens valeur/identité exigés.
