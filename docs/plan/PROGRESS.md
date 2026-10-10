@@ -65,7 +65,7 @@
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
-| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | ea6466accf8d51d9fb3394b632f6cb33cd15b1e5 | Production reçue 228 et check 629/35/build codes 0 ; garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 imports préparatoires corrigés |
+| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | 41822c8ea7db91f0eda7f17c273daf47786d7459 | Production reçue 228 et check 629/35/build codes 0 ; garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 imports préparatoires corrigés |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
@@ -483,6 +483,7 @@
 - Check Windows 6321 code final 0 : backend 629 / 3893,46 s et frontend 35 / quatre suites / 13,13 s ; lint/types/build verts, build 357406 ms, reçu 159c8012-17d8-48ea-910b-bd09feb9da1b archivé. Couvertures et intégrations consignées ci-dessus.
 - Contrôle SQL actif en lecture seule à 07:59:09Z code 0 : 482 sources / MD5 47b4402859acc41e3ae91fdb128e56c6 et 764 prix / MD5 4b2586cb8e422f11c4873ad513d66bc1 inchangés. Lecture réelle de chaque version Bronze 29081 code 0 : 674 versions/objets, zéro delete marker, 1377481 octets ; SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c inchangé.
 - R0.5 IN_PROGRESS : garde de publication Gold, adaptateurs natifs et lignée des conversions restent obligatoires ; aucune performance de marché, collecte live ou qualification humaine revendiquée.
+- Commit 41822c8ea7db91f0eda7f17c273daf47786d7459 : 22 fichiers, 567 ajouts/17 retraits ; diff staged check 81367 code 0, gitleaks 3085 code 0 / 337596 octets / aucune fuite. Aucun tag de phase.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 

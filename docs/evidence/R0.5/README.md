@@ -7,6 +7,9 @@ clôture documentaire cd89d17 ; incrément pur reçu et commité :
 
 ## Incrément 6 reçu : brut production
 
+Commit 41822c8ea7db91f0eda7f17c273daf47786d7459 ; diff staged check et gitleaks codes 0,
+337596 octets / aucune fuite ; DB et Bronze actifs inchangés.
+
 ADR-021/SPECS avant code ; migration nullable sans backfill, brut/evidence conservés
 aux deux insertions, idempotence décimale et révisions de source/preuve/brut/statut.
 Précision NUMERIC(20,4) inchangée, arrondis implicites/non-finis refusés.
