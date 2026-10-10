@@ -65,7 +65,7 @@
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
-| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | 41822c8ea7db91f0eda7f17c273daf47786d7459 | Natifs JSON/CSV reçus 258 et check 659/35/build codes 0 ; garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 imports préparatoires corrigés |
+| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | ca4e33f27da2fad6d9328a4731b1cfa1112acd86 | Natifs JSON/CSV reçus 258 et check 659/35/build codes 0 ; garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 imports préparatoires corrigés |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
@@ -527,6 +527,7 @@
 - Check Windows 23511 code final 0, 659 backend / 2649,23 s et frontend 35 / quatre suites / 5,17 s ; reçu 567fb9cb-202a-4811-b026-c537890968ff, lint 17088 ms/types 19912 ms/tests 11438 ms/build 246537 ms, toutes étapes 0 sans timeout/signal/erreur. Rapport receipt exporté, autres artifacts déjà archivés.
 - Préservation SQL 93143 code 0 : 482 source_record / MD5 47b4402859acc41e3ae91fdb128e56c6, 764 prix / MD5 4b2586cb8e422f11c4873ad513d66bc1 ; Bronze 31213 code 0 : 674 versions/objets, zéro delete marker, 1377481 octets, SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c inchangé. Diff check 27842 code 0.
 - Prototype SQL publication : lint 53740 code 0 et types 51124 code 0 / un fichier ; test écrit mais pas exécuté, aucun rollback réel ni migration 0005 revendiqués. R0.5 IN_PROGRESS ; pas de tag final ni de source/modèle marché qualifiés.
+- Commit ca4e33f27da2fad6d9328a4731b1cfa1112acd86 : 17 fichiers, 640 ajouts/13 retraits ; diff staged check 54793 code 0, gitleaks 44170 code 0 / 348309 octets / aucune fuite. Aucun déploiement ni tag de phase.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 

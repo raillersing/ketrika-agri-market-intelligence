@@ -7,6 +7,9 @@ clôture documentaire cd89d17 ; incrément pur reçu et commité :
 
 ## Incrément 7 reçu : preuves natives CSV/JSON
 
+Commit ca4e33f27da2fad6d9328a4731b1cfa1112acd86 ; diff staged check et gitleaks codes 0,
+348309 octets / aucune fuite ; base et Bronze actifs inchangés.
+
 ADR-022/SPECS avant transfert ; lexème numérique JSON original explicite, refus des
 clés dupliquées et profondeur bornée ; coordonnées natives du CSV de test 1.0.1.
 Pas de nouveau connecteur public ni de réactivation de source interdite.
