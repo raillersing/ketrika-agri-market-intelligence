@@ -1,7 +1,7 @@
 # Réception R0.5 — cellules source, pas qualification opérationnelle
 
-État : IN_PROGRESS. Les résultats ci-dessous ne remplacent pas le check global
-courant ni son code final. Aucun tag de phase n'est autorisé par ce document.
+État : DONE logiciel source-cell, commit 9559e755877475c72a027051e0a0e08f0627292b.
+Check global courant code final 0 reçu ; aucun tag de phase autorisé par ce document.
 
 | Critère du plan R0.5 | Preuve implémentée | Limite |
 |---|---|---|
@@ -34,4 +34,6 @@ normalize 84,85523385300668 % ; lint/format 198 fichiers, types 197 codes 0.
 Frontend 35 tests / quatre suites / 7,13 s ; reçu
 84bc6869-c602-4f04-95c9-c82e3408bdc4, lint/types/tests/build codes 0,
 build 214764 ms. Empreintes actives finales identiques, reçu séparé archivé.
-À recevoir avant clôture : scan staged et commit atomique. PROGRESS et plan R restent canoniques.
+Diff staged final code 0 ; gitleaks staged Docker 78877 code 0 :
+168416452 octets / 50 min 54 s / aucune fuite. Commit atomique ci-dessus.
+PROGRESS et plan R restent canoniques ; ni marché, source live ou modèle qualifiés.

@@ -2,7 +2,7 @@
 
 Date : 2026-10-09. Version du plan : 1.0. Langue de travail : français.
 
-**Statut : exécution autorisée le 2026-10-09 ; R0.1/R0.2/R0.3/R0.4 DONE, R0.5 IN_PROGRESS.** Ce plan décrit 74 tâches R0.1–R6.11, dont les gates. Il ne recertifie pas les statuts historiques T0–T11 et n'élargit aucune autorisation de diffusion. La gouvernance du programme est intégrée en R0.1 ; les extensions des contrats de données restent soumises à ADR/SPECS avant code.
+**Statut : exécution autorisée le 2026-10-09 ; R0.1–R0.5 DONE.** Ce plan décrit 74 tâches R0.1–R6.11, dont les gates. Il ne recertifie pas les statuts historiques T0–T11 et n'élargit aucune autorisation de diffusion. La gouvernance du programme est intégrée en R0.1 ; les extensions des contrats de données restent soumises à ADR/SPECS avant code.
 
 Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MVP](MVP_EXECUTION_PLAN.md), [PROGRESS](PROGRESS.md), [BLOCKERS](BLOCKERS.md), [DECISIONS](DECISIONS.md), [audit et recherche du 9 octobre](../research/2026-10-09-market-intelligence-audit.md). Les faits d'audit sont des constats statiques à revérifier, pas une photographie certifiée de la base en fonctionnement.
 
@@ -16,7 +16,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.2 | MUST | DONE | 6b4ad7f : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés |
 | R0.3 | MUST | DONE | 4f8d7e2 : check Windows 340/35, QA 58, E2E 9, préservation et secrets verts |
 | R0.4 | MUST | DONE | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 ; 65 fichiers / dix cellules, check 411/35 et QA 72 codes 0, données actives préservées |
-| R0.5 | MUST | IN_PROGRESS | ca4e33f : sept incréments reçus ; garde Gold 8 en qualification, QA élargie 327/20 puis check global requis |
+| R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
 | R0.6 | MUST | TODO | — |
 | R0.7 | MUST | TODO | — |
 | R0.8 | MUST | TODO | — |

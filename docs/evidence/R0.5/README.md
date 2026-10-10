@@ -1,6 +1,11 @@
 # R0.5 — provenance mesurée
 
-État : IN_PROGRESS. Huitième incrément reçu globalement, scan et commit encore requis.
+État : DONE, qualification logicielle source-cell uniquement.
+Commit final fonctionnel : 9559e755877475c72a027051e0a0e08f0627292b.
+Check Windows 21289 code final 0 ; QA 327/20 ; diff staged final code 0 ;
+gitleaks staged Docker code 0 / 168416452 octets / 50 min 54 s / aucune fuite.
+Les mentions « encore requis » ci-dessous décrivent les étapes intermédiaires,
+pas le statut final. Matrice de réception : ACCEPTANCE.md.
 Base reçue : R0.4 commit 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482,
 clôture documentaire cd89d17 ; incrément pur reçu et commité :
 30d0a837bf666336ee802ecdf843dc810f75d639, ADR-016 avant implémentation.
