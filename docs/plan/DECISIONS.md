@@ -2,6 +2,16 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-020 : R0.5 — provenance météo et révisions ajout seules
+
+- **Date :** 2026-10-10 ; accepté avant transfert du prototype au dépôt principal.
+- **Contexte :** WeatherRecord porte evidence/extraction_method/location_raw mais le loader les perd ; la table interdit deux versions et le loader modifie les anciennes valeurs en place. Aucun audit mécanique ni historique fiable n'est possible ainsi.
+- **Décision :** migration additive 0003 : location_raw, value_raw, evidence, extraction_method et superseded_by nullable, aucune réécriture/backfill des anciennes valeurs. WeatherRecord ajoute value_raw optionnel, jamais inventé à partir d'un float. FK de supersession différée, unique partiel des observations courantes ; même trigger append-only que les autres observations. Le loader conserve preuves/bruts, insère une nouvelle observation pour une révision et ne modifie que superseded_by de l'ancienne. Identique contenu/provenance stockée => skip ; changement de preuve/brut/méthode crée une révision, pas une mise à jour destructive.
+- **Gold météo :** exclure les lignes supersédées via to_jsonb(wo)->>'superseded_by' IS NULL, compatible avec le schéma 0001 afin de ne pas casser la migration historique 0002 qui lit les fichiers SQL courants. Migration 0003 recrée uniquement les vues dérivées weather_monthly et market_health dans sa transaction ; pas de suppression Bronze/Silver. Cela ne remplace pas la future garde de provenance Gold.
+- **Alternatives :** attribuer des preuves aux anciennes lignes, recalculer un brut depuis un float, écraser value/source_record_id ou compter les deux versions dans Gold (rejetées).
+- **Précision :** conserver NUMERIC(10,3) ; une nouvelle valeur non finie, hors capacité ou non exactement représentable est refusée avant insertion, jamais arrondie silencieusement. value_raw reste celui du source/record, pas str(value) fabriqué par le loader. Toute extension de précision future exige contrat explicite.
+- **Conséquences :** anciennes lignes sans preuves restent invalides, aucun statut live NASA/H5 changé. Tests SQL de preservation/relecture, unicité courante, refus UPDATE/DELETE, supersession et Gold sans double comptage ; migrations exclusivement QA isolée, aucune application à la DB active. Downgrade refusé dès qu'il perdrait une preuve ou une révision ; pas de purge pour rendre les tests verts.
+
 ## ADR-019 : R0.5 — preuve LLM mécanique, jamais preuve par étiquette
 
 - **Date :** 2026-10-10 ; accepté avant transfert du prototype au dépôt principal.

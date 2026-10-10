@@ -18,6 +18,7 @@ WITH monthly_aggregates AS (
         round(avg(CASE WHEN wo.variable = 'rh2m_pct' THEN wo.value END)::numeric, 2) AS rh2m_avg_pct
     FROM obs.weather_observation wo
     LEFT JOIN ref.location loc ON wo.location_id = loc.location_id
+    WHERE to_jsonb(wo)->>'superseded_by' IS NULL
     GROUP BY
         wo.location_id,
         loc.pcode,

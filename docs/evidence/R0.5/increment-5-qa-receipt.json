@@ -1,0 +1,43 @@
+{
+  "task": "R0.5",
+  "execution_id": "cfc2e48e46f84402aa9286c6c858f954",
+  "scope": "software subset only; not task DONE or market certification",
+  "pytest_exit": 0,
+  "command": [
+    "pytest",
+    "-p",
+    "pytest_asyncio.plugin",
+    "-p",
+    "pytest_cov.plugin",
+    "-p",
+    "_hypothesis_pytestplugin",
+    "-p",
+    "pytest_httpserver.pytest_plugin",
+    "-m",
+    "not network",
+    "tests/unit/test_provenance.py",
+    "tests/unit/test_provenance_audit.py",
+    "tests/unit/test_provenance_tables.py",
+    "tests/unit/test_provenance_llm.py",
+    "tests/unit/test_weather_provenance.py",
+    "tests/unit/test_weather_migration.py",
+    "tests/unit/test_nasa_power.py",
+    "tests/unit/test_core_db_models.py",
+    "tests/authentic/test_provenance_wdi.py",
+    "tests/integration/test_provenance_audit.py",
+    "tests/integration/test_weather_provenance.py",
+    "tests/integration/test_nasa_power.py",
+    "--junitxml=/app/.venv/qa-results/cfc2e48e46f84402aa9286c6c858f954/tests.xml"
+  ],
+  "passed": true,
+  "counts": {
+    "tests": 212,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "integration_by_layout": 6,
+    "integration_by_marker": 6,
+    "integration_tests": 6
+  },
+  "duration_seconds": 105.284
+}

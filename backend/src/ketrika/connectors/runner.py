@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import uuid
+from copy import deepcopy
 from datetime import UTC, datetime
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import or_, select, update
@@ -553,7 +555,7 @@ def load_weather_record_with_supersession(
     source_id: str,
     source_record_id: uuid.UUID,
 ) -> tuple[str, uuid.UUID]:
-    """Load WeatherRecord into obs.weather_observation respecting unique constraint (provider, location_id, date, variable)."""
+    """Preserve weather revisions and supplied proof; never fabricate raw values."""
     loc_stmt = select(Location).where(
         or_(
             Location.pcode == record.location_raw,
@@ -578,33 +580,51 @@ def load_weather_record_with_supersession(
         WeatherObservation.location_id == location.location_id,
         WeatherObservation.date == record.date,
         WeatherObservation.variable == record.variable,
+        WeatherObservation.superseded_by.is_(None),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()
-
-    if current_obs is None:
-        new_obs = WeatherObservation(
-            observation_id=uuid.uuid4(),
-            source_record_id=source_record_id,
-            location_id=location.location_id,
-            date=record.date,
-            variable=record.variable,
-            value=record.value,
-            method=record.method,
-            provider=record.provider,
-        )
-        session.add(new_obs)
-        session.flush()
-        return "inserted", new_obs.observation_id
-
-    curr_val = float(current_obs.value) if current_obs.value is not None else None
-    if curr_val == record.value and current_obs.method == record.method:
+    # Refuse silent NUMERIC(10,3) rounding; raw evidence stays source supplied.
+    source_value = Decimal(str(record.value))
+    if not source_value.is_finite() or abs(source_value) > Decimal("9999999.999"):
+        raise ValueError("weather_value_not_representable")
+    stored_value = source_value.quantize(Decimal("0.001"))
+    if stored_value != source_value:
+        raise ValueError("weather_precision_not_supported")
+    if current_obs is not None and (
+        current_obs.value == stored_value
+        and current_obs.method == record.method
+        and current_obs.source_record_id == source_record_id
+        and current_obs.location_raw == record.location_raw
+        and current_obs.value_raw == record.value_raw
+        and current_obs.extraction_method == record.extraction_method
+        and current_obs.evidence == record.evidence
+    ):
         return "idempotent_skipped", current_obs.observation_id
-
-    current_obs.value = record.value
-    current_obs.method = record.method
-    current_obs.source_record_id = source_record_id
+    new_id = uuid.uuid4()
+    if current_obs is not None:
+        session.execute(
+            update(WeatherObservation)
+            .where(WeatherObservation.observation_id == current_obs.observation_id)
+            .values(superseded_by=new_id)
+        )
+        session.flush()
+    new_obs = WeatherObservation(
+        observation_id=new_id,
+        source_record_id=source_record_id,
+        location_id=location.location_id,
+        location_raw=record.location_raw,
+        date=record.date,
+        variable=record.variable,
+        value=stored_value,
+        value_raw=record.value_raw,
+        method=record.method,
+        provider=record.provider,
+        evidence=deepcopy(record.evidence),
+        extraction_method=record.extraction_method,
+    )
+    session.add(new_obs)
     session.flush()
-    return "superseded", current_obs.observation_id
+    return "superseded" if current_obs is not None else "inserted", new_id
 
 
 def load_record_with_supersession(

@@ -65,7 +65,7 @@
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
-| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | c29acf2cffffabbabab9604e053a42abfe8d806b | Incrément LLM reçu : QA 182, check Windows 55501 code 0 / 593 backend / 35 web / build ; garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 prototype seulement |
+| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | c29acf2cffffabbabab9604e053a42abfe8d806b | Météo QA 212 et check Windows 613/35/build codes 0 ; migration QA préserve huit lignes ; garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 imports préparatoires corrigés |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
@@ -392,6 +392,37 @@
 - Commit c29acf2cffffabbabab9604e053a42abfe8d806b, 20 fichiers / 536 ajouts / 12 retraits. Diff staged check code 0, gitleaks staged Docker 80870 code 0 / 318571 octets / aucune fuite ; index uniquement le lot reçu, aucun push/tag.
 - Plan/PROGRESS synchronisés, R0.5 toujours IN_PROGRESS. Avant transfert météo : ADR-020/SPECS principal, empreinte des anciennes colonnes météo QA avant migration, préparation isolée puis comparaison après ; conservation source_record/Bronze et tests SQL/migration obligatoires. Aucune migration/reset/rebuild de test sur la destination active.
 - Active API a startup de seed utilisateur, sans create_all/init_gold/migration ni usage direct WeatherObservation repéré. Cela ne prouve pas la santé du futur workflow météo : version active et version qualifiée restent distinctes, vérifier route de santé après transfert et garder les limites dans la passation.
+
+### [2026-10-10T04:08:39Z] R0.5 — cinquième incrément, provenance/historique météo
+
+- Incrément 4 reçu c29acf2, clôture d7fae10 ; aucune tâche DONE ni garde Gold déjà reçue. ADR-020/SPECS principal avant transfert. Baseline QA relue code 0 : ketrika_qualification / 0002_gold_views, météo 8 / MD5 f556846ea87e095a614d349b0bd6a617 ; source_record 287 / MD5 7e5f6363a3b1c239f6c80306da345838.
+- Mini-plan :
+1. Transférer uniquement les ajouts météo/migration/tests du worktree, pas les anciens autres fichiers.
+2. Préparer le profil QA, comparer les anciennes colonnes météo (hors cinq ajouts NULL) et source_record, sans appliquer la migration active.
+3. Vérifier SQL/MinIO : deux versions conservées, une courante, preuve DQ relue, unicité/trigger/downgrade ; Gold sans double comptage.
+4. Adapter le reçu de rejeu NASA au grain courant et historique complet ; fichiers fixtures restent unverified, aucun accès NASA.
+5. Réception ciblée puis check Windows intégral, préservation active, scan et commit seulement vert. Garde Gold/adaptateurs métier encore obligatoires.
+
+### [2026-10-10T04:15:09Z] R0.5 — migration météo QA préserve les anciennes valeurs
+
+- Transfer par apply_patch borné aux fichiers météo/SQL et tests, format 29965 code 0 / neuf fichiers inchangés. Windows qa-isolated prepare 81104 code 0 : 0002 -> 0003, profil dédié, aucune migration active.
+- Lectures QA avant/après codes 0 : anciennes colonnes météo huit lignes / MD5 f556846ea87e095a614d349b0bd6a617 identiques, zéro ligne avec nouveaux champs non-null ; source_record 287 / MD5 7e5f6363a3b1c239f6c80306da345838 identiques. Reçu JSON archivé, MD5 diagnostique pas preuve d'authenticité.
+- Mypy principal 35861 code 0 / huit fichiers, lint 22998 code 0. Active route de santé lue Docker 68386 code 0 / HTTP 200 / DB et storage connected ; aucune preuve de workflow météo actif ni de migration active.
+- QA Windows 82330 en cours, minimum 212 / six intégrations ; tests SQL et check complet encore obligatoires. R0.5 IN_PROGRESS dans les deux registres ; aucune source NASA réactivée ni collectée.
+
+### [2026-10-10T04:20:12Z] R0.5 — cinquième incrément ciblé reçu, check global figé
+
+- QA Windows 82330 code 0 : 212 / 95,59 s / six intégrations / zéro failure/error/skip ; reçu cfc2e48e46f84402aa9286c6c858f954 / 105,284 s, rapports increment-5-qa exportés. Révision météo SQL/MinIO réelle en QA : deux lignes conservées, une courante, 2/2 preuve valide, deux objets lus, DQ relue ; trigger UPDATE/DELETE, unique courante et downgrade avec preuves refusés, somme Gold sans ancienne version.
+- NASA demeure un test local sur fixtures unverified ; son reçu sépare historique/courant/supersédé, pas de collecte NASA ni de réception complète R0.8. Profil QA migré seulement, legacy huit lignes et 287 source_record préservés avant scénarios (reçu dédié).
+- Types 35861 code 0 / huit fichiers, lint 22998 code 0. Check Windows global 7616 lancé, code fonctionnel figé jusqu'à réception complète ; aucun commit de cet incrément avant backend/frontend/codes actuels et préservation.
+- R0.5 IN_PROGRESS dans les deux registres ; preuves météo/QA ne qualifient pas géographie/unités, droits, source live ni modèle. Bruts production, adaptateurs et garde fail-closed Gold encore obligatoires.
+
+### [2026-10-10T06:30:58Z] R0.5 — cinquième incrément reçu globalement
+
+- Check Windows 7616 code final 0 : 613 backend / 1610,71 s, cinq avertissements, zéro failure/error/skip ; intégrations union 40 (dossier/marqueur 36). Couvertures core 93,4721665999 %, extraction 86,3768115942 %, normalize 84,8552338530 %.
+- Frontend 35 / quatre suites / 11,42 s ; reçu f320be59-3759-4a69-9d1c-e2085a04280a : lint 19021 ms, types 22866 ms, tests 18104 ms, build 278980 ms, tous codes 0 sans signal/timeout/erreur. Rapports increment-5-backend-check/frontend-check exportés.
+- Préservation active relue codes 0 : 482 source_record / MD5 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix / MD5 4b2586cb8e422f11c4873ad513d66bc1, inchangés. Bronze 674 versions/objets, zéro delete marker, 1377481 octets / SHA-256 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c inchangé ; lecture effective des octets, aucune migration active.
+- R0.5 reste IN_PROGRESS ; logiciel météo synthétique testé, pas de qualification source live/géographique/économique. Bruts production, adaptateurs métier et garde Gold restent obligatoires ; aucun tag.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 

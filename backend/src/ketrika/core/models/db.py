@@ -448,6 +448,15 @@ class WeatherObservation(Base):
     method: Mapped[str] = mapped_column(TEXT, nullable=False)
     provider: Mapped[str] = mapped_column(TEXT, nullable=False)
     ingested_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
+    location_raw: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    value_raw: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    evidence: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    extraction_method: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    superseded_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("obs.weather_observation.observation_id", deferrable=True, initially="DEFERRED"),
+        nullable=True,
+    )
 
 
 class CpiObservation(Base):

@@ -32,7 +32,7 @@ L'absence de valeur ou de preuve échoue ; les lignes ne sont pas retirées du c
 | stock_observation | quantity_value/quantity_raw, coverage_days, stock_status | product_raw, location_raw, period_start, unit_raw |
 | trade_flow | value_mga, value_usd, weight_kg/weight_raw | product_raw, period_start, flow, hs_code, partner_raw |
 | production_observation | value | product_raw, period_start, element, unit_raw |
-| weather_observation | value, mais aucune preuve structurée stockée actuellement : échec explicite | date, variable, provider ; raccordement géographique restant |
+| weather_observation | ADR-020 transféré, réception en cours : value/value_raw exacts et evidence persistée ; anciennes lignes sans preuve échouent | date, variable, provider, location_raw, method ; qualification géographique/unités et adaptateur natif restants |
 | cpi_observation | index_value | series_code, series_label, geo_scope, period_start, base_period |
 
 ## Limites obligatoires avant réception totale
@@ -44,8 +44,10 @@ L'absence de valeur ou de preuve échoue ; les lignes ne sont pas retirées du c
 - Pas de conversion implicite de date, de libellé, de devise, de poids ou d'unité.
   Une source sans ces cellules littérales est refusée jusqu'à un adaptateur contractuel.
 - value_raw du commerce n'est pas encore rattaché aux deux devises ; value_raw de
-  production et evidence/extraction_method météo ne sont pas conservés par le schéma
-  actuel. Résoudre explicitement les contrats, sans réécriture destructive des observations.
+  production ne sont pas conservés par le schéma actuel. ADR-020 ajoute les preuves/bruts
+  météo et l'historique sans backfill, en réception QA ; aucun brut NASA ni preuve de
+  géographie/unités fabriqués, adaptateur natif encore requis. Résoudre les autres contrats
+  sans réécriture destructive des observations.
 - ADR-019 reçu (QA 182 / quatre intégrations, check Windows 593/35/build code 0) : llm_verified/dual_agree
   exigent cellules SQL exactes puis page/extrait relus et tous les tokens valeur/identité.
   Leur étiquette seule échoue ; human/méthode inconnue restent refusés. Formats LLM

@@ -54,7 +54,9 @@ def sample_payload() -> dict[str, Any]:
 
 
 @pytest.mark.integration
-def test_nasa_power_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, sample_payload: dict):
+def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
+    httpserver, db_session, sample_payload: dict, request: pytest.FixtureRequest
+):
     """Verify CC3-CC6: backfill covering 100% of districts, DQ checks, and offline rebuild."""
     wipe_silver_gold_tables(db_session)
     db_session.commit()
@@ -129,7 +131,7 @@ def test_nasa_power_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, sa
     obs_stmt = (
         select(WeatherObservation)
         .join(SourceRecord, WeatherObservation.source_record_id == SourceRecord.source_record_id)
-        .where(SourceRecord.source_id == "nasa_power")
+        .where(SourceRecord.source_id == "nasa_power", WeatherObservation.superseded_by.is_(None))
     )
     weather_obs = list(db_session.execute(obs_stmt).scalars().all())
     assert len(weather_obs) == expected_inserted
@@ -166,5 +168,33 @@ def test_nasa_power_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, sa
 
     obs_after = list(db_session.execute(obs_stmt).scalars().all())
     assert len(obs_after) == expected_inserted
+    # The current grain remains stable; revised artifacts now retain older rows.
+    history = list(
+        db_session.scalars(
+            select(WeatherObservation)
+            .join(
+                SourceRecord, WeatherObservation.source_record_id == SourceRecord.source_record_id
+            )
+            .where(SourceRecord.source_id == "nasa_power")
+        )
+    )
+    assert len(history) >= expected_inserted
+    assert all(row.value is not None for row in history)
+    superseded = sum(row.superseded_by is not None for row in history)
+    assert len(history) == len(obs_after) + superseded
+    request.node.user_properties.append(
+        (
+            "ketrika.weather.rebuild_current_grain",
+            json.dumps(
+                {
+                    "history_rows": len(history),
+                    "current_rows": len(obs_after),
+                    "superseded_rows": superseded,
+                    "source_records_replayed": rebuild_stats["source_records_replayed"],
+                    "scope": "software fixtures; not live source or complete R0.8 certification",
+                }
+            ),
+        )
+    )
     covered_after = {o.location_id for o in obs_after}
     assert covered_after == expected_location_ids

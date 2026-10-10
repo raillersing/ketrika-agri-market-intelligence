@@ -71,7 +71,10 @@ POLICIES: dict[str, BindingPolicy] = {
         {},
     ),
     "weather_observation": BindingPolicy(
-        WeatherObservation, ("value",), ("date", "variable", "provider"), {}
+        WeatherObservation,
+        ("value",),
+        ("date", "variable", "provider", "location_raw", "method"),
+        {"value": "value_raw"},
     ),
     "cpi_observation": BindingPolicy(
         CpiObservation,

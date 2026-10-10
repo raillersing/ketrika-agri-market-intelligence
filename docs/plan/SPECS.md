@@ -623,8 +623,21 @@ CREATE TABLE obs.weather_observation (
   method TEXT NOT NULL,          -- point_centroid | zonal_mean
   provider TEXT NOT NULL,        -- nasa_power | chirps
   ingested_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE (provider, location_id, date, variable)
+  location_raw TEXT, value_raw TEXT, evidence JSONB, extraction_method TEXT,
+  superseded_by UUID REFERENCES obs.weather_observation DEFERRABLE INITIALLY DEFERRED
 );
+CREATE UNIQUE INDEX weather_current_uk ON obs.weather_observation
+  (provider, location_id, date, variable) WHERE superseded_by IS NULL;
+
+ADR-020 : champs ajoutés nullable sans backfill ni valeur brute fabriquée ;
+WeatherRecord.value_raw optionnel. Preuves et brut conservés, révision par nouvelle
+ligne et seul superseded_by modifiable, trigger append-only. Gold météo ne compte que
+les courantes, predicate JSON compatible avec le schéma initial. Migration QA seulement,
+downgrade refuse toute perte de preuve/révision ; garde Gold reste un travail distinct.
+NUMERIC(10,3) conservé : nouvelles valeurs non finies, hors capacité ou non exactement
+représentables refusées avant insertion, aucun arrondi silencieux ni brut fabriqué.
+Liaison météo : value/value_raw exacts, date, variable, provider, location_raw et method
+issus des champs SQL, sans qualification automatique des coordonnées/grille ou unités.
 
 CREATE TABLE obs.cpi_observation (
   observation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

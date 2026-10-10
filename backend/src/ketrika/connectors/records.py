@@ -124,6 +124,7 @@ class WeatherRecord(RecordBase):
     date: date
     variable: str  # precip_mm | t2m_max_c | t2m_min_c | rh2m_pct
     value: float
+    value_raw: str | None = None
     method: str = "point_centroid"  # point_centroid | zonal_mean
     provider: str = "nasa_power"  # nasa_power | chirps
 

@@ -1,9 +1,38 @@
 # R0.5 — provenance mesurée
 
-État : IN_PROGRESS. Quatre incréments reçus ; pas de tâche DONE ni de garde Gold livrée.
+État : IN_PROGRESS. Cinq incréments testés ; pas de tâche DONE ni de garde Gold livrée.
 Base reçue : R0.4 commit 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482,
 clôture documentaire cd89d17 ; incrément pur reçu et commité :
 30d0a837bf666336ee802ecdf843dc810f75d639, ADR-016 avant implémentation.
+
+## Incrément 5 testé : provenance/historique météo
+
+ADR-020/SPECS avant transfert. Migration 0003 QA prépare cinq colonnes nullable,
+sans backfill, remplace l'unicité globale par celle des courantes et ajoute le trigger
+append-only. Loader conserve les preuves et le brut fourni, refuse un arrondi implicite,
+révision par nouvelle ligne ; Gold météo exclut les supersessions. Cela ne fournit pas
+encore la garde de publication Gold ni les adaptateurs natifs NASA.
+
+Windows prepare 81104 code 0 : QA 0002 -> 0003, huit anciennes lignes météo et
+287 source_record inchangés, hashes des anciennes colonnes/références identiques ;
+cinq nouveaux champs tous NULL. Reçu increment-5-migration-preservation.json.
+Ce MD5 diagnostique prouve une égalité, pas l'authenticité/provenance de ces anciennes lignes.
+Aucune migration active ; sa route de santé HTTP 200 après transfert, workflow météo
+actif non qualifié et schéma actif distinct. Types 35861 code 0 / huit fichiers,
+lint 22998 code 0, format Docker 29965 code 0 / neuf fichiers inchangés.
+
+QA R0.5 82330 code 0 : 212 / 95,59 s / six intégrations, zéro failure/error/skip ;
+reçu cfc2e48e46f84402aa9286c6c858f954 / 105,284 s, rapports increment-5-qa exportés.
+Révision SQL, unicité, trigger, refus de downgrade en lecture seule, relecture DQ et
+Gold sans double compte vérifiés ; NASA test uniquement local/fixtures, jamais live.
+Check Windows complet 7616 lancé 2026-10-10T04:20:12Z, code final 0 reçu
+2026-10-10T06:30:58Z : 613 backend / 1610,71 s / cinq avertissements,
+zéro failure/error/skip, intégrations union 40 (dossier/marqueur 36).
+Couvertures core 93,4721665999 %, extraction 86,3768115942 %, normalize 84,8552338530 %.
+Frontend 35 / quatre suites / 11,42 s ; reçu f320be59-3759-4a69-9d1c-e2085a04280a :
+lint/types/tests/build codes 0, build 278980 ms, aucun signal/timeout/erreur.
+Rapports increment-5-backend-check/frontend-check archivés ; préservation et scan
+encore obligatoires avant commit. L'heure de réception n'est pas la durée d'exécution.
 
 ## Incrément 4 reçu : preuve LLM mécanique
 
