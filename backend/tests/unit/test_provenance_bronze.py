@@ -55,6 +55,7 @@ def test_bad_declared_size_refused_without_reading_body(declared, reason) -> Non
         ("source", 6, "invalid_document"),
         (b"x" * (MAX_CONTENT_BYTES + 1), 0, "content_too_large"),
     ],
+    ids=["size-mismatch", "not-bytes", "actual-body-over-limit"],
 )
 def test_body_is_not_certified_from_header_only(content, declared, reason) -> None:
     instance, _, body = reader(content, declared)

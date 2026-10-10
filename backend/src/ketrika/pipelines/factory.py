@@ -6,6 +6,7 @@ from typing import Any
 from dagster import (
     AssetCheckResult,
     AssetCheckSeverity,
+    AssetIn,
     AssetsDefinition,
     ScheduleDefinition,
     SensorDefinition,
@@ -13,8 +14,12 @@ from dagster import (
     asset_check,
 )
 
-from ketrika.connectors.base import Connector, RawArtifact, RunContext
-from ketrika.connectors.runner import execute_connector_pipeline
+from ketrika.connectors.base import Connector, RunContext
+from ketrika.connectors.stages import (
+    BronzeBatch,
+    collect_connector_bronze,
+    consume_connector_silver,
+)
 from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import get_session
 from ketrika.core.http import PoliteHttpClient
@@ -64,35 +69,38 @@ def build_source_assets(connector_cls: type[Connector]) -> SourceAssets:
 
     # 1. Bronze Asset
     @asset(name=bronze_name, group_name="bronze", compute_kind="fetch")
-    def bronze_asset(context) -> list[RawArtifact]:
+    def bronze_asset(context) -> BronzeBatch:
         connector = connector_cls()
-        ctx = RunContext(
-            source_id=source_id,
-            http_client=PoliteHttpClient(),
-            bronze_store=BronzeStore(),
-            policy_engine=PolicyEngine(),
-            logger=context.log,
-        )
-        discovered = list(connector.discover(ctx))
-        artifacts: list[RawArtifact] = []
-        for item in discovered:
-            art = connector.fetch(item, ctx)
-            artifacts.append(art)
-        return artifacts
+        policy = PolicyEngine()
+        with PoliteHttpClient(policy_engine=policy) as http_client:
+            ctx = RunContext(
+                source_id=source_id,
+                http_client=http_client,
+                bronze_store=BronzeStore(),
+                policy_engine=policy,
+                logger=context.log,
+                metadata={"dagster_run_id": context.run.run_id},
+            )
+            with get_session() as session:
+                return collect_connector_bronze(connector, ctx, session)
 
     # 2. Silver Asset
-    @asset(name=silver_name, group_name="silver", compute_kind="normalize", deps=[bronze_asset])
-    def silver_asset(context) -> dict[str, Any]:
+    @asset(
+        name=silver_name,
+        group_name="silver",
+        compute_kind="normalize",
+        ins={"bronze_batch": AssetIn(key=bronze_name)},
+    )
+    def silver_asset(context, bronze_batch: BronzeBatch) -> dict[str, Any]:
         connector = connector_cls()
         ctx = RunContext(
             source_id=source_id,
-            http_client=PoliteHttpClient(),
             bronze_store=BronzeStore(),
             policy_engine=PolicyEngine(),
             logger=context.log,
         )
         with get_session() as session:
-            stats = execute_connector_pipeline(connector, ctx, session)
+            stats = consume_connector_silver(connector, ctx, session, bronze_batch)
         return stats
 
     # 3. DQ Asset Checks (SPECS §14)

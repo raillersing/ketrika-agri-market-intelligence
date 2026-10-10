@@ -52,7 +52,9 @@ def csv_content() -> str:
 
 
 @pytest.mark.integration
-def test_wfp_hdx_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, csv_content: str):
+def test_wfp_hdx_backfill_dq_and_rebuild_lifecycle(
+    httpserver, db_session, csv_content: str, monkeypatch
+):
     """Verify CC3-CC6: backfill execution, idempotence, supersession, DQ checks and offline rebuild."""
     # Ensure fresh Silver/Gold state
     wipe_silver_gold_tables(db_session)
@@ -68,10 +70,13 @@ def test_wfp_hdx_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, csv_c
     bronze_store = BronzeStore()
     policy = PolicyEngine()
     http_client = PoliteHttpClient(policy_engine=policy)
-    connector = WfpHdxMdgConnector()
+    from tests.local_connector import local_connector
+
+    connector = local_connector(WfpHdxMdgConnector, monkeypatch)
+    source_id = connector.source_id
 
     ctx = RunContext(
-        source_id="wfp_hdx_mdg",
+        source_id=source_id,
         bronze_store=bronze_store,
         http_client=http_client,
         policy_engine=policy,
@@ -89,7 +94,7 @@ def test_wfp_hdx_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, csv_c
         select(PriceObservation)
         .join(SourceRecord, PriceObservation.source_record_id == SourceRecord.source_record_id)
         .where(
-            SourceRecord.source_id == "wfp_hdx_mdg",
+            SourceRecord.source_id == source_id,
             PriceObservation.superseded_by.is_(None),
         )
     )
@@ -119,7 +124,7 @@ def test_wfp_hdx_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, csv_c
     assert stats2["n_skipped"] == 36
 
     # 4. CC6: Rebuild stable verification
-    rebuild_stats = rejected_legacy_rebuild(db_session, "wfp_hdx_mdg", allow_empty=True)
+    rebuild_stats = rejected_legacy_rebuild(db_session, source_id, allow_empty=True)
     assert rebuild_stats["source_records_replayed"] >= 1
 
     obs_after_rebuild = list(db_session.execute(stmt).scalars().all())

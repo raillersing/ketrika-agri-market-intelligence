@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from typing import TYPE_CHECKING
 
 from ketrika.connectors.douanes_stats import DouanesStatsConnector
@@ -44,6 +45,23 @@ def get_connector_class(source_id: str) -> type[Connector] | None:
 
     Supports exact match as well as dynamic dummy sources (e.g. dummy_<id>).
     """
+    if source_id.startswith("fixture_"):
+        from ketrika.core.qualification import QualificationSafetyError, validate_environment
+
+        try:
+            validate_environment(os.environ)
+        except QualificationSafetyError:
+            return None
+        for original_id in ("nasa_power", "wfp_hdx_mdg"):
+            prefix = f"fixture_{original_id}_"
+            suffix = source_id.removeprefix(prefix)
+            if (
+                source_id.startswith(prefix)
+                and len(suffix) == 32
+                and all(c in "0123456789abcdef" for c in suffix)
+            ):
+                return _CONNECTOR_REGISTRY.get(source_id, _CONNECTOR_REGISTRY[original_id])
+        return None
     if source_id in _CONNECTOR_REGISTRY:
         return _CONNECTOR_REGISTRY[source_id]
     if source_id.startswith("dummy_"):

@@ -1,0 +1,24 @@
+{
+  "checked_at_utc": "2026-10-10T20:07:37Z",
+  "environment": "active; read-only checks only",
+  "sql_exit_code": 0,
+  "source_records": {
+    "count": 482,
+    "md5": "47b4402859acc41e3ae91fdb128e56c6"
+  },
+  "prices": {
+    "count": 764,
+    "md5": "4b2586cb8e422f11c4873ad513d66bc1"
+  },
+  "bronze_exit_code": 0,
+  "bronze": {
+    "bucket": "bronze",
+    "version_count": 674,
+    "current_objects": 674,
+    "delete_markers": 0,
+    "total_version_bytes": 1377481,
+    "sha256": "83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c"
+  },
+  "matches_received_R05": true,
+  "scope": "preservation only; not active-schema or business readiness"
+}

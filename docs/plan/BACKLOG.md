@@ -4,6 +4,7 @@
 
 | ID | Date | Tâche source | Description | Catégorie | Priorité post-MVP |
 |---|---|---|---|---|---|
+| BL-014 | 2026-10-10 | R0.5 / R0.6 | Paramètre pytest bytes surdimensionné sans id explicite sérialisé en nom JUnit de plus de 33 Mo, cinq rapports / ~168 Mo, gitleaks 50 min 54 s. Ajouter des ids courts aux mêmes cas de borne mémoire, sans diminuer données de test ni supprimer les anciens rapports reçus ; nouveaux reçus compacts | Test observability / Performance | Medium |
 | BL-013 | 2026-10-10 | R0.5 / R0.6 / R2.1 | connectors/runner.py load_price_record_with_supersession insère brut sans normalisation produit/lieu/unité/devise et impose accepted/exact malgré price_mga_per_base NULL. Relecture QA WFP : 36 accepted/exact, zéro converti et zéro Gold. Raccorder le vrai normalize→load en R0.6 avec compteurs/provenance/revisions et vérifier prix comparables en R2.1 ; ne pas confondre Gold empty 0/0 avec 100 % ou source qualifiée. Aucun backfill d'observations persistées ni facteur inventé | Silver lineage / Normalization correctness | High |
 | BL-001 | 2026-10-05 | Cadrage | Connecteurs marketplaces privées (Tantsah, CoinAfrique) sous réserve d'accord/API | Feature | High |
 | BL-002 | 2026-10-05 | Cadrage | OCR de PDF scannés pour archives historiques dégradées | Extraction | Medium |

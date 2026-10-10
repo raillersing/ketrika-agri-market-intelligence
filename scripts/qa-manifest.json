@@ -12,6 +12,20 @@
       "minimum_tests": 58,
       "minimum_integration_tests": 2
     },
+    "R0.6": {
+      "tests": [
+        "tests/unit/test_connector_stages.py",
+        "tests/unit/test_provenance_bronze.py",
+        "tests/unit/test_execution_plan.py",
+        "tests/integration/test_connector_stages.py",
+        "tests/integration/test_connector_pipeline.py",
+        "tests/integration/test_observability.py",
+        "tests/integration/test_nasa_power.py",
+        "tests/integration/test_wfp_hdx_mdg.py"
+      ],
+      "minimum_tests": 63,
+      "minimum_integration_tests": 8
+    },
     "R0.5": {
       "tests": [
         "tests/unit/test_provenance.py",

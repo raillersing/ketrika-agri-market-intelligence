@@ -21,6 +21,7 @@ from ketrika.core.registry import find_repo_root
 from ketrika.core.settings import get_settings
 from ketrika.gold.provenance_gate import GoldProvenanceRejected
 from ketrika.pipelines.rebuild import rebuild_database, wipe_silver_gold_tables
+from tests.local_connector import local_connector
 
 FIXTURE_PATH = (
     find_repo_root()
@@ -57,7 +58,7 @@ def sample_payload() -> dict[str, Any]:
 
 @pytest.mark.integration
 def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
-    httpserver, db_session, sample_payload: dict, request: pytest.FixtureRequest
+    httpserver, db_session, sample_payload: dict, request: pytest.FixtureRequest, monkeypatch
 ):
     """Local fixture coverage/idempotence/replay; unproven Gold must be refused."""
     wipe_silver_gold_tables(db_session)
@@ -110,10 +111,11 @@ def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
     bronze_store = BronzeStore()
     policy = PolicyEngine()
     http_client = PoliteHttpClient(policy_engine=policy)
-    connector = NasaPowerConnector()
+    connector = local_connector(NasaPowerConnector, monkeypatch)
+    source_id = connector.source_id
 
     ctx = RunContext(
-        source_id="nasa_power",
+        source_id=source_id,
         bronze_store=bronze_store,
         http_client=http_client,
         policy_engine=policy,
@@ -133,7 +135,7 @@ def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
     obs_stmt = (
         select(WeatherObservation)
         .join(SourceRecord, WeatherObservation.source_record_id == SourceRecord.source_record_id)
-        .where(SourceRecord.source_id == "nasa_power", WeatherObservation.superseded_by.is_(None))
+        .where(SourceRecord.source_id == source_id, WeatherObservation.superseded_by.is_(None))
     )
     weather_obs = list(db_session.execute(obs_stmt).scalars().all())
     assert len(weather_obs) == expected_inserted
@@ -177,7 +179,7 @@ def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
 
     with patch.object(NasaPowerConnector, "parse", autospec=True, side_effect=track_real_parse):
         with pytest.raises(GoldProvenanceRejected) as rejected:
-            rebuild_database(session=db_session, offline=True, source_id="nasa_power")
+            rebuild_database(session=db_session, offline=True, source_id=source_id)
     assert len(parsed_artifacts) >= len(db_districts)
     assert rejected.value.receipt.report.total == expected_inserted
     assert rejected.value.receipt.report.valid == 0
@@ -197,7 +199,7 @@ def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
             .join(
                 SourceRecord, WeatherObservation.source_record_id == SourceRecord.source_record_id
             )
-            .where(SourceRecord.source_id == "nasa_power")
+            .where(SourceRecord.source_id == source_id)
         )
     )
     assert len(history) >= expected_inserted

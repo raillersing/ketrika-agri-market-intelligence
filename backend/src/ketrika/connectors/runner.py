@@ -14,7 +14,6 @@ from sqlalchemy.orm import Session
 from ketrika.alerts.notifier import send_pipeline_failure_email
 from ketrika.connectors.base import (
     Connector,
-    ParseResult,
     RawArtifact,
     RunContext,
 )
@@ -34,7 +33,6 @@ from ketrika.core.models.db import (
     Location,
     PriceObservation,
     ProductionObservation,
-    ReviewItem,
     Source,
     SourceRecord,
     StockObservation,
@@ -669,106 +667,28 @@ def execute_connector_pipeline(
     ctx: RunContext,
     session: Session,
 ) -> dict[str, Any]:
-    """Execute full Bronze -> Silver lifecycle for a connector."""
-    source_id = connector.source_id
-    ingestion_run = ensure_ingestion_run_started(session, source_id)
-    bind_context(run_id=str(ingestion_run.run_id), source_id=source_id)
+    """Compose exact Bronze collection and offline Silver consumption."""
+    from ketrika.connectors.stages import collect_connector_bronze, consume_connector_silver
 
-    stats: dict[str, int] = {
-        "n_fetched": 0,
-        "n_new_artifacts": 0,
-        "n_inserted": 0,
-        "n_superseded": 0,
-        "n_skipped": 0,
-    }
-
+    bind_context(source_id=connector.source_id)
+    batch = None
     try:
-        # Phase 1: Bronze
-        discovered = list(connector.discover(ctx))
-        stats["n_fetched"] = len(discovered)
-
-        artifacts: list[tuple[RawArtifact, uuid.UUID]] = []
-        for item in discovered:
-            if item.partition_key:
-                bind_context(partition_key=str(item.partition_key))
-            raw_art = connector.fetch(item, ctx)
-            db_record, is_new = record_bronze_artifact(
-                session=session,
-                source_id=source_id,
-                artifact=raw_art,
-                parser_version=connector.parser_version,
-            )
-            if is_new:
-                stats["n_new_artifacts"] += 1
-            artifacts.append((raw_art, db_record.source_record_id))
-
-        # Phase 2: Silver
-        for raw_art, s_rec_id in artifacts:
-            # Reconstruct RawArtifact with actual DB source_record_id
-            bound_artifact = RawArtifact(
-                source_record_id=str(s_rec_id),
-                object_key=raw_art.object_key,
-                content_sha256=raw_art.content_sha256,
-                mime_type=raw_art.mime_type,
-                url=raw_art.url,
-                is_new=raw_art.is_new,
-                published_at=raw_art.published_at,
-            )
-            parse_res: ParseResult = connector.parse(bound_artifact, ctx)
-
-            for rec in parse_res.records:
-                action, _ = load_record_with_supersession(
-                    session=session,
-                    record=rec,
-                    source_id=source_id,
-                    source_record_id=s_rec_id,
-                )
-                if action == "inserted":
-                    stats["n_inserted"] += 1
-                elif action == "superseded":
-                    stats["n_superseded"] += 1
-                else:
-                    stats["n_skipped"] += 1
-
-            for issue in parse_res.issues:
-                review_item = ReviewItem(
-                    review_id=uuid.uuid4(),
-                    kind=issue.get("kind", "extraction_conflict"),
-                    source_record_id=s_rec_id,
-                    payload=issue.get("payload", issue),
-                    status="open",
-                )
-                session.add(review_item)
-                stats["n_review"] = stats.get("n_review", 0) + 1
-
-            # Mark source_record parsed
-            mark_stmt = (
-                update(SourceRecord)
-                .where(SourceRecord.source_record_id == s_rec_id)
-                .values(extraction_status="parsed")
-            )
-            session.execute(mark_stmt)
-
-        ingestion_run.status = "success"
-        ingestion_run.finished_at = datetime.now(UTC)
-        ingestion_run.n_fetched = stats["n_fetched"]
-        ingestion_run.n_new_artifacts = stats["n_new_artifacts"]
-        ingestion_run.n_records = stats["n_inserted"] + stats["n_superseded"]
-        ingestion_run.n_review = stats.get("n_review", 0)
-        session.flush()
-
-        return stats
-
-    except Exception as e:
-        ingestion_run.status = "failed"
-        ingestion_run.finished_at = datetime.now(UTC)
-        ingestion_run.error = str(e)
-        session.flush()
-        # Dispatch failure notification email to Mailpit (T11.1)
+        batch = collect_connector_bronze(connector, ctx, session)
+        bind_context(run_id=str(batch.ingestion_run_id))
+        return consume_connector_silver(connector, ctx, session, batch)
+    except Exception as exc:
+        failed_run_id = batch.ingestion_run_id if batch is not None else ctx.run_id
+        if failed_run_id is not None and session.is_active:
+            run = session.get(IngestionRun, failed_run_id)
+            if run is not None and run.source_id == connector.source_id:
+                run.status = "failed"
+                run.finished_at = datetime.now(UTC)
+                run.error = type(exc).__name__
+                session.flush()
         send_pipeline_failure_email(
-            job_name=f"connector_{source_id}",
-            run_id=str(ingestion_run.run_id),
-            error_message=str(e),
+            job_name=f"connector_{connector.source_id}",
+            run_id=str(failed_run_id) if failed_run_id is not None else "bronze_collection",
+            error_message=type(exc).__name__,
         )
         raise
     finally:

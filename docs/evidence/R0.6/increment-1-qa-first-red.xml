@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="53" time="62.834" timestamp="2026-10-10T19:46:49.547652+00:00" hostname="0dc610e812b2"><testcase classname="tests.unit.test_connector_stages" name="test_collection_binds_the_actual_sql_uuid_without_parsing" time="0.654" /><testcase classname="tests.unit.test_connector_stages" name="test_registered_policy_stop_precedes_discovery[disabled]" time="0.277" /><testcase classname="tests.unit.test_connector_stages" name="test_registered_policy_stop_precedes_discovery[forbidden]" time="0.036" /><testcase classname="tests.unit.test_connector_stages" name="test_silver_consumes_verified_bytes_and_does_not_touch_collection_context" time="1.059" /><testcase classname="tests.unit.test_connector_stages" name="test_sql_reference_mismatch_prevents_parse[source_id-other]" time="0.091" /><testcase classname="tests.unit.test_connector_stages" name="test_sql_reference_mismatch_prevents_parse[object_key-different-key]" time="0.075" /><testcase classname="tests.unit.test_connector_stages" name="test_sql_reference_mismatch_prevents_parse[content_sha256-0000000000000000000000000000000000000000000000000000000000000000]" time="0.075" /><testcase classname="tests.unit.test_connector_stages" name="test_sql_reference_mismatch_prevents_parse[mime_type-application/json]" time="0.075" /><testcase classname="tests.unit.test_connector_stages" name="test_sql_reference_mismatch_prevents_parse[parser_version-2.0.0]" time="0.079" /><testcase classname="tests.unit.test_connector_stages" name="test_altered_object_prevents_parse_without_mutating_store" time="0.079" /><testcase classname="tests.unit.test_connector_stages" name="test_batch_binding_errors_are_explicit[change0-silver_batch_source_mismatch]" time="0.020" /><testcase classname="tests.unit.test_connector_stages" name="test_batch_binding_errors_are_explicit[change1-silver_batch_parser_mismatch]" time="0.012" /><testcase classname="tests.unit.test_connector_stages" name="test_duplicate_receipt_reference_is_not_silently_replayed" time="0.013" /><testcase classname="tests.unit.test_connector_stages" name="test_factory_silver_has_a_real_bronze_input_dependency" time="0.042" /><testcase classname="tests.unit.test_connector_stages" name="test_fixture_alias_cannot_resolve_outside_validated_qa" time="0.015" /><testcase classname="tests.unit.test_connector_stages" name="test_invalid_fixture_namespace_is_not_a_connector[]" time="0.004" /><testcase classname="tests.unit.test_connector_stages" name="test_invalid_fixture_namespace_is_not_a_connector[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]" time="0.014" /><testcase classname="tests.unit.test_connector_stages" name="test_invalid_fixture_namespace_is_not_a_connector[gggggggggggggggggggggggggggggggg]" time="0.018" /><testcase classname="tests.unit.test_connector_stages" name="test_invalid_fixture_namespace_is_not_a_connector[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]" time="0.005" /><testcase classname="tests.unit.test_provenance_bronze" name="test_original_bytes_are_read_with_limit_and_stream_closed[6]" time="0.029" /><testcase classname="tests.unit.test_provenance_bronze" name="test_original_bytes_are_read_with_limit_and_stream_closed[None]" time="0.012" /><testcase classname="tests.unit.test_provenance_bronze" name="test_bad_declared_size_refused_without_reading_body[33554433-content_too_large]" time="0.010" /><testcase classname="tests.unit.test_provenance_bronze" name="test_bad_declared_size_refused_without_reading_body[-1-invalid_object_size]" time="0.008" /><testcase classname="tests.unit.test_provenance_bronze" name="test_bad_declared_size_refused_without_reading_body[True-invalid_object_size]" time="0.011" /><testcase classname="tests.unit.test_provenance_bronze" name="test_bad_declared_size_refused_without_reading_body[6-invalid_object_size]" time="0.013" /><testcase classname="tests.unit.test_provenance_bronze" name="test_body_is_not_certified_from_header_only[size-mismatch]" time="0.010" /><testcase classname="tests.unit.test_provenance_bronze" name="test_body_is_not_certified_from_header_only[not-bytes]" time="0.011" /><testcase classname="tests.unit.test_provenance_bronze" name="test_body_is_not_certified_from_header_only[actual-body-over-limit]" time="0.020" /><testcase classname="tests.unit.test_provenance_bronze" name="test_transport_failure_still_closes_body" time="0.017" /><testcase classname="tests.unit.test_execution_plan" name="test_valid_plan_is_not_runtime_qualification" time="0.005" /><testcase classname="tests.unit.test_execution_plan" name="test_missing_status_never_defaults_to_todo" time="0.004" /><testcase classname="tests.unit.test_execution_plan" name="test_mirror_must_match_canonical_progress" time="0.003" /><testcase classname="tests.unit.test_execution_plan" name="test_duplicate_definition_is_rejected" time="0.009" /><testcase classname="tests.unit.test_execution_plan" name="test_duplicate_status_is_rejected" time="0.003" /><testcase classname="tests.unit.test_execution_plan" name="test_empty_plan_fails" time="0.011" /><testcase classname="tests.unit.test_execution_plan" name="test_unknown_dependency_fails" time="0.003" /><testcase classname="tests.unit.test_execution_plan" name="test_dependency_cycle_fails" time="0.006" /><testcase classname="tests.unit.test_execution_plan" name="test_must_cannot_require_optional_task" time="0.011" /><testcase classname="tests.unit.test_execution_plan" name="test_unknown_task_status_fails[PARTIAL]" time="0.005" /><testcase classname="tests.unit.test_execution_plan" name="test_unknown_task_status_fails[SUCCESS]" time="0.008" /><testcase classname="tests.unit.test_execution_plan" name="test_unknown_task_status_fails[]" time="0.003" /><testcase classname="tests.unit.test_execution_plan" name="test_unknown_task_status_fails[DONE-ish]" time="0.004" /><testcase classname="tests.unit.test_execution_plan" name="test_done_without_commit_proof_fails" time="0.004" /><testcase classname="tests.unit.test_execution_plan" name="test_done_with_incomplete_dependencies_fails" time="0.003" /><testcase classname="tests.unit.test_execution_plan" name="test_ranges_and_numeric_order" time="0.003" /><testcase classname="tests.unit.test_execution_plan" name="test_invalid_ranges_fail[R1.4\u2013R2.5]" time="0.003" /><testcase classname="tests.unit.test_execution_plan" name="test_invalid_ranges_fail[R1.9\u2013R1.2]" time="0.004" /><testcase classname="tests.unit.test_execution_plan" name="test_actual_repository_plan_is_coherent" time="0.086" /><testcase classname="tests.integration.test_connector_stages" name="test_committed_bronze_replayed_without_http_then_revision_is_append_only" time="3.528"><properties><property name="ketrika.integration" value="true" /></properties><failure message="KeyError: &quot;Source 'dummy_stages_df51ac60311646d0ba8f817b600c4225' not found in registry&quot;">httpserver = &lt;HTTPServer host=localhost port=33523&gt;
+
+    @pytest.mark.integration
+    def test_committed_bronze_replayed_without_http_then_revision_is_append_only(httpserver):
+        identifier = f"dummy_stages_{uuid.uuid4().hex}"
+        path = f"/{identifier}.csv"
+        httpserver.expect_request(path).respond_with_data(CSV_V1, content_type="text/csv")
+        request_count = [0]
+
+        class CountingHttp(PoliteHttpClient):
+            def _execute_request(self, *args, **kwargs):
+                request_count[0] += 1
+                return super()._execute_request(*args, **kwargs)
+
+        policy, store = PolicyEngine(), BronzeStore()
+        connector = DummyCsvConnector()
+        connector.source_id = identifier
+        engine = create_engine(get_settings().database_url)
+        try:
+            with CountingHttp(policy_engine=policy) as http:
+                ctx = RunContext(
+                    source_id=identifier,
+                    http_client=http,
+                    bronze_store=store,
+                    policy_engine=policy,
+                    metadata={"csv_url": httpserver.url_for(path)},
+                )
+                with Session(engine) as session:
+&gt;                   batch = collect_connector_bronze(connector, ctx, session)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_connector_stages.py:50:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/ketrika/connectors/stages.py:66: in collect_connector_bronze
+    definition = get_source(connector.source_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+source_id = 'dummy_stages_df51ac60311646d0ba8f817b600c4225'
+registry_path = None
+
+    def get_source(source_id: str, registry_path: Path | str | None = None) -&gt; SourceDefinition:
+        """Find a specific source by its unique ID."""
+        sources = load_sources(registry_path)
+        for s in sources:
+            if s.source_id == source_id:
+                return s
+&gt;       raise KeyError(f"Source '{source_id}' not found in registry")
+E       KeyError: "Source 'dummy_stages_df51ac60311646d0ba8f817b600c4225' not found in registry"
+
+src/ketrika/core/registry.py:78: KeyError</failure></testcase><testcase classname="tests.integration.test_connector_stages" name="test_dagster_materializes_real_bronze_input_once_and_silver_rows" time="9.504"><properties><property name="ketrika.integration" value="true" /></properties><failure message="KeyError: &quot;Source 'dummy_dagster_f1196e09722e43719f44a7cb10249ff2' not found in registry&quot;">step_context = &lt;dagster._core.execution.context.system.StepExecutionContext object at 0x78bee85120c0&gt;
+force_local_execution = False
+
+    def dagster_event_sequence_for_step(
+        step_context: StepExecutionContext, force_local_execution: bool = False
+    ) -&gt; Iterator[DagsterEvent]:
+        """Yield a sequence of dagster events for the given step with the step context.
+
+        This function also processes errors. It handles a few error cases:
+
+            (1) User code requests to be retried:
+                A RetryRequested has been raised. We will either put the step in to
+                up_for_retry state or a failure state depending on the number of previous attempts
+                and the max_retries on the received RetryRequested.
+
+            (2) User code fails successfully:
+                The user-space code has raised a Failure which may have
+                explicit metadata attached.
+
+            (3) User code fails unexpectedly:
+                The user-space code has raised an Exception. It has been
+                wrapped in an exception derived from DagsterUserCodeException. In that
+                case the original user exc_info is stashed on the exception
+                as the original_exc_info property.
+
+            (4) Execution interrupted:
+                The run was interrupted in the middle of execution (typically by a
+                termination request).
+
+            (5) Dagster framework error:
+                The framework raised a DagsterError that indicates a usage error
+                or some other error not communicated by a user-thrown exception. For example,
+                if the user yields an object out of a compute function that is not a
+                proper event (not an Output, ExpectationResult, etc).
+
+            (6) All other errors:
+                An unexpected error occurred. Either there has been an internal error in the framework
+                OR we have forgotten to put a user code error boundary around invoked user-space code.
+
+
+        The "raised_dagster_errors" context manager can be used to force these errors to be
+        re-raised and surfaced to the user. This is mostly to get sensible errors in test and
+        ad-hoc contexts, rather than forcing the user to wade through the
+        JobExecutionResult API in order to find the step that failed.
+
+        For tools, however, this option should be false, and a sensible error message
+        signaled to the user within that tool.
+
+        When we launch a step that has a step launcher, we use this function on both the host process
+        and the remote process. When we run the step in the remote process, to prevent an infinite loop
+        of launching steps that then launch steps, and so on, the remote process will run this with
+        the force_local_execution argument set to True.
+        """
+        check.inst_param(step_context, "step_context", StepExecutionContext)
+
+        try:
+            if step_context.step_launcher and not force_local_execution:
+                # info all on step_context - should deprecate second arg
+                step_events = step_context.step_launcher.launch_step(step_context)
+            else:
+                step_events = core_dagster_event_sequence_for_step(step_context)
+
+&gt;           yield from check.generator(step_events)
+
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/execute_plan.py:243:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/execute_step.py:505: in core_dagster_event_sequence_for_step
+    for user_event in _step_output_error_checked_user_event_sequence(
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/execute_step.py:184: in _step_output_error_checked_user_event_sequence
+    for user_event in user_event_sequence:
+                      ^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/execute_step.py:88: in _process_asset_results_to_events
+    for user_event in user_event_sequence:
+                      ^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/compute.py:188: in execute_core_compute
+    for step_output in _yield_compute_results(step_context, inputs, compute_fn, compute_context):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/compute.py:157: in _yield_compute_results
+    for event in iterate_with_context(
+.venv/lib/python3.12/site-packages/dagster/_utils/__init__.py:392: in iterate_with_context
+    with context_fn():
+         ^^^^^^^^^^^^
+/usr/local/lib/python3.12/contextlib.py:158: in __exit__
+    self.gen.throw(value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+error_cls = &lt;class 'dagster._core.errors.DagsterExecutionStepExecutionError'&gt;
+msg_fn = &lt;function _yield_compute_results.&lt;locals&gt;.&lt;lambda&gt;.&lt;locals&gt;.&lt;lambda&gt; at 0x78bee81a0e00&gt;
+step_context = &lt;dagster._core.execution.context.system.StepExecutionContext object at 0x78bee85120c0&gt;
+kwargs = {'step_key': 'dummy_dagster_f1196e09722e43719f44a7cb10249ff2__bronze', 'op_def_name': 'dummy_dagster_f1196e09722e43719f44a7cb10249ff2__bronze', 'op_name': 'dummy_dagster_f1196e09722e43719f44a7cb10249ff2__bronze'}
+
+    @contextmanager
+    def op_execution_error_boundary(
+        error_cls: type[DagsterUserCodeExecutionError],
+        msg_fn: Callable[[], str],
+        step_context: "StepExecutionContext",
+        **kwargs: Any,
+    ) -&gt; Iterator[None]:
+        """A specialization of user_code_error_boundary for the steps involved in executing a solid.
+        This variant supports the control flow exceptions RetryRequested and Failure as well
+        as respecting the RetryPolicy if present.
+        """
+        from dagster._core.execution.context.system import StepExecutionContext
+        from dagster._utils.error import redact_user_stacktrace_if_enabled
+
+        check.callable_param(msg_fn, "msg_fn")
+        check.class_param(error_cls, "error_cls", superclass=DagsterUserCodeExecutionError)
+        check.inst_param(step_context, "step_context", StepExecutionContext)
+
+        with redact_user_stacktrace_if_enabled(), raise_execution_interrupts():
+            step_context.log.begin_python_log_capture()
+            retry_policy = step_context.op_retry_policy
+
+            try:
+                yield
+            except DagsterError as de:
+                # The system has thrown an error that is part of the user-framework contract
+                raise de
+
+            except Exception as e:
+                # An exception has been thrown by user code and computation should cease
+                # with the error reported further up the stack
+
+                # Directly thrown RetryRequested escalate before evaluating the retry policy.
+                if isinstance(e, RetryRequested):
+                    raise e
+
+                if retry_policy:
+                    # if Failure with allow_retries set to false, disregard retry policy and raise
+                    if isinstance(e, Failure) and not e.allow_retries:
+                        raise e
+
+                    raise RetryRequestedFromPolicy(
+                        max_retries=retry_policy.max_retries,
+                        seconds_to_wait=retry_policy.calculate_delay(
+                            step_context.previous_attempt_count + 1
+                        ),
+                    ) from e
+
+                # Failure exceptions get re-throw without wrapping
+                if isinstance(e, Failure):
+                    raise e
+
+                # Otherwise wrap the user exception with context
+&gt;               raise error_cls(
+                    msg_fn(),
+                    user_exception=e,
+                    original_exc_info=sys.exc_info(),
+                    **kwargs,
+                ) from e
+E               dagster._core.errors.DagsterExecutionStepExecutionError: Error occurred while executing op "dummy_dagster_f1196e09722e43719f44a7cb10249ff2__bronze":
+
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/utils.py:87: DagsterExecutionStepExecutionError
+
+During handling of the above exception, another exception occurred:
+
+httpserver = &lt;HTTPServer host=localhost port=33523&gt;
+
+    @pytest.mark.integration
+    def test_dagster_materializes_real_bronze_input_once_and_silver_rows(httpserver):
+        identifier = f"dummy_dagster_{uuid.uuid4().hex}"
+        path = f"/{identifier}.csv"
+        httpserver.expect_request(path).respond_with_data(CSV_V1, content_type="text/csv")
+        discoveries = [0]
+
+        class LocalCsv(DummyCsvConnector):
+            source_id = identifier
+
+            def discover(self, ctx):
+                discoveries[0] += 1
+                yield DiscoveredItem(url=httpserver.url_for(path), partition_key="fixture")
+
+        bundle = build_source_assets(LocalCsv)
+&gt;       result = materialize([bundle.bronze_asset, bundle.silver_asset], raise_on_error=True)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_connector_stages.py:118:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv/lib/python3.12/site-packages/dagster/_core/definitions/materialize.py:109: in materialize
+    ).execute_in_process(
+.venv/lib/python3.12/site-packages/dagster/_core/definitions/job_definition.py:821: in execute_in_process
+    return core_execute_in_process(
+.venv/lib/python3.12/site-packages/dagster/_core/execution/execute_in_process.py:157: in core_execute_in_process
+    event_list = list(execute_run_iterable)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/dagster/_core/execution/api.py:873: in __iter__
+    yield from self.iterator(
+.venv/lib/python3.12/site-packages/dagster/_core/execution/api.py:742: in job_execution_iterator
+    for event in job_context.executor.execute(job_context, execution_plan):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/dagster/_core/executor/in_process.py:71: in execute
+    yield from iter(
+.venv/lib/python3.12/site-packages/dagster/_core/execution/api.py:873: in __iter__
+    yield from self.iterator(
+.venv/lib/python3.12/site-packages/dagster/_core/executor/in_process.py:28: in inprocess_execution_iterator
+    yield from inner_plan_execution_iterator(
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/execute_plan.py:85: in inner_plan_execution_iterator
+    for step_event in check.generator(dagster_event_sequence_for_step(step_context)):
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/execute_plan.py:316: in dagster_event_sequence_for_step
+    raise dagster_user_error.user_exception
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/utils.py:57: in op_execution_error_boundary
+    yield
+.venv/lib/python3.12/site-packages/dagster/_utils/__init__.py:394: in iterate_with_context
+    next_output = next(iterator)
+                  ^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/compute_generator.py:136: in _coerce_op_compute_fn_to_iterator
+    result = invoke_compute_fn(
+.venv/lib/python3.12/site-packages/dagster/_core/execution/plan/compute_generator.py:116: in invoke_compute_fn
+    return fn(context, **args_to_pass) if context_arg_provided else fn(**args_to_pass)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/ketrika/pipelines/factory.py:85: in bronze_asset
+    return collect_connector_bronze(connector, ctx, session)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/ketrika/connectors/stages.py:66: in collect_connector_bronze
+    definition = get_source(connector.source_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+source_id = 'dummy_dagster_f1196e09722e43719f44a7cb10249ff2'
+registry_path = None
+
+    def get_source(source_id: str, registry_path: Path | str | None = None) -&gt; SourceDefinition:
+        """Find a specific source by its unique ID."""
+        sources = load_sources(registry_path)
+        for s in sources:
+            if s.source_id == source_id:
+                return s
+&gt;       raise KeyError(f"Source '{source_id}' not found in registry")
+E       KeyError: "Source 'dummy_dagster_f1196e09722e43719f44a7cb10249ff2' not found in registry"
+
+src/ketrika/core/registry.py:78: KeyError</failure></testcase><testcase classname="tests.integration.test_connector_pipeline" name="test_dummy_csv_pipeline_lifecycle_and_supersession" time="0.470"><properties><property name="ketrika.integration" value="true" /></properties><failure message="KeyError: &quot;Source 'dummy_7cb053' not found in registry&quot;">httpserver = &lt;HTTPServer host=localhost port=33523&gt;
+db_session = &lt;sqlalchemy.orm.session.Session object at 0x78bee820fc20&gt;
+
+    @pytest.mark.integration
+    def test_dummy_csv_pipeline_lifecycle_and_supersession(httpserver, db_session):
+        """Verify T2.3 acceptance criteria:
+
+        1st run inserts N rows with valid source_record_id.
+        2nd run is idempotent (0 new rows).
+        3rd run with altered value creates 1 new row and 1 superseded_by pointer.
+        """
+        source_id = f"dummy_{uuid.uuid4().hex[:6]}"
+        endpoint_path = f"/{source_id}/prices.csv"
+
+        # Set up HTTP server serving CSV_V1
+        httpserver.expect_request(endpoint_path).respond_with_data(
+            CSV_V1,
+            content_type="text/csv",
+        )
+        csv_url = httpserver.url_for(endpoint_path)
+
+        connector = DummyCsvConnector()
+        connector.source_id = source_id
+
+        policy_engine = PolicyEngine()
+        http_client = PoliteHttpClient(policy_engine=policy_engine)
+        bronze_store = BronzeStore()
+
+        ctx = RunContext(
+            source_id=source_id,
+            http_client=http_client,
+            bronze_store=bronze_store,
+            policy_engine=policy_engine,
+            metadata={"csv_url": csv_url},
+        )
+
+        # =========================================================================
+        # Run 1: Initial Ingestion -&gt; 3 rows inserted
+        # =========================================================================
+&gt;       stats1 = execute_connector_pipeline(connector, ctx, db_session)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_connector_pipeline.py:84:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/ketrika/connectors/runner.py:676: in execute_connector_pipeline
+    batch = collect_connector_bronze(connector, ctx, session)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/ketrika/connectors/stages.py:66: in collect_connector_bronze
+    definition = get_source(connector.source_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+source_id = 'dummy_7cb053', registry_path = None
+
+    def get_source(source_id: str, registry_path: Path | str | None = None) -&gt; SourceDefinition:
+        """Find a specific source by its unique ID."""
+        sources = load_sources(registry_path)
+        for s in sources:
+            if s.source_id == source_id:
+                return s
+&gt;       raise KeyError(f"Source '{source_id}' not found in registry")
+E       KeyError: "Source 'dummy_7cb053' not found in registry"
+
+src/ketrika/core/registry.py:78: KeyError</failure></testcase><testcase classname="tests.integration.test_nasa_power" name="test_nasa_power_backfill_dq_and_rebuild_lifecycle" time="0.931"><properties><property name="ketrika.integration" value="true" /></properties><failure message="KeyError: &quot;Source 'fixture_nasa_power_ad53dfae4e51447184a9ab5fedfa51b5' not found in registry&quot;">httpserver = &lt;HTTPServer host=localhost port=33523&gt;
+db_session = &lt;sqlalchemy.orm.session.Session object at 0x78bee821b560&gt;
+sample_payload = {'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': [47.525, -18.924, 1280.0]}, 'properties': {'district_..., '20240104': 65.4, ...}}}, 'header': {'title': 'NASA POWER Agroclimatology Daily Point API', 'api_version': 'v2.0.0'}}
+request = &lt;FixtureRequest for &lt;Function test_nasa_power_backfill_dq_and_rebuild_lifecycle&gt;&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78bee8219370&gt;
+
+    @pytest.mark.integration
+    def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
+        httpserver, db_session, sample_payload: dict, request: pytest.FixtureRequest, monkeypatch
+    ):
+        """Local fixture coverage/idempotence/replay; unproven Gold must be refused."""
+        wipe_silver_gold_tables(db_session)
+        db_session.commit()
+
+        # Query all admin_level = 2 districts in database
+        district_stmt = select(Location).where(Location.admin_level == 2).order_by(Location.pcode)
+        db_districts = list(db_session.execute(district_stmt).scalars().all())
+        assert len(db_districts) &gt;= 3, "Expected at least 3 admin2 districts in ref.location"
+
+        run_tag = uuid.uuid4().hex[:8]
+        urls_info = []
+
+        # Coordinate mapping for sample districts
+        district_coords = {
+            "MDG1101": [47.525, -18.924, 1280.0],
+            "MDG1201": [47.025, -19.875, 1500.0],
+            "MDG3101": [49.410, -18.150, 10.0],
+        }
+
+        for district in db_districts:
+            pcode = district.pcode or "MDG1101"
+            coords = district_coords.get(pcode, [47.5, -18.9, 1000.0])
+
+            dist_payload = json.loads(json.dumps(sample_payload))
+            dist_payload["geometry"]["coordinates"] = coords
+            dist_payload["properties"]["district_pcode"] = pcode
+            dist_payload["properties"]["district_name"] = district.name
+            dist_payload["test_run_tag"] = run_tag
+
+            path = f"/nasa_power_{run_tag}/{pcode}.json"
+            httpserver.expect_request(path).respond_with_data(
+                json.dumps(dist_payload), content_type="application/json"
+            )
+            url = httpserver.url_for(path)
+
+            urls_info.append(
+                {
+                    "url": url,
+                    "partition_key": f"{pcode}_daily",
+                    "hints": {
+                        "district_pcode": pcode,
+                        "district_name": district.name,
+                        "longitude": str(coords[0]),
+                        "latitude": str(coords[1]),
+                    },
+                }
+            )
+
+        bronze_store = BronzeStore()
+        policy = PolicyEngine()
+        http_client = PoliteHttpClient(policy_engine=policy)
+        connector = local_connector(NasaPowerConnector, monkeypatch)
+        source_id = connector.source_id
+
+        ctx = RunContext(
+            source_id=source_id,
+            bronze_store=bronze_store,
+            http_client=http_client,
+            policy_engine=policy,
+            metadata={"urls": urls_info},
+        )
+
+        # 1. CC3: Backfill initial run
+&gt;       stats1 = execute_connector_pipeline(connector=connector, ctx=ctx, session=db_session)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_nasa_power.py:126:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/ketrika/connectors/runner.py:676: in execute_connector_pipeline
+    batch = collect_connector_bronze(connector, ctx, session)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/ketrika/connectors/stages.py:66: in collect_connector_bronze
+    definition = get_source(connector.source_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+source_id = 'fixture_nasa_power_ad53dfae4e51447184a9ab5fedfa51b5'
+registry_path = None
+
+    def get_source(source_id: str, registry_path: Path | str | None = None) -&gt; SourceDefinition:
+        """Find a specific source by its unique ID."""
+        sources = load_sources(registry_path)
+        for s in sources:
+            if s.source_id == source_id:
+                return s
+&gt;       raise KeyError(f"Source '{source_id}' not found in registry")
+E       KeyError: "Source 'fixture_nasa_power_ad53dfae4e51447184a9ab5fedfa51b5' not found in registry"
+
+src/ketrika/core/registry.py:78: KeyError</failure></testcase><testcase classname="tests.integration.test_wfp_hdx_mdg" name="test_wfp_hdx_backfill_dq_and_rebuild_lifecycle" time="1.215"><properties><property name="ketrika.integration" value="true" /></properties><failure message="KeyError: &quot;Source 'fixture_wfp_hdx_mdg_f3506cf398994f1c896af42266d37228' not found in registry&quot;">httpserver = &lt;HTTPServer host=localhost port=33523&gt;
+db_session = &lt;sqlalchemy.orm.session.Session object at 0x78bee8126390&gt;
+csv_content = 'date,admin1,admin2,market,latitude,longitude,category,commodity,unit,priceflag,pricetype,currency,price,usdprice\n#da...Vakinankaratra,Antsirabe I,Asabotsy,-19.865,47.033,cereals and tubers,Cassava (fresh),KG,actual,Retail,MGA,1150,0.26\n'
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78bee821abd0&gt;
+
+    @pytest.mark.integration
+    def test_wfp_hdx_backfill_dq_and_rebuild_lifecycle(
+        httpserver, db_session, csv_content: str, monkeypatch
+    ):
+        """Verify CC3-CC6: backfill execution, idempotence, supersession, DQ checks and offline rebuild."""
+        # Ensure fresh Silver/Gold state
+        wipe_silver_gold_tables(db_session)
+        db_session.commit()
+
+        run_tag = uuid.uuid4().hex[:8]
+        unique_csv = f"# test_run_{run_tag}\n" + csv_content
+
+        endpoint_path = f"/wfp_test_{run_tag}/prices.csv"
+        httpserver.expect_request(endpoint_path).respond_with_data(unique_csv, content_type="text/csv")
+        csv_url = httpserver.url_for(endpoint_path)
+
+        bronze_store = BronzeStore()
+        policy = PolicyEngine()
+        http_client = PoliteHttpClient(policy_engine=policy)
+        from tests.local_connector import local_connector
+
+        connector = local_connector(WfpHdxMdgConnector, monkeypatch)
+        source_id = connector.source_id
+
+        ctx = RunContext(
+            source_id=source_id,
+            bronze_store=bronze_store,
+            http_client=http_client,
+            policy_engine=policy,
+            metadata={"csv_url": csv_url},
+        )
+
+        # 1. CC3: Backfill initial run
+&gt;       stats1 = execute_connector_pipeline(connector=connector, ctx=ctx, session=db_session)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_wfp_hdx_mdg.py:87:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/ketrika/connectors/runner.py:676: in execute_connector_pipeline
+    batch = collect_connector_bronze(connector, ctx, session)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/ketrika/connectors/stages.py:66: in collect_connector_bronze
+    definition = get_source(connector.source_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+source_id = 'fixture_wfp_hdx_mdg_f3506cf398994f1c896af42266d37228'
+registry_path = None
+
+    def get_source(source_id: str, registry_path: Path | str | None = None) -&gt; SourceDefinition:
+        """Find a specific source by its unique ID."""
+        sources = load_sources(registry_path)
+        for s in sources:
+            if s.source_id == source_id:
+                return s
+&gt;       raise KeyError(f"Source '{source_id}' not found in registry")
+E       KeyError: "Source 'fixture_wfp_hdx_mdg_f3506cf398994f1c896af42266d37228' not found in registry"
+
+src/ketrika/core/registry.py:78: KeyError</failure></testcase></testsuite></testsuites>

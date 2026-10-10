@@ -1,0 +1,23 @@
+{
+  "scope": "static definitions, not runtime or source qualification",
+  "environment": "Docker ketrika-backend:qa-r03, network none, repository read-only",
+  "session_id": 64611,
+  "exit_code": 0,
+  "assets": 19,
+  "checks": 8,
+  "schedules": 8,
+  "registered_non_dummy_sources": 8,
+  "sources": [
+    {"source_id": "wfp_hdx_mdg", "status": "disabled", "assets": 2, "scheduled": true},
+    {"source_id": "wb_rtfp_mdg", "status": "active", "assets": 2, "scheduled": true},
+    {"source_id": "faostat", "status": "active", "assets": 2, "scheduled": true},
+    {"source_id": "nasa_power", "status": "disabled", "assets": 2, "scheduled": true},
+    {"source_id": "instat_nipc", "status": "active", "assets": 2, "scheduled": true},
+    {"source_id": "miasa_odr", "status": "active", "assets": 2, "scheduled": true},
+    {"source_id": "mincc_ppn", "status": "active", "assets": 2, "scheduled": true},
+    {"source_id": "douanes_stats", "status": "active", "assets": 2, "scheduled": true}
+  ],
+  "diagnosis": "disabled sources still have definitions and schedules; collection guard refuses before discovery",
+  "followup": "R0.6 inventory, explicit construction errors and disabled schedules; BL-010 remains open",
+  "receipt_origin": "manual transcription of received read-only Docker inspection"
+}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="36" time="710.834" timestamp="2026-10-10T20:06:51.185127+00:00" hostname="a8dce2b3d681"><testcase classname="tests.authentic.test_corpus_wdi" name="test_authentic_document_and_annotation" time="17.846" /><testcase classname="tests.authentic.test_corpus_wdi" name="test_golden_is_independent_and_bounded" time="0.062" /><testcase classname="tests.authentic.test_corpus_wdi" name="test_unverified_sources_excluded" time="14.652" /><testcase classname="tests.authentic.test_corpus_wdi" name="test_authentic_annotation_refuses_generated_source" time="0.041" /><testcase classname="tests.authentic.test_provenance_wdi" name="test_original_wdi_numeric_cells_and_record_identity" time="0.099" /><testcase classname="tests.integration.test_alerts_engine" name="test_alerts_engine_lifecycle_and_notifications" time="6.201"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_alerts_engine" name="test_multi_source_severity_rule" time="32.923"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_api_perf" name="test_rate_limiter_strict_60_req_per_minute" time="5.143"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_api_perf" name="test_aggregated_endpoints_latency_p95" time="98.729"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_api_v1" name="test_api_public_and_analytical_endpoints_200" time="24.622"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_api_v1" name="test_observation_provenance_and_presigned_bronze_url" time="0.872"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_api_v1" name="test_api_auth_roles_and_status_codes" time="4.606"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_api_v1" name="test_api_security_headers" time="0.309"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_bulletin_service" name="test_generate_weekly_bulletin_integration" time="29.618"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_connector_pipeline" name="test_dummy_csv_pipeline_lifecycle_and_supersession" time="10.994"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_connector_stages" name="test_committed_bronze_replayed_without_http_then_revision_is_append_only" time="6.815"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_connector_stages" name="test_dagster_materializes_real_bronze_input_once_and_silver_rows" time="9.217"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_db_permissions" name="test_copilot_ro_cannot_read_obs_price_observation" time="0.140" /><testcase classname="tests.integration.test_db_permissions" name="test_copilot_ro_can_access_gold_schema" time="0.035" /><testcase classname="tests.integration.test_db_permissions" name="test_meta_source_record_immutability" time="0.170" /><testcase classname="tests.integration.test_db_permissions" name="test_obs_price_observation_append_only_rules" time="0.151" /><testcase classname="tests.integration.test_douanes_stats" name="test_douanes_stats_backfill_dq_rebuild_and_revision_cycle" time="5.617"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_faostat" name="test_faostat_backfill_dq_and_rebuild_lifecycle" time="24.974"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_gold_dq" name="test_gold_source_health_stale_and_alert_lifecycle" time="3.629"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_gold_dq" name="test_gold_dq_asset_checks_battery" time="1.141"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_gold_publication_provenance" name="test_real_publication_rejects_bad_provenance_and_rolls_back_partial_sql" time="46.446"><properties><property name="ketrika.integration" value="true" /><property name="ketrika.gold.publication" value="{&quot;dataset&quot;: &quot;synthetic&quot;, &quot;published_source_cells&quot;: 250, &quot;validated_source_cells&quot;: 250, &quot;bad_provenance_rejected&quot;: true, &quot;partial_refresh_rolled_back&quot;: true, &quot;dependency_caches_refreshed&quot;: true, &quot;model_qualified&quot;: false}" /></properties></testcase><testcase classname="tests.integration.test_gold_views" name="test_gold_views_sql_e2e_synthetic" time="25.244"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_gold_views" name="test_price_monthly_best_priority_order" time="22.345"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_instat_nipc" name="test_instat_nipc_backfill_dq_and_rebuild_lifecycle" time="41.571"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_miasa_odr" name="test_miasa_odr_backfill_dq_and_rebuild_lifecycle" time="67.406"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_mincc_ppn" name="test_mincc_ppn_backfill_dq_and_rebuild_lifecycle" time="18.267"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_nasa_power" name="test_nasa_power_backfill_dq_and_rebuild_lifecycle" time="32.196"><properties><property name="ketrika.integration" value="true" /><property name="ketrika.weather.rebuild_current_grain" value="{&quot;history_rows&quot;: 108, &quot;current_rows&quot;: 108, &quot;superseded_rows&quot;: 0, &quot;source_records_replayed&quot;: 3, &quot;gold_publication_refused&quot;: true, &quot;scope&quot;: &quot;software fixtures; not live source or complete R0.8 certification&quot;}" /></properties></testcase><testcase classname="tests.integration.test_native_provenance" name="test_native_cells_and_raw_rejection_persist_across_sessions[json]" time="0.376"><properties><property name="ketrika.integration" value="true" /><property name="ketrika.native.provenance" value="synthetic SQL/MinIO only; format=json; valid=1/1; rejected=0/1; persisted=true" /></properties></testcase><testcase classname="tests.integration.test_native_provenance" name="test_native_cells_and_raw_rejection_persist_across_sessions[csv]" time="0.449"><properties><property name="ketrika.integration" value="true" /><property name="ketrika.native.provenance" value="synthetic SQL/MinIO only; format=csv; valid=1/1; rejected=0/1; persisted=true" /></properties></testcase><testcase classname="tests.integration.test_observability" name="test_send_pipeline_failure_email_direct" time="0.675"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_observability" name="test_forced_connector_failure_records_failed_and_dispatches_email" time="1.344"><properties><property name="ketrika.integration" value="true" /></properties><failure message="ketrika.core.policy.PolicyStop: source_not_registered">db_session = &lt;sqlalchemy.orm.session.Session object at 0x7a1595e563c0&gt;
+
+    @pytest.mark.integration
+    def test_forced_connector_failure_records_failed_and_dispatches_email(db_session: Session):
+        """Verify that a forced connector failure produces an email in Mailpit and status failed in /v1/sources."""
+        clear_mailpit_messages()
+
+        unique_source_id = f"failing_src_{uuid.uuid4().hex[:6]}"
+
+        # Ensure source exists in meta.source
+        src = Source(
+            source_id=unique_source_id,
+            spec={"name": "Failing Test Source", "priority": "P2", "freshness_sla_days": 15},
+            status="active",
+        )
+        db_session.add(src)
+        db_session.commit()
+
+        class CustomFailingConnector(FailingConnector):
+            source_id = unique_source_id
+
+        connector = CustomFailingConnector()
+        ctx = RunContext(source_id=unique_source_id)
+
+        # 1. Execute pipeline which will fail
+        with pytest.raises(RuntimeError, match="upstream API 500 error"):
+&gt;           execute_connector_pipeline(connector, ctx, db_session)
+
+tests/integration/test_observability.py:124:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/ketrika/connectors/runner.py:676: in execute_connector_pipeline
+    batch = collect_connector_bronze(connector, ctx, session)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+connector = &lt;tests.integration.test_observability.test_forced_connector_failure_records_failed_and_dispatches_email.&lt;locals&gt;.CustomFailingConnector object at 0x7a154b85f260&gt;
+ctx = RunContext(source_id='failing_src_c51822', settings=Settings(app_env='test', tz_business='Indian/Antananarivo', log_le...ent=None, bronze_store=None, policy_engine=None, run_id=None, logger=None, llm_client=None, offline=False, metadata={})
+session = &lt;sqlalchemy.orm.session.Session object at 0x7a1595e563c0&gt;
+
+    def collect_connector_bronze(
+        connector: Connector, ctx: RunContext, session: Session
+    ) -&gt; BronzeBatch:
+        """Persist references once and return the exact immutable receipt, no parse."""
+        from ketrika.connectors.runner import ensure_ingestion_run_started, record_bronze_artifact
+
+        if ctx.source_id != connector.source_id:
+            raise ValueError("connector_context_source_mismatch")
+        try:
+            definition = get_source(connector.source_id)
+        except KeyError:
+            from ketrika.connectors.registry import get_connector_class
+
+            registered = get_connector_class(connector.source_id)
+            if (
+                not connector.source_id.startswith(("dummy_", "fixture_"))
+                or registered is None
+                or not isinstance(connector, registered)
+            ):
+&gt;               raise PolicyStop("source_not_registered") from None
+E               ketrika.core.policy.PolicyStop: source_not_registered
+
+src/ketrika/connectors/stages.py:79: PolicyStop</failure></testcase></testsuite></testsuites>

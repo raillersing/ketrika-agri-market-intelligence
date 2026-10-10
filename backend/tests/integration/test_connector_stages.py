@@ -1,0 +1,133 @@
+"""Real isolated SQL/S3 and local HTTP; no official live-source qualification."""
+
+import uuid
+
+import pytest
+from dagster import materialize
+from sqlalchemy import create_engine, func, select
+from sqlalchemy.orm import Session
+
+from ketrika.connectors.base import DiscoveredItem, RunContext
+from ketrika.connectors.dummy_csv import DummyCsvConnector
+from ketrika.connectors.stages import collect_connector_bronze, consume_connector_silver
+from ketrika.core.bronze import BronzeStore
+from ketrika.core.http import PoliteHttpClient
+from ketrika.core.models.db import PriceObservation, SourceRecord
+from ketrika.core.policy import PolicyEngine
+from ketrika.core.provenance_audit import ObservationTarget, audit_observation_provenance
+from ketrika.core.provenance_bronze import BronzeProofReader
+from ketrika.core.settings import get_settings
+from ketrika.pipelines.factory import build_source_assets
+from tests.integration.test_connector_pipeline import CSV_V1, CSV_V2_MODIFIED
+
+
+@pytest.mark.integration
+def test_committed_bronze_replayed_without_http_then_revision_is_append_only(httpserver):
+    identifier = f"dummy_stages_{uuid.uuid4().hex}"
+    path = f"/{identifier}.csv"
+    httpserver.expect_request(path).respond_with_data(CSV_V1, content_type="text/csv")
+    request_count = [0]
+
+    class CountingHttp(PoliteHttpClient):
+        def _execute_request(self, *args, **kwargs):
+            request_count[0] += 1
+            return super()._execute_request(*args, **kwargs)
+
+    policy, store = PolicyEngine(), BronzeStore()
+    connector = DummyCsvConnector()
+    connector.source_id = identifier
+    engine = create_engine(get_settings().database_url)
+    try:
+        with CountingHttp(policy_engine=policy) as http:
+            ctx = RunContext(
+                source_id=identifier,
+                http_client=http,
+                bronze_store=store,
+                policy_engine=policy,
+                metadata={"csv_url": httpserver.url_for(path)},
+            )
+            with Session(engine) as session:
+                batch = collect_connector_bronze(connector, ctx, session)
+                session.commit()
+            assert request_count == [1]
+            assert len(batch.artifacts) == 1
+            with Session(engine) as session:
+                stats = consume_connector_silver(connector, ctx, session, batch)
+                session.commit()
+            assert stats["n_inserted"] == 3 and request_count == [1]
+            with Session(engine) as session:
+                replay = consume_connector_silver(connector, ctx, session, batch)
+                session.commit()
+            assert replay["n_inserted"] == 0 and replay["n_skipped"] == 3 and request_count == [1]
+            httpserver.clear()
+            httpserver.expect_request(path).respond_with_data(
+                CSV_V2_MODIFIED, content_type="text/csv"
+            )
+            with Session(engine) as session:
+                revision = collect_connector_bronze(connector, ctx, session)
+                session.commit()
+            assert request_count == [2]
+            assert revision.ingestion_run_id != batch.ingestion_run_id
+            assert revision.artifacts[0].source_record_id != batch.artifacts[0].source_record_id
+            with Session(engine) as session:
+                updated = consume_connector_silver(connector, ctx, session, revision)
+                session.commit()
+            assert (
+                updated["n_superseded"] == 1 and updated["n_skipped"] == 2 and request_count == [2]
+            )
+        with Session(engine) as session:
+            rows = session.scalars(
+                select(PriceObservation)
+                .join(SourceRecord)
+                .where(SourceRecord.source_id == identifier)
+            ).all()
+            assert len(rows) == 4
+            assert sum(row.superseded_by is None for row in rows) == 3
+            current_rice = next(
+                row
+                for row in rows
+                if row.location_raw == "Antananarivo" and row.superseded_by is None
+            )
+            assert str(current_rice.price_value) == "2900.0000"
+            targets = [ObservationTarget("price_observation", row.observation_id) for row in rows]
+            receipt = audit_observation_provenance(
+                session, BronzeProofReader(store), mode="incremental", targets=targets
+            )
+            assert receipt.report.total == receipt.report.valid == 4
+            assert receipt.report.objects_read == 2
+            session.commit()
+    finally:
+        engine.dispose()
+
+
+@pytest.mark.integration
+def test_dagster_materializes_real_bronze_input_once_and_silver_rows(httpserver):
+    identifier = f"dummy_dagster_{uuid.uuid4().hex}"
+    path = f"/{identifier}.csv"
+    httpserver.expect_request(path).respond_with_data(CSV_V1, content_type="text/csv")
+    discoveries = [0]
+
+    class LocalCsv(DummyCsvConnector):
+        source_id = identifier
+
+        def discover(self, ctx):
+            discoveries[0] += 1
+            yield DiscoveredItem(url=httpserver.url_for(path), partition_key="fixture")
+
+    bundle = build_source_assets(LocalCsv)
+    result = materialize([bundle.bronze_asset, bundle.silver_asset], raise_on_error=True)
+    assert result.success and discoveries == [1]
+    silver = result.output_for_node(f"{identifier}__silver")
+    assert silver["n_fetched"] == 1 and silver["n_inserted"] == 3
+    engine = create_engine(get_settings().database_url)
+    try:
+        with Session(engine) as session:
+            count = session.scalar(
+                select(func.count())
+                .select_from(PriceObservation)
+                .join(SourceRecord)
+                .where(SourceRecord.source_id == identifier)
+            )
+            assert count == 3
+    finally:
+        engine.dispose()

@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from ketrika.alerts.notifier import send_pipeline_failure_email
 from ketrika.api.main import app
 from ketrika.connectors.base import Connector, DiscoveredItem, ParseResult, RawArtifact, RunContext
+from ketrika.connectors.registry import _CONNECTOR_REGISTRY
 from ketrika.connectors.runner import execute_connector_pipeline
 from ketrika.core.db import check_db_connection
 from ketrika.core.models.db import IngestionRun, Source
@@ -98,11 +99,13 @@ def test_send_pipeline_failure_email_direct():
 
 
 @pytest.mark.integration
-def test_forced_connector_failure_records_failed_and_dispatches_email(db_session: Session):
+def test_forced_connector_failure_records_failed_and_dispatches_email(
+    db_session: Session, monkeypatch: pytest.MonkeyPatch
+):
     """Verify that a forced connector failure produces an email in Mailpit and status failed in /v1/sources."""
     clear_mailpit_messages()
 
-    unique_source_id = f"failing_src_{uuid.uuid4().hex[:6]}"
+    unique_source_id = f"dummy_failing_{uuid.uuid4().hex}"
 
     # Ensure source exists in meta.source
     src = Source(
@@ -116,6 +119,7 @@ def test_forced_connector_failure_records_failed_and_dispatches_email(db_session
     class CustomFailingConnector(FailingConnector):
         source_id = unique_source_id
 
+    monkeypatch.setitem(_CONNECTOR_REGISTRY, unique_source_id, CustomFailingConnector)
     connector = CustomFailingConnector()
     ctx = RunContext(source_id=unique_source_id)
 
@@ -133,7 +137,8 @@ def test_forced_connector_failure_records_failed_and_dispatches_email(db_session
     )
     assert failed_run is not None
     assert failed_run.status == "failed"
-    assert "upstream API 500 error" in (failed_run.error or "")
+    assert failed_run.error == "RuntimeError"
+    assert ctx.run_id == failed_run.run_id
 
     # 3. Assert an alert email was sent to Mailpit
     messages = get_mailpit_messages()

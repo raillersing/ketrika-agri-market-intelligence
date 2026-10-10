@@ -1,0 +1,26 @@
+{
+  "task": "R0.6",
+  "scope": "software check, not task or source qualification",
+  "command": "./scripts/dev.ps1 check",
+  "session_id": 41998,
+  "started_at": "2026-10-10T20:04:35Z",
+  "exit_code": 1,
+  "backend": {
+    "collected": 744,
+    "passed": 35,
+    "failed": 1,
+    "warnings": 5,
+    "pytest_duration_seconds": 710.83,
+    "lint_exit": 0,
+    "format_files": 202,
+    "format_exit": 0,
+    "typecheck_files": 201,
+    "typecheck_exit": 0,
+    "failed_test": "tests/integration/test_observability.py::test_forced_connector_failure_records_failed_and_dispatches_email"
+  },
+  "frontend_executed": false,
+  "passed": false,
+  "blocker": "B-R029",
+  "report": "increment-1-global-first-red.xml",
+  "receipt_origin": "manual transcription of received Windows process output; not a qa-manifest execution receipt"
+}

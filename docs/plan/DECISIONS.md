@@ -2,6 +2,30 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-034 : R0.6 — identité du run avant retour du lot et erreurs expurgées
+
+- **Date :** 2026-10-10 ; accepté avant correction.
+- **Contexte :** check Windows 41998 rouge, 35 passed / 1 failed : le scénario d'échec utilise une source fictive non enregistrée, désormais correctement refusée. Le wrapper perd aussi l'UUID lorsqu'une collecte échoue avant de retourner BronzeBatch.
+- **Décision :** réinitialiser ctx.run_id au début de collecte puis le lier uniquement au run SQL effectivement créé. Le wrapper utilise cet UUID pour statut failed et notification Mailpit, même sans lot ; stocker/envoyer uniquement la classe d'erreur, jamais le texte source. Le scénario utilise une identité dummy et une classe temporairement enregistrée dans QA validée, sans exemption de politique.
+- **Alternatives :** autoriser les sources inconnues ou notifier sous une identité fixe (rejeté).
+- **Limites :** transaction du caller, aucun commit implicite ; un rollback du caller peut encore supprimer ce reçu. Durabilité indépendante et gestion des assets directs restent obligatoires dans les prochains incréments R0.6.
+
+## ADR-033 : R0.6 — séparer les sources désactivées des acquisitions de fixtures locales
+
+- **Date :** 2026-10-10 ; accepté avant adaptation.
+- **Contexte :** les tests historiques NASA/WFP collectent un serveur HTTP local sous l'identité de la source publique disabled. La nouvelle garde doit refuser cette identité avant discover, sans exemption de test ni réactivation.
+- **Décision :** les acquisitions synthétiques de ces scénarios utilisent une identité fixture_<source>_<UUID>, avec classe locale temporairement enregistrée et même parseur ; aucune modification du statut public. Résolution de ces identités pour le rejeu uniquement dans l'environnement QA validé, jamais comme source live/asset/schedule de production. Les anciennes observations et objets conservent leur identité ; aucun backfill ni purge. Mêmes valeurs/comptes/révisions et refus Gold conservés.
+- **Conséquences :** le rejeu QA peut résoudre son historique de fixtures sans contacter la source désactivée. Ce mécanisme ne qualifie ni la source, ni des droits, ni le rebuild complet R0.8. Tests de refus hors QA et identité de fixture obligatoire.
+
+## ADR-032 : R0.6 — lot Bronze exact et consommation Silver hors collecte
+
+- **Date :** 2026-10-10 ; accepté avant implémentation.
+- **Contexte :** factory Silver relance execute_connector_pipeline, donc discover/fetch, et perd la lignée du résultat Bronze. Le wrapper existant reste nécessaire aux tests et CLI ; les erreurs/durabilité et normalisation ne sont pas encore qualifiées.
+- **Décision :** contrat interne de lot immuable : source_id, ingestion_run_id, parser_version et tuple des RawArtifact liés aux UUID source_record réellement persistés. Collecte et consommation exposées séparément ; le wrapper les compose. Silver vérifie la concordance lot/source/parser/run/référence/clé/SHA/MIME puis les octets avant parse, sans discover/fetch ; contexte copié offline avec client HTTP refusant les requêtes, sans changer HTTP_OFFLINE global ni le contexte de collecte. Aucune référence fournie par le document ne peut remplacer celle de la DB.
+- **Alternatives :** refetch avec déduplication (rejeté : ne démontre pas la lignée) ; faire confiance au lot sans relire les octets (rejeté).
+- **Métadonnées :** URL et published_at du lot proviennent de la référence SQL fraîchement relue et doivent concorder à consommation. La représentation TIMESTAMPTZ SQL est conservée, aucun fuseau/date inventé ni backfill.
+- **Conséquences :** pas de nouvelle dépendance ni changement ORM ; transaction/commit au caller. Les compteurs représentent les étapes réelles et le rejeu reste idempotent. Garde disabled/robots, normalisation, checks mesurés/durables, construction et partitions restent réception obligatoire R0.6 ; un incrément transport seul ne termine pas la tâche.
+
 ## ADR-031 : R0.5 — distinguer Gold vide du refus et de la certification
 
 - **Date :** 2026-10-10 ; accepté avant implémentation.

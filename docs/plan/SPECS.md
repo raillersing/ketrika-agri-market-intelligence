@@ -813,6 +813,29 @@ Types d'enregistrements obligatoires (dans `ketrika/connectors/records.py`) : `P
 - un schedule dérivé de `cadence` ;
 - un sensor si `entrypoints` contient `rss` ou `index`.
 
+Extension R0.6 ADR-032 : lot interne immuable BronzeBatch(source_id,
+ingestion_run_id, parser_version, artifacts=tuple[RawArtifact,...]) ; chaque
+artefact porte l'UUID source_record réellement enregistré. Collecte et consommation
+Silver séparées, wrapper historique conservé. Silver ne découvre ni ne fetch,
+copie le contexte en offline et remplace le client HTTP par un refus explicite.
+Source/parser/run et références SQL/clé/SHA/MIME doivent concorder ; octets relus
+et SHA vérifié avant parse. Pas de modification globale de HTTP_OFFLINE, aucun
+commit implicite ; durabilité d'échec, normalisation et checks R0.6 restent requis.
+Le lot reprend URL et published_at de la référence SQL relue, avec sa
+représentation TIMESTAMPTZ réelle ; Silver refuse toute divergence de ces
+métadonnées. Aucune date de publication devinée ou correction rétroactive.
+
+ADR-034 : collect réinitialise ctx.run_id puis y lie l'UUID SQL créé avant
+discover. Le wrapper peut ainsi enregistrer failed/notifier cet UUID même si
+aucun lot n'est retourné. Erreur persistée/notifiée = classe uniquement ;
+exception originale propagée. Transaction du caller, pas de commit implicite
+ni de qualification de durabilité après rollback.
+
+ADR-033 : acquisitions de fixtures locales NASA/WFP sous identités
+fixture_<source>_<UUID>, pas sous l'identité publique disabled. Classes locales
+temporaires ; résolution au rejeu limitée à QA validée, jamais un schedule/source
+live. Aucun changement de statut public ni mutation d'ancien objet/observation.
+
 ---
 
 ## 10. Layout Bronze
