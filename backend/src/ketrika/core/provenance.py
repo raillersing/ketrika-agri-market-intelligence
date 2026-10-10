@@ -18,9 +18,47 @@ from decimal import Decimal, InvalidOperation
 from typing import Any, Literal, Protocol
 from uuid import UUID
 
+MAX_CONTENT_BYTES = 32 * 1024 * 1024
+MAX_JSON_DEPTH = 128
+
 
 class ProofError(ValueError):
     """Stable non-sensitive error code, never a collected snippet or exception."""
+
+
+@dataclass(frozen=True)
+class JsonNumberToken:
+    raw: str
+
+
+def _unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ProofError("duplicate_json_key")
+        result[key] = value
+    return result
+
+
+def _check_json_depth(document: str) -> None:
+    depth = 0
+    quoted = escaped = False
+    for character in document:
+        if quoted:
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                quoted = False
+        elif character == '"':
+            quoted = True
+        elif character in "[{":
+            depth += 1
+            if depth > MAX_JSON_DEPTH:
+                raise ProofError("invalid_document")
+        elif character in "]}":
+            depth -= 1
 
 
 class ArtifactReader(Protocol):
@@ -134,6 +172,10 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
     At least one value and one identity cell are mandatory. This verifies the
     supplied binding, not whether the caller correctly bound a database row.
     """
+    if not isinstance(content, bytes):
+        raise ProofError("invalid_document")
+    if len(content) > MAX_CONTENT_BYTES:
+        raise ProofError("content_too_large")
     if (
         not isinstance(proof, Mapping)
         or type(proof.get("version")) is not int
@@ -157,7 +199,14 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
     try:
         if format_name == "json" and mime == "application/json":
             document = content.decode("utf-8-sig")
-            payload = json.loads(document, parse_float=Decimal, parse_constant=_reject_constant)
+            _check_json_depth(document)
+            payload = json.loads(
+                document,
+                parse_float=JsonNumberToken,
+                parse_int=JsonNumberToken,
+                parse_constant=_reject_constant,
+                object_pairs_hook=_unique_json_object,
+            )
             scope = _path(proof.get("scope_path"))
             _at(payload, scope)
 
@@ -165,7 +214,20 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
                 path = _path(cell.get("path"))
                 if len(path) <= len(scope) or path[: len(scope)] != scope:
                     raise ProofError("cell_outside_record")
-                return path, _at(payload, path)
+                actual = _at(payload, path)
+                encoding = cell.get("raw_encoding")
+                if "raw_encoding" in cell:
+                    if encoding != "json_number_lexeme" or cell.get("kind") != "number":
+                        raise ProofError("unsupported_raw_encoding")
+                    if not isinstance(actual, JsonNumberToken):
+                        raise ProofError("json_number_token_required")
+                    return path, actual.raw
+                try:
+                    return path, Decimal(actual.raw) if isinstance(
+                        actual, JsonNumberToken
+                    ) else actual
+                except InvalidOperation as exc:
+                    raise ProofError("invalid_document") from exc
 
             get_cell = get_json_cell
 
@@ -200,16 +262,17 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
             from ketrika.core.provenance_tables import table_cell_reader
 
             get_cell = table_cell_reader(content, mime, proof)
-
         else:
             raise ProofError("unsupported_format")
-    except (UnicodeError, json.JSONDecodeError, csv.Error) as exc:
+    except (UnicodeError, json.JSONDecodeError, csv.Error, InvalidOperation, RecursionError) as exc:
         raise ProofError("invalid_document") from exc
 
     seen: set[tuple[Any, ...]] = set()
     fields: set[str] = set()
     verified_values: list[str] = []
     for cell in cells:
+        if "raw_encoding" in cell and format_name != "json":
+            raise ProofError("unsupported_raw_encoding")
         field = cell.get("field")
         if not isinstance(field, str) or not field or field in fields:
             raise ProofError("invalid_field")

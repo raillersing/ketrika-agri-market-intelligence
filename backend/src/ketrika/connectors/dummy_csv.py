@@ -16,7 +16,7 @@ class DummyCsvConnector:
     """A minimal CSV price connector used to verify pipeline execution and supersession."""
 
     source_id: ClassVar[str] = "dummy_csv"
-    parser_version: ClassVar[str] = "1.0.0"
+    parser_version: ClassVar[str] = "1.0.1"
 
     def discover(self, ctx: RunContext) -> Iterable[DiscoveredItem]:
         """Discover dummy CSV target."""
@@ -37,7 +37,7 @@ class DummyCsvConnector:
         reader = csv.DictReader(io.StringIO(text_content))
 
         records: list[PriceRecord] = []
-        for row in reader:
+        for row_index, row in enumerate(reader):
             p_start = date.fromisoformat(row["period_start"])
             p_end = date.fromisoformat(row["period_end"])
             p_raw = row["price"]
@@ -55,7 +55,33 @@ class DummyCsvConnector:
                     unit_raw=row["unit"],
                     currency_raw=row.get("currency", "MGA"),
                     extraction_method="deterministic",
-                    evidence={"row": row},
+                    evidence={
+                        "row": row,
+                        "provenance": {
+                            "version": 1,
+                            "format": "csv",
+                            "row": row_index,
+                            "delimiter": ",",
+                            "cells": [
+                                {
+                                    "field": field,
+                                    "column": column,
+                                    "role": "value" if field == "price_value" else "identity",
+                                    "kind": "number" if field == "price_value" else "text",
+                                    "expected": row[column],
+                                }
+                                for field, column in (
+                                    ("price_value", "price"),
+                                    ("product_raw", "product"),
+                                    ("location_raw", "market"),
+                                    ("period_start", "period_start"),
+                                    ("unit_raw", "unit"),
+                                    ("currency_raw", "currency"),
+                                )
+                                if column in row and row[column] is not None
+                            ],
+                        },
+                    },
                     confidence=1.0,
                 )
             )

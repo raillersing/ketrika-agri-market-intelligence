@@ -65,7 +65,7 @@
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
-| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | 41822c8ea7db91f0eda7f17c273daf47786d7459 | Production reçue 228 et check 629/35/build codes 0 ; garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 imports préparatoires corrigés |
+| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | 41822c8ea7db91f0eda7f17c273daf47786d7459 | Natifs JSON/CSV reçus 258 et check 659/35/build codes 0 ; garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 imports préparatoires corrigés |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
@@ -484,6 +484,49 @@
 - Contrôle SQL actif en lecture seule à 07:59:09Z code 0 : 482 sources / MD5 47b4402859acc41e3ae91fdb128e56c6 et 764 prix / MD5 4b2586cb8e422f11c4873ad513d66bc1 inchangés. Lecture réelle de chaque version Bronze 29081 code 0 : 674 versions/objets, zéro delete marker, 1377481 octets ; SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c inchangé.
 - R0.5 IN_PROGRESS : garde de publication Gold, adaptateurs natifs et lignée des conversions restent obligatoires ; aucune performance de marché, collecte live ou qualification humaine revendiquée.
 - Commit 41822c8ea7db91f0eda7f17c273daf47786d7459 : 22 fichiers, 567 ajouts/17 retraits ; diff staged check 81367 code 0, gitleaks 3085 code 0 / 337596 octets / aucune fuite. Aucun tag de phase.
+
+### [2026-10-10T08:08:40Z] R0.5 — septième incrément : preuves natives JSON/CSV
+
+- Mini-plan : ADR-022/SPECS avant transfert ; reprendre uniquement lexèmes JSON bornés et adaptateur CSV du worktree, sans garde Gold/générateur prototype ; conserver le comportement historique sans option ; tests négatifs de brut/identité/ambiguïté ; scénario SQL/MinIO avec relecture DQ ; augmenter le manifeste sans réduire les seuils ; QA puis check Windows complet ; préservation active, scan et commit atomique.
+- Base fonctionnelle reçue 41822c8ea7db91f0eda7f17c273daf47786d7459 ; R0.5 IN_PROGRESS, aucune migration active ni nouveau droit de collecte.
+
+### [2026-10-10T14:26:11Z] R0.5 — septième incrément ciblé reçu
+
+- QA Windows 31083 code final 0 : 258 passed / 94,82 s, neuf intégrations, zéro failure/error/skip ; reçu 47ef2fcaecf94630b8c40affa0a636fc / 104,384 s, rapports increment-7-qa exportés. L'heure de réception ne représente pas la durée d'exécution.
+- SQL/MinIO natif JSON et CSV : positif 1/1, négatif 0/1, résultats DQ relus dans nouvelle session ; brut JSON divergent et ligne CSV étrangère refusés. Aucun objet existant modifié ou supprimé ; sources de test explicitement synthetic/verified=false.
+- Ruff 14692 code 0 ; format 17447 code 0 / un reformatté, quatre inchangés ; mypy 94244 code 0 / cinq fichiers. Fonctionnel figé pour contrôle Windows complet avant réception/commit ; aucune garde Gold encore raccordée.
+
+### [2026-10-10T14:38:10Z] R0.5 — préparations séparées pendant contrôle principal
+
+- Worktree /tmp/ketrika-r05-formats.OQ2It5 uniquement : ADR-024 préparatoire, générateur de nouvelles observations transient avec vrais octets JSON synthétiques, SHA/clé et références ; ancien historique conservé, pas de réparation des données réelles. Reader QA réutilisé, bucket réel protégé ; modèle/mapping de production alignés sur ADR-021 déjà reçu.
+- Unités 59157 code 0 / 39 / 74,86 s ; cible générateur complet avec SQL/store simulés 87753 code 0 / sept / 51,71 s ; types 77096 code 0 / trois fichiers et lint 51948 code 0. Dernier ajout stock quantity/unit requiert recontrôle, pas de qualification SQL/Gold revendiquée.
+- Check principal 23511 reste actif, lint/format/types/gouvernance verts (185/184 fichiers) ; aucun code fonctionnel principal modifié depuis lancement. Garde Gold, conversions et modèle non livrés par ces préparations.
+
+### [2026-10-10T14:45:50Z] R0.5 — contrôles préparatoires, sans raccordement de publication
+
+- Worktree seulement : sélection de garde alignée sur prédicats prix/stock/production des vues, audit historique distinct, lock_timeout transactionnel 5 s et erreur propagée sans succès/retry. ADR/SPECS préparatoires avant code ; aucune édition fonctionnelle principale pendant check 23511.
+- Cible 44198 code 0 : 22 passed / 21,62 s (garde 15 + générateur sept, SQL/store simulés). Générateur courant recontrôlé 5473 code 0 / sept / 17,91 s ; types 41517 code 0 / quatre fichiers ; lint 92309 code 0. Nouveau type check 53609 encore en cours, aucune qualification de verrou SQL réel ni protection Gold revendiquée.
+- Préservation active renouvelée : SQL 13548 code 0, 482 sources/764 prix et mêmes MD5 ; lecture Bronze 8393 code 0, 674 versions/objets, zéro delete marker, 1377481 octets et SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c inchangé. API Docker healthy, pas de qualification des parcours métier actifs.
+
+### [2026-10-10T15:04:47Z] R0.5 — préparations de mémoire et publication, principal toujours figé
+
+- Worktree uniquement : ADR-025 reader borné avant parsing (32 MiB + sentinelle, flux fermé sur succès/refus, SHA réel toujours requis), ADR-026 groupement par clé validée sans rétention de tout le corpus, résultats dans ordre original et doublons prévalidés. Cible 45955 code 0 / 77 / 19,76 s ; types 30795 code 0 / deux fichiers ; lint 14379 code 0.
+- Régressions groupement/formats/LLM/binder 13307 code 0 / 210 / 53,10 s, types 21007 code 0 / quatre fichiers, lint 99308 code 0. Reader/groupement non transférés au principal ; durée transport/mémoire du parsing distinctes, non qualifiées.
+- ADR-027 préparatoire avant code : 12 scripts Gold WITH NO DATA, init sans publication implicite, refresh allowlist/topologique, audit fresh puis savepoint global et savepoint local pour retry concurrent ; aucune réussite partielle sur erreur, scope source_cells non modèle/non conversions explicite. Migration d'invalidation de cache encore requise avant transfert ; aucun schéma ni cache actif touché.
+- Cible publication/garde/générateur 82364 code 0 / 32 / 18,86 s, types 95307 code 0 / deux fichiers et lint 87925 code 0. Ces mocks ne prouvent ni syntaxe PostgreSQL, rollback réel ni protection d'une publication actuelle. Garde six fichiers : types 53609 code 0.
+- Check Windows principal 23511 au test_ml_forecast ; toutes les intégrations du dossier tests/integration reçues vertes, les contrôles marqués integration hors dossier et la réception globale restent obligatoires. Processus pytest CPU actif, aucun timeout/échec supposé. R0.5 IN_PROGRESS.
+
+### [2026-10-10T15:18:18Z] R0.5 — backend natif reçu, build frontend obligatoire
+
+- Check Windows 23511 backend reçu : 659 passed / 2649,23 s, cinq avertissements de dépendances, zéro failure/error/skip ; intégrations dossier/marqueur 39, union 43. Couvertures core 93,5217903416 %, extraction 86,3768115942 %, normalize 84,8552338530 %. Rapports increment-7-backend-check exportés.
+- Frontend lint/types codes 0, 35 tests / quatre suites / 5,17 s ; reçu en cours 567fb9cb-202a-4811-b026-c537890968ff, rapport de tests exporté. Build lancé ; code Windows final inconnu, aucun commit natif avant réception complète/préservation/scan.
+- Prototype migration unpopulated : cible 57578 code 0 / 12 / 19,81 s, types 53574 code 0 / deux fichiers, lint 45142 code 0. Scénario SQL publication/rerelecture/corruption mémoire/rollback rédigé mais NON exécuté ; types 51124 et lint 53740 en cours, aucun lancement contre volumes QA occupés. R0.5 IN_PROGRESS.
+
+### [2026-10-10T15:22:32Z] R0.5 — septième incrément reçu intégralement
+
+- Check Windows 23511 code final 0, 659 backend / 2649,23 s et frontend 35 / quatre suites / 5,17 s ; reçu 567fb9cb-202a-4811-b026-c537890968ff, lint 17088 ms/types 19912 ms/tests 11438 ms/build 246537 ms, toutes étapes 0 sans timeout/signal/erreur. Rapport receipt exporté, autres artifacts déjà archivés.
+- Préservation SQL 93143 code 0 : 482 source_record / MD5 47b4402859acc41e3ae91fdb128e56c6, 764 prix / MD5 4b2586cb8e422f11c4873ad513d66bc1 ; Bronze 31213 code 0 : 674 versions/objets, zéro delete marker, 1377481 octets, SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c inchangé. Diff check 27842 code 0.
+- Prototype SQL publication : lint 53740 code 0 et types 51124 code 0 / un fichier ; test écrit mais pas exécuté, aucun rollback réel ni migration 0005 revendiqués. R0.5 IN_PROGRESS ; pas de tag final ni de source/modèle marché qualifiés.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 

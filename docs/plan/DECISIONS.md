@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-022 : R0.5 — lexèmes numériques JSON et coordonnées CSV natives
+
+- **Date :** 2026-10-10 ; accepté avant transfert au principal (prototype nommé ADR-023 dans son worktree, non normatif).
+- **Contexte :** un nombre JSON exact ne prouve pas un brut reconstruit depuis float/Decimal ; les parsers doivent fournir des coordonnées natives plutôt qu'une recherche libre.
+- **Décision :** option de cellule raw_encoding=json_number_lexeme, JSON/number seulement ; conserver le token original via parse_int/parse_float et comparer valeur décimale et brut exact. Sans option, refus historique d'un brut textuel sur token numérique maintenu. Clés JSON dupliquées, option inconnue, chaîne sous option numérique et identité numérique implicitement convertie sont refusées. Limite générale 32 MiB avant parsing et profondeur JSON 128 niveaux indépendante de Python, chaînes/échappements exclus ; exposant non interprétable refusé avec erreur stable.
+- **CSV de test :** DummyCsvConnector 1.0.1 fournit ligne zéro-indexée et colonnes originales pour prix/produit/lieu/date/unité/devise. Une devise par défaut n'invente jamais une cellule source. Pas de nouveau connecteur public ni réactivation NASA/HDX.
+- **Alternatives :** sérialiser un float/Decimal pour inventer le brut, accepter une autre ligne de même prix, résoudre opportunistement une clé dupliquée (rejetées).
+- **Conséquences :** réception unitaires et SQL/MinIO isolée obligatoire ; aucune preuve de conversion Gold, collecte live ou modèle. Garde Gold distincte encore non livrée ; aucun changement de précision SQL ni migration active.
+
 ## ADR-021 : R0.5 — brut de production conservé sans backfill
 
 - **Date :** 2026-10-10 ; accepté avant implémentation.

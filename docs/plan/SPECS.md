@@ -901,6 +901,12 @@ Ordre : `parse → validate → product match → unit conversion → location m
 
 ## 14. Qualité des données
 
+### 14.0 Lexèmes JSON et coordonnées natives (ADR-022)
+
+Cellule number JSON : raw_encoding=json_number_lexeme autorise seulement un token numérique original conservé par le décodeur, jamais str(float/Decimal). Sans option, le refus historique raw_expected sur un nombre JSON est maintenu. Option inconnue, chaîne JSON sous cette option, bool/non-fini et clés dupliquées refusés. Identités numériques non implicitement transformées en texte. Contenu limité à 32 MiB avant parsing ; profondeur JSON limitée à 128 niveaux indépendamment de Python, chaînes/échappements exclus du compteur ; exposant non interprétable refusé avec code stable.
+
+DummyCsvConnector parser 1.0.1 fournit une preuve CSV v1 par ligne originale : price_value/product_raw/location_raw/period_start/unit_raw/currency_raw liés aux colonnes price/product/market/period_start/unit/currency. Colonne absente non inventée ; valeur par défaut non qualifiée comme cellule source. Adaptateur de test seulement, aucune qualification live ni conversion économique implicite.
+
 ### 14.1 Provenance vérifiable R0.5 (ADR-016)
 
 Vérificateur hors réseau : référence SourceRecord/UUID, clé relative `{source_id}/{yyyy}/{mm}/{sha256}.{ext}`, SHA-256 hexadécimal valide et recalculé depuis les octets lus. Cache par objet limité au contrôle courant, jamais un succès sur exception. Résultats sans URL, extrait collecté, exception brute ni secret ; effectifs d'observations valides/total et objets effectivement lus. Certification complète distincte d'un contrôle incrémental ; ensemble vide non certifié, pas de taux 100 % par défaut. Les états d'authenticité R0.4 sont indépendants de l'intégrité des octets.

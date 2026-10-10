@@ -13,9 +13,9 @@
       "minimum_integration_tests": 2
     },
     "R0.5": {
-      "tests": ["tests/unit/test_provenance.py", "tests/unit/test_provenance_audit.py", "tests/unit/test_provenance_tables.py", "tests/unit/test_provenance_llm.py", "tests/unit/test_weather_provenance.py", "tests/unit/test_weather_migration.py", "tests/unit/test_production_provenance.py", "tests/unit/test_production_migration.py", "tests/unit/test_nasa_power.py", "tests/unit/test_core_db_models.py", "tests/authentic/test_provenance_wdi.py", "tests/integration/test_provenance_audit.py", "tests/integration/test_weather_provenance.py", "tests/integration/test_production_provenance.py", "tests/integration/test_nasa_power.py"],
-      "minimum_tests": 228,
-      "minimum_integration_tests": 7
+      "tests": ["tests/unit/test_provenance.py", "tests/unit/test_provenance_json_lexemes.py", "tests/unit/test_dummy_csv_provenance.py", "tests/unit/test_provenance_audit.py", "tests/unit/test_provenance_tables.py", "tests/unit/test_provenance_llm.py", "tests/unit/test_weather_provenance.py", "tests/unit/test_weather_migration.py", "tests/unit/test_production_provenance.py", "tests/unit/test_production_migration.py", "tests/unit/test_nasa_power.py", "tests/unit/test_core_db_models.py", "tests/authentic/test_provenance_wdi.py", "tests/integration/test_provenance_audit.py", "tests/integration/test_weather_provenance.py", "tests/integration/test_production_provenance.py", "tests/integration/test_native_provenance.py", "tests/integration/test_nasa_power.py"],
+      "minimum_tests": 258,
+      "minimum_integration_tests": 9
     },
     "R0.4": {
       "tests": ["tests/unit/test_corpus.py", "tests/authentic/test_corpus_wdi.py", "tests/integration/test_douanes_stats.py"],

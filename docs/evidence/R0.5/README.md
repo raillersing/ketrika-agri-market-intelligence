@@ -1,9 +1,30 @@
 # R0.5 — provenance mesurée
 
-État : IN_PROGRESS. Six incréments testés ; pas de tâche DONE ni de garde Gold livrée.
+État : IN_PROGRESS. Sept incréments reçus ; pas de tâche DONE ni de garde Gold livrée.
 Base reçue : R0.4 commit 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482,
 clôture documentaire cd89d17 ; incrément pur reçu et commité :
 30d0a837bf666336ee802ecdf843dc810f75d639, ADR-016 avant implémentation.
+
+## Incrément 7 reçu : preuves natives CSV/JSON
+
+ADR-022/SPECS avant transfert ; lexème numérique JSON original explicite, refus des
+clés dupliquées et profondeur bornée ; coordonnées natives du CSV de test 1.0.1.
+Pas de nouveau connecteur public ni de réactivation de source interdite.
+QA Windows 31083 code 0 : 258 / 94,82 s / neuf intégrations, zéro failure/error/skip ;
+reçu 47ef2fcaecf94630b8c40affa0a636fc / 104,384 s, rapports increment-7-qa archivés.
+SQL/MinIO : JSON et CSV 1/1 valides, brut divergent/ligne étrangère 0/1 chacun,
+résultats DQ relus dans nouvelle session. Tests synthétiques seulement.
+Types 94244 code 0 / cinq fichiers ; lint 14692 code 0 ; format 17447 code 0.
+Check Windows 23511 lancé à 2026-10-10T14:26:11Z, code final 0 reçu à 15:22:32Z :
+659 backend / 2649,23 s, cinq avertissements, zéro failure/error/skip ; intégrations
+39 par dossier/marqueur, union 43. Couvertures core 93,5217903416 %,
+extraction 86,3768115942 %, normalize 84,8552338530 % ; lint/format 185, types 184 verts.
+Frontend 35 tests / quatre suites / 5,17 s ; reçu 567fb9cb-202a-4811-b026-c537890968ff,
+lint 17088 ms, types 19912 ms, tests 11438 ms, build 246537 ms, toutes étapes code 0.
+Rapports increment-7-backend-check/frontend-check archivés. Préservation renouvelée :
+482 sources/764 prix et mêmes MD5 ; 674 versions/objets Bronze, zéro delete marker,
+1377481 octets, SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c inchangé.
+Pas de qualification de source live, conversion économique ou modèle de marché.
 
 ## Incrément 6 reçu : brut production
 
