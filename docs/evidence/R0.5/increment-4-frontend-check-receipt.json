@@ -1,0 +1,63 @@
+{
+  "execution_id": "2f8726a5-b54f-4f2e-9c0d-aeb76ad91c26",
+  "scope": "frontend software only",
+  "passed": true,
+  "steps": [
+    {
+      "command": [
+        "pnpm",
+        "lint"
+      ],
+      "exit_code": 0,
+      "error_code": null,
+      "signal": null,
+      "timed_out": false,
+      "successful": true,
+      "duration_ms": 11353
+    },
+    {
+      "command": [
+        "pnpm",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "error_code": null,
+      "signal": null,
+      "timed_out": false,
+      "successful": true,
+      "duration_ms": 15829
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "test",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=/app/node_modules/.qa-results/2f8726a5-b54f-4f2e-9c0d-aeb76ad91c26/vitest.json"
+      ],
+      "exit_code": 0,
+      "error_code": null,
+      "signal": null,
+      "timed_out": false,
+      "successful": true,
+      "duration_ms": 10577
+    },
+    {
+      "command": [
+        "pnpm",
+        "build"
+      ],
+      "exit_code": 0,
+      "error_code": null,
+      "signal": null,
+      "timed_out": false,
+      "successful": true,
+      "duration_ms": 195248
+    }
+  ],
+  "counts": {
+    "tests": 35,
+    "suites": 4
+  }
+}

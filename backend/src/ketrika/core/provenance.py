@@ -208,6 +208,7 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
 
     seen: set[tuple[Any, ...]] = set()
     fields: set[str] = set()
+    verified_values: list[str] = []
     for cell in cells:
         field = cell.get("field")
         if not isinstance(field, str) or not field or field in fields:
@@ -239,6 +240,11 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
                 )
         else:
             raise ProofError("unsupported_cell_kind")
+        verified_values.append(str(actual))
+    if "llm_evidence" in proof:
+        from ketrika.core.provenance_llm import verify_llm_evidence
+
+        verify_llm_evidence(content, proof, verified_values)
     return len(seen)
 
 

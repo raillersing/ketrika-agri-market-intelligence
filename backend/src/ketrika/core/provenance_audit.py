@@ -104,7 +104,10 @@ def bind_observation(table: str, observation: Any) -> ObservationClaim:
     proof = evidence.get("provenance") if isinstance(evidence, dict) else None
     if not isinstance(proof, dict) or not isinstance(proof.get("cells"), list):
         raise ProofError("binding_proof_missing")
-    if getattr(observation, "extraction_method", None) != "deterministic":
+    method = getattr(observation, "extraction_method", None)
+    if method not in ("deterministic", "llm_verified", "dual_agree"):
+        raise ProofError("extraction_proof_not_supported")
+    if method in ("llm_verified", "dual_agree") and not isinstance(proof.get("llm_evidence"), dict):
         raise ProofError("extraction_proof_not_supported")
     bound = copy.deepcopy(proof)
     required_values = {field for field in policy.values if getattr(observation, field) is not None}

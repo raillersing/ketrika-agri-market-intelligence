@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from copy import deepcopy
 from datetime import UTC, datetime
 from uuid import uuid4
 
@@ -24,13 +25,27 @@ from tests.unit.test_provenance_audit import price_example
 
 
 @pytest.mark.integration
+@pytest.mark.parametrize("method", ["deterministic", "llm_verified", "dual_agree"])
 def test_audit_persists_bound_results_and_missing_target_across_sessions(
     request: pytest.FixtureRequest,
+    method: str,
 ):
     observation, content = price_example()
+    mime_type, extension = "application/json", "json"
+    if method != "deterministic":
+        observation.extraction_method = method
+        assert observation.evidence is not None
+        proof = observation.evidence["provenance"]
+        proof.update(format="html_table", table=0, row=0)
+        for column, cell in enumerate(proof["cells"]):
+            cell["column"] = column
+            cell.pop("path")
+        proof["llm_evidence"] = {"page": 1, "text": "3000.1250 rice 2024-01-01 kg MGA"}
+        content = b"<table><tr><td>3000.1250</td><td>rice</td><td>2024-01-01</td><td>kg</td><td>MGA</td></tr></table>"
+        mime_type, extension = "text/html", "html"
     source_id = f"test_provenance_{uuid4().hex}"
     digest = hashlib.sha256(content).hexdigest()
-    key = f"{source_id}/2026/10/{digest}.json"
+    key = f"{source_id}/2026/10/{digest}.{extension}"
     target = ObservationTarget("price_observation", observation.observation_id)
     missing = ObservationTarget("price_observation", uuid4())
     with get_session() as session:
@@ -41,7 +56,7 @@ def test_audit_persists_bound_results_and_missing_target_across_sessions(
         artifact = reader.put(
             source_id=source_id,
             content=content,
-            mime_type="application/json",
+            mime_type=mime_type,
             url="https://example.invalid/test-only",
             retrieved_via="manual_upload",
             fetched_at=datetime(2026, 10, 10, tzinfo=UTC),
@@ -69,7 +84,7 @@ def test_audit_persists_bound_results_and_missing_target_across_sessions(
                 retrieved_via="manual_upload",
                 object_key=key,
                 content_sha256=digest,
-                mime_type="application/json",
+                mime_type=mime_type,
                 fetched_at=datetime.now(UTC),
                 extraction_status="parsed",
                 parser_version="test",
@@ -120,11 +135,47 @@ def test_audit_persists_bound_results_and_missing_target_across_sessions(
                         "passed": False,
                         "objects_read": 1,
                         "backend": "isolated MinIO + SQL",
+                        "extraction_method": method,
                         "dataset": "synthetic; never market qualification",
                     }
                 ),
             )
         )
+        if method != "deterministic":
+            unsupported, _ = price_example()
+            unsupported.source_record_id = observation.source_record_id
+            unsupported.extraction_method = method
+            unsupported.evidence = deepcopy(observation.evidence)
+            assert unsupported.evidence is not None
+            unsupported.evidence["provenance"]["llm_evidence"]["text"] = "3000.1250 rice"
+            session.add(unsupported)
+            session.flush()
+            rejected = audit_observation_provenance(
+                session,
+                reader,
+                mode="incremental",
+                targets=[ObservationTarget("price_observation", unsupported.observation_id)],
+            )
+            assert rejected.report.valid == 0 and rejected.report.total == 1
+            assert not rejected.report.passed
+            assert rejected.report.results[0].reason == "llm_cell_not_in_excerpt"
+            rejected_id = rejected.dq_id
+            request.node.user_properties.append(
+                (
+                    "ketrika.provenance.llm_rejected",
+                    json.dumps(
+                        {
+                            "dq_id": str(rejected_id),
+                            "valid": 0,
+                            "total": 1,
+                            "passed": False,
+                            "extraction_method": method,
+                            "reason": "llm_cell_not_in_excerpt",
+                            "dataset": "synthetic",
+                        }
+                    ),
+                )
+            )
         unproven, _ = price_example()
         unproven.source_record_id = observation.source_record_id
         unproven.evidence = None
@@ -160,6 +211,13 @@ def test_audit_persists_bound_results_and_missing_target_across_sessions(
                 ),
             )
         )
+    if method != "deterministic":
+        with get_session() as session:
+            saved_rejected = session.get(DqResult, rejected_id)
+            assert saved_rejected is not None and not saved_rejected.passed
+            assert saved_rejected.metric == 0 and saved_rejected.details is not None
+            assert saved_rejected.details["total_records"] == 1
+            assert saved_rejected.details["results"][0]["reason"] == "llm_cell_not_in_excerpt"
 
 
 @pytest.mark.integration

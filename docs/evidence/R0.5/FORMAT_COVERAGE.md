@@ -46,8 +46,10 @@ L'absence de valeur ou de preuve échoue ; les lignes ne sont pas retirées du c
 - value_raw du commerce n'est pas encore rattaché aux deux devises ; value_raw de
   production et evidence/extraction_method météo ne sont pas conservés par le schéma
   actuel. Résoudre explicitement les contrats, sans réécriture destructive des observations.
-- llm_verified, dual_agree, human et méthode inconnue ne passent pas l'auditeur actuel.
-  Leur étiquette n'est pas une preuve ; page/extrait relus et identité ancrée restent requis.
+- ADR-019 reçu (QA 182 / quatre intégrations, check Windows 593/35/build code 0) : llm_verified/dual_agree
+  exigent cellules SQL exactes puis page/extrait relus et tous les tokens valeur/identité.
+  Leur étiquette seule échoue ; human/méthode inconnue restent refusés. Formats LLM
+  XLSX/CSV/JSON non pris en charge ; aucune performance fournisseur qualifiée.
 - Audit complet : toutes les six tables, y compris historique et sources disabled.
   Cela prouve le périmètre sélectionné, pas l'autorisation de collecte d'une source.
   Incrémental : couples table/UUID explicites, absences comptées. Résultats DQ sans

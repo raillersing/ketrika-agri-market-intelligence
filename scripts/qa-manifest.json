@@ -13,9 +13,9 @@
       "minimum_integration_tests": 2
     },
     "R0.5": {
-      "tests": ["tests/unit/test_provenance.py", "tests/unit/test_provenance_audit.py", "tests/unit/test_provenance_tables.py", "tests/authentic/test_provenance_wdi.py", "tests/integration/test_provenance_audit.py"],
-      "minimum_tests": 149,
-      "minimum_integration_tests": 2
+      "tests": ["tests/unit/test_provenance.py", "tests/unit/test_provenance_audit.py", "tests/unit/test_provenance_tables.py", "tests/unit/test_provenance_llm.py", "tests/authentic/test_provenance_wdi.py", "tests/integration/test_provenance_audit.py"],
+      "minimum_tests": 182,
+      "minimum_integration_tests": 4
     },
     "R0.4": {
       "tests": ["tests/unit/test_corpus.py", "tests/authentic/test_corpus_wdi.py", "tests/integration/test_douanes_stats.py"],

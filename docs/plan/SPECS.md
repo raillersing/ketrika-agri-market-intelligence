@@ -900,6 +900,17 @@ ADR-018 : preuve v1 étendue avec pdf_table/html_table (table/row/column zéro-i
 
 Asset checks Dagster obligatoires, avec résultats écrits dans `ops.dq_result` :
 
+Extension R0.5 ADR-019 (remplace la restriction initiale deterministic de l'auditeur) :
+llm_verified/dual_agree exigent evidence.provenance.llm_evidence={page:int,text:str}.
+Après SHA et cellules exactes liées à SQL : PDF page identique relue, HTML page logique 1
+et texte nettoyé relu ; extrait non vide ancré selon §11.2 (substring ou partial_ratio>=95).
+Toutes les valeurs brutes et identités vérifiées doivent apparaître comme tokens complets,
+sans arrondi float ni assimilation d'un préfixe/décimale prolongée/signe différent.
+Preuve absente/incomplète, page discordante/inaccessible ou format LLM XLSX/JSON/CSV
+non pris en charge : échec explicite. human/méthode inconnue restent refusés ; aucun appel
+fournisseur, OCR, outil ou instruction provenant du contenu source. Réception logicielle
+distincte de la qualification de modèle/source ; garde Gold et adaptateurs restent requis.
+
 | Check | Seuil MVP | Bloquant pour Gold |
 |---|---|---|
 | `provenance_complete` : 100 % des observations ont un `source_record_id` valide | 100 % | oui |

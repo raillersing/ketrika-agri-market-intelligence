@@ -1,9 +1,38 @@
 # R0.5 — provenance mesurée
 
-État : IN_PROGRESS. Trois incréments reçus ; pas de tâche DONE ni de garde Gold livrée.
+État : IN_PROGRESS. Quatre incréments reçus ; pas de tâche DONE ni de garde Gold livrée.
 Base reçue : R0.4 commit 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482,
 clôture documentaire cd89d17 ; incrément pur reçu et commité :
 30d0a837bf666336ee802ecdf843dc810f75d639, ADR-016 avant implémentation.
+
+## Incrément 4 reçu : preuve LLM mécanique
+
+ADR-019/SPECS avant transfert par apply_patch depuis le prototype conservé.
+Cellules et attentes SQL vérifiées avant page/extrait ; PDF page identique, HTML
+page logique 1, ancrage normalisé §11.2 et tous les tokens valeur/identité exigés.
+Ni arrondi float, préfixe numérique ni étiquette seule ne prouvent une valeur.
+XLSX/CSV/JSON LLM restent non pris en charge ; human/inconnu refusés.
+Pas d'appel fournisseur, de collecte live, d'OCR ni de nouvelle dépendance.
+
+QA enregistrée : minimum 182 tests / quatre intégrations SQL-MinIO ; trois méthodes
+deterministic/llm_verified/dual_agree, refus LLM incomplet persisté et relu depuis
+une nouvelle session SQL. Objets réellement écrits uniquement au bucket QA,
+synthétiques/manual_upload, URL verified=false et zéro HTTP acquis ; aucune mutation
+Bronze négative réelle. QA Windows 65882 code 0 : 182 / 22,91 s / quatre intégrations,
+zéro failure/error/skip, reçu e6e52eb0295e4d0da9d792af7032a0a0 / 31,479 s,
+rapports increment-4-qa archivés. Mypy 95072 code 0 / six fichiers, lint 39249 code 0.
+Check Windows intégral 55501 lancé 2026-10-10T03:25:28Z, code fonctionnel figé ;
+code final 0 reçu 2026-10-10T04:02:14Z : 593 backend / 1849,68 s / cinq avertissements,
+zéro failure/error/skip ; intégrations union 39 (dossier/marqueur 35).
+Couvertures core 93,4590690209 %, extraction 86,3768115942 %, normalize 84,8552338530 % ;
+preuve LLM 52/53 statements. Frontend 35 / quatre suites / 5,45 s, reçu
+2f8726a5-b54f-4f2e-9c0d-aeb76ad91c26, lint/types/tests/build codes 0 ; build 195248 ms,
+aucun signal/timeout/erreur. Rapports increment-4-backend-check/frontend-check archivés.
+JUnit ciblé : complet 1/255 puis 2/258 puis 3/261, toujours failed ; deux refus LLM
+incomplets 0/1 persistés/relus. Ces dénominateurs incluent les anciennes régressions
+QA synthétiques, pas des observations du marché. Préservation active inchangée,
+482 source_record / 764 prix / 674 Bronze, empreintes dans PROGRESS.
+Garde Gold et adaptateurs métier restent obligatoires avant DONE.
 
 ## Incrément 3 reçu : formats et preuve SQL/MinIO
 

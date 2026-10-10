@@ -65,7 +65,7 @@
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
-| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | c012c8a5de30cf020914ff183215184eda80d0e9 | Incrément 3 reçu : QA 149, check Windows 28765 code 0 / 560 backend / 35 web / build ; garde Gold/adaptateurs/LLM encore obligatoires | B-R016/017 résolus |
+| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | c012c8a5de30cf020914ff183215184eda80d0e9 | Incrément LLM reçu : QA 182, check Windows 55501 code 0 / 593 backend / 35 web / build ; commit à consigner, garde Gold/adaptateurs encore obligatoires | B-R016/017 résolus ; B-R018 prototype seulement |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
@@ -353,6 +353,39 @@
 
 - Commit c012c8a5de30cf020914ff183215184eda80d0e9, 20 fichiers / 815 ajouts / 26 retraits. Index explicitement borné au lot reçu ; diff staged check 14478 code 0, gitleaks staged Docker 10378 code 0 / 333808 octets / aucune fuite.
 - Plan/PROGRESS synchronisés, R0.5 toujours IN_PROGRESS. Prochain lot : ADR-019/SPECS avant transfert de la preuve LLM préparée ; cellules liées à SQL, page/extrait relus et refus persisté, tests/reçus ciblés puis check Windows intégral. Garde Gold/adaptateurs encore obligatoires, aucun tag.
+
+### [2026-10-10T03:21:34Z] R0.5 — transfert du contrôle LLM, incrément 4
+
+- Incrément 3 reçu c012c8a, clôture documentaire 910e322. ADR-019 et SPECS intégrés avant code ; prototype conservé, aucune donnée active modifiée. Statut R0.5 IN_PROGRESS.
+- Mini-plan :
+1. Transférer le vérificateur page/extrait et tests synthétiques par apply_patch, sans écraser d'autres changements.
+2. Raccorder post-vérification des cellules et liaison SQL fail-closed pour llm_verified/dual_agree.
+3. Vérifier les trois méthodes via SQL/MinIO isolés, refus LLM persisté et relu ; négatifs d'objets simulés uniquement.
+4. Mettre à jour manifest/matrice et exécuter QA ciblée, lint/types puis check Windows intégral figé.
+5. Archiver effectifs/limites, préserver actif, scanner et committer seulement vert ; garde Gold/adaptateurs encore obligatoires.
+
+### [2026-10-10T03:25:28Z] R0.5 — quatrième incrément ciblé reçu, check global figé
+
+- QA Windows 65882 code 0 : 182 / 22,91 s / quatre intégrations / zéro failure/error/skip ; reçu e6e52eb0295e4d0da9d792af7032a0a0 / 31,479 s, rapports increment-4-qa exportés. Tests réels de SQL/MinIO QA pour deterministic/llm_verified/dual_agree ; négatifs LLM persistés et relus, aucun provider/live qualifié.
+- Mypy 95072 code 0 / six fichiers, lint 39249 et diff check 74082 codes 0. Format Docker 78419 code 0 / six fichiers inchangés. Aucun ignore ni seuil retiré, aucune mutation Bronze active.
+- Check Windows complet 55501 lancé, code fonctionnel figé. R0.5 IN_PROGRESS ; aucun commit de cet incrément avant réception complète. Les comptes complets de QA synthétique restent distincts de la qualification marché/Gold.
+
+### [2026-10-10T03:40:00Z] R0.5 — check LLM actif, préparation météo isolée
+
+- Check Windows 55501 : 593 tests collectés, lint/format 176, mypy 175 et gouvernance codes 0. Toutes les intégrations passent, notamment les quatre SQL/MinIO de preuve LLM ; quatrième test ML long actif. Aucun code final ni commit de l'incrément 4 reçu.
+- Worktree /tmp/ketrika-r05-formats.OQ2It5 uniquement : ADR-020/SPECS avant prototype de provenance météo, colonnes nullable sans backfill, supersession ajout seule, ancienne valeur/SourceRecord conservés, refus de brut inventé et d'arrondi implicite. Garde Gold reste distincte et obligatoire ; aucune migration active ni NASA live autorisée.
+- Prototype : unités 77916 code 0 / 58 / 29,54 s ; mypy 29828 code 0 / cinq fichiers. B-R018 imports corrigés, lint 18067 code 0. Migration 0003 et intégration SQL/MinIO météo préparées, non exécutées ; tests de conservation/relecture/trigger/unique/Gold encore requis. Fichiers main fonctionnels inchangés pendant le check.
+- Gold météo du prototype filtre les supersessions via predicate JSON compatible avec 0001 ; 0003 recrée seulement weather_monthly/market_health dérivés. Downgrade refuse perte de preuve/historique. Ne pas transférer avant réception et commit de l'incrément LLM ; aucune preuve de migration/qualification actuelle revendiquée.
+
+### [2026-10-10T04:02:14Z] R0.5 — réception globale du quatrième incrément logiciel
+
+- Check Windows 55501 code final 0 : lint/format 176 fichiers, types 175, gouvernance quatre DONE / une IN_PROGRESS / 69 TODO ; backend 593 / 1849,68 s / cinq avertissements / zéro failure/error/skip. Intégrations dossier/marqueur 35, union 39.
+- Couvertures core 93,4590690209 %, extraction 86,3768115942 %, normalize 84,8552338530 % ; preuve LLM 52/53 statements. QA 182 / quatre intégrations / 22,91 s code 0 ; fichiers increment-4-qa/backend-check/frontend-check archivés.
+- Frontend 35 / quatre suites / 5,45 s, reçu 2f8726a5-b54f-4f2e-9c0d-aeb76ad91c26 : lint 11353 ms, types 15829 ms, tests 10577 ms, build 195248 ms, tous codes 0 sans signal/timeout/erreur.
+- Propriétés JUnit ciblées relues Docker 90050 code 0 : chaque méthode a 1/2 valide (cible absente), LLM incomplet 0/1/refus persisté ; contrôles complets successifs 1/255, 2/258, 3/261, tous passed=false, un/deux/trois objets lus. Jeu QA synthétique/anciennes régressions, jamais santé du marché actif ni chiffre de qualification économique.
+- Préservation active relue codes 0 : mêmes source_record 482 / MD5 47b4402859acc41e3ae91fdb128e56c6, prix 764 / MD5 4b2586cb8e422f11c4873ad513d66bc1 ; Bronze 674 versions/objets, zéro delete marker, 1377481 octets, SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c. Aucun envoi/provider, migration active ou source live qualifiés.
+- Prototype météo conservé : 41395 code 0 / 61 / 28,43 s ; types 7718 code 0 / sept fichiers, NASA adapté 13030 code 0, lint 19207 code 0 avant cette dernière adaptation. SQL/migration non exécutés. Active API/daemons bindent les fichiers et API --reload ; ne pas confondre fichiers modifiés et schéma actif migré. API actuelle n'utilise pas WeatherObservation directement (recherche de source) ; compatibilité runtime de l'extension à vérifier avant transfert.
+- R0.5 IN_PROGRESS : scanner/stager uniquement le lot LLM reçu puis commit atomique. La garde Gold, les bruts/preuves complémentaires et adaptateurs métier restent obligatoires ; aucun tag ni réception totale.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 

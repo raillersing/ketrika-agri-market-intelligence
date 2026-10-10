@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-019 : R0.5 — preuve LLM mécanique, jamais preuve par étiquette
+
+- **Date :** 2026-10-10 ; accepté avant transfert du prototype au dépôt principal.
+- **Contexte :** un nombre présent dans une page entière ou un label llm_verified ne prouve ni la ligne ni l'identité ; les conversions float perdent la précision.
+- **Décision :** preuve v1 avec llm_evidence={page:int,text:str}, contrôlée après cellules/identités exactes et SHA réel. PDF : page identique à la page de la table, texte relu depuis les octets ; HTML : page logique 1 et texte nettoyé relu. Extrait non vide ancré au texte normalisé selon §11.2 (sous-chaîne ou partial_ratio>=95), puis toutes les cellules vérifiées de valeur et d'identité doivent apparaître comme tokens complets dans l'extrait. Nombres issus des cellules relues, sans génération/arrondi float ; ne pas confondre un préfixe, une décimale prolongée ou un nombre signé. XLSX/JSON/CSV LLM non pris en charge dans ce lot ; refus explicite.
+- **Liaison SQL :** llm_verified/dual_agree admis uniquement avec cette preuve structurée obligatoire et validation mécanique complète ; attentes toujours issues des champs SQL autorisés. human et méthode inconnue restent refusés sans contrat de revue. Pas de fournisseur/OCR/nouvelle dépendance, ni instruction ou outil provenant du contenu collecté.
+- **Alternatives :** faire confiance au label, à une page voisine, à rice dans price ou à un nombre arrondi (rejetées).
+- **Conséquences :** résultat DQ négatif persisté et relu, pas de succès sur extrait omettant une identité obligatoire. Réception ciblée/globale requise ; garde Gold et adaptateurs métier restent obligatoires avant DONE. Une fixture ne qualifie aucune source live, performance LLM ou marché ; Bronze actif jamais modifié.
+
 ## ADR-018 : R0.5 — coordonnées des tableaux PDF, HTML et XLSX
 
 - **Date :** 2026-10-10 ; contrat préparé dans un worktree isolé avant code, intégré avant le raccordement principal.

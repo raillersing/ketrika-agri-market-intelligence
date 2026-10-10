@@ -60,6 +60,37 @@ def price_example() -> tuple[PriceObservation, bytes]:
     return observation, json.dumps([fields]).encode()
 
 
+@pytest.mark.parametrize("method", ["llm_verified", "dual_agree"])
+def test_llm_label_requires_bound_cells_and_source_excerpt(method: str) -> None:
+    observation, _ = price_example()
+    observation.extraction_method = method
+    assert observation.evidence is not None
+    proof = observation.evidence["provenance"]
+    proof.update(format="html_table", table=0, row=0)
+    for column, cell in enumerate(proof["cells"]):
+        cell["column"] = column
+        cell.pop("path")
+    snippet = "3000.1250 rice 2024-01-01 kg MGA"
+    proof["llm_evidence"] = {"page": 1, "text": snippet}
+    content = b"<table><tr><td>3000.1250</td><td>rice</td><td>2024-01-01</td><td>kg</td><td>MGA</td></tr></table>"
+    before = copy.deepcopy(observation.evidence)
+    bound = bind_observation("price_observation", observation)
+    assert verify_cells(content, "text/html", bound.proof) == 5
+    assert observation.evidence == before
+    proof["llm_evidence"]["text"] = "3000.1250 rice"
+    with pytest.raises(ProofError, match="llm_cell_not_in_excerpt"):
+        verify_cells(content, "text/html", bind_observation("price_observation", observation).proof)
+
+
+def test_llm_proof_cannot_promote_unrelated_human_label() -> None:
+    observation, _ = price_example()
+    observation.extraction_method = "human"
+    assert observation.evidence is not None
+    observation.evidence["provenance"]["llm_evidence"] = {"page": 1, "text": "rice 3000.1250"}
+    with pytest.raises(ProofError, match="extraction_proof_not_supported"):
+        bind_observation("price_observation", observation)
+
+
 def test_sql_binding_overrides_untrusted_expectations_without_mutation():
     observation, content = price_example()
     before = copy.deepcopy(observation.evidence)
