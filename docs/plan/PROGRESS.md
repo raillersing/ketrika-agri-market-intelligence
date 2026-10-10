@@ -65,7 +65,7 @@
 | R0.2 | MUST | DONE | 2026-10-09T09:17:39Z | 2026-10-09T10:15:59Z | 6b4ad7feef184acff08cdbbf65b372d52019f2f8 | docs/evidence/R0.2/README.md : check Windows code 0, 290 backend / 15 web ; DB/S3 préservés | B-R003 résolu |
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
-| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | 180cc77c68185715689a6b69f6e98b7a68997489 | Incrément 3 reçu : QA 149, check Windows 28765 code 0 / 560 backend / 35 web / build ; garde Gold/adaptateurs/LLM encore obligatoires | B-R016/017 résolus ; commit formats à consigner |
+| R0.5 | MUST | IN_PROGRESS | 2026-10-09T21:23:10Z | — | c012c8a5de30cf020914ff183215184eda80d0e9 | Incrément 3 reçu : QA 149, check Windows 28765 code 0 / 560 backend / 35 web / build ; garde Gold/adaptateurs/LLM encore obligatoires | B-R016/017 résolus |
 | R0.6 | MUST | TODO | — | — | — | — | — |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
@@ -348,6 +348,11 @@
 - Préservation active relue codes 0 (92023/13530) : source_record 482 / MD5 47b4402859acc41e3ae91fdb128e56c6, prix 764 / MD5 4b2586cb8e422f11c4873ad513d66bc1 ; Bronze 674 versions/objets, zéro delete marker, 1377481 octets, SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c, inchangés.
 - B-R016/017 résolus par réception ciblée et globale, sans ignore/seuil retiré. Prototype LLM séparé : mypy 97938 code 0 / six fichiers ; derniers tests LLM 86221 code 0 / 28 / 10,52 s, sans integration SQL exécutée ni transfert.
 - R0.5 reste IN_PROGRESS ; ces formats synthétiques et octets SQL/MinIO ne qualifient ni source live, performance de marché, modèle ou revue humaine. Garde Gold, adaptateurs métier et contrôle LLM principal restent obligatoires. Scanner uniquement le lot reçu puis commit atomique ; aucun tag.
+
+### [2026-10-10T03:20:31Z] R0.5 — incrément 3 commité, préparation du quatrième
+
+- Commit c012c8a5de30cf020914ff183215184eda80d0e9, 20 fichiers / 815 ajouts / 26 retraits. Index explicitement borné au lot reçu ; diff staged check 14478 code 0, gitleaks staged Docker 10378 code 0 / 333808 octets / aucune fuite.
+- Plan/PROGRESS synchronisés, R0.5 toujours IN_PROGRESS. Prochain lot : ADR-019/SPECS avant transfert de la preuve LLM préparée ; cellules liées à SQL, page/extrait relus et refus persisté, tests/reçus ciblés puis check Windows intégral. Garde Gold/adaptateurs encore obligatoires, aucun tag.
 
 ### [2026-10-09T18:37:38Z] R0.3 — réception globale courante, intégrations vertes et calcul ML actif
 

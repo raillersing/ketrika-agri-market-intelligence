@@ -7,6 +7,9 @@ clôture documentaire cd89d17 ; incrément pur reçu et commité :
 
 ## Incrément 3 reçu : formats et preuve SQL/MinIO
 
+Commit c012c8a5de30cf020914ff183215184eda80d0e9 ; diff staged check code 0,
+gitleaks staged Docker code 0 / 333808 octets / aucune fuite. Statut global IN_PROGRESS.
+
 ADR-018/SPECS intégrés avant transfert. Nouveaux lecteurs et tests copiés par apply_patch
 depuis le worktree, empreintes Git identiques ; répartiteur commun raccordé, source brute
 PDF/XLSX non décodée en UTF-8 avant son lecteur. Documents et nombres bornés, aucune
