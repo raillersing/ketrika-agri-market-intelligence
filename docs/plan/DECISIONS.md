@@ -2,6 +2,16 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-049 : R0.6 — adoption du contrôle structurel et du Gold connecté
+
+- **Date :** 2026-10-11 ; accepté avant transfert principal de l'incrément 6. Les numéros intermédiaires restent réservés aux préparations isolées, non adoptées implicitement.
+- **Contexte :** provenance source mesurée reçue, mais Gold Dagster sans dépendances Silver et aucun contrôle structurel réel. Préparation indépendante : huit scénarios SQL/S3 code final 0, dont six Gold/provenance/CSV/JSON et deux helpers durables ; seuls les six premiers concernent cette adoption.
+- **Décision :** contrats CSV/JSON fermés, code-owned et versionnés, jamais appris du contenu ; absent ou MIME discordant = unknown/refus. CSV UTF-8/BOM, colonnes requises/optionnelles explicites, doublons/largeur/colonnes inattendues refusés. JSON typé sans coercition, clés dupliquées/constantes non finies refusées et tokens numériques exacts. Diagnostics fixes et SHA/compteurs seulement ; aucun contenu exécuté.
+- **Bornes :** document 32 MiB ; CSV 256 colonnes/noms 256 caractères ; JSON profondeur 128, contrat 32 niveaux/4096 nodes, traversal 100000 nodes. Audit au maximum 100000 artefacts réellement référencés par six tables d'observations, historique/rejeté inclus, références et SHA relus dans Bronze, lecture dédupliquée. Vide failed/metric NULL, aucune certification de 100 % sur vide.
+- **Raccordement :** chaque bundle source porte exactement provenance_complete et schema_drift natifs blocking ERROR sur son Silver. Reçu structure append-only ops.dq_result, threshold 0/metric nombre non vérifié, commit indépendant du check avant résultat. Repository Gold construit avec dépendances Silver exactes ; helper SQL de refresh et export historique conservés. Inventaire 15 assets/12 checks/six schedules ; statuts et droits de collecte inchangés.
+- **Limites :** structure valide n'est ni qualification de parsing/conversion/source ni preuve de prix. Aucun contrat de source publique inféré ou automatiquement enregistré ; exécutions sans baseline restent refusées. Garde structure SQL directe/CLI, ledger/partitions/reprise et durabilité des pipelines restent distincts à recevoir. Helpers de runs et autres préparations non transférés dans ce lot. Réception principale ciblée et check Windows intégral requis après transfert.
+- **Alternatives rejetées :** check constant, contrôle uniquement Pydantic, apprendre le premier en-tête, ignorer champs inconnus, Gold sans prérequis ou annonce de qualification live à partir de fixtures.
+
 ## ADR-039 : R0.6 — observabilité API sans cache Gold
 
 - **Date :** 2026-10-11 ; accepté avant transfert principal. Identifiant conservé du prototype isolé ; ADR-038 de structure CSV reste préparatoire et non transféré.

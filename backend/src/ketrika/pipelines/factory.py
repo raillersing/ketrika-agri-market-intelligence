@@ -1,5 +1,6 @@
 """Dagster asset and pipeline factory for Ketrika connectors (SPECS §9)."""
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -28,6 +29,8 @@ from ketrika.core.policy import PolicyEngine
 from ketrika.core.provenance_audit import audit_source_provenance
 from ketrika.core.provenance_bronze import BronzeProofReader
 from ketrika.core.registry import get_source
+from ketrika.core.schema_audit import SchemaContract
+from ketrika.pipelines.schema_check import build_source_schema_check
 
 
 @dataclass
@@ -84,7 +87,9 @@ def _source_for_assets(source_id: str) -> SourceDefinition | None:
     return definition
 
 
-def build_source_assets(connector_cls: type[Connector]) -> SourceAssets:
+def build_source_assets(
+    connector_cls: type[Connector], *, schema_contract: SchemaContract | None = None
+) -> SourceAssets:
     """Build Dagster assets, checks, schedule and sensor for a given connector class (SPECS §9)."""
     source_id = connector_cls.source_id
     source_def = _source_for_assets(source_id)
@@ -171,21 +176,48 @@ def build_source_assets(connector_cls: type[Connector]) -> SourceAssets:
         source_id=source_id,
         bronze_asset=bronze_asset,
         silver_asset=silver_asset,
-        checks=[check_provenance],
+        checks=[check_provenance, build_source_schema_check(source_id, schema_contract)],
         schedule=schedule,
         sensor=None,
     )
 
 
-@asset(name="gold__refresh", group_name="gold", compute_kind="refresh")
-def gold_refresh_asset(context) -> dict[str, Any]:
-    """Dagster asset triggering topological refresh of all Gold materialized views."""
+def _refresh_gold() -> dict[str, Any]:
+    """Shared real SQL refresh; no stand-in or alternate publication path."""
     from ketrika.gold.refresh import refresh_gold_views
 
     with get_session() as session:
         res = refresh_gold_views(session)
         session.commit()
     return res
+
+
+@asset(name="gold__refresh", group_name="gold", compute_kind="refresh")
+def gold_refresh_asset(context) -> dict[str, Any]:
+    """Historical direct export; repository wiring is prepared separately."""
+    return _refresh_gold()
+
+
+def build_gold_refresh_asset(silver_assets: Sequence[AssetsDefinition]) -> AssetsDefinition:
+    """Connect exact Silver definitions; a graph is not SQL qualification."""
+    keys = set()
+    for definition in silver_assets:
+        if not isinstance(definition, AssetsDefinition) or len(definition.keys) != 1:
+            raise ValueError("gold_invalid_silver_definition")
+        key = next(iter(definition.keys))
+        if len(key.path) != 1 or not key.path[0].endswith("__silver"):
+            raise ValueError("gold_invalid_silver_key")
+        if key in keys:
+            raise ValueError("gold_duplicate_silver_key")
+        keys.add(key)
+
+    @asset(
+        name="gold__refresh", group_name="gold", compute_kind="refresh", deps=list(silver_assets)
+    )
+    def connected_gold(context) -> dict[str, Any]:
+        return _refresh_gold()
+
+    return connected_gold
 
 
 @asset(

@@ -286,5 +286,40 @@ Lint 77825, format 45237 et types 98066 codes 0 ; trois fichiers contrôlés.
 Check Windows complet 44242 reçu code final 0 : 885 backend/54 intégrations,
 35 frontend/quatre suites/7,88 s ; build 228639 ms, quatre étapes code 0.
 Snapshot 98540 code 0/trois fichiers identiques ; SQL et toutes versions Bronze
-actives inchangés après réception. Reçus finaux archivés. Diff/scan/commit requis ;
+actives inchangés après réception. Commit 2d5b8ae, diff 11737 code 0,
+scan 56727 code 0/389525 octets/12,2 s/aucune fuite ; BL-015 RESOLVED_FIXED.
 R0.6 reste IN_PROGRESS, aucun prototype indépendant ni source live qualifié.
+
+## Incrément 6 — structure et Gold connecté (en qualification)
+
+ADR-049/SPECS adoptés avant transfert des seuls helpers structurels, audit,
+check natif et dépendances Gold. Contrats CSV/JSON explicitement déclarés,
+aucun contrat public inféré ; absence = unknown/refus. Factory deux checks
+blocking, inventaire 15 assets/12 checks/six schedules. Garde structure SQL
+directe/CLI, ledger/durabilité/partitions et qualifications sources restent ouverts.
+Unités principales 85042 code 0/134/120,22 s ; lint et format 15 fichiers verts.
+QA élargie minimum 319/24, aucun test historique retiré. Ancien scénario
+provenance doit fournir son contrat JSON synthétique explicite et vérifier
+les deux évaluations, pas un sous-ensemble ; nouvelle réception obligatoire.
+Préparation indépendante 83639 code 0/huit tests/55,23 s : six Gold et deux
+helpers durables, ces derniers non transférés ni reçus dans cet incrément.
+
+QA initiale 45059 code final 1 : 315 passed/4 failed/259,86 s, reçu
+d927b84cf74340278955e7ba62038823/284,26 s et XML originaux conservés.
+Le snapshot incluait un contrat intermédiaire location_raw au lieu du champ
+period_start réel de la fixture ; les six nouveaux Gold passent. B-R035,
+correction limitée au contrat synthétique, nouvelle QA 30895 requise.
+
+QA renouvelée 30895 code final 0 : 319 tests/24 intégrations/199,56 s,
+zéro failure/error/skip, reçu 1d8413a058984cc0b4efb71fa7f2d9f1/215,381 s.
+Originaux increment-6-qa-final conservés ; code figé pour check Windows intégral,
+préservation/diff/scan final/commit requis. R0.6 et B-R035 non clos par la QA seule.
+
+Réception globale Windows 21370 code final 0 obtenue le 2026-10-11T16:24:50Z.
+XML original : 997 tests, 2240,356 s, zéro échec/erreur/skip ; couvertures
+core 94,2094 %, extraction 86,3768 %, normalize 88,2090 %. Frontend 35 tests,
+quatre suites ; reçu 7180d33b-7642-40d8-baa4-78d889afad15, toutes étapes code 0,
+build 140732 ms. Les seize fichiers du lot correspondent au snapshot testé.
+SQL actif et toutes versions Bronze relus après réception : empreintes identiques
+au précheck (482 références, 764 prix, 674 versions, 1377481 octets).
+Commit/scan final encore requis ; aucune réception complète de R0.6.

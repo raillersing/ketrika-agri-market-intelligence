@@ -956,6 +956,27 @@ Ordre : `parse → validate → product match → unit conversion → location m
 
 ## 14. Qualité des données
 
+### Contrôle structurel et dépendances Gold (ADR-049)
+
+Contrats explicites CSVSchemaContract ou JSONSchemaContract, fermés/versionnés,
+jamais appris du document. Absent/incompatible avec MIME = unknown/refus ;
+CSV text/csv ou application/csv, JSON application/json. Octets Bronze frais et
+références/SHA vérifiés avant inspection. Colonnes CSV requises/optionnelles,
+doublons/largeur/champs inconnus refusés ; JSON typé sans coercition, clés
+dupliquées/non-finis refusés, tokens numériques exacts conservés.
+Bornes : 32 MiB ; CSV 256 colonnes/noms 256 caractères ; JSON profondeur 128,
+contrat profondeur 32/4096 nodes, parcours 100000 nodes. Audit des six tables
+d'observations, historique/rejeté inclus, maximum 100000 artefacts sans troncature.
+Vide failed/metric NULL ; reçu ops.dq_result schema_drift append-only,
+threshold 0 et metric nombre d'artefacts non vérifiés, diagnostics fixes/SHA/
+compteurs sans texte collecté. Helper sans commit ; check commit son propre reçu.
+Factory porte exactement provenance_complete et schema_drift blocking ERROR,
+même Silver ; repository Gold dépend des Silver exacts, pas de bypass SQL ajouté.
+Inventaire courant 15 assets/12 checks/six schedules ; contrats publics non
+qualifiés, absence de baseline bloque, aucune permission de collecte élargie.
+Garde structure SQL directe/CLI, ledger/durabilité/partitions/reprise restent
+à recevoir ; conformité structurelle seule ne qualifie aucun chiffre/source.
+
 ### 14.0a Publication source-cell et initialisation non publiée (ADR-023–029)
 
 Avant REFRESH : liste statique des vues/tables, audit fresh des lignes réellement consommées sous LOCK SHARE/meta.source_record et tables obs, lock_timeout transactionnel 5 s. Prix courants accepted et price_mga_per_base non NULL ; stocks courants avec produit/lieu (LAG inclus) ; production courante element=production_t ; autres tables courantes sans filtre source/status. Audit complet historique séparé. Empty/metadata_only ne constituent pas 100 % ; aucun cache de succès ni bypass test.

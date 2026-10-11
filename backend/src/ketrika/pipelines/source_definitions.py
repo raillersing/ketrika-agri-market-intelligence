@@ -7,7 +7,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from dagster import AssetsDefinition, ScheduleDefinition
+from dagster import AssetChecksDefinition, AssetKey, AssetsDefinition, ScheduleDefinition
 
 from ketrika.connectors.base import Connector
 from ketrika.connectors.registry import list_registered_connectors
@@ -86,11 +86,25 @@ def build_registered_source_definitions(
             continue
         try:
             bundle = builder(connector)
+            expected_checks = {
+                (AssetKey(f"{source_id}__silver"), f"{source_id}__{name}")
+                for name in ("provenance_complete", "schema_drift")
+            }
+            if len(bundle.checks) != 2 or not all(
+                isinstance(check, AssetChecksDefinition) for check in bundle.checks
+            ):
+                raise ValueError("invalid_source_checks")
+            specs = [spec for check in bundle.checks for spec in check.check_specs]
+            if (
+                len(specs) != 2
+                or {(spec.asset_key, spec.name) for spec in specs} != expected_checks
+                or not all(spec.blocking for spec in specs)
+            ):
+                raise ValueError("invalid_source_checks")
             if (
                 bundle.source_id != source_id
                 or bundle.bronze_asset.key.path != [f"{source_id}__bronze"]
                 or bundle.silver_asset.key.path != [f"{source_id}__silver"]
-                or not bundle.checks
             ):
                 raise ValueError("invalid_source_bundle")
         except Exception as exc:

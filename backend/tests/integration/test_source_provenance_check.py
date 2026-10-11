@@ -16,6 +16,7 @@ from ketrika.core.models.db import DqResult, Source, SourceRecord
 from ketrika.core.provenance_audit import audit_source_provenance
 from ketrika.core.provenance_bronze import BronzeProofReader
 from ketrika.core.qualification import require_synthetic_test_database
+from ketrika.core.schema_json import JSONSchemaContract, JSONShape
 from ketrika.pipelines.factory import build_source_assets
 from tests.unit.test_provenance import MemoryReader
 from tests.unit.test_provenance_audit import price_example
@@ -101,7 +102,26 @@ def test_source_measurement_and_receipt_survive_new_session(variant, monkeypatch
     # Real Dagster scheduling of the production check, with an inert Silver
     # stand-in and downstream sentinel. No acquisition or Gold mutation here.
     connector = type("LocalSourceCheck", (DummyCsvConnector,), {"source_id": source_id})
-    bundle = build_source_assets(connector)
+    contract = JSONSchemaContract(
+        "synthetic-source-check-json-v1",
+        JSONShape(
+            "array",
+            items=JSONShape(
+                "object",
+                properties=tuple(
+                    (field, JSONShape("string"), True)
+                    for field in (
+                        "product_raw",
+                        "period_start",
+                        "unit_raw",
+                        "currency_raw",
+                        "price_value",
+                    )
+                ),
+            ),
+        ),
+    )
+    bundle = build_source_assets(connector, schema_contract=contract)
     downstream_calls = []
 
     @asset(name=f"{source_id}__silver")
@@ -124,8 +144,14 @@ def test_source_measurement_and_receipt_survive_new_session(variant, monkeypatch
     assert result.success is (variant == "valid")
     assert downstream_calls == (["executed"] if variant == "valid" else [])
     evaluations = result.get_asset_check_evaluations()
-    assert len(evaluations) == 1
-    evaluation = evaluations[0]
+    assert len(evaluations) == 2
+    evaluation = next(
+        item for item in evaluations if item.check_name == f"{source_id}__provenance_complete"
+    )
+    schema_evaluation = next(
+        item for item in evaluations if item.check_name == f"{source_id}__schema_drift"
+    )
+    assert schema_evaluation.passed
     assert evaluation.passed is (variant == "valid")
     check_dq_id = evaluation.metadata["dq_id"].value
     with get_session() as session:

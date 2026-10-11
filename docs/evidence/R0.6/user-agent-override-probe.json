@@ -1,0 +1,10 @@
+{
+  "received_at_utc": "2026-10-11T14:20:48Z",
+  "command_scope": "Docker --network none; PoliteHttpClient._execute_request with httpx.MockTransport",
+  "session_id": 41385, "exit_code": 0,
+  "requests": 1, "url_verified": false,
+  "matches_mandatory_bot_identity": false,
+  "browser_override_received": true,
+  "scope": "request construction only; no network or source acquisition; no active state write",
+  "receipt_origin": "manual transcription of received mock transport output; no configured contact identity disclosed"
+}

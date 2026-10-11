@@ -41,7 +41,7 @@ def test_actual_definitions_inventory_matches_eligible_registered_sources():
     included = {entry.source_id for entry in source_inventory if entry.included}
     assert included == eligible
     assert len(all_assets) == 3 + 2 * len(eligible) == 15
-    assert len(all_checks) == len(eligible) == 6
+    assert len(all_checks) == 2 * len(eligible) == 12
     assert len(all_schedules) == len(eligible) == 6
     assert {schedule.name for schedule in all_schedules} == {
         f"{source_id}__schedule" for source_id in eligible
@@ -155,6 +155,16 @@ def test_invalid_bundle_is_not_silently_omitted():
         build_registered_source_definitions(
             {"wb_rtfp_mdg": connector_for("wb_rtfp_mdg")},
             build=lambda _: replace(bundle, checks=[]),
+        )
+
+
+@pytest.mark.parametrize("removed", [0, 1])
+def test_bundle_missing_either_required_check_is_explicit(removed):
+    bundle = build_source_assets(connector_for("wb_rtfp_mdg"))
+    with pytest.raises(SourceDefinitionsError, match="source_construction_failed"):
+        build_registered_source_definitions(
+            {"wb_rtfp_mdg": connector_for("wb_rtfp_mdg")},
+            build=lambda _: replace(bundle, checks=[bundle.checks[1 - removed]]),
         )
 
 

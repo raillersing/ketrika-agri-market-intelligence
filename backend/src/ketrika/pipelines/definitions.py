@@ -1,17 +1,24 @@
 from typing import Any
 
-from dagster import Definitions, RunFailureSensorContext, run_failure_sensor
+from dagster import AssetKey, Definitions, RunFailureSensorContext, run_failure_sensor
 
 from ketrika.alerts.notifier import send_pipeline_failure_email
 from ketrika.pipelines.factory import (
     alerts_evaluate_asset,
-    gold_refresh_asset,
+    build_gold_refresh_asset,
     ml_price_forecast_asset,
 )
 from ketrika.pipelines.source_definitions import build_registered_source_definitions
 
 source_definitions = build_registered_source_definitions()
 source_inventory = source_definitions.inventory
+source_assets_by_key = {definition.key: definition for definition in source_definitions.assets}
+silver_assets = [
+    source_assets_by_key[AssetKey(f"{entry.source_id}__silver")]
+    for entry in source_inventory
+    if entry.included
+]
+gold_refresh_asset = build_gold_refresh_asset(silver_assets)
 all_assets = [
     gold_refresh_asset,
     alerts_evaluate_asset,

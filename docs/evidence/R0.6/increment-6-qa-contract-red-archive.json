@@ -1,0 +1,11 @@
+{
+  "task": "R0.6", "increment": 6,
+  "original_file": "increment-6-qa-contract-red.xml",
+  "archive_file": "increment-6-qa-contract-red.xml.gz",
+  "original_sha256": "d779b227301cc1f60ab189fce2cc7458c52982d3cb3bfdb12a9e1d0bc28784da",
+  "decompressed_sha256": "d779b227301cc1f60ab189fce2cc7458c52982d3cb3bfdb12a9e1d0bc28784da",
+  "original_scan_session": 2021, "original_scan_exit_code": 0,
+  "original_scan_bytes": 157250, "original_scan_duration_seconds": 6.68,
+  "reason": "original pytest failure trace contains trailing whitespace; archive preserves exact bytes without changing evidence or whitespace policy",
+  "scope": "new unpublished report only; no historical report or Bronze deleted"
+}

@@ -21,6 +21,11 @@
         "tests/unit/test_price_references.py",
         "tests/unit/test_price_loader.py",
         "tests/unit/test_sources_no_cache.py",
+        "tests/unit/test_schema_drift.py",
+        "tests/unit/test_schema_json.py",
+        "tests/unit/test_schema_audit.py",
+        "tests/unit/test_source_schema_check.py",
+        "tests/unit/test_gold_dependency_graph.py",
         "tests/unit/test_connectors.py",
         "tests/unit/test_provenance_bronze.py",
         "tests/unit/test_execution_plan.py",
@@ -28,6 +33,8 @@
         "tests/integration/test_source_provenance_check.py",
         "tests/integration/test_normalized_price_load.py",
         "tests/integration/test_sources_no_cache.py",
+        "tests/integration/test_connected_gold_provenance.py",
+        "tests/integration/test_schema_gold_gate.py",
         "tests/integration/test_miasa_odr.py",
         "tests/integration/test_weather_provenance.py",
         "tests/integration/test_connector_pipeline.py",
@@ -35,8 +42,8 @@
         "tests/integration/test_nasa_power.py",
         "tests/integration/test_wfp_hdx_mdg.py"
       ],
-      "minimum_tests": 207,
-      "minimum_integration_tests": 18
+      "minimum_tests": 319,
+      "minimum_integration_tests": 24
     },
     "R0.5": {
       "tests": [
