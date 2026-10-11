@@ -135,3 +135,8 @@ Bronze session 58622 codes 0, mêmes comptes et empreintes que le précheck.
 Reçu increment-2-active-preservation-final.json ; snapshot applicatif testé
 comparé au worktree (session 4324 code 0), quatre fichiers identiques.
 Diff/scan final et commit restent requis ; aucune qualification live.
+
+Commit fonctionnel reçu b873f44ec71c8fcb04677983423f48a1ba17ab2f :
+20 fichiers / 647 ajouts / 27 retraits. Diff staged 51497 code 0, scan
+configuré final 75483 code 0 / 339921 octets / 8,67 s / aucune fuite.
+R0.6 reste IN_PROGRESS ; aucune qualification source/modèle/usage humain.

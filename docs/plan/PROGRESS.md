@@ -66,7 +66,7 @@
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
-| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | c63fe22 (incrément 1) | Transport reçu : 63/8 ciblés, check 746 backend / 35 web / build ; normalisation/checks/durabilité/inventaire/partitions encore requis | BL-010/013 ouverts |
+| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | b873f44 (incrément 2) | Transport et inventaire reçus : 94/8 ciblés, check 774 backend / 35 web / build ; normalisation/checks/durabilité/ledger/partitions encore requis | BL-010/013 ouverts |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
 | R0.9 | MUST | TODO | — | — | — | — | — |
@@ -577,6 +577,7 @@
 
 ### [2026-10-10T21:18:52Z] R0.6 — incrément 2 : inventaire et erreurs de construction
 
+- [2026-10-11T04:55:55Z] Commit fonctionnel b873f44ec71c8fcb04677983423f48a1ba17ab2f reçu : 20 fichiers / 647 ajouts / 27 retraits. Diff staged 51497 code 0, scan configuré final 75483 code 0 / 339921 octets / 8,67 s / aucune fuite. Check Windows 18002 et QA 13568 verts, préservation finale inchangée ; R0.6 reste IN_PROGRESS, aucun tag. Suite sûre : remplacer le check de provenance constant par une mesure source-scopée et persister son reçu ; schema_drift/blocage/normalisation/ledger/partitions/durabilité restent ouverts.
 - [2026-10-11T04:56:00Z] Finalisation après réception intégrale verte inchangée : snapshot applicatif testé comparé au worktree, session 4324 code 0 / quatre fichiers identiques. Préservation finale renouvelée : SQL chunk 9958e6 et Bronze 58622 codes 0, 482 références / 764 prix / 674 versions / zéro marqueur / 1377481 octets, empreintes inchangées ; reçu final archivé. Diff/scan final puis commit requis, R0.6 IN_PROGRESS, aucun tag.
 - Base transport c63fe22, clôture e0c4de6 reçue ; R0.6 reste IN_PROGRESS dans les deux plans. ADR-035/SPECS écrits avant code ; aucun nouveau droit de collecte ni changement de statut public.
 - Mini-plan : 1) inventaire déterministe avec exclusions explicites ; 2) résolution/construction fail-closed, sans erreur brute ; 3) schedules disabled/planned/forbidden/fixtures absents et cadences explicites ; 4) tests réels de construction Dagster, échec/exclusion/inventaire ; 5) QA élargie puis check Windows intégral, préservation/diff/scan/commit ; 6) maintenir les critères R0.6 restants ouverts.
