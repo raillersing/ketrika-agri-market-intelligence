@@ -18,9 +18,9 @@ ni essai humain. Les fixtures QA sont synthétiques et séparées de l'actif.
 | Silver normalize puis load | Reçu, 47dc4a8 | Decimal/référentiels/load raccordés ; QA 197/16 et Windows 99868 code 0/875 backend/35 web/build. SQL/S3 FMG/USD, retry/révision et seuil MiASA 5 % conservés ; références MiASA exclusivement synthétiques sans P-code, aucun backfill actif ; value_kind colonne/UI restent R2.1 |
 | Partitions document/version/run | Non reçu | Batch/run source liés ; ledger/document/version/partition durable et rejeu après restart restent requis |
 | Erreurs et DQ durables après rollback | Partiel | Wrapper caller et Mailpit reçus ; rollback caller peut perdre le run, assets directs à traiter |
-| Runs visibles sans cache Gold | Non reçu | B-R031/BL-015 : API liste source dépend encore d'une source_health publiée ; prototype distinct non transféré, préparation de cache du test ne corrige pas ce chemin |
+| Runs visibles sans cache Gold | Reçu, 2d5b8ae | QA 207/18, deux scénarios SQL/API réels : cache absent/ancien, dernier run meta visible, freshness NULL et santé indisponible 503 sans refresh ; aucun autre indicateur DQ qualifié |
 | Politique robots sans contournement | Partiel | Disabled/forbidden avant collecte et schedules reçus ; robots automatique BL-010 reste ouvert |
-| Definition of Done complète | Non reçue | Incrément 4 committé 47dc4a8, check vert : 875 backend/35 web/build ; critères R0.6 restants non reçus, prototypes API/schema/Gold/ledger/robots indépendants non inclus |
+| Definition of Done complète | Non reçue | Incrément 5 committé 2d5b8ae, check Windows 44242 code 0 : 885 backend/35 web/build ; critères R0.6 restants non reçus, prototypes schema/Gold/ledger/robots indépendants non inclus |
 
 R0.6 ne devient DONE que lorsque tous ses critères et le check global du
 snapshot final sont reçus, documentés et committés. Aucun tag R0 avant R0.9.
