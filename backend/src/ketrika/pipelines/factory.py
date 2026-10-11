@@ -16,10 +16,9 @@ from dagster import (
 )
 
 from ketrika.connectors.base import Connector, RunContext
+from ketrika.connectors.durable_phases import execute_durable_bronze, execute_durable_silver
 from ketrika.connectors.stages import (
     BronzeBatch,
-    collect_connector_bronze,
-    consume_connector_silver,
 )
 from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import get_session
@@ -110,8 +109,7 @@ def build_source_assets(
                 logger=context.log,
                 metadata={"dagster_run_id": context.run.run_id},
             )
-            with get_session() as session:
-                return collect_connector_bronze(connector, ctx, session)
+            return execute_durable_bronze(connector, ctx)
 
     # 2. Silver Asset
     @asset(
@@ -128,9 +126,7 @@ def build_source_assets(
             policy_engine=PolicyEngine(),
             logger=context.log,
         )
-        with get_session() as session:
-            stats = consume_connector_silver(connector, ctx, session, bronze_batch)
-        return stats
+        return execute_durable_silver(connector, ctx, bronze_batch)
 
     # 3. DQ Asset Checks (SPECS §14)
     @asset_check(asset=silver_name, name=f"{source_id}__provenance_complete", blocking=True)

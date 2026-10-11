@@ -13,10 +13,11 @@ from ketrika.connectors.dummy_csv import DummyCsvConnector
 from ketrika.connectors.stages import collect_connector_bronze, consume_connector_silver
 from ketrika.core.bronze import BronzeStore
 from ketrika.core.http import PoliteHttpClient
-from ketrika.core.models.db import PriceObservation, SourceRecord
+from ketrika.core.models.db import PriceObservation, Source, SourceRecord
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.provenance_audit import ObservationTarget, audit_observation_provenance
 from ketrika.core.provenance_bronze import BronzeProofReader
+from ketrika.core.qualification import require_synthetic_test_database
 from ketrika.core.settings import get_settings
 from ketrika.pipelines.factory import build_source_assets
 from tests.integration.test_connector_pipeline import CSV_V1, CSV_V2_MODIFIED
@@ -122,6 +123,21 @@ def test_dagster_materializes_real_bronze_input_once_and_silver_rows(httpserver)
             yield DiscoveredItem(url=httpserver.url_for(path), partition_key="fixture")
 
     bundle = build_source_assets(LocalCsv)
+    setup_engine = create_engine(get_settings().database_url)
+    try:
+        with Session(setup_engine) as session:
+            target = session.get_bind().engine.url
+            require_synthetic_test_database(target.host, target.database)
+            session.add(
+                Source(
+                    source_id=identifier,
+                    spec={"dataset_mode": "test", "authenticity": "synthetic", "verified": False},
+                    status="disabled",
+                )
+            )
+            session.commit()
+    finally:
+        setup_engine.dispose()
     result = materialize([bundle.bronze_asset, bundle.silver_asset], raise_on_error=True)
     assert result.success and discoveries == [1]
     silver = result.output_for_node(f"{identifier}__silver")

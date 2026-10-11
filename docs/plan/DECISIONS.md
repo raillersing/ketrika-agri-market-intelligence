@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-050 : R0.6 — propriétaires transactionnels Bronze/Silver durables
+
+- **Date / statut :** 2026-10-11, accepté avant transfert principal ; préparation isolée validée par 104 tests unitaires et dix tests SQL.
+- **Contexte :** un rollback de la transaction de données peut effacer le démarrage et le statut failed ; le succès d'un helper seul ne prouve pas la durabilité du pipeline.
+- **Décision :** la factory confie Bronze et Silver à des propriétaires privés. Garde de collecte avant démarrage ; Source SQL déjà persistée obligatoire, jamais créée/activée implicitement. Démarrage meta dans une session indépendante, données dans une autre ; référence explicite UUID/source/date/dagster vérifiée sous verrou. Après échec : rollback des données puis failed/classe/date dans une session indépendante. Silver reprend exclusivement le batch et la référence SQL running.
+- **Erreurs :** conserver seulement type(error), sortir du bloc except avant persistance et exception finale ; aucun message collecté ni objet d'erreur dans __context__. Reçu impossible = failure_receipt_unavailable, jamais succès ni affirmation de failed durable. Compteurs de phases échouées restent transactionnels ; Bronze immuable conservé.
+- **Alternatives :** commit de la transaction du caller (rejeté, risque d'écritures partielles), statut uniquement Dagster (insuffisant pour API SQL).
+- **Conséquences / limites :** aucun changement ORM ni dépendance ; wrapper caller historique inchangé et non qualifié durable. Ledger/reprise/partitions, arrêt brutal, sources live et notifications restent distincts. Douze checks et graphe Gold reçus en ADR-049 conservés ; aucun gate levé.
+
 ## ADR-049 : R0.6 — adoption du contrôle structurel et du Gold connecté
 
 - **Date :** 2026-10-11 ; accepté avant transfert principal de l'incrément 6. Les numéros intermédiaires restent réservés aux préparations isolées, non adoptées implicitement.

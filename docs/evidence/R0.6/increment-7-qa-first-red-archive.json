@@ -1,0 +1,9 @@
+{
+  "execution_id": "1ce76baacc044229a0bd79208f8a965b",
+  "original": "increment-7-qa-first-red.xml",
+  "archive": "increment-7-qa-first-red.xml.gz",
+  "original_and_decompressed_sha256": "1906f3388a9992704fd1bf33ec47475c3ac243f0db3500e644dab0f5683ee04e",
+  "compression": "gzip -n, original bytes unchanged",
+  "original_secret_scan": {"session": 34632, "exit_code": 0, "bytes_scanned": 116308, "leaks": 0},
+  "reason": "Preserve original pytest trace including trailing whitespace; no report content rewrite"
+}

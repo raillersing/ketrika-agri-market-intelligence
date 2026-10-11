@@ -757,6 +757,17 @@ Pour chaque enregistrement normalisé, on calcule `natural_key`, puis :
 
 ## 9. Interface Connector (normative)
 
+ADR-050 : les assets natifs Bronze/Silver utilisent des propriétaires de phase.
+Après la garde de collecte existante, un run meta est committé indépendamment
+sur une Source SQL déjà persistée (aucune création/activation implicite).
+Les données utilisent une transaction distincte et une référence running
+UUID/source/date/dagster vérifiée sous verrou. Échec : rollback des données
+avant persistance indépendante de failed/classe/date ; pas de commit du caller.
+Silver lit le batch et la référence SQL, sans acquisition. L'erreur finale ne
+contient ni texte collecté ni objet d'erreur dans __context__ ; défaut du reçu
+= failure_receipt_unavailable, jamais succès. Le wrapper caller historique,
+la reprise après arrêt brutal, le ledger et les partitions restent non qualifiés.
+
 ```python
 # backend/src/ketrika/connectors/base.py
 from __future__ import annotations

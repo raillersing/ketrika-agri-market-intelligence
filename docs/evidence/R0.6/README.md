@@ -1,5 +1,10 @@
 # R0.6 — lignée Bronze → Silver
 
+État courant 2026-10-11 : incréments 1–6 reçus, dernier fonctionnel 6f1a9b1,
+clôture cb6c420. R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
+historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
+Incrément 7 durable transféré après ADR-050, réception principale encore requise.
+
 Point de reprise incrément 4 (2026-10-11T11:48:18Z) : toujours non committé.
 QA finale de comportement 45271 code Windows 0, 197 tests dont seize
 intégrations, 192,75 s, zéro failure/error/skip ; reçu
@@ -327,3 +332,37 @@ scan configuré 50898 code final 0 : 502123 octets/31,9 s/aucune fuite ;
 gouvernance 26921 code 0/74 statuts cohérents. B-R035 résolu par correction
 du seul contrat synthétique et réception globale renouvelée. R0.6 demeure
 IN_PROGRESS ; aucune réception complète, source live, modèle ou usage humain.
+
+## Incrément 7 — durabilité des phases (en qualification)
+
+Préparation indépendante : dix tests SQL 22936 code final 0/78,63 s,
+deux helpers et huit cas propriétaires/assets natifs, échec après artefact,
+après parse, après insertion et succès ; SQL/S3 synthétiques, pas d'acquisition
+HTTP ni qualification live. ADR-050/SPECS adoptés avant transfert principal.
+Factory utilise les propriétaires tout en conservant les douze checks et le
+graphe Gold. Source SQL préexistante obligatoire, garde de collecte avant run ;
+rollback puis reçu failed indépendant, classe seule sans chaîne d'erreur collectée.
+Wrapper caller historique/crash recovery/ledger/partitions restent ouverts.
+QA portée à 368 tests minimum/34 intégrations, aucune régression historique retirée.
+
+QA initiale principale 81371 code 1 : 367 passed/1 failed/431,61 s ;
+B-R036 TypeError dans préparation de la fixture historique, garde appelée avec
+connection au lieu de host/database. Correction limitée à la lecture de l'URL
+de session réellement liée ; aucune garde ni assertion retirée. XML rouge
+archivé gzip -n, SHA original/décompressé identique, scan original vert.
+Après interruption, aucun reçu du run 17691 ; non réutilisé comme succès.
+QA renouvelée Windows 37651 code final 0 : 368/34/273,25 s,
+zéro échec-erreur-skip ; reçu 566e579b3d19430396ff2d6ea0916c27/291,931 s.
+Types/unités principales 76548 code 0 : dix fichiers, 103 tests/347,66 s.
+Check Windows intégral 63938 en cours sur code figé ; aucun commit fonctionnel
+du lot 7, B-R036 à clore après réception globale/preservation/scan/commit.
+
+Réception Windows intégrale 63938 code final 0 obtenue 2026-10-11T23:41:56Z.
+Backend 1046/70 intégrations/1477,80 s/cinq warnings, zéro échec-erreur-skip ;
+XML original 1477,786 s. Couvertures core 94,2094 %, extraction 86,3768 %,
+normalize 88,2090 %. Front 35/quatre suites/4,45 s, reçu
+af0f0afe-738a-49f8-bf5d-983ae5c603c4 : quatre étapes code 0, build 109683 ms.
+Dix fichiers correspondent au snapshot testé ; gouvernance Windows 15546 code 0.
+Après contrôle complet, SQL et toutes versions Bronze actifs inchangés,
+preuve increment-7-active-preservation-final. Scan final/commit encore requis ;
+R0.6 reste IN_PROGRESS, wrapper caller/crash recovery/ledger/partitions ouverts.

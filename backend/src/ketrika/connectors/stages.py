@@ -13,6 +13,7 @@ from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from ketrika.connectors.base import Connector, RawArtifact, RunContext
+from ketrika.connectors.durable_runs import DurableRunReference, bind_running_run
 from ketrika.core.bronze import BronzeArtifact, BronzeStore
 from ketrika.core.http import FetchResult, PoliteHttpClient
 from ketrika.core.models.db import IngestionRun, ReviewItem, SourceRecord
@@ -57,13 +58,8 @@ class _VerifiedBronzeStore(BronzeStore):
         raise ValueError("silver_bronze_write_forbidden")
 
 
-def collect_connector_bronze(
-    connector: Connector, ctx: RunContext, session: Session
-) -> BronzeBatch:
-    """Persist references once and return the exact immutable receipt, no parse."""
-    from ketrika.connectors.runner import ensure_ingestion_run_started, record_bronze_artifact
-
-    ctx.run_id = None
+def authorize_collection(connector: Connector, ctx: RunContext) -> None:
+    """The existing registry/fixture policy, before starting a durable run."""
     if ctx.source_id != connector.source_id:
         raise ValueError("connector_context_source_mismatch")
     try:
@@ -87,9 +83,31 @@ def collect_connector_bronze(
         definition.status == "disabled" or definition.crawl_permission == "forbidden"
     ):
         raise PolicyStop("source_collection_disabled")
-    run = ensure_ingestion_run_started(
-        session, connector.source_id, ctx.metadata.get("dagster_run_id")
-    )
+
+
+def collect_connector_bronze(
+    connector: Connector,
+    ctx: RunContext,
+    session: Session,
+    *,
+    durable_run: DurableRunReference | None = None,
+) -> BronzeBatch:
+    """Persist exact references; optional owner never comes from collected data."""
+    from ketrika.connectors.runner import ensure_ingestion_run_started, record_bronze_artifact
+
+    ctx.run_id = None
+    authorize_collection(connector, ctx)
+    if durable_run is None:
+        run = ensure_ingestion_run_started(
+            session, connector.source_id, ctx.metadata.get("dagster_run_id")
+        )
+    else:
+        if (
+            not isinstance(durable_run, DurableRunReference)
+            or durable_run.source_id != connector.source_id
+        ):
+            raise ValueError("durable_run_reference_mismatch")
+        run = bind_running_run(session, durable_run)
     ctx.run_id = run.run_id
     artifacts: list[RawArtifact] = []
     for item in connector.discover(ctx):

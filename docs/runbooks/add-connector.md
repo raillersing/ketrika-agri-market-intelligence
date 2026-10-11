@@ -7,6 +7,26 @@
 
 ## Vue d'ensemble du flux de données
 
+Programme R, état de qualification : les statuts historiques du MVP ne sont
+pas une preuve actuelle. Pour les assets natifs, la Source doit déjà exister
+en SQL avant exécution ; ne pas la créer ni l'activer implicitement pour faire
+passer un test. Une construction de définition ne vaut pas autorisation de collecte.
+Bronze retourne son lot de références exactes et Silver le consomme sans refetch.
+ADR-050 introduit des propriétaires transactionnels : démarrage meta indépendant,
+transaction de données séparée, rollback avant reçu failed indépendant. Une
+erreur failure_receipt_unavailable ne prouve pas un statut failed en SQL ; vérifier
+le run UUID par relecture API/SQL. Un run running après interruption brutale ne
+doit pas être déclaré terminé ni repris automatiquement sans ledger qualifié.
+Le wrapper historique à transaction fournie par le caller reste distinct.
+
+Les deux checks natifs reçus en R0.6 sont provenance_complete et schema_drift,
+mesurés sur les observations et objets Bronze réels ; un contrat CSV/JSON absent
+est unknown/refus, pas une structure apprise automatiquement. Les autres checks
+listés plus bas sont des exigences à vérifier, pas un inventaire qualifié.
+Le blocage Gold reçu concerne le graphe Dagster connecté ; les chemins SQL/CLI
+directs, partitions et reprise restent à recevoir. Toute fixture synthétique doit
+rester explicitement telle, sans conclure à une collecte officielle live.
+
 ```
 Source Publique (HTTP / API / RSS)
         │
