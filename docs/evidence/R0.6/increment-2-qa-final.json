@@ -1,0 +1,41 @@
+{
+  "task": "R0.6",
+  "execution_id": "2693c4c0de6a45fc8ad68f6431f70dd5",
+  "scope": "software subset only; not task DONE or market certification",
+  "pytest_exit": 0,
+  "command": [
+    "pytest",
+    "-p",
+    "pytest_asyncio.plugin",
+    "-p",
+    "pytest_cov.plugin",
+    "-p",
+    "_hypothesis_pytestplugin",
+    "-p",
+    "pytest_httpserver.pytest_plugin",
+    "-m",
+    "not network",
+    "tests/unit/test_connector_stages.py",
+    "tests/unit/test_source_definitions.py",
+    "tests/unit/test_connectors.py",
+    "tests/unit/test_provenance_bronze.py",
+    "tests/unit/test_execution_plan.py",
+    "tests/integration/test_connector_stages.py",
+    "tests/integration/test_connector_pipeline.py",
+    "tests/integration/test_observability.py",
+    "tests/integration/test_nasa_power.py",
+    "tests/integration/test_wfp_hdx_mdg.py",
+    "--junitxml=/app/.venv/qa-results/2693c4c0de6a45fc8ad68f6431f70dd5/tests.xml"
+  ],
+  "passed": true,
+  "counts": {
+    "tests": 94,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "integration_by_layout": 8,
+    "integration_by_marker": 8,
+    "integration_tests": 8
+  },
+  "duration_seconds": 128.224
+}

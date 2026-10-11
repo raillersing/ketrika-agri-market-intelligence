@@ -836,6 +836,16 @@ fixture_<source>_<UUID>, pas sous l'identité publique disabled. Classes locales
 temporaires ; résolution au rejeu limitée à QA validée, jamais un schedule/source
 live. Aucun changement de statut public ni mutation d'ancien objet/observation.
 
+ADR-035 : assemblage automatique des seuls connecteurs enregistrés active/degraded
+et non forbidden, avec identité classe/registre concordante ; planned/disabled,
+forbidden et namespaces dummy/fixture exclus explicitement dans l'inventaire.
+Résolution/construction invalide = erreur expurgée explicite, jamais continue.
+Factory : aucun schedule pour source inéligible/fixture ou cadence event/static ;
+cadences périodiques mappées sans repli implicite, horaire Indian/Antananarivo.
+Définitions pures de fixtures sans entrée registre permises, sans droit de collecte
+ni exposition automatique. Effectifs construits et exclusions restitués ; ce
+contrat ne qualifie ni source live ni checks mesurés, partitions ou durabilité.
+
 ---
 
 ## 10. Layout Bronze

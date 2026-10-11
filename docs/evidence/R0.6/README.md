@@ -96,3 +96,42 @@ c63fe222832f76cc55feeba4f97def4ec296884d (41 fichiers, 1917 ajouts,
 440 194 octets / 7,04 s / aucune fuite, exception exacte de step UUID documentée.
 R0.6 reste IN_PROGRESS ; suite : définitions/inventaire/schedules désactivés,
 puis checks mesurés, ledger, normalisation, partitions et durabilité.
+
+Deuxième incrément en réalisation après ADR-035/SPECS : inventaire explicite,
+erreurs de résolution/construction expurgées plutôt qu'ignorées, exclusions
+planned/disabled/forbidden/fixtures, cadences sans repli implicite et timezone
+business. Unités 42059 code final 0 : 53 / 63,10 s, dont 24 nouvelles ; repository
+Dagster réellement chargé, 15 assets / six checks / six schedules vérifiés.
+NASA/WFP désactivées ne sont plus planifiées ; aucune acquisition effectuée.
+Format 18169/lint 85433 codes 0 ; types 48096 en cours. QA portée à 90/huit
+intégrations, réception complète et commit encore requis. Checks numériques,
+normalisation, ledger, partitions et durabilité restent non qualifiés.
+
+Revue défensive : classe de connecteur obligatoire, discover/fetch/parse callable ;
+quatre tests de refus supplémentaires. Unités renouvelées 18533 code final 0 :
+57 / 68,29 s, dont 28 source_definitions ; format 12397 et lint 45009 codes 0.
+Mypy 10054 encore en cours. QA minimum désormais 94/huit intégrations ; code
+de l'incrément 2 non committé, aucune qualification globale ou source live.
+
+Types finals 10054 code 0 / quatre fichiers. QA Windows 13568 code final 0 :
+94 / 115,84 s / huit intégrations / zéro failure/error/skip ; reçu
+2693c4c0de6a45fc8ad68f6431f70dd5 / 128,224 s, increment-2-qa-final.json/xml.
+Code figé pour réception intégrale renouvelée ; aucun commit ou DONE de cet
+incrément avant check complet, préservation active, diff et scan.
+
+Réception intégrale incrément 2, Windows 18002 code final 0 :
+774 backend / 2365,63 s / cinq avertissements / zéro failure/error/skip,
+42 intégrations par layout/marker et 46 union ; core 93,83242823894491 %,
+extraction 86,3768115942029 %, normalize 84,85523385300668 %.
+Frontend 35 tests / quatre suites / 11,58 s, reçu
+9ad7f99c-026b-4d0b-90e2-ae3c910d67ed, quatre codes 0,
+build 234840 ms. Rapports backend/frontend et agrégat final conservés.
+Inventaire 15/six/six testé, exclusions et erreurs explicites ; aucune collecte
+publique ou qualification de checks numériques revendiquée. Préservation
+finale et scan du lot complet encore requis avant commit, R0.6 IN_PROGRESS.
+
+Préservation finale renouvelée reçue le 2026-10-11 : SQL chunk 9958e6 et
+Bronze session 58622 codes 0, mêmes comptes et empreintes que le précheck.
+Reçu increment-2-active-preservation-final.json ; snapshot applicatif testé
+comparé au worktree (session 4324 code 0), quatre fichiers identiques.
+Diff/scan final et commit restent requis ; aucune qualification live.

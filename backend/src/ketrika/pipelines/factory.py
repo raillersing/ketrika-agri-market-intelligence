@@ -23,6 +23,7 @@ from ketrika.connectors.stages import (
 from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import get_session
 from ketrika.core.http import PoliteHttpClient
+from ketrika.core.models.source import SourceDefinition
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.registry import get_source
 
@@ -49,7 +50,7 @@ class SourceAssets:
         return defs
 
 
-def _cadence_to_cron(cadence: str) -> str:
+def _cadence_to_cron(cadence: str) -> str | None:
     """Map source cadence string to cron expression."""
     cadence_map = {
         "daily": "0 6 * * *",
@@ -58,12 +59,33 @@ def _cadence_to_cron(cadence: str) -> str:
         "quarterly": "0 9 1 1,4,7,10 *",
         "annual": "0 10 1 1 *",
     }
-    return cadence_map.get(cadence.lower(), "0 6 * * 1")
+    if cadence in ("event", "static"):
+        return None
+    if cadence not in cadence_map:
+        raise ValueError("unsupported_source_cadence")
+    return cadence_map[cadence]
+
+
+def _source_for_assets(source_id: str) -> SourceDefinition | None:
+    try:
+        definition = get_source(source_id)
+    except KeyError:
+        if source_id.startswith(("dummy_", "fixture_")):
+            return None
+        raise ValueError("unregistered_source_definition") from None
+    if definition is None:
+        if source_id.startswith(("dummy_", "fixture_")):
+            return None
+        raise ValueError("missing_source_definition")
+    if definition.source_id != source_id:
+        raise ValueError("source_definition_identity_mismatch")
+    return definition
 
 
 def build_source_assets(connector_cls: type[Connector]) -> SourceAssets:
     """Build Dagster assets, checks, schedule and sensor for a given connector class (SPECS §9)."""
     source_id = connector_cls.source_id
+    source_def = _source_for_assets(source_id)
     bronze_name = f"{source_id}__bronze"
     silver_name = f"{source_id}__silver"
 
@@ -115,17 +137,20 @@ def build_source_assets(connector_cls: type[Connector]) -> SourceAssets:
 
     # 4. Schedule from registry cadence
     schedule: ScheduleDefinition | None = None
-    try:
-        source_def = get_source(source_id)
-        if source_def and source_def.cadence:
-            cron = _cadence_to_cron(source_def.cadence)
+    if (
+        source_def is not None
+        and not source_id.startswith(("dummy_", "fixture_"))
+        and source_def.status in ("active", "degraded")
+        and source_def.crawl_permission != "forbidden"
+    ):
+        cron = _cadence_to_cron(source_def.cadence)
+        if cron is not None:
             schedule = ScheduleDefinition(
                 name=f"{source_id}__schedule",
                 target=[bronze_asset, silver_asset],
                 cron_schedule=cron,
+                execution_timezone="Indian/Antananarivo",
             )
-    except Exception:
-        schedule = None
 
     return SourceAssets(
         source_id=source_id,

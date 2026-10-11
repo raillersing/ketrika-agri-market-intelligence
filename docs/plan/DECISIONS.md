@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-035 : R0.6 — définitions explicites et inventaire sans acquisition automatique désactivée
+
+- **Date :** 2026-10-10 ; accepté avant implémentation.
+- **Contexte :** inspection 64611 : 19 assets / 8 checks / 8 schedules, NASA/WFP disabled encore planifiées ; definitions.py masque toute erreur de construction, factory masque celle du registre et invente une cadence de repli.
+- **Décision :** construire un inventaire déterministe des connecteurs enregistrés. Exclure explicitement namespaces dummy/fixture, status planned/disabled et crawl_permission forbidden de l'assemblage automatique ; active/degraded restent admissibles à construction, sans qualification de source. Concordance identité/classe/registre obligatoire. Toute erreur de résolution/construction devient une erreur explicite expurgée, jamais continue. Restituer les exclusions et les effectifs réellement construits.
+- **Factory :** résolution du registre avant construction ; KeyError admis uniquement pour définition pure de fixture dummy/fixture, jamais pour source réelle inconnue. Aucun schedule de fixture, source planned/disabled/forbidden ou cadence event/static ; autres cadences mappées explicitement, cadence inconnue refusée. Horaire business Indian/Antananarivo explicite. La définition pure d'une fixture ne donne aucun droit d'exécution : garde d'acquisition QA/disabled de ADR-032/033 inchangée.
+- **Alternatives :** schedules désactivés mais erreurs ignorées, ou inventaire constant (rejetés).
+- **Limites :** aucun nouveau connecteur, appel réseau, requalification live, seed/migration active ou mutation Bronze. Checks mesurés/blocage Gold, ledger, normalisation, partitions, reprise et durabilité restent obligatoires avant DONE R0.6 ; l'inventaire décrit uniquement les connecteurs effectivement enregistrés, pas toutes les capacités du registre.
+
 ## ADR-034 : R0.6 — identité du run avant retour du lot et erreurs expurgées
 
 - **Date :** 2026-10-10 ; accepté avant correction.

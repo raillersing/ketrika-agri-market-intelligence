@@ -1,0 +1,28 @@
+{
+  "task": "R0.6",
+  "increment": 2,
+  "scope": "software backend check; not task, source or model qualification",
+  "command": "./scripts/dev.ps1 check",
+  "session_id": 18002,
+  "received_at_utc": "2026-10-10T22:16:11Z",
+  "backend_passed": true,
+  "windows_final_exit": null,
+  "frontend_pending": true,
+  "tests": 774,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "warnings": 5,
+  "pytest_duration_seconds": 2365.63,
+  "integration_by_layout": 42,
+  "integration_by_marker": 42,
+  "integration_tests": 46,
+  "format_files": 204,
+  "typecheck_files": 203,
+  "coverage_percent": {
+    "core": 93.83242823894491,
+    "extraction": 86.3768115942029,
+    "normalize": 84.85523385300668
+  },
+  "receipt_origin": "manual transcription of received backend output; Windows final reception recorded separately"
+}

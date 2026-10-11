@@ -3,29 +3,23 @@ from typing import Any
 from dagster import Definitions, RunFailureSensorContext, run_failure_sensor
 
 from ketrika.alerts.notifier import send_pipeline_failure_email
-from ketrika.connectors.registry import list_registered_connectors
 from ketrika.pipelines.factory import (
     alerts_evaluate_asset,
-    build_source_assets,
     gold_refresh_asset,
     ml_price_forecast_asset,
 )
+from ketrika.pipelines.source_definitions import build_registered_source_definitions
 
-all_assets = [gold_refresh_asset, alerts_evaluate_asset, ml_price_forecast_asset]
-all_checks = []
-all_schedules = []
-
-for s_id, conn_cls in list_registered_connectors().items():
-    if s_id.startswith("dummy_"):
-        continue
-    try:
-        src_assets = build_source_assets(conn_cls)
-        all_assets.extend([src_assets.bronze_asset, src_assets.silver_asset])
-        all_checks.extend(src_assets.checks)
-        if src_assets.schedule:
-            all_schedules.append(src_assets.schedule)
-    except Exception:
-        continue
+source_definitions = build_registered_source_definitions()
+source_inventory = source_definitions.inventory
+all_assets = [
+    gold_refresh_asset,
+    alerts_evaluate_asset,
+    ml_price_forecast_asset,
+    *source_definitions.assets,
+]
+all_checks = list(source_definitions.checks)
+all_schedules = list(source_definitions.schedules)
 
 
 def handle_pipeline_failure(context: Any) -> None:

@@ -1,0 +1,23 @@
+{
+  "task": "R0.6",
+  "increment": 2,
+  "scope": "software definitions increment; not complete R0.6 or market qualification",
+  "command": "./scripts/dev.ps1 check",
+  "session_id": 18002,
+  "started_at": "2026-10-10T21:33:12Z",
+  "received_at": "2026-10-10T22:21:07Z",
+  "windows_final_exit": 0,
+  "passed": true,
+  "backend_receipt": "increment-2-backend-check-receipt.json",
+  "backend_tests": 774,
+  "backend_failures": 0,
+  "backend_errors": 0,
+  "backend_skipped": 0,
+  "frontend_execution_id": "9ad7f99c-026b-4d0b-90e2-ae3c910d67ed",
+  "frontend_receipt": "increment-2-frontend-check-receipt.json",
+  "frontend_tests": 35,
+  "frontend_suites": 4,
+  "build_exit": 0,
+  "build_duration_ms": 234840,
+  "receipt_origin": "manual transcription of received Windows exit and backend/frontend results; underlying reports retained"
+}
