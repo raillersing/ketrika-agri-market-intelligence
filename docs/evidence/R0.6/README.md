@@ -173,3 +173,9 @@ Préservation finale reçue : SQL chunk ddf1f4/Bronze 15632 codes 0,
 482 références/764 prix/674 versions/current, zéro marqueur/1377481 octets,
 empreintes identiques au précheck ; reçu final conservé. Aucun schéma actif,
 source live ou usage humain qualifié. Diff/scan/commit du lot complet requis.
+
+Réception finale : commit 27d4e0e7b576de18515c8244d932674b41c91e36,
+24 fichiers/676 ajouts/huit retraits ; diff staged 76641 code 0,
+scan configuré 98284 code 0/369689 octets/4,46 s/aucune fuite.
+QA 107/douze, check 787 backend/35 web/build et préservation reçus.
+R0.6 reste IN_PROGRESS ; normalisation préparée hors snapshot, non livrée.

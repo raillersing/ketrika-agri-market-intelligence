@@ -12,14 +12,14 @@ ni essai humain. Les fixtures QA sont synthétiques et séparées de l'actif.
 | Révision append-only/supersession | Reçu, c63fe22 | Deux requêtes après révision, une supersession/deux skips, quatre lignes dont trois courantes ; normalisation réelle encore absente |
 | Construction invalide explicite | Reçu, b873f44 | `increment-2-qa-final.json/xml`, erreurs expurgées, pas de continue silencieux |
 | Inventaire/schedules selon statuts | Reçu, b873f44 | 15 assets/six checks/six schedules mesurés ; NASA/WFP disabled et fixtures exclues, timezone business ; inventaire des connecteurs enregistrés seulement |
-| Checks de provenance mesurés | Testé, commit incrément 3 requis | QA finale 107/douze et global 83312 verts, 787 backend/35 web/build ; check réel Dagster et reçu négatif relu, empty failed/0/0/NULL |
+| Checks de provenance mesurés | Reçu, 27d4e0e | QA finale 107/douze et global 83312 verts, 787 backend/35 web/build ; check réel Dagster et reçu négatif relu, empty failed/0/0/NULL |
 | Provenance bloque le refresh concerné | Partiel | Garde SQL Gold reçue R0.5 ; raccordement aval réel Dagster/Gold et durabilité restent requis, sentinel ne qualifie pas un refresh Gold |
 | Schema drift bloque le refresh concerné | Non reçu | Détection/mesure/run/propagation/Gold encore à implémenter et vérifier |
 | Silver normalize puis load | Non reçu | BL-013 : loader brut, conversion NULL et étiquette exact incorrecte ; aucun backfill effectué |
 | Partitions document/version/run | Non reçu | Batch/run source liés ; ledger/document/version/partition durable et rejeu après restart restent requis |
 | Erreurs et DQ durables après rollback | Partiel | Wrapper caller et Mailpit reçus ; rollback caller peut perdre le run, assets directs à traiter |
 | Politique robots sans contournement | Partiel | Disabled/forbidden avant collecte et schedules reçus ; robots automatique BL-010 reste ouvert |
-| Definition of Done complète | Non reçue | Check incrément 3 vert : 787 backend/35 web/build ; commit encore requis et critères R0.6 restants non reçus ; prototype normalisation non inclus |
+| Definition of Done complète | Non reçue | Incrément 3 committé 27d4e0e, check vert : 787 backend/35 web/build ; critères R0.6 restants non reçus ; prototype normalisation non inclus |
 
 R0.6 ne devient DONE que lorsque tous ses critères et le check global du
 snapshot final sont reçus, documentés et committés. Aucun tag R0 avant R0.9.
