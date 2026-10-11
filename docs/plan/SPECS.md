@@ -922,6 +922,28 @@ Chaque valeur LLM porte `evidence = {page: int, text: str}`. On applique `verify
 
 ## 13. Normalisation
 
+ADR-037 : prix normalisés avant chargement par consume_connector_silver.
+Decimal, style explicite concordant à la preuve ; ND/NA ≠ invalid, jamais zéro
+ou code missing inventé. Hors NUMERIC(18,4) refusé, aucun arrondi observé ;
+dérivé seul HALF_UP à quatre décimales. Devise explicite, facteur positif
+documenté/confiance >=0,8 et base produit compatible requis ; aucun sac
+générique/FX/densité inféré. Alias SQL source avant global, pg_trgm >=0,85
+avec identité unique, lieu fuzzy seulement avec admin_level explicite ;
+aucune création d'alias. Token <=128 caractères ; milliers à points sans
+number_style explicite restent en revue. FK/source contrôlées ; bruts/preuve
+inchangés, normalization.version=1 séparé et value_kind en métadonnées
+(colonne/UI R2.1 non livrées). Comparaison append-only inclut dérivés et
+classification par chemins tuple statiques. Revue à insertion/supersession
+uniquement, compteur réel ; inconnus/non convertibles pending/dérivé NULL.
+Confidence minimum des composants configurés tronqué à 0,01, non probabiliste ;
+human_reviewed=false. Aucun commit implicite ni backfill historique.
+Classification actor_level : conserver les valeurs §8 producer/wholesale/retail/
+official_ppn/listing/unknown et farmgate documentée par PriceRecord ; aucun
+mapping implicite ni nouvelle permission de collecte privée.
+Précision observée contrôlée via coefficient/exposant exacts (as_tuple), jamais
+Decimal.normalize() qui peut arrondir selon le contexte. Exposants extrêmes
+refusés sans overflow/sous-débordement ni mutation du nombre observé.
+
 Ordre : `parse → validate → product match → unit conversion → location match → natural key → supersede/load`.
 
 - **Produit :** normaliser l'alias (minuscules, suppression des accents, ponctuation et espaces), puis 1) correspondance exacte d'alias spécifique à la source, 2) correspondance exacte d'alias global, 3) trigramme `pg_trgm` avec similarité ≥ 0,85 et produit unique, 4) sinon `review_item(unknown_product)` avec `product_id = NULL` (l'observation est conservée en Silver mais exclue du Gold).

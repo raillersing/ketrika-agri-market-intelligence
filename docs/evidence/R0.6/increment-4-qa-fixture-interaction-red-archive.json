@@ -1,0 +1,18 @@
+{
+  "scope": "lossless failed software qualification archive; not passing",
+  "execution_id": "2850dbcabf2042b0a2afaefe7383f972",
+  "check_session": 81034,
+  "check_exit_code": 1,
+  "original_xml_sha256": "6f8866b9d77c77c925803c86932ae1b18e6684217e9b1b41a8554a6758740536",
+  "gzip_sha256": "593d5cf4666015ddfdac3004a0624c3f6c1c40494bbb7432f27f43ec9e9c0b7d",
+  "decompressed_destination_sha256": "6f8866b9d77c77c925803c86932ae1b18e6684217e9b1b41a8554a6758740536",
+  "archive_session": 37161,
+  "archive_exit_code": 0,
+  "destination_verification_session": 57809,
+  "destination_verification_exit_code": 0,
+  "original_staged_gitleaks_session": 50067,
+  "original_staged_gitleaks_exit_code": 0,
+  "original_staged_scanned_bytes": 172579,
+  "historical_reports_rewritten": false,
+  "bronze_objects_modified": false
+}

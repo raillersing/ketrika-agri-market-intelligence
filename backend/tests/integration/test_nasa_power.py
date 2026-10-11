@@ -64,24 +64,29 @@ def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
     wipe_silver_gold_tables(db_session)
     db_session.commit()
 
-    # Query all admin_level = 2 districts in database
-    district_stmt = select(Location).where(Location.admin_level == 2).order_by(Location.pcode)
-    db_districts = list(db_session.execute(district_stmt).scalars().all())
-    assert len(db_districts) >= 3, "Expected at least 3 admin2 districts in ref.location"
-
-    run_tag = uuid.uuid4().hex[:8]
-    urls_info = []
-
-    # Coordinate mapping for sample districts
+    # This scenario owns exactly these three synthetic coordinate references;
+    # symbolic places from other tests must not acquire a default P-code.
     district_coords = {
         "MDG1101": [47.525, -18.924, 1280.0],
         "MDG1201": [47.025, -19.875, 1500.0],
         "MDG3101": [49.410, -18.150, 10.0],
     }
+    district_stmt = (
+        select(Location)
+        .where(Location.admin_level == 2, Location.pcode.in_(district_coords))
+        .order_by(Location.pcode)
+    )
+    db_districts = list(db_session.execute(district_stmt).scalars().all())
+    assert len(db_districts) >= 3, "Expected at least 3 admin2 districts in ref.location"
+    assert {district.pcode for district in db_districts} == set(district_coords)
+
+    run_tag = uuid.uuid4().hex[:8]
+    urls_info = []
 
     for district in db_districts:
-        pcode = district.pcode or "MDG1101"
-        coords = district_coords.get(pcode, [47.5, -18.9, 1000.0])
+        pcode = district.pcode
+        assert pcode is not None
+        coords = district_coords[pcode]
 
         dist_payload = json.loads(json.dumps(sample_payload))
         dist_payload["geometry"]["coordinates"] = coords

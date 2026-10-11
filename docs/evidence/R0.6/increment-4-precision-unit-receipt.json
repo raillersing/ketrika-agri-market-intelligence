@@ -1,0 +1,15 @@
+{
+  "scope": "pure Decimal regression tests; not SQL persistence, official source or market qualification",
+  "unit_session": 76838,
+  "unit_exit_code": 0,
+  "tests": 45,
+  "seconds": 6.88,
+  "lint_session": 62799,
+  "lint_exit_code": 0,
+  "types_session": 17697,
+  "types_exit_code": 0,
+  "typed_modules": 1,
+  "issue": "B-R030",
+  "validation": "exact coefficient/exponent via as_tuple; no context-rounded normalize",
+  "global_check_received": false
+}

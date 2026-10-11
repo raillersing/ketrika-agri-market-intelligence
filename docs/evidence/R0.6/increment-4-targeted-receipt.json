@@ -1,0 +1,23 @@
+{
+  "scope": "software normalization; synthetic data only; not official collection or market qualification",
+  "unit_session": 28016,
+  "unit_exit_code": 0,
+  "unit_tests": 105,
+  "unit_seconds": 78.16,
+  "sql_s3_windows_session": 2301,
+  "sql_s3_windows_exit_code": 0,
+  "sql_s3_tests": 2,
+  "sql_s3_seconds": 21.12,
+  "sql_s3_variants": ["FMG", "USD"],
+  "assertions": [
+    "source-scoped alias precedes global alias",
+    "raw price decimal and currency preserved",
+    "FMG-derived price rounded only after explicit conversion",
+    "USD retained pending with NULL comparable price",
+    "retry no duplicate observation or review",
+    "revision appends and marks old superseded_by without changing its price",
+    "two source-cell proofs verified from real immutable QA Bronze"
+  ],
+  "global_check_received": false,
+  "functional_commit_received": false
+}

@@ -1,0 +1,16 @@
+{
+  "windows_session": 75577,
+  "windows_exit_code": 1,
+  "passed": false,
+  "tests_passed": 51,
+  "failures": 1,
+  "warnings": 5,
+  "backend_seconds": 952.27,
+  "collected_tests": 875,
+  "formatted_files": 214,
+  "typed_files": 213,
+  "failed_test": "test_weather_history_proof_and_gold_current_rows",
+  "scope": "synthetic fixture cross-test reference isolation; not weather or source qualification",
+  "frontend_completed": false,
+  "active_data_modified": false
+}

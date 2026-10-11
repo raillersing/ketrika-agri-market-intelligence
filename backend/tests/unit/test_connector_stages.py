@@ -3,13 +3,14 @@
 import hashlib
 import uuid
 from dataclasses import FrozenInstanceError, replace
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from ketrika.connectors.base import DiscoveredItem, ParseResult, RawArtifact, RunContext
 from ketrika.connectors.dummy_csv import DummyCsvConnector
+from ketrika.connectors.records import PriceRecord
 from ketrika.connectors.registry import _CONNECTOR_REGISTRY, get_connector_class
 from ketrika.connectors.runner import execute_connector_pipeline
 from ketrika.connectors.stages import (
@@ -21,6 +22,7 @@ from ketrika.core.bronze import BronzeStore
 from ketrika.core.models.db import IngestionRun, SourceRecord
 from ketrika.core.policy import OfflineError, PolicyStop
 from ketrika.core.qualification import QualificationSafetyError
+from ketrika.normalize.price_loader import NormalizedLoad
 from ketrika.pipelines.factory import build_source_assets
 
 
@@ -195,6 +197,36 @@ def test_duplicate_receipt_reference_is_not_silently_replayed():
             connector, ctx, session, replace(batch, artifacts=batch.artifacts * 2)
         )
     connector.parse.assert_not_called()
+
+
+@pytest.mark.parametrize("action,reviews", [("inserted", 2), ("idempotent_skipped", 0)])
+def test_silver_routes_prices_to_normalization_and_counts_actual_reviews(action, reviews):
+    connector, ctx, session, batch, run, *_ = fixture()
+    record = PriceRecord(
+        product_raw="Synthetic unknown product",
+        period_start=date(2024, 1, 1),
+        period_end=date(2024, 1, 1),
+        price_raw="2850",
+        unit_raw="kg",
+    )
+    connector.parse.return_value = ParseResult(parser_version="1.0.0", records=[record])
+    with (
+        patch(
+            "ketrika.normalize.price_loader.load_normalized_price",
+            return_value=NormalizedLoad(action, uuid.uuid4(), reviews),
+        ) as normalize,
+        patch("ketrika.connectors.runner.load_record_with_supersession") as raw_loader,
+    ):
+        stats = consume_connector_silver(connector, ctx, session, batch)
+    normalize.assert_called_once_with(
+        session, record, batch.source_id, uuid.UUID(batch.artifacts[0].source_record_id)
+    )
+    raw_loader.assert_not_called()
+    assert stats["n_review"] == run.n_review == reviews
+    assert stats["n_inserted"] == int(action == "inserted")
+    assert stats["n_skipped"] == int(action == "idempotent_skipped")
+    connector.fetch.assert_not_called()
+    session.commit.assert_not_called()
 
 
 def test_factory_silver_has_a_real_bronze_input_dependency():

@@ -1,6 +1,7 @@
 """Real isolated SQL/S3 and local HTTP; no official live-source qualification."""
 
 import uuid
+from decimal import Decimal
 
 import pytest
 from dagster import materialize
@@ -89,6 +90,12 @@ def test_committed_bronze_replayed_without_http_then_revision_is_append_only(htt
                 if row.location_raw == "Antananarivo" and row.superseded_by is None
             )
             assert str(current_rice.price_value) == "2900.0000"
+            assert current_rice.price_mga_per_base == Decimal("2900.0000")
+            assert current_rice.base_unit == "kg"
+            assert current_rice.review_status == "accepted"
+            assert current_rice.currency_raw == "MGA" and current_rice.unit_raw == "kg"
+            assert current_rice.evidence["normalization"]["version"] == 1
+            assert current_rice.evidence["normalization"]["human_reviewed"] is False
             targets = [ObservationTarget("price_observation", row.observation_id) for row in rows]
             receipt = audit_observation_provenance(
                 session, BronzeProofReader(store), mode="incremental", targets=targets

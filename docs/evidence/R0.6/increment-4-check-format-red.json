@@ -1,0 +1,12 @@
+{
+  "windows_session": 26579,
+  "windows_exit_code": 1,
+  "passed": false,
+  "stage": "ruff format --check",
+  "unformatted_files": ["tests/integration/test_miasa_odr.py"],
+  "unchanged_formatted_files": 213,
+  "backend_tests_executed": false,
+  "frontend_completed": false,
+  "reason": "New symbolic assertions were linted but not formatted after their final addition",
+  "scope": "formatting regression; not functional test failure or market qualification"
+}

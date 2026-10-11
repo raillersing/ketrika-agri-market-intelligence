@@ -11,12 +11,13 @@ from ketrika.connectors.miasa_odr import MiasaOdrConnector
 from ketrika.connectors.runner import execute_connector_pipeline
 from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import check_db_connection
-from ketrika.core.models.db import PriceObservation, ReviewItem, SourceRecord
+from ketrika.core.models.db import Location, PriceObservation, ReviewItem, SourceRecord
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.settings import get_settings
 from ketrika.extraction.llm.replay import ReplayClient
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
 from tests.legacy_replay import rejected_legacy_rebuild
+from tests.miasa_reference_fixture import seed_miasa_normalization_references
 
 
 @pytest.fixture
@@ -40,6 +41,17 @@ def test_miasa_odr_backfill_dq_and_rebuild_lifecycle(db_session: Session):
     """Verify CC3-CC6: backfill 3 editions, idempotence, DQ checks, SQL 0 ND/NA->0, and offline rebuild."""
     # Ensure fresh Silver/Gold state
     wipe_silver_gold_tables(db_session)
+    # Explicit symbolic lookup corpus from the existing golden; not official
+    # geographic qualification or aliases added to production by the loader.
+    references = seed_miasa_normalization_references(db_session)
+    assert references["symbolic_locations"] == references["location_aliases"]
+    symbolic = (
+        select(func.count())
+        .select_from(Location)
+        .where(Location.boundary_version == "synthetic-fixture;verified=false")
+    )
+    assert db_session.scalar(symbolic.where(Location.admin_level != 9)) == 0
+    assert db_session.scalar(symbolic.where(Location.pcode.is_not(None))) == 0
     db_session.commit()
 
     bronze_store = BronzeStore()

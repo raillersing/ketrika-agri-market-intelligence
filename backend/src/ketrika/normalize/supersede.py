@@ -38,6 +38,7 @@ def load_observation_with_supersession[T: Base](
     natural_key: str,
     create_instance_fn: Any,  # Callable[[uuid.UUID], T]
     compare_attrs: dict[str, Any],
+    evidence_fields: dict[tuple[str, ...], Any] | None = None,
 ) -> tuple[str, uuid.UUID]:
     """Load observation into an obs table following SPECS §8.1 supersession logic.
 
@@ -76,6 +77,14 @@ def load_observation_with_supersession[T: Base](
                 is_identical = False
                 break
         elif current_val != expected_val:
+            is_identical = False
+            break
+
+    for path, expected_value in (evidence_fields or {}).items():
+        current_value = getattr(current_obs, "evidence", None)
+        for key in path:
+            current_value = current_value.get(key) if isinstance(current_value, dict) else None
+        if current_value != expected_value:
             is_identical = False
             break
 

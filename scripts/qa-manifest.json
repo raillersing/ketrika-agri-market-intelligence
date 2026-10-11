@@ -17,18 +17,24 @@
         "tests/unit/test_connector_stages.py",
         "tests/unit/test_source_definitions.py",
         "tests/unit/test_source_provenance_check.py",
+        "tests/unit/test_decimal_price.py",
+        "tests/unit/test_price_references.py",
+        "tests/unit/test_price_loader.py",
         "tests/unit/test_connectors.py",
         "tests/unit/test_provenance_bronze.py",
         "tests/unit/test_execution_plan.py",
         "tests/integration/test_connector_stages.py",
         "tests/integration/test_source_provenance_check.py",
+        "tests/integration/test_normalized_price_load.py",
+        "tests/integration/test_miasa_odr.py",
+        "tests/integration/test_weather_provenance.py",
         "tests/integration/test_connector_pipeline.py",
         "tests/integration/test_observability.py",
         "tests/integration/test_nasa_power.py",
         "tests/integration/test_wfp_hdx_mdg.py"
       ],
-      "minimum_tests": 107,
-      "minimum_integration_tests": 12
+      "minimum_tests": 197,
+      "minimum_integration_tests": 16
     },
     "R0.5": {
       "tests": [

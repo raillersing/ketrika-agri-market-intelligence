@@ -1,0 +1,16 @@
+{
+  "execution_id": "1df3ad29b56e4844a4ff323f8fea4111",
+  "original_xml_sha256": "7c25b64c65258ddeda0e20393b317b0af12a7fb236cbfe55da6a7462316c63c8",
+  "decompressed_sha256": "7c25b64c65258ddeda0e20393b317b0af12a7fb236cbfe55da6a7462316c63c8",
+  "gzip_sha256": "3709d70aee9dee679c2e4e7a6417e099039348a117952d24d9c599b4c1ca7320",
+  "archive_file": "increment-4-qa-precision-red.xml.gz",
+  "archive_session": 31136,
+  "archive_exit_code": 0,
+  "unchanged_original_bytes": true,
+  "reason": "Preserve traceback whitespace exactly, without a text diff whitespace exemption or rewriting the failed report",
+  "original_uncompressed_secret_scan_session": 73355,
+  "original_uncompressed_secret_scan_exit_code": 0,
+  "original_uncompressed_scanned_bytes": 184520,
+  "original_uncompressed_scan_seconds": 7.16,
+  "passed": false
+}

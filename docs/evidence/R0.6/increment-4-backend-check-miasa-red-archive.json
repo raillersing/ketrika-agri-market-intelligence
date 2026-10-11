@@ -1,0 +1,17 @@
+{
+  "scope": "lossless archive of failed software qualification; not a passing receipt",
+  "check_session": 89136,
+  "check_exit_code": 1,
+  "original_xml_sha256": "f6bb33fee934ec46e2c27576bf9442a385536d067cc84d12caafe2a13e7e91ca",
+  "gzip_sha256": "282364163b8af6bf496fe3391beac4b654a618d30718a753a87b8b632986ad50",
+  "decompressed_destination_sha256": "f6bb33fee934ec46e2c27576bf9442a385536d067cc84d12caafe2a13e7e91ca",
+  "archive_session": 75316,
+  "archive_exit_code": 0,
+  "destination_verification_session": 50289,
+  "destination_verification_exit_code": 0,
+  "original_staged_gitleaks_session": 90211,
+  "original_staged_gitleaks_exit_code": 0,
+  "original_staged_scanned_bytes": 145349,
+  "historical_reports_rewritten": false,
+  "bronze_objects_modified": false
+}

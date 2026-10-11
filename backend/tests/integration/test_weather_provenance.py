@@ -36,7 +36,11 @@ def test_weather_history_proof_and_gold_current_rows(request: pytest.FixtureRequ
         reader = BronzeStore()
         assert reader.bucket == "ketrika-qa-bronze"
         wipe_silver_gold_tables(session)
-        location = session.scalars(select(Location).where(Location.admin_level == 2)).first()
+        location = session.scalars(
+            select(Location)
+            .where(Location.admin_level == 2, Location.pcode.is_not(None))
+            .order_by(Location.pcode)
+        ).first()
         assert location is not None and location.pcode is not None
         location_id, location_raw = location.location_id, location.pcode
         session.add(

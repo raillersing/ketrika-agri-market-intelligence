@@ -123,7 +123,9 @@ def consume_connector_silver(
     connector: Connector, ctx: RunContext, session: Session, batch: BronzeBatch
 ) -> dict[str, Any]:
     """Parse only verified Bronze bytes; does not discover/fetch/commit."""
+    from ketrika.connectors.records import PriceRecord
     from ketrika.connectors.runner import load_record_with_supersession
+    from ketrika.normalize.price_loader import load_normalized_price
 
     if (
         not isinstance(batch, BronzeBatch)
@@ -197,9 +199,14 @@ def consume_connector_silver(
             if result.parser_version != batch.parser_version:
                 raise ValueError("silver_parse_version_mismatch")
             for record in result.records:
-                action, _ = load_record_with_supersession(
-                    session, record, batch.source_id, reference_id
-                )
+                if isinstance(record, PriceRecord):
+                    loaded = load_normalized_price(session, record, batch.source_id, reference_id)
+                    action = loaded.action
+                    stats["n_review"] = stats.get("n_review", 0) + loaded.review_items
+                else:
+                    action, _ = load_record_with_supersession(
+                        session, record, batch.source_id, reference_id
+                    )
                 if action == "inserted":
                     stats["n_inserted"] += 1
                 elif action == "superseded":

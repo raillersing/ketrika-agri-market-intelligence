@@ -1,0 +1,28 @@
+{
+  "task": "R0.6",
+  "increment": 4,
+  "scope": "software backend normalizer check; not task, source or model qualification",
+  "command": "./scripts/dev.ps1 check",
+  "session_id": 99868,
+  "received_at_utc": "2026-10-11T12:18:27Z",
+  "backend_passed": true,
+  "windows_final_exit": null,
+  "frontend_pending": true,
+  "tests": 875,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "warnings": 5,
+  "pytest_duration_seconds": 2464.91,
+  "integration_by_layout": 48,
+  "integration_by_marker": 48,
+  "integration_tests": 52,
+  "format_files": 214,
+  "typecheck_files": 213,
+  "coverage_percent": {
+    "core": 93.85088393543428,
+    "extraction": 86.3768115942029,
+    "normalize": 88.2089552238806
+  },
+  "receipt_origin": "manual transcription of received backend output; original XML and coverage exported; Windows final reception recorded separately"
+}

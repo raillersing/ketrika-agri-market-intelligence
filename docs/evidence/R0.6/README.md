@@ -1,5 +1,30 @@
 # R0.6 — lignée Bronze → Silver
 
+Point de reprise incrément 4 (2026-10-11T11:48:18Z) : toujours non committé.
+QA finale de comportement 45271 code Windows 0, 197 tests dont seize
+intégrations, 192,75 s, zéro failure/error/skip ; reçu
+fb298a810c7046c590d738397d45ef4b / 204,982 s conservé. Types 23865 code 0
+pour les trois fichiers de fixture, lint 98221 code 0. Format final global
+66933 code 0 / 214 fichiers ; AST MiASA inchangé après format 49303 code 0.
+Check intégral actuel 99868 : résultat final backend/frontend/build encore
+requis. Aucun résultat du worktree préparatoire API/Gold/schema n'est inclus
+dans cette qualification principale.
+
+B-R032 : alias source et lieux MiASA exclusivement synthétiques, origin depuis
+golden existant/human_reviewed=false ; aucun P-code ou niveau administratif
+déduit du rôle producteur, niveaux symboliques 9. Rejeu corrige seulement les
+anciennes références de cette fixture exacte sous garde QA, aucune observation
+ou Bronze réécrit. Météo exige explicitement son P-code ; NASA conserve trois
+P-codes de son mapping préexistant sans remplacement implicite. Seuil 5 %,
+180 observations, distributions, bruts, idempotence et refus de Gold historique
+conservés ; source MiASA et géographie réelle R1.1/R1.3 non qualifiées.
+
+Les refus précédents restent conservés : 89136 (MiASA), 81034 (interaction NASA),
+75577 (météo), 26579 (format). XML rouges récents archivés gzip sans modification
+d'octets, SHA de destination décompressée vérifié et original scanné avant
+compression ; JSON d'archivage et reçus présents. Pas d'effacement de rapport
+historique, de seuil abaissé ou de cache vide déclaré certifié.
+
 État : IN_PROGRESS. Base fonctionnelle R0.5 reçue
 9559e755877475c72a027051e0a0e08f0627292b ; clôture 90b2eb4.
 
@@ -179,3 +204,61 @@ Réception finale : commit 27d4e0e7b576de18515c8244d932674b41c91e36,
 scan configuré 98284 code 0/369689 octets/4,46 s/aucune fuite.
 QA 107/douze, check 787 backend/35 web/build et préservation reçus.
 R0.6 reste IN_PROGRESS ; normalisation préparée hors snapshot, non livrée.
+
+## Incrément 4 — normalisation (en qualification, non committée)
+
+ADR-037/SPECS acceptés avant transfert : Decimal exact, alias SQL source avant
+global, conversion documentée compatible produit et revue d'ambiguïtés.
+Silver route PriceRecord vers normalize→load ; autres types inchangés.
+Bruts/provenance conservés, revue comptée sans duplication au retry, révisions
+append-only. value_kind en métadonnées seulement, colonne/UI R2.1 non livrées.
+SQL/S3 Windows 2301 code final 0 : deux tests / 21,12 s, FMG/USD, source alias,
+retry/révision et deux preuves natives vérifiées ; scope synthétique seulement.
+Pas de réception globale de cet incrément, aucun Gold réel/source live/modèle
+qualifié. Manifeste élargi sans réduction, préservation active inchangée.
+
+B-R030 reçu numériquement : 45 tests / 6,88 s, précision exacte as_tuple,
+exposants extrêmes et contexte de faible précision refusés sans arrondi observé.
+Ancien check 37430 interrompu explicitement (Windows 1/Docker 137), reçu conservé,
+pas réception complète. QA précision 79315 rouge : 194/1 / 140,92 s,
+JSON/XML conservés ; défaut préexistant cache source_health B-R031/BL-015.
+Le scénario Mailpit/API prépare désormais seulement les métadonnées source_health,
+avec 0/0/NULL et sans publier de prix. Cela ne corrige pas l'API sans cache ;
+correction séparée requise avant DONE R0.6. Nouveau manifeste minimum 195/14.
+
+QA corrigée 3441 code final 0 : 195/138,18 s/quatorze intégrations,
+zéro failure/error/skip, reçu 40f45e447ade40dda714ad488a0f0d15/152,36 s.
+Nouveau check Windows 89136 en cours : lint/format 213, types 212 verts,
+875 tests collectés ; backend/frontend/build finaux non reçus.
+XML rouge conservé en `.xml.gz` : SHA original/décompressé identique
+7c25b64c65258ddeda0e20393b317b0af12a7fb236cbfe55da6a7462316c63c8,
+archive/réception dans `increment-4-qa-precision-red-archive.json`.
+Scan préparatoire XML brut inclus 73355 vert/184520 octets/7,16 s ;
+diff avait espaces de traceback originaux, archive évite de les réécrire.
+Nouveau diff/scan du lot final et commit encore requis.
+
+Réception renouvelée après les refus MiASA, interaction NASA/météo et format :
+les XML rouges sont conservés byte-identiques dans leurs archives gzip,
+avec SHA original/décompressé et scans des originaux avant compression.
+Les références MiASA sont uniquement synthétiques, source-scopées,
+sans P-code officiel ; tous les lieux créés portent admin_level 9.
+NASA et météo sélectionnent leurs références explicites sans P-code inventé.
+Seuil de revue et assertions de valeurs originaux conservés.
+QA finale 45271 code 0 : 197 tests/seize intégrations/192,75 s,
+reçu fb298a810c7046c590d738397d45ef4b/204,982 s.
+Backend complet 99868 reçu code 0 : 875 tests/2464,91 s/cinq avertissements,
+48 intégrations dossier/marqueur, 52 union, zéro failure/error/skip.
+Core 93,85088393543428 %, extraction 86,3768115942029 %, normalize
+88,2089552238806 %. Relecture XML exporté 54010 code 0, 875/52.
+Snapshot sept fichiers identiques 64912 code 0 ; frontend/build et code final
+Windows encore requis à ce point, aucun commit incrément 4 ni DONE R0.6.
+
+Check Windows 99868 code final 0 reçu à 2026-10-11T12:23:16Z : frontend
+35 tests/quatre suites/10,27 s, quatre étapes code 0 et build 227055 ms.
+Reçu 0ba956bf-d093-487c-bb53-e50e93a60f31 et vitest originaux exportés ;
+agrégat final conservé. Aucun prototype API/schema/Gold/ledger/robots séparé
+inclus ; R0.6 IN_PROGRESS. Préservation finale et scan/commit encore requis.
+
+Préservation finale : SQL aa1db6/Bronze 91367 codes 0, 482 références/764 prix,
+674 versions/current et zéro delete marker/1377481 octets ; empreintes identiques
+au précheck, reçu conservé. Diff/scan du lot complet et commit encore requis.

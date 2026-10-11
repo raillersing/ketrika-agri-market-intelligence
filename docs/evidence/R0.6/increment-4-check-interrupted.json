@@ -1,0 +1,19 @@
+{
+  "windows_session": 37430,
+  "windows_exit_code": 1,
+  "docker_exit_code": 137,
+  "qualified": false,
+  "controlled_interruption": true,
+  "stopped_container": "ketrika-qualification-api-run-7e7ae66c131c",
+  "stop_session": 26352,
+  "stop_exit_code": 0,
+  "reason": "B-R030: independently reproduced exact SQL precision validation defect; repair and fresh complete check required",
+  "lint_passed": true,
+  "formatted_files": 213,
+  "typed_files": 212,
+  "collected_tests": 868,
+  "backend_completed": false,
+  "frontend_completed": false,
+  "active_services_or_data_changed": false,
+  "test_removed_or_threshold_lowered": false
+}

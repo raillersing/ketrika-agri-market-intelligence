@@ -20,6 +20,7 @@ from ketrika.connectors.runner import execute_connector_pipeline
 from ketrika.core.db import check_db_connection
 from ketrika.core.models.db import IngestionRun, Source
 from ketrika.core.settings import get_settings
+from ketrika.gold.refresh import refresh_gold_views
 from ketrika.pipelines.definitions import handle_pipeline_failure
 
 
@@ -148,6 +149,13 @@ def test_forced_connector_failure_records_failed_and_dispatches_email(
     assert unique_source_id in matched[0]["Subject"]
 
     # 4. Assert /v1/sources API returns latest_run_status == "failed"
+    # Arrange the existing metadata-cache precondition explicitly. This does
+    # not fix or qualify the no-cache API path tracked separately in BL-015.
+    metadata = refresh_gold_views(db_session, views=["source_health"])
+    assert metadata["views_refreshed"] == ["source_health"]
+    assert metadata["source_observations_total"] == metadata["source_observations_valid"] == 0
+    assert metadata["source_cell_rate"] is None
+    db_session.commit()
     client = TestClient(app)
     resp = client.get("/v1/sources")
     assert resp.status_code == 200

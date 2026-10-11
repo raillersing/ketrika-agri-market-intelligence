@@ -1,0 +1,23 @@
+{
+  "windows_session": 89136,
+  "windows_exit_code": 1,
+  "passed": false,
+  "tests_passed": 29,
+  "failures": 1,
+  "warnings": 5,
+  "backend_seconds": 643.85,
+  "collected_tests": 875,
+  "formatted_files": 213,
+  "typed_files": 212,
+  "failed_test": "test_miasa_odr_backfill_dq_and_rebuild_lifecycle",
+  "review_items": 390,
+  "observations": 180,
+  "review_threshold": 0.05,
+  "review_causes": {
+    "unknown_product": 144,
+    "unknown_location": 108,
+    "unqualified_unit_factor": 138
+  },
+  "scope": "synthetic fixture normalization references missing; no official source or geographical qualification",
+  "frontend_completed": false
+}
