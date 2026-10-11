@@ -1,0 +1,13 @@
+{
+  "task": "R0.6",
+  "increment": 3,
+  "received_at_utc": "2026-10-11T05:57:59Z",
+  "command": "./scripts/dev.ps1 check",
+  "session_id": 83312,
+  "windows_final_exit_code": 0,
+  "backend": {"tests": 787, "duration_seconds": 2327.02, "failures": 0, "errors": 0, "skipped": 0},
+  "frontend": {"execution_id": "a0e167cf-3795-44c9-92d6-9a84ec69021a", "tests": 35, "suites": 4, "duration_seconds": 6.73, "build_ms": 216184, "all_steps_exit_zero": true},
+  "snapshot_comparison": {"session_id": 82554, "exit_code": 0, "files_identical": 4},
+  "scope": "software check only; R0.6 still IN_PROGRESS; no source/model/human qualification; separate normalization prototype not included",
+  "receipt_origin": "manual transcription of received Windows and Docker outputs"
+}

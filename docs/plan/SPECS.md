@@ -994,6 +994,15 @@ distincte de la qualification de modèle/source ; garde Gold et adaptateurs rest
 | `schema_drift` : colonnes ou structure inattendues | 0 | oui |
 | `llm_unverified_in_gold` | 0 | oui |
 
+ADR-036 : provenance_complete Dagster mesure toutes les observations des six
+tables attribuées à la source par source_record, sans filtre de publication.
+Vérification fraîche octets/SHA/cellules avec reçu ops.dq_result source-scopé ;
+ensemble vide failed/empty, total=valid=0 et métrique NULL. Check blocking ERROR,
+effectifs/lectures/UUID/état exposés, pas URL/extrait/valeur source. Le helper ne
+commit pas ; le check commit son reçu avant de retourner un résultat négatif.
+Ce check ne qualifie ni authenticité ni conversion ni modèle ; orphelins sans
+source attribuable restent contrôlés par l'audit global, sans attribution inventée.
+
 ---
 
 ## 15. Couche Gold (vues SQL dans `backend/src/ketrika/gold/sql/`)

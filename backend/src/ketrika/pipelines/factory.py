@@ -25,6 +25,8 @@ from ketrika.core.db import get_session
 from ketrika.core.http import PoliteHttpClient
 from ketrika.core.models.source import SourceDefinition
 from ketrika.core.policy import PolicyEngine
+from ketrika.core.provenance_audit import audit_source_provenance
+from ketrika.core.provenance_bronze import BronzeProofReader
 from ketrika.core.registry import get_source
 
 
@@ -126,13 +128,26 @@ def build_source_assets(connector_cls: type[Connector]) -> SourceAssets:
         return stats
 
     # 3. DQ Asset Checks (SPECS §14)
-    @asset_check(asset=silver_name, name=f"{source_id}__provenance_complete")
+    @asset_check(asset=silver_name, name=f"{source_id}__provenance_complete", blocking=True)
     def check_provenance(context) -> AssetCheckResult:
-        # Check that 100% of observations for source have a valid source_record_id
+        with get_session() as session:
+            receipt = audit_source_provenance(session, BronzeProofReader(BronzeStore()), source_id)
+        report = receipt.report
         return AssetCheckResult(
-            passed=True,
+            passed=report.passed,
             severity=AssetCheckSeverity.ERROR,
-            metadata={"source_id": source_id, "check": "provenance_complete"},
+            metadata={
+                "source_id": source_id,
+                "check": "provenance_complete",
+                "dq_id": str(receipt.dq_id),
+                "total_records": report.total,
+                "valid_provenance": report.valid,
+                "rate": float(report.rate) if report.rate is not None else None,
+                "objects_read": report.objects_read,
+                "object_read_attempts": report.object_read_attempts,
+                "state": "empty" if not report.total else "verified" if report.passed else "failed",
+                "scope": "source_cells_not_authenticity_conversions_or_model",
+            },
         )
 
     # 4. Schedule from registry cadence

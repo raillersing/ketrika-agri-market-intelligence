@@ -1,0 +1,16 @@
+{
+  "scope": "software only; no live source or market qualification",
+  "command": "Docker pytest tests/unit/test_source_provenance_check.py tests/unit/test_provenance_audit.py tests/unit/test_source_definitions.py",
+  "environment": "Docker ketrika-backend:qa-r03; network none; readonly repository mount",
+  "session": 95502,
+  "exit_code": 0,
+  "passed": 70,
+  "duration_seconds": 84.65,
+  "new_cases": 9,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "types": {"session": 44427, "exit_code": 0, "files": 2},
+  "lint": {"session": 99135, "exit_code": 0},
+  "receipt_origin": "manual transcription of received Docker outputs"
+}

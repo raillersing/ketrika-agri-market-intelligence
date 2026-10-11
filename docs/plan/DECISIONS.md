@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-036 : R0.6 — check de provenance mesuré par source
+
+- **Date :** 2026-10-11 ; accepté avant implémentation.
+- **Contexte :** factory renvoie passed=True sans lecture SQL/Bronze malgré le vérificateur reçu en R0.5.
+- **Décision :** sélectionner toutes les observations des six tables liées à la source via source_record, sans filtre accepted/current/conversion ; réutiliser la vérification octets/SHA/cellules et persister un reçu DQ source-scopé. Ensemble vide = failed, état empty, 0/0, métrique NULL, jamais 100 %. Le check Dagster est blocking avec sévérité ERROR et métadonnées mesurées (UUID DQ, effectifs, objets, état).
+- **Transactions :** le vérificateur ne commit pas ; l'asset check commit son reçu dans son propre get_session avant de retourner le résultat négatif. Erreur technique propagée, aucun faux vert. Aucun accès réseau source, aucune mutation d'observation/Bronze.
+- **Alternatives :** contrôler seulement les FK, reprendre un ancien reçu ou certifier un ensemble vide (rejetés).
+- **Limites :** source-cell uniquement, pas authenticité/conversion/modèle. Orphelins sans source attribuable restent couverts par l'audit global R0.5, jamais attribués artificiellement. Lignée Gold explicite, schema_drift, ledger et durabilité des échecs de parsing restent à recevoir avant DONE R0.6.
+
 ## ADR-035 : R0.6 — définitions explicites et inventaire sans acquisition automatique désactivée
 
 - **Date :** 2026-10-10 ; accepté avant implémentation.

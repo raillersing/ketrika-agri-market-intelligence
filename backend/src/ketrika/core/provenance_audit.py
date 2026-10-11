@@ -262,3 +262,59 @@ def audit_observation_provenance(
     session.add(dq)
     session.flush()
     return AuditReceipt(report, tuple(target for target, _ in selected), dq.dq_id)
+
+
+def audit_source_provenance(
+    session: Session, reader: ArtifactReader, source_id: str
+) -> AuditReceipt:
+    """Measure every source-attributable row, including historical/rejected rows."""
+    if not isinstance(source_id, str) or not source_id:
+        raise ValueError("invalid_audit_source")
+    targets: list[ObservationTarget] = []
+    for table, policy in POLICIES.items():
+        model = policy.model
+        ids = session.scalars(
+            select(model.observation_id)
+            .join(SourceRecord, model.source_record_id == SourceRecord.source_record_id)
+            .where(SourceRecord.source_id == source_id)
+            .order_by(model.observation_id)
+        ).all()
+        targets.extend(ObservationTarget(table, observation_id) for observation_id in ids)
+    if targets:
+        receipt = audit_observation_provenance(session, reader, mode="incremental", targets=targets)
+        dq = session.get(DqResult, receipt.dq_id)
+        if dq is None:
+            raise ValueError("source_audit_receipt_missing")
+        dq.details = dict(dq.details or {}) | {"scope": "all_source_observations"}
+    else:
+        report = VerificationReport("incremental", (), 0, 0)
+        dq = DqResult(
+            check_name="provenance_bytes_and_cells",
+            passed=False,
+            metric=None,
+            threshold=Decimal(100),
+            details={
+                "mode": "incremental",
+                "scope": "all_source_observations",
+                "tables": list(POLICIES),
+                "total_records": 0,
+                "valid_provenance": 0,
+                "objects_read": 0,
+                "object_read_attempts": 0,
+                "results": [],
+            },
+        )
+        session.add(dq)
+        session.flush()
+        receipt = AuditReceipt(report, (), dq.dq_id)
+    dq.source_id = source_id
+    dq.asset_key = f"{source_id}__silver"
+    dq.details = dict(dq.details or {}) | {
+        "state": "empty"
+        if not receipt.report.total
+        else "verified"
+        if receipt.report.passed
+        else "failed"
+    }
+    session.flush()
+    return receipt

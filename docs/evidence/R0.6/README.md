@@ -140,3 +140,36 @@ Commit fonctionnel reçu b873f44ec71c8fcb04677983423f48a1ba17ab2f :
 20 fichiers / 647 ajouts / 27 retraits. Diff staged 51497 code 0, scan
 configuré final 75483 code 0 / 339921 octets / 8,67 s / aucune fuite.
 R0.6 reste IN_PROGRESS ; aucune qualification source/modèle/usage humain.
+
+Incrément 3 en cours après ADR-036 : provenance source-scopée mesurée sur les
+six tables, incluant historique/revue ; vide échoue avec 0/0 et métrique NULL.
+Check blocking ERROR, reçu SQL avant retour négatif. Unités 95502 code 0 :
+70 / 84,65 s ; types 44427 code 0 / deux fichiers, lint 99135 code 0.
+QA Windows 47407 en cours (107/douze intégrations). Test réel de blocage aval,
+réception intégrale et commit restent requis ; Gold réel/schema_drift/normalisation/
+ledger/partitions/durabilité non qualifiés par ce reçu.
+
+QA finale renforcée 28400 code final 0 : 107 / 116,74 s / douze intégrations,
+zéro failure/error/skip ; reçu 5536f1c478bf4f66b4ee516f9b3b0f89 / 130,296 s.
+Check réel Dagster : 1/1 valide laisse exécuter le sentinel, trois cas 0/1
+le bloquent ; chaque reçu négatif est relu en nouvelle session SQL. Aucun
+refresh Gold ni corpus officiel qualifié. Code figé pour check Windows 83312,
+réception intégrale/préservation/diff/scan/commit encore requis.
+
+Backend intégral 83312 reçu vert : 787 / 2327,02 s / cinq avertissements /
+zéro failure/error/skip ; intégrations 46 layout / 46 marker / 50 union.
+Core 93,85088393543428 %, extraction 86,3768115942029 %, normalize
+84,85523385300668 %. XML/coverage/receipt increment-3-backend-check conservés,
+relecture Docker 97146 code 0 ; frontend/code final Windows encore requis.
+Ces résultats ne qualifient pas le prototype séparé de normalisation.
+
+Check Windows 83312 code final 0 : frontend 35/quatre suites/6,73 s,
+reçu a0e167cf-3795-44c9-92d6-9a84ec69021a, quatre étapes code 0,
+build 216184 ms. Rapports frontend et agrégat final conservés ; snapshot
+82554 code 0, quatre fichiers identiques. Préservation/diff/scan/commit
+finals restent requis ; R0.6 IN_PROGRESS, prototype non inclus.
+
+Préservation finale reçue : SQL chunk ddf1f4/Bronze 15632 codes 0,
+482 références/764 prix/674 versions/current, zéro marqueur/1377481 octets,
+empreintes identiques au précheck ; reçu final conservé. Aucun schéma actif,
+source live ou usage humain qualifié. Diff/scan/commit du lot complet requis.
