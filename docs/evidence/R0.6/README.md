@@ -322,4 +322,8 @@ quatre suites ; reçu 7180d33b-7642-40d8-baa4-78d889afad15, toutes étapes code 
 build 140732 ms. Les seize fichiers du lot correspondent au snapshot testé.
 SQL actif et toutes versions Bronze relus après réception : empreintes identiques
 au précheck (482 références, 764 prix, 674 versions, 1377481 octets).
-Commit/scan final encore requis ; aucune réception complète de R0.6.
+Commit 6f1a9b1f6dff9c6411435a012c96c6b6f8d48def. Diff staged 52385 code 0,
+scan configuré 50898 code final 0 : 502123 octets/31,9 s/aucune fuite ;
+gouvernance 26921 code 0/74 statuts cohérents. B-R035 résolu par correction
+du seul contrat synthétique et réception globale renouvelée. R0.6 demeure
+IN_PROGRESS ; aucune réception complète, source live, modèle ou usage humain.
