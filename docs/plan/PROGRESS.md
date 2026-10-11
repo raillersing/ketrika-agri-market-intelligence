@@ -66,7 +66,7 @@
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
-| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | 27d4e0e (incrément 3) | Provenance source mesurée et bloquante reçue : 107/12 ciblés, check 787 backend / 35 web / build ; normalisation/schema_drift/Gold réel/durabilité/ledger/partitions encore requis | BL-010/013 ouverts |
+| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | 47dc4a8 (incrément 4) | Normalisation source-backed reçue : QA 197/16, check 875 backend / 35 web / build ; API sans cache/schema_drift/Gold réel/durabilité/ledger/partitions encore requis | BL-010/015 ouverts ; BL-013 partiel/R2.1 |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
 | R0.9 | MUST | TODO | — | — | — | — | — |
@@ -563,6 +563,8 @@
 - R0.5 DONE logiciel source-cell, miroir synchronisé. Ni droits/acquisition live, conversions, lignée modèle, usage humain, schéma actif ou rebuild complet qualifiés. R0.6 reste nécessaire pour la lignée Dagster, durabilité DQ et BL-010/013 ; aucun tag de phase avant R0.9.
 
 ### [2026-10-10T19:32:37Z] Démarrage R0.6 — lignée sans refetch
+
+- [2026-10-11T12:26:13Z] Clôture incrément 4 : commit vert 47dc4a852d1df22c3b3935eca6b68e4fa4d6f38c, 59 fichiers/2112 ajouts/21 retraits. QA 197/seize intégrations et Windows complet 99868 code 0/875 backend/35 web/build ; couvertures core/extraction/normalize ≥80 %, bruts/retry/révisions/ND-NA conservés. Préservation SQL/Bronze finale identique, diff staged 48495 code 0 et scan configuré 23767 code final 0/915064 octets/15,7 s/aucune fuite. Gouvernance 98674 code 0/74 statuts cohérents/5 DONE/1 IN_PROGRESS/68 TODO. B-R030/033/034 corrigés et reçus ; B-R031 repli de test seulement, BL-015 API reste ouvert ; B-R032 référentiels synthétiques/repli, aucune source réelle qualifiée. R0.6 IN_PROGRESS : schema_drift/Gold connecté/ledger/durabilité/partitions et robots automatique encore requis ; aucun tag ni migration active, aucun prototype indépendant reçu par ce commit.
 
 - [2026-10-11T12:24:24Z] Préservation finale incrément 4 reçue : SQL aa1db6/Bronze 91367 codes 0 ; 482 références/764 prix/674 versions/current, zéro delete marker/1377481 octets, empreintes identiques au précheck et commits précédents. Reçu final archivé, aucun schéma actif qualifié ni donnée/Bronze actif modifié. Après fin effective check 99868, contrôle préparatoire SQL/S3/schema/Gold séparé 71446 lancé depuis worktree readonly sur destination QA gardée ; ne qualifie aucun code principal, aucune réception prototype encore reçue. Diff/scan final du lot principal puis commit requis ; R0.6 IN_PROGRESS.
 

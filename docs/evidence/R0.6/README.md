@@ -205,7 +205,7 @@ scan configuré 98284 code 0/369689 octets/4,46 s/aucune fuite.
 QA 107/douze, check 787 backend/35 web/build et préservation reçus.
 R0.6 reste IN_PROGRESS ; normalisation préparée hors snapshot, non livrée.
 
-## Incrément 4 — normalisation (en qualification, non committée)
+## Incrément 4 — normalisation (reçue, 47dc4a8)
 
 ADR-037/SPECS acceptés avant transfert : Decimal exact, alias SQL source avant
 global, conversion documentée compatible produit et revue d'ambiguïtés.
@@ -262,3 +262,10 @@ inclus ; R0.6 IN_PROGRESS. Préservation finale et scan/commit encore requis.
 Préservation finale : SQL aa1db6/Bronze 91367 codes 0, 482 références/764 prix,
 674 versions/current et zéro delete marker/1377481 octets ; empreintes identiques
 au précheck, reçu conservé. Diff/scan du lot complet et commit encore requis.
+
+Clôture : commit 47dc4a852d1df22c3b3935eca6b68e4fa4d6f38c,
+59 fichiers/2112 ajouts/21 retraits. Diff staged 48495 code 0, scan configuré
+23767 code final 0/915064 octets/15,7 s/aucune fuite, gouvernance 98674 code 0.
+QA 197/16, contrôle complet 875/35/build et préservation reçus.
+R0.6 reste IN_PROGRESS ; aucune source native/modèle/usage humain qualifié,
+aucun prototype séparé inclus. BL-015 et autres critères de la matrice restent ouverts.
