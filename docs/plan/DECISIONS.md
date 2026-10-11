@@ -2,6 +2,16 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-039 : R0.6 — observabilité API sans cache Gold
+
+- **Date :** 2026-10-11 ; accepté avant transfert principal. Identifiant conservé du prototype isolé ; ADR-038 de structure CSV reste préparatoire et non transféré.
+- **Contexte :** B-R031/BL-015 : GET /v1/sources échoue avant première publication de source_health et préfère un ancien statut en cache.
+- **Décision :** lire pg_matviews avant de joindre la vue. Cache absent/non peuplé : liste depuis meta, freshness_days/is_stale NULL. Dernier statut/date toujours depuis meta.ingestion_run, ordre started_at/run_id décroissant ; aucun refresh implicite ni exception SQL absorbée.
+- **Santé dédiée :** GET /v1/sources/{id}/health renvoie 503 RFC 7807/about:blank si cache indisponible, jamais de métriques fabriquées. Cache disponible : métriques de la vue, statut/date relus meta ; entrée absente conserve 404. Aucun schéma de réponse 200 modifié.
+- **Réception :** unité et vraie API/SQL sur WITH NO DATA et cache ancien, signatures des prix et population des vues numériques inchangées. Préparation worktree reçue séparément ne vaut pas réception principale ; QA et check Windows complets après transfert obligatoires.
+- **Alternatives :** refresh à chaque GET, fabriquer une santé vide, présenter un statut obsolète (rejetés).
+- **Limites :** pas correction des autres métriques DQ historiques, pas qualification de fraîcheur du cache, source, prix ou modèle. Gates H1–H7 inchangés.
+
 ## ADR-037 : R0.6 — normalisation décimale avant chargement append-only
 
 - **Isolation météo et niveaux symboliques :** seconde manifestation B-R033 : fixture météo prenait le premier admin2 sans exiger son P-code. Exiger explicitement pcode non NULL et ordre déterministe dans sa sélection. Les lieux MiASA sont tous symboliques au niveau 9, sans assertion d'un niveau administratif à partir de l'acteur producer ; lors du rejeu, corriger uniquement les anciennes lignes de cette fixture, identifiées par alias source exact/origin exact/pcode NULL/boundary synthetic-fixture;verified=false. Aucun lieu officiel, alias de production, P-code, preuve source ou observation historique n'est réécrit. Les garde-fous de destination QA restent obligatoires avant toute correction de fixture.

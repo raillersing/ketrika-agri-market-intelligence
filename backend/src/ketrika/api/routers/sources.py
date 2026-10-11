@@ -6,18 +6,37 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from ketrika.api.errors import NotFoundException
+from ketrika.api.errors import NotFoundException, ProblemDetailException
 from ketrika.api.schemas import SourceHealthItem, SourceItem
 from ketrika.core.db import get_db
 
 router = APIRouter(prefix="/v1/sources", tags=["sources"])
 
 
+def _health_cache_populated(session: Session) -> bool:
+    """Inspect state, not a count or fabricated readiness metric."""
+    return (
+        session.scalar(
+            text(
+                "SELECT ispopulated FROM pg_matviews "
+                "WHERE schemaname='gold' AND matviewname='source_health'"
+            )
+        )
+        is True
+    )
+
+
 @router.get("", response_model=list[SourceItem])
 def list_sources(session: Session = Depends(get_db)) -> list[SourceItem]:
     """List all registered data sources and their priority / freshness SLAs and health."""
+    health_join = (
+        "LEFT JOIN gold.source_health sh ON s.source_id = sh.source_id"
+        if _health_cache_populated(session)
+        else "LEFT JOIN (SELECT NULL::integer AS freshness_days, NULL::boolean AS is_stale) sh ON FALSE"
+    )
+    # Only fixed code-owned SQL fragments; no source or request content.
     sql = text(
-        """
+        f"""
         SELECT
             s.source_id,
             COALESCE(s.spec->>'name', s.source_id) AS name,
@@ -26,15 +45,15 @@ def list_sources(session: Session = Depends(get_db)) -> list[SourceItem]:
             (s.spec->>'freshness_sla_days')::integer AS freshness_sla_days,
             sh.freshness_days,
             sh.is_stale,
-            COALESCE(sh.latest_run_status, lr.latest_run_status) AS latest_run_status,
-            COALESCE(sh.last_run_started_at, lr.started_at) AS last_run_started_at
+            lr.latest_run_status AS latest_run_status,
+            lr.started_at AS last_run_started_at
         FROM meta.source s
-        LEFT JOIN gold.source_health sh ON s.source_id = sh.source_id
+        {health_join}
         LEFT JOIN LATERAL (
             SELECT status AS latest_run_status, started_at
             FROM meta.ingestion_run ir
             WHERE ir.source_id = s.source_id
-            ORDER BY ir.started_at DESC
+            ORDER BY ir.started_at DESC, ir.run_id DESC
             LIMIT 1
         ) lr ON true
         ORDER BY s.source_id;
@@ -66,6 +85,12 @@ def get_source_health(
     session: Session = Depends(get_db),
 ) -> SourceHealthItem:
     """Retrieve DataOps health metrics for a specific source from gold.source_health (SPECS §19)."""
+    if not _health_cache_populated(session):
+        raise ProblemDetailException(
+            status_code=503,
+            title="DataOps health not published",
+            detail="The source health cache has not been published; no health metrics are available.",
+        )
     sql = text(
         """
         SELECT
@@ -75,13 +100,20 @@ def get_source_health(
             freshness_sla_days,
             freshness_days,
             is_stale,
-            latest_run_status,
-            last_run_started_at,
+            lr.latest_run_status,
+            lr.started_at AS last_run_started_at,
             n_records_30d,
             parse_success_rate::float,
             open_review_items
-        FROM gold.source_health
-        WHERE source_id = :sid;
+        FROM gold.source_health sh
+        LEFT JOIN LATERAL (
+            SELECT status AS latest_run_status, started_at
+            FROM meta.ingestion_run ir
+            WHERE ir.source_id = sh.source_id
+            ORDER BY ir.started_at DESC, ir.run_id DESC
+            LIMIT 1
+        ) lr ON true
+        WHERE sh.source_id = :sid;
         """
     )
     row = session.execute(sql, {"sid": source_id}).fetchone()

@@ -1,0 +1,12 @@
+{
+  "received_at_utc": "2026-10-11T13:10:34Z",
+  "session_id": 34705,
+  "exit_code": 0,
+  "environment": "Docker readonly, network none; synthetic transient observation and JSON bytes",
+  "marker": "ND",
+  "verified": false,
+  "reason": "binding_value_or_identity_missing",
+  "scope": "pure current binder behavior; no SQL writes, source qualification or observed market damage established",
+  "action": "BL-017; separate marker provenance from numerical Gold qualification with ADR/SPECS and SQL refusal regressions before changing the binder",
+  "receipt_origin": "manual transcription of received Docker output"
+}

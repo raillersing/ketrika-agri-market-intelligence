@@ -1097,6 +1097,19 @@ Le moteur est idempotent (upsert sur `dedupe_key`, mise à jour de `last_seen_at
 
 ## 19. API (FastAPI, préfixe `/v1`)
 
+### R0.6 — lecture DataOps sans cache publié (ADR-039)
+
+`GET /v1/sources` reste disponible depuis `meta.source` et le dernier
+`meta.ingestion_run` même si `gold.source_health` est absente/non peuplée.
+Dans ce cas, `freshness_days` et `is_stale` sont NULL, pas zéro/false inventés.
+Le dernier statut/date du run provient toujours de meta, ordre
+`started_at DESC, run_id DESC`, jamais d'un cache ancien.
+`GET /v1/sources/{id}/health` renvoie 503 RFC 7807/about:blank si la vue
+n'est pas publiée ; sinon métriques du cache et statut/date du dernier run
+meta, avec 404 conservé pour une entrée absente. Aucun refresh implicite,
+changement de réponse 200, ni absorption d'erreur SQL. Ces lectures ne
+qualifient pas la fraîcheur du cache ni les données de marché.
+
 Conventions : JSON par défaut ; `?format=csv` sur les endpoints de séries ; pagination `limit` (≤ 1000) + `cursor` ; dates ISO 8601 ; erreurs RFC 7807 (`application/problem+json`).
 Auth : cookie JWT httpOnly (web) **ou** en-tête `X-API-Key`. Rôles : `admin` (tout), `client` (lecture).
 Chaque valeur exposée inclut `value_kind` (`observed | imputed | forecast | composite`) et, quand c'est applicable, `sources: [source_id]`.

@@ -1,0 +1,21 @@
+{
+  "received_at_utc": "2026-10-11T12:36:57Z",
+  "environment": "active; read-only checks only, no active migration",
+  "sql_session": 36989,
+  "sql_exit_code": 0,
+  "source_records": {"count": 482, "md5": "47b4402859acc41e3ae91fdb128e56c6"},
+  "prices": {"count": 764, "md5": "4b2586cb8e422f11c4873ad513d66bc1"},
+  "bronze_session": 18111,
+  "bronze_exit_code": 0,
+  "bronze": {
+    "bucket": "bronze",
+    "version_count": 674,
+    "current_objects": 674,
+    "delete_markers": 0,
+    "total_version_bytes": 1377481,
+    "sha256": "83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c"
+  },
+  "matches_previous_received_increment": true,
+  "scope": "preservation only; not active-schema or business readiness",
+  "receipt_origin": "manual transcription of received read-only Docker checks"
+}

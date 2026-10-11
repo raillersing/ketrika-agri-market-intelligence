@@ -1,0 +1,28 @@
+{
+  "task": "R0.6",
+  "increment": 5,
+  "scope": "software backend API-without-cache check; not task, source or model qualification",
+  "command": "./scripts/dev.ps1 check",
+  "session_id": 44242,
+  "received_at_utc": "2026-10-11T13:20:36Z",
+  "backend_passed": true,
+  "windows_final_exit": null,
+  "frontend_pending": true,
+  "tests": 885,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "warnings": 5,
+  "pytest_duration_seconds": 2507.61,
+  "integration_by_layout": 50,
+  "integration_by_marker": 50,
+  "integration_tests": 54,
+  "format_files": 216,
+  "typecheck_files": 215,
+  "coverage_percent": {
+    "core": 93.85088393543428,
+    "extraction": 86.3768115942029,
+    "normalize": 88.2089552238806
+  },
+  "receipt_origin": "manual transcription of received backend output; original XML and coverage exported; Windows final reception recorded separately"
+}

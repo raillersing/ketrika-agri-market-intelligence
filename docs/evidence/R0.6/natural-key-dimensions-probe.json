@@ -1,0 +1,12 @@
+{
+  "received_at_utc": "2026-10-11T13:01:17Z",
+  "session_id": 7114,
+  "exit_code": 0,
+  "environment": "Docker readonly, network none, synthetic PriceRecord instances only",
+  "different_varieties_same_key": true,
+  "different_statistic_same_key": true,
+  "source": "PriceRecord.natural_key_fields and RecordBase.compute_natural_key",
+  "scope": "pure identity collision probe; no SQL writes or observed market damage established",
+  "action": "BL-016; versioned contract and replay tests required before changing keys or historical observations",
+  "receipt_origin": "manual transcription of received Docker output"
+}

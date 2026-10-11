@@ -269,3 +269,22 @@ Clôture : commit 47dc4a852d1df22c3b3935eca6b68e4fa4d6f38c,
 QA 197/16, contrôle complet 875/35/build et préservation reçus.
 R0.6 reste IN_PROGRESS ; aucune source native/modèle/usage humain qualifié,
 aucun prototype séparé inclus. BL-015 et autres critères de la matrice restent ouverts.
+
+## Incrément 5 — API DataOps sans cache (en qualification)
+
+ADR-039/SPECS acceptés avant transfert ciblé route et deux fichiers de tests.
+Liste depuis meta quand cache absent/non peuplé, fraîcheur NULL ; dernier run
+meta prioritaire sur cache ancien. Santé non publiée 503 RFC 7807, sans chiffres
+fabriqués ni refresh implicite. Huit unités et deux scénarios SQL/API ajoutés,
+manifest minimum 207/dix-huit intégrations, aucun ancien test retiré.
+Réception principale ciblée/globale, signatures SQL/Bronze et commit requis ;
+prototype préparatoire 7389 ne qualifie pas ce nouvel état du dépôt.
+
+QA principale 83025 code final 0 : 207 tests/dix-huit intégrations/169,87 s,
+zéro failure/error/skip, reçu d7fa51b094544607b8e6b325aa627f94/183,532 s.
+Lint 77825, format 45237 et types 98066 codes 0 ; trois fichiers contrôlés.
+Check Windows complet 44242 reçu code final 0 : 885 backend/54 intégrations,
+35 frontend/quatre suites/7,88 s ; build 228639 ms, quatre étapes code 0.
+Snapshot 98540 code 0/trois fichiers identiques ; SQL et toutes versions Bronze
+actives inchangés après réception. Reçus finaux archivés. Diff/scan/commit requis ;
+R0.6 reste IN_PROGRESS, aucun prototype indépendant ni source live qualifié.
