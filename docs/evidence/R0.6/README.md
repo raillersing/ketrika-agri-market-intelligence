@@ -1,11 +1,11 @@
 # R0.6 — lignée Bronze → Silver
 
-État courant 2026-10-12 : incréments 1–11 reçus, dernier fonctionnel f9f0fd6.
+État courant 2026-10-12 : incréments 1–12 reçus, dernier fonctionnel e5a4018.
 R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
 Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 reçu.
 
-Incrément 12 transféré après ADR-053/SPECS ; réception principale non close.
+Incrément 12 reçu après ADR-053/SPECS : e5a4018b10fad1760670ca3592689bb4ac134b30.
 Contexte ref session/transaction/locks/manifeste/archive, lecture ORM fraîche
 sans écraser une modification pendante, SHA stocké dans normalization et
 comparé en supersession ; batch Silver réutilise un seul contexte. Durabilité
@@ -24,8 +24,9 @@ Check Windows complet 65025 code FINAL 0 : 1194 backend/86 intégrations/
 9d4ba4a4-dccd-4aa1-accd-7d6765419cf8 : quatre étapes code 0/build 153309 ms.
 Originaux indépendamment relus 51837 code 0 ; snapshot final 44384 code 0/
 13 fichiers identiques, gouvernance Windows 63922 code 0, SQL/Bronze
-inchangés (increment-12-preservation.json). Scan/commit encore requis.
-B-R038 non clos avant commit, R0.6 IP. Six SQL-S3 préparatoires reçus au
+inchangés (increment-12-preservation.json). Diff 40e615 code 0, scan 90028
+code FINAL 0/561822 octets/21,4 s/sans fuite ; commit 70353 code FINAL 0.
+B-R038 résolu après réception complète et commit, R0.6 IP. Six SQL-S3 préparatoires reçus au
 worktree ne valent pas réception principale ni qualification de source/ledger.
 Le XML rouge initial est conservé dans increment-12-qa-first-tests.xml.gz,
 avec manifeste .integrity.json : décompression byte-identical/SHA
