@@ -1,9 +1,9 @@
 # R0.6 — lignée Bronze → Silver
 
-État courant 2026-10-11 : incréments 1–7 reçus, dernier fonctionnel 1bb0670.
+État courant 2026-10-12 : incréments 1–8 reçus, dernier fonctionnel 4710a6f.
 R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
-Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 en réception.
+Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 reçu.
 
 Incrément 8 (2026-10-12) : identité User-Agent imposée via HTTPX Headers,
 dix tests de casse/doublons/retry/redirection/GET conditionnel/304/429.
@@ -15,7 +15,9 @@ Check Windows complet 49133 code FINAL 0 : 1056 backend/70 intégrations/
 extraction 86,3768 %, normalize 88,2090 %. Front 35/quatre suites/2,86 s,
 reçu fb6c5a51-67be-4065-85d9-f06ea32bdc1c : quatre étapes code 0,
 build 128964 ms. Deux fichiers identiques au snapshot, SQL/Bronze final
-inchangés. Commit fonctionnel encore requis. Helpers/ADR de worktree non adoptés, robots runtime,
+inchangés. Commit fonctionnel 4710a6f9ffaadeebc808f6c647951f5e2fd5804e.
+Diff code 0 ; scan final 90864 code 0/455948 octets/3,96 s/sans fuite ;
+gouvernance 81159 code 0. BL-018 résolu. Helpers/ADR de worktree non adoptés, robots runtime,
 ledger/partitions/reprise/garde structure SQL directe encore requis.
 Précheck actif dans increment-8-precheck-preservation.json ; probe readonly
 legacy-statistical-kind-readonly.json ne qualifie pas les prix : 764 types

@@ -17,7 +17,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.3 | MUST | DONE | 4f8d7e2 : check Windows 340/35, QA 58, E2E 9, préservation et secrets verts |
 | R0.4 | MUST | DONE | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 ; 65 fichiers / dix cellules, check 411/35 et QA 72 codes 0, données actives préservées |
 | R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
-| R0.6 | MUST | IN_PROGRESS | Incréments 1–7 committés, dernier 1bb0670 ; incrément HTTP 8 QA 378/34 code 0, check Windows 49133 code FINAL 0/1056 backend/35 web/build, non committé ; SQL/Bronze inchangés ; wrapper caller/crash recovery/ledger/partitions/robots et garde structure SQL directe encore requis |
+| R0.6 | MUST | IN_PROGRESS | Incréments 1–8 reçus, dernier 4710a6f identité HTTP : QA 378/34, check Windows 49133 code FINAL 0/1056 backend/35 web/build ; SQL/Bronze inchangés ; wrapper caller/crash recovery/ledger/partitions/robots et garde structure SQL directe encore requis |
 | R0.7 | MUST | TODO | — |
 | R0.8 | MUST | TODO | — |
 | R0.9 | MUST | TODO | — |
