@@ -5,6 +5,26 @@ R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
 Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 reçu.
 
+Incrément 11 archive interne transféré après ADR-052/SPECS, check intégral
+vert ; gouvernance Windows 31115 code 0/74 statuts cohérents ; scan/commit
+encore requis. Ciblé 6752 code 0/types trois fichiers/17 unités/15,63 s.
+QA Windows 3862 code FINAL 0 : 504 tests/44 intégrations/224,68 s,
+zéro échec-erreur-skip ; reçu 65f61a27e80444b9b343e3e7b3517444/239,546 s,
+originaux increment-11-qa-final-{receipt.json,tests.xml} conservés.
+Check Windows 16651 code FINAL 0 : 1149 backend/80 intégrations/2193,58 s,
+zéro échec-erreur-skip/cinq warnings ; core 94,4063 %, extraction 86,3768 %,
+normalize 88,2090 %. Front 35/quatre suites/7,72 s, reçu
+b02a0aaf-4eb8-4ba4-b84f-75bd91e2280e : quatre étapes code 0/build 172591 ms.
+Trois fichiers identiques au snapshot final 6427 code 0, SQL/Bronze
+inchangés (increment-11-preservation.json). Aucun commit ni livraison complète
+revendiqués. URL vide/snapshot interne non qualifié ; archive relue par GET
+borné, aucune Source/SourceRecord institutionnelle fabriquée. Deux S3 QA
+vérifient répétition/versions inchangées et dommage de lecture simulé sans
+modifier un objet. Ledger, référentiel réellement consommé par normaliseur,
+partitions/reprise/robots/garde SQL directe restent obligatoires.
+La répétition S3 est séquentielle ; aucun PUT concurrent ni réparation d'un
+sidecar absent n'est qualifié par ces tests.
+
 Incrément 10 ND/NA reçu après ADR-051/SPECS : binder d'absence
 explicite sans valeur numérique/dérivé ni coercition des preuves anciennes.
 Ciblé 80563 code 0/lint-format-types trois fichiers/56 unités/23,08 s,

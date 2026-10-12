@@ -3,6 +3,27 @@
 > **Statut :** Document normatif de passation du MVP Ketrika Agri Market Intelligence (AGENTS.md §3.2 & §5.3).
 > Ce document récapitule l'état de livraison du MVP, les pré-requis humains pour la phase d'exploitation, ainsi que les gates d'autorité (H1 à H7) nécessitant une intervention humaine.
 
+## État courant du programme autorisé R0–R6 — 2026-10-12
+
+Les sections MVP ci-dessous décrivent la livraison historique T. Elles ne
+constituent pas une qualification actuelle des sources, des modèles, du
+déploiement ou d'un usage humain. Le programme R n'est pas terminé :
+R0.1–R0.5 sont DONE ; R0.6 reste IN_PROGRESS et R0.7–R6.11 restent TODO.
+PROGRESS.md est canonique ; le plan R en est le miroir.
+
+Dernier incrément reçu : da215ed (ND/NA explicites, check Windows 42672
+code final 0). L'archive interne ADR-052 est en réception : QA 504/44 verte,
+check Windows complet 16651 code final 0/1149 backend/35 web/build ;
+gouvernance verte, scan/commit encore requis, R0.6 n'est pas terminée.
+Ce snapshot ne qualifie pas la provenance institutionnelle des référentiels ;
+ledger, consommation du snapshot par normalisation, partitions/reprise,
+robots automatique et garde structurelle SQL directe restent requis.
+
+Les gates H1–H7 d'AGENTS.md prévalent : replay/local QA, aucune collecte
+privée, aucune émission réelle, aucun contact de tiers ou provisionnement
+effectué par l'agent. Les actions d'exploitation ci-dessous sont historiques,
+réservées à une décision humaine ; elles ne sont pas une autorisation nouvelle.
+
 ---
 
 ## 1. État de livraison du MVP (v0.1.0)

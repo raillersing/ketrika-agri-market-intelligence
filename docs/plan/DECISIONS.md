@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-052 : R0.6 — archive référentiel interne
+
+- **Date / statut :** 2026-10-12, accepté avant transfert principal de l'incrément 11 ; préparation 17 unités et deux vrais S3 reçus séparément.
+- **Contexte :** le manifeste SQL/SHA reçu ne conserve pas à lui seul ses octets pour un futur ledger/rejeu. Un snapshot configuré n'est pas une publication institutionnelle.
+- **Décision :** valider contenu/frame canonique/SHA/comptes du ReferenceManifest puis archiver via BronzeStore sous racine interne reference_manifest/yyyy/mm/SHA.json. Application/json, URL vide, manual_upload/http_status 0/internal-snapshot;source_verified=false ; aucun Source/SourceRecord fictif. Descripteur contrôlé puis GET borné frais/SHA/octets exacts avant référence immutable. Pas de suppression/écrasement ni URL institutionnelle attribuée.
+- **Réception :** 17 unités invalidité/descripteur/relecture/erreur/date et deux S3 réels répétition/versions inchangées/lecture endommagée simulée, jamais objet modifié. QA 504/44 puis check Windows complet, source figée, snapshot/préservation/scan/commit principaux obligatoires.
+- **Limites :** snapshot interne non qualifié des données SQL configurées ; pas provenance officielle des mappings, liaison au normaliseur, ledger, partitions ou reconstruction reçus. Répétition S3 séquentielle testée, pas qualification de PUT concurrents ou réparation de sidecar absent. Aucun test de qualification n'écrit dans le bucket actif. Verrou référentiel et brouillon ledger du worktree non adoptés implicitement.
+- **Alternatives :** SHA sans octets, lien institutionnel inventé, SourceRecord artificiel, accepter descripteur sans GET (rejetées).
+
 ## ADR-051 : R0.6 — preuve explicite d'absence prix
 
 - **Date / statut :** 2026-10-12, accepté avant transfert principal de l'incrément 10 ; préparation 56 unités et trois SQL/S3/Gold reçue séparément.

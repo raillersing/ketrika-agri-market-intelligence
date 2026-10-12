@@ -874,6 +874,15 @@ contrat ne qualifie ni source live ni checks mesurés, partitions ou durabilité
 
 ## 10. Layout Bronze
 
+ADR-052 : archive interne des manifestes sous reference_manifest/yyyy/mm/SHA.json,
+application/json, URL vide, manual_upload/http_status 0, en-tête
+internal-snapshot;source_verified=false. Aucun Source/SourceRecord fictif créé.
+Validation frame canonique/contenu/SHA/comptes avant PUT, descripteur puis GET
+borné frais/SHA/octets exacts avant retour d'une référence immutable. Aucun
+delete/overwrite ; snapshot de configuration non qualifié, pas publication
+institutionnelle ni preuve de normalisation effectivement liée, ledger,
+partition ou reconstruction. Les tests S3 utilisent le bucket QA exclusivement.
+
 ```text
 s3://bronze/{source_id}/{yyyy}/{mm}/{sha256}.{ext}
 s3://bronze/{source_id}/{yyyy}/{mm}/{sha256}.meta.json   # url, fetched_at, http headers, status, retrieved_via, ua
