@@ -30,6 +30,8 @@
         "tests/unit/test_durable_phases.py",
         "tests/unit/test_durable_factory.py",
         "tests/unit/test_http_identity.py",
+        "tests/unit/test_artifact_identity.py",
+        "tests/unit/test_reference_manifest.py",
         "tests/unit/test_connectors.py",
         "tests/unit/test_provenance_bronze.py",
         "tests/unit/test_execution_plan.py",
@@ -41,6 +43,8 @@
         "tests/integration/test_schema_gold_gate.py",
         "tests/integration/test_durable_runs.py",
         "tests/integration/test_durable_phases.py",
+        "tests/integration/test_reference_manifest_readonly.py",
+        "tests/integration/test_artifact_identity_readonly.py",
         "tests/integration/test_miasa_odr.py",
         "tests/integration/test_weather_provenance.py",
         "tests/integration/test_connector_pipeline.py",
@@ -48,8 +52,8 @@
         "tests/integration/test_nasa_power.py",
         "tests/integration/test_wfp_hdx_mdg.py"
       ],
-      "minimum_tests": 378,
-      "minimum_integration_tests": 34
+      "minimum_tests": 426,
+      "minimum_integration_tests": 39
     },
     "R0.5": {
       "tests": [

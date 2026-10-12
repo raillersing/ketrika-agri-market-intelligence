@@ -2,6 +2,16 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-040 : R0.6 — identité explicite et manifeste de références
+
+- **Date / statut :** 2026-10-12, accepté avant transfert principal de l'incrément 9. Identifiant réservé au prototype reconstruit ; les anciens worktrees temporaires perdus ne constituent pas une preuve actuelle.
+- **Contexte :** URL ou UUID du run seuls ne distinguent pas les octets, les versions de traitement et le référentiel utilisé. Ces primitives préparent le ledger mais ne le remplacent pas.
+- **Décision :** identité privée immutable source_id snake_case, source_record UUID non nul, SHA contenu, version parser, version normaliseur et SHA manifeste référentiel. Clé SHA256 d'une liste JSON canonique ASCII versionnée ; clé de membre séparée avec UUID run. Versions explicites <=128 caractères sans blancs périphériques/contrôles ; SHA lowercase strict. Aucune édition/document logique inférée.
+- **Manifeste :** cinq tables ref : product/product_alias/location/location_alias/unit_conversion ; une requête UNION ALL et un snapshot SQL de statement. Payloads JSONB SQL conservés textuellement, NUMERIC sans réencodage float ; clés composées JSON, tri déterministe, doublons refusés. Maximum 100000 lignes/32 MiB, pas de résultat tronqué ; flux fermé sans commit du caller. Snapshot vide = zéro références, pas référentiel qualifié.
+- **Réception requise :** 27+16 unités et cinq SQL READ ONLY/REPEATABLE READ, QA 426/39 puis check Windows complet, sources figées, snapshot/preservation/scan et commit. Tests de forme/répétition/comptes/lexèmes ne certifient ni provenance des mappings ni octets d'un artefact.
+- **Limites :** aucun ORM/migration/API/permission changé, archive référentiel Bronze, liaison à la transaction de normalisation, ledger, partition/reprise et document logique restent non livrés. Clé prix/robots préparatoires non transférés. R0.6 demeure IN_PROGRESS.
+- **Alternatives :** URL seule, UUID run seul, concaténation avec séparateurs ou baseline inférée du contenu (rejetées).
+
 ## ADR-050 : R0.6 — propriétaires transactionnels Bronze/Silver durables
 
 - **Date / statut :** 2026-10-11, accepté avant transfert principal ; préparation isolée validée par 104 tests unitaires et dix tests SQL.

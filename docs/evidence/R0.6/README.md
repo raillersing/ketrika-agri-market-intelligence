@@ -5,6 +5,21 @@ R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
 Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 reçu.
 
+Incrément 9 en réception après ADR-040/SPECS : deux primitives identité
+artefact/manifeste, six fichiers source/tests. Ciblé 47180 code 0/43 unités/
+8,07 s/types-lint-format six fichiers ; QA Windows 96902 code final 0/
+426/39/zéro échec-erreur-skip/139,44 s, reçu
+78c7750c6f174769b0998e9659e225bc/147,987 s, originaux conservés.
+Check Windows complet 12952 code FINAL 0 : 1104/75 intégrations/1990,69 s,
+zéro échec-erreur-skip ; core 94,3629 %, extraction 86,3768 %, normalize 88,2090 %.
+Front 35/quatre suites/4,66 s, reçu fc2c6306-937f-42d7-b81d-54084d50a0fb :
+quatre étapes code 0, build 112316 ms. Six fichiers identiques au snapshot,
+gouvernance Windows 21397 code 0, SQL/toutes versions Bronze inchangés.
+Scan/diff/commit encore requis ; aucun ledger/partition/reprise qualifié.
+SQL readonly vérifie comptes/NUMERIC/NULL/clés/version, pas des octets ou
+provenance de mappings. Archive Bronze, référentiel effectivement utilisé,
+ledger/partition/reprise non livrés ; prix/robots/ND préparatoires séparés.
+
 Incrément 8 (2026-10-12) : identité User-Agent imposée via HTTPX Headers,
 dix tests de casse/doublons/retry/redirection/GET conditionnel/304/429.
 Ciblé 29503 code 0/lint-format-types deux fichiers/dix tests/5,94 s.

@@ -757,6 +757,19 @@ Pour chaque enregistrement normalisé, on calcule `natural_key`, puis :
 
 ## 9. Interface Connector (normative)
 
+ADR-040 : primitives privées d'identité de traitement, sans ledger livré.
+Identité : source_id snake_case, UUID SourceRecord non nul, SHA contenu,
+versions parser/normaliseur explicites et SHA manifeste ; frame JSON ASCII
+versionné/SHA256, membre de run séparé par UUID. SHA lowercase strict,
+versions <=128 sans blancs périphériques/contrôles. Manifeste des cinq tables
+ref product/product_alias/location/location_alias/unit_conversion, une requête
+UNION ALL ; JSONB SQL conservé textuellement/NUMERIC sans float, clés
+composées JSON, tri déterministe/refus doublons. Bornes 100000 lignes/32 MiB,
+curseur fermé sans commit ; vide ne qualifie pas le référentiel. Archive Bronze,
+références effectivement utilisées par la normalisation, ledger/partitions/
+reprise et document logique restent à recevoir. Aucun statut de qualification
+source/modèle/humain n'est déduit d'une identité ou d'un manifeste.
+
 ADR-050 : les assets natifs Bronze/Silver utilisent des propriétaires de phase.
 Après la garde de collecte existante, un run meta est committé indépendamment
 sur une Source SQL déjà persistée (aucune création/activation implicite).
