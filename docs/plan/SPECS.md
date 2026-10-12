@@ -757,6 +757,22 @@ Pour chaque enregistrement normalisé, on calcule `natural_key`, puis :
 
 ## 9. Interface Connector (normative)
 
+ADR-055 : lot Bronze SQL immutable, migration 0006_ingestion_batch après
+0005_gold_unpopulated. Header par run réel : source_id, parser_version explicite
+<=128 sans blancs périphériques/contrôles, n_artifacts 0..100000 et SHA lowercase.
+Membres ordonnés 0..n-1, FK header et SourceRecord, unique (run,source_record),
+SHA/clé/MIME/URL/is_new/published_at conservés. Frame JSON ASCII versionnée
+ingestion_batch_v1, dates aware converties UTC, taille <=32 MiB, UUID non nuls.
+Persistance/lecture revalident source/run et chaque parent SQL exact sans HTTP.
+Refus des changements ORM run/SourceRecord/ledger pendants avant lecture fraîche.
+Helpers sans commit ; verrou run dans transaction Bronze existante. Répétition
+exige même contenu complet, pas la seule existence du run. Propriétaire Bronze
+natif persiste avant commit ; échec rollback puis reçu indépendant expurgé.
+Triggers interdisent UPDATE/DELETE ; downgrade refuse la suppression du journal.
+Pas de backfill/réactivation ; Silver garde la GET SHA fraîche. Appelants
+historiques non raccordés ne revendiquent pas ce registre. Reconstruction des
+références ne prouve ni octets, tentative Silver ni reprise automatique.
+
 ADR-053 : le batch Silver natif prépare au premier prix un contexte privé des
 références lié à la session/transaction racine active. Refuser les changements
 ORM ref pendants, acquérir SHARE locks/5s dans l'ordre location/location_alias/

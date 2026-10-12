@@ -3,6 +3,8 @@
 > Format : `ID | tâche | date | symptôme | cause supposée | tentatives (1, 2, 3) | repli appliqué | statut`
 > Statut : `INVESTIGATING` | `RESOLVED_FALLBACK` | `RESOLVED_FIXED` | `BLOCKED`
 
+| B-R040 | R0.6 incrément 13 préparation | 2026-10-12 | 60162 lint code 1/F811 ; 21091 types code 1/sept erreurs, tests non démarrés par cette commande | Fixture importée masquée par paramètre homonyme ; liste membre inférée object ; données volontairement invalides de replace typées object | 1 : déplacer les scénarios dans le module propriétaire sans ignore ; annotation union du membre, Any limité aux entrées invalides des tests ; 98568 FINAL 0/39 unités/24 s, 77582 FINAL 0/types quatre fichiers ; principal 20261 FINAL 0/39/29,99 s | Aucun seuil/runtime assoupli ; fixes préparatoires seulement, pas réception SQL/check complet du nouvel incrément | RESOLVED_FIXED |
+
 | ID | Tâche | Date | Symptôme | Cause | Tentatives | Repli appliqué | Statut |
 |---|---|---|---|---|---|---|---|
 | B-R039 | R0.6 incrément 12 / preuve rouge | 2026-10-12 | Diff staged 90529 code FINAL 2, espaces fin de ligne dans traceback pytest original | Export brut du XML rouge conserve les espaces de la preuve originale ; les supprimer changerait la preuve | 1 : gzip -n sans normaliser, 36028 code 0/identité binaire après décompression/SHA c287500e778d3b041926b6ede36a307dae96db2e6109fbeaa135518ffa56609e/106052 octets/549 tests/deux échecs ; raw déjà scanné 81723 code 0/665350 octets/sans fuite | XML récupérable depuis archive et volume QA ; aucun seuil/ignore/config du diff ou des secrets changé, rescan final requis | RESOLVED_FIXED |

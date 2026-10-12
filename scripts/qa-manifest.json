@@ -28,6 +28,8 @@
         "tests/unit/test_gold_dependency_graph.py",
         "tests/unit/test_durable_runs.py",
         "tests/unit/test_durable_phases.py",
+        "tests/unit/test_batch_ledger.py",
+        "tests/integration/test_batch_ledger.py",
         "tests/unit/test_durable_factory.py",
         "tests/unit/test_http_identity.py",
         "tests/unit/test_artifact_identity.py",
@@ -63,8 +65,8 @@
         "tests/integration/test_nasa_power.py",
         "tests/integration/test_wfp_hdx_mdg.py"
       ],
-      "minimum_tests": 549,
-      "minimum_integration_tests": 50
+      "minimum_tests": 591,
+      "minimum_integration_tests": 60
     },
     "R0.5": {
       "tests": [

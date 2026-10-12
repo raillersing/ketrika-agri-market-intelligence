@@ -46,7 +46,7 @@ def test_real_publication_rejects_bad_provenance_and_rolls_back_partial_sql(
         require_synthetic_test_database(target.host, target.database)
         assert (
             session.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
-            == "0005_gold_unpopulated"
+            == "0006_ingestion_batch"
         )
         store = BronzeStore()
         assert store.bucket == "ketrika-qa-bronze"

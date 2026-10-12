@@ -1,0 +1,12 @@
+{
+  "command_session": 81743,
+  "exit_code": 0,
+  "qa_execution_id": "38629384862e45979be617a8a69b528a",
+  "selection": "eight exact run IDs from ketrika.durable_phase JUnit properties; no time-based selection",
+  "native_phase_runs_checked": 8,
+  "persisted_batches_reread": 6,
+  "bronze_objects_freshly_verified": 6,
+  "rolled_back_bronze_without_batch": 2,
+  "database_readonly": true,
+  "scope": "synthetic owner and native-asset SQL/S3 receipts; not automatic recovery, partitions or live sources"
+}

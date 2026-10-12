@@ -5,6 +5,35 @@ R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
 Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 reçu.
 
+Incrément 13 ADR-055 en réception, non committé : registre SQL immuable des
+lots Bronze et références ordonnées, propriétaire natif persiste avant commit.
+Pas de tentative Silver, reprise automatique, partition ou source qualifiée.
+Principal 20261 FINAL 0/39 unités/29,99 s ; types préparatoires 77582 code 0.
+Migration isolée vers 0006 réalisée lors de préparation QA ; suite 13027
+interrompue avant collecte pour renforcer les fixtures avec vrais objets S3
+synthétiques et GET SHA, ne vaut pas succès. Baseline 99236 interrompue
+volontairement/Docker 137, ne vaut pas revalidation. Réception QA/check complète,
+originaux, comparaison source figée, préservation finale et scan/commit requis.
+
+Relance principale 75087 FINAL 0 : 591 tests/60 intégrations/243,13 s/zéro
+échec-erreur-skip, reçu 38629384862e45979be617a8a69b528a/255,064 s ; JSON/XML
+originaux increment-13-qa-final archivés. Relecture 81743 code 0 : huit run_id
+exactement extraits des propriétés JUnit ; six lots SQL/six objets GET SHA,
+deux pannes Bronze sans lot après rollback, DB READ ONLY/bucket QA vérifiés.
+Preuve increment-13-native-ledger-verification.json. Check Windows 3975 actif :
+lint-format 258/types 257/gouvernance 74 verts, 1236 tests collectés ; huit
+fichiers sources/tests/migration identiques au snapshot Docker (41647 code 0).
+Résultat final backend/frontend/build/couvertures/empreintes/scan/commit requis.
+
+Check Windows 3975 FINAL 0 : 1236 backend/96 intégrations/2161,30 s/cinq
+warnings/zéro échec-erreur-skip ; core 94,4678 %, extraction 86,3768 %,
+normalize 89,0430 %. XML original 2161,137 s/2fadd93fb6c7 ; nouveaux modèles
+ledger 100 %. Front 35/quatre suites/6,03 s, quatre étapes code 0, build
+190556 ms ; reçu 70b8733b-d4fe-46e3-bf52-de764ddd9eaa. Originaux archivés
+et relus 15172 FINAL 0. SQL/Bronze inchangés (increment-13-preservation.json).
+Gouvernance Windows 15089 FINAL 0/74 statuts ; snapshot final 80925 code 0/
+huit fichiers identiques. Stage/diff/scan/commit à clôturer ; R0.6 reste IN_PROGRESS.
+
 Incrément 12 reçu après ADR-053/SPECS : e5a4018b10fad1760670ca3592689bb4ac134b30.
 Contexte ref session/transaction/locks/manifeste/archive, lecture ORM fraîche
 sans écraser une modification pendante, SHA stocké dans normalization et

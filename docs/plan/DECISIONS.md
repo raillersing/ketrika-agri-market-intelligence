@@ -2,6 +2,17 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-055 : R0.6 — registre SQL immuable des lots Bronze
+
+- **Date/statut :** 2026-10-12, accepté avant transfert principal ; 39 unités et types reçus au worktree seulement, vrais SQL/réception principale requis.
+- **Contexte :** BronzeBatch ne survit actuellement que dans la sortie Dagster. Reprendre ses références exactes ne doit ni discover ni fetch ni inventer un document logique.
+- **Décision :** migration ajout seule 0006_ingestion_batch, header meta.ingestion_batch par run réel et membres ordonnés meta.ingestion_batch_member avec FK SourceRecord. Tous champs RawArtifact et parser_version conservés, SHA canonique du lot, bornes 100000 membres/32 MiB ; lot vide explicite. Verrou run avant écriture dans transaction Bronze existante, jamais transaction indépendante après verrou ; helper sans commit. Répétition identique sans mutation, divergence refusée. Lecture revalide les parents SQL et le SHA sans HTTP ; elle ne certifie pas les octets, que Silver doit toujours relire/vérifier. Refus des changements ORM pendants avant populate_existing, sans écraser les compteurs ou un parent modifié.
+- **Immutabilité :** triggers refusent UPDATE/DELETE des deux tables ; downgrade refuse la suppression historique. Aucun backfill, Bronze/Silver existant inchangé. Nouveau head Alembic exact 0006_ingestion_batch dans le test de publication ; pas d'acceptation opportuniste de plusieurs heads.
+- **Raccordement :** seul propriétaire Bronze natif persiste le lot avant son commit, dans sa transaction ; échec ledger implique rollback puis reçu d'échec indépendant expurgé. Appelants historiques non raccordés ne revendiquent pas le registre.
+- **Réception :** vrais SQL lot vide/non vide/relecture nouvelle session/répétition/conflit/parents/rollback/immutabilité/concurrence ; durabilité des propriétaires/assets réelle conservée. QA et check Windows intégraux/source figée/originaux/préservation/scan/commit requis.
+- **Limites :** registre de membres Bronze seulement, pas ledger des tentatives Silver, leases/recovery automatique, partitions ni source qualifiée. R0.6 reste IN_PROGRESS ; aucune reprise réussie déduite de la seule reconstruction d'un objet batch.
+- **Alternatives :** JSON Dagster seul, refetch de reprise, digest déclaré sans parents relus, suppression du journal au downgrade (rejetés).
+
 ## ADR-053 : R0.6 — liaison transactionnelle des références prix
 
 - **Date / statut :** 2026-10-12, accepté avant transfert principal incrément 12 ; préparation 106 unités et six SQL/S3 reçue séparément, pas réception principale.

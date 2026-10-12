@@ -3,6 +3,7 @@
 from typing import Any, NoReturn
 
 from ketrika.connectors.base import Connector, RunContext
+from ketrika.connectors.batch_ledger import persist_bronze_batch
 from ketrika.connectors.durable_runs import (
     DurableRunReference,
     bind_running_run,
@@ -43,7 +44,9 @@ def execute_durable_bronze(connector: Connector, ctx: RunContext) -> BronzeBatch
     )
     try:
         with get_session() as session:
-            return collect_connector_bronze(connector, ctx, session, durable_run=reference)
+            batch = collect_connector_bronze(connector, ctx, session, durable_run=reference)
+            persist_bronze_batch(session, batch)
+            return batch
     except Exception as error:
         cause = type(error)
     _raise_failure(reference, "bronze", cause)

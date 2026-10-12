@@ -20,6 +20,23 @@ verrouillée ; les appelants historiques sans contexte ne revendiquent pas cette
 Ledger, partitions/reprise,
 robots automatique et garde structurelle SQL directe restent requis.
 
+Incrément 13 ADR-055 en réception, non committé : registre SQL immuable des
+lots Bronze/header/membres et persistance native avant commit. QA Windows
+75087 FINAL 0/591 tests/60 intégrations/243,13 s, originaux archivés ; relecture
+81743 FINAL 0/huit runs exacts/six lots et six GET SHA/deux pannes Bronze sans
+lot. Check Windows intégral 3975 en cours, résultat final requis avant commit.
+Ne pas considérer la migration QA 0006 ou ces sous-ensembles comme tâche DONE,
+reprise automatique, partition ou qualification de source. Préparation ADR-056
+uniquement dans worktree r06-ledger-20261013 : cinq unités supplémentaires,
+44 unités/10,99 s/types verts, aucun transfert principal ni SQL concurrent.
+
+Attention à la séparation runtime : la base active reste au head historique
+0002_gold_views (lecture readonly b5df39), tandis que seule la qualification
+est migrée vers 0006_ingestion_batch. API active en --reload/bind et daemon
+Dagster n'ont pas été arrêtés ni leur base migrée. La réception isolée ne
+constitue donc pas une qualification des routes ou workflows de cette stack
+active ; ne pas y exécuter migration/rebuild/restore de test.
+
 Les gates H1–H7 d'AGENTS.md prévalent : replay/local QA, aucune collecte
 privée, aucune émission réelle, aucun contact de tiers ou provisionnement
 effectué par l'agent. Les actions d'exploitation ci-dessous sont historiques,

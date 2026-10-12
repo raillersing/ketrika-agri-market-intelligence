@@ -20,6 +20,28 @@ from ketrika.core.policy import PolicyStop
 MODULE = "ketrika.connectors.durable_phases."
 
 
+def test_ledger_write_precedes_owner_commit(setup_owner, monkeypatch):
+    connector, context, batch, _, events, persist, _, _ = setup_owner
+    monkeypatch.setattr(MODULE + "collect_connector_bronze", Mock(return_value=batch))
+    ledger = Mock(side_effect=lambda *args: events.append("ledger"))
+    monkeypatch.setattr(MODULE + "persist_bronze_batch", ledger)
+    assert execute_durable_bronze(connector, context) == batch
+    ledger.assert_called_once()
+    assert ledger.call_args.args[1] == batch
+    assert events[-2:] == ["ledger", "commit"]
+    persist.assert_not_called()
+
+
+def test_ledger_failure_rolls_back_before_independent_failure_receipt(setup_owner, monkeypatch):
+    connector, context, batch, reference, events, persist, _, _ = setup_owner
+    monkeypatch.setattr(MODULE + "collect_connector_bronze", Mock(return_value=batch))
+    monkeypatch.setattr(MODULE + "persist_bronze_batch", Mock(side_effect=ValueError("UNTRUSTED")))
+    with pytest.raises(DurablePhaseFailure, match="^bronze:ValueError$"):
+        execute_durable_bronze(connector, context)
+    assert events[-2:] == ["rollback", "persist"] and "commit" not in events
+    persist.assert_called_once_with(reference, ValueError)
+
+
 @pytest.fixture
 def setup_owner(monkeypatch):
     events = []
@@ -41,6 +63,7 @@ def setup_owner(monkeypatch):
             events.append("commit")
 
     monkeypatch.setattr(MODULE + "get_session", transaction)
+    monkeypatch.setattr(MODULE + "persist_bronze_batch", Mock())
     authorize = Mock(side_effect=lambda *_: events.append("authorize"))
     create = Mock(side_effect=lambda *_: (events.append("create"), reference)[1])
     read = Mock(return_value=reference)
