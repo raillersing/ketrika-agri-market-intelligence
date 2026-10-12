@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 from ketrika.core.models.db import Location, LocationAlias, Product, ProductAlias, UnitConversion
 from ketrika.normalize.locations import normalize_location_string
 from ketrika.normalize.products import normalize_product_string
+from ketrika.normalize.reference_snapshot import require_clean_reference_state
 
 
 @dataclass(frozen=True)
@@ -38,6 +39,7 @@ def _unique(rows: Sequence[Any], identity: str, method: str) -> ReferenceMatch |
 
 
 def resolve_product(session: Session, raw: str, source_id: str) -> ReferenceMatch | None:
+    require_clean_reference_state(session)
     normalized = normalize_product_string(raw)
     if not normalized:
         return None
@@ -47,7 +49,7 @@ def resolve_product(session: Session, raw: str, source_id: str) -> ReferenceMatc
             .join(ProductAlias, ProductAlias.product_id == Product.product_id)
             .where(ProductAlias.alias_norm == normalized, ProductAlias.source_id == scope)
         )
-        rows = session.execute(query).all()
+        rows = session.execute(query, execution_options={"populate_existing": True}).all()
         if rows:
             return _unique(rows, "product_id", method)
     score = func.similarity(ProductAlias.alias_norm, normalized)
@@ -57,7 +59,8 @@ def resolve_product(session: Session, raw: str, source_id: str) -> ReferenceMatc
         .where(
             ProductAlias.source_id.is_(None) | (ProductAlias.source_id == source_id),
             score >= Decimal("0.85"),
-        )
+        ),
+        execution_options={"populate_existing": True},
     ).all()
     return _unique(rows, "product_id", "fuzzy_trigram")
 
@@ -65,6 +68,7 @@ def resolve_product(session: Session, raw: str, source_id: str) -> ReferenceMatc
 def resolve_location(
     session: Session, raw: str | None, source_id: str, *, admin_level: int | None = None
 ) -> ReferenceMatch | None:
+    require_clean_reference_state(session)
     if not raw:
         return None
     normalized = normalize_location_string(raw)
@@ -73,7 +77,7 @@ def resolve_location(
     pcode_query = select(Location).where(Location.pcode == raw.strip().upper())
     if admin_level is not None:
         pcode_query = pcode_query.where(Location.admin_level == admin_level)
-    pcodes = session.scalars(pcode_query).all()
+    pcodes = session.scalars(pcode_query, execution_options={"populate_existing": True}).all()
     if pcodes:
         return _unique(
             [(row, Decimal(1), row.pcode) for row in pcodes], "location_id", "exact_pcode"
@@ -86,7 +90,7 @@ def resolve_location(
         )
         if admin_level is not None:
             query = query.where(Location.admin_level == admin_level)
-        rows = session.execute(query).all()
+        rows = session.execute(query, execution_options={"populate_existing": True}).all()
         if rows:
             return _unique(rows, "location_id", method)
     if admin_level is None:
@@ -99,13 +103,15 @@ def resolve_location(
             LocationAlias.source_id.is_(None) | (LocationAlias.source_id == source_id),
             Location.admin_level == admin_level,
             score >= Decimal("0.85"),
-        )
+        ),
+        execution_options={"populate_existing": True},
     ).all()
     return _unique(rows, "location_id", "fuzzy_trigram")
 
 
 def unit_factor(session: Session, unit_raw: str, product_id: UUID) -> UnitConversion | None:
     """No generic 'sac' assumption; only an explicit registered unit."""
+    require_clean_reference_state(session)
     normalized = unit_raw.strip().lower()
     aliases = {
         "kilogramme": "kg",
@@ -128,7 +134,8 @@ def unit_factor(session: Session, unit_raw: str, product_id: UUID) -> UnitConver
         rows = session.scalars(
             select(UnitConversion).where(
                 UnitConversion.unit_code == normalized, UnitConversion.product_id == scope
-            )
+            ),
+            execution_options={"populate_existing": True},
         ).all()
         if rows:
             return rows[0] if len(rows) == 1 else None

@@ -144,6 +144,7 @@ def consume_connector_silver(
     from ketrika.connectors.records import PriceRecord
     from ketrika.connectors.runner import load_record_with_supersession
     from ketrika.normalize.price_loader import load_normalized_price
+    from ketrika.normalize.reference_snapshot import prepare_reference_snapshot
 
     if (
         not isinstance(batch, BronzeBatch)
@@ -168,6 +169,7 @@ def consume_connector_silver(
         "n_skipped": 0,
     }
     reader = BronzeProofReader(ctx.bronze_store)
+    reference_snapshot = None
     with _OfflineHttpClient() as offline_http:
         for artifact in batch.artifacts:
             try:
@@ -218,7 +220,15 @@ def consume_connector_silver(
                 raise ValueError("silver_parse_version_mismatch")
             for record in result.records:
                 if isinstance(record, PriceRecord):
-                    loaded = load_normalized_price(session, record, batch.source_id, reference_id)
+                    if reference_snapshot is None:
+                        reference_snapshot = prepare_reference_snapshot(session, ctx.bronze_store)
+                    loaded = load_normalized_price(
+                        session,
+                        record,
+                        batch.source_id,
+                        reference_id,
+                        reference_snapshot=reference_snapshot,
+                    )
                     action = loaded.action
                     stats["n_review"] = stats.get("n_review", 0) + loaded.review_items
                 else:

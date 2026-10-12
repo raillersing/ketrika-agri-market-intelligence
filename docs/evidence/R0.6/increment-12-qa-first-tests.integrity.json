@@ -1,0 +1,20 @@
+{
+  "execution_id": "727da0620e64403999b1f0125b16a945",
+  "archive": "increment-12-qa-first-tests.xml.gz",
+  "compression": "gzip -n",
+  "original_bytes": 106052,
+  "compressed_bytes": 13781,
+  "sha256_decompressed": "c287500e778d3b041926b6ede36a307dae96db2e6109fbeaa135518ffa56609e",
+  "byte_identical": true,
+  "tests": 549,
+  "failures_preserved": 2,
+  "verification_session": "36028",
+  "verification_exit_code": 0,
+  "original_staged_secret_scan": {
+    "session": "81723",
+    "exit_code": 0,
+    "scanned_bytes": 665350,
+    "leaks": 0
+  },
+  "reason": "Preserve original failure traceback bytes without weakening staged whitespace checks. Original remains recoverable by decompression and in QA backend volume. No source/test assertion changed."
+}

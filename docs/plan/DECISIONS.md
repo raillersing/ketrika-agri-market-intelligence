@@ -2,6 +2,18 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-053 : R0.6 — liaison transactionnelle des références prix
+
+- **Date / statut :** 2026-10-12, accepté avant transfert principal incrément 12 ; préparation 106 unités et six SQL/S3 reçue séparément, pas réception principale.
+- **Contexte :** archive et verrou seuls ne prouvent pas que le normaliseur utilise le snapshot. Le cache ORM peut représenter des références anciennes.
+- **Décision :** contexte privé session/transaction racine active ; refus de changements ORM pendants sur les cinq tables ref ; SHARE locks en ordre fixe/5s, manifeste SQL et archive avec GET vérifiée dans la même transaction. Avant chaque normalisation liée, vérifier contexte actif/même session/transaction/manifeste inchangé. Entités ref chargées avec populate_existing ; chaque resolver refuse les modifications ORM ref pendantes avant lecture, y compris un caller historique sans contexte, sans écrasement silencieux.
+- **Preuve :** normalization.reference_snapshot contient SHA/clé/comptes/version/scope interne/source_verified=false, calculés depuis le contexte et non le contenu collecté. Le SHA est comparé en supersession : changement de configuration implique une nouvelle ligne, jamais modification d'une valeur existante ni prétention de révision institutionnelle.
+- **Raccordement :** batch Silver prépare un contexte une fois au premier PriceRecord et le transmet au loader. Autorisation limitée à archiver la configuration interne avec le store original ; le parseur conserve son store source readonly vérifié, sans refetch/discover ni SourceRecord fictif. Pas de commit/rollback implicite, nouvelle dépendance, migration ou clé naturelle.
+- **Réception :** unités contexte/session/transaction/erreurs/lectures fraîches/batch ; vrais SQL/S3 usage du snapshot, relecture persistée, retry sans doublon, contexte expiré et changements propres refusés, ancien cache rafraîchi. QA 549/50 puis check Windows complet figé, originaux/snapshot/préservation/gouvernance/scan/commit obligatoires.
+- **Fixture de panne B-R038 :** le wrapper after_insert transmet les kwargs au vrai loader pour conserver le nouveau contexte ; assertions insertion SQL=1, RuntimeError, rollback/prix=0, reçu durable/expurgation inchangées. Une erreur de signature TypeError avant insertion ne remplace pas ce scénario.
+- **Limites :** références configurées non institutionnellement qualifiées ; callers historiques non liés ne revendiquent pas le snapshot. Ledger/rejeu historique/partitions/reprise/robots/garde SQL structure restent requis ; durabilité native incrément 7 conservée, aucun transfert global stages.py ancien.
+- **Alternatives :** SHA fourni par parseur, archive hors transaction, ORM stale, inférence de provenance officielle, remplacement de la durabilité reçue (rejetées).
+
 ## ADR-052 : R0.6 — archive référentiel interne
 
 - **Date / statut :** 2026-10-12, accepté avant transfert principal de l'incrément 11 ; préparation 17 unités et deux vrais S3 reçus séparément.

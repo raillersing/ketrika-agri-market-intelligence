@@ -5,6 +5,7 @@ import unicodedata
 from copy import deepcopy
 from dataclasses import dataclass
 from decimal import ROUND_DOWN, Decimal
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -13,6 +14,7 @@ from ketrika.connectors.records import PriceRecord
 from ketrika.core.models.db import PriceObservation, SourceRecord
 from ketrika.normalize.decimal_price import ParsedPrice, convert_price, parse_price
 from ketrika.normalize.price_references import resolve_location, resolve_product, unit_factor
+from ketrika.normalize.reference_snapshot import ReferenceSnapshot, reference_snapshot_evidence
 from ketrika.normalize.supersede import create_review_item, load_observation_with_supersession
 
 
@@ -30,11 +32,17 @@ def load_normalized_price(
     source_record_id: UUID,
     *,
     admin_level: int | None = None,
+    reference_snapshot: ReferenceSnapshot | None = None,
 ) -> NormalizedLoad:
     """No collect, seed, commit, alias insertion or update of an observed value."""
     reference = session.get(SourceRecord, source_record_id)
     if reference is None or reference.source_id != source_id:
         raise ValueError("normalization_source_reference_mismatch")
+    snapshot_evidence = (
+        reference_snapshot_evidence(session, reference_snapshot)
+        if reference_snapshot is not None
+        else None
+    )
     if (
         record.period_end < record.period_start
         or record.observed_or_imputed not in {"observed", "imputed"}
@@ -104,6 +112,8 @@ def load_normalized_price(
         "scope": "configured_reference_conversion_not_market_or_source_qualification",
     }
     comparable = converted.price_mga_per_base if not issues else None
+    if snapshot_evidence is not None:
+        evidence["normalization"]["reference_snapshot"] = snapshot_evidence
     values = {
         "product_raw": record.product_raw,
         "product_id": product.entity.product_id if product else None,
@@ -140,13 +150,20 @@ def load_normalized_price(
 
     # Compare semantic classification as well as raw and derived values. Full
     # evidence is not compared: a repeated artifact must not create duplicates.
+    comparison_evidence: dict[tuple[str, ...], Any] = {
+        ("normalization", "value_kind"): record.value_kind
+    }
+    if snapshot_evidence is not None:
+        comparison_evidence[("normalization", "reference_snapshot", "sha256")] = snapshot_evidence[
+            "sha256"
+        ]
     action, observation_id = load_observation_with_supersession(
         session,
         PriceObservation,
         natural_key,
         build,
         values,
-        evidence_fields={("normalization", "value_kind"): record.value_kind},
+        evidence_fields=comparison_evidence,
     )
     if action not in {"inserted", "superseded", "idempotent_skipped"}:
         raise ValueError("normalization_loader_action_invalid")

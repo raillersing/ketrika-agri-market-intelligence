@@ -103,8 +103,8 @@ def test_real_phase_rollback_and_independent_failure(failure, entrypoint, monkey
     if failure == "silver_after_insert":
         from ketrika.normalize.price_loader import load_normalized_price
 
-        def load_then_fail(session, *args):
-            loaded = load_normalized_price(session, *args)
+        def load_then_fail(session, *args, **kwargs):
+            loaded = load_normalized_price(session, *args, **kwargs)
             assert loaded.action == "inserted"
             assert (
                 session.scalar(

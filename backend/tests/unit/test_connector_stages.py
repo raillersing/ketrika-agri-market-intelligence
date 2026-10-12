@@ -215,12 +215,18 @@ def test_silver_routes_prices_to_normalization_and_counts_actual_reviews(action,
             "ketrika.normalize.price_loader.load_normalized_price",
             return_value=NormalizedLoad(action, uuid.uuid4(), reviews),
         ) as normalize,
+        patch("ketrika.normalize.reference_snapshot.prepare_reference_snapshot") as prepare,
         patch("ketrika.connectors.runner.load_record_with_supersession") as raw_loader,
     ):
         stats = consume_connector_silver(connector, ctx, session, batch)
     normalize.assert_called_once_with(
-        session, record, batch.source_id, uuid.UUID(batch.artifacts[0].source_record_id)
+        session,
+        record,
+        batch.source_id,
+        uuid.UUID(batch.artifacts[0].source_record_id),
+        reference_snapshot=prepare.return_value,
     )
+    prepare.assert_called_once_with(session, ctx.bronze_store)
     raw_loader.assert_not_called()
     assert stats["n_review"] == run.n_review == reviews
     assert stats["n_inserted"] == int(action == "inserted")

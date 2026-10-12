@@ -5,6 +5,34 @@ R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
 Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 reçu.
 
+Incrément 12 transféré après ADR-053/SPECS ; réception principale non close.
+Contexte ref session/transaction/locks/manifeste/archive, lecture ORM fraîche
+sans écraser une modification pendante, SHA stocké dans normalization et
+comparé en supersession ; batch Silver réutilise un seul contexte. Durabilité
+native précédente conservée par patch limité. Ciblé 29860 code FINAL 0/
+lint-format-types 12 fichiers/106 unités/58,54 s. QA initiale 50787 code
+FINAL 1 : 547 passed/deux failed/425,88 s ; reçu
+727da0620e64403999b1f0125b16a945/459,593 s et XML originaux conservés.
+B-R038 : signature du simulateur after_insert refuse reference_snapshot ;
+kwargs transmis au vrai loader, assertions insertion/rollback/RuntimeError/
+reçu durable/expurgation inchangées. Relance Windows 61133 code FINAL 0 :
+549/50/373,50 s/zéro échec-erreur-skip ; reçu
+11d5d2b5d4e940b9842f59fd777921a4/396,759 s, originaux conservés.
+Check Windows complet 65025 code FINAL 0 : 1194 backend/86 intégrations/
+2408,19 s/cinq warnings/zéro échec-erreur-skip ; core 94,4209 %, extraction
+86,3768 %, normalize 89,0430 %. Front 35/quatre suites/4,00 s, reçu
+9d4ba4a4-dccd-4aa1-accd-7d6765419cf8 : quatre étapes code 0/build 153309 ms.
+Originaux indépendamment relus 51837 code 0 ; snapshot final 44384 code 0/
+13 fichiers identiques, gouvernance Windows 63922 code 0, SQL/Bronze
+inchangés (increment-12-preservation.json). Scan/commit encore requis.
+B-R038 non clos avant commit, R0.6 IP. Six SQL-S3 préparatoires reçus au
+worktree ne valent pas réception principale ni qualification de source/ledger.
+Le XML rouge initial est conservé dans increment-12-qa-first-tests.xml.gz,
+avec manifeste .integrity.json : décompression byte-identical/SHA
+c287500e778d3b041926b6ede36a307dae96db2e6109fbeaa135518ffa56609e,
+549 tests/deux échecs. B-R039 : pas de suppression des espaces de la trace
+ni d'affaiblissement du diff ; original brut scanné sans fuite avant compression.
+
 Incrément 11 archive interne transféré après ADR-052/SPECS, check intégral
 vert ; gouvernance Windows 31115 code 0/74 statuts cohérents ; commit
 f9f0fd664fec17e795bacd26265c97eb3ab8579a/13919 code 0. Diff 35448 code 0,

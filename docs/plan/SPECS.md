@@ -757,6 +757,23 @@ Pour chaque enregistrement normalisé, on calcule `natural_key`, puis :
 
 ## 9. Interface Connector (normative)
 
+ADR-053 : le batch Silver natif prépare au premier prix un contexte privé des
+références lié à la session/transaction racine active. Refuser les changements
+ORM ref pendants, acquérir SHARE locks/5s dans l'ordre location/location_alias/
+product/product_alias/unit_conversion ; lire le manifeste puis archiver la
+configuration interne avec GET vérifiée, même transaction. Avant chaque
+normalisation liée, contexte/transaction/manifeste inchangés exigés. Entités ref
+fraîches via populate_existing ; tous les resolvers refusent les changements
+ORM ref pendants avant lecture, sans écrasement. Le parseur garde son store
+source readonly ; aucune collecte/refetch ou SourceRecord institutionnel ajouté.
+normalization.reference_snapshot stocke SHA/clé/comptes/version/scope interne/
+source_verified=false calculés depuis le contexte, jamais un champ collecté.
+SHA comparé en supersession : configuration différente = nouvelle ligne,
+pas modification destructive ni qualification d'une révision institutionnelle.
+Caller propriétaire du commit/rollback ; callers historiques non liés ne
+revendiquent pas le snapshot. Aucun ledger/rejeu/partition/reprise ni nouvelle
+clé naturelle déduits ; qualification des références reste distincte.
+
 ADR-040 : primitives privées d'identité de traitement, sans ledger livré.
 Identité : source_id snake_case, UUID SourceRecord non nul, SHA contenu,
 versions parser/normaliseur explicites et SHA manifeste ; frame JSON ASCII
