@@ -29,6 +29,7 @@
         "tests/unit/test_durable_runs.py",
         "tests/unit/test_durable_phases.py",
         "tests/unit/test_durable_factory.py",
+        "tests/unit/test_http_identity.py",
         "tests/unit/test_connectors.py",
         "tests/unit/test_provenance_bronze.py",
         "tests/unit/test_execution_plan.py",
@@ -47,7 +48,7 @@
         "tests/integration/test_nasa_power.py",
         "tests/integration/test_wfp_hdx_mdg.py"
       ],
-      "minimum_tests": 368,
+      "minimum_tests": 378,
       "minimum_integration_tests": 34
     },
     "R0.5": {

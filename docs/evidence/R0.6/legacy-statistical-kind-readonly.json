@@ -1,0 +1,15 @@
+{
+  "scope": "Read-only local legacy SQL risk profile; not market measurements or source qualification",
+  "captured_at_utc": "2026-10-12T05:05:14Z",
+  "command_exit": 0,
+  "query": "SELECT count(*) total, count(*) FILTER (WHERE evidence #>> '{normalization,value_kind}' IN ('point','min','max','avg')) explicit_statistical_kind, count(*) FILTER (WHERE evidence #>> '{normalization,value_kind}' IS NULL) absent_statistical_kind, count(*) FILTER (WHERE price_mga_per_base IS NOT NULL AND review_status='accepted' AND superseded_by IS NULL) eligible_current_price, count(*) FILTER (WHERE price_value IS NULL) null_price, count(*) FILTER (WHERE missing_code IN ('ND','NA')) declared_missing FROM obs.price_observation",
+  "counts": {
+    "total": 764,
+    "explicit_statistical_kind": 0,
+    "absent_statistical_kind": 764,
+    "eligible_current_price": 234,
+    "null_price": 9,
+    "declared_missing": 9
+  },
+  "interpretation": "Do not infer a point statistical type for legacy reconciliation. Eligibility is only an SQL predicate, not source-cell or model qualification. No observed value or natural key modified."
+}

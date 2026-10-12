@@ -95,9 +95,8 @@ class PoliteHttpClient:
         **kwargs: Any,
     ) -> httpx.Response:
         """Execute request with retries on network failures."""
-        req_headers = {"User-Agent": self.user_agent}
-        if headers:
-            req_headers.update(headers)
+        req_headers = httpx.Headers(headers)
+        req_headers["User-Agent"] = self.user_agent
         return self._client.request(method, url, headers=req_headers, **kwargs)
 
     def get(
