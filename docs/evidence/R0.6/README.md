@@ -1,11 +1,11 @@
 # R0.6 — lignée Bronze → Silver
 
-État courant 2026-10-12 : incréments 1–9 reçus, dernier fonctionnel a5ec413.
+État courant 2026-10-12 : incréments 1–10 reçus, dernier fonctionnel da215ed.
 R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
 Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 reçu.
 
-Incrément 10 ND/NA en réception après ADR-051/SPECS : binder d'absence
+Incrément 10 ND/NA reçu après ADR-051/SPECS : binder d'absence
 explicite sans valeur numérique/dérivé ni coercition des preuves anciennes.
 Ciblé 80563 code 0/lint-format-types trois fichiers/56 unités/23,08 s,
 dont 33 historiques. QA Windows 24610 code final 0/485/42/210,50 s,
@@ -15,8 +15,10 @@ zéro échec-erreur-skip/cinq warnings ; core 94,3854 %, extraction 86,3768 %,
 normalize 88,2090 %. Front 35/quatre suites/6,42 s, reçu
 b3cd2488-347c-488a-af34-1fe46ceb8c16 : quatre étapes code 0/build 164790 ms.
 Trois fichiers identiques au snapshot final (26602 code 0), gouvernance
-Windows 48536 code 0, SQL/toutes versions Bronze inchangés. Diff/scan final/
-commit encore requis, BL-017 non clos avant commit. B-R037 formulation
+Windows 48536 code 0, SQL/toutes versions Bronze inchangés. Commit
+da215ed821c850956c518d46cfbfff6abe0a1950/39262 code 0 ; diff 98690 code 0,
+scan final 40638 code 0/502642 octets/16,2 s/sans fuite. BL-017 résolu pour
+contrat explicite seulement, anciennes preuves non conformes refusées. B-R037 formulation
 documentaire corrigée, aucun ignore/exception/règle de secrets modifié.
 
 Incrément 9 reçu après ADR-040/SPECS : deux primitives identité
