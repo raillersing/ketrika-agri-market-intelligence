@@ -11,8 +11,8 @@ déploiement ou d'un usage humain. Le programme R n'est pas terminé :
 R0.1–R0.5 sont DONE ; R0.6 reste IN_PROGRESS et R0.7–R6.11 restent TODO.
 PROGRESS.md est canonique ; le plan R en est le miroir.
 
-Dernier incrément reçu : e5a4018 (contexte de normalisation ADR-053, QA 549/50,
-check Windows complet 65025 code final 0/1194 backend/35 web/build ;
+Dernier incrément reçu : b139c90 (registre Bronze ADR-055, QA 591/60,
+check Windows complet 3975 code final 0/1236 backend/35 web/build ;
 gouvernance/snapshot/préservation/scan verts). R0.6 n'est pas terminée.
 Ce snapshot ne qualifie pas la provenance institutionnelle des référentiels ;
 Le snapshot est consommé par les prix du batch Silver dans la transaction
@@ -20,15 +20,21 @@ verrouillée ; les appelants historiques sans contexte ne revendiquent pas cette
 Ledger, partitions/reprise,
 robots automatique et garde structurelle SQL directe restent requis.
 
-Incrément 13 ADR-055 en réception, non committé : registre SQL immuable des
+Incrément 13 ADR-055 reçu et committé : registre SQL immuable des
 lots Bronze/header/membres et persistance native avant commit. QA Windows
 75087 FINAL 0/591 tests/60 intégrations/243,13 s, originaux archivés ; relecture
 81743 FINAL 0/huit runs exacts/six lots et six GET SHA/deux pannes Bronze sans
-lot. Check Windows intégral 3975 en cours, résultat final requis avant commit.
+lot. Check Windows intégral 3975 FINAL 0, origine/snapshot/préservation/
+gouvernance/diff/scan verts ; commit b139c90d0ccbebbd9c9af3f717b908d82191ff25.
 Ne pas considérer la migration QA 0006 ou ces sous-ensembles comme tâche DONE,
 reprise automatique, partition ou qualification de source. Préparation ADR-056
 uniquement dans worktree r06-ledger-20261013 : cinq unités supplémentaires,
 44 unités/10,99 s/types verts, aucun transfert principal ni SQL concurrent.
+
+Après fin du check principal, trois SQL/S3 préparatoires ADR-056 reçus dans
+ce worktree : 30934 FINAL 0/20,35 s/refus avant parse, aucun transfert principal.
+Adopter les contrats puis reprendre la réception principale QA 599/63 et
+check complet avant de revendiquer la consommation du registre par Silver.
 
 Attention à la séparation runtime : la base active reste au head historique
 0002_gold_views (lecture readonly b5df39), tandis que seule la qualification

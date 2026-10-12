@@ -1,11 +1,11 @@
 # R0.6 — lignée Bronze → Silver
 
-État courant 2026-10-12 : incréments 1–12 reçus, dernier fonctionnel e5a4018.
+État courant 2026-10-12 : incréments 1–13 reçus, dernier fonctionnel b139c90.
 R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
 Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 reçu.
 
-Incrément 13 ADR-055 en réception, non committé : registre SQL immuable des
+Incrément 13 ADR-055 reçu, b139c90d0ccbebbd9c9af3f717b908d82191ff25 : registre SQL immuable des
 lots Bronze et références ordonnées, propriétaire natif persiste avant commit.
 Pas de tentative Silver, reprise automatique, partition ou source qualifiée.
 Principal 20261 FINAL 0/39 unités/29,99 s ; types préparatoires 77582 code 0.
@@ -32,7 +32,10 @@ ledger 100 %. Front 35/quatre suites/6,03 s, quatre étapes code 0, build
 190556 ms ; reçu 70b8733b-d4fe-46e3-bf52-de764ddd9eaa. Originaux archivés
 et relus 15172 FINAL 0. SQL/Bronze inchangés (increment-13-preservation.json).
 Gouvernance Windows 15089 FINAL 0/74 statuts ; snapshot final 80925 code 0/
-huit fichiers identiques. Stage/diff/scan/commit à clôturer ; R0.6 reste IN_PROGRESS.
+huit fichiers identiques. Stage 82122/diff 21288/scan 72430 codes FINAL 0 ;
+scan 587613 octets/12,7 s/sans fuite, commit 77212 FINAL 0/25 fichiers.
+R0.6 reste IN_PROGRESS ; les mentions de réception en attente ci-dessus
+décrivent les étapes historiques, pas l'état courant de ce lot reçu.
 
 Incrément 12 reçu après ADR-053/SPECS : e5a4018b10fad1760670ca3592689bb4ac134b30.
 Contexte ref session/transaction/locks/manifeste/archive, lecture ORM fraîche
