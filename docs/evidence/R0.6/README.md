@@ -1,11 +1,11 @@
 # R0.6 — lignée Bronze → Silver
 
-État courant 2026-10-12 : incréments 1–8 reçus, dernier fonctionnel 4710a6f.
+État courant 2026-10-12 : incréments 1–9 reçus, dernier fonctionnel a5ec413.
 R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
 Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 reçu.
 
-Incrément 9 en réception après ADR-040/SPECS : deux primitives identité
+Incrément 9 reçu après ADR-040/SPECS : deux primitives identité
 artefact/manifeste, six fichiers source/tests. Ciblé 47180 code 0/43 unités/
 8,07 s/types-lint-format six fichiers ; QA Windows 96902 code final 0/
 426/39/zéro échec-erreur-skip/139,44 s, reçu
@@ -15,7 +15,9 @@ zéro échec-erreur-skip ; core 94,3629 %, extraction 86,3768 %, normalize 88,20
 Front 35/quatre suites/4,66 s, reçu fc2c6306-937f-42d7-b81d-54084d50a0fb :
 quatre étapes code 0, build 112316 ms. Six fichiers identiques au snapshot,
 gouvernance Windows 21397 code 0, SQL/toutes versions Bronze inchangés.
-Scan/diff/commit encore requis ; aucun ledger/partition/reprise qualifié.
+Commit a5ec41324bf761a01850de4a073ba18f33d97255/11187 code 0 ; diff 02a66a
+code 0, scan final 17967 code 0/499911 octets/39,4 s/aucune fuite.
+Aucun ledger/partition/reprise qualifié.
 SQL readonly vérifie comptes/NUMERIC/NULL/clés/version, pas des octets ou
 provenance de mappings. Archive Bronze, référentiel effectivement utilisé,
 ledger/partition/reprise non livrés ; prix/robots/ND préparatoires séparés.
