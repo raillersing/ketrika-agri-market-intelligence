@@ -5,6 +5,20 @@ R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
 Incrément 7 durable reçu après ADR-050 ; incrément HTTP 8 reçu.
 
+Incrément 10 ND/NA en réception après ADR-051/SPECS : binder d'absence
+explicite sans valeur numérique/dérivé ni coercition des preuves anciennes.
+Ciblé 80563 code 0/lint-format-types trois fichiers/56 unités/23,08 s,
+dont 33 historiques. QA Windows 24610 code final 0/485/42/210,50 s,
+zéro échec-erreur-skip ; reçu 94dfa5d347ff489c98d86e176b7fc4b8/229,721 s.
+Check Windows 42672 code FINAL 0/1130 backend/78 intégrations/2339,09 s,
+zéro échec-erreur-skip/cinq warnings ; core 94,3854 %, extraction 86,3768 %,
+normalize 88,2090 %. Front 35/quatre suites/6,42 s, reçu
+b3cd2488-347c-488a-af34-1fe46ceb8c16 : quatre étapes code 0/build 164790 ms.
+Trois fichiers identiques au snapshot final (26602 code 0), gouvernance
+Windows 48536 code 0, SQL/toutes versions Bronze inchangés. Diff/scan final/
+commit encore requis, BL-017 non clos avant commit. B-R037 formulation
+documentaire corrigée, aucun ignore/exception/règle de secrets modifié.
+
 Incrément 9 reçu après ADR-040/SPECS : deux primitives identité
 artefact/manifeste, six fichiers source/tests. Ciblé 47180 code 0/43 unités/
 8,07 s/types-lint-format six fichiers ; QA Windows 96902 code final 0/

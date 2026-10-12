@@ -980,6 +980,18 @@ Ordre : `parse → validate → product match → unit conversion → location m
 
 ## 14. Qualité des données
 
+### Absence prix explicite (ADR-051)
+
+price_value NULL + missing_code ND/NA explicite impose dérivé NULL et brut
+concordant aux marqueurs de normalisation : NFKC/strip/casse ND/NA ou vide/tiret
+ND, <=128 caractères. Cellule price_raw/value/text à coordonnées exactes,
+attendu remplacé par brut SQL et identités obligatoires inchangées. Un nombre
+avec code absence ou code/brut discordants refuse ; sans code, refus ancien
+conservé. Aucune réinterprétation automatique de price_value/number ni
+invention de marqueur ; preuve d'absence n'est pas prix numérique Gold,
+conversion ou forecast. Les preuves anciennes non conformes restent refusées,
+pas de backfill/source qualifiée/observation active modifiée.
+
 ### Contrôle structurel et dépendances Gold (ADR-049)
 
 Contrats explicites CSVSchemaContract ou JSONSchemaContract, fermés/versionnés,

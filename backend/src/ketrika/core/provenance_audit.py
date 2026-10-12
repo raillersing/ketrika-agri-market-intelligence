@@ -7,6 +7,7 @@ discover sources. Legacy rows without supported evidence fail rather than disapp
 from __future__ import annotations
 
 import copy
+import unicodedata
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from datetime import date
@@ -114,6 +115,17 @@ def bind_observation(table: str, observation: Any) -> ObservationClaim:
         raise ProofError("extraction_proof_not_supported")
     bound = copy.deepcopy(proof)
     required_values = {field for field in policy.values if getattr(observation, field) is not None}
+    if table == "price_observation" and observation.missing_code is not None:
+        if observation.price_value is not None or observation.price_mga_per_base is not None:
+            raise ProofError("binding_missingness_conflict")
+        raw = observation.price_raw
+        if not isinstance(raw, str) or len(raw) > 128:
+            raise ProofError("binding_missing_marker_invalid")
+        marker = unicodedata.normalize("NFKC", raw).strip().upper()
+        code = "ND" if marker in {"", "-"} else marker
+        if code not in {"ND", "NA"} or observation.missing_code != code:
+            raise ProofError("binding_missing_marker_invalid")
+        required_values = {"price_raw"}
     required_identities = {
         field for field in policy.identities if getattr(observation, field) is not None
     }
@@ -129,7 +141,7 @@ def bind_observation(table: str, observation: Any) -> ObservationClaim:
         seen.add(field)
         if field in required_values:
             role = "value"
-            kind = "text" if field == "stock_status" else "number"
+            kind = "text" if field in {"stock_status", "price_raw"} else "number"
         elif field in required_identities:
             role, kind = "identity", "text"
         else:

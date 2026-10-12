@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-051 : R0.6 — preuve explicite d'absence prix
+
+- **Date / statut :** 2026-10-12, accepté avant transfert principal de l'incrément 10 ; préparation 56 unités et trois SQL/S3/Gold reçue séparément.
+- **Contexte :** BL-017 : un prix NULL avec marqueur ND/NA source exact est une observation d'absence, pas un nombre. Le binder ne reconnaît pas encore ce cas.
+- **Décision :** pour price_value NULL + missing_code ND/NA explicite, exiger price_mga_per_base NULL et concordance du brut avec les tokens déjà normalisés : NFKC/strip/casse, ND/NA, vide/tiret = ND, longueur <=128. Cellule price_raw/value/text explicite à coordonnées exactes ; attentes remplacées par le brut SQL, toutes les identités conservées. Nombre non NULL + code absence refuse. Sans code, refus historique conservé ; ancien price_value/number jamais converti implicitement en texte.
+- **Réception :** 23 unités nouvelles + 33 binders historiques et trois SQL réels ND/NA/cellule discordante ; relecture SQL des NULL, preuve Bronze, DQ persisté et refresh Gold numérique réellement vide/0-0-NULL. Manifeste QA 485/42, check Windows complet, snapshot/préservation/scan/commit exigés après transfert.
+- **Limites :** ne fabrique ni zéro ni chiffre, ne publie pas de prix dérivé/prévision et ne qualifie pas une source. Aucun ORM, migration, parser de source, backfill ou donnée active changé. Les preuves historiques non conformes restent refusées ; BL-017 ne sera clos qu'après réception principale complète.
+- **Alternatives :** ND→0, accepter NULL sans preuve, transformer silencieusement une preuve numérique, réécrire l'historique (rejetées).
+
 ## ADR-040 : R0.6 — identité explicite et manifeste de références
 
 - **Date / statut :** 2026-10-12, accepté avant transfert principal de l'incrément 9. Identifiant réservé au prototype reconstruit ; les anciens worktrees temporaires perdus ne constituent pas une preuve actuelle.
