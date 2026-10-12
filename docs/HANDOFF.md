@@ -11,10 +11,9 @@ déploiement ou d'un usage humain. Le programme R n'est pas terminé :
 R0.1–R0.5 sont DONE ; R0.6 reste IN_PROGRESS et R0.7–R6.11 restent TODO.
 PROGRESS.md est canonique ; le plan R en est le miroir.
 
-Dernier incrément reçu : da215ed (ND/NA explicites, check Windows 42672
-code final 0). L'archive interne ADR-052 est en réception : QA 504/44 verte,
+Dernier incrément reçu : f9f0fd6 (archive interne ADR-052, QA 504/44,
 check Windows complet 16651 code final 0/1149 backend/35 web/build ;
-gouvernance verte, scan/commit encore requis, R0.6 n'est pas terminée.
+gouvernance/snapshot/préservation/scan verts). R0.6 n'est pas terminée.
 Ce snapshot ne qualifie pas la provenance institutionnelle des référentiels ;
 ledger, consommation du snapshot par normalisation, partitions/reprise,
 robots automatique et garde structurelle SQL directe restent requis.

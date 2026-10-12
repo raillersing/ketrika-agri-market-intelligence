@@ -17,7 +17,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.3 | MUST | DONE | 4f8d7e2 : check Windows 340/35, QA 58, E2E 9, préservation et secrets verts |
 | R0.4 | MUST | DONE | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 ; 65 fichiers / dix cellules, check 411/35 et QA 72 codes 0, données actives préservées |
 | R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
-| R0.6 | MUST | IN_PROGRESS | Incréments 1–10 reçus, dernier da215ed ; archive incrément 11 QA 504/44/check Windows 16651 FINAL 0/1149 backend/35 web/build, gouvernance/empreintes vertes, scan/commit requis ; liaison normaliseur/ledger/partitions/reprise/robots/garde structure SQL directe requis |
+| R0.6 | MUST | IN_PROGRESS | Incréments 1–11 reçus, dernier f9f0fd6 archive interne : QA 504/44/check Windows 16651 FINAL 0/1149 backend/35 web/build ; gouvernance/snapshot/empreintes/scan verts ; liaison normaliseur/ledger/partitions/reprise/robots/garde structure SQL directe requis |
 | R0.7 | MUST | TODO | — |
 | R0.8 | MUST | TODO | — |
 | R0.9 | MUST | TODO | — |
