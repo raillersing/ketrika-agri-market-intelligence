@@ -1,9 +1,9 @@
 # R0.6 — lignée Bronze → Silver
 
-État courant 2026-10-11 : incréments 1–6 reçus, dernier fonctionnel 6f1a9b1,
-clôture cb6c420. R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
+État courant 2026-10-11 : incréments 1–7 reçus, dernier fonctionnel 1bb0670.
+R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.
-Incrément 7 durable transféré après ADR-050, réception principale encore requise.
+Incrément 7 durable reçu après ADR-050 ; incrément HTTP suivant encore requis.
 
 Point de reprise incrément 4 (2026-10-11T11:48:18Z) : toujours non committé.
 QA finale de comportement 45271 code Windows 0, 197 tests dont seize
@@ -366,3 +366,8 @@ Dix fichiers correspondent au snapshot testé ; gouvernance Windows 15546 code 0
 Après contrôle complet, SQL et toutes versions Bronze actifs inchangés,
 preuve increment-7-active-preservation-final. Scan final/commit encore requis ;
 R0.6 reste IN_PROGRESS, wrapper caller/crash recovery/ledger/partitions ouverts.
+
+Commit reçu 1bb067025a66cef99c8e189ba4165efe48355ee8 (72010 code final 0).
+Diff b2100f code 0 ; scan final configuré 31299 code 0/496673 octets/3,71 s,
+aucune fuite. B-R036 RESOLVED_FIXED. Réception limitée aux phases natives et
+cas d'échec testés, pas au wrapper historique, arrêt brutal ou ledger/reprise.
