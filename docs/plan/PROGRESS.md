@@ -3,6 +3,31 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-13T13:47:18Z] R0.6 B1 — réception complète verte, intégration requise
+
+- Source figée f7b3b32 (dfad489 produit + a6a1abb inventaire + f7b3b32 fixture météo), Windows réel 76875 FINAL 0 : lint/format 272/types 271, 1348 backend/2516,33 s/cinq warnings/zéro échec-erreur-skip ; intégrations 122 layout/122 marker/126 union. Couvertures core 94,46163366336634 %, extraction 86,3768115942029 %, normalize 89,04299583911235 %. Aucune modification applicative pendant réception.
+- 26575 FINAL 0 prouve inclusion R0.6 dans JUnit global : 57 fichiers/684 cas/90 intégrations, zéro manquant ; nouveaux cas 17 unités et dix SQL. XML original SHA 606e584a353a3745572e31776eccc654e6d591cdae3f3f1ef4b3b8d2236e8a2d ; aucun qa R0.6 cumulé répété. Snapshot 11224 FINAL 0/dix-huit fichiers identiques.
+- Frontend receipt 1f204ecc-d566-4190-914a-009a05e7a63a, 35 tests/quatre suites/5,91 s ; lint/types/tests/build codes 0, durées 24926/15779/9960/157732 ms, aucun timeout/signal/error ; quinze pages statiques construites. Ce n'est pas une qualification navigateur/usage humain.
+- Préservation après réception backend : 0c2c65 FINAL 0, 482 SR/MD5 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix/MD5 4b2586cb8e422f11c4873ad513d66bc1 ; active head 0002. 39495 FINAL 0 : 674 versions/1377481 octets/SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c, zéro delete markers. Toutes mutations de tests en QA, pas de migration active.
+- Originaux exportés au worktree ; gouvernance/scan puis intégration main des trois commits, résolution documentaire seulement et preuve de contenu exact requis. R0.6 IN_PROGRESS, HTTP/budget Antigravity et B2/BL-016 non terminés ; aucun tag/déploiement/source live/modèle de marché revendiqué.
+
+### [2026-10-13T12:56:32Z] R0.6 lot B — suivi du même check 76875
+
+- Check f7b3b32 toujours en cours : corpus, dossier integration (dont météo corrigée, dix SQL/S3 structure, quatre Dagster, reprises) et premières unités passent ; test_ml_forecast en calcul, intégrations marquées hors dossier encore requises. Aucun résultat backend/frontend/couverture/final déclaré vert.
+- Comparaison readonly 11224 FINAL 0 : dix-huit fichiers backend changés identiques au snapshot réel de qualification. Aucun fichier applicatif ni destination QA modifié pendant check. Reprendre 76875, ne pas relancer baseline ou suite cumulée, ne pas arrêter les vrais fits.
+
+### [2026-10-13T12:34:19Z] R0.6 lot B — réception f7b3b32 en cours
+
+- Fix de fixture f7b3b32 (35809 FINAL 0) sur branche work/r06-publication-20261013 ; 52116 FINAL 0/une SQL-S3/121,70 s, 11170 lint/types verts. Scan brut 45256 FINAL 0/57558 octets, final 75969 FINAL 0/3493 octets, diff 93053 FINAL 0. Produit dfad489 inchangé ; inventaire corrigé a6a1abb et météo déclarée f7b3b32, pas fusionnés main.
+- Windows réel dev.ps1 check session 76875 démarrée à 2026-10-13T12:34:19Z, source figée. Reprendre ce processus jusqu'au code final ; ne pas réexécuter baseline/cibles cumulées ni muter sa QA ou le worktree. Check 8010 rouge conservé, pas transformé en succès ; aucun frontend/couverture/qualification de source reçu.
+- Prochaines étapes : résultat complet et originaux ; inclusion R0.6 57 fichiers/684 minimum/90 intégrations ; comparaison des dix-huit fichiers backend avec snapshot ; préservation SQL/S3 active ; scan/intégration main et clôture documentaire. HTTP/budget à Antigravity ; B2 identité prix préparé readonly, BL-016 ouvert. R0.6 IN_PROGRESS, aucun tag.
+
+### [2026-10-13T12:31:37Z] R0.6 lot B — réception interrompue par fixture météo
+
+- Windows 8010 FINAL 1 sur a6a1abb : 125 succès puis GoldSchemaRejected météo, 999,84 s ; aucun frontend ni couverture reçu. Dix nouveaux SQL/S3 de publication, quatre schema Dagster et reprises natives passent, mais rapport global rouge. 63421 FINAL 0 : dix-sept fichiers exacts du snapshot, aucun code modifié pendant check.
+- B-R050 au worktree : ancienne fixture JSON météo n'avait pas de déclaration, nouveau refus correct. Déclaration explicite source/parser synthetic-test/MIME et forme fermée six string ; aucun changement de donnée/preuve/assertion ni bypass public. Lint/types 11170 FINAL 0 ; cible 52116 affiche 1 passed/121,70 s, code final à confirmer. Original rouge exporté/gzip lossless SHA 9db41148968bad5cc3797044d1ff22f72c753c12fd2a0e2a087ce479cbb00287, scan brut vert.
+- Reprendre work/r06-publication-20261013 : commit de cette fixture puis check complet unique du contenu nouveau ; ne pas réexécuter suite cumulative SQL/S3 ni préparer un helper en interrompant la réception. Produit non transféré sur main ; HTTP à Antigravity, BL-016 ouvert. R0.6 reste IN_PROGRESS.
+
 ### [2026-10-13T12:06:53Z] R0.6 lot B — réception reprise après inventaire
 
 - 9966 FINAL 1 confirmé, premier test corpus rouge/137,47 s, frontend non exécuté ; produit dfad489 non reçu sur main. B-R049 : inventaire du générateur synthétique obsolète, correction bornée à deux entrées, aucun document authentique/annotation/droit changé.
