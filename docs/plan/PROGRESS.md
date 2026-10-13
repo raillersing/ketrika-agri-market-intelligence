@@ -3,6 +3,24 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-13T08:00:49Z] R0.6 — réception maintenue, préparation B readonly
+
+- Windows 27517 poursuit le même check du commit 459f5a2 : 1321 cas collectés, intégrations et premiers modules unitaires verts, calcul scientifique test_ml_forecast en cours ; aucun code final, couverture ou frontend déclaré vert prématurément. Source du worktree figée, aucune suite QA mutante concurrente.
+- Audit readonly des écarts du lot B consigné dans PUBLICATION_BATCH_PREPARATION.md : publication directe sans garde structure, contrats absents du modèle SourceDefinition, périmètre historique/candidats à arrêter, identité métier BL-016 distincte des partitions. Pas d'ADR nouveau/code/SQL/tests ou démarrage de tâche future ; HTTP à Antigravity.
+- Scan dir 45095 FINAL 1 (182206384 octets/1m33s) : unique correspondance préexistante deploy.md:92–93/generic-api-key, hors diff du lot. Diagnostic metadata-only 43200 FINAL 0, 61427 FINAL 0 prouve que la valeur entière de S3_SECRET_KEY ligne 92 est un placeholder entre chevrons ; pas de valeur affichée ni ignore ajouté. Scans staged du lot restent FINAL 0 ; résultat dir 1 conservé, pas transformé en code 0.
+
+### [2026-10-13T07:37:03Z] R0.6 lot A — réception Windows en cours
+
+- Commit de branche stabilisé 459f5a2eeb4ef7cedd3648a67a3fa238e504fbfb (44387 FINAL 0, 29 fichiers/1878 ajouts/17 retraits), pas intégré sur main. Vingt SQL/S3 du code applicatif sont verts dans 4721 (rapport ensuite rouge uniquement sur mock kwargs) ; mock corrigé sans nouveau changement applicatif, 1501 FINAL 0/44 unités/33,86 s. Originaux rouges conservés en gzip déterministe ; aucun Bronze supprimé. Stage 3950/diff 43235 FINAL 0 ; scans staged bruts 8202 FINAL 0/165448 octets puis final 19501 FINAL 0/108544 octets, sans fuite. Ce scope ne certifie pas tout le répertoire : scan dir 4673 signale une correspondance hors diff, localisation en cours sans afficher de secret.
+- Windows réel `dev.ps1 check` depuis worktree UNC, session 27517 démarrée après commit et source figée. Isolation Compose validée, migration/seed QA seulement ; lint/format 267 fichiers, types 266, gouvernance 74/5 DONE/1 IP/68 TODO verts ; pytest global en cours, frontend et code final encore inconnus. Ne pas lancer autre suite mutante, déplacer tags ou interrompre cette réception pour un helper. HTTP/policy restent à Antigravity, aucune mutation du code applicatif principal ni migration active.
+
+### [2026-10-13T07:01:48Z] R0.6 — lot A, résilience native isolée
+
+- Worktree `/home/raillersing/projects/ketrika-qa-worktrees/r06-resilience-20261013`, branche `work/r06-resilience-20261013`, base 6715b13. Antigravity conserve le lot HTTP ; aucun fichier HTTP/policy partagé modifié ici. ADR-056 et ADR-058/059/060 réservés au lot A, contrats adoptés avant code dans ce worktree, pas encore réception produit sur main.
+- Implémentation en préparation : garde registre, intention/résultat immuables, exclusion PostgreSQL, reprise nouveau run sans collecte, partitions document/version et jobs Dagster, membres de réussite/identité prix liée au vrai référentiel. Mini-plan : développement ciblé ; finaliser reçus et tests négatifs ; figer ; réception complète unique ; intégrer preuves/statuts, pas de baseline check ni QA cumulée répétée.
+- Preuves intermédiaires : 14143 FINAL 0/types deux fichiers/23 unités/9 s ; 75424 FINAL 0/29 unités/8,08 s ; 56536 FINAL 0/48 tests dont 18 SQL/S3/49 s après correction des compteurs ; 91146 FINAL 0/types deux fichiers/36 unités/44,39 s ; 2804 FINAL 0/sept SQL/S3/87,40 s (jobs réels, retry/révision, crash). Nouveaux membres/identités : validation consolidée 29757 en cours ; aucune réception globale ni migration active. Anciennes preuves ne couvrent pas ces derniers changements. R0.6 reste IN_PROGRESS.
+- Incident préparatoire B-R041 au worktree : première cible SQL 64119 FINAL 1/10 échecs/8 succès/70,95 s, compteur n_fetched/n_new_artifacts absent du validateur de reçu ; corrigé sans seuil réduit, rapport rouge conservé. Types 33184 Optional classe résolu par registre explicite ; 83838 Optional identité résolu par variable dédiée ; validation finale requise. Aucune suppression Bronze/SQL active, aucun tag ni qualification live/modèle/humaine.
+
 ---
 
 ## 1. Tableau de bord des tâches
@@ -137,6 +155,11 @@
 | R6.11 | MUST | TODO | — | — | — | — | — |
 
 - [2026-10-11T16:24:50Z] Réception Windows intégrale incrément 6 : session 21370 code FINAL 0, XML original 997 tests/2240,356 s/zéro échec-erreur-skip ; couvertures core 94,2094 %, extraction 86,3768 %, normalize 88,2090 %. Frontend 35 tests/quatre suites, reçu 7180d33b-7642-40d8-baa4-78d889afad15 : lint/type/test/build codes 0 (11133/14254/10261/140732 ms). Source figée : comparaison des seize fichiers avec snapshot Docker code 0. Relecture active SQL ea1dd0 et Bronze 93980 codes 0 : 482 références MD5 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix MD5 4b2586cb8e422f11c4873ad513d66bc1 ; 674 versions/1377481 octets/SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c, aucune différence. Rapports originaux exportés ; scan final et commit encore requis. R0.6 IN_PROGRESS, aucun tag ni qualification live/modèle/humaine.
+
+### [2026-10-13T06:21:19Z] R0.6 — répartition parallèle autorisée
+
+- Autorisation explicite utilisateur : comparer les tâches et déléguer les moins complexes. Agent `acceptance_map` chargé uniquement de `docs/plan/DELEGATION_MATRIX.md` : cartographie des preuves et travaux indépendants ; aucune mutation applicative, SQL/S3 ou qualification produit. Principal conserve résilience, migrations et intégration.
+- Mini-plan : comparer dépendances/risques ; vérifier les preuves existantes sans relancer les suites ; déléguer une préparation documentaire exclusive ; relire sa matrice ; poursuivre le lot A avec tests ciblés puis réception complète unique. Les tâches futures non éligibles ne démarrent pas ; R0.6 reste IN_PROGRESS, aucun tag/DONE ajouté.
 
 ### [2026-10-09T19:33:57Z] Démarrage R0.4 — authenticité des fixtures
 

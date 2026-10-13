@@ -17,7 +17,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.3 | MUST | DONE | 4f8d7e2 : check Windows 340/35, QA 58, E2E 9, préservation et secrets verts |
 | R0.4 | MUST | DONE | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 ; 65 fichiers / dix cellules, check 411/35 et QA 72 codes 0, données actives préservées |
 | R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
-| R0.6 | MUST | IN_PROGRESS | Incréments 1–13 reçus, dernier b139c90 ; méthode ADR-057 : lots résilience native/publication sûre/collecte conforme (EXECUTION_METHOD.md), réception complète par lot ; préparation ADR-056 incluse dans résilience, pas tâche reçue ; exigences restantes inchangées |
+| R0.6 | MUST | IN_PROGRESS | Incréments 1–13 reçus, dernier b139c90 ; lot A préparé 459f5a2 sur work/r06-resilience-20261013, réception Windows 27517 en cours (code final inconnu), pas intégré ; ADR-056/058–060, tentatives/reprise/partitions/reçus ; HTTP Antigravity ; exigences restantes inchangées |
 | R0.7 | MUST | TODO | — |
 | R0.8 | MUST | TODO | — |
 | R0.9 | MUST | TODO | — |
