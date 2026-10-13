@@ -17,7 +17,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.3 | MUST | DONE | 4f8d7e2 : check Windows 340/35, QA 58, E2E 9, préservation et secrets verts |
 | R0.4 | MUST | DONE | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 ; 65 fichiers / dix cellules, check 411/35 et QA 72 codes 0, données actives préservées |
 | R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
-| R0.6 | MUST | IN_PROGRESS | Lot A intégré ddb848f, Windows 27517 FINAL 0 : 1321 backend/35 web/build, inclusion R0.6 657/80 prouvée ; source exacte et données actives préservées ; ADR-056/058–060 ; publication sûre et HTTP Antigravity restent requis |
+| R0.6 | MUST | IN_PROGRESS | Lot A reçu ddb848f/27517 : 1321 backend/35 web/build, R0.6 657/80 ; lot B publication en développement isolé work/r06-publication-20261013, ADR-061 réservé, sans réception globale ; HTTP/budget Antigravity non reçus, BL-016 ouvert |
 | R0.7 | MUST | TODO | — |
 | R0.8 | MUST | TODO | — |
 | R0.9 | MUST | TODO | — |

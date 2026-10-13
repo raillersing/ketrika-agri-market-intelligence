@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-13T11:43:52Z] R0.6 lot B — reprise isolée, pas de réception prématurée
+
+- Worktree work/r06-publication-20261013/base 65bba4a ; ADR-061 réservé/adopté avant code dans ce worktree, registre source/parseur/MIME et garde structure directe implémentés en préparation. HTTP, robots et budgets restent à Antigravity ; aucun transfert du lot C, aucune migration active.
+- Mini-plan : contrats explicites ; candidats partagés sous verrous ; audit fresh/cache lié au contrat ; garde avant refresh ; déclarations synthétiques ; SQL/S3 négatifs/conservation ; figer puis check complet unique, pas de baseline ou QA cumulée répétée.
+- Préparation verte : 27577 FINAL 0/lint-format/types neuf fichiers/49 unités/32,74 s ; 56995 FINAL 0/types quinze fichiers/32 unités/11,63 s ; 74658 FINAL 0/types garde finale. SQL 42606 FINAL 1/six succès/fixture même SHA réinsérée ; 28107 FINAL 1/huit succès/fixture empty avec triggers différés non commités. Corrections de fixtures seules, rapports rouges conservés au worktree ; 67725 poursuit empty et les cas non encore exécutés. Aucun check global ni DONE déduit.
+- Préservation readonly : 86326 FINAL 0, 482 références MD5 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix MD5 4b2586cb8e422f11c4873ad513d66bc1 ; head 0002. Bronze 44675 FINAL 0, 674 versions/1377481 octets/SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c, zéro delete markers. R0.6 IN_PROGRESS ; BL-016 et correction HTTP restent requis.
+
 ### [2026-10-13T10:40:08Z] R0.6 — lot A intégré, préparation lot B
 
 - Réception main ddb848f, cherry-pick 42383 FINAL 0. Seize fichiers backend identiques au snapshot qualifié (85654 FINAL 0), diff staged 34067 FINAL 0 ; scan 39282 FINAL 0/556920 octets/sans fuite. Résolution documentaire uniquement ; aucun check global répété.
