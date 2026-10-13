@@ -3,6 +3,12 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-13T18:58:45Z] R0.6 B2 — incrément préparatoire isolé, réception restante
+
+- Reprise AGENTS complet ; branche work/r06-price-identity-20261013 dans /home/raillersing/projects/ketrika-qa-worktrees/r06-price-identity-20261013, base fc3bcda, commit 12433bd. ADR-062/SPECS adoptés sur cette branche avant helper ; aucun contrat/code B2 reçu sur main.
+- Identité prix typée JSON/SHA exacte : variété/statistique/unité/devise/observed_or_imputed distincts, NULL/vide/None/séparateurs protégés. 8457 FINAL 0 Docker hors réseau : types deux fichiers et 29 tests/6,65 s ; format/lint verts. 69552 FINAL 127, invocation mypy corrigée par python -m mypy, dépendances inchangées. 72495 scan FINAL 0/10194 octets ; 97793 gouvernance 74 cohérents et commit FINAL 0. Aucun check complet inutilement relancé.
+- Reprendre sur ce worktree : pont historique verrouillé/refus des statistiques inconnues, raccordement des deux loaders/stages/revues/counters et reçus v2, SQL/S3 isolés puis unique check final du lot figé. Helper non raccordé : aucune qualification de loader ou nouvelle capacité produit revendiquée. R0.6 reste IN_PROGRESS/BL-016 ouvert, miroir inchangé ; HTTP/budget Antigravity laissé intact, données actives non touchées.
+
 ### [2026-10-13T13:57:39Z] R0.6 B1 — intégré et reçu sur main
 
 - Commit atomique main 97f8eb8 (9664 FINAL 0, 38 fichiers/1041 ajouts/30 retraits) ; contenu applicatif final f7b3b32 exactement qualifié par Windows 76875 FINAL 0, dix-huit fichiers comparés 50530 FINAL 0. Aucun commit produit intermédiaire rouge inscrit sur main ; résolutions documentaires seules, tous journaux conservés. Diff 81680/gouvernance 61270 FINAL 0 ; scan final 97063 FINAL 0/518083 octets/sans fuite.
