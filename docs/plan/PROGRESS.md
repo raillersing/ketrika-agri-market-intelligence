@@ -3,6 +3,12 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-13T10:40:08Z] R0.6 — lot A intégré, préparation lot B
+
+- Réception main ddb848f, cherry-pick 42383 FINAL 0. Seize fichiers backend identiques au snapshot qualifié (85654 FINAL 0), diff staged 34067 FINAL 0 ; scan 39282 FINAL 0/556920 octets/sans fuite. Résolution documentaire uniquement ; aucun check global répété.
+- Préservation après intégration : SQL 81740 FINAL 0, 482 références/MD5 47b4402859acc41e3ae91fdb128e56c6 et 764 prix/MD5 4b2586cb8e422f11c4873ad513d66bc1 ; Bronze 82600 FINAL 0, 674 versions/1377481 octets/SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c, zéro suppression. Base active 0002 : migrations 0007–0009 qualifiées uniquement en QA, pas de déploiement revendiqué.
+- Lot B : arrêter les contrats structurels explicites et leur résolution commune ; définir les candidats sous verrou ; raccorder la garde à la publication directe ; couvrir refus et conservation SQL/S3 ; figer puis réception complète unique. ADR/SPECS avant code. HTTP/policy restent au lot C Antigravity ; R0.6 reste IN_PROGRESS.
+
 ### [2026-10-13T08:21:16Z] R0.6 lot A — réception complète verte, intégration
 
 - Commit testé 459f5a2eeb4ef7cedd3648a67a3fa238e504fbfb, Windows réel 27517 FINAL 0 : lint/format 267 fichiers, types 266 ; 1321 backend/2076,04 s/cinq warnings/0 échec-erreur-skip ; intégrations union 116 (112 layout/112 marker). Couvertures core 94,47252053063804 %, extraction 86,3768115942029 %, normalize 89,04299583911235 %. Source Docker comparée aux seize fichiers modifiés, 99383 FINAL 0/aucune divergence.
@@ -107,7 +113,7 @@
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
-| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | b139c90 (incrément 13) | Registre Bronze reçu : QA 591/60/check Windows 3975 FINAL 0/1236 backend/35 web/build ; source/gouvernance/préservation/diff/scan verts ; consommation registre Silver/tentatives/partitions/reprise/robots/garde SQL directe requis | B-R038/039/040 résolus ; BL-010/016 ouverts ; BL-013 partiel/R2.1 |
+| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | ddb848f (lot A) | Résilience native/partitions/reprise reçues : check Windows 27517 FINAL 0/1321 backend/35 web/build ; R0.6 inclus 657/80 ; source/préservation/diff/scan verts ; garde publication et HTTP Antigravity restent requis | B-R038–045 corrigés ; BL-010/016 ouverts ; BL-013 partiel/R2.1 |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
 | R0.9 | MUST | TODO | — | — | — | — | — |

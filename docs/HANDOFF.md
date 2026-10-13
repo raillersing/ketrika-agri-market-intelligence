@@ -17,6 +17,14 @@ Les sections MVP ci-dessous décrivent la livraison historique T. Elles ne
 constituent pas une qualification actuelle des sources, des modèles, du
 déploiement ou d'un usage humain. Le programme R n'est pas terminé :
 R0.1–R0.5 sont DONE ; R0.6 reste IN_PROGRESS et R0.7–R6.11 restent TODO.
+
+Mise à jour 2026-10-13 : lot A intégré ddb848f (reprise native, reçus immuables,
+partitions document/version et jobs de rejeu). Check Windows 27517 FINAL 0 :
+1321 backend, 35 frontend et build verts ; inclusion R0.6 vérifiée 657/80.
+Publication sûre (lot B) et HTTP Antigravity (lot C) restent à recevoir.
+Migrations 0007–0009 appliquées uniquement en QA ; base active toujours 0002,
+482 références, 764 prix et 674 versions Bronze inchangés. Ne pas confondre
+cette réception logicielle avec une migration active ou une qualification live.
 PROGRESS.md est canonique ; le plan R en est le miroir.
 
 Dernier incrément reçu : b139c90 (registre Bronze ADR-055, QA 591/60,

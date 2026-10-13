@@ -1,7 +1,7 @@
 # R0.6 lot B — préparation de publication sûre
 
 Audit statique du 2026-10-13. Aucun contrat nouveau adopté, code ou test
-implémenté par ce document. Réception du lot A 459f5a2/27517 encore en cours.
+implémenté par ce document. Lot A intégré ddb848f, réception 459f5a2/27517 verte.
 
 ## Écarts confirmés dans le code actuel
 
