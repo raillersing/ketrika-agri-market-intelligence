@@ -23,6 +23,7 @@ from ketrika.core.schema_json import JSONSchemaContract, JSONShape
 from ketrika.gold.refresh import init_gold_views
 from ketrika.pipelines.factory import build_gold_refresh_asset, build_source_assets
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.e2e_data.schema_declarations import declare_synthetic_contract
 from tests.unit.test_provenance_audit import price_example
 
 COLUMNS = ("price_value", "product_raw", "period_start", "unit_raw", "currency_raw")
@@ -79,6 +80,7 @@ def test_explicit_structure_blocks_actual_gold_refresh(drift, format_id, request
         content = json.dumps([values]).encode("utf-8")
         contract, mime = JSON_CONTRACT, "application/json"
     store = BronzeStore()
+    declare_synthetic_contract(source_id, "1.0.1", mime, contract)
     with get_session() as session:
         target = session.get_bind().engine.url
         require_synthetic_test_database(target.host, target.database)
@@ -143,7 +145,8 @@ def test_explicit_structure_blocks_actual_gold_refresh(drift, format_id, request
         session.flush()
         assert init_gold_views(session)["views_populated"] == 0
     connector = type("LocalSchemaGold", (DummyCsvConnector,), {"source_id": source_id})
-    bundle = build_source_assets(connector, schema_contract=contract)
+    # Both actual Dagster check and direct Gold resolve the same explicit registry.
+    bundle = build_source_assets(connector)
 
     @asset(name=f"{source_id}__silver")
     def existing_silver():

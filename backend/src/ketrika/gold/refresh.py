@@ -13,7 +13,9 @@ from sqlalchemy.orm import Session
 from ketrika.core.bronze import BronzeStore
 from ketrika.core.provenance import ArtifactReader
 from ketrika.core.provenance_bronze import BronzeProofReader
+from ketrika.core.schema_contracts import SchemaContractRegistry
 from ketrika.gold.provenance_gate import require_gold_provenance, tables_for_views
+from ketrika.gold.schema_gate import require_gold_structure
 
 logger = logging.getLogger("ketrika.gold")
 
@@ -104,6 +106,7 @@ def refresh_gold_views(
     views: list[str] | None = None,
     *,
     reader: ArtifactReader | None = None,
+    schema_registry: SchemaContractRegistry | None = None,
 ) -> dict[str, Any]:
     """Fresh cell check and atomic publication; no model/conversion qualification."""
     requested = ORDERED_GOLD_VIEWS if views is None else views
@@ -121,6 +124,7 @@ def refresh_gold_views(
                 raise ValueError("gold_view_missing")
         proof_reader = reader if reader is not None else BronzeProofReader(BronzeStore())
         check = require_gold_provenance(session, proof_reader, target_views)
+        structure = require_gold_structure(session, proof_reader, check, schema_registry)
         with session.begin_nested():
             for view_name in target_views:
                 if concurrently:
@@ -149,4 +153,9 @@ def refresh_gold_views(
         "source_observations_total": check.receipt.report.total if check.receipt else 0,
         "source_observations_valid": check.receipt.report.valid if check.receipt else 0,
         "source_cell_rate": str(check.receipt.report.rate) if check.receipt else None,
+        "structure_state": structure.state,
+        "structure_dq_ids": [str(receipt.dq_id) for receipt in structure.receipts],
+        "structure_artifacts_total": structure.total,
+        "structure_artifacts_valid": structure.valid,
+        "structure_scope": "publication_candidate_artifacts_not_authenticity_or_model",
     }

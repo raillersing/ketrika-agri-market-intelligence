@@ -1,4 +1,4 @@
-"""Standalone prepared structural check; not automatically attached to sources."""
+"""Blocking source structure check; trusted registry resolution by default."""
 
 from dagster import AssetCheckResult, AssetChecksDefinition, AssetCheckSeverity, asset_check
 

@@ -83,14 +83,34 @@
     },
     {
       "path": "tests/e2e_data/source_backed_synthetic.py",
-      "sha256": "19c0f45795d259040e2a0ab0c03865fccac79712bc6831788d4bcc2250b0dabd",
-      "size_bytes": 5189,
+      "sha256": "16a2808912ad1bd762af133fa8a91bd9dee03ff26add46e7a142b8d1785b03ff",
+      "size_bytes": 5480,
       "artifact_type": "py",
       "authenticity": "synthetic",
       "origin": {
         "kind": "repository_generator",
         "reference": "tests/e2e_data/source_backed_synthetic.py",
         "limitations": "Synthetic source bytes only; never official acquisition, real raw reconstruction or model qualification."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/e2e_data/schema_declarations.py",
+      "sha256": "a9100d2574b1efbefb4a5f9acbcbb178f52db3a30ef21ae1fbee0753765a49d2",
+      "size_bytes": 1825,
+      "artifact_type": "py",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "tests/e2e_data/source_backed_synthetic.py",
+        "limitations": "Explicit code-owned test shapes only; never inferred from collected bytes or proof of official format."
       },
       "rights": {
         "status": "internal_test_only",

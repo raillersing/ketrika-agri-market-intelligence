@@ -2,6 +2,17 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-061 : publication Gold et contrats structurels de confiance
+
+- **Date/statut :** 2026-10-13, adopté avant code du lot B, worktree uniquement.
+- **Contexte :** refresh direct sans schema_drift ; construction Dagster seule insuffisante. Une baseline apprise du contenu contrôlé serait circulaire.
+- **Décision :** registre immuable en code, déclarations explicites indexées par source_id/parser_version/MIME, contrats CSV/JSON fermés et versionnés. Défaut vide pour sources publiques non qualifiées ; aucune wildcard, aucun apprentissage Bronze/allowed_fields. Ajout par changement versionné après examen explicite du format/document de référence ; structure ne prouve ni authenticité ni droits.
+- **Publication :** mêmes candidats/verrous SHARE que provenance, capture des source_record avant refresh ; audit fresh par source sur ces seules références. Absent/format inconnu/dérive/lecture/SHA invalides refusent tout le lot avant REFRESH. Historique hors candidats exclu de ce lot, mais conservé dans l'audit historique Dagster ; parser ancien candidat sans déclaration refusé.
+- **Reçus :** ops.dq_result ajout seul, scope publication_candidate_artifacts, version/identité contrat et parseur, effectifs/état/codes fixes. Transaction caller ; exception expose reçus, rollback externe peut les annuler, aucune durabilité implicite revendiquée. Empty/metadata_only distincts, pas de 100 % sur vide.
+- **Compatibilité :** override historique de contrat = diagnostic source, pas autorisation Gold. Check Dagster sans override et refresh direct résolvent le même registre. Tests déclarent leurs contrats synthétiques avant inspection via le même registre ; aucun bypass produit. Pas de migration/dépendance nouvelle.
+- **Alternatives :** baseline automatique rejetée ; stockage SQL de contrats différé (complexité non nécessaire pour registre versionné). Identité métier BL-016/R2.1 et budget Antigravity distincts.
+- **Réception :** unités registre/sélection/cache ; SQL/S3 direct et Dagster, refus sans refresh et caches/observations/Bronze conservés, historique exclu/candidat inconnu ; check complet unique. R0.6 reste IN_PROGRESS.
+
 ## ADR-060 : membres traités et identité de normalisation reçue
 
 - **Date/statut :** 2026-10-13, accepté avant code du lot A, worktree uniquement.

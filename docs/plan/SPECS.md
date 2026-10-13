@@ -1109,6 +1109,24 @@ Garde structure SQL directe/CLI, ledger/durabilité/partitions/reprise restent
 
 ### 14.0a Publication source-cell et initialisation non publiée (ADR-023–029)
 
+Extension ADR-061 : garde structure après provenance et avant REFRESH, mêmes
+candidats/verrous SHARE maintenus jusqu'au commit caller. Registre code
+immuable de SchemaContractBinding, clé exacte (source_id, parser_version,
+MIME), 4096 déclarations maximum ; aucune wildcard. CSV/JSON fermés/versionnés,
+défaut vide pour sources non qualifiées. Résolution par identité seule, pas
+contenu/allowed_fields ; ajout versionné après examen explicite du format.
+Audit fresh des source_record candidats exacts, regroupés par source ; cache
+d'inspection comprend identité/version du contrat et version du parseur.
+Absent/unknown/dérive/SHA/lecture invalides refusent le lot avant refresh.
+GoldSchemaRejected expose reçus, transaction caller sans commit implicite
+ni durabilité après rollback. Reçus schema_drift scope
+publication_candidate_artifacts ; réponse refresh ajoute état/IDs/effectifs
+structure distincts de provenance. Empty/metadata_only ne certifient rien.
+Audit historique Dagster utilise le même registre par défaut ; override
+historique explicite = diagnostic, pas autorisation Gold. Tests synthétiques
+déclarent les mêmes types de contrats avant inspection, aucune exception
+produit ni contrat appris des réponses.
+
 Avant REFRESH : liste statique des vues/tables, audit fresh des lignes réellement consommées sous LOCK SHARE/meta.source_record et tables obs, lock_timeout transactionnel 5 s. Prix courants accepted et price_mga_per_base non NULL ; stocks courants avec produit/lieu (LAG inclus) ; production courante element=production_t ; autres tables courantes sans filtre source/status. Audit complet historique séparé. Empty/metadata_only ne constituent pas 100 % ; aucun cache de succès ni bypass test.
 
 Reader de preuves Bronze : GET existant borné à 32 MiB + sentinelle, flux fermé sur tous chemins, taille déclarée utilisée seulement pour refuser ; SHA réel recalculé. Vérificateur groupe par clé validée, prévalide doublons dans ordre d'entrée, libère octets par objet et restitue résultats dans cet ordre ; aucune observation ignorée pour mémoire/taux.

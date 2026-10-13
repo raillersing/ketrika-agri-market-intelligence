@@ -18,6 +18,16 @@ constituent pas une qualification actuelle des sources, des modèles, du
 déploiement ou d'un usage humain. Le programme R n'est pas terminé :
 R0.1–R0.5 sont DONE ; R0.6 reste IN_PROGRESS et R0.7–R6.11 restent TODO.
 
+Lot B1 reçu logiciel le 2026-10-13 : f7b3b32/Windows 76875 FINAL 0,
+1348 backend/35 frontend/build ; inclusion R0.6 57 fichiers/684 cas/90
+intégrations vérifiée. Publication directe Gold contrôle aussi la structure
+sur candidats exacts sous verrous ; registre source/parseur/MIME commun avec
+Dagster. Défaut public vide : aucun format réel qualifié par ces fixtures.
+Les reçus structure suivent la transaction caller, pas une persistance après
+rollback. HTTP/budget Antigravity non reçus ; B2/BL-016 toujours ouvert.
+SQL/S3 actifs préservés ; schéma actif 0002, migrations nouvelles QA seulement.
+Ne pas revendiquer de déploiement ou de performance de marché validée.
+
 Mise à jour 2026-10-13 : lot A intégré ddb848f (reprise native, reçus immuables,
 partitions document/version et jobs de rejeu). Check Windows 27517 FINAL 0 :
 1321 backend, 35 frontend et build verts ; inclusion R0.6 vérifiée 657/80.

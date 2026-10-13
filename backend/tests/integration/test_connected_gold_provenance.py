@@ -22,6 +22,7 @@ from ketrika.core.schema_audit import CSVSchemaContract
 from ketrika.gold.refresh import init_gold_views, refresh_gold_views
 from ketrika.pipelines.factory import build_gold_refresh_asset, build_source_assets
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.e2e_data.schema_declarations import declare_synthetic_contract
 from tests.integration.test_gold_publication_provenance import DamagedMemoryReader
 from tests.unit.test_provenance_audit import price_example
 
@@ -42,6 +43,7 @@ def test_production_check_controls_actual_gold_sql(damaged, monkeypatch, request
     observation, original = price_example()
     columns = ("price_value", "product_raw", "period_start", "unit_raw", "currency_raw")
     contract = CSVSchemaContract("synthetic-flat-price-v1", columns)
+    declare_synthetic_contract(source_id, "1.0.0", "text/csv", contract)
     values = json.loads(original)[0]
     output = io.StringIO(newline="")
     writer = csv.writer(output, lineterminator="\n")
@@ -143,7 +145,7 @@ def test_production_check_controls_actual_gold_sql(damaged, monkeypatch, request
         simulated = DamagedMemoryReader(reader, artifact.object_key)
         monkeypatch.setattr("ketrika.pipelines.factory.BronzeProofReader", lambda _: simulated)
     connector = type("LocalActualGold", (DummyCsvConnector,), {"source_id": source_id})
-    bundle = build_source_assets(connector, schema_contract=contract)
+    bundle = build_source_assets(connector)
 
     @asset(name=f"{source_id}__silver")
     def existing_silver():

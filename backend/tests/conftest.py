@@ -7,6 +7,16 @@ import pytest
 from ketrika.core.qualification import QualificationSafetyError, validate_environment
 
 
+@pytest.fixture(autouse=True)
+def isolated_schema_declarations(monkeypatch):
+    """Declarations must be explicit in each scenario, not inherited from an earlier test."""
+    from ketrika.core.schema_contracts import SchemaContractRegistry
+
+    monkeypatch.setattr(
+        "ketrika.core.schema_contracts.DEFAULT_SCHEMA_CONTRACT_REGISTRY", SchemaContractRegistry()
+    )
+
+
 @pytest.hookimpl(trylast=True)
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
     if any(

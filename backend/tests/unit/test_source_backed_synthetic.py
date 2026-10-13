@@ -16,6 +16,12 @@ from ketrika.core.provenance_audit import bind_observation
 from tests.e2e_data.source_backed_synthetic import attach_new_synthetic_proof
 
 
+@pytest.fixture(autouse=True)
+def synthetic_declaration_environment(monkeypatch):
+    monkeypatch.setenv("KETRIKA_QUALIFICATION", "1")
+    monkeypatch.setenv("APP_ENV", "test")
+
+
 def price(raw: str | None = "1650.00") -> PriceObservation:
     return PriceObservation(
         observation_id=uuid4(),

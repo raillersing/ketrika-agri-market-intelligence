@@ -8,6 +8,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
+from uuid import UUID
 
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
@@ -51,6 +52,7 @@ class PublicationCheck:
     state: str
     tables: tuple[str, ...]
     receipt: AuditReceipt | None
+    candidate_record_ids: tuple[UUID, ...] = ()
 
 
 def tables_for_views(views: Sequence[str]) -> tuple[str, ...]:
@@ -70,6 +72,7 @@ def require_gold_provenance(
     session.execute(text("SET LOCAL lock_timeout = '5s'"))
     session.execute(text("LOCK TABLE " + ", ".join(identifiers) + " IN SHARE MODE"))
     targets: list[ObservationTarget] = []
+    candidate_ids: set[UUID] = set()
     for table in tables:
         model = POLICIES[table].model
         query = select(model).where(model.superseded_by.is_(None))
@@ -83,9 +86,10 @@ def require_gold_provenance(
             query = query.where(model.element == "production_t")
         rows = session.scalars(query.order_by(model.observation_id)).all()
         targets.extend(ObservationTarget(table, row.observation_id) for row in rows)
+        candidate_ids.update(row.source_record_id for row in rows)
     if not targets:
         return PublicationCheck("empty", tables, None)
     receipt = audit_observation_provenance(session, reader, mode="incremental", targets=targets)
     if not receipt.report.passed:
         raise GoldProvenanceRejected(receipt)
-    return PublicationCheck("cells_verified", tables, receipt)
+    return PublicationCheck("cells_verified", tables, receipt, tuple(sorted(candidate_ids)))

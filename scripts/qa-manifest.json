@@ -24,6 +24,8 @@
         "tests/unit/test_schema_drift.py",
         "tests/unit/test_schema_json.py",
         "tests/unit/test_schema_audit.py",
+        "tests/unit/test_schema_contracts.py",
+        "tests/integration/test_direct_schema_publication.py",
         "tests/unit/test_source_schema_check.py",
         "tests/unit/test_gold_dependency_graph.py",
         "tests/unit/test_durable_runs.py",
@@ -70,8 +72,8 @@
         "tests/integration/test_nasa_power.py",
         "tests/integration/test_wfp_hdx_mdg.py"
       ],
-      "minimum_tests": 657,
-      "minimum_integration_tests": 80
+      "minimum_tests": 684,
+      "minimum_integration_tests": 90
     },
     "R0.5": {
       "tests": [

@@ -22,6 +22,7 @@ from ketrika.core.models.db import SourceRecord
 from ketrika.core.policy import PolicyEngine
 from ketrika.gold.provenance_gate import GoldProvenanceRejected
 from ketrika.gold.refresh import refresh_gold_views
+from ketrika.gold.schema_gate import GoldSchemaRejected
 
 logger = logging.getLogger("ketrika.rebuild")
 
@@ -175,7 +176,7 @@ def rebuild_database(
         # Refresh Gold views to reflect replayed records
         try:
             gold_refresh = refresh_gold_views(s)
-        except GoldProvenanceRejected as exc:
+        except (GoldProvenanceRejected, GoldSchemaRejected) as exc:
             exc.replay_stats = {
                 **stats,
                 "gold_views_refreshed": 0,

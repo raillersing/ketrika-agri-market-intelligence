@@ -18,6 +18,10 @@ from ketrika.core.models.db import SourceRecord
 from ketrika.core.provenance import verify_cells
 from ketrika.core.provenance_audit import POLICIES, bind_observation
 from ketrika.core.qualification import require_synthetic_test_database
+from tests.e2e_data.schema_declarations import (
+    SYNTHETIC_GENERATOR_CONTRACT,
+    declare_synthetic_contract,
+)
 
 
 def attach_new_synthetic_proof(
@@ -38,6 +42,12 @@ def attach_new_synthetic_proof(
         reader = BronzeStore()
     if reader.bucket != "ketrika-qa-bronze":
         raise ValueError("synthetic_bronze_destination_refused")
+    declare_synthetic_contract(
+        reference.source_id,
+        "synthetic-source-generator-v1",
+        "application/json",
+        SYNTHETIC_GENERATOR_CONTRACT,
+    )
     fields: dict[str, str] = {}
     supplied_raw: dict[str, str] = {}
     cells = []

@@ -98,7 +98,10 @@ def test_lock_failure_never_reads_objects_or_claims_success() -> None:
 def test_fresh_audit_required_without_success_cache(valid: bool) -> None:
     session, reader = MagicMock(spec=Session), MagicMock()
     identifier = uuid4()
-    session.scalars.return_value.all.return_value = [MagicMock(observation_id=identifier)]
+    source_record_id = uuid4()
+    session.scalars.return_value.all.return_value = [
+        MagicMock(observation_id=identifier, source_record_id=source_record_id)
+    ]
     report = VerificationReport(
         "incremental",
         (VerificationResult(identifier, uuid4(), valid, None if valid else "cell_mismatch"),),
@@ -112,6 +115,7 @@ def test_fresh_audit_required_without_success_cache(valid: bool) -> None:
         if valid:
             result = require_gold_provenance(session, reader, ["weather_monthly"])
             assert result.receipt is receipt and result.state == "cells_verified"
+            assert result.candidate_record_ids == (source_record_id,)
             require_gold_provenance(session, reader, ["weather_monthly"])
             assert audit.call_count == 2
         else:

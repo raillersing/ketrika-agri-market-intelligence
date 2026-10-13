@@ -3,6 +3,12 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-13T13:55:26Z] R0.6 B1 — préparation de réception atomique main
+
+- Main documentaire 77cf3c8 (56479 FINAL 0), gouvernance 48123 FINAL 0/74 et scan 9091 FINAL 0/5029 octets. Intégration dfad489/a6a1abb/f7b3b32 : conflits uniquement PROGRESS/miroir, tous journaux conservés par apply_patch ; aucun conflit applicatif. Utiliser --quit (index conservé) puis corrections --no-commit et un seul commit main du contenu final vert, pas les états intermédiaires rouges. Aucun reset/checkout/abandon de donnée utilisateur.
+- 50530 FINAL 0 : dix-huit fichiers main identiques au snapshot qualifié f7b3b32 ; source/test/corpus inchangés. 15810 FINAL 0 vérifie originaux frontend 1f204ecc-d566-4190-914a-009a05e7a63a/35/quatre étapes vertes. Quatre originaux de réception copiés sans transformation, B-R046–050 résolus avec preuves/rouges conservés, HANDOFF mis à jour.
+- Diff/gouvernance/scan final puis commit atomique et préservation post-intégration requis. Pas de nouvelle réception après seules résolutions documentaires ; aucun produit DONE/tag, source publique/modèle/usage humain non qualifiés. B2/BL-016 et HTTP/budget Antigravity restent à recevoir.
+
 ### [2026-10-13T13:47:18Z] R0.6 B1 — réception complète verte, intégration requise
 
 - Source figée f7b3b32 (dfad489 produit + a6a1abb inventaire + f7b3b32 fixture météo), Windows réel 76875 FINAL 0 : lint/format 272/types 271, 1348 backend/2516,33 s/cinq warnings/zéro échec-erreur-skip ; intégrations 122 layout/122 marker/126 union. Couvertures core 94,46163366336634 %, extraction 86,3768115942029 %, normalize 89,04299583911235 %. Aucune modification applicative pendant réception.
@@ -48,6 +54,38 @@
 - Mini-plan : contrats explicites ; candidats partagés sous verrous ; audit fresh/cache lié au contrat ; garde avant refresh ; déclarations synthétiques ; SQL/S3 négatifs/conservation ; figer puis check complet unique, pas de baseline ou QA cumulée répétée.
 - Préparation verte : 27577 FINAL 0/lint-format/types neuf fichiers/49 unités/32,74 s ; 56995 FINAL 0/types quinze fichiers/32 unités/11,63 s ; 74658 FINAL 0/types garde finale. SQL 42606 FINAL 1/six succès/fixture même SHA réinsérée ; 28107 FINAL 1/huit succès/fixture empty avec triggers différés non commités. Corrections de fixtures seules, rapports rouges conservés au worktree ; 67725 poursuit empty et les cas non encore exécutés. Aucun check global ni DONE déduit.
 - Préservation readonly : 86326 FINAL 0, 482 références MD5 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix MD5 4b2586cb8e422f11c4873ad513d66bc1 ; head 0002. Bronze 44675 FINAL 0, 674 versions/1377481 octets/SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c, zéro delete markers. R0.6 IN_PROGRESS ; BL-016 et correction HTTP restent requis.
+
+### [2026-10-13T12:31:37Z] R0.6 lot B — dernière fixture de publication déclarée
+
+- Windows 8010 FINAL 1/a6a1abb : 1348 collectés, 125 succès puis refus correct météo sans contrat/999,84 s ; frontend non exécuté. Dix nouveaux SQL/S3, quatre guards Dagster, native recovery et corpus passent dans ce rapport partiel, pas de réception globale. Comparaison readonly 63421 FINAL 0 : dix-sept fichiers backend identiques au snapshot testé, aucune modification pendant check.
+- B-R050 : fixture météo JSON synthetic-test, six champs string explicites, déclaration avant octets, pas apprentissage/défaut source. Données/preuves/metadata et assertions inchangées ; 11170 FINAL 0/lint-format-types un fichier, 52116 SQL/S3 affiche un succès/121,70 s (code final encore à lire). Audit de tous appels refresh/rebuild : autres positives utilisent générateur déclaré ou états empty/metadata_only ; ML garde vrais fits/anti-fuite et mêmes seuils.
+- Original rouge exporté puis gzip lossless, SHA 9db41148968bad5cc3797044d1ff22f72c753c12fd2a0e2a087ce479cbb00287 (19347 FINAL 0), scan brut 45256 FINAL 0/57558 octets. Nouveau commit de fixture et check complet requis, code produit inchangé ; ne pas répéter QA cumulée. R0.6 IN_PROGRESS ; HTTP/budget et BL-016 toujours requis.
+
+### [2026-10-13T12:03:29Z] R0.6 lot B — correction bornée d'inventaire
+
+- Commit produit dfad489, Windows 9966 FINAL 1 : lint/format 272/types 271/gouvernance 74 verts ; 1348 collectés puis premier test authentic rouge/137,47 s, frontend non exécuté. B-R049 : taille/SHA obsolètes du générateur de fixture, nouveau fichier de déclarations non inventorié. Original XML exporté sans transformation ; aucune garde affaiblie ni authenticité qualifiée par ce rouge.
+- Correction manuelle apply_patch uniquement deux entrées synthétiques corpus-manifest.json : source_backed_synthetic SHA/5480 octets, schema_declarations SHA/1825 octets, droits internal_test_only et human_reviewed=false ; document WDI authentique, annotation, preuves et droits inchangés. 22046 FINAL 0 : 71 validations corpus/7,02 s. Diagnostic 71505 FINAL 1 avant lecture (interpréteur système sans pydantic_settings), relance readonly avec venv dédiée ; pas de changement de dépendance.
+- Nouveau commit d'inventaire et réception Windows complète requis ; ne pas réexécuter cibles SQL/S3 déjà vertes, aucun code produit ni scénario modifié. R0.6 reste IN_PROGRESS, pas d'intégration main/tag.
+
+### [2026-10-13T11:51:35Z] R0.6 lot B — verrou reçu, gel de réception
+
+- 41475 FINAL 0 : une vraie insertion depuis une seconde connexion PostgreSQL refusée 55P03 sous le verrou candidat, cache inchangé, 20,22 s. Dix nouveaux SQL/S3 couverts entre cibles ; dix raccordements Dagster/Gold/bulletin dans 30869 FINAL 0. Aucun envoi externe ni acquisition HTTP, seules fixtures explicites en QA.
+- Manifeste renforcé 57 fichiers/684 cas minimum/90 intégrations : dix SQL et dix-sept unités ajoutés, les quinze autres unités de 56995 appartiennent au fichier Gold préexistant hors sélection R0.6. Corriger le comptage préparatoire 686 avant réception, aucune borne déjà reçue réduite (657/80 → 684/90). Check global doit démontrer l'inclusion JUnit, pas répéter qa R0.6. B-R046/047/048 corrigés par fixtures uniquement ; originaux rouges conservés.
+- Stage/diff/scan puis commit branche et check Windows source figée requis. Aucun code applicatif ne doit changer pendant la réception. R0.6 reste IN_PROGRESS, garde structure ne résout pas BL-016 ni HTTP/budget Antigravity.
+- Diff brut 23771/40882 code 2 uniquement sur espaces de tracebacks des originaux XML rouges. Scan brut 61492 FINAL 0/103008 octets/sans fuite ; conserver ces octets en gzip déterministe, pas normaliser les rapports. SHA décompressés attendus e2abb616e0ebe501443d14d2401c27a60541b802c7fa6bc225807aa1c732adb6, 69b168fc2be14bdfc879b0ef08bf1c4a9b7997124d37d41c0e6b30c9f16af3d4, 20fad58eb6f9cfc03b5c9bbd9d113aba36f518fdd7cc7365d1e495cb9d4561c5.
+
+### [2026-10-13T11:49:37Z] R0.6 lot B — raccordements stabilisés, réception requise
+
+- Source work/r06-publication-20261013/base 65bba4a. ADR-061 avant code : registre immuable source/parseur/MIME et garde SQL directe ; mêmes candidats/verrous que provenance, GET/SHA fresh, refus avant refresh, diagnostics fixes, états empty/metadata_only distincts. Défaut public vide ; déclarations synthétiques explicites, jamais apprises des octets. HTTP et migrations non modifiés.
+- 27577 FINAL 0 : lint/format/types neuf fichiers, 49 unités/32,74 s ; 56995 FINAL 0/types quinze fichiers/32 unités/11,63 s ; 74658 FINAL 0/types garde finale ; 10028 FINAL 0/types trois raccordements ; Ruff global 29430 FINAL 0. Gouvernance 17185 FINAL 0/74 statuts cohérents.
+- SQL/S3 : 28107 montre huit nouveaux scénarios passants ; empty corrigé et quatre schema passants dans 67725, puis refus correct pour déclaration de fixture au mauvais parseur. 30869 FINAL 0 : dix scénarios/220,08 s, Dagster CSV/JSON sans override, provenance/atomicité/dependency caches réelles, vues et bulletin. Dernier scénario de verrou indépendant encore à recevoir, puis figer/commit/check Windows unique. Aucun statut produit DONE ni couverture déduits des cibles.
+- Incidents B-R046/047/048 de fixtures : rapports originaux rouges conservés ; aucun schéma/garde/seuil/contrainte affaibli. Préservation active 86326/44675 FINAL 0 : 482 SR/764 prix/head 0002, 674 versions Bronze/1377481 octets, empreintes inchangées. Migrations QA uniquement. BL-016/R2.1 et HTTP restent hors réception de cette garde.
+
+### [2026-10-13T11:24:20Z] R0.6 lot B — publication structurelle en développement
+
+- Worktree work/r06-publication-20261013 depuis 65bba4a ; HTTP/budget à Antigravity, aucun fichier HTTP ni migration modifié ici. ADR-061/SPECS adoptés avant code, défaut vide pour les sources publiques non qualifiées.
+- Mini-plan : registre source/parseur/MIME ; références des candidats sous verrous ; audit fresh ciblé/cache lié au contrat ; garde directe avant refresh ; déclarations synthétiques explicites ; tests négatifs SQL/S3/Dagster/conservation ; réception complète unique du lot figé. Pas de baseline check ni QA cumulée répétée.
+- R0.6 reste IN_PROGRESS ; BL-016/R2.1 non résolus par cette garde. Aucun déploiement/source live/modèle/usage humain qualifié.
 
 ### [2026-10-13T10:40:08Z] R0.6 — lot A intégré, préparation lot B
 
@@ -159,7 +197,7 @@
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
-| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | ddb848f (lot A) | Résilience native/partitions/reprise reçues : check Windows 27517 FINAL 0/1321 backend/35 web/build ; R0.6 inclus 657/80 ; source/préservation/diff/scan verts ; garde publication et HTTP Antigravity restent requis | B-R038–045 corrigés ; BL-010/016 ouverts ; BL-013 partiel/R2.1 |
+| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | f7b3b32 (B1 testé) | A résilience et B1 garde structure reçus : Windows 76875 FINAL 0/1348 backend/35 web/build ; R0.6 inclus 684/90 ; contenu snapshot exact, données actives préservées ; intégration atomique main en cours ; B2 et HTTP Antigravity requis | B-R046–050 résolus ; BL-010/016 ouverts ; BL-013 partiel/R2.1 |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
 | R0.9 | MUST | TODO | — | — | — | — | — |

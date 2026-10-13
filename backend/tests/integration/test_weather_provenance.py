@@ -21,14 +21,31 @@ from ketrika.core.db import get_session
 from ketrika.core.models.db import DqResult, Location, Source, SourceRecord, WeatherObservation
 from ketrika.core.provenance_audit import ObservationTarget, audit_observation_provenance
 from ketrika.core.qualification import require_synthetic_test_database
+from ketrika.core.schema_json import JSONSchemaContract, JSONShape
 from ketrika.gold.refresh import refresh_gold_views
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.e2e_data.schema_declarations import declare_synthetic_contract
 from tests.unit.test_weather_migration import migration
+
+WEATHER_CONTRACT = JSONSchemaContract(
+    "synthetic-weather-structure-v1",
+    JSONShape(
+        "array",
+        items=JSONShape(
+            "object",
+            properties=tuple(
+                (name, JSONShape("string"), True)
+                for name in ("value", "date", "location_raw", "variable", "provider", "method")
+            ),
+        ),
+    ),
+)
 
 
 @pytest.mark.integration
 def test_weather_history_proof_and_gold_current_rows(request: pytest.FixtureRequest) -> None:
     source_id = "test_weather_" + uuid4().hex
+    declare_synthetic_contract(source_id, "synthetic-test", "application/json", WEATHER_CONTRACT)
     source_records = [uuid4(), uuid4()]
     with get_session() as session:
         url = session.get_bind().engine.url
