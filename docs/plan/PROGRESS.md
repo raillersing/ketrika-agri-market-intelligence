@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-13T13:57:39Z] R0.6 B1 — intégré et reçu sur main
+
+- Commit atomique main 97f8eb8 (9664 FINAL 0, 38 fichiers/1041 ajouts/30 retraits) ; contenu applicatif final f7b3b32 exactement qualifié par Windows 76875 FINAL 0, dix-huit fichiers comparés 50530 FINAL 0. Aucun commit produit intermédiaire rouge inscrit sur main ; résolutions documentaires seules, tous journaux conservés. Diff 81680/gouvernance 61270 FINAL 0 ; scan final 97063 FINAL 0/518083 octets/sans fuite.
+- Quatre originaux verts backend/frontend versionnés, inclusion 26575 FINAL 0/57 fichiers/684 cas/90 intégrations et frontend 15810 FINAL 0/35/quatre étapes verts. Reçus rouges précédents conservés, B-R046–050 RESOLVED_FIXED. Aucun QA cumulé répété ni seuil abaissé.
+- Après intégration : 808fa6 FINAL 0, 482 SR/MD5 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix/MD5 4b2586cb8e422f11c4873ad513d66bc1 ; head actif 0002. 21505 FINAL 0 : 674 versions Bronze/1377481 octets/SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c/zéro delete markers. Aucun déploiement/migration active.
+- Suite coordinateur : B2 PRICE_IDENTITY_BATCH_PREPARATION.md, ADR/SPECS avant code, legacy inconnu conservé (9207d9 : 764/0 explicites/764 absents). HTTP/budget à Antigravity, aucun transfert de 186ab4a. R0.6 IN_PROGRESS et phases suivantes non démarrées ; aucun tag/source live/modèle de marché/usage humain qualifié.
+
 ### [2026-10-13T13:55:26Z] R0.6 B1 — préparation de réception atomique main
 
 - Main documentaire 77cf3c8 (56479 FINAL 0), gouvernance 48123 FINAL 0/74 et scan 9091 FINAL 0/5029 octets. Intégration dfad489/a6a1abb/f7b3b32 : conflits uniquement PROGRESS/miroir, tous journaux conservés par apply_patch ; aucun conflit applicatif. Utiliser --quit (index conservé) puis corrections --no-commit et un seul commit main du contenu final vert, pas les états intermédiaires rouges. Aucun reset/checkout/abandon de donnée utilisateur.
@@ -197,7 +204,7 @@
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
-| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | f7b3b32 (B1 testé) | A résilience et B1 garde structure reçus : Windows 76875 FINAL 0/1348 backend/35 web/build ; R0.6 inclus 684/90 ; contenu snapshot exact, données actives préservées ; intégration atomique main en cours ; B2 et HTTP Antigravity requis | B-R046–050 résolus ; BL-010/016 ouverts ; BL-013 partiel/R2.1 |
+| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | 97f8eb8 (B1 reçu main) | A résilience et B1 garde structure reçus : Windows 76875 FINAL 0/1348 backend/35 web/build ; R0.6 inclus 684/90 ; contenu snapshot exact, données actives préservées ; B2 et HTTP Antigravity requis | B-R046–050 résolus ; BL-010/016 ouverts ; BL-013 partiel/R2.1 |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
 | R0.9 | MUST | TODO | — | — | — | — | — |

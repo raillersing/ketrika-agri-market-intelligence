@@ -1,5 +1,9 @@
 # R0.6 lot B — préparation de publication sûre
 
+Mise à jour : B1 garde structure reçu main 97f8eb8/Windows 76875 FINAL 0.
+L'audit ci-dessous décrit l'état antérieur au correctif, pas le code courant.
+B2/BL-016 reste ouvert ; voir PRICE_IDENTITY_BATCH_PREPARATION.md.
+
 Audit statique du 2026-10-13. Aucun contrat nouveau adopté, code ou test
 implémenté par ce document. Lot A intégré ddb848f, réception 459f5a2/27517 verte.
 

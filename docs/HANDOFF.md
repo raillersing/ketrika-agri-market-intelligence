@@ -18,7 +18,7 @@ constituent pas une qualification actuelle des sources, des modèles, du
 déploiement ou d'un usage humain. Le programme R n'est pas terminé :
 R0.1–R0.5 sont DONE ; R0.6 reste IN_PROGRESS et R0.7–R6.11 restent TODO.
 
-Lot B1 reçu logiciel le 2026-10-13 : f7b3b32/Windows 76875 FINAL 0,
+Lot B1 reçu main 97f8eb8 le 2026-10-13 : f7b3b32/Windows 76875 FINAL 0,
 1348 backend/35 frontend/build ; inclusion R0.6 57 fichiers/684 cas/90
 intégrations vérifiée. Publication directe Gold contrôle aussi la structure
 sur candidats exacts sous verrous ; registre source/parseur/MIME commun avec
