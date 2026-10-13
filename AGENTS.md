@@ -43,9 +43,12 @@ L'agent **DOIT** répéter la boucle suivante jusqu'à une condition d'arrêt (�
              et statut de qualification de la capacité restent obligatoires.
 3. MARQUER la tâche IN_PROGRESS dans PROGRESS.md (horodatage ISO 8601 UTC)
            et synchroniser le miroir des statuts du plan R.
-4. PLANIFIER un mini-plan de 10 lignes maximum dans le journal de PROGRESS.md.
-5. IMPLÉMENTER par petits incréments, avec un commit atomique à chaque incrément vert.
-6. VÉRIFIER : exécuter TOUS les critères d'acceptation de la tâche, puis `./scripts/dev.ps1 check`.
+4. PLANIFIER un lot fonctionnel (résultat utilisable + réception), mini-plan
+   de 10 lignes maximum ; pas un lot par helper (§3.3).
+5. IMPLÉMENTER par petits incréments, tests ciblés pendant développement ;
+   commits intermédiaires sur branche/worktree, sans réception main prématurée.
+6. VÉRIFIER le lot stabilisé : tous ses critères puis un check complet sur
+   source figée avant réception sur main (§3.3).
 7. CONCLURE :
      - succès : statut DONE, preuve (commandes + résultats chiffrés), hash du commit ;
      - échec  : appliquer le protocole de blocage (§6).
@@ -57,7 +60,7 @@ L'agent **DOIT** répéter la boucle suivante jusqu'à une condition d'arrêt (�
 
 ### 3.1 Reprise de session
 
-L'agent peut être interrompu à tout moment. `PROGRESS.md` est **la seule mémoire fiable**. Il **DOIT** donc permettre à un nouvel agent, sans aucun autre contexte, de reprendre le travail. Une tâche `IN_PROGRESS` trouvée au démarrage **DOIT** être revérifiée depuis le début de son étape 6.
+L'agent peut être interrompu à tout moment. `PROGRESS.md` est **la seule mémoire fiable**. Une tâche `IN_PROGRESS` impose un audit des preuves et de l'état courant, pas une relance systématique avant de reprendre le développement. Reprendre à la première preuve manquante ou invalidée. Un résultat inconnu, rouge, interrompu ou sur un autre contenu ne peut être réutilisé. Sans preuve suffisante, recevoir le prochain lot stabilisé par l'étape 6 plutôt que lancer un check de base puis un autre du nouveau lot.
 
 Pour R, tenir après chaque incrément et clôture les statuts du plan et PROGRESS cohérents. PROGRESS reste canonique ; une divergence impose une vérification, pas un choix opportuniste. Chaque preuve indique commit, commandes/codes, environnement isolé, effectifs et limites. Logiciel testé, source live, modèle validé et usage humain sont des qualifications distinctes ; aucune fixture ne peut prouver une collecte live ou une performance de marché.
 
@@ -70,7 +73,23 @@ Pour R, tenir après chaque incrément et clôture les statuts du plan et PROGRE
 
 ---
 
+### 3.3 Méthode d'exécution (autorisation utilisateur du 2026-10-13)
+
+- Un lot livre un résultat fonctionnel complet, borné au plan autorisé. Regrouper helpers, raccordements et scénarios négatifs avant réception ; garder dépendances et ADR/SPECS avant code.
+- Développement : lint/types des fichiers concernés, tests nouveaux et régressions impactées. Commits intermédiaires verts sur worktree ; SQL/S3 isolés, jamais deux suites mutantes sur la même destination.
+- Réception : un seul `./scripts/dev.ps1 check` complet du lot stabilisé, tous critères SQL/S3/E2E applicables, couvertures et frontend inchangés. `qa <ID>` reste disponible pour diagnostic ; ne pas répéter sa suite juste avant check si ses cas sont effectivement exécutés et vérifiables dans le JUnit global. Le seul nombre global de tests ne prouve pas l'inclusion.
+- Après changement applicatif, de tests, dépendances ou environnement affectant la preuve : nouvelle réception complète. Pas après chaque helper, lecture de rapport, clôture documentaire ou nouveau message utilisateur. Réutilisation logicielle exige commit/contenu exact et originaux verts ; elle ne qualifie jamais source live, fraîcheur, modèle de marché ou usage humain.
+- Exception bornée : documentation/gouvernance/diagnostic readonly et leurs tests dédiés, sans effet applicatif, peuvent être reçus par lint/types/tests ciblés et cohérence du plan, avec chemins modifiés et référence au dernier check applicatif. Tout changement du chemin du check, sélection/isolement, contrat produit ou dépendance impose check complet. Aucun statut produit DONE, tag ou nouvelle couverture déduit de l'exception.
+- Ne pas interrompre un check final pour préparer un helper. Travail indépendant dans autre worktree uniquement, sans mutation des sources ou destination QA du check ; reprendre le même processus connu à la session suivante.
+- Journal : mini-plan au départ, incidents réels, preuve consolidée à réception. Messages brefs aux jalons, état concis pendant calcul long.
+- Profiler les JUnit existants avec `qa-profile`, sans réexécuter les tests. Aucun test scientifique supprimé, seuil réduit, benchmark remplacé par mock ou gain revendiqué sans mesure avant/après.
+
+
+---
+
 ## 4. Principes non négociables
+
+La méthode de validation et de reprise ne lève aucun de ces principes.
 
 1. **Provenance totale.** Chaque observation en base référence un `source_record`, qui référence un objet Bronze. Aucune donnée sans provenance n'entre en Silver.
 2. **Bronze immuable.** Les objets Bronze sont adressés par leur contenu (sha256). On ne les modifie ni ne les supprime jamais.
@@ -185,7 +204,7 @@ L'agent **NE DOIT JAMAIS** :
 Une tâche n'est `DONE` que si **toutes** les conditions suivantes sont vraies :
 
 - [ ] Tous les critères d'acceptation de la tâche passent, et la preuve est consignée dans PROGRESS.md.
-- [ ] `./scripts/dev.ps1 check` est vert (lint, types, tests unitaires et d'intégration du backend ; lint, types et build du front).
+- [ ] `./scripts/dev.ps1 check` est vert pour une livraison produit (backend et frontend complets). L'exception readonly/documentaire §3.3 exige ses preuves ciblées et ne clôt aucune tâche produit.
 - [ ] Les nouveaux comportements sont couverts par des tests. Couverture des modules `core`, `extraction` et `normalize` ≥ 80 %.
 - [ ] La documentation est à jour (fiche source, README, runbook si pertinent).
 - [ ] Aucun secret, aucun `print()` de débogage, aucun `TODO` orphelin.

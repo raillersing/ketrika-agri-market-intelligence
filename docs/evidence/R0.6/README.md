@@ -1,5 +1,13 @@
 # R0.6 — lignée Bronze → Silver
 
+Méthode ADR-057 (2026-10-13) : lots fonctionnels et réception globale unique,
+voir docs/plan/EXECUTION_METHOD.md et AGENTS §3.3. Profil historique readonly
+execution-method-profile-increment-13.json, SHA de l'original conservé :
+anti-fuite/prévisions 1015,416 s sur somme testcase 2008,004 s. Aucun fit retiré,
+modèle modifié ou gain de vitesse d'entraînement revendiqué ; seuls doublons
+de réception et fragmentation sont traités. Tests méthode ciblés 38 verts,
+aucune qualification supplémentaire du produit ou statut R clos.
+
 État courant 2026-10-12 : incréments 1–13 reçus, dernier fonctionnel b139c90.
 R0.6 IN_PROGRESS. Les points de reprise ci-dessous sont
 historiques ; ils ne remplacent pas les réceptions consignées en fin de fichier.

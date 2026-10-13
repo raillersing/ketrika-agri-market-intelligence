@@ -5,6 +5,14 @@
 
 ## État courant du programme autorisé R0–R6 — 2026-10-12
 
+Méthode révisée à la demande utilisateur le 2026-10-13 : AGENTS §3.3 et
+EXECUTION_METHOD.md/ADR-057 prévalent pour organiser les prochaines réalisations.
+Ne pas relancer le check de base à chaque « continues » ; auditer les preuves,
+développer un résultat fonctionnel complet puis recevoir ce lot. La préparation
+ADR-056 rejoint le lot résilience native, pas une réception isolée automatique.
+Tous critères produit/gates/couvertures conservés. `qa-profile` mesure les
+rapports existants en lecture seule ; aucune nouvelle qualification délivrée.
+
 Les sections MVP ci-dessous décrivent la livraison historique T. Elles ne
 constituent pas une qualification actuelle des sources, des modèles, du
 déploiement ou d'un usage humain. Le programme R n'est pas terminé :

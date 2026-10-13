@@ -104,10 +104,16 @@ function Show-Help {
     Write-Host "  qa-isolated <cmd>  - Dedicated profile: check, test, governance, prepare"
     Write-Host "  qa-build           - Build locked backend, web and browser QA images"
     Write-Host "  qa <task_id>       - Run a declared measured software subset"
+    Write-Host "  qa-profile <xml>   - Read archived JUnit timings; no test execution or database"
 }
 
 
 switch ($Command) {
+    "qa-profile" {
+        if ($ArgsList.Count -ne 1) { throw "QA profile requires one relative XML report path" }
+        Invoke-QaDocker -DockerArgs @("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-r03", "python", "-m", "ketrika.core.qa_profile", $ArgsList[0])
+        exit 0
+    }
     "help" {
         Show-Help
         exit 0

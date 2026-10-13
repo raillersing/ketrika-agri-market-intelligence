@@ -132,6 +132,13 @@ Image multi-stage `python:3.12-slim`. Dépendances système : `libpq`, `gdal` (s
 
 ### 3.3 `scripts/dev.ps1` : commandes obligatoires
 
+ADR-057 : méthode de lots/validation proportionnée définie par AGENTS §3.3.
+`qa-profile <rapport.xml>` : diagnostic readonly des durées JUnit archivées,
+Docker réseau none/bind readonly, sans Compose/seed ni réexécution. Chemin
+relatif sous dépôt, XML <=16 MiB/100000 cas, durées Decimal finies >=0,
+paramètres de noms masqués ; aucune qualification ou statut passed délivré.
+Commande sans argument, rapport absent/invalide/hors dépôt : échec explicite.
+
 ADR-011 / correction E2E R0.3 : les requêtes navigateur utilisent le proxy web
 same-origin `/api/v1/*`, backend interne uniquement (`API_INTERNAL_URL` puis
 `INTERNAL_API_URL`, défaut `http://api:8000`). Cookies `session_token` HttpOnly

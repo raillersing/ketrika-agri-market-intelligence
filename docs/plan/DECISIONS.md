@@ -2,6 +2,16 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-057 : méthode d'exécution par lots et profiling readonly
+
+- **Date/statut :** 2026-10-13, accepté avant code sur demande explicite utilisateur ; ADR-056 réservé à la préparation Silver.
+- **Contexte :** incrément 13 backend 2161,30 s/build 190556 ms ; petites réceptions et checks de base successifs multiplient cette dépense.
+- **Décision :** AGENTS §3.3 : développement ciblé/commits worktree puis réception complète par lot fonctionnel ; audit de reprise sans double check automatique. QA non répétée si inclusion effective de ses cas prouvée dans le JUnit global, jamais sur son seul effectif. Aucun échec/skip obligatoire promu en succès.
+- **Diagnostic :** qa-profile lit un JUnit archivé dans Docker/network none/bind readonly, sans Compose, seed, SQL, S3 ni réexécution. Durées Decimal, paramètres de noms masqués, rapport borné, aucune qualification. Pas de dépendance nouvelle.
+- **Réception de ce lot méthode :** exception bornée pour gouvernance/diagnostic readonly sans chemin applicatif modifié ; tests dédiés/lint/types/commandes Windows-Linux/cohérence du plan. Check applicatif b139c90/3975 conservé comme preuve historique, pas nouvelle réception produit. Changer sélection ou runner check exige contrôle complet.
+- **Limites :** fits scientifiques non accélérés ; profiler puis traiter BL-012 séparément. H1–H7/Bronze/critères DONE conservés, aucun statut R produit clos.
+- **Alternatives rejetées :** retirer/mocker les validations scientifiques, multiplier les petits checks, déclarer verts des skips.
+
 ## ADR-055 : R0.6 — registre SQL immuable des lots Bronze
 
 - **Date/statut :** 2026-10-12, accepté avant transfert principal ; 39 unités et types reçus au worktree seulement, vrais SQL/réception principale requis.

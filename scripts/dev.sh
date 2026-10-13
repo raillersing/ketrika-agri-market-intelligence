@@ -98,6 +98,7 @@ show_help() {
   echo "  validate-registry  - Validate registry/sources.yaml against Pydantic schema"
   echo "  qa-isolated <cmd>  - Dedicated profile: check, test, governance, prepare"
   echo "  qa-build           - Build locked backend, web and browser QA images"
+  echo "  qa-profile <xml>   - Read archived JUnit timings; no tests or database"
   echo "  qa <task_id>       - Run a declared measured software subset"
 }
 
@@ -150,6 +151,10 @@ case "$COMMAND" in
     ;;
   qa)
     qa_isolated qa "$@"
+    ;;
+  qa-profile)
+    [ "$#" -eq 1 ] || { echo "QA profile requires one relative XML report path" >&2; exit 1; }
+    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-r03 python -m ketrika.core.qa_profile "$1"
     ;;
   qualify)
     echo "Command not yet qualified; no implicit success. See the R0 task status." >&2
