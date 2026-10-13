@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-13T12:06:53Z] R0.6 lot B — réception reprise après inventaire
+
+- 9966 FINAL 1 confirmé, premier test corpus rouge/137,47 s, frontend non exécuté ; produit dfad489 non reçu sur main. B-R049 : inventaire du générateur synthétique obsolète, correction bornée à deux entrées, aucun document authentique/annotation/droit changé.
+- Correction branche a6a1abb (22852 FINAL 0), 71 tests corpus/7,02 s (22046 FINAL 0). 65969 FINAL 0 : inventaire 67 fichiers/516922 octets, 46 synthetic/2 authentic/19 unverified, un document acquis/une annotation/dix cellules, intégrité offline seulement. XML rouge original SHA 4d2785637de6ee5a5195a3bfef0306a7c482dd28027d5575166155c1f81beca4, exporté puis gzip lossless 3406 FINAL 0. Scans brut 76630/final 22526 FINAL 0, 4872/2706 octets ; diff vert. Diagnostic 71505 mauvais interpréteur corrigé par venv dédiée sans dépendance ajoutée.
+- Premier lancement après correction b84587 n'exécute aucun contrôle : chemin UNC mal saisi, message fichier absent malgré code shell 0 ; aucune preuve verte déduite. Lancement réel corrigé depuis worktree r06-publication-20261013, session Windows 8010, commit a6a1abb/source figée. Reprendre ce processus, sans changer code/QA ; résultats complets encore inconnus. Pas de cibles SQL/S3 répétées.
+- HTTP/budget Antigravity et BL-016 restent requis ; analyse identity seulement readonly pendant réception. R0.6 IN_PROGRESS, aucun tag/DONE/déploiement/live/modèle/usage humain revendiqué.
+
+### [2026-10-13T11:55:13Z] R0.6 lot B — réception complète en cours
+
+- Branche work/r06-publication-20261013, commit dfad489 (40776 FINAL 0, 28 fichiers/897 ajouts/27 retraits), base 65bba4a. Code applicatif figé, pas intégré sur main. Source/parseur/MIME explicites, garde structure SQL directe et registre commun Dagster, dix nouveaux SQL/S3 dont insertion concurrente réellement refusée 55P03 (41475 FINAL 0/20,22 s). 30869 FINAL 0/dix raccordements/220,08 s ; unités 49 puis 32 ciblées, aucun scénario supprimé.
+- Diff final 48630 FINAL 0 ; scan brut 61492 FINAL 0/103008 octets puis final 94256 FINAL 0/51552 octets. XML rouges conservés en gzip lossless, trois SHA décompressés identiques (62d746 FINAL 0). Pas de nettoyage des preuves ou de Bronze.
+- Windows réel dev.ps1 check lancé dans le worktree UNC, session 9966, 2026-10-13T11:55:13Z. Reprendre CE processus et son premier résultat manquant ; ne pas interrompre ni relancer un baseline. Aucun changement applicatif du worktree ou autre suite QA mutante pendant réception. Manifeste R0.6 renforcé 57 fichiers/684 minimum/90 intégrations (17 unités +10 SQL ajoutés) : inclusion à vérifier dans JUnit global, pas de QA cumulée en doublon.
+- Dernier HEAD main ce8a93f documentaire ; prompt de correction Antigravity laissé intact. Lot C non intégré, BL-016/R2.1 et autres critères R0.6 non terminés. Résultat check/backend/frontend/couvertures/source snapshot encore inconnus ; aucun DONE/tag/source live/modèle/usage humain déduit.
+
 ### [2026-10-13T11:43:52Z] R0.6 lot B — reprise isolée, pas de réception prématurée
 
 - Worktree work/r06-publication-20261013/base 65bba4a ; ADR-061 réservé/adopté avant code dans ce worktree, registre source/parseur/MIME et garde structure directe implémentés en préparation. HTTP, robots et budgets restent à Antigravity ; aucun transfert du lot C, aucune migration active.
