@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 
 from ketrika.connectors.base import Connector, RawArtifact, RunContext
 from ketrika.connectors.durable_runs import DurableRunReference, bind_running_run
+from ketrika.core.artifact_identity import ArtifactProcessingIdentity
 from ketrika.core.bronze import BronzeArtifact, BronzeStore
 from ketrika.core.http import FetchResult, PoliteHttpClient
 from ketrika.core.models.db import IngestionRun, ReviewItem, SourceRecord
@@ -138,7 +139,12 @@ def collect_connector_bronze(
 
 
 def consume_connector_silver(
-    connector: Connector, ctx: RunContext, session: Session, batch: BronzeBatch
+    connector: Connector,
+    ctx: RunContext,
+    session: Session,
+    batch: BronzeBatch,
+    *,
+    processing_identities: list[ArtifactProcessingIdentity] | None = None,
 ) -> dict[str, Any]:
     """Parse only verified Bronze bytes; does not discover/fetch/commit."""
     from ketrika.connectors.records import PriceRecord
@@ -218,8 +224,10 @@ def consume_connector_silver(
             result = connector.parse(artifact, parse_context)
             if result.parser_version != batch.parser_version:
                 raise ValueError("silver_parse_version_mismatch")
+            used_price_normalizer = False
             for record in result.records:
                 if isinstance(record, PriceRecord):
+                    used_price_normalizer = True
                     if reference_snapshot is None:
                         reference_snapshot = prepare_reference_snapshot(session, ctx.bronze_store)
                     loaded = load_normalized_price(
@@ -243,6 +251,19 @@ def consume_connector_silver(
                     stats["n_skipped"] += 1
                 else:
                     raise ValueError("silver_loader_action_invalid")
+            if used_price_normalizer and processing_identities is not None:
+                if reference_snapshot is None:
+                    raise ValueError("silver_reference_snapshot_missing")
+                processing_identities.append(
+                    ArtifactProcessingIdentity(
+                        batch.source_id,
+                        reference_id,
+                        artifact.content_sha256,
+                        batch.parser_version,
+                        "price_normalizer_v1",
+                        reference_snapshot.manifest.sha256,
+                    )
+                )
             for issue in result.issues:
                 session.add(
                     ReviewItem(

@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-13T08:21:16Z] R0.6 lot A — réception complète verte, intégration
+
+- Commit testé 459f5a2eeb4ef7cedd3648a67a3fa238e504fbfb, Windows réel 27517 FINAL 0 : lint/format 267 fichiers, types 266 ; 1321 backend/2076,04 s/cinq warnings/0 échec-erreur-skip ; intégrations union 116 (112 layout/112 marker). Couvertures core 94,47252053063804 %, extraction 86,3768115942029 %, normalize 89,04299583911235 %. Source Docker comparée aux seize fichiers modifiés, 99383 FINAL 0/aucune divergence.
+- Originaux backend XML/coverage et frontend receipt/vitest exportés sans transformation. Vérification 47187 FINAL 0 : suite R0.6 effectivement incluse, 55 fichiers/657 cas/80 intégrations, zéro fichier manquant ; nouveaux fichiers 25/10/4 unités et 13/7 SQL. Pas de QA cumulée répétée ; aucune preuve fondée sur le seul total global. XML SHA 80cc85ee44148acfc231914aa9a81f4e0a78119700995c8e3016bde169ed327c.
+- Frontend c5a21170-ac2d-4e62-ad0d-57bf9e65627f : 35 tests/quatre suites/9,15 s ; lint/types/tests/build codes 0, durées 17606/15694/17392/244664 ms. 50522 FINAL 0 confirme rapports originaux, aucun signal/timeout/error. Ni navigateur ni usage humain requalifiés.
+- Main documentaire 74e5a44 (71534 FINAL 0), gouvernance readonly 35532 FINAL 0/74 statuts, scan 15883 FINAL 0/21514 octets. Cherry-pick 38734 retourne conflits uniquement dans PROGRESS/miroir de plan, tous nos journaux conservés par apply_patch ; code applicatif et migrations restent exactement ceux testés. Vérification main, préservation, scan staged puis clôture requis ; pas de nouvelle réception scientifique après fusion documentaire seule.
+- R0.6 reste IN_PROGRESS : lot B garde publication/identité métier et lot C Antigravity non reçus. Code testé ≠ déploiement ; base active reste attendue 0002, pas 0009. Tous les gates H1–H7 restent en vigueur, aucun tag final.
+
 ### [2026-10-13T08:00:49Z] R0.6 — réception maintenue, préparation B readonly
 
 - Windows 27517 poursuit le même check du commit 459f5a2 : 1321 cas collectés, intégrations et premiers modules unitaires verts, calcul scientifique test_ml_forecast en cours ; aucun code final, couverture ou frontend déclaré vert prématurément. Source du worktree figée, aucune suite QA mutante concurrente.
@@ -20,6 +28,21 @@
 - Implémentation en préparation : garde registre, intention/résultat immuables, exclusion PostgreSQL, reprise nouveau run sans collecte, partitions document/version et jobs Dagster, membres de réussite/identité prix liée au vrai référentiel. Mini-plan : développement ciblé ; finaliser reçus et tests négatifs ; figer ; réception complète unique ; intégrer preuves/statuts, pas de baseline check ni QA cumulée répétée.
 - Preuves intermédiaires : 14143 FINAL 0/types deux fichiers/23 unités/9 s ; 75424 FINAL 0/29 unités/8,08 s ; 56536 FINAL 0/48 tests dont 18 SQL/S3/49 s après correction des compteurs ; 91146 FINAL 0/types deux fichiers/36 unités/44,39 s ; 2804 FINAL 0/sept SQL/S3/87,40 s (jobs réels, retry/révision, crash). Nouveaux membres/identités : validation consolidée 29757 en cours ; aucune réception globale ni migration active. Anciennes preuves ne couvrent pas ces derniers changements. R0.6 reste IN_PROGRESS.
 - Incident préparatoire B-R041 au worktree : première cible SQL 64119 FINAL 1/10 échecs/8 succès/70,95 s, compteur n_fetched/n_new_artifacts absent du validateur de reçu ; corrigé sans seuil réduit, rapport rouge conservé. Types 33184 Optional classe résolu par registre explicite ; 83838 Optional identité résolu par variable dédiée ; validation finale requise. Aucune suppression Bronze/SQL active, aucun tag ni qualification live/modèle/humaine.
+### [2026-10-13T07:25:26Z] R0.6 lot A — préparation stabilisée, réception requise
+
+- Base 6715b13/worktree work/r06-resilience-20261013 ; ADR-056/058–060 avant code. Intention/résultat/membres ajout seuls, exclusion run/source, nouveau run de reprise, partitions et six jobs réels sans step Bronze. Registre exact/GET SHA fraîche conservés ; normalisation prix liée au vrai manifeste reçu, NULL explicites sans prix. HTTP/policy non modifiés.
+- 4721 FINAL 1 : types douze fichiers verts et 66 tests verts dont vingt SQL/S3, puis seul échec mock finish_success sans kwargs (98,64 s). Source applicative inchangée depuis ces vingt SQL/S3 ; mock corrigé, 1501 FINAL 0/lint/types un fichier/44 unités propriétaires et stages/33,86 s. Rapports originaux rouges et verts conservés ; tous critères ne sont pas encore reçus globalement. Aucun check complet/QA cumulée préalable lancé.
+- Scénarios SQL/S3 passants : échec après vraie insertion puis rollback/reprise, os._exit(91) après vraie insertion/unknown/reprise sans fetch, contention même run et même source/deux UUID, garde parser/is_new, immutabilité quatre journaux, jobs partitionnés réels/retry, révision 2800→2900 seule supersession, changement de configuration change identité de traitement mais pas document. Alias ajouté uniquement synthétique/source-scopé en QA/human_reviewed=false.
+- Minima QA renforcés 657/80 (cinq nouveaux fichiers) ; la réception globale doit prouver les cas du manifeste dans le JUnit, pas lancer encore une QA cumulée identique. Préservation readonly 13630 FINAL 0 : 482 SR/MD5 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix/full-row MD5 4b2586cb8e422f11c4873ad513d66bc1 ; head actif 0002 inchangé. 10934 FINAL 0 : 674 versions Bronze/1377481 octets/SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c, zéro delete markers. Migrations 0007–0009 QA seulement.
+- Incidents B-R041/042/043/044/045 corrigés en préparation ; aucune garde affaiblie. Cache mypy dédié labels qualification, UID/GID app=1000 observés 93308 ; seul répertoire de ce volume chown, 66198 FINAL 0. Scanner/stage/diff/commit branche puis check Windows source figée requis. R0.6 demeure IN_PROGRESS, pas tag/qualification live/modèle/humaine.
+
+### [2026-10-13T06:37:29Z] R0.6 lot A — développement isolé
+
+- Base 6715b13, branche work/r06-resilience-20261013 ; HTTP réservé à Antigravity.
+- Mini-plan : adopter ADR-056/058 ; garde registre Silver ; intentions/résultats
+  immuables avec exclusion PostgreSQL ; reprise nouveau run sans fetch ; tests
+  ciblés réutilisant fixtures ; compléter identités/partitions puis réception
+  complète unique. Aucun baseline check, migration active ou DONE supplémentaire.
 
 ---
 

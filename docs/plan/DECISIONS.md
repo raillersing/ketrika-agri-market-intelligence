@@ -2,6 +2,40 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-060 : membres traités et identité de normalisation reçue
+
+- **Date/statut :** 2026-10-13, accepté avant code du lot A, worktree uniquement.
+- **Décision :** migration ajout seule 0009_silver_attempt_member : membre ordinal/FK résultat de tentative, SourceRecord, clé document, processing_key/normalizer_version/reference_manifest_sha256 nullable ensemble. Une ligne par artefact vérifié au succès, même transaction que données/résultat ; aucun membre de réussite après rollback. Pour prix, identité ArtifactProcessingIdentity calculée par framework après normalisation liée au vrai ReferenceSnapshot, version interne price_normalizer_v1 cohérente avec normalization.version=1. Pour non-prix/aucun prix, triplet NULL explicite : aucune référence/normalisation fictive.
+- **Vérification :** membres relus lors d'un succès rejoué, ordre/comptes/references/clé document exacts ; identité prix recomputée depuis ses champs persistés. Intention et résultat ne constituent pas seuls un reçu complet. Aucune donnée collectée ne fournit la référence de configuration ou le processing_key. Archive SHA reste configuration interne non institutionnellement qualifiée.
+- **Réception :** SQL/S3 identité reçue identique à preuve de normalisation et changement SHA configuration produisant identité différente, aucun succès incomplet accepté, immutabilité ; réception complète lot A. Pas de backfill ni modification d'observation/Bronze active.
+
+## ADR-059 : partitions document-version et replay Dagster sans collecte
+
+- **Date/statut :** 2026-10-13, accepté avant code dans le lot A ; aucune réception principale.
+- **Décision :** identité document-version = SHA d'une frame JSON ASCII versionnée (source, SourceRecord UUID, SHA contenu, parser_version), sans inférer édition logique/URL/normalisation. Table ajout seule meta.document_partition (clé, premier run Bronze enregistré, SourceRecord, source, SHA, parser). Même identité conserve son origine, toute divergence refuse. Migration 0008_document_partition ajoute document_key nullable/FK à silver_attempt, sans backfill des anciennes tentatives. Historique UPDATE/DELETE/downgrade refusés.
+- **Dagster :** un job document_replay par source éligible, DynamicPartitionsDefinition source-scopée, clés publiées après commit Bronze. Les assets/checks/schedules existants restent identiques. Une erreur de publication des clés reste explicite ; le registre SQL n'est pas effacé. Chaque job relit le membre exact du registre, crée un nouveau run partitionné et parse hors réseau ; pas d'AssetIn Bronze déclenchant une acquisition. Identité de run inclut UUID/run metadata et partition_key du document.
+- **Sémantique :** replay document peut provenir d'un run success, à la différence de resume du lot running/failed. Intention relie document_key et run d'origine ; un seul artefact exact doit correspondre. La référence de normalisation effectivement utilisée reste dans les observations (ADR-053) ; cette partition ne revendique pas l'identité complète des transformations.
+- **Réception :** clés déterministes/différentes versions/entrées invalides, définition réelle du job, isolation des sources, registre SQL immuable, replay materialisé et retry idempotent sans fetch, supersession de document révisé. Tests ciblés puis réception complète du lot, sans migration active ni nouveau source/connecteur.
+- **Alternatives rejetées :** une partition par UUID de tentative, déduire document/édition de l'URL, réactiver une origine terminée, dépendance Bronze forçant refetch.
+
+## ADR-058 : tentatives Silver natives et reprise explicite
+
+- **Date/statut :** 2026-10-13, accepté avant code du lot A dans worktree ; réception principale non réalisée.
+- **Contexte :** références Bronze persistées, mais aucune intention durable Silver ni reprise après perte du processus. Une FK écrite indépendamment après verrou du run peut s'auto-bloquer.
+- **Décision :** tables ajout seules 0007_silver_attempt : intention unique par run et résultat unique par intention, immuables UPDATE/DELETE. Intention indépendante committée AVANT transaction de données/verrou run ; résultat success dans la transaction Silver, failed après rollback. Classes d'erreurs seulement, statistiques bornées non négatives sans texte collecté. Le digest enregistré doit correspondre au lot fourni avant parsing.
+- **Exclusion :** verrous advisory PostgreSQL session-scoped par UUID run et source, connexion dédiée conservée jusqu'au résultat ; source sérialise aussi deux runs distincts traitant le même document (une ligne courante inexistante ne peut être verrouillée par supersession). Acquisition non bloquante, contention = refus sans marquer le run concurrent failed. Libération explicite inverse, connexion invalidée si acquisition partielle/libération impossible ; crash libère les verrous. Aucun délai supposé ne prouve un crash.
+- **Reprise :** entrée Python explicite depuis UUID/source, sans discover/fetch. Sous verrou de l'ancien run, refuser success/worker actif, relire le registre ; créer nouveau run et copier ses membres immuables dans un nouveau header, puis exécuter Silver avec lien resumed_from. Ancien run et intention non modifiés. Intention sans résultat = unknown, jamais failed/success inventé. Reprise après rollback ou arrêt brutal idempotente via loaders existants ; aucune recovery automatique.
+- **Succès répété :** relecture du même résultat success et du même lot enregistré permet de retourner les compteurs persistés sans parsing ; résultat incomplet/incohérent refuse. Ce reçu n'est pas une nouvelle qualification des octets/source/modèle.
+- **Identité :** intention contient SHA du batch exact ; partitions document/version et identité complète de normalisation restent des étapes du lot A, pas déduites de ce registre de tentatives. Pas de schéma métier/donnée active/Bronze altéré, aucun ancien run réactivé.
+- **Réception :** unités d'ordre/expurgation/gardes ; vrais SQL/S3 success, rollback, conflit, verrou concurrent et arrêt du processus/reprise sans refetch, invariance historique. Check global seulement à stabilisation du lot A complet ; R0.6 reste IN_PROGRESS.
+- **Alternatives rejetées :** mutable retry de l'ancien run, succès déduit du timeout, commit de données pour préserver l'intention, journal indépendant après verrou FK, lock mémoire seulement.
+
+## ADR-056 : consommation Silver du registre Bronze
+
+- **Date/statut :** 2026-10-13, accepté avant raccordement du lot A.
+- **Décision :** après liaison du run, relecture du batch SQL et comparaison canonique au batch fourni ; absent/corrompu/divergent refuse avant parse. GET fraîche/SHA des octets conservées. Échec rollback puis reçu indépendant expurgé.
+- **Limites :** garde seule ne livre ni reprise ni tentative ni partition ; réception incluse dans lot A, pas check complet isolé du helper.
+
 ## ADR-057 : méthode d'exécution par lots et profiling readonly
 
 - **Date/statut :** 2026-10-13, accepté avant code sur demande explicite utilisateur ; ADR-056 réservé à la préparation Silver.

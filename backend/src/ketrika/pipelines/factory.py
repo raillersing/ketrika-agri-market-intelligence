@@ -9,14 +9,23 @@ from dagster import (
     AssetCheckSeverity,
     AssetIn,
     AssetsDefinition,
+    DynamicPartitionsDefinition,
+    JobDefinition,
     ScheduleDefinition,
     SensorDefinition,
     asset,
     asset_check,
+    job,
+    op,
 )
 
 from ketrika.connectors.base import Connector, RunContext
-from ketrika.connectors.durable_phases import execute_durable_bronze, execute_durable_silver
+from ketrika.connectors.document_partitions import document_keys
+from ketrika.connectors.durable_phases import (
+    execute_durable_bronze,
+    execute_durable_silver,
+    replay_document_silver,
+)
 from ketrika.connectors.stages import (
     BronzeBatch,
 )
@@ -109,7 +118,12 @@ def build_source_assets(
                 logger=context.log,
                 metadata={"dagster_run_id": context.run.run_id},
             )
-            return execute_durable_bronze(connector, ctx)
+            batch = execute_durable_bronze(connector, ctx)
+            context.instance.add_dynamic_partitions(
+                f"{source_id}__document_versions",
+                list(document_keys(batch)),
+            )
+            return batch
 
     # 2. Silver Asset
     @asset(
@@ -176,6 +190,30 @@ def build_source_assets(
         schedule=schedule,
         sensor=None,
     )
+
+
+def build_document_replay_job(connector_cls: type[Connector]) -> JobDefinition:
+    """Explicit document/version job with no dependency that triggers Bronze."""
+    source_id = connector_cls.source_id
+    _source_for_assets(source_id)
+    partitions = DynamicPartitionsDefinition(name=f"{source_id}__document_versions")
+
+    @op(name=f"{source_id}__replay_recorded_document")
+    def replay(context) -> dict[str, Any]:
+        ctx = RunContext(
+            source_id=source_id,
+            bronze_store=BronzeStore(),
+            policy_engine=PolicyEngine(),
+            logger=context.log,
+            metadata={"dagster_run_id": context.run_id},
+        )
+        return replay_document_silver(connector_cls(), ctx, context.partition_key)
+
+    @job(name=f"{source_id}__document_replay", partitions_def=partitions)
+    def document_replay():
+        replay()
+
+    return document_replay
 
 
 def _refresh_gold() -> dict[str, Any]:

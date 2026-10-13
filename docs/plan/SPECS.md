@@ -764,6 +764,51 @@ Pour chaque enregistrement normalisé, on calcule `natural_key`, puis :
 
 ## 9. Interface Connector (normative)
 
+ADR-060 : 0009_silver_attempt_member, PK (attempt_id,ordinal 0..99999), FK
+résultat de tentative, SourceRecord et document_partition ; processing_key,
+normalizer_version, reference_manifest_sha256 NULL ensemble ou tous présents,
+SHA stricts. Une ligne par artefact de batch au success, même transaction ;
+UPDATE/DELETE/downgrade refusés. Prix : identité calculée après usage du vrai
+ReferenceSnapshot, normaliseur interne price_normalizer_v1 (preuve
+normalization.version=1). Autres documents : NULL explicites, pas références
+inventées. Relecture de success exige ordre/comptes/membres/identités exacts
+et clé prix recomputée. Ce reçu ne requalifie pas la source ou les références.
+
+ADR-059 : document_version_v1, SHA JSON ASCII (source_id, UUID SourceRecord,
+content_sha256, parser_version), aucune édition/normalisation inférée. Migration
+0008_document_partition : meta.document_partition, PK partition_key SHA,
+origin_run_id FK ingestion_batch, source_record_id FK, source_id FK, SHA contenu,
+parser_version ; UPDATE/DELETE/downgrade refusés. silver_attempt.document_key
+nullable/FK, sans backfill. Origine du premier lot conservée pour clé identique.
+Un job Dagster source__document_replay par source automatiquement éligible,
+partitions dynamiques source__document_versions ; Bronze publie les clés après
+commit. Les assets/checks/schedules existants ne changent pas. Le job relit
+un seul membre exact SQL/Bronze et crée un nouveau run avec partition_key,
+resumed_from origine et document_key ; parsing hors réseau, retry idempotent.
+Replay document explicite autorise origine success, pas reprise du batch
+terminal. Référence de normalisation conservée dans observations, pas inférée
+de la clé document. Aucun test synthétique ne qualifie un document réel.
+
+ADR-056/058 (lot A en développement) : Silver natif compare le lot fourni au
+registre Bronze relu avant parsing. Migration ajout seule 0007_silver_attempt :
+meta.silver_attempt (attempt_id UUID PK, run_id UUID unique/FK ingestion_batch,
+batch_sha256 SHA strict, started_at TIMESTAMPTZ, resumed_from UUID nullable/FK
+ingestion_batch) ; meta.silver_attempt_result (attempt_id PK/FK, finished_at,
+status success|failed, stats JSONB, error_class nullable). UPDATE/DELETE et
+downgrade destructif refusés. Success = stats de compteurs non négatifs et
+error_class NULL ; failed = stats NULL et classe d'erreur expurgée.
+Intention commit indépendant avant verrou FK du run dans transaction données.
+Résultat success committé avec données ; failed après rollback. Connexion
+dédiée porte verrous advisory non bloquants run puis source pendant la phase,
+libérés en ordre inverse ou connexion invalidée. Deux runs distincts d'une
+même source sont exclus aussi ; contention ne produit pas de reçu failed.
+Intention sans résultat = unknown. Succès relu ne déclenche aucun parsing et
+n'est pas une nouvelle vérification des octets. Reprise explicite par UUID et
+source sous verrou de l'ancien run, refus si success ; nouveau run lié au
+précédent et copie du lot enregistré sans réseau source ; aucun changement
+de l'historique ni réactivation. Le lien de reprise est conservé dans intention.
+Partitions et identité complète restent à raccorder avant réception du lot.
+
 ADR-055 : lot Bronze SQL immutable, migration 0006_ingestion_batch après
 0005_gold_unpopulated. Header par run réel : source_id, parser_version explicite
 <=128 sans blancs périphériques/contrôles, n_artifacts 0..100000 et SHA lowercase.

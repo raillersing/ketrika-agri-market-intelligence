@@ -28,6 +28,11 @@
         "tests/unit/test_gold_dependency_graph.py",
         "tests/unit/test_durable_runs.py",
         "tests/unit/test_durable_phases.py",
+        "tests/unit/test_silver_attempts.py",
+        "tests/unit/test_silver_success_receipt.py",
+        "tests/unit/test_document_partitions.py",
+        "tests/integration/test_silver_recovery.py",
+        "tests/integration/test_document_replay.py",
         "tests/unit/test_batch_ledger.py",
         "tests/integration/test_batch_ledger.py",
         "tests/unit/test_durable_factory.py",
@@ -65,8 +70,8 @@
         "tests/integration/test_nasa_power.py",
         "tests/integration/test_wfp_hdx_mdg.py"
       ],
-      "minimum_tests": 591,
-      "minimum_integration_tests": 60
+      "minimum_tests": 657,
+      "minimum_integration_tests": 80
     },
     "R0.5": {
       "tests": [

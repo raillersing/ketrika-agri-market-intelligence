@@ -46,7 +46,7 @@ def test_ledger_failure_rolls_back_before_independent_failure_receipt(setup_owne
 def setup_owner(monkeypatch):
     events = []
     reference = DurableRunReference(uuid4(), "dummy_owner", datetime.now(UTC), None)
-    connector = Mock(source_id=reference.source_id)
+    connector = Mock(source_id=reference.source_id, parser_version="1.0.0")
     context = RunContext(source_id=reference.source_id)
     batch = BronzeBatch(reference.source_id, reference.run_id, "1.0.0", ())
     session = Mock()
@@ -64,6 +64,18 @@ def setup_owner(monkeypatch):
 
     monkeypatch.setattr(MODULE + "get_session", transaction)
     monkeypatch.setattr(MODULE + "persist_bronze_batch", Mock())
+    monkeypatch.setattr(MODULE + "register_document_partitions", Mock())
+    monkeypatch.setattr(MODULE + "read_bronze_batch", Mock(return_value=batch))
+    monkeypatch.setattr(MODULE + "read_success", Mock(return_value=None))
+    monkeypatch.setattr(MODULE + "begin_attempt", Mock(return_value=uuid4()))
+    monkeypatch.setattr(MODULE + "finish_success", Mock())
+    monkeypatch.setattr(MODULE + "finish_failure", Mock())
+
+    @contextmanager
+    def exclusive(_run_id, _source_id=None):
+        yield
+
+    monkeypatch.setattr(MODULE + "exclusive_silver_run", exclusive)
     authorize = Mock(side_effect=lambda *_: events.append("authorize"))
     create = Mock(side_effect=lambda *_: (events.append("create"), reference)[1])
     read = Mock(return_value=reference)
@@ -130,6 +142,91 @@ def test_policy_refusal_never_creates_a_run_or_opens_data_transaction(setup_owne
     create.assert_not_called()
     persist.assert_not_called()
     assert events == []
+
+
+def test_silver_intention_precedes_data_lock_and_success_is_transactional(setup_owner, monkeypatch):
+    connector, context, batch, _, events, persist, _, _ = setup_owner
+    attempt_id = uuid4()
+    monkeypatch.setattr(
+        MODULE + "begin_attempt",
+        Mock(side_effect=lambda *args: (events.append("intent"), attempt_id)[1]),
+    )
+    monkeypatch.setattr(MODULE + "consume_connector_silver", Mock(return_value={"n_inserted": 2}))
+    monkeypatch.setattr(
+        MODULE + "finish_success",
+        Mock(side_effect=lambda *args, **kwargs: events.append("success_receipt")),
+    )
+    assert execute_durable_silver(connector, context, batch) == {"n_inserted": 2}
+    assert events == ["intent", "begin", "bind", "success_receipt", "commit"]
+    persist.assert_not_called()
+
+
+def test_silver_result_failure_rolls_back_and_keeps_error_text_out(setup_owner, monkeypatch):
+    connector, context, batch, reference, events, persist, _, _ = setup_owner
+    monkeypatch.setattr(MODULE + "consume_connector_silver", Mock(return_value={"n_inserted": 2}))
+    monkeypatch.setattr(MODULE + "finish_success", Mock(side_effect=OSError("SOURCE_SECRET")))
+    failed = Mock(side_effect=lambda *args: events.append("attempt_failure"))
+    monkeypatch.setattr(MODULE + "finish_failure", failed)
+    with pytest.raises(DurablePhaseFailure, match="^silver:OSError$") as captured:
+        execute_durable_silver(connector, context, batch)
+    assert events[-3:] == ["rollback", "attempt_failure", "persist"]
+    assert failed.call_args.args[1] is OSError
+    persist.assert_called_once_with(reference, OSError)
+    assert captured.value.__context__ is None
+
+
+def test_missing_attempt_failure_receipt_never_reports_success(setup_owner, monkeypatch):
+    connector, context, batch, _, events, persist, _, _ = setup_owner
+    monkeypatch.setattr(
+        MODULE + "consume_connector_silver", Mock(side_effect=ValueError("SOURCE_SECRET"))
+    )
+    monkeypatch.setattr(MODULE + "finish_failure", Mock(side_effect=OSError("DATABASE_SECRET")))
+    with pytest.raises(
+        DurablePhaseFailure, match="^silver:attempt_receipt_unavailable$"
+    ) as captured:
+        execute_durable_silver(connector, context, batch)
+    assert events[-1] == "rollback"
+    persist.assert_not_called()
+    assert captured.value.__context__ is None
+
+
+def test_previous_success_is_returned_without_new_attempt_or_data_transaction(
+    setup_owner, monkeypatch
+):
+    connector, context, batch, _, events, persist, _, _ = setup_owner
+    monkeypatch.setattr(MODULE + "read_success", Mock(return_value={"n_inserted": 3}))
+    attempt = Mock()
+    consume = Mock()
+    monkeypatch.setattr(MODULE + "begin_attempt", attempt)
+    monkeypatch.setattr(MODULE + "consume_connector_silver", consume)
+    assert execute_durable_silver(connector, context, batch) == {"n_inserted": 3}
+    attempt.assert_not_called()
+    consume.assert_not_called()
+    persist.assert_not_called()
+    assert events == []
+
+
+def test_changed_parser_cannot_reuse_an_old_success_receipt(setup_owner, monkeypatch):
+    connector, context, batch, _, events, _, _, _ = setup_owner
+    connector.parser_version = "different-v2"
+    read = Mock()
+    monkeypatch.setattr(MODULE + "read_success", read)
+    with pytest.raises(ValueError, match="silver_batch_parser_mismatch"):
+        execute_durable_silver(connector, context, batch)
+    read.assert_not_called()
+    assert events == []
+
+
+@pytest.mark.parametrize("reason", ["ingestion_batch_missing", "ingestion_batch_digest_mismatch"])
+def test_silver_registered_batch_guard_prevents_parse(setup_owner, monkeypatch, reason):
+    connector, context, batch, _, events, _, _, _ = setup_owner
+    monkeypatch.setattr(MODULE + "read_bronze_batch", Mock(side_effect=ValueError(reason)))
+    consume = Mock()
+    monkeypatch.setattr(MODULE + "consume_connector_silver", consume)
+    with pytest.raises(DurablePhaseFailure, match="^silver:ValueError$"):
+        execute_durable_silver(connector, context, batch)
+    consume.assert_not_called()
+    assert "rollback" in events and "commit" not in events
 
 
 def test_receipt_write_failure_is_not_reported_as_durable_success(setup_owner, monkeypatch):
