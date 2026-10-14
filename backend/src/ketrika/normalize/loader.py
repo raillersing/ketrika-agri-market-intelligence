@@ -6,6 +6,7 @@ import argparse
 import functools
 import sys
 import uuid
+from copy import deepcopy
 
 from argon2 import PasswordHasher
 from sqlalchemy import select, update
@@ -35,6 +36,7 @@ from ketrika.normalize.locations import (
     normalize_location_string,
     parse_admin_level,
 )
+from ketrika.normalize.price_bridge import identity_evidence, resolve_price_identity
 from ketrika.normalize.products import ProductResolver
 from ketrika.normalize.supersede import create_review_item, load_observation_with_supersession
 from ketrika.normalize.units import UnitConverter, normalize_currency, parse_numeric_value
@@ -284,6 +286,7 @@ def seed_database(session: Session) -> dict[str, int]:
 def _build_price_obs(
     obs_id: uuid.UUID,
     rec: PriceRecord,
+    source_id: str,
     source_record_id: uuid.UUID,
     nk: str,
     product_id: uuid.UUID | None,
@@ -322,7 +325,7 @@ def _build_price_obs(
         observed_or_imputed=rec.observed_or_imputed,
         missing_code=missing_code,
         extraction_method=rec.extraction_method,
-        evidence=rec.evidence,
+        evidence=deepcopy(rec.evidence) | {"price_identity": identity_evidence(rec, source_id)},
         confidence=overall_conf,
         review_status="accepted",
         superseded_by=None,
@@ -343,7 +346,7 @@ def normalize_and_load_price_records(
     l_res = location_resolver or LocationResolver()
     u_conv = unit_converter or UnitConverter()
 
-    stats = {"inserted": 0, "superseded": 0, "skipped": 0, "review_items": 0}
+    stats = {"inserted": 0, "superseded": 0, "skipped": 0, "review_items": 0, "rejected": 0}
 
     # Fetch product_id map from database
     db_prods = session.execute(select(Product.product_code, Product.product_id)).all()
@@ -354,6 +357,11 @@ def normalize_and_load_price_records(
     loc_id_map = {pcode: loc_id for pcode, loc_id in db_locs if pcode}
 
     for rec in records:
+        resolution = resolve_price_identity(session, rec, source_id, source_record_id)
+        if resolution.review_id is not None:
+            stats["rejected"] += 1
+            stats["review_items"] += resolution.reviews_created
+            continue
         # 1. Parse numeric value and missing code
         price_val, missing_code = parse_numeric_value(rec.price_raw)
 
@@ -417,6 +425,7 @@ def normalize_and_load_price_records(
         builder = functools.partial(
             _build_price_obs,
             rec=rec,
+            source_id=source_id,
             source_record_id=source_record_id,
             nk=nk,
             product_id=product_id,
@@ -442,6 +451,7 @@ def normalize_and_load_price_records(
             natural_key=nk,
             create_instance_fn=builder,
             compare_attrs=compare_attrs,
+            lookup_key=resolution.lookup_key,
         )
 
         if action == "inserted":

@@ -41,6 +41,7 @@ def receipt(monkeypatch):
         "n_new_artifacts": 1,
         "n_records": 3,
         "n_review": 0,
+        "n_rejected": 0,
     }
     member = {
         "ordinal": 0,
@@ -84,6 +85,7 @@ def test_complete_receipt_returns_only_stored_stats(receipt):
         "partial_identity",
         "missing_counter",
         "wrong_count",
+        "wrong_rejected",
         "run_running",
     ],
 )
@@ -109,6 +111,8 @@ def test_incomplete_or_inconsistent_success_refused(receipt, corruption):
         del header["stats"]["n_inserted"]
     elif corruption == "wrong_count":
         header["n_records"] = 4
+    elif corruption == "wrong_rejected":
+        header["n_rejected"] = 1
     else:
         header["run_status"] = "running"
     with pytest.raises(ValueError, match="silver_attempt_"):

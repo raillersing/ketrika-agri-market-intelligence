@@ -1,0 +1,40 @@
+{
+  "product_commit": "9d2076b",
+  "base_commit": "fc3bcda",
+  "worktree": "/home/raillersing/projects/ketrika-qa-worktrees/r06-price-identity-20261013",
+  "command": "Windows powershell.exe -File scripts/dev.ps1 check",
+  "session": 48496,
+  "exit_code": 0,
+  "environment": "ketrika-qualification; isolated SQL/S3/internal network; replay/Mailpit",
+  "backend": {
+    "tests": 1396, "failures": 0, "errors": 0, "skipped": 0,
+    "seconds": 3018.54,
+    "integration_by_layout": 140, "integration_by_marker": 140, "integration_union": 144,
+    "coverage": {"core": 94.46163366336634, "extraction": 86.3768115942029, "normalize": 90.37758830694276},
+    "new_modules_coverage": {"price_identity": 100, "price_bridge": 100},
+    "xml_sha256": "1ab22917bf81d76b440eb30c675ed3afea27caec50920de8a805f74ed0fc7d22"
+  },
+  "manifest_inclusion": {
+    "session": 77065, "exit_code": 0, "files": 59, "tests": 732,
+    "integration_tests": 108, "missing_files": [], "new_identity_units": 29, "new_bridge_sql": 18
+  },
+  "snapshot": {"session": 92100, "exit_code": 0, "backend_files": 15, "mismatches": []},
+  "frontend": {
+    "execution_id": "1f6f9424-1188-42af-8efb-5ec925760e14",
+    "original_reports_verified_session": 86204, "exit_code": 0,
+    "tests": 35, "suites": 4, "steps": 4, "all_green": true, "static_pages": 15
+  },
+  "additional_revision_provenance": {
+    "session": 94435, "exit_code": 0,
+    "source_id": "dummy_b2_proof_6032c456340b422a9f7fe00f59dc2659",
+    "old_id": "fa869a26-42d7-4802-a8f9-63bb99b2b76d",
+    "new_id": "6b60ad04-e1ca-4971-b4cd-fe03e7afa510",
+    "old_source_record_id": "16681d93-1ce8-47f9-b9ae-020e1799c7f4",
+    "new_source_record_id": "3d4cf1ae-9189-46c4-8348-4d64c9b05d99",
+    "valid": 2, "total": 2, "fresh_objects_read": 2,
+    "action": "superseded", "retry_action": "idempotent_skipped",
+    "old_key_evidence_value_preserved": true,
+    "scope": "synthetic source cells; not source authenticity, market or human qualification"
+  },
+  "limits": ["No active migration/backfill", "No live source/model/browser/human qualification", "R0.6 remains IN_PROGRESS pending lot C reception"]
+}

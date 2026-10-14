@@ -107,6 +107,7 @@ def rebuild_database(
             "records_inserted": 0,
             "records_superseded": 0,
             "records_skipped": 0,
+            "records_rejected": 0,
             "gold_wiped": wipe_stats,
         }
 
@@ -157,6 +158,8 @@ def rebuild_database(
                         stats["records_inserted"] += 1
                     elif action == "superseded":
                         stats["records_superseded"] += 1
+                    elif action == "review_required":
+                        stats["records_rejected"] += 1
                     else:
                         stats["records_skipped"] += 1
 

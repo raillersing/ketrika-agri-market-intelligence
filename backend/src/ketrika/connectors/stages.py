@@ -173,6 +173,7 @@ def consume_connector_silver(
         "n_inserted": 0,
         "n_superseded": 0,
         "n_skipped": 0,
+        "n_rejected": 0,
     }
     reader = BronzeProofReader(ctx.bronze_store)
     reference_snapshot = None
@@ -249,6 +250,8 @@ def consume_connector_silver(
                     stats["n_superseded"] += 1
                 elif action == "idempotent_skipped":
                     stats["n_skipped"] += 1
+                elif action == "review_required":
+                    stats["n_rejected"] += 1
                 else:
                     raise ValueError("silver_loader_action_invalid")
             if used_price_normalizer and processing_identities is not None:
@@ -260,7 +263,7 @@ def consume_connector_silver(
                         reference_id,
                         artifact.content_sha256,
                         batch.parser_version,
-                        "price_normalizer_v1",
+                        "price_normalizer_v2",
                         reference_snapshot.manifest.sha256,
                     )
                 )
@@ -283,5 +286,6 @@ def consume_connector_silver(
     run.status, run.finished_at = "success", datetime.now(UTC)
     run.n_records = stats["n_inserted"] + stats["n_superseded"]
     run.n_review = stats.get("n_review", 0)
+    run.n_rejected = stats["n_rejected"]
     session.flush()
     return stats

@@ -95,7 +95,7 @@ def test_committed_bronze_replayed_without_http_then_revision_is_append_only(htt
             assert current_rice.base_unit == "kg"
             assert current_rice.review_status == "accepted"
             assert current_rice.currency_raw == "MGA" and current_rice.unit_raw == "kg"
-            assert current_rice.evidence["normalization"]["version"] == 1
+            assert current_rice.evidence["normalization"]["version"] == 2
             assert current_rice.evidence["normalization"]["human_reviewed"] is False
             targets = [ObservationTarget("price_observation", row.observation_id) for row in rows]
             receipt = audit_observation_provenance(

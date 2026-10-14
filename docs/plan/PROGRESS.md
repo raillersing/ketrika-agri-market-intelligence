@@ -16,6 +16,32 @@
 - Identité prix typée JSON/SHA exacte : variété/statistique/unité/devise/observed_or_imputed distincts, NULL/vide/None/séparateurs protégés. 8457 FINAL 0 Docker hors réseau : types deux fichiers et 29 tests/6,65 s ; format/lint verts. 69552 FINAL 127, invocation mypy corrigée par python -m mypy, dépendances inchangées. 72495 scan FINAL 0/10194 octets ; 97793 gouvernance 74 cohérents et commit FINAL 0. Aucun check complet inutilement relancé.
 - Reprendre sur ce worktree : pont historique verrouillé/refus des statistiques inconnues, raccordement des deux loaders/stages/revues/counters et reçus v2, SQL/S3 isolés puis unique check final du lot figé. Helper non raccordé : aucune qualification de loader ou nouvelle capacité produit revendiquée. R0.6 reste IN_PROGRESS/BL-016 ouvert, miroir inchangé ; HTTP/budget Antigravity laissé intact, données actives non touchées.
 
+### [2026-10-14T02:08:28Z] R0.6 B2 — réception complète verte, intégration requise
+
+- Code figé 9d2076b, Windows réel 48496 FINAL 0 : format/lint 276/types 275 ; 1396 backend/3018,54 s/cinq warnings/zéro échec-erreur-skip ; intégrations 140 layout/140 marker/144 union. Couvertures core 94,46163366336634/extraction 86,3768115942029/normalize 90,37758830694276 %, nouveaux price_identity/price_bridge 100 %.
+- Frontend 35/quatre suites/6,57 s/quatre étapes vertes/quinze pages, reçu 1f6f9424-1188-42af-8efb-5ec925760e14 ; originaux vérifiés 86204 FINAL 0. Inclusion 77065 FINAL 0 : 59 fichiers/732 cas/108 intégrations, 29 nouvelles unités/18 nouveaux SQL, zéro absent ; SHA XML 1ab22917bf81d76b440eb30c675ed3afea27caec50920de8a805f74ed0fc7d22. Snapshot quinze fichiers identiques 92100 FINAL 0. Aucun QA cumulé répété.
+- Complément 94435 FINAL 0 : révision legacy connue sur deux véritables objets Bronze QA/SourceRecord distincts, audit source-cell fresh 2/2/deux GET, ancienne clé/preuve/valeur préservées, retry idempotent. Script de réception documentaire et résultats versionnés ; aucun changement applicatif/tests après check, seules preuves/clarifications v2 cohérentes avec ADR-062.
+- Rapports LOT_B2_RECEPTION.md/json et originaux conservés. Scan/gouvernance/diff et intégration atomique de 12433bd+9d2076b requis, sans états intermédiaires reçus main. BL-016 clôturable après cette intégration, R0.6 toujours IN_PROGRESS : C encore dirty/186ab4a sans livraison corrigée (42247), aucune tâche suivante éligible. Pas de tag/source live/modèle marché/usage humain qualifié.
+
+### [2026-10-14T01:02:26Z] R0.6 B2 — raccordement fonctionnel en validation
+
+- Reprise 12433bd sans baseline redondante : clé PriceRecord v2, pont source-scopé verrou transactionnel/row locks, comparaison de toutes dimensions, revue unknown/multiple/contradictoire ajout-seul sans prix/supersession. Deux loaders et ancien batch normalisation raccordés ; retry revue idempotent, brut/preuve/ancienne clé conservés.
+- Native stats/run n_rejected/n_review explicites, cache vérifie n_rejected SQL ; membres price_normalizer_v2/normalization.version=2, vieux reçus conservés. Rebuild compte records_rejected, pas skipped. Runbook et SPECS détaillent UUID review versus observation et success de traitement versus acceptation.
+- 41719 types neuf fichiers et 97 tests verts/deux mock headers rouges ; B-R051 corrigé, 2885 FINAL 0/11/tests/types deux. 71177 FINAL 0/24 SQL-S3/70,25 s dont 16 nouveaux : coexistence, pont exact/refus/revue, rollback, connexion indépendante 55P03, reçu/cache/counters ; normalisation/snapshot/stages régressions verts. Deux négatifs source ajoutés avant réception finale, pas encore exécutés.
+- Actif 64965 FINAL 0 : 482 SR/47b4402859acc41e3ae91fdb128e56c6, 764 prix/4b2586cb8e422f11c4873ad513d66bc1, head 0002 inchangés. R0.6 IN_PROGRESS, BL-016 ouvert jusqu'à check figé et intégration ; HTTP à Antigravity. Prochaine étape : format/types/manifest/gouvernance/scan, commit worktree, unique Windows check final et originaux ; aucun produit DONE/tag.
+
+### [2026-10-13T18:58:45Z] R0.6 B2 — fondation typée vérifiée, lot non reçu
+
+- ADR-062/SPECS adoptés avant code ; nouveau price_identity.py sans import/raccordement applicatif encore. Frame exacte inclut unité/devise/observed_or_imputed ; aucune dimension historique déduite. 29 cas couvrent chaque dimension, NULL/vide/None, séparateurs, dates et entrées invalides.
+- Docker hors réseau : 69552 FINAL 127 après format/lint verts, exécutable mypy absent au chemin opt/venv/bin ; correction d'invocation seulement python -m mypy. 8457 FINAL 0 : types deux fichiers, 29 tests/6,65 s. Aucune dépendance/configuration changée, aucun test SQL exécuté, aucune preuve de loader/rejeu/Gold déduite.
+- Reste avant réception : rapprochement historique verrouillé et revue des inconnus ; raccordement des deux loaders/stages/counters ; normaliseur/reçus v2 ; SQL/S3 rollback/concurrence ; unique check final figé. R0.6 IN_PROGRESS et BL-016 ouvert, plan miroir inchangé. Aucun logiciel B2 transféré sur main, aucune modification des données actives.
+
+### [2026-10-13T18:55:04Z] R0.6 B2 — démarrage isolé
+
+- Branche work/r06-price-identity-20261013, base fc3bcda ; AGENTS complet relu, historique B1 vert réutilisé sans baseline redondante. Aucun fichier HTTP/budget Antigravity touché.
+- Mini-plan : adopter ADR-062/SPECS ; identité typée complète ; pont historique source-scopé prudent ; raccorder loaders historique/normalisé et revues/counters ; versionner preuves/reçus ; tests ciblés unités/SQL isolés ; un check Windows final sur lot figé ; preuves et intégration atomique.
+- R0.6 reste IN_PROGRESS, BL-016 ouvert ; pas d'écriture SQL/S3 active, pas de migration/backfill, pas de reclassification des 764 prix historiques. Incréments préparatoires sur worktree uniquement, aucune réception main avant lot complet.
+
 ### [2026-10-13T13:57:39Z] R0.6 B1 — intégré et reçu sur main
 
 - Commit atomique main 97f8eb8 (9664 FINAL 0, 38 fichiers/1041 ajouts/30 retraits) ; contenu applicatif final f7b3b32 exactement qualifié par Windows 76875 FINAL 0, dix-huit fichiers comparés 50530 FINAL 0. Aucun commit produit intermédiaire rouge inscrit sur main ; résolutions documentaires seules, tous journaux conservés. Diff 81680/gouvernance 61270 FINAL 0 ; scan final 97063 FINAL 0/518083 octets/sans fuite.

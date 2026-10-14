@@ -754,6 +754,25 @@ CREATE TABLE auth.api_key (
 
 ### 8.1 Supersession (normative)
 
+Extension prix ADR-062 (lot B2 en développement, non encore reçu) : identité
+price_identity_v2, SHA-256 de JSON ASCII compact de la liste ordonnée
+[version, source_id, product_raw, variety, location_raw, actor_level,
+period_start ISO, period_end ISO, value_kind statistique, unit_raw,
+currency_raw, observed_or_imputed]. Brut exact, NULL distinct des chaînes.
+Statistique point/min/max/avg distincte de l'origine observed/imputed.
+Les autres records gardent leur contrat actuel. Aucun backfill implicite.
+Pont historique source-scopé sous verrou transactionnel, comparaison complète
+et statistique explicite ; ambiguïté/inconnu produit review_required,
+ReviewItem extraction_conflict lié au SourceRecord, n_rejected/n_review,
+sans supersession ni nouvelle observation. Les deux loaders prix doivent
+respecter ce contrat. Normalisation v2/reçus price_normalizer_v2 ; les reçus
+v1 restent historiques et ne prouvent pas v2. Pas de migration active.
+Ancien batch normalize_and_load_price_records : même pont, compteur rejected.
+Loader normalisé review_required : observation_id NULL ; loader historique :
+UUID de revue (pas observation). Rebuild compte records_rejected, pas skipped.
+Silver success = traitement terminé avec n_rejected/n_review explicites,
+pas acceptation complète ; cache vérifie aussi n_rejected contre le run SQL.
+
 Pour chaque enregistrement normalisé, on calcule `natural_key`, puis :
 
 - aucune ligne courante (`superseded_by IS NULL`) ne porte cette clé : `INSERT` ;
@@ -769,8 +788,8 @@ résultat de tentative, SourceRecord et document_partition ; processing_key,
 normalizer_version, reference_manifest_sha256 NULL ensemble ou tous présents,
 SHA stricts. Une ligne par artefact de batch au success, même transaction ;
 UPDATE/DELETE/downgrade refusés. Prix : identité calculée après usage du vrai
-ReferenceSnapshot, normaliseur interne price_normalizer_v1 (preuve
-normalization.version=1). Autres documents : NULL explicites, pas références
+ReferenceSnapshot, normaliseur interne price_normalizer_v2 (ADR-062, preuve
+normalization.version=2 ; reçus v1 historiques conservés). Autres documents : NULL explicites, pas références
 inventées. Relecture de success exige ordre/comptes/membres/identités exacts
 et clé prix recomputée. Ce reçu ne requalifie pas la source ou les références.
 
@@ -1049,7 +1068,7 @@ générique/FX/densité inféré. Alias SQL source avant global, pg_trgm >=0,85
 avec identité unique, lieu fuzzy seulement avec admin_level explicite ;
 aucune création d'alias. Token <=128 caractères ; milliers à points sans
 number_style explicite restent en revue. FK/source contrôlées ; bruts/preuve
-inchangés, normalization.version=1 séparé et value_kind en métadonnées
+inchangés, normalization.version=2 depuis ADR-062 (v1 historique conservé) et value_kind en métadonnées
 (colonne/UI R2.1 non livrées). Comparaison append-only inclut dérivés et
 classification par chemins tuple statiques. Revue à insertion/supersession
 uniquement, compteur réel ; inconnus/non convertibles pending/dérivé NULL.

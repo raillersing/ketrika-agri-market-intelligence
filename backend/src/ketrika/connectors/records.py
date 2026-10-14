@@ -37,6 +37,23 @@ class PriceRecord(RecordBase):
     missing_code: str | None = None  # ND | NA | None
     published_at: datetime | None = None
 
+    def compute_natural_key(self, source_id: str) -> str:
+        from ketrika.normalize.price_identity import PriceIdentity
+
+        return PriceIdentity(
+            source_id,
+            self.product_raw,
+            self.variety,
+            self.location_raw,
+            self.actor_level,
+            self.period_start,
+            self.period_end,
+            self.value_kind,
+            self.unit_raw,
+            self.currency_raw,
+            self.observed_or_imputed,
+        ).natural_key
+
 
 class StockRecord(RecordBase):
     """Normalized stock level record (matching obs.stock_observation)."""

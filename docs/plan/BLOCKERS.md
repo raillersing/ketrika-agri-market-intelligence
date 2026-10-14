@@ -3,6 +3,11 @@
 > Format : `ID | tâche | date | symptôme | cause supposée | tentatives (1, 2, 3) | repli appliqué | statut`
 > Statut : `INVESTIGATING` | `RESOLVED_FALLBACK` | `RESOLVED_FIXED` | `BLOCKED`
 
+| B-R053 | R0.6 B2 / script documentaire de réception | 2026-10-14 | 19622 FINAL 1 : mypy Optional evidence à l'indexation ; exécution SQL complémentaire 94435 déjà verte | Colonne ORM evidence nullable, script n'explicite pas le garde avant accès | 1 : assert evidence non NULL dans le seul script docs/evidence, aucun code produit/tests modifié | Types documentaires à revérifier ; check applicatif 48496 FINAL 0 reste lié au contenu inchangé | RESOLVED_FIXED |
+
+| B-R051 | R0.6 B2 / mock reçu | 2026-10-14 | 41719 FINAL 1 : 97 succès/deux échecs/33,11 s KeyError n_rejected ; types neuf fichiers verts | Nouvelle lecture SQL inclut n_rejected mais ancien mock header omet ce champ déjà réel en SQL | 1 : fixture header n_rejected=0, ajouter refus de corruption wrong_rejected ; 2885 FINAL 0/types deux fichiers/11 tests/15,80 s | SQL réel 71177 FINAL 0/24 tests/70,25 s dont 16 nouveaux ; aucun compteur/seuil/guard réduit ; réception complète requise | RESOLVED_FIXED |
+| B-R052 | R0.6 B2 / imports préparatoires | 2026-10-14 | 38226 FINAL 1 après format, Ruff I001 sur normalize/loader.py ; types/tests non démarrés | Import price_bridge ajouté après products au lieu de l'ordre lexical | 1 : déplacer import seulement, 41719 lint/types neuf fichiers verts | Aucun comportement runtime changé pour corriger lint | RESOLVED_FIXED |
+
 Clôture B-R046–050 : réception Windows 76875 FINAL 0 sur f7b3b32,
 1348 backend/35 web/build, inclusion R0.6 684/90 prouvée. Corrections de
 fixtures et inventaire seulement ; gardes/contraintes/seuils conservés.

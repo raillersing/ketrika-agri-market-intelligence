@@ -119,7 +119,7 @@ def read_success(batch: BronzeBatch) -> dict[str, int] | None:
             session.execute(
                 text(
                     "SELECT a.attempt_id, a.batch_sha256, r.status, r.stats, i.status AS run_status, "
-                    "i.n_fetched, i.n_new_artifacts, i.n_records, i.n_review "
+                    "i.n_fetched, i.n_new_artifacts, i.n_records, i.n_review, i.n_rejected "
                     "FROM meta.silver_attempt a JOIN meta.silver_attempt_result r USING (attempt_id) "
                     "JOIN meta.ingestion_run i ON i.run_id = a.run_id WHERE a.run_id = :run"
                 ),
@@ -181,7 +181,14 @@ def read_success(batch: BronzeBatch) -> dict[str, int] | None:
             stats["n_new_artifacts"],
             stats["n_inserted"] + stats["n_superseded"],
             stats.get("n_review", 0),
-        ) != (row["n_fetched"], row["n_new_artifacts"], row["n_records"], row["n_review"]):
+            stats.get("n_rejected", 0),
+        ) != (
+            row["n_fetched"],
+            row["n_new_artifacts"],
+            row["n_records"],
+            row["n_review"],
+            row["n_rejected"],
+        ):
             raise ValueError("silver_attempt_result_inconsistent")
         return stats
 

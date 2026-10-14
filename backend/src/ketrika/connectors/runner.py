@@ -39,6 +39,7 @@ from ketrika.core.models.db import (
     TradeFlow,
     WeatherObservation,
 )
+from ketrika.normalize.price_bridge import identity_evidence, resolve_price_identity
 
 
 def ensure_ingestion_run_started(
@@ -118,11 +119,16 @@ def load_price_record_with_supersession(
 
     Returns: (action, observation_id) where action is 'inserted', 'idempotent_skipped', or 'superseded'.
     """
+    resolution = resolve_price_identity(session, record, source_id, source_record_id)
+    if resolution.review_id is not None:
+        return "review_required", resolution.review_id
     nk = record.compute_natural_key(source_id)
+    evidence = deepcopy(record.evidence)
+    evidence["price_identity"] = identity_evidence(record, source_id)
 
     # 1. Check for active current row (superseded_by IS NULL)
     stmt = select(PriceObservation).where(
-        PriceObservation.natural_key == nk,
+        PriceObservation.natural_key == resolution.lookup_key,
         PriceObservation.superseded_by.is_(None),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()
@@ -162,7 +168,7 @@ def load_price_record_with_supersession(
             observed_or_imputed=record.observed_or_imputed,
             missing_code=missing_code,
             extraction_method=record.extraction_method,
-            evidence=record.evidence,
+            evidence=evidence,
             confidence=record.confidence,
             review_status="accepted",
             superseded_by=None,
@@ -213,7 +219,7 @@ def load_price_record_with_supersession(
         observed_or_imputed=record.observed_or_imputed,
         missing_code=missing_code,
         extraction_method=record.extraction_method,
-        evidence=record.evidence,
+        evidence=evidence,
         confidence=record.confidence,
         review_status="accepted",
         superseded_by=None,

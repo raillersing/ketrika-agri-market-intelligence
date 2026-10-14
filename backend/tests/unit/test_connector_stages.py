@@ -130,6 +130,7 @@ def test_silver_consumes_verified_bytes_and_does_not_touch_collection_context():
         "n_inserted": 0,
         "n_superseded": 0,
         "n_skipped": 0,
+        "n_rejected": 0,
     }
     assert run.status == "success"
     connector.discover.assert_not_called()

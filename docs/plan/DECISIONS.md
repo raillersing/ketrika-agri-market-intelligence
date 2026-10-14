@@ -2,6 +2,17 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-062 : grain prix versionné et rapprochement historique prudent
+
+- **Date/statut :** 2026-10-13, adopté avant code sur work/r06-price-identity-20261013 ; réception produit non acquise.
+- **Contexte :** ancienne concaténation ambiguë, variété/statistique absentes de la clé ; historique sans statistique explicite non classifiable automatiquement.
+- **Décision :** SHA-256 de JSON ASCII compact ordonné : price_identity_v2, source_id, product_raw, variety, location_raw, actor_level, period_start ISO, period_end ISO, value_kind statistique, unit_raw, currency_raw, observed_or_imputed. Valeurs brutes exactes, NULL distinct de chaîne ; aucune normalisation implicite. Unité/devise/origine observée ou imputée sont des grains distincts, pas des révisions de valeur. Aucun champ origin géographique nouveau (R2.1 non commencé).
+- **Historique :** clé ancienne seulement filtre de candidats, jamais preuve de rapprochement. Source et toutes dimensions doivent correspondre, statistique explicitement attestée dans evidence.normalization.value_kind ou preuve price_identity interne. Candidat inconnu ou multiple : aucun changement d'observation ; review_item extraction_conflict avec IDs/provenance, action review_required comptée n_rejected/n_review. Aucun prix ambigu admis en Gold ni omission silencieuse. Revue H5 sans qualification humaine fictive.
+- **Transactions :** verrou transactionnel source avant recherche/écriture sur les deux chemins prix ; ancienne clé/valeur inchangée. Révision connue atomique par superseded_by et nouvelle ligne ; refus/rollback conserve toute observation. Revue durable seulement après commit explicite du propriétaire, jamais après rollback.
+- **Versions :** nouvelle normalisation price_normalizer_v2 et normalization.version=2 ; reçus v1 historiques lisibles comme histoire, jamais présentés comme traitement v2. Rejeu document explicite crée nouvelle tentative. Même UUID success reste reçu original, pas une exécution du nouveau code.
+- **Alternatives :** backfill statistique point et réécriture des anciennes clés rejetés ; changer tous les RecordBase rejeté, portée prix uniquement. Aucune migration/dépendance nouvelle prévue.
+- **Réception :** helper et raccordement des deux loaders, ambiguïtés/revues/counters/reçus ; SQL isolé coexistence, pont exact/refus, retry, rollback/concurrence ; check complet unique du lot stabilisé. R0.6 reste IN_PROGRESS, BL-016 ouvert jusqu'à réception.
+
 ## ADR-061 : publication Gold et contrats structurels de confiance
 
 - **Date/statut :** 2026-10-13, adopté avant code du lot B, worktree uniquement.

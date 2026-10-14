@@ -39,6 +39,8 @@ def load_observation_with_supersession[T: Base](
     create_instance_fn: Any,  # Callable[[uuid.UUID], T]
     compare_attrs: dict[str, Any],
     evidence_fields: dict[tuple[str, ...], Any] | None = None,
+    *,
+    lookup_key: str | None = None,
 ) -> tuple[str, uuid.UUID]:
     """Load observation into an obs table following SPECS §8.1 supersession logic.
 
@@ -55,7 +57,7 @@ def load_observation_with_supersession[T: Base](
     """
     model_any: Any = model_cls
     stmt = select(model_cls).where(
-        model_any.natural_key == natural_key,
+        model_any.natural_key == (lookup_key if lookup_key is not None else natural_key),
         model_any.superseded_by.is_(None),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()

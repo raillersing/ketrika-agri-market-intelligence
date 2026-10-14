@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from ketrika.connectors.records import PriceRecord
 from ketrika.core.models.db import PriceObservation, SourceRecord
 from ketrika.normalize.decimal_price import ParsedPrice, convert_price, parse_price
+from ketrika.normalize.price_bridge import identity_evidence, resolve_price_identity
 from ketrika.normalize.price_references import resolve_location, resolve_product, unit_factor
 from ketrika.normalize.reference_snapshot import ReferenceSnapshot, reference_snapshot_evidence
 from ketrika.normalize.supersede import create_review_item, load_observation_with_supersession
@@ -21,7 +22,7 @@ from ketrika.normalize.supersede import create_review_item, load_observation_wit
 @dataclass(frozen=True)
 class NormalizedLoad:
     action: str
-    observation_id: UUID
+    observation_id: UUID | None
     review_items: int
 
 
@@ -38,6 +39,9 @@ def load_normalized_price(
     reference = session.get(SourceRecord, source_record_id)
     if reference is None or reference.source_id != source_id:
         raise ValueError("normalization_source_reference_mismatch")
+    resolution = resolve_price_identity(session, record, source_id, source_record_id)
+    if resolution.review_id is not None:
+        return NormalizedLoad("review_required", None, resolution.reviews_created)
     snapshot_evidence = (
         reference_snapshot_evidence(session, reference_snapshot)
         if reference_snapshot is not None
@@ -97,7 +101,7 @@ def load_normalized_price(
     ).quantize(Decimal("0.01"), rounding=ROUND_DOWN)
     evidence = deepcopy(record.evidence)
     evidence["normalization"] = {
-        "version": 1,
+        "version": 2,
         "human_reviewed": False,
         "confidence_definition": "minimum_configured_components_not_calibrated_probability",
         "value_kind": record.value_kind,
@@ -112,6 +116,7 @@ def load_normalized_price(
         "scope": "configured_reference_conversion_not_market_or_source_qualification",
     }
     comparable = converted.price_mga_per_base if not issues else None
+    evidence["price_identity"] = identity_evidence(record, source_id)
     if snapshot_evidence is not None:
         evidence["normalization"]["reference_snapshot"] = snapshot_evidence
     values = {
@@ -164,6 +169,7 @@ def load_normalized_price(
         build,
         values,
         evidence_fields=comparison_evidence,
+        lookup_key=resolution.lookup_key,
     )
     if action not in {"inserted", "superseded", "idempotent_skipped"}:
         raise ValueError("normalization_loader_action_invalid")
@@ -176,7 +182,7 @@ def load_normalized_price(
                     "source_id": source_id,
                     "observation_id": str(observation_id),
                     "reason": reason,
-                    "normalization_version": 1,
+                    "normalization_version": 2,
                 },
                 source_record_id,
             )
