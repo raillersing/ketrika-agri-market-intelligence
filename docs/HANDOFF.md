@@ -17,14 +17,17 @@ Reprise C explicitement autorisée par l'utilisateur : worktree coordinateur
 work/r06-http-takeover-20261014, base a573f90. Antigravity 186ab4a/cinq dirty
 préservés dans docs/evidence/R0.6/antigravity_snapshot, sans mutation.
 ADR-063/SPECS et migration QA 0010 précèdent le nouveau garde SQL atomique,
-arrêt durable, HTTP/robots/redirect/retry et binding collecte. Tests ciblés
-verts, réception complète/intégration non acquises. Ne pas intégrer l'ancien
-commit ni présenter le snapshot comme une livraison.
-R0.6 reste IN_PROGRESS ; R0.7 exige R0.6 DONE, aucun autre ID éligible.
-Ne pas relancer B2 à réception de C : reprendre ses preuves de code exact,
-puis qualifier seulement le nouveau lot stabilisé selon AGENTS §3.3.
+arrêt durable, HTTP/robots/redirect/retry et binding collecte. C reçu et intégré
+main 173c41a : Windows 80378 FINAL 0/1462 backend/35 web/build, inclusion
+63 fichiers/805 cas/118 intégrations, vingt fichiers exacts. Originaux dans
+LOT_C_RECEPTION.md/json ; aucun transfert de l'ancien commit non qualifié.
+R0.6 DONE logiciel ; R0.7 désormais éligible, programme R non terminé.
+Ne pas relancer les checks reçus après seules clôtures documentaires.
 Les 482 références/764 prix/674 versions Bronze actifs sont inchangés,
-schéma actif 0002. Pas de tag final ni qualification live/modèle/usage humain.
+schéma actif 0002. Migration active non autorisée/exécutée : le nouveau garde
+SQL refuse toute acquisition tant que ses tables manquent ; le déploiement
+requiert migration contrôlée séparée. Pas de tag final ni qualification
+live/modèle/usage humain.
 
 Méthode révisée à la demande utilisateur le 2026-10-13 : AGENTS §3.3 et
 EXECUTION_METHOD.md/ADR-057 prévalent pour organiser les prochaines réalisations.

@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T08:38:21Z] R0.6 — DONE, lots A/B1/B2/C reçus sur main
+
+- C intégré atomiquement main 173c41a (19837 FINAL 0, 44 fichiers/1663 ajouts/132 retraits), application/tests exactement a1ee504 qualifié par Windows 80378 FINAL 0/1462 backend/35 web/build. Vingt fichiers comparés 4aa5c0 FINAL 0/aucune différence ; seuls conflits documentaires résolus, tous journaux conservés.
+- Originaux backend/frontend, LOT_C_RECEPTION.md/json versionnés ; inclusion R0.6 63 fichiers/805 cas/118 intégrations sans absence ; HTTP 95,4545 %/budget 99,1453 %, seuils core/extraction/normalize verts. Pas de QA cumulative répétée, aucun état intermédiaire rouge reçu sur main.
+- Diff/gouvernance 37296 FINAL 0/74 cohérents ; scan final 573451 octets/sans fuite. Préservation post-intégration 70348 FINAL 0 : 482 SR/47b4402859acc41e3ae91fdb128e56c6, 764 prix/4b2586cb8e422f11c4873ad513d66bc1, head actif 0002 ; Bronze 674/1377481 octets/83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c/zéro delete markers.
+- R0.6 DONE logiciel/lignée/provenance/checks/reprise ; BL-010 résolu pour HTTP/robots, BL-013 reste R2.1. Pas de collecte live, modèle marché, déploiement ni usage humain qualifié ; migration active non faite, garde SQL fail-closed tant que schéma actif absent. Aucun tag de phase avant R0.9.
+- Suite éligible R0.7 : qualification fondée sur preuves, ADR/SPECS avant extension de commande ; relire ses contrats et choisir un lot fonctionnel complet. Programme R non terminé.
+
 ### [2026-10-14T08:37:00Z] R0.6 C — préparation intégration atomique main
 
 - Réception Windows 80378 FINAL 0 sur a1ee504, 1462 backend/35 web/build et inclusion 805/118 prouvée. Intégration --no-commit de 1990011/a1ee504/ee49e5d ; conflits uniquement PROGRESS et miroir, tous journaux conservés, aucun conflit applicatif.
@@ -303,7 +311,7 @@
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
-| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | 03e5750 (B2 reçu main) | A/B1/B2 reçus, Windows 48496 FINAL 0/1396 backend/35 web/build ; inclusion 732/108 ; snapshot exact et actif préservé ; réception C HTTP/budget Antigravity requise | B-R051–053 résolus ; BL-016 résolu ; BL-010 ouvert ; BL-013 partiel/R2.1 |
+| R0.6 | MUST | DONE | 2026-10-10T19:32:37Z | 2026-10-14T08:38:21Z | 173c41a | A/B1/B2/C intégrés ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118, vingt fichiers exacts et données actives préservées ; voir LOT_C_RECEPTION.md | B-R054–058 résolus ; BL-010/016 résolus ; BL-013 partiel/R2.1 ; pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
 | R0.9 | MUST | TODO | — | — | — | — | — |

@@ -1,6 +1,6 @@
 # R0.6 C — réception HTTP durable
 
-Logiciel reçu sur branche ; intégration main et clôture R0.6 requises.
+Logiciel reçu et intégré atomiquement main 173c41a ; R0.6 DONE.
 Autorisation explicite de reprise, snapshot Antigravity non qualifié conservé
 sans mutation du worktree original (cinq archives gzip lossless).
 
