@@ -3,6 +3,15 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T07:49:00Z] R0.6 C — réception complète en cours sur branche isolée
+
+- Reprise C explicitement autorisée. Worktree /home/raillersing/projects/ketrika-qa-worktrees/r06-http-takeover-20261014, branche work/r06-http-takeover-20261014, commit 1990011c26484a2f9af43b60334a5faa88e32609 (35 fichiers). Antigravity 186ab4a/cinq dirty inchangés et snapshot gzip lossless aux cinq SHA vérifiés.
+- ADR-063/SPECS/migration 0010 sur branche avant code : quotas source/domaine atomiques SQL par défaut, cadence partagée, arrêt durable hors transaction métier ; robots/redirect/retry/UA gardés, binding collecte, 304 sans référence connue refuse avant Bronze. Aucun DDL runtime/repli mémoire implicite.
+- Types 279 fichiers/31 unités régressions verts (22827) ; garde HTTP 38 (30695), budget 17 (18448), SQL huit (11325), deux SQL client natif et collecte/révision verts (71949 partiel rouge dû fixture), correction Dagster positive 18299 FINAL 0/1/26,95 s. Incidents et originaux conservés sur branche. Aucune réception complète déduite des cibles.
+- Check Windows réel dev.ps1 check session 10681 lancé sur 1990011 figé ; reprendre ce processus, ne pas changer application/tests ni démarrer suite mutante QA concurrente. Manifest minimum 805/118. Après vert : originaux/inclusion/couvertures/frontend/préservation/intégration atomique. R0.6 IN_PROGRESS, R0.7 non éligible.
+- Préservation 60636 FINAL 0 : 482 SR/47b4402859acc41e3ae91fdb128e56c6 ; 764 prix/4b2586cb8e422f11c4873ad513d66bc1 ; head actif 0002, Bronze 674 versions/1377481 octets/83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c/zéro delete markers. Aucun service actif arrêté/migration active.
+- Scan raw 85892 FINAL 0/150698 octets puis scan staged gzip 55965 FINAL 0/66726 octets, aucune fuite ; diff vert. Main ne reçoit que ce checkpoint documentaire, pas le produit C ni un tag.
+
 ### [2026-10-14T02:32:15Z] R0.6 B2 — terminé et intégré, lot C attendu
 
 - Commit atomique main 03e5750 (46401 FINAL 0, trente fichiers/991 ajouts/19 retraits), contenu applicatif 9d2076b qualifié par Windows 48496 FINAL 0/1396 backend/35 web/build. Quinze fichiers main identiques à la qualification 8310 FINAL 0 ; seules résolutions documentaires, journaux conservés. Diff 85054/gouvernance et scan 88712 FINAL 0/526392 octets/sans fuite. Aucun état applicatif intermédiaire reçu sur main, aucun check redondant.
