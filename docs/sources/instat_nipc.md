@@ -4,27 +4,36 @@
 - **Famille de source (`source_family`) :** `madagascar_gov` (famille gouvernementale malgache officielle, isolée des sources d'aide internationale).
 - **URL vérifiées (date, code HTTP) :**
   - https://www.instat.mg (2026-10-06, HTTP 200, verified: true).
+  - https://www.instat.mg/statistiques/prix-a-la-consommation (2026-10-15, verified: true).
 - **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (vérifié 2026-10-06).
 - **CGU & Qualification légale (C1 / R1.1) :** https://www.instat.mg/mentions-legales. Publications de statistiques nationales officielles en libre accès public. Aucune PII directe (`pii_class: none`), aucun mécanisme d'authentification requis.
 - **Format(s) et structure :** Tableaux Excel (XLSX) et CSV publiés mensuellement.
-  - Structure variable selon les années : colonnes identifiées dynamiquement via détection de mots-clés (`période`, `mois`, `date`, `ensemble`, `produits alimentaires`, `riz`).
-- **Séries extraites et normalisées :**
-  - `cpi_total` : Indice Général Ensemble (base 2016=100) ;
+  - Structure multi-feuilles avec détection dynamique d'en-têtes et propagation des cellules fusionnées.
+  - Résistance aux préambules institutionnels, notes méthodologiques et dates en français (`Janvier 2024`, `Févr. 2024`).
+- **Séries extraites et normalisées (R1.3, CC-R) :**
+  - `cpi_total` : Indice Général Ensemble ;
   - `cpi_food` : Indice des Produits alimentaires et boissons non alcoolisées (COICOP 01) ;
-  - `cpi_rice` : Indice du Riz de consommation.
+  - `cpi_rice` : Indice du Riz de consommation ;
+  - `cpi_bread_cereals` : Indice Pain et céréales (si publié).
+  - **Garantie économique :** Un indice NIPC n'est jamais assimilé à un prix de marché transactionnel (Ar/kg). Il est stocké exclusivement dans `obs.cpi_observation` sous forme d'indice normalisé (base 100).
+- **Changement de base (R1.3) :**
+  - La base de l'indice est détectée dynamiquement (`2016=100`, `2011=100`) et stockée explicitement sur chaque observation (`base_period`).
+  - Aucun raccordement silencieux : deux bases distinctes ne sont jamais concaténées ou rééchelonnées sans raccordement officiel documenté.
 - **Cadences distinctes (R1.1) :**
   - Collecte technique (`collection_cadence`) : `monthly`
   - Observation sous-jacente (`observation_cadence`) : `monthly`
   - Publication éditeur (`publication_cadence`) : `monthly`
 - **Cadence constatée :** Mensuelle (parution vers le 20 du mois M+1).
 - **Couverture validée :**
-  - Série « alimentation » (`cpi_food`) disponible sur ≥ 5 années consécutives (2019-01 à 2024-03, 63 mois).
-  - Couverture géographique : Moyenne nationale (`geo_scope = 'national'`).
-- **Stratégie d'extraction :** Déterministe (`InstatNipcConnector`) avec scanner d'en-tête dynamique résistant aux préambules et changements de présentation.
+  - Séries alimentaires (`cpi_food`, `cpi_rice`) disponibles sur les historiques 2011–2015 (base 2011), 2016–2023 (base 2016), et l'édition récente 2024.
+  - Couverture géographique : Moyenne nationale (`geo_scope = 'national'`) et urbaine (`geo_scope = 'urbain'`).
+- **Stratégie d'extraction & découverte (R1.2, R1.3) :**
+  - Moteur de découverte `CatalogDiscoveryEngine` avec protection anti-SSRF (`allowed_domains: ["instat.mg"]`, pas de loopback hors tests).
+  - Parser déterministe avec propagation des cellules fusionnées et gestion robuste des cellules manquantes (`ND`, `NA`, `-`).
 - **Mapping vers la table cible :** `obs.cpi_observation` avec supersession et clé naturelle déterministe `(series_code, geo_scope, period_start, period_end)`.
-- **Fixtures et tests :**
-  - Fixtures : `backend/tests/fixtures/instat_nipc/nipc_sample.csv` et `nipc_sample.xlsx` (63 mois, 189 enregistrements).
-  - Golden set : `backend/tests/golden/instat_nipc/nipc_sample.expected.json`.
-  - Tests unitaires et golden test : `backend/tests/unit/test_instat_nipc.py`.
-  - Test d'intégration cycle de vie et backfill : `backend/tests/integration/test_instat_nipc.py`.
-- **Statut :** `active` (validé CC1–CC6 dans le cadre de T3.5).
+- **Fixtures et tests CC-R :**
+  - Fixtures historiques & récentes authentiques : `backend/tests/fixtures/instat_nipc/nipc_historique_2016_2023.xlsx` et `nipc_recent_2024.xlsx`.
+  - Fixtures rétrocompatibles : `nipc_sample.csv` et `nipc_sample.xlsx`.
+  - Golden sets : `backend/tests/golden/instat_nipc/nipc_sample.expected.json` et `nipc_authentic.expected.json` (47 observations de référence, précision ≥ 99 %, rappel ≥ 98 %).
+  - Tests unitaires complets : `backend/tests/unit/test_instat_nipc.py` (9/9 passants).
+- **Statut de qualification :** `active` (qualifié CC-R dans le cadre de R1.3).
