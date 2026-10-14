@@ -14,6 +14,10 @@
     },
     "R0.6": {
       "tests": [
+        "tests/unit/test_http_budget_atomic.py",
+        "tests/unit/test_http_guard.py",
+        "tests/unit/test_core_policy_http.py",
+        "tests/integration/test_http_budget_sql.py",
         "tests/unit/test_connector_stages.py",
         "tests/unit/test_source_definitions.py",
         "tests/unit/test_source_provenance_check.py",
@@ -74,8 +78,8 @@
         "tests/integration/test_nasa_power.py",
         "tests/integration/test_wfp_hdx_mdg.py"
       ],
-      "minimum_tests": 732,
-      "minimum_integration_tests": 108
+      "minimum_tests": 805,
+      "minimum_integration_tests": 118
     },
     "R0.5": {
       "tests": [

@@ -3,6 +3,11 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T08:37:00Z] R0.6 C — préparation intégration atomique main
+
+- Réception Windows 80378 FINAL 0 sur a1ee504, 1462 backend/35 web/build et inclusion 805/118 prouvée. Intégration --no-commit de 1990011/a1ee504/ee49e5d ; conflits uniquement PROGRESS et miroir, tous journaux conservés, aucun conflit applicatif.
+- Quit des cherry-picks conserve index ; un seul commit produit main du contenu final qualifié, aucun état intermédiaire rouge reçu. Vingt fichiers backend, diff/gouvernance/scan puis préservation post-intégration encore à vérifier. R0.6 IN_PROGRESS jusque clôture complète ; pas de tag.
+
 ### [2026-10-14T08:00:00Z] R0.6 C — correction assertion de migration, nouvelle réception
 
 - 10681 FINAL 1 sur 1990011 : 1462 collectés, 65 succès/un échec/464,34 s, lint/format 280/types 279 verts ; frontend non démarré. Cause : test Gold épinglé 0009, migration ajout seule 0010 correcte. Original rouge archivé sur branche, aucun arrêt volontaire ni contrôle Gold assoupli.
@@ -17,6 +22,39 @@
 - Check Windows réel dev.ps1 check session 10681 lancé sur 1990011 figé ; reprendre ce processus, ne pas changer application/tests ni démarrer suite mutante QA concurrente. Manifest minimum 805/118. Après vert : originaux/inclusion/couvertures/frontend/préservation/intégration atomique. R0.6 IN_PROGRESS, R0.7 non éligible.
 - Préservation 60636 FINAL 0 : 482 SR/47b4402859acc41e3ae91fdb128e56c6 ; 764 prix/4b2586cb8e422f11c4873ad513d66bc1 ; head actif 0002, Bronze 674 versions/1377481 octets/83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c/zéro delete markers. Aucun service actif arrêté/migration active.
 - Scan raw 85892 FINAL 0/150698 octets puis scan staged gzip 55965 FINAL 0/66726 octets, aucune fuite ; diff vert. Main ne reçoit que ce checkpoint documentaire, pas le produit C ni un tag.
+
+### [2026-10-14T08:31:15Z] R0.6 C — réception complète verte, intégration restante
+
+- Windows 80378 FINAL 0 sur a1ee504 : lint/format 280/types 279 ; 1462 backend/1540,70 s/zéro failure-error-skip/154 intégrations union ; core 93,8982070561018 %, extraction 86,3768115942029 %, normalize 90,37758830694276 %. Frontend 35/quatre suites/21,29 s/build 15 pages, quatre étapes code 0, reçu 533c6633-279f-419c-9be3-9506ec609b6b.
+- Originaux copiés sans transformation ; vérification readonly de JUnit, manifest et snapshot : 63 fichiers/805 cas/118 intégrations/aucune absence ; vingt fichiers backend identiques au contenu effectivement testé. SHA XML cad608e41926907943eedd7afbd8b2e64ed76577bae8762fed52cef3a1580d3c. HTTP 95,4545 %/budget 99,1453 %. Aucun test/science/seuil supprimé.
+- Préservation 1079 FINAL 0 : mêmes 482 SR/47b4402859acc41e3ae91fdb128e56c6, 764 prix/4b2586cb8e422f11c4873ad513d66bc1, head actif 0002, Bronze 674/1377481 octets/83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c/zéro delete markers. Antigravity inchangé ; B-R058 résolu par le check complet.
+- LOT_C_RECEPTION.md/json et originaux versionnés ; intégration atomique main encore requise, R0.6 IN_PROGRESS jusque-là. Pas de collecte live/modèle marché/déploiement/usage humain qualifié ni tag.
+
+### [2026-10-14T07:58:35Z] R0.6 C — réception interrompue par assertion de version
+
+- Windows 10681 FINAL 1 sur 1990011 : lint/format 280/types 279/gouvernance verts ; 1462 collectés, 65 succès/un échec/464,34 s, frontend non démarré. B-R058 : test_gold_publication_provenance attend encore exactement 0009 ; migration QA effective 0010 correcte. Aucun check interrompu volontairement.
+- XML rouge original copié sans transformation et gzip -n, lot-c-backend-check-red-tests.xml.gz. Seul attendu exact modifié à 0010 ; recherche des autres pins 0009 dans tests/scripts : aucun autre. Pas de suppression/assouplissement de contrôle Gold, aucune migration active.
+- Correction de test invalide la réception applicative ; nouveau commit et check complet requis. R0.6 IN_PROGRESS ; ne pas réutiliser le rouge ni annoncer réception. Main checkpoint 79ec7ca à mettre à jour après lancement du processus corrigé.
+
+### [2026-10-14T07:45:00Z] R0.6 C — lot stabilisé, check complet requis
+
+- 71949 FINAL 1 : trois succès/un échec/31,23 s, deux nouveaux SQL clients natifs verts et collecte/replay/révision sans refetch verte. Fixture Dagster disabled correctement refusée ; B-R057 corrigé dans seul scénario synthétique (active, robots 404). 18299 FINAL 0 : matérialisation native Bronze/Silver réelle/1 test/26,95 s. Original rouge et huit SQL verts copiés sans transformation.
+- Contenu fonctionnel complet sur branche isolée : garde SQL par défaut, quotas/cadence/arrêts, client, binding même en création paresseuse, garde 304 et fixtures HTTP mises en conformité. Manifest R0.6 minimum 805/118, quatre fichiers ajoutés, aucune sélection supprimée.
+- 43338d FINAL 0 : cinq snapshots Antigravity aux SHA exacts du manifeste, diff sans erreur. Types 279 et tests ciblés reçus ne remplacent pas la réception complète. Figer le code, scanner/committer branche, lancer une seule réception Windows réelle ; aucune réception main/DONE/tag avant originaux verts, inclusion et préservation.
+- Diff staged 2 uniquement espaces des originaux Antigravity/XML rouge ; originaux non normalisés : scan raw 85892 FINAL 0/150698 octets/sans fuite puis gzip -n lossless, b9d3cf FINAL 0/cinq SHA décompressés identiques/diff vert. Rapport rouge désormais lot-c-collect-red-tests.xml.gz, aucune preuve supprimée.
+
+### [2026-10-14T07:40:00Z] R0.6 C — développement ciblé, réception non acquise
+
+- Migration QA 0010 appliquée seulement par bash scripts/dev.sh qa-isolated prepare, 53162 FINAL 0 ; aucun DDL runtime. Quotas source/domaine atomiques, cadence partagée et arrêt indépendant codés ; binding authorize_collection, robots origin-scopé, retries/redirects gardés et 304 sans artefact connu refusé avant Bronze.
+- 18448 FINAL 0 : types budget/17 unités/7,17 s. 77760 FINAL 0 : types trois fichiers/26 garde HTTP/7,62 s ; nouveaux négatifs stabilisés 30695 FINAL 0/types quatre fichiers/38 garde/5,21 s. 11325 FINAL 0 : huit SQL/24,66 s dont concurrence/processus séparé/rollback ; originaux .venv/lot-c-sql-tests.xml. Régressions 22827 FINAL 0 : types 279 fichiers/31 unités propriétaires/33,43 s. Pas de QA cumulative redondante.
+- Incidents B-R054–056 résolus ; 24950 rouge 59/1 conservé par journal, correctif Retry-After ciblé 81338 FINAL 0/1/12,05 s. Deux scénarios SQL client natif et collecte encore en réception 71949 ; check complet unique sur source figée reste obligatoire.
+- Préservation active 60636 FINAL 0 : 482 SR/47b4402859acc41e3ae91fdb128e56c6, 764 prix/4b2586cb8e422f11c4873ad513d66bc1, head 0002 ; Bronze 674/1377481 octets/83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c/zéro delete markers. Gouvernance 5413 FINAL 0/74 statuts. R0.6 IN_PROGRESS, Antigravity inchangé.
+
+### [2026-10-14T07:20:00Z] R0.6 C — reprise coordinateur autorisée
+
+- Autorisation utilisateur explicite, worktree work/r06-http-takeover-20261014 basé a573f90. Antigravity HEAD 186ab4a et cinq fichiers dirty conservés dans antigravity_snapshot ; aucun fichier de son worktree modifié.
+- Audit : DDL runtime, réservation source/domaine séparée, singleton mémoire et disabled non durable ; draft non accepté. ADR-063/SPECS avant code, B2 reste reçu sans répétition du check.
+- Mini-plan : (1) migration/garde atomique ; (2) HTTP/robots/retry/redirect ; (3) binding collecte ; (4) tests négatifs et SQL isolé ; (5) un check complet sur source figée ; (6) preuves/préservation/intégration atomique. R0.6 IN_PROGRESS, aucune tâche suivante DONE ni migration active.
 
 ### [2026-10-14T02:32:15Z] R0.6 B2 — terminé et intégré, lot C attendu
 

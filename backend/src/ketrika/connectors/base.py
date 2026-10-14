@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 
 from ketrika.core.bronze import BronzeArtifact, BronzeStore
 from ketrika.core.http import PoliteHttpClient
-from ketrika.core.policy import PolicyEngine
+from ketrika.core.policy import PolicyEngine, PolicyStop
 from ketrika.core.settings import Settings, get_settings
 
 
@@ -97,6 +97,8 @@ class RunContext:
             self.bronze_store = BronzeStore()
 
         resp = self.http_client.get(item.url)
+        if resp.is_not_modified:
+            raise PolicyStop("http_not_modified_without_known_artifact")
         content_bytes = resp.content
         resp_mime = resp.headers.get("content-type", mime_type).split(";")[0].strip()
 

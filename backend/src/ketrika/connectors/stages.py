@@ -84,6 +84,14 @@ def authorize_collection(connector: Connector, ctx: RunContext) -> None:
         definition.status == "disabled" or definition.crawl_permission == "forbidden"
     ):
         raise PolicyStop("source_collection_disabled")
+    if ctx.http_client is None:
+        ctx.http_client = PoliteHttpClient(policy_engine=ctx.policy_engine)
+    if isinstance(ctx.http_client, PoliteHttpClient):
+        ctx.http_client.bind_source(
+            connector.source_id,
+            definition.daily_request_budget if definition is not None else 500,
+            definition.max_rps if definition is not None else 0.2,
+        )
 
 
 def collect_connector_bronze(

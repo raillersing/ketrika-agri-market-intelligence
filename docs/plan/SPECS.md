@@ -1046,6 +1046,29 @@ Chaque valeur LLM porte `evidence = {page: int, text: str}`. On applique `verify
 
 ## 12. Politique HTTP (normative)
 
+### 12.1 Persistance et périmètre du garde (ADR-063)
+
+Migration 0010_http_policy_budget : meta.http_daily_budget (scope source/domain,
+scope_key, day_utc, request_count, budget_limit), meta.http_domain_pacing
+(domain, next_allowed_at UTC, max_rps), meta.http_policy_stop
+(scope source/origin, scope_key, reason_code, status_code, stopped_at UTC).
+Toutes les réservations source/domaine et le créneau de débit sont atomiques,
+committées avant émission ; plafond partagé minimum rencontré, domaine au plus
+500/jour. Le count reste historique exact même après baisse sous usage déjà consommé.
+Verrous dans ordre déterministe ; crash consomme sa réservation. Aucune création
+de table dans le client, aucun repli mémoire implicite si SQL indisponible.
+Chaque émission (robots/retry/redirect compris) passe ce garde unique.
+Les limites du registre sont liées au client avant discovery ; caller peut réduire,
+jamais augmenter. Arrêts persistants indépendants de la transaction métier, aucun
+réseau après arrêt même au redémarrage ; ligne source disabled synchronisée sans
+attendre une ligne verrouillée, journal durable faisant autorité.
+Robots par origin exact (scheme/host/port), absent/expiré fail-closed ; acquisition
+contrôlée, 404/410 seuls permissifs. Pas de redirect automatique ni option de bypass.
+Retry-After entier ou date HTTP, attente maximale locale 300 s : au-delà refus
+temporaire sans désactivation. Header/cookie/auth cross-origin supprimés après
+construction du request, identité bot réinjectée. Tests inertes peuvent injecter
+backend mémoire explicitement ; cette injection ne qualifie pas la durabilité.
+
 - `User-Agent` : `"{BOT_USER_AGENT}; {BOT_CONTACT_EMAIL}"`. Jamais d'UA de navigateur usurpé.
 - `robots.txt` lu (`protego`) et mis en cache 24 h. URL refusée : `PolicyStop`, aucune requête.
 - Débit : token bucket **par domaine**, `max_rps` issu du registre (défaut 0,2 req/s pour les domaines `.gov.mg` et `.mg`). Plafond journalier : `daily_request_budget`.

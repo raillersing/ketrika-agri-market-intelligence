@@ -68,6 +68,7 @@ def test_wfp_hdx_backfill_dq_and_rebuild_lifecycle(
     csv_url = httpserver.url_for(endpoint_path)
 
     bronze_store = BronzeStore()
+    httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy = PolicyEngine()
     http_client = PoliteHttpClient(policy_engine=policy)
     from tests.local_connector import local_connector

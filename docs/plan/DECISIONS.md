@@ -2,6 +2,18 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-063 : garde HTTP durable, quotas atomiques et arrêt persistant
+
+- **Date/statut :** 2026-10-14, adopté avant code sur work/r06-http-takeover-20261014 ; aucune réception produit.
+- **Contexte :** reprise C explicitement autorisée ; draft Antigravity conservé sans modification et non qualifié. Compteurs mémoire, transactions distinctes et DDL au runtime ne satisfont pas la durabilité.
+- **Décision :** migration explicite 0010_http_policy_budget. Réserver ensemble source/jour UTC et hostname/jour UTC dans une transaction PostgreSQL indépendante avant chaque émission (robots, retry, redirect inclus). Plafond domaine conservateur 500, réduit par la limite source et les limites déjà rencontrées ; aucune réservation partielle. Une réservation peut être consommée sans émission en cas de crash : aucun remboursement optimiste.
+- **Cadence :** créneau partagé par hostname, réservé dans cette même transaction ; débit minimum déjà rencontré, attente hors transaction. Pas de deuxième throttle local. Échec SQL : PolicyStop avant réseau, sans repli mémoire ; backend mémoire uniquement explicitement injecté dans tests.
+- **Arrêt :** journal SQL source/origin indépendant, sans FK bloquant une transaction de collecte. Challenge ou 401/403 : aucun retry, désactivation mémoire et persistante ; source SQL disabled lorsque sa ligne peut être verrouillée sans attendre, sinon journal reste autorité de refus. Aucun rétablissement automatique.
+- **HTTP :** robots cache origin exact 24 h, absent/expiré inconnu refusé sauf acquisition contrôlée des règles ; 404/410 permettent, autres erreurs refusent. Redirections manuelles et chaque tentative contrôlée ; rejet userinfo, options de bypass, schémas non HTTP(S). En cross-origin supprimer authentification, cookies et conditions du vrai request construit. Retry-After entier/date UTC, aucune attente anticipée ; attente >300 s refuse temporairement sans disabled.
+- **Contrats :** bind source avant discovery/fetch depuis registre, limites caller ne peuvent augmenter celles du registre. Les fixtures autorisées par authorize_collection utilisent le même garde, sans exemption SQL/S3. Aucun connecteur privé, aucune dépendance nouvelle, aucune migration active.
+- **Alternatives :** DDL runtime, SQLite/mémoire par défaut, réservations séparées et redirect automatique rejetés.
+- **Réception :** négatifs transport inerte et SQL isolé concurrence/restart/rollback/cadence, collect réelle raccordée ; un check Windows intégral final du lot stabilisé. R0.6 IN_PROGRESS.
+
 ## ADR-062 : grain prix versionné et rapprochement historique prudent
 
 - **Date/statut :** 2026-10-13, adopté avant code sur work/r06-price-identity-20261013 ; réception produit non acquise.

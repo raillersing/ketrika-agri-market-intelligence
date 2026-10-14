@@ -66,6 +66,7 @@ def test_faostat_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, json_
     api_url = httpserver.url_for(endpoint_path)
 
     bronze_store = BronzeStore()
+    httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy = PolicyEngine()
     http_client = PoliteHttpClient(policy_engine=policy)
     connector = FaostatConnector()

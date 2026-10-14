@@ -60,6 +60,7 @@ def test_rebuild_preserves_exact_counts_offline(httpserver, db_session):
     csv_url = httpserver.url_for(endpoint_path)
 
     bronze_store = BronzeStore()
+    httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy = PolicyEngine()
     http_client = PoliteHttpClient(policy_engine=policy)
 

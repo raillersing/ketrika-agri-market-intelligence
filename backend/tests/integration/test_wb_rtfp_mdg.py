@@ -61,6 +61,7 @@ def test_wb_rtfp_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, csv_c
     csv_url = httpserver.url_for(endpoint_path)
 
     bronze_store = BronzeStore()
+    httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy = PolicyEngine()
     http_client = PoliteHttpClient(policy_engine=policy)
     connector = WbRtfpMdgConnector()

@@ -1,0 +1,28 @@
+{
+  "captured_at": "2026-10-14T07:19:00Z",
+  "base_commit": "186ab4a",
+  "qualification": "UNQUALIFIED_DIRTY_SNAPSHOT",
+  "archive_format": "gzip -n; filename = path with / replaced by __, plus .txt.gz; sha256 is decompressed UTF-8 text",
+  "files": [
+    {
+      "path": "src/ketrika/core/http.py",
+      "sha256": "fa991bc68963c9c82e283840ebc7b800867d10bdf93244da0666e4719c3273e6"
+    },
+    {
+      "path": "src/ketrika/core/http_budget.py",
+      "sha256": "494664d822dd7df4945abc8ee4618af42ea8e1bd6e8c76f7e2dee455bcc8c402"
+    },
+    {
+      "path": "src/ketrika/core/policy.py",
+      "sha256": "934d0c4b308ba30a3bdce41fb561cb4e6936e11f5a34745697ee91ac34fbf3cb"
+    },
+    {
+      "path": "tests/unit/test_core_http_conformance.py",
+      "sha256": "ba5f049ce948bbc4680dd0d94ba7565f8bb9119d1ad7c63f51e7503cdfc848db"
+    },
+    {
+      "path": "tests/unit/test_core_policy_http.py",
+      "sha256": "eae1200c4ec2b658798082b302c002177bbdffaa71a9c1a3323aa1bea089b7b2"
+    }
+  ]
+}

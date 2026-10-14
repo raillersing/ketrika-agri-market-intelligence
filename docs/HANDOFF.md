@@ -13,12 +13,13 @@ complémentaire 2/2 sur deux véritables objets Bronze QA, ancienne clé/preuve/
 valeur préservées. Aucune reclassification/backfill ni migration active.
 Rapports originaux et LOT_B2_RECEPTION.md/json dans docs/evidence/R0.6.
 
-Prochain travail autorisé : réception du lot C HTTP/budgets réservé à
-Antigravity. État vérifié 42247 : HEAD 186ab4a et cinq fichiers non committés,
-pas de nouveau rapport livré ; ne pas intégrer ce snapshot ni l'ancien
-commit audité rouge en acceptation. Fournir commit corrigé, rapport, ADR/SPECS,
-migration coordonnée (0007–0009 déjà occupés) et preuves d'acceptation ;
-sinon autorisation explicite de reprise avant de prendre le travail C.
+Reprise C explicitement autorisée par l'utilisateur : worktree coordinateur
+work/r06-http-takeover-20261014, base a573f90. Antigravity 186ab4a/cinq dirty
+préservés dans docs/evidence/R0.6/antigravity_snapshot, sans mutation.
+ADR-063/SPECS et migration QA 0010 précèdent le nouveau garde SQL atomique,
+arrêt durable, HTTP/robots/redirect/retry et binding collecte. Tests ciblés
+verts, réception complète/intégration non acquises. Ne pas intégrer l'ancien
+commit ni présenter le snapshot comme une livraison.
 R0.6 reste IN_PROGRESS ; R0.7 exige R0.6 DONE, aucun autre ID éligible.
 Ne pas relancer B2 à réception de C : reprendre ses preuves de code exact,
 puis qualifier seulement le nouveau lot stabilisé selon AGENTS §3.3.

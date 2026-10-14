@@ -27,6 +27,7 @@ from tests.integration.test_connector_pipeline import CSV_V1, CSV_V2_MODIFIED
 def test_committed_bronze_replayed_without_http_then_revision_is_append_only(httpserver):
     identifier = f"dummy_stages_{uuid.uuid4().hex}"
     path = f"/{identifier}.csv"
+    httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     httpserver.expect_request(path).respond_with_data(CSV_V1, content_type="text/csv")
     request_count = [0]
 
@@ -51,16 +52,16 @@ def test_committed_bronze_replayed_without_http_then_revision_is_append_only(htt
             with Session(engine) as session:
                 batch = collect_connector_bronze(connector, ctx, session)
                 session.commit()
-            assert request_count == [1]
+            assert request_count == [2]
             assert len(batch.artifacts) == 1
             with Session(engine) as session:
                 stats = consume_connector_silver(connector, ctx, session, batch)
                 session.commit()
-            assert stats["n_inserted"] == 3 and request_count == [1]
+            assert stats["n_inserted"] == 3 and request_count == [2]
             with Session(engine) as session:
                 replay = consume_connector_silver(connector, ctx, session, batch)
                 session.commit()
-            assert replay["n_inserted"] == 0 and replay["n_skipped"] == 3 and request_count == [1]
+            assert replay["n_inserted"] == 0 and replay["n_skipped"] == 3 and request_count == [2]
             httpserver.clear()
             httpserver.expect_request(path).respond_with_data(
                 CSV_V2_MODIFIED, content_type="text/csv"
@@ -68,14 +69,14 @@ def test_committed_bronze_replayed_without_http_then_revision_is_append_only(htt
             with Session(engine) as session:
                 revision = collect_connector_bronze(connector, ctx, session)
                 session.commit()
-            assert request_count == [2]
+            assert request_count == [3]
             assert revision.ingestion_run_id != batch.ingestion_run_id
             assert revision.artifacts[0].source_record_id != batch.artifacts[0].source_record_id
             with Session(engine) as session:
                 updated = consume_connector_silver(connector, ctx, session, revision)
                 session.commit()
             assert (
-                updated["n_superseded"] == 1 and updated["n_skipped"] == 2 and request_count == [2]
+                updated["n_superseded"] == 1 and updated["n_skipped"] == 2 and request_count == [3]
             )
         with Session(engine) as session:
             rows = session.scalars(
@@ -112,6 +113,7 @@ def test_committed_bronze_replayed_without_http_then_revision_is_append_only(htt
 def test_dagster_materializes_real_bronze_input_once_and_silver_rows(httpserver):
     identifier = f"dummy_dagster_{uuid.uuid4().hex}"
     path = f"/{identifier}.csv"
+    httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     httpserver.expect_request(path).respond_with_data(CSV_V1, content_type="text/csv")
     discoveries = [0]
 
@@ -132,7 +134,7 @@ def test_dagster_materializes_real_bronze_input_once_and_silver_rows(httpserver)
                 Source(
                     source_id=identifier,
                     spec={"dataset_mode": "test", "authenticity": "synthetic", "verified": False},
-                    status="disabled",
+                    status="active",
                 )
             )
             session.commit()

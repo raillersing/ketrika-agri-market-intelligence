@@ -49,6 +49,23 @@ CHALLENGE_PATTERNS = [
 ]
 
 
+def canonical_origin(url: str) -> str:
+    """Validate network URL and retain scheme/host/port as the robots identity."""
+    parsed = urlparse(url)
+    try:
+        port = parsed.port
+    except ValueError:
+        raise PolicyStop("http_invalid_url") from None
+    if parsed.scheme.lower() not in ("http", "https") or not parsed.hostname:
+        raise PolicyStop("http_invalid_url")
+    if parsed.username is not None or parsed.password is not None:
+        raise PolicyStop("http_url_credentials_forbidden")
+    host = parsed.hostname.lower()
+    host = "[" + host + "]" if ":" in host else host
+    suffix = "" if port is None or port == (443 if parsed.scheme == "https" else 80) else f":{port}"
+    return f"{parsed.scheme.lower()}://{host}{suffix}"
+
+
 def detect_challenge(content: str, status_code: int = 200) -> bool:
     """Detect if response content or status indicates an anti-bot challenge or block (SPECS §12)."""
     if status_code in (401, 403):
@@ -125,37 +142,44 @@ class PolicyEngine:
         """Cache robots.txt parsed rules for domain."""
         parser = Protego.parse(robots_content)
         with self._lock:
-            self._robots_cache[domain] = (parser, time.monotonic())
+            origin = canonical_origin(domain if "://" in domain else "https://" + domain)
+            self._robots_cache[origin] = (parser, time.monotonic())
+
+    def has_robots_txt(self, url: str) -> bool:
+        origin = canonical_origin(url)
+        with self._lock:
+            cached = self._robots_cache.get(origin)
+            return cached is not None and time.monotonic() - cached[1] < 86400
 
     def is_allowed_by_robots(self, url: str, user_agent: str | None = None) -> bool:
         """Check if URL is allowed according to cached robots.txt."""
-        parsed = urlparse(url)
-        domain = parsed.netloc.lower()
+        domain = canonical_origin(url)
         ua = user_agent or get_settings().bot_user_agent
 
         with self._lock:
             cached = self._robots_cache.get(domain)
             if cached is None:
-                return True
+                return False
             parser, cached_at = cached
             # Expire after 24h (86400s)
             if time.monotonic() - cached_at > 86400:
                 del self._robots_cache[domain]
-                return True
+                return False
 
         return bool(parser.can_fetch(url, ua))
 
     def check_pre_fetch(self, url: str, max_rps: float | None = None) -> None:
         """Validate offline status and robots.txt permissions before sending request."""
+        self.check_offline(url)
+        if not self.is_allowed_by_robots(url):
+            raise PolicyStop(f"Fetching disallowed by robots.txt: {url}")
+
+    def check_offline(self, url: str) -> None:
+        """Reject network before robots acquisition or SQL reservation."""
         env_offline = os.environ.get("HTTP_OFFLINE", "") in ("1", "true", "True")
         settings = get_settings()
         if env_offline or settings.http_offline:
             raise OfflineError(url)
-
-        if not self.is_allowed_by_robots(url):
-            raise PolicyStop(f"Fetching disallowed by robots.txt: {url}")
-
-        self.throttle(url, max_rps)
 
     def check_post_fetch(self, content: str, status_code: int = 200, url: str = "") -> None:
         """Validate response content against anti-bot challenges."""

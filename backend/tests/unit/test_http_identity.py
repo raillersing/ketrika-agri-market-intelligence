@@ -7,6 +7,7 @@ import pytest
 from tenacity import wait_none
 
 from ketrika.core.http import PoliteHttpClient
+from ketrika.core.http_budget import MemoryBudgetBackend
 from ketrika.core.policy import PolicyEngine
 
 
@@ -27,7 +28,9 @@ def test_custom_headers_cannot_replace_mandatory_bot_identity(headers):
         requests.append(request)
         return httpx.Response(200, content=b"fixture")
 
-    with PoliteHttpClient() as client:
+    with PoliteHttpClient(budget_backend=MemoryBudgetBackend(), sleep=lambda _: None) as client:
+        client.bind_source("fixture_identity", 500, 5)
+        client.policy.set_robots_txt("https://example.invalid", "User-agent: *\nDisallow:\n")
         client._client.close()
         client._client = httpx.Client(
             transport=httpx.MockTransport(handle), headers={"User-Agent": "wrong-default"}
@@ -53,7 +56,9 @@ def test_mandatory_identity_survives_network_retry():
             raise httpx.ReadTimeout("inert timeout", request=request)
         return httpx.Response(200, content=b"fixture")
 
-    with PoliteHttpClient() as client:
+    with PoliteHttpClient(budget_backend=MemoryBudgetBackend(), sleep=lambda _: None) as client:
+        client.bind_source("fixture_identity", 500, 5)
+        client.policy.set_robots_txt("https://example.invalid", "User-agent: *\nDisallow:\n")
         client._client.close()
         client._client = httpx.Client(transport=httpx.MockTransport(handle))
         request = client._execute_request.retry_with(wait=wait_none())
@@ -73,7 +78,9 @@ def test_mandatory_identity_survives_httpx_redirect():
             return httpx.Response(302, headers={"Location": "/next"})
         return httpx.Response(200, content=b"fixture")
 
-    with PoliteHttpClient() as client:
+    with PoliteHttpClient(budget_backend=MemoryBudgetBackend(), sleep=lambda _: None) as client:
+        client.bind_source("fixture_identity", 500, 5)
+        client.policy.set_robots_txt("https://example.invalid", "User-agent: *\nDisallow:\n")
         client._client.close()
         client._client = httpx.Client(transport=httpx.MockTransport(handle), follow_redirects=True)
         response = client._execute_request(
@@ -94,7 +101,10 @@ def test_public_get_preserves_identity_and_conditional_headers(first_status):
         headers = {"Retry-After": "0"} if status == 429 else {}
         return httpx.Response(status, headers=headers, content=b"fixture")
 
-    with PoliteHttpClient(policy_engine=policy) as client:
+    with PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), sleep=lambda _: None
+    ) as client:
+        client.bind_source("fixture_identity", 500, 5)
         client._client.close()
         client._client = httpx.Client(transport=httpx.MockTransport(handle))
         response = client.get(
@@ -106,9 +116,8 @@ def test_public_get_preserves_identity_and_conditional_headers(first_status):
         assert response.status_code == (304 if first_status == 304 else 200)
         assert response.is_not_modified is (first_status == 304)
         assert len(requests) == (2 if first_status == 429 else 1)
-        policy.check_pre_fetch.assert_called_once_with(
-            "https://example.invalid/fixture", max_rps=None
-        )
+        assert policy.check_pre_fetch.call_count == (2 if first_status == 429 else 1)
+        policy.check_pre_fetch.assert_called_with("https://example.invalid/fixture", max_rps=None)
         for request in requests:
             assert request.headers.get_list("User-Agent") == [client.user_agent]
             assert request.headers["If-None-Match"] == '"fixture-etag"'

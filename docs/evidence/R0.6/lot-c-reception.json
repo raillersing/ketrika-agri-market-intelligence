@@ -1,0 +1,170 @@
+{
+  "qualified_commit": "a1ee5045f75c18844a95327668b10e29bdac8b14",
+  "windows_exit": 0,
+  "backend": {
+    "tests": 1462,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "integration_by_layout": 150,
+    "integration_by_marker": 150,
+    "integration_tests": 154
+  },
+  "backend_duration_seconds": 1540.7,
+  "r06_inclusion": {
+    "files": 63,
+    "tests": 805,
+    "integrations": 118,
+    "missing": []
+  },
+  "per_file": {
+    "tests/unit/test_http_budget_atomic.py": 17,
+    "tests/unit/test_http_guard.py": 39,
+    "tests/unit/test_core_policy_http.py": 7,
+    "tests/integration/test_http_budget_sql.py": 10,
+    "tests/unit/test_connector_stages.py": 28,
+    "tests/unit/test_source_definitions.py": 30,
+    "tests/unit/test_source_provenance_check.py": 9,
+    "tests/unit/test_decimal_price.py": 45,
+    "tests/unit/test_price_references.py": 9,
+    "tests/unit/test_price_loader.py": 30,
+    "tests/unit/test_normalize_price_identity_v2.py": 29,
+    "tests/integration/test_price_identity_bridge.py": 18,
+    "tests/unit/test_sources_no_cache.py": 8,
+    "tests/unit/test_schema_drift.py": 30,
+    "tests/unit/test_schema_json.py": 38,
+    "tests/unit/test_schema_audit.py": 25,
+    "tests/unit/test_schema_contracts.py": 17,
+    "tests/integration/test_direct_schema_publication.py": 10,
+    "tests/unit/test_source_schema_check.py": 5,
+    "tests/unit/test_gold_dependency_graph.py": 6,
+    "tests/unit/test_durable_runs.py": 30,
+    "tests/unit/test_durable_phases.py": 16,
+    "tests/unit/test_silver_attempts.py": 25,
+    "tests/unit/test_silver_success_receipt.py": 11,
+    "tests/unit/test_document_partitions.py": 4,
+    "tests/integration/test_silver_recovery.py": 13,
+    "tests/integration/test_document_replay.py": 7,
+    "tests/unit/test_batch_ledger.py": 30,
+    "tests/integration/test_batch_ledger.py": 10,
+    "tests/unit/test_durable_factory.py": 2,
+    "tests/unit/test_http_identity.py": 10,
+    "tests/unit/test_artifact_identity.py": 27,
+    "tests/unit/test_reference_manifest.py": 16,
+    "tests/unit/test_reference_lock.py": 4,
+    "tests/unit/test_reference_snapshot.py": 28,
+    "tests/unit/test_price_reference_snapshot.py": 2,
+    "tests/unit/test_reference_snapshot_routes.py": 5,
+    "tests/unit/test_provenance_audit.py": 33,
+    "tests/unit/test_price_missing_provenance.py": 23,
+    "tests/unit/test_reference_archive.py": 17,
+    "tests/unit/test_connectors.py": 3,
+    "tests/unit/test_provenance_bronze.py": 10,
+    "tests/unit/test_execution_plan.py": 19,
+    "tests/integration/test_connector_stages.py": 2,
+    "tests/integration/test_source_provenance_check.py": 4,
+    "tests/integration/test_normalized_price_load.py": 2,
+    "tests/integration/test_sources_no_cache.py": 2,
+    "tests/integration/test_connected_gold_provenance.py": 2,
+    "tests/integration/test_schema_gold_gate.py": 4,
+    "tests/integration/test_durable_runs.py": 2,
+    "tests/integration/test_durable_phases.py": 8,
+    "tests/integration/test_reference_manifest_readonly.py": 4,
+    "tests/integration/test_reference_lock.py": 2,
+    "tests/integration/test_normalization_reference_snapshot.py": 4,
+    "tests/integration/test_artifact_identity_readonly.py": 1,
+    "tests/integration/test_price_missing_provenance.py": 3,
+    "tests/integration/test_reference_archive.py": 2,
+    "tests/integration/test_miasa_odr.py": 1,
+    "tests/integration/test_weather_provenance.py": 1,
+    "tests/integration/test_connector_pipeline.py": 1,
+    "tests/integration/test_observability.py": 3,
+    "tests/integration/test_nasa_power.py": 1,
+    "tests/integration/test_wfp_hdx_mdg.py": 1
+  },
+  "source_snapshot": {
+    "files": 20,
+    "mismatches": []
+  },
+  "new_module_coverage": {
+    "src/ketrika/core/http.py": 95.45454545454545,
+    "src/ketrika/core/http_budget.py": 99.14529914529915
+  },
+  "frontend": {
+    "execution_id": "533c6633-279f-419c-9be3-9506ec609b6b",
+    "tests": 35,
+    "suites": 4,
+    "steps": [
+      {
+        "command": [
+          "pnpm",
+          "lint"
+        ],
+        "exit_code": 0,
+        "error_code": null,
+        "signal": null,
+        "timed_out": false,
+        "successful": true,
+        "duration_ms": 44293
+      },
+      {
+        "command": [
+          "pnpm",
+          "typecheck"
+        ],
+        "exit_code": 0,
+        "error_code": null,
+        "signal": null,
+        "timed_out": false,
+        "successful": true,
+        "duration_ms": 10916
+      },
+      {
+        "command": [
+          "pnpm",
+          "run",
+          "test",
+          "--reporter=default",
+          "--reporter=json",
+          "--outputFile=/app/node_modules/.qa-results/533c6633-279f-419c-9be3-9506ec609b6b/vitest.json"
+        ],
+        "exit_code": 0,
+        "error_code": null,
+        "signal": null,
+        "timed_out": false,
+        "successful": true,
+        "duration_ms": 27286
+      },
+      {
+        "command": [
+          "pnpm",
+          "build"
+        ],
+        "exit_code": 0,
+        "error_code": null,
+        "signal": null,
+        "timed_out": false,
+        "successful": true,
+        "duration_ms": 140790
+      }
+    ]
+  },
+  "reports_sha256": {
+    "lot-c-backend-check-tests.xml": "cad608e41926907943eedd7afbd8b2e64ed76577bae8762fed52cef3a1580d3c",
+    "lot-c-backend-check-coverage.json": "14a8c153d78cd89ead45880f408a50db854966072d6a1f33d60208bc4dc4e825",
+    "lot-c-frontend-check-receipt.json": "2929a82eba91b4d629796a225e3c27816e370e066e21a7979eda522d6b370c36",
+    "lot-c-frontend-check-tests.json": "68fd91842079c08d5a122351cf69e011b39999a65bd46f09b557d8b907458064"
+  },
+  "active_preservation": {
+    "source_records": 482,
+    "source_record_md5": "47b4402859acc41e3ae91fdb128e56c6",
+    "prices": 764,
+    "price_md5": "4b2586cb8e422f11c4873ad513d66bc1",
+    "alembic_head": "0002_gold_views",
+    "bronze_versions": 674,
+    "bronze_bytes": 1377481,
+    "bronze_sha256": "83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c",
+    "delete_markers": 0
+  },
+  "scope": "software qualification only; not live collection, market model, deployment or human acceptance"
+}

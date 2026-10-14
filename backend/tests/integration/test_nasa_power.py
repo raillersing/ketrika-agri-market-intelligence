@@ -114,6 +114,7 @@ def test_nasa_power_backfill_dq_and_rebuild_lifecycle(
         )
 
     bronze_store = BronzeStore()
+    httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy = PolicyEngine()
     http_client = PoliteHttpClient(policy_engine=policy)
     connector = local_connector(NasaPowerConnector, monkeypatch)

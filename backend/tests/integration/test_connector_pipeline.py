@@ -66,6 +66,7 @@ def test_dummy_csv_pipeline_lifecycle_and_supersession(httpserver, db_session):
     connector = DummyCsvConnector()
     connector.source_id = source_id
 
+    httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy_engine = PolicyEngine()
     http_client = PoliteHttpClient(policy_engine=policy_engine)
     bronze_store = BronzeStore()
