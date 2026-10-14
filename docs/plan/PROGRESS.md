@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T01:07:26Z] R0.6 B2 — réception complète en cours
+
+- Lot fonctionnel isolé 9d2076b sur work/r06-price-identity-20261013 (base fc3bcda + fondation 12433bd) : clé prix v2 et rapprochement source-scopé sous verrou, revue des historiques inconnus/multiples, loaders/stages/batch/rebuild et compteurs reçus v2 raccordés ; aucun code HTTP/budget Antigravity modifié.
+- 71177 FINAL 0/24 SQL-S3/70,25 s dont 16 nouveaux ; unités types et corrections de mock headers tracées dans PROGRESS/BLOCKERS du worktree ; scan 34946 FINAL 0/32546 octets. Manifest R0.6 étendu à 59 fichiers/732 minimum/108 intégrations, incluant deux négatifs source encore à exécuter dans check final.
+- Windows réel dev.ps1 check session 48496 démarré sur 9d2076b figé. Reprendre ce même processus, aucune mutation applicative/tests/QA concurrente, aucun résultat complet déduit des cibles. Après vert : originaux/inclusion/snapshot/préservation et intégration atomique. R0.6 reste IN_PROGRESS/BL-016 ouvert jusque-là.
+- Préservation 64965/55152 FINAL 0 : 482 SR/47b4402859acc41e3ae91fdb128e56c6 ; 764 prix/4b2586cb8e422f11c4873ad513d66bc1 ; head actif 0002, Bronze 674 versions/1377481 octets/SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c/zéro delete markers. Lot C présente encore des edits non committés chez Antigravity, pas de livraison reçue ; suite R0.7 dépend de R0.6 DONE, aucune anticipation non autorisée.
+
 ### [2026-10-13T18:58:45Z] R0.6 B2 — incrément préparatoire isolé, réception restante
 
 - Reprise AGENTS complet ; branche work/r06-price-identity-20261013 dans /home/raillersing/projects/ketrika-qa-worktrees/r06-price-identity-20261013, base fc3bcda, commit 12433bd. ADR-062/SPECS adoptés sur cette branche avant helper ; aucun contrat/code B2 reçu sur main.
