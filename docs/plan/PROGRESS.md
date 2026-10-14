@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T18:57:00Z] Correctif HTTP indépendant préparé pendant réception R0.7
+
+- Branche fix/r06-secret-header-audit-20261014, commit `034947a` basé 13a21f4 : ADR-066/SPECS avant ajout de cinq variantes de clés API à la purge finale cross-origin/robots. Aucun fichier ni destination QA du check R0.7 34901 modifié ; aucun cherry-pick Agy.
+- Probe transport inerte 95762 FINAL 1 attendu démontre fuite X-API-Key cross-origin sur source précédente/7,91 s ; correction 45842 FINAL 0, 57 tests du garde/21,27 s dont 18 nouveaux cas (casse, defaults/caller, robots/cross/same-origin), lint/types deux fichiers. Scan 52752 FINAL 0/4367 octets/sans fuite. JUnit temporaire non archivé : développement seulement, réception complète future indispensable avant main.
+- R0.7 check f4a7294 toujours en cours : 1515 collectés, intégrations HTTP SQL/INSTAT/ODR passées ; observation 16,75 minutes/76,9 % CPU, PostgreSQL sans attente de verrou. Aucun succès global, statut IN_PROGRESS inchangé. Reprendre 34901, pas de recheck/redémarrage ni de code ajouté au lot figé.
+
+
 ### [2026-10-14T18:33:00Z] R0.7 — navigateur reçu et check complet connu
 
 - Windows E2E 21709 FINAL 1 sur f4a7294 : cinq scénarios/486,993 s, navigation prices timeout 120 s, compilation froide observée 108,8 s, zéro browser_errors. Reçu rouge original conservé dans worktree ; aucune hausse du délai.
