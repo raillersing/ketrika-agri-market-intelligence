@@ -3,6 +3,12 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T10:45:00Z] R0.7 — footer strict refuse inventaire, correctif propriétaire
+
+- Windows 59885 FINAL 1 : 1508 backend verts/1280,83 s puis junit_inventory_incomplete, frontend non exécuté. Diagnostic readonly 9cd1cb : inventaire écrasé par pytest enfant du test normatif, un test_marker au lieu des 1508 cas. Trois originaux archivés sur branche, XML gzip lossless.
+- Correctif c1a583ce02c6ab25e6a40bf82871c1840e97a0e4 : capture réservée au PPID du runner, tests/runner mis à jour et cas dédié. 99403 FINAL 0/types deux fichiers/1 test/3,61 s ; native owner probe 52556 FINAL 0/1/12,26 s puis 3f0714 FINAL 0/inventaire un cas parent exact, pas le cas enfant. Première invocation du probe sans exec refusait proprement l'absence du propriétaire ; pas de garde affaiblie.
+- Source figée c1a583c ; E2E Windows 58740 en cours pour rattacher reçu au nouveau fingerprint, puis nouvelle réception complète nécessaire après code/tests/runner changés. R0.7 IN_PROGRESS, aucun produit main/DONE ; R0.6 et données actives inchangés.
+
 ### [2026-10-14T10:14:39Z] R0.7 — E2E reçu, check complet en cours
 
 - 32999 FINAL 0 sur 28a65b9 : parcours navigateur réel 9/9/49,378 s, zéro browser_errors, prix proxy 200 et accès après logout 401. Reçu avec commit/fingerprint 3acdde666339f04ef8d3c37829e88a0241b23bf1099c0339027925691e2bc0a6/images exactes ; trace conservée dans volume navigateur SHA 7a4b1b7544a772be0b877cd3fd3e268639b2746a4eb7b42358b041876d937fce, pas de secret committé.

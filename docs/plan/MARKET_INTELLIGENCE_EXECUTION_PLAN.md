@@ -18,7 +18,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.4 | MUST | DONE | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 ; 65 fichiers / dix cellules, check 411/35 et QA 72 codes 0, données actives préservées |
 | R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
 | R0.6 | MUST | DONE | A/B1/B2/C intégrés main 173c41a ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118/snapshot exact/actif préservé ; logiciel reçu, pas de collecte live/modèle/humain qualifié |
-| R0.7 | MUST | IN_PROGRESS | branche work/r07-measured-qualification-20261014/28a65b9 ; types 283/46+45 tests verts ; E2E 32999 FINAL 0/9/49,378 s ; check Windows 59885 en cours ; aucun KPI opérationnel déduit des fixtures |
+| R0.7 | MUST | IN_PROGRESS | branche work/r07-measured-qualification-20261014/c1a583c ; 59885 refus footer malgré 1508 verts, inventaire enfant corrigé/probe natif vert ; E2E 58740 en cours puis nouveau check complet ; aucun KPI opérationnel déduit des fixtures |
 | R0.8 | MUST | TODO | — |
 | R0.9 | MUST | TODO | — |
 | R1.1 | MUST | TODO | — |
