@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T17:56:52Z] Audit Agy et reprise du check R0.7 existant
+
+- Lecture seule du commit Agy `5efd36b1cbe6fac8468a589f48362b264322dff4`, worktree propre : audit détaillé `docs/evidence/R0.6/AGY_5EFD36B_AUDIT.md`. Budget par défaut mémoire, réservations source/domaine disjointes, DDL runtime et arrêts mémoire persistent dans cette livraison ; tests SQL fournis SQLite, pas preuve PostgreSQL. Aucune fusion ni nouvelle qualification produit. Apport de purge des variantes d'en-têtes API à traiter séparément, sans toucher au check figé.
+- R0.7 reste IN_PROGRESS sur `c1a583ce02c6ab25e6a40bf82871c1840e97a0e4`. Check Windows existant observé PID 54158, conteneur `ketrika-qualification-api-run-66615b399f2f`, suite backend en cours : aucune relance concurrente ni modification des sources. Handle de sortie perdu lors de troncature ; récupérer les originaux et l'état final, ne pas présumer le code zéro.
+- E2E corrigé 58740 FINAL 0 : neuf scénarios/50,999 s, fingerprint `7be35b120ce349c6dabde33da83336a896c859388543ce2b50dc02278100a0fe`, zéro erreur navigateur, prix 200 et logout 401. Reçu et trace originaux conservés dans volume dédié ; intégration main et réception complète encore requises.
+
+
 ### [2026-10-14T10:45:00Z] R0.7 — footer strict refuse inventaire, correctif propriétaire
 
 - Windows 59885 FINAL 1 : 1508 backend verts/1280,83 s puis junit_inventory_incomplete, frontend non exécuté. Diagnostic readonly 9cd1cb : inventaire écrasé par pytest enfant du test normatif, un test_marker au lieu des 1508 cas. Trois originaux archivés sur branche, XML gzip lossless.
