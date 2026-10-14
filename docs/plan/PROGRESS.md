@@ -3,6 +3,12 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T08:00:00Z] R0.6 C — correction assertion de migration, nouvelle réception
+
+- 10681 FINAL 1 sur 1990011 : 1462 collectés, 65 succès/un échec/464,34 s, lint/format 280/types 279 verts ; frontend non démarré. Cause : test Gold épinglé 0009, migration ajout seule 0010 correcte. Original rouge archivé sur branche, aucun arrêt volontaire ni contrôle Gold assoupli.
+- Correctif a1ee504 sur work/r06-http-takeover-20261014 : seul attendu exact 0010, journal B-R058 et original gzip. Scan 72094 FINAL 0/1423 octets/sans fuite, diff vert. Nouveau check Windows 80378 lancé sur a1ee504 figé ; reprendre ce processus, aucun test concurrent/mutation QA/source.
+- Aucun code C intégré main, R0.6 IN_PROGRESS et preuves partielles non reçues. Main checkpoint documentaire précédent 79ec7ca ; R0.7 non éligible tant que réception complète/inclusion/préservation/intégration restent absentes.
+
 ### [2026-10-14T07:49:00Z] R0.6 C — réception complète en cours sur branche isolée
 
 - Reprise C explicitement autorisée. Worktree /home/raillersing/projects/ketrika-qa-worktrees/r06-http-takeover-20261014, branche work/r06-http-takeover-20261014, commit 1990011c26484a2f9af43b60334a5faa88e32609 (35 fichiers). Antigravity 186ab4a/cinq dirty inchangés et snapshot gzip lossless aux cinq SHA vérifiés.
