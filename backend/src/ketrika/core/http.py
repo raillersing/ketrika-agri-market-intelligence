@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import os
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -23,6 +24,7 @@ from ketrika.core.policy import (
     canonical_origin,
     detect_challenge,
     get_policy_engine,
+    validate_candidate_url,
 )
 from ketrika.core.settings import get_settings
 
@@ -80,6 +82,7 @@ class PoliteHttpClient:
         transport: httpx.BaseTransport | None = None,
         clock: Callable[[], datetime] | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        allow_loopback: bool | None = None,
     ) -> None:
         self.policy = policy_engine or get_policy_engine()
         self.budget = (
@@ -87,6 +90,11 @@ class PoliteHttpClient:
         )
         self._clock = clock or (lambda: datetime.now(UTC))
         self._sleep = sleep
+        self.allow_loopback = (
+            allow_loopback
+            if allow_loopback is not None
+            else (os.environ.get("KETRIKA_ALLOW_TEST_LOOPBACK", "") in ("1", "true", "True"))
+        )
         settings = get_settings()
         self.user_agent = f"{settings.bot_user_agent}; {settings.bot_contact_email}"
         self.timeout = httpx.Timeout(timeout, connect=connect_timeout)
@@ -170,6 +178,7 @@ class PoliteHttpClient:
         if max_rps is not None and (not math.isfinite(max_rps) or max_rps <= 0):
             raise PolicyStop("http_invalid_rate")
         for hop in range(11):
+            validate_candidate_url(current, allow_loopback=self.allow_loopback)
             origin = canonical_origin(current)
             if self._stopped:
                 raise PolicyStop("http_source_disabled")
@@ -219,7 +228,9 @@ class PoliteHttpClient:
             if response.status_code in (301, 302, 303, 307, 308) and "location" in response.headers:
                 if hop == 10:
                     raise PolicyStop("http_redirect_limit_exceeded")
-                current = str(response.url.join(response.headers["location"]))
+                next_url = str(response.url.join(response.headers["location"]))
+                validate_candidate_url(next_url, allow_loopback=self.allow_loopback)
+                current = next_url
                 kwargs.pop("params", None)
                 continue
             if response.status_code in (429, 502, 503, 504):

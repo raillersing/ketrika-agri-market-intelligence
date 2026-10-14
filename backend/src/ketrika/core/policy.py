@@ -48,6 +48,119 @@ CHALLENGE_PATTERNS = [
     re.compile(r"attention required", re.IGNORECASE),
 ]
 
+FORBIDDEN_HOSTNAMES: frozenset[str] = frozenset(
+    {
+        "localhost",
+        "local",
+        "loopback",
+        "metadata.google.internal",
+        "instance-data",
+    }
+)
+
+FORBIDDEN_HOST_SUFFIXES: tuple[str, ...] = (
+    ".localhost",
+    ".local",
+    ".internal",
+    ".lan",
+    ".home.arpa",
+)
+
+
+def is_loopback_target(hostname: str) -> bool:
+    """Check if target host is strictly a loopback address (127.0.0.0/8, ::1, localhost)."""
+    if not hostname:
+        return False
+    lower_host = hostname.strip().lower().strip("[]")
+    if lower_host == "localhost" or lower_host.endswith(".localhost"):
+        return True
+    import ipaddress
+
+    try:
+        ip = ipaddress.ip_address(lower_host)
+        return ip.is_loopback
+    except ValueError:
+        return False
+
+
+def is_forbidden_network_target(hostname: str, allow_loopback: bool = False) -> bool:
+    """Check if target host is a private, loopback, or metadata address (SSRF prevention)."""
+    if not hostname:
+        return True
+    lower_host = hostname.strip().lower().strip("[]")
+
+    if is_loopback_target(lower_host):
+        return not allow_loopback
+
+    if lower_host in FORBIDDEN_HOSTNAMES:
+        return True
+    if any(lower_host.endswith(suffix) for suffix in FORBIDDEN_HOST_SUFFIXES):
+        return True
+
+    # Direct IP address check (v4 or v6)
+    import ipaddress
+
+    try:
+        ip = ipaddress.ip_address(lower_host)
+        return (
+            ip.is_private
+            or ip.is_link_local
+            or ip.is_reserved
+            or ip.is_multicast
+            or ip.is_unspecified
+        )
+    except ValueError:
+        pass
+
+    return False
+
+
+def validate_candidate_url(
+    url: str,
+    allowed_domains: Any = None,
+    allow_loopback: bool = False,
+) -> str:
+    """Validate a candidate URL before fetch or crawl according to SSRF & domain policies.
+
+    Raises PolicyStop if URL uses an unsupported scheme, targets a forbidden private/loopback/cloud
+    metadata address, or falls outside the allowed domains list.
+    """
+    if not isinstance(url, str) or not url.strip():
+        raise PolicyStop("http_invalid_url")
+
+    clean_url = url.strip()
+    parsed = urlparse(clean_url)
+    if parsed.scheme.lower() not in ("http", "https"):
+        raise PolicyStop("http_unsupported_scheme")
+
+    if not parsed.hostname:
+        raise PolicyStop("http_invalid_url")
+
+    try:
+        _ = parsed.port
+    except ValueError:
+        raise PolicyStop("http_invalid_url") from None
+
+    if parsed.username or parsed.password:
+        raise PolicyStop("http_url_credentials_forbidden")
+
+    hostname = parsed.hostname.lower()
+
+    if is_forbidden_network_target(hostname, allow_loopback=allow_loopback):
+        raise PolicyStop(f"http_forbidden_destination_target: {hostname}")
+
+    if allowed_domains is not None:
+        allowed = False
+        for domain in allowed_domains:
+            clean_dom = domain.lower().strip()
+            if hostname == clean_dom or hostname.endswith("." + clean_dom):
+                allowed = True
+                break
+        if not allowed:
+            raise PolicyStop(f"http_domain_not_allowed: {hostname}")
+
+    return clean_url
+
 
 def canonical_origin(url: str) -> str:
     """Validate network URL and retain scheme/host/port as the robots identity."""
