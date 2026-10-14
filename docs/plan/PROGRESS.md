@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T10:11:01Z] R0.7 — lot stabilisé en qualification sur worktree
+
+- Branche work/r07-measured-qualification-20261014, commit 28a65b99b48e4f7dccd9671b007a673c3b22a3d6 basé d5665bf ; 18 fichiers/1821 ajouts/49 retraits. ADR-064/SPECS avant code, qualificateur offline borné et KPI mesurés, reporters liés au commit/fingerprint/environnement/images, JUnit et front vérifiés par mêmes lecteurs que la réception.
+- Lint/format 284/types 283 verts 34720 FINAL 0 ; 46 nouveaux tests 16296 FINAL 0/4,86 s, correctif LLM/dénominateur ciblé b350ed FINAL 0/1/3,27 s ; QA manifest 45569 FINAL 0/45/26,84 s. Scan 18052 FINAL 0/81993 octets/sans fuite, diff/syntaxe shell verts. Aucune fixture transformée en qualification réelle.
+- Windows qualify R0 56865 FINAL 1 attendu sans bundle : JSON/Markdown PARTIAL, aucune préparation/seed/SQL/réseau. Linux 9826 FINAL 1 identique. Diagnostic avant commit, pas une preuve de capacité reçue. Les sources planned/disabled, neuf sources et dix séries restent explicitement non compensées.
+- E2E Windows réel session 32999 lancé sur 28a65b9 figé pour recevoir le reporter navigateur. Reprendre ce processus, puis un seul check complet du lot stabilisé ; aucun code/test modifié pendant réception, aucune suite QA mutante concurrente. Manifest R0.7 91/0 ; produit R0.7 pas intégré ni DONE.
+- R0.6 main 173c41a et clôture d5665bf restent qualifiés, données actives inchangées ; main ne reçoit que ce checkpoint documentaire. Les incidents de développement détaillés sont dans le worktree.
+
 ### [2026-10-14T08:46:31Z] R0.7 — IN_PROGRESS, qualification mesurée
 
 - Dépendances R0.3/R0.5/R0.6 DONE, gouvernance 29370 FINAL 0 confirme R0.7 seule éligible. Worktree work/r07-measured-qualification-20261014 basé d5665bf, aucune relance du check C reçu.
