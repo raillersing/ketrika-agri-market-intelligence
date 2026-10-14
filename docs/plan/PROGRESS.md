@@ -3,6 +3,12 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T08:46:31Z] R0.7 — IN_PROGRESS, qualification mesurée
+
+- Dépendances R0.3/R0.5/R0.6 DONE, gouvernance 29370 FINAL 0 confirme R0.7 seule éligible. Worktree work/r07-measured-qualification-20261014 basé d5665bf, aucune relance du check C reçu.
+- Contrats relus : AGENTS, SPECS §3.3, MVP §1.3/T11.6, R0.7/R0.9, demo retiré, benchmarks API/copilote et reporters existants. R0 gate logiciel distinct des onze KPI opérationnels MVP ; sources planned et corpus synthétiques ne deviennent pas qualifiés.
+- Mini-plan : (1) ADR/SPECS protocole de preuve borné ; (2) lecteurs/vérificateurs partagés avec réception ; (3) qualifier readonly JSON/Markdown et runner sans seed ; (4) corpus de scénarios négatifs/stale/incomplets ; (5) un check complet stabilisé, rapports/versionnement/intégration. Aucune collecte ni migration active.
+
 ### [2026-10-14T08:38:21Z] R0.6 — DONE, lots A/B1/B2/C reçus sur main
 
 - C intégré atomiquement main 173c41a (19837 FINAL 0, 44 fichiers/1663 ajouts/132 retraits), application/tests exactement a1ee504 qualifié par Windows 80378 FINAL 0/1462 backend/35 web/build. Vingt fichiers comparés 4aa5c0 FINAL 0/aucune différence ; seuls conflits documentaires résolus, tous journaux conservés.
@@ -312,7 +318,7 @@
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
 | R0.6 | MUST | DONE | 2026-10-10T19:32:37Z | 2026-10-14T08:38:21Z | 173c41a | A/B1/B2/C intégrés ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118, vingt fichiers exacts et données actives préservées ; voir LOT_C_RECEPTION.md | B-R054–058 résolus ; BL-010/016 résolus ; BL-013 partiel/R2.1 ; pas de collecte live/modèle/humain qualifié |
-| R0.7 | MUST | TODO | — | — | — | — | — |
+| R0.7 | MUST | IN_PROGRESS | 2026-10-14T08:46:31Z | — | — | Qualification mesurée sur work/r07-measured-qualification-20261014, ADR/SPECS avant commande ; réception requise | Aucun KPI opérationnel déclaré atteint sans preuve |
 | R0.8 | MUST | TODO | — | — | — | — | — |
 | R0.9 | MUST | TODO | — | — | — | — | — |
 | R1.1 | MUST | TODO | — | — | — | — | — |
