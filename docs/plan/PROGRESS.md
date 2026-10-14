@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T18:33:00Z] R0.7 — navigateur reçu et check complet connu
+
+- Windows E2E 21709 FINAL 1 sur f4a7294 : cinq scénarios/486,993 s, navigation prices timeout 120 s, compilation froide observée 108,8 s, zéro browser_errors. Reçu rouge original conservé dans worktree ; aucune hausse du délai.
+- Reprise navigateur Docker sur serveurs QA déjà compilés, source/images inchangées, sans préparer ni redémarrer : 36727 FINAL 0, neuf scénarios/48,122 s, prix 200/logout 401/zéro erreur ; fingerprint ab0b134b2cb85a44a5fccea9d16fd080b122b648b0cd44f37f54c8989fd20a9f ; trace SHA e8a035efbcfd6a26d469dde274588d07a3059bf58741cd287a7a11c956f11f0d. Démonstration logicielle mixed, pas preuve marché/humaine.
+- Check Windows complet 34901 en cours sur f4a7294291f37c6c6504bb9eced8880d94c31150 figé. Reprendre cette session, aucun changement source/tests/runner/environnement ni QA mutante concurrente. Backend/frontend/couverture/inclusion/qualify négatif et préservation à recevoir avant main et DONE. Agy non fusionné, audit af82e8f.
+
+
 ### [2026-10-14T18:18:00Z] R0.7 — quotas de fixtures isolés, nouvelle source figée
 
 - Check c1a583c arrêté : 120 passed/1 failed/1008,96 s, quota durable localhost épuisé au rebuild ; aucun frontend reçu. XML et inventaire originaux conservés dans worktree, pas de succès global.
