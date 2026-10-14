@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T18:18:00Z] R0.7 — quotas de fixtures isolés, nouvelle source figée
+
+- Check c1a583c arrêté : 120 passed/1 failed/1008,96 s, quota durable localhost épuisé au rebuild ; aucun frontend reçu. XML et inventaire originaux conservés dans worktree, pas de succès global.
+- Correctif `f4a7294` sur work/r07-measured-qualification-20261014 : ADR-065/SPECS avant adaptation test-only de clé domaine loopback par scénario intégration validé. Limites/cadence/source/origine/SQL inchangés, domaines publics/.invalid inchangés ; aucun compteur ni objet Bronze effacé.
+- Régression ciblée 15818 FINAL 0 : 11 SQL/rebuild/46,75 s. Six contrôles mapping 51208 FINAL 0/16,19 s ; lint/types 96943 FINAL 0 ; scan 96260 FINAL 0/226634 octets/sans fuite. Diagnostics d'invocation MYPYPATH/cache readonly corrigés, aucun ignore ajouté.
+- E2E Windows 21709 lancé sur f4a7294 figé ; ensuite check complet sur même source nécessaire. R0.7 reste IN_PROGRESS, aucune intégration produit/main/DONE ni tag ; audit Agy af82e8f indépendant, branche Agy intacte.
+
+
 ### [2026-10-14T17:56:52Z] Audit Agy et reprise du check R0.7 existant
 
 - Lecture seule du commit Agy `5efd36b1cbe6fac8468a589f48362b264322dff4`, worktree propre : audit détaillé `docs/evidence/R0.6/AGY_5EFD36B_AUDIT.md`. Budget par défaut mémoire, réservations source/domaine disjointes, DDL runtime et arrêts mémoire persistent dans cette livraison ; tests SQL fournis SQLite, pas preuve PostgreSQL. Aucune fusion ni nouvelle qualification produit. Apport de purge des variantes d'en-têtes API à traiter séparément, sans toucher au check figé.
