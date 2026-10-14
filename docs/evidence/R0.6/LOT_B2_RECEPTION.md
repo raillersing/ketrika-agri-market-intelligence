@@ -3,6 +3,11 @@
 Code figé : 9d2076b (base fc3bcda, fondation 12433bd), branche
 work/r06-price-identity-20261013. Environnement ketrika-qualification :
 SQL/S3/réseau dédiés, replay, Mailpit, aucune destination active migrée.
+Intégration main atomique 03e5750, source identique (8310 FINAL 0/quinze
+fichiers) ; conflits documentaires seuls, journaux conservés. Scan
+88712 FINAL 0/526392 octets, gouvernance 74 cohérente. Actif après réception
+1295 FINAL 0 : 482 SourceRecord/764 prix/674 versions Bronze inchangés,
+head 0002, zéro delete markers.
 
 ## Résultats
 

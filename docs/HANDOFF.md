@@ -3,7 +3,27 @@
 > **Statut :** Document normatif de passation du MVP Ketrika Agri Market Intelligence (AGENTS.md §3.2 & §5.3).
 > Ce document récapitule l'état de livraison du MVP, les pré-requis humains pour la phase d'exploitation, ainsi que les gates d'autorité (H1 à H7) nécessitant une intervention humaine.
 
-## État courant du programme autorisé R0–R6 — 2026-10-12
+## État courant du programme autorisé R0–R6 — 2026-10-14
+
+Lot B2 reçu et intégré atomiquement main 03e5750 : Windows 48496 FINAL 0
+sur code 9d2076b, 1396 backend/35 frontend/build, manifest R0.6 inclus
+59 fichiers/732 cas/108 intégrations. Identité prix v2, pont historique prudent
+et revues/counters/reçus raccordés ; BL-016 RESOLVED_FIXED. Source-cell
+complémentaire 2/2 sur deux véritables objets Bronze QA, ancienne clé/preuve/
+valeur préservées. Aucune reclassification/backfill ni migration active.
+Rapports originaux et LOT_B2_RECEPTION.md/json dans docs/evidence/R0.6.
+
+Prochain travail autorisé : réception du lot C HTTP/budgets réservé à
+Antigravity. État vérifié 42247 : HEAD 186ab4a et cinq fichiers non committés,
+pas de nouveau rapport livré ; ne pas intégrer ce snapshot ni l'ancien
+commit audité rouge en acceptation. Fournir commit corrigé, rapport, ADR/SPECS,
+migration coordonnée (0007–0009 déjà occupés) et preuves d'acceptation ;
+sinon autorisation explicite de reprise avant de prendre le travail C.
+R0.6 reste IN_PROGRESS ; R0.7 exige R0.6 DONE, aucun autre ID éligible.
+Ne pas relancer B2 à réception de C : reprendre ses preuves de code exact,
+puis qualifier seulement le nouveau lot stabilisé selon AGENTS §3.3.
+Les 482 références/764 prix/674 versions Bronze actifs sont inchangés,
+schéma actif 0002. Pas de tag final ni qualification live/modèle/usage humain.
 
 Méthode révisée à la demande utilisateur le 2026-10-13 : AGENTS §3.3 et
 EXECUTION_METHOD.md/ADR-057 prévalent pour organiser les prochaines réalisations.
@@ -24,7 +44,7 @@ intégrations vérifiée. Publication directe Gold contrôle aussi la structure
 sur candidats exacts sous verrous ; registre source/parseur/MIME commun avec
 Dagster. Défaut public vide : aucun format réel qualifié par ces fixtures.
 Les reçus structure suivent la transaction caller, pas une persistance après
-rollback. HTTP/budget Antigravity non reçus ; B2/BL-016 toujours ouvert.
+rollback. HTTP/budget Antigravity non reçus ; B2/BL-016 clos le 2026-10-14 (ci-dessus).
 SQL/S3 actifs préservés ; schéma actif 0002, migrations nouvelles QA seulement.
 Ne pas revendiquer de déploiement ou de performance de marché validée.
 

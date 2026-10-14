@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T02:32:15Z] R0.6 B2 — terminé et intégré, lot C attendu
+
+- Commit atomique main 03e5750 (46401 FINAL 0, trente fichiers/991 ajouts/19 retraits), contenu applicatif 9d2076b qualifié par Windows 48496 FINAL 0/1396 backend/35 web/build. Quinze fichiers main identiques à la qualification 8310 FINAL 0 ; seules résolutions documentaires, journaux conservés. Diff 85054/gouvernance et scan 88712 FINAL 0/526392 octets/sans fuite. Aucun état applicatif intermédiaire reçu sur main, aucun check redondant.
+- Originaux et LOT_B2_RECEPTION.md/json versionnés, inclusion 77065 FINAL 0/732 cas/108 intégrations ; complément 94435 source-cell 2/2/deux objets/différents SourceRecord/ancienne clé-preuve-valeur préservées. Types du seul script de réception 18069 FINAL 0 après B-R053, aucun changement applicatif après le check. BL-016 RESOLVED_FIXED ; pas de reclassification des 764 lignes sans statistique explicite.
+- Après intégration 1295 FINAL 0 : 482 SR/MD5 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix/MD5 4b2586cb8e422f11c4873ad513d66bc1 ; head actif 0002, Bronze 674 versions/1377481 octets/SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c/zéro delete markers. Aucun déploiement/migration active/source live/modèle de marché/usage humain qualifié.
+- Aucun MUST/SHOULD suivant éligible : R0.7 dépend de R0.6 DONE, R0.6 attend C réservé à Antigravity (42247 : HEAD 186ab4a, cinq fichiers dirty, aucun nouveau reçu). Ne pas intégrer ce snapshot ni reprendre ses fichiers sans coordination. Action : livrer commit corrigé + rapport/ADR/SPECS/migration et commandes/rapports d'acceptation, ou autorisation explicite de reprise C. R0.6 IN_PROGRESS et miroir synchronisé, aucun tag final.
+
 ### [2026-10-14T01:07:26Z] R0.6 B2 — réception complète en cours
 
 - Lot fonctionnel isolé 9d2076b sur work/r06-price-identity-20261013 (base fc3bcda + fondation 12433bd) : clé prix v2 et rapprochement source-scopé sous verrou, revue des historiques inconnus/multiples, loaders/stages/batch/rebuild et compteurs reçus v2 raccordés ; aucun code HTTP/budget Antigravity modifié.
@@ -243,7 +250,7 @@
 | R0.3 | MUST | DONE | 2026-10-09T10:24:19Z | 2026-10-09T19:21:39Z | 4f8d7e2cb0deaba2a9685ef9472c5cab4c4066f6 | docs/evidence/R0.3/README.md : check Windows 340/35, QA 58, négatif et E2E 9 codes 0 ; DB/S3 préservés | B-R007 résolu, B-R008 repli ; B-R005 non reproduit/cause inconnue |
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
-| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | 97f8eb8 (B1 reçu main) | A résilience et B1 garde structure reçus : Windows 76875 FINAL 0/1348 backend/35 web/build ; R0.6 inclus 684/90 ; contenu snapshot exact, données actives préservées ; B2 et HTTP Antigravity requis | B-R046–050 résolus ; BL-010/016 ouverts ; BL-013 partiel/R2.1 |
+| R0.6 | MUST | IN_PROGRESS | 2026-10-10T19:32:37Z | — | 03e5750 (B2 reçu main) | A/B1/B2 reçus, Windows 48496 FINAL 0/1396 backend/35 web/build ; inclusion 732/108 ; snapshot exact et actif préservé ; réception C HTTP/budget Antigravity requise | B-R051–053 résolus ; BL-016 résolu ; BL-010 ouvert ; BL-013 partiel/R2.1 |
 | R0.7 | MUST | TODO | — | — | — | — | — |
 | R0.8 | MUST | TODO | — | — | — | — | — |
 | R0.9 | MUST | TODO | — | — | — | — | — |
