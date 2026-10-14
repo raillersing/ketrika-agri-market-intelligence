@@ -1,17 +1,22 @@
 # faostat : FAOSTAT – Food and Agriculture Organization Statistics (Madagascar)
 
 - **Propriétaire / licence / attribution :** Food and Agriculture Organization of the United Nations (FAO). Licence : CC BY-NC-SA 3.0 IGO. Attribution : "FAOSTAT, Food and Agriculture Organization of the United Nations".
+- **Famille de source (`source_family`) :** `un_fao` (famille d'agences onusiennes spécialisées agriculture et alimentation).
 - **URL vérifiées (date, code HTTP) :**
-  - https://www.fao.org/faostat/en/#data (2026-10-06, HTTP 200).
-  - https://fenixservices.fao.org/faostat/api/v1/en/data/QCL (2026-10-06, HTTP 200).
+  - https://www.fao.org/faostat/en/#data (2026-10-06, HTTP 200, verified: true).
+  - https://fenixservices.fao.org/faostat/api/v1/en/data/QCL (2026-10-06, HTTP 200, verified: true).
 - **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` pour l'API et les données publiques.
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://www.fao.org/contact-us/terms/en/. Données ouvertes pour usage analytique et non commercial direct sans altération de l'intégrité statistique.
+- **CGU & Qualification légale (C1 / R1.1) :** https://www.fao.org/contact-us/terms/en/. Données ouvertes pour usage analytique et non commercial direct sans altération de l'intégrité statistique. Aucune PII directe (`pii_class: none`), pas d'authentification requise.
 - **Format(s) et structure :** API REST JSON et CSV téléchargeables.
   - Domaines : `QCL` (Crops and livestock products), `FBS` (Food Balance Sheets), `TM` (Detailed trade matrix).
   - Champs : `AreaCode` (129 pour Madagascar), `Area`, `DomainCode`, `ItemCode`, `Item`, `ElementCode` (5510 Production, 5610 Importations, 5910 Exportations), `Element`, `Year`, `Unit`, `Value`, `Flag`.
 - **Règles de dérivation des flags (`observed_or_imputed`) :**
   - **Observé (`observed`)** : Drapeaux officiels et vérifiés `A` (Official figure), `P` (Provisional), `X` (International reliable source), ou absence de drapeau `""` (donnée officielle standard).
   - **Imputé (`imputed`)** : Drapeaux d'estimation ou d'imputation `E` (Estimated value), `I` (Imputed value), `F` (FAO estimate), `T` (Trend calculation), `M` (Data not available / proxy).
+- **Cadences distinctes (R1.1) :**
+  - Collecte technique (`collection_cadence`) : `monthly`
+  - Observation sous-jacente (`observation_cadence`) : `annual`
+  - Publication éditeur (`publication_cadence`) : `annual`
 - **Cadence constatée :** Annuelle avec révisions consolidées.
 - **Couverture validée :**
   - Production agricole : ≥ 20 années consécutives (2004–2023) de production de riz paddy pour Madagascar, séries maïs et manioc.

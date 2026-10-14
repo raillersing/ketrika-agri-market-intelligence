@@ -1,23 +1,28 @@
 - source_id: ocha_codab_mdg
   name: "OCHA Madagascar - Subnational Administrative Boundaries (COD-AB)"
   owner: "OCHA Madagascar / BNGRC / FTM"
+  source_family: un_ocha
   priority: P0
   status: active
   access_method: file
   connector: ketrika.connectors.ocha_codab_mdg:Connector
   cadence: static
+  collection_cadence: static
+  observation_cadence: static
+  publication_cadence: annual
   freshness_sla_days: 365
   partitioning: static
   entrypoints:
     - url: "https://data.humdata.org/dataset/cod-ab-mdg"
       kind: landing
-      verified_at: null
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
   languages: [fr, en]
   licence: "Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO)"
   tos_url: "https://data.humdata.org/terms"
   tos_sha256: null
-  tos_checked_at: null
-  robots_checked_at: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
   crawl_permission: public_open_data
   pii_class: none
   allowed_fields: ["*"]
@@ -33,23 +38,28 @@
 - source_id: wfp_hdx_mdg
   name: "WFP Food Prices – Madagascar (HDX)"
   owner: "World Food Programme / OCHA HDX"
+  source_family: un_wfp
   priority: P1
   status: disabled
   access_method: file
   connector: ketrika.connectors.wfp_hdx_mdg:Connector
   cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: monthly
   freshness_sla_days: 62
   partitioning: static
   entrypoints:
     - url: "https://data.humdata.org/dataset/wfp-food-prices-for-madagascar"
       kind: landing
       verified_at: null
+      verified: false
   languages: [en]
   licence: "Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO)"
   tos_url: "https://data.humdata.org/terms"
   tos_sha256: null
-  tos_checked_at: null
-  robots_checked_at: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
   crawl_permission: public_open_data
   pii_class: none
   allowed_fields: ["*"]
@@ -60,28 +70,33 @@
   redistribution_allowed: yes
   legal_review_status: approved
   data_kinds: [price]
-  notes: "Données historiques mensuelles des prix des denrées alimentaires sur les marchés de Madagascar."
+  notes: "Données historiques mensuelles des prix des denrées alimentaires sur les marchés de Madagascar. Statut disabled suite blocage 403 HDX."
 
 - source_id: wb_rtfp_mdg
   name: "World Bank Real-Time Food Prices – Madagascar (RTFP)"
   owner: "World Bank Data360 / Development Economics Data Group"
+  source_family: world_bank
   priority: P1
   status: active
   access_method: file
   connector: ketrika.connectors.wb_rtfp_mdg:Connector
   cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: monthly
   freshness_sla_days: 62
   partitioning: static
   entrypoints:
     - url: "https://microdata.worldbank.org/index.php/catalog/food-prices"
       kind: landing
-      verified_at: null
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
   languages: [en]
   licence: "Creative Commons Attribution 4.0 International (CC BY 4.0)"
   tos_url: "https://www.worldbank.org/en/about/legal/terms-and-conditions"
   tos_sha256: null
-  tos_checked_at: null
-  robots_checked_at: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
   crawl_permission: public_open_data
   pii_class: none
   allowed_fields: ["*"]
@@ -97,26 +112,32 @@
 - source_id: faostat
   name: "FAOSTAT – Food and Agriculture Organization Statistics (Madagascar)"
   owner: "Food and Agriculture Organization (FAO)"
+  source_family: un_fao
   priority: P1
   status: active
   access_method: api
   connector: ketrika.connectors.faostat:Connector
   cadence: annual
+  collection_cadence: monthly
+  observation_cadence: annual
+  publication_cadence: annual
   freshness_sla_days: 365
   partitioning: annual
   entrypoints:
     - url: "https://www.fao.org/faostat/en/#data"
       kind: landing
-      verified_at: null
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
     - url: "https://fenixservices.fao.org/faostat/api/v1/en/data/QCL"
       kind: api
-      verified_at: null
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
   languages: [en, fr]
   licence: "Creative Commons Attribution-NonCommercial-ShareAlike 3.0 IGO (CC BY-NC-SA 3.0 IGO)"
   tos_url: "https://www.fao.org/contact-us/terms/en/"
   tos_sha256: null
-  tos_checked_at: null
-  robots_checked_at: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
   crawl_permission: public_open_data
   pii_class: none
   allowed_fields: ["*"]
@@ -132,23 +153,28 @@
 - source_id: nasa_power
   name: "NASA POWER Agroclimatology Daily Point API"
   owner: "NASA Langley Research Center"
+  source_family: nasa
   priority: P1
   status: disabled
   access_method: api
   connector: ketrika.connectors.nasa_power:Connector
   cadence: daily
+  collection_cadence: daily
+  observation_cadence: daily
+  publication_cadence: daily
   freshness_sla_days: 7
   partitioning: monthly
   entrypoints:
     - url: "https://power.larc.nasa.gov/api/temporal/daily/point"
       kind: api
-      verified_at: null
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
   languages: [en]
   licence: "NASA Open Data Policy (Public Domain)"
   tos_url: "https://power.larc.nasa.gov/docs/services/api/"
   tos_sha256: null
-  tos_checked_at: null
-  robots_checked_at: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
   crawl_permission: public_open_data
   pii_class: none
   allowed_fields: ["*"]
@@ -164,23 +190,28 @@
 - source_id: instat_nipc
   name: "INSTAT Madagascar – Indice des Prix à la Consommation (NIPC)"
   owner: "Institut National de la Statistique de Madagascar (INSTAT)"
+  source_family: madagascar_gov
   priority: P1
   status: active
   access_method: file
   connector: ketrika.connectors.instat_nipc:Connector
   cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: monthly
   freshness_sla_days: 62
   partitioning: monthly
   entrypoints:
     - url: "https://www.instat.mg"
       kind: landing
-      verified_at: null
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
   languages: [fr]
   licence: "Données publiques officielles gouvernementales"
   tos_url: "https://www.instat.mg/mentions-legales"
   tos_sha256: null
-  tos_checked_at: null
-  robots_checked_at: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
   crawl_permission: public_open_data
   pii_class: none
   allowed_fields: ["*"]
@@ -196,23 +227,28 @@
 - source_id: miasa_odr
   name: "MiASA Observatoire du Riz (ODR) – Bulletins Périodiques"
   owner: "Ministère de l'Agriculture et de l'Élevage (MiASA) / Observatoire du Riz"
+  source_family: madagascar_gov
   priority: P1
   status: active
   access_method: file
   connector: ketrika.connectors.miasa_odr:Connector
   cadence: weekly
+  collection_cadence: weekly
+  observation_cadence: weekly
+  publication_cadence: weekly
   freshness_sla_days: 28
   partitioning: per_document
   entrypoints:
     - url: "http://www.agriculture.gov.mg"
       kind: landing
-      verified_at: null
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
   languages: [fr, mg]
   licence: "Données publiques officielles gouvernementales"
-  tos_url: null
+  tos_url: "http://www.agriculture.gov.mg/mentions-legales"
   tos_sha256: null
-  tos_checked_at: null
-  robots_checked_at: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
   crawl_permission: public_open_data
   pii_class: none
   allowed_fields: ["*"]
@@ -223,28 +259,33 @@
   redistribution_allowed: yes
   legal_review_status: approved
   data_kinds: [price]
-  notes: "Bulletins hebdomadaires ODR détaillant les prix du paddy, riz blanc local et riz importé par région et district."
+  notes: "Bulletins hebdomadaires ODR détaillant les prix du paddy, riz blanc local et riz importé par région et district. Base légale: mission publique de suivi de la sécurité alimentaire."
 
 - source_id: mincc_ppn
   name: "MinCC – Relevés Prix & Stocks PPN"
   owner: "Ministère de l'Industrialisation et du Commerce (MinCC) / DRCC"
+  source_family: madagascar_gov
   priority: P1
   status: active
   access_method: file
   connector: ketrika.connectors.mincc_ppn:Connector
   cadence: weekly
+  collection_cadence: weekly
+  observation_cadence: weekly
+  publication_cadence: weekly
   freshness_sla_days: 28
   partitioning: per_document
   entrypoints:
     - url: "http://www.commerce.gov.mg"
       kind: landing
-      verified_at: null
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
   languages: [fr]
   licence: "Données publiques officielles gouvernementales"
-  tos_url: null
+  tos_url: "http://www.commerce.gov.mg/mentions-legales"
   tos_sha256: null
-  tos_checked_at: null
-  robots_checked_at: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
   crawl_permission: public_open_data
   pii_class: none
   allowed_fields: ["*"]
@@ -255,28 +296,33 @@
   redistribution_allowed: yes
   legal_review_status: approved
   data_kinds: [price, stock]
-  notes: "Relevés de la Direction du Commerce Intérieur sur les prix et stocks des produits de première nécessité (huile, sucre, farine, riz)."
+  notes: "Relevés de la Direction du Commerce Intérieur sur les prix et stocks des produits de première nécessité (huile, sucre, farine, riz). Données publiques de régulation."
 
 - source_id: douanes_stats
   name: "Douanes Malagasy – Statistiques du Commerce Extérieur"
   owner: "Direction Générale des Douanes de Madagascar"
+  source_family: madagascar_gov
   priority: P1
   status: active
   access_method: file
   connector: ketrika.connectors.douanes_stats:Connector
   cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: monthly
   freshness_sla_days: 62
   partitioning: monthly
   entrypoints:
     - url: "https://www.douanes.gov.mg"
       kind: landing
-      verified_at: null
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
   languages: [fr]
   licence: "Données publiques officielles gouvernementales"
   tos_url: "https://www.douanes.gov.mg/mentions-legales"
   tos_sha256: null
-  tos_checked_at: null
-  robots_checked_at: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
   crawl_permission: public_open_data
   pii_class: none
   allowed_fields: ["*"]
@@ -292,23 +338,28 @@
 - source_id: chirps
   name: "CHIRPS – Climate Hazards Center InfraRed Precipitation with Station Data"
   owner: "Climate Hazards Center, UC Santa Barbara"
+  source_family: chc_ucsb
   priority: P2
   status: planned
   access_method: file
   connector: ketrika.connectors.chirps:Connector
   cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: monthly
   freshness_sla_days: 62
   partitioning: monthly
   entrypoints:
     - url: "https://www.chc.ucsb.edu/data/chirps"
       kind: landing
-      verified_at: null
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
   languages: [en]
   licence: "Public Domain / CC0"
   tos_url: "https://www.chc.ucsb.edu/data/terms"
   tos_sha256: null
-  tos_checked_at: null
-  robots_checked_at: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
   crawl_permission: public_open_data
   pii_class: none
   allowed_fields: ["*"]

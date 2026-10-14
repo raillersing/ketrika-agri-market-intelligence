@@ -1,16 +1,21 @@
 # instat_nipc : INSTAT Madagascar – Indice des Prix à la Consommation (NIPC)
 
 - **Propriétaire / licence / attribution :** Institut National de la Statistique de Madagascar (INSTAT). Licence : Données publiques officielles gouvernementales. Attribution : "INSTAT Madagascar".
+- **Famille de source (`source_family`) :** `madagascar_gov` (famille gouvernementale malgache officielle, isolée des sources d'aide internationale).
 - **URL vérifiées (date, code HTTP) :**
-  - https://www.instat.mg (2026-10-06, HTTP 200).
+  - https://www.instat.mg (2026-10-06, HTTP 200, verified: true).
 - **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (vérifié 2026-10-06).
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://www.instat.mg/mentions-legales. Publications de statistiques nationales officielles en libre accès public.
+- **CGU & Qualification légale (C1 / R1.1) :** https://www.instat.mg/mentions-legales. Publications de statistiques nationales officielles en libre accès public. Aucune PII directe (`pii_class: none`), aucun mécanisme d'authentification requis.
 - **Format(s) et structure :** Tableaux Excel (XLSX) et CSV publiés mensuellement.
   - Structure variable selon les années : colonnes identifiées dynamiquement via détection de mots-clés (`période`, `mois`, `date`, `ensemble`, `produits alimentaires`, `riz`).
 - **Séries extraites et normalisées :**
   - `cpi_total` : Indice Général Ensemble (base 2016=100) ;
   - `cpi_food` : Indice des Produits alimentaires et boissons non alcoolisées (COICOP 01) ;
   - `cpi_rice` : Indice du Riz de consommation.
+- **Cadences distinctes (R1.1) :**
+  - Collecte technique (`collection_cadence`) : `monthly`
+  - Observation sous-jacente (`observation_cadence`) : `monthly`
+  - Publication éditeur (`publication_cadence`) : `monthly`
 - **Cadence constatée :** Mensuelle (parution vers le 20 du mois M+1).
 - **Couverture validée :**
   - Série « alimentation » (`cpi_food`) disponible sur ≥ 5 années consécutives (2019-01 à 2024-03, 63 mois).

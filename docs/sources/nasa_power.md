@@ -9,13 +9,18 @@
 > ([méthodologie officielle](https://power.larc.nasa.gov/docs/methodology/), consultée le 2026-10-09).
 
 - **Propriétaire / licence / attribution :** NASA Langley Research Center. Licence : Public Domain (US Government Open Data). Attribution : "NASA POWER Project, NASA Langley Research Center".
+- **Famille de source (`source_family`) :** `nasa` (National Aeronautics and Space Administration).
 - **URL vérifiées (date, code HTTP) :**
-  - https://power.larc.nasa.gov/api/temporal/daily/point (2026-10-06, HTTP 200).
-- **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (vérifié 2026-10-06).
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://power.larc.nasa.gov/docs/services/api/. Accès public illimité avec respect d'un débit modéré (débit maximal respecté : ≤ 0,5 req/s).
+  - https://power.larc.nasa.gov/api/temporal/daily/point (historique 2026-10-06 HTTP 200, actuellement `verified: false` en raison de la directive robots.txt interdisant `/api/` B-R010).
+- **robots.txt (extrait pertinent, date) :** `Disallow: /api/` avec exception `/api/pages/` (B-R010, vérifié 2026-10-09).
+- **CGU & Qualification légale (C1 / R1.1) :** https://power.larc.nasa.gov/docs/services/api/. Accès public au domaine public US mais restreint par robots.txt pour les scripts automatiques non exemptés. Statut `degraded` / attente résolution R1.11 sans appel prohibé. Aucune PII directe (`pii_class: none`).
 - **Format(s) et structure :** API REST GeoJSON / JSON.
   - Paramètres de requête : communauté `AG` (agroclimatology), paramètres `PRECTOTCORR,T2M_MAX,T2M_MIN,RH2M`, `longitude`, `latitude`, `format=JSON`.
   - Structure de réponse : dictionnaire horodaté `properties.parameter.<PARAM>.<YYYYMMDD>`.
+- **Cadences distinctes (R1.1) :**
+  - Collecte technique (`collection_cadence`) : `daily`
+  - Observation sous-jacente (`observation_cadence`) : `daily`
+  - Publication éditeur (`publication_cadence`) : `daily`
 - **Mapping des variables :**
   - `PRECTOTCORR` → `precip_mm` (précipitations quotidiennes en millimètres) ;
   - `T2M_MAX` → `t2m_max_c` (température maximale quotidienne à 2m en °C) ;

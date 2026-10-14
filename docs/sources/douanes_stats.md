@@ -1,10 +1,11 @@
 # douanes_stats : Douanes Malagasy – Statistiques du Commerce Extérieur
 
 - **Propriétaire / licence / attribution :** Direction Générale des Douanes de Madagascar (DGD) / Ministère de l'Économie et des Finances. Licence : Données publiques officielles gouvernementales. Attribution : "Direction Générale des Douanes, Madagascar".
+- **Famille de source (`source_family`) :** `madagascar_gov` (famille gouvernementale malgache officielle, isolée des sources d'aide internationale).
 - **URL vérifiées (date, code HTTP) :**
-  - https://www.douanes.gov.mg (2026-10-06, HTTP 200).
+  - https://www.douanes.gov.mg (2026-10-06, HTTP 200, verified: true).
 - **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /`
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://www.douanes.gov.mg/mentions-legales. Publications statistiques officielles du commerce extérieur malagasy issues de SYDONIAWorld.
+- **CGU & Qualification légale (C1 / R1.1) :** https://www.douanes.gov.mg/mentions-legales. Publications statistiques officielles du commerce extérieur malagasy issues de SYDONIAWorld. Données statistiques agrégées sans secret commercial nominatif ni PII directe (`pii_class: none`).
 - **Format(s) et structure (avec exemples réels, pages, colonnes) :**
   - Fichiers mensuels tabulaires CSV / XLSX structurés par flux déclarés au cordon douanier.
   - Colonnes principales :
@@ -16,6 +17,10 @@
     - `poids_net_kg` : Poids net en kilogrammes.
     - `valeur_caf_fob_mga` : Valeur statistique en Francs Malgaches/Ariary (valeur CAF à l'importation, valeur FOB à l'exportation).
     - `valeur_usd` : Contre-valeur statistique en USD.
+- **Cadences distinctes (R1.1) :**
+  - Collecte technique (`collection_cadence`) : `monthly`
+  - Observation sous-jacente (`observation_cadence`) : `monthly`
+  - Publication éditeur (`publication_cadence`) : `monthly`
 - **Cadence constatée :** Mensuelle avec consolidations trimestrielles et annuelles.
 - **Gestion des révisions (SPECS §8.1) :**
   - Les apurements des déclarations SYDONIAWorld entraînent des révisions rétroactives des tonnages et valeurs déclarés.

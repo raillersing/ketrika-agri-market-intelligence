@@ -7,11 +7,16 @@
 > R1.7 doit établir disponibilité, droits et corpus authentique avant qualification live.
 
 - **Propriétaire / licence / attribution :** World Food Programme (WFP) / OCHA HDX. Licence : CC BY-IGO. Attribution obligatoire : "World Food Programme (WFP)".
+- **Famille de source (`source_family`) :** `un_wfp` (famille Programme Alimentaire Mondial, strictement isolée de `world_bank` pour prévenir toute double comptabilisation de prix imputés selon C3).
 - **URL vérifiées (date, code HTTP) :**
-  - https://data.humdata.org/dataset/wfp-food-prices-for-madagascar (2026-10-06, HTTP 200).
-- **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (vérifié 2026-10-06).
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** https://data.humdata.org/terms. Utilisation libre avec attribution et mention de la source.
+  - https://data.humdata.org/dataset/wfp-food-prices-for-madagascar (historique 2026-10-06, actuellement `verified: false` suite au 403 Cloudflare sur HDX en direct).
+- **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (historique vérifié 2026-10-06).
+- **CGU & Qualification légale (C1 / R1.1) :** https://data.humdata.org/terms. Utilisation libre avec attribution et mention de la source. Statut opérationnel `status: disabled` conformément à B-R009 et AGENTS §8.1. Aucune tentative de contournement CAPTCHA / 403. Aucune PII directe (`pii_class: none`).
 - **Format(s) et structure (avec exemples réels, pages, colonnes) :** CSV structuré. Colonnes : `date`, `admin1`, `admin2`, `market`, `latitude`, `longitude`, `category`, `commodity`, `unit`, `priceflag`, `pricetype`, `currency`, `price`, `usdprice`.
+- **Cadences distinctes (R1.1) :**
+  - Collecte technique (`collection_cadence`) : `monthly`
+  - Observation sous-jacente (`observation_cadence`) : `monthly`
+  - Publication éditeur (`publication_cadence`) : `monthly`
 - **Cadence constatée (dates des 6 dernières publications) :** Mensuelle. Données consolidées par le WFP VAM.
 - **Couverture :** Madagascar, principaux marchés urbains et ruraux. Produits : riz (local et importé), maïs, manioc, légumineuses, huile, sucre.
 - **Pièges connus :** Variations des libellés de marchés selon les années, flags de prix (actual vs forecast), conversion monétaire MGA vs USD.

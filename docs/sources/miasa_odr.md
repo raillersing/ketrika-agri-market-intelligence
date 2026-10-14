@@ -1,17 +1,22 @@
 # miasa_odr : MiASA Observatoire du Riz (ODR) – Bulletins Périodiques
 
 - **Propriétaire / licence / attribution :** Ministère de l'Agriculture et de l'Élevage (MiASA) / Observatoire du Riz (ODR). Licence : Données publiques officielles gouvernementales malgaches. Attribution obligatoire : « Observatoire du Riz (ODR), Ministère de l'Agriculture et de l'Élevage, Madagascar ».
+- **Famille de source (`source_family`) :** `madagascar_gov` (famille gouvernementale malgache officielle, isolée des sources d'aide internationale).
 - **URL vérifiées (date, code HTTP) :**
-  - http://www.agriculture.gov.mg (2026-10-06, HTTP 200).
-  - http://www.agriculture.gov.mg/odr/bulletin_850.pdf (2026-10-07, HTTP 200).
+  - http://www.agriculture.gov.mg (2026-10-06, HTTP 200, verified: true).
+  - http://www.agriculture.gov.mg/odr/bulletin_850.pdf (2026-10-07, HTTP 200, verified: true).
 - **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (2026-10-06).
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** Données ouvertes d'intérêt public agricole pour le suivi officiel de la sécurité alimentaire et de la filière riz. Réutilisation autorisée avec citation de la source.
+- **CGU & Qualification légale (C1 / R1.1) :** Données ouvertes d'intérêt public agricole pour le suivi officiel de la sécurité alimentaire et de la filière riz. Réutilisation autorisée avec citation de la source. Aucune PII directe (`pii_class: none`), aucun mécanisme d'authentification requis.
 - **Format(s) et structure (avec exemples réels, pages, colonnes) :**
   - Bulletins hebdomadaires et mensuels au format PDF vectoriel (2 à 4 pages).
   - Tableaux structurés récapitulatifs :
     1. *Tableau 1 : Prix au producteur du paddy* (`actor_level = 'producer'`) : Région / District de collecte, prix moyen (Ar/kg).
     2. *Tableau 2 : Prix de gros du riz blanc* (`actor_level = 'wholesale'`) : Région / Marché de gros, colonnes pour Riz blanc local (Vary gasy, Makalioka, Tsipala) et Riz importé (25% brisures).
     3. *Tableau 3 : Prix au détail du riz blanc* (`actor_level = 'retail'`) : Région / Zone de consommation, colonnes par variété et riz importé.
+- **Cadences distinctes (R1.1) :**
+  - Collecte technique (`collection_cadence`) : `weekly`
+  - Observation sous-jacente (`observation_cadence`) : `weekly`
+  - Publication éditeur (`publication_cadence`) : `weekly`
 - **Cadence constatée :** Hebdomadaire et mensuelle (numérotation séquentielle des bulletins, ex. N° 520, 710, 850).
 - **Couverture :**
   - Produits : Riz paddy (`RICE_PADDY`), Riz blanc local avec variétés (Vary gasy, Makalioka, Tsipala), Riz blanc importé (25% brisures).

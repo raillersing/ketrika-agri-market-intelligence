@@ -1,15 +1,20 @@
 # mincc_ppn : MinCC – Relevés Prix & Stocks PPN
 
 - **Propriétaire / licence / attribution :** Ministère de l'Industrialisation et du Commerce (MinCC) / Direction de la Régulation du Commerce et de la Consommation (DRCC). Licence : Données publiques officielles gouvernementales. Attribution : "Ministère de l'Industrialisation et du Commerce, Madagascar".
+- **Famille de source (`source_family`) :** `madagascar_gov` (famille gouvernementale malgache officielle, isolée des sources d'aide internationale).
 - **URL vérifiées (date, code HTTP) :**
-  - http://www.commerce.gov.mg (2026-10-06, HTTP 200).
-  - http://www.commerce.gov.mg/ppn/ (2026-10-07, HTTP 200).
+  - http://www.commerce.gov.mg (2026-10-06, HTTP 200, verified: true).
+  - http://www.commerce.gov.mg/ppn/ (2026-10-07, HTTP 200, verified: true).
 - **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (vérifié 2026-10-06).
-- **CGU (URL, sha256, résumé des clauses de réutilisation) :** Surveillance administrative des prix et des stocks stratégiques de denrées de première nécessité (PPN vivriers). Accès public et officiel aux données sans restriction de rediffusion.
+- **CGU & Qualification légale (C1 / R1.1) :** Surveillance administrative des prix et des stocks stratégiques de denrées de première nécessité (PPN vivriers). Accès public et officiel aux données sans restriction de rediffusion. Aucune PII directe (`pii_class: none`), aucun mécanisme d'authentification requis.
 - **Format(s) et structure (avec exemples réels, pages, colonnes) :**
   - Tableaux HTML régionaux réguliers (`<table>`) comportant les colonnes : Produit, Stade de commercialisation (Gros / Détail), Prix (Ar/kg ou Ar/L), Stock disponible (Tonnes), Couverture estimée (Jours), Statut d'approvisionnement (Suffisant / Tendu / Rupture).
   - Communiqués périodiques textuels de la DRCC en français et en malgache (filazana / fanambarana), décrivant l'état des approvisionnements, les cours observés et les stocks stratégiques.
   - Produits couverts : Sucre blanc, Huile alimentaire vrac, Farine de blé, Riz blanc local et importé.
+- **Cadences distinctes (R1.1) :**
+  - Collecte technique (`collection_cadence`) : `weekly`
+  - Observation sous-jacente (`observation_cadence`) : `daily`
+  - Publication éditeur (`publication_cadence`) : `weekly`
 - **Cadence constatée (dates des 6 dernières publications) :** Hebdomadaire (relevés hebdomadaires de février 2024 : 2024-02-05, 2024-02-06, 2024-02-07, 2024-02-08, 2024-02-09, 2024-02-10).
 - **Couverture :** Grands centres régionaux de consommation et d'approvisionnement : Analamanga (Antananarivo), Atsinanana (Toamasina), Boeny (Mahajanga), Vakinankaratra (Antsirabe), Atsimo-Andrefana (Toliara), Diana (Antsiranana).
 - **Pièges connus :** Unités variables (litres pour les huiles vs kg pour solides ; tonnes métriques pour les stocks en entrepôts), bilinguisme (termes malgaches pour les produits et statuts : *siramamy fotsy*, *menaka fihinana*, *vary gasy*, *lafarinina*, *ampy*, *sahirana*, *banga*).
