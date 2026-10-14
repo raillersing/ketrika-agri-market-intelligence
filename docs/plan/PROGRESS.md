@@ -3,6 +3,12 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T10:14:39Z] R0.7 — E2E reçu, check complet en cours
+
+- 32999 FINAL 0 sur 28a65b9 : parcours navigateur réel 9/9/49,378 s, zéro browser_errors, prix proxy 200 et accès après logout 401. Reçu avec commit/fingerprint 3acdde666339f04ef8d3c37829e88a0241b23bf1099c0339027925691e2bc0a6/images exactes ; trace conservée dans volume navigateur SHA 7a4b1b7544a772be0b877cd3fd3e268639b2746a4eb7b42358b041876d937fce, pas de secret committé.
+- Check Windows réel 59885 lancé sur même commit/source figés, reprendra inventory/bindings/lecteurs partagés. Reprendre ce processus, aucun code/test/runner modifié ni suite QA mutante concurrente. Après vert : originaux/inclusion/couvertures/partial qualify/préservation et intégration atomique requis ; R0.7 IN_PROGRESS.
+- Préservation 40853 FINAL 0 : 482 SR/47b4402859acc41e3ae91fdb128e56c6 ; 764 prix/4b2586cb8e422f11c4873ad513d66bc1 ; head actif 0002 ; Bronze 674/1377481 octets/83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c/zéro delete markers. Seuls serveurs api/web QA arrêtés avant build, aucun service/volume actif altéré.
+
 ### [2026-10-14T10:11:01Z] R0.7 — lot stabilisé en qualification sur worktree
 
 - Branche work/r07-measured-qualification-20261014, commit 28a65b99b48e4f7dccd9671b007a673c3b22a3d6 basé d5665bf ; 18 fichiers/1821 ajouts/49 retraits. ADR-064/SPECS avant code, qualificateur offline borné et KPI mesurés, reporters liés au commit/fingerprint/environnement/images, JUnit et front vérifiés par mêmes lecteurs que la réception.
