@@ -2,6 +2,11 @@
   "version": 1,
   "scope": "software subsets; never automatic task, source, model or human certification",
   "tasks": {
+    "R0.8": {
+      "tests": ["tests/unit/test_rebuild_manifest.py", "tests/unit/test_rebuild_bronze.py", "tests/unit/test_rebuild_qualification.py"],
+      "minimum_tests": 71,
+      "minimum_integration_tests": 0
+    },
     "R0.7": {
       "tests": [
         "tests/unit/test_measured_qualification.py",

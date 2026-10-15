@@ -1041,6 +1041,26 @@ qualification expose seulement GET/HEAD sur un inventaire fermé clé/SHA/taille
 lit les fichiers SHA sans symlink et revérifie les octets à chaque GET. Aucun
 PUT ni fallback S3 ; objet absent/corrompu refuse le rejeu. Ce lecteur seul
 ne certifie ni authenticité ni confinement système.
+Le worker de preuve refuse avant tout wipe une cible autre que
+ketrika_rebuild_qualification, utilisateur ketrika/mot de passe public
+qa-local-only, socket /run/ketrika-rebuild (aucun hôte IP). Il confirme
+current_database() et inet_server_addr() NULL, ainsi que seule interface lo
+et absence de route IPv4 hors lo. Inventaires ref, meta.source et
+meta.source_record comparés sans exclusion. Toutes sources doivent être
+rejouables et chaque objet local doit avoir son SHA correct avant destruction.
+Sa réussite logicielle ne qualifie pas le corpus ou la restauration ML ;
+rapport explicitement PARTIAL tant que ces preuves séparées restent absentes.
+Commande logicielle distincte `scripts/dev.ps1 rebuild-smoke prepare|replay`
+(Linux dev.sh identique) : profile Compose ketrika-rebuild-qualification,
+volumes pgdata/socket/copy/reports étiquetés et dédiés, seul venv QA existant
+réutilisé readonly. Prepare crée explicitement deux éditions synthétiques
+sur base neuve, refuse toute réinitialisation ; replay copie readonly, aucun
+seed implicite, conteneurs conservés pour inspect. Ce smoke ne reçoit pas R0.8.
+Reprise prepare permise après interruption seulement si schéma présent mais
+toutes tables meta/ref/obs/ml strictement vides et aucun inventaire créé ;
+aucun effacement. Prepare root sans capabilities initialise seulement les
+volumes dédiés ; worker non-root, copie readonly, rapports sous runs sticky.
+Le fichier Compose dédié fait partie de l'empreinte de source.
 
 ADR-052 : archive interne des manifestes sous reference_manifest/yyyy/mm/SHA.json,
 application/json, URL vide, manual_upload/http_status 0, en-tête

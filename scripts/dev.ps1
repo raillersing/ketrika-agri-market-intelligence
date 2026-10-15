@@ -127,6 +127,7 @@ function Show-Help {
     Write-Host "  test-network       - Run tests requiring live network access"
     Write-Host "  backfill <src>     - Run Dagster backfill for specified source or all"
     Write-Host "  rebuild            - Rebuild Silver and Gold from Bronze with network disabled"
+    Write-Host "  rebuild-smoke <prepare|replay> - Synthetic software proof, dedicated network-none DB"
     Write-Host "  e2e                - Run Playwright end-to-end tests"
     Write-Host "  bulletin           - Generate a weekly PPN bulletin draft"
     Write-Host "  demo               - Execute the final MVP acceptance scenario (T11.6)"
@@ -235,6 +236,26 @@ switch ($Command) {
         Write-Host "Running backfill for $source..." -ForegroundColor Cyan
         docker compose exec -T api python -m ketrika.pipelines.backfill $source
         exit $LASTEXITCODE
+    }
+    "rebuild-smoke" {
+        if ($ArgsList.Count -ne 1 -or $ArgsList[0] -notin @("prepare", "replay")) { throw "rebuild-smoke requires prepare|replay" }
+        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_backend_venv_r03"
+        foreach ($suffix in @("pgdata", "socket", "copy", "reports")) {
+            $name = "ketrika_rebuild_qualification_$suffix"
+            $existing = @(& docker volume ls --format '{{.Name}}')
+            if ($LASTEXITCODE -ne 0) { throw "Cannot list rebuild volumes" }
+            if ($existing -contains $name) {
+                $labels = (& docker volume inspect --format '{{json .Labels}}' $name) | ConvertFrom-Json
+                if ($LASTEXITCODE -ne 0 -or $labels.'ketrika.scope' -ne "rebuild-qualification" -or $labels.'com.docker.compose.project' -ne "ketrika-rebuild-qualification") { throw "Foreign rebuild volume refused" }
+            }
+        }
+        $rebuildCompose = @("compose", "--env-file", (Join-Path $RepoRoot "scripts/qualification.env"), "--project-name", "ketrika-rebuild-qualification", "-f", (Join-Path $RepoRoot "docker-compose.rebuild-qualification.yml"))
+        Invoke-QaDocker -DockerArgs ($rebuildCompose + @("config", "--quiet"))
+        Invoke-QaDocker -DockerArgs ($rebuildCompose + @("up", "-d", "--wait", "db"))
+        $service = if ($ArgsList[0] -eq "prepare") { "prepare" } else { "worker" }
+        $runName = "ketrika-rebuild-" + $ArgsList[0] + "-" + [guid]::NewGuid().ToString("N")
+        Invoke-QaDocker -DockerArgs ($rebuildCompose + @("run", "--no-deps", "--name", $runName, $service))
+        exit 0
     }
     "rebuild" {
         Write-Host "Rebuilding Silver/Gold from Bronze offline..." -ForegroundColor Cyan

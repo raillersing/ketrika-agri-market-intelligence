@@ -19,7 +19,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
 | R0.6 | MUST | DONE | A/B1/B2/C intégrés main 173c41a ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118/snapshot exact/actif préservé ; logiciel reçu, pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | main442a20c, source971702e : Windows1538/35/build, E2E9, inclusion160, empreinte exacte, préservation et gitleaks0 ; aucun KPI marché qualifié |
-| R0.8 | MUST | IN_PROGRESS | Branche isolée : 55 unités/lint/types verts, capture SQL readonly19 relations et client Bronze local ; confinement/rejeu authentique/révisions et réception complète restants |
+| R0.8 | MUST | IN_PROGRESS | Rejeu réel synthétique91244 code0, Docker none/socket/copie readonly, 19 manifestes identiques et révisions2/1 ; réception Windows, corpus authentique/révisions réelles et ML restants |
 | R0.9 | MUST | TODO | — |
 | R1.1 | MUST | TODO | — |
 | R1.2 | MUST | TODO | — |

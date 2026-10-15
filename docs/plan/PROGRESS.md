@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T14:43:27Z] R0.8 — rejeu réel sans réseau, lot logiciel à recevoir
+
+- ADR-068/SPECS complétés avant worker/profil/commande rebuild-smoke. Nouvelle base ketrika_rebuild_qualification, socket Unix dédiée, DB/worker Docker network=none ; copie locale readonly, worker app/capdropALL. Aucun accès ni migration active, aucun volume QA historique utilisé pour les données ; seul venv QA réutilisé readonly.
+- Incidents B-R065/066 distincts : serveur initdb temporaire puis permissions volumes neufs ; corrections sans effacement, reprise seulement schéma et tables strictement vides. Préparation65086 FINAL0 ; replay91244 FINAL0, rapport brut R0.8-offline-smoke-development.json. Inspect18581 confirme none/ALL/app/copyRWfalse ; SQL2 observations/1 supersédée, 19 manifestes et référentiels identiques. PARTIAL/synthetic, pas corpus authentique/S3 versionné/ML qualifiés.
+- 88914 FINAL0 : 77 régressions qualificateur/garde/14,76 s, lint et types huit fichiers verts ; précédent55 cas be587d1 inchangés. Manifest R0.8 trois fichiers/minimum71. Nouvelle configuration Compose liée à l'empreinte et symlinks racine refusés/3 cas. Scan97925 FINAL0/204597 octets/sans fuite, diffcheck0.
+- Lot stabilisé à figer puis réception Windows unique, preuve CLI native et originaux/inclusion/préservation avant intégration. R0.8 demeure IN_PROGRESS, aucun tag ni gate R0.9. Corpus authentique et révisions réelles restent à acquérir selon droits/policy ; continuer les travaux sûrs, pas d'arrêt humain exclusif artificiel.
+
 ### [2026-10-15T07:01:20Z] R0.8 — incrément de développement, pas réception
 
 - Worktree isolé work/r08-offline-rebuild-20261015 basé main3a3ccba, sous /home/raillersing/projects/ketrika-qa-worktrees/r08-offline-rebuild-20261015 ; ancien clone et ses exports non suivis conservés (switch refusé sans écraser, nouveau worktree créé). ADR-068/SPECS avant code ; capture complète19 tables/vues, mapping révisions/Gold, diff à comptes égaux et client Bronze local readonly, injection même store parse/Gold.

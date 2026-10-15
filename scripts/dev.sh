@@ -192,6 +192,23 @@ case "$COMMAND" in
     SRC="${1:-all}"
     docker compose exec -T api python -m ketrika.pipelines.backfill "$SRC"
     ;;
+  rebuild-smoke)
+    [ "$#" -eq 1 ] && { [ "$1" = prepare ] || [ "$1" = replay ]; } || { echo "rebuild-smoke requires prepare|replay" >&2; exit 1; }
+    qa_owned_resource volume ketrika_qualification_backend_venv_r03
+    for rebuild_suffix in pgdata socket copy reports; do
+      rebuild_name="ketrika_rebuild_qualification_$rebuild_suffix"
+      if docker volume inspect "$rebuild_name" >/dev/null 2>&1; then
+        [ "$(docker volume inspect --format '{{index .Labels "ketrika.scope"}}' "$rebuild_name")" = rebuild-qualification ] &&
+        [ "$(docker volume inspect --format '{{index .Labels "com.docker.compose.project"}}' "$rebuild_name")" = ketrika-rebuild-qualification ] || { echo "Foreign rebuild volume refused" >&2; exit 1; }
+      fi
+    done
+    rebuild_compose=(docker compose --env-file "$REPO_ROOT/scripts/qualification.env" --project-name ketrika-rebuild-qualification -f "$REPO_ROOT/docker-compose.rebuild-qualification.yml")
+    "${rebuild_compose[@]}" config --quiet
+    "${rebuild_compose[@]}" up -d --wait db
+    rebuild_service=worker
+    [ "$1" != prepare ] || rebuild_service=prepare
+    "${rebuild_compose[@]}" run --no-deps "$rebuild_service"
+    ;;
   rebuild)
     docker compose exec -T -e HTTP_OFFLINE=1 api python -m ketrika.pipelines.rebuild
     ;;

@@ -3,6 +3,31 @@
 Statut : **IN_PROGRESS**. Aucun rebuild actif, aucune réception R0.8 ou gate
 R0.9. Ce document distingue implémentation, tests logiciels et preuve réelle.
 
+## Rejeu logiciel désormais exécutable
+
+`scripts/dev.ps1 rebuild-smoke prepare` initialise explicitement la nouvelle
+base ketrika_rebuild_qualification ; `rebuild-smoke replay` rejoue ses deux
+éditions synthétiques. Linux : `bash scripts/dev.sh rebuild-smoke ...`.
+Les volumes ketrika_rebuild_qualification_* et conteneurs sont conservés.
+Prepare refuse une base peuplée ; reprise d'un schéma seul strictement vide
+permise, sans effacement. Aucun reset ni nettoyage automatique.
+
+Développement réel : préparation65086 code0 ; rejeu91244 code0, rapport
+`/reports/runs/489700d177bd4cf6bf001e188f01db9b/replay.json`, copie originale
+docs/evidence/R0.8-offline-smoke-development.json. Docker inspect : réseau
+none, toutes capabilities retirées, utilisateur app, montage /copy RW=false.
+PostgreSQL relu : deux observations dont une supersédée. Manifestes complets
+et références identiques, replay_passed=true ; rapport PARTIAL/synthetic.
+Ce résultat de développement ne reçoit ni corpus authentique, ni versions
+S3 originales, ni prévisions recalculées. Réception complète encore requise.
+
+Garde réseau/destination : 16 nouveaux cas ; régressions qualificateur et
+garde77 verts/14,76 s, types huit fichiers verts88914. Incident initial de
+disponibilité PostgreSQL corrigé en exigeant son processus final ; problème
+de permissions des nouveaux volumes corrigé par préparation root sans
+capabilities, worker non-root et rapports dédiés sticky. Aucun chmod hôte,
+cache utilisateur ou volume actif ; aucun objet Bronze S3 supprimé/modifié.
+
 ## Éléments implémentés (branche work/r08-offline-rebuild-20261015)
 
 - `core/rebuild_manifest.py` : capture SQL SELECT des sept tables obs et
