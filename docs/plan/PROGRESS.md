@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T21:52:34Z] R0.8 — rejeu des référentiels implémenté sur branche native
+
+- Worktree r08-native-qualification-20261016, commit0aae91c : ADR-073/SPECS avant résolution des identités Silver réussies et réouverture de leur archive unique, vérifiée contre les références SQL verrouillées avant wipe. Aucun PUT Bronze au rejeu, copie bornée aux archives nécessaires ; aucun changement Antigravity.
+- Docker :85910 FINAL0,48 tests/13,98 s et mypy quatre modules ;19097 FINAL0,108 tests/12,21 s ;71659 FINAL0 lint/format huit fichiers. SQL/S3 QA93187 FINAL0,1 test/10,12 s,3 désélectionnés : archive relue puis normalisation/idempotence et expiration transactionnelle vérifiées. Compose a recréé le seul conteneur DB QA sur volume conservé ; aucune donnée supprimée ni destination active touchée.
+- Reprise10643 FINAL1 :547 passed/1 failed/936,77 s, troisième compte historique six sources au graphe Gold ; correction cinq sources et exclusion INSTAT explicite incluse dans les48 tests verts. XML rouge conservé sur branche native dans docs/evidence/R0.8-gold-source-count-red.xml. Pas de réception globale verte revendiquée.
+- R0.8 IN_PROGRESS, miroir synchronisé : parcours natif durable complet/clone hors réseau avec snapshot, révisions authentiques et réception globale restent à qualifier. Aucun nouveau check complet lancé pour ce lot non stabilisé, aucun tag/DONE.
+
 ### [2026-10-15T21:17:31Z] R0.8 — raccordement natif développé en parallèle de la réception
 
 - Check10643 poursuit sa suite sur04f1d39 figé (1694 collectés, lint297/types296 verts, intégrations en cours). Source/worktree/destination QA inchangés ; aucune relance ni interruption. La correction des comptes de sources n'est pas encore reçue globalement.

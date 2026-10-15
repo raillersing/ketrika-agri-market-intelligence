@@ -3,6 +3,8 @@
 > Format : `ID | tâche | date | symptôme | cause supposée | tentatives (1, 2, 3) | repli appliqué | statut`
 > Statut : `INVESTIGATING` | `RESOLVED_FALLBACK` | `RESOLVED_FIXED` | `BLOCKED`
 
+| B-R071 | R0.8 / graphe Gold après arrêt INSTAT | 2026-10-15 UTC | Check10643 FINAL1 :547 passed/1 failed/936,77 s | Troisième assertion historique six sources malgré cinq autorisées | Correction dans0aae91c : cinq et exclusion INSTAT explicite ; six tests graphe inclus dans48 verts85910 | XML rouge conservé sur branche native ; correction ciblée seulement, nouvelle réception globale requise | RESOLVED_FIXED |
+
 | B-R065 | R0.8 / première disponibilité socket | 2026-10-15 | prepare20992 code1 : serveur temporaire PostgreSQL healthy puis arrêt pendant première initialisation | pg_isready seul accepte le serveur initdb transitoire | 1 : healthcheck exige PID1 postgres final, puis disponibilité socket ; aucune donnée supprimée | prepare65086 code0, replay91244 code0 sur même destination dédiée | RESOLVED_FIXED |
 | B-R066 | R0.8 / volumes neufs du smoke | 2026-10-15 | prepare49094 code1 : permission refusée sur /copy après migrations dédiées, transaction de fixtures annulée | Image non-root et volume neuf root-owned | 1 : prepare root sans capabilities, copie finale readonly, rapports dédiés sticky ; reprise seulement schéma/meta/ref/obs/ml vides, aucun effacement | prepare65086 code0, replay91244 code0 ; worker app/capdropALL/copy readonly inspectés18581 | RESOLVED_FIXED |
 
