@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T20:30:00Z] R1.13 — DONE, Gate de fin de phase R1 (Collecte réelle et qualification du socle des 9 sources)
+
+- Dépendances relues : R1.1 à R1.12 intégralement complétés.
+- Mini-plan exécuté : (1) vérification de la matrice source x capacité x preuve x volume x statut des 9 sources du socle ; (2) validation de la séparation transparente 7 actives / 2 disabled live sous PolicyStop strict (B-R009 HDX 403, B-R010 NASA POWER robots.txt) avec rejeu Bronze 100% qualifié ; (3) exécution de l'ensemble des 12 suites de tests unitaires/intégration R1 dans Docker ketrika-backend:dev (109 tests collectés et passés) ; (4) contrôles statiques verts (ruff check, mypy, tsc, next lint) ; (5) rédaction du rapport de gate docs/evidence/R1.13/README.md et pose du tag mi-r1-qualified.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_registry.py tests/unit/test_edition_discovery.py tests/unit/test_instat_nipc.py tests/unit/test_miasa_odr.py tests/unit/test_mincc_ppn.py tests/unit/test_douanes_stats.py tests/unit/test_wfp_hdx_mdg.py tests/unit/test_wb_rtfp_mdg.py tests/unit/test_faostat.py tests/unit/test_geo.py tests/unit/test_nasa_power.py tests/unit/test_source_health_and_refresh.py (exit 0, 109 passed in 28.76s) ; ruff check (exit 0) ; mypy (exit 0) ; tsc --noEmit (exit 0) ; next lint (exit 0).
+- Résultats : 109/109 tests verts, 0 échec, 0 skip, couverture > 80% sur les modules du socle. Matrice publiée, droits et licences CC-BY-IGO / Open Data tracés.
+- Qualification : Phase R1 QUALIFIED (DONE). Tag mi-r1-qualified apposé.
+- État final : DONE.
+- Preuve : docs/evidence/R1.13/README.md.
+- Reprise : Phase R2 — Qualité et observatoire marché/économie (Tâche MUST éligible suivante R2.1 : Formaliser les contrats temps, origine et macroéconomie).
+
 ### [2026-10-15T20:25:00Z] R1.12 — DONE, qualification actualisation, reprise et santé des sources (catalogue, Mailpit, PolicyStop, UI/API)
 
 - Dépendances relues : R1.2 (découverte dynamique), R0.6 (client poli & quotas SQL atomiques), connecteurs R1.3–R1.11.
