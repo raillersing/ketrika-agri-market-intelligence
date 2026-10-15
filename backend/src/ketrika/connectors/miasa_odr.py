@@ -5,6 +5,7 @@ from __future__ import annotations
 import calendar
 import hashlib
 import io
+import logging
 import re
 from collections.abc import Iterable, Sequence
 from datetime import UTC, date, datetime
@@ -20,12 +21,15 @@ from ketrika.connectors.base import (
     RawArtifact,
     RunContext,
 )
+from ketrika.connectors.discovery import CatalogDiscoveryEngine
 from ketrika.connectors.records import PriceRecord, RecordBase
 from ketrika.core.registry import find_repo_root
 from ketrika.extraction.llm.base import LLMPart
 from ketrika.extraction.llm.replay import ReplayClient
-from ketrika.extraction.pdf import extract_pdf_pages
+from ketrika.extraction.pdf import extract_pdf_pages, is_scanned_pdf
 from ketrika.extraction.reconcile import reconcile_records
+
+logger = logging.getLogger(__name__)
 
 
 class OdrPriceItem(BaseModel):
@@ -99,44 +103,108 @@ class MiasaOdrConnector(Connector):
     """Connector for official Ministry of Agriculture (MiASA) / Observatoire du Riz bulletins."""
 
     source_id: ClassVar[str] = "miasa_odr"
-    parser_version: ClassVar[str] = "1.0.0"
-    dual_extraction: ClassVar[bool] = True
+    parser_version: ClassVar[str] = "1.1.0"
+    dual_extraction: bool = True
+
+    def __init__(self, dual_extraction: bool = True) -> None:
+        self.dual_extraction = dual_extraction
 
     def discover(self, ctx: RunContext) -> Iterable[DiscoveredItem]:
-        """Discover available ODR bulletins.
+        """Discover available ODR bulletins via official catalog discovery or explicit targets."""
+        # 1. Explicit targets in metadata
+        file_urls = ctx.metadata.get("file_urls")
+        if file_urls and isinstance(file_urls, list):
+            for u in file_urls:
+                url_str = str(u)
+                ed_match = re.search(r"bulletin[-_]?(\d+)", url_str, re.IGNORECASE)
+                ed_id = ed_match.group(1) if ed_match else "custom"
+                yield DiscoveredItem(
+                    url=url_str,
+                    partition_key=f"odr_bulletin_{ed_id}",
+                    hints={"edition": ed_id, "publisher": "MiASA/ODR", "format": "pdf"},
+                )
+            return
 
-        Returns items ordered newest first per SPECS §11.3.
-        """
-        # Catalog of ODR editions supported in the MVP
+        file_url = ctx.metadata.get("file_url")
+        if file_url:
+            url_str = str(file_url)
+            ed_match = re.search(r"bulletin[-_]?(\d+)", url_str, re.IGNORECASE)
+            ed_id = ed_match.group(1) if ed_match else "custom"
+            yield DiscoveredItem(
+                url=url_str,
+                partition_key=f"odr_bulletin_{ed_id}",
+                hints={"edition": ed_id, "publisher": "MiASA/ODR", "format": "pdf"},
+            )
+            return
+
+        # 2. Dynamic Catalog Discovery (R1.2, R1.4)
+        catalog_url = ctx.metadata.get("catalog_url") or "http://www.agriculture.gov.mg/odr/bulletins"
+        allow_loopback = ctx.metadata.get("allow_loopback", False)
+        allowed_domains: list[str] = list(ctx.metadata.get("allowed_domains") or ["agriculture.gov.mg"])
+        if allow_loopback:
+            allowed_domains.extend(["localhost", "127.0.0.1"])
+
+        engine = CatalogDiscoveryEngine(
+            source_id=self.source_id,
+            http_client=ctx.http_client,
+            allowed_domains=allowed_domains,
+            max_pages=5,
+            allow_loopback=allow_loopback,
+        )
+
+        odr_link_pattern = re.compile(
+            r"/.*(?:bulletin|odr)[-_]?(\d+)?.*\.pdf$",
+            re.IGNORECASE,
+        )
+
+        try:
+            discovery_res = engine.discover_html_editions(
+                start_url=catalog_url,
+                link_pattern=odr_link_pattern,
+            )
+            if discovery_res.editions:
+                for edition in discovery_res.editions:
+                    ed_match = re.search(r"bulletin[-_]?(\d+)", edition.url, re.IGNORECASE)
+                    ed_id = ed_match.group(1) if ed_match else (edition.edition_identifier or "unknown")
+                    hints = dict(
+                        edition.hints,
+                        parent_url=edition.parent_url,
+                        publisher="MiASA/ODR",
+                        format="pdf",
+                        edition=ed_id,
+                    )
+                    yield DiscoveredItem(
+                        url=edition.url,
+                        partition_key=f"odr_bulletin_{ed_id}",
+                        published_at=edition.published_at,
+                        hints=hints,
+                    )
+                return
+        except Exception as exc:
+            logger.warning("Catalog discovery failed on %s: %s", catalog_url, exc)
+
+        # 3. Fallback baseline historical catalog
+        logger.info("Falling back to standard baseline ODR catalog editions")
         catalog = [
             DiscoveredItem(
                 url="http://www.agriculture.gov.mg/odr/bulletin_850.pdf",
                 partition_key="odr_bulletin_850",
                 published_at=datetime(2024, 1, 22, 8, 0, tzinfo=UTC),
-                hints={"edition": "850", "period": "2024-01"},
+                hints={"edition": "850", "period": "2024-01", "publisher": "MiASA/ODR", "format": "pdf"},
             ),
             DiscoveredItem(
                 url="http://www.agriculture.gov.mg/odr/bulletin_710.pdf",
                 partition_key="odr_bulletin_710",
                 published_at=datetime(2021, 10, 25, 8, 0, tzinfo=UTC),
-                hints={"edition": "710", "period": "2021-10"},
+                hints={"edition": "710", "period": "2021-10", "publisher": "MiASA/ODR", "format": "pdf"},
             ),
             DiscoveredItem(
                 url="http://www.agriculture.gov.mg/odr/bulletin_520.pdf",
                 partition_key="odr_bulletin_520",
                 published_at=datetime(2018, 5, 20, 8, 0, tzinfo=UTC),
-                hints={"edition": "520", "period": "2018-05"},
+                hints={"edition": "520", "period": "2018-05", "publisher": "MiASA/ODR", "format": "pdf"},
             ),
         ]
-
-        if not ctx.offline and ctx.http_client:
-            try:
-                resp = ctx.http_client.get("http://www.agriculture.gov.mg")
-                if resp.status_code == 200:
-                    pass
-            except Exception:
-                pass
-
         yield from catalog
 
     def fetch(self, item: DiscoveredItem, ctx: RunContext) -> RawArtifact:
@@ -191,6 +259,19 @@ class MiasaOdrConnector(Connector):
         if not pages:
             return ParseResult(records=[], issues=[], parser_version=self.parser_version)
 
+        # 0. Check for scanned raster PDF (no selectable text)
+        if is_scanned_pdf(pages):
+            return ParseResult(
+                records=[],
+                issues=[
+                    {
+                        "kind": "scanned_pdf_needs_review",
+                        "detail": "PDF contains scanned raster pages with no extractable text; OCR is not authorized without extension contract",
+                    }
+                ],
+                parser_version=self.parser_version,
+            )
+
         # 1. Parse document metadata (bulletin number, observation period)
         full_text = "\n".join(p.text for p in pages)
         bulletin_num, p_start, p_end = _parse_bulletin_metadata(full_text)
@@ -207,6 +288,7 @@ class MiasaOdrConnector(Connector):
         # 2. Deterministic Extraction
         det_records: list[RecordBase] = []
         issues: list[dict[str, Any]] = []
+        recognized_tables_count = 0
 
         with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
             for p_idx, page in enumerate(pdf.pages, start=1):
@@ -224,6 +306,7 @@ class MiasaOdrConnector(Connector):
                         or "paddy" in hdr_joined
                         or "collecte" in hdr_joined
                     ):
+                        recognized_tables_count += 1
                         for row in table[1:]:
                             if len(row) < 2:
                                 continue
@@ -258,6 +341,7 @@ class MiasaOdrConnector(Connector):
                             evidence = {
                                 "page": p_idx,
                                 "text": f"{loc_raw} {pr_raw}",
+                                "table": "producer",
                             }
 
                             det_records.append(
@@ -282,6 +366,7 @@ class MiasaOdrConnector(Connector):
 
                     # Wholesale table
                     elif "gros" in hdr_joined:
+                        recognized_tables_count += 1
                         self._parse_variety_table(
                             table=table,
                             actor_level="wholesale",
@@ -294,6 +379,7 @@ class MiasaOdrConnector(Connector):
 
                     # Retail table
                     elif "détail" in hdr_joined or "consommation" in hdr_joined:
+                        recognized_tables_count += 1
                         self._parse_variety_table(
                             table=table,
                             actor_level="retail",
@@ -304,7 +390,20 @@ class MiasaOdrConnector(Connector):
                             out_records=det_records,
                         )
 
-        # 3. Dual Extraction with LLM (SPECS §11.1)
+        # 3. Check for layout drift / schema change
+        if recognized_tables_count == 0:
+            return ParseResult(
+                records=[],
+                issues=[
+                    {
+                        "kind": "layout_changed",
+                        "detail": "ODR recognized tables (producer/wholesale/retail) not found: layout or schema drift detected",
+                    }
+                ],
+                parser_version=self.parser_version,
+            )
+
+        # 4. Dual Extraction with LLM (SPECS §11.1)
         llm_records: list[RecordBase] = []
         if self.dual_extraction:
             llm_client = ctx.llm_client or ReplayClient()

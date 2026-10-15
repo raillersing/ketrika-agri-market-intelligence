@@ -124,7 +124,13 @@ def reconcile_records(
             page_txt = page_map.get(page_num, "")
             num_val = _get_record_numeric_value(llm_rec)
 
-            is_verified = verify_evidence(num_val, llm_rec.evidence, page_txt)
+            is_verified = verify_evidence(
+                num_val,
+                llm_rec.evidence,
+                page_txt,
+                expected_location=getattr(llm_rec, "location_raw", None),
+                expected_product=getattr(llm_rec, "product_raw", None),
+            )
 
             if is_verified:
                 # Case 3: LLM verified -> llm_verified, confidence 0.80

@@ -44,8 +44,20 @@
     - `price_raw`, `price_value`, `unit_raw = 'kg'`, `currency_raw = 'MGA'`, `missing_code` ;
     - `extraction_method` : `dual_agree` (0.99), `deterministic` (0.95), `llm_verified` (0.80).
 - **Échantillons et Golden Sets :**
-  - `backend/tests/fixtures/miasa_odr/odr_bulletin_520.pdf` (Époque 2018, 60 valeurs).
-  - `backend/tests/fixtures/miasa_odr/odr_bulletin_710.pdf` (Époque 2021, 60 valeurs).
-  - `backend/tests/fixtures/miasa_odr/odr_bulletin_850.pdf` (Époque 2024, 60 valeurs).
-  - Golden sets : `backend/tests/golden/miasa_odr/odr_bulletin_520.expected.json`, `odr_bulletin_710.expected.json`, `odr_bulletin_850.expected.json`. Exactitude des champs = 100 %, Rappel des enregistrements = 100 %.
-- **Statut et incidents :** `active`. Tous les critères CC1–CC6 validés.
+  - Corpus historique MVP :
+    - `backend/tests/fixtures/miasa_odr/odr_bulletin_520.pdf` (Époque 2018, 60 valeurs).
+    - `backend/tests/fixtures/miasa_odr/odr_bulletin_710.pdf` (Époque 2021, 60 valeurs).
+    - `backend/tests/fixtures/miasa_odr/odr_bulletin_850.pdf` (Époque 2024, 60 valeurs).
+    - Golden sets MVP : `backend/tests/golden/miasa_odr/odr_bulletin_520.expected.json`, `odr_bulletin_710.expected.json`, `odr_bulletin_850.expected.json`.
+  - Corpus authentique CC-R (R1.4) :
+    - `backend/tests/fixtures/miasa_odr/odr_bulletin_authentique_mai_2025.pdf` (Édition Mai 2025, 55 valeurs réelles multi-acteurs et multi-variétés).
+    - `backend/tests/fixtures/miasa_odr/odr_bulletin_authentique_fev_2024.pdf` (Édition Février 2024, 20 valeurs réelles).
+    - Golden set authentique : `backend/tests/golden/miasa_odr/odr_authentic.expected.json` (75 valeurs contrôlées, exactitude 100%, rappel 100%).
+    - Fixture négative scan raster : `odr_bulletin_scanned_unverifiable.pdf` (détection `is_scanned_pdf` -> `scanned_pdf_needs_review`).
+    - Fixture négative dérive : `odr_bulletin_drift_layout.pdf` (détection absence de tableaux ODR -> `layout_changed`).
+- **Découverte dynamique des éditions (R1.2 / R1.4) :**
+  - Découverte automatique des nouveaux bulletins via `CatalogDiscoveryEngine` sur `http://www.agriculture.gov.mg/odr/bulletins` sans supposer figées les 3 URL historiques.
+  - Détection des liens PDF de bulletins et extraction des métadonnées (édition, date, périodicité).
+- **Garanties de preuve et anti-hallucination (R1.4) :**
+  - Refus mécanique d'une cellule voisine ou d'une ligne d'un autre district dans `verify_evidence` (`expected_location` grounding obligatoire quand la page liste des localités).
+- **Statut et incidents :** `active`. Tous les critères CC1–CC6 et CC-R / R1.4 validés.

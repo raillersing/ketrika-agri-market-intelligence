@@ -45,3 +45,11 @@ def extract_pdf_pages(pdf_bytes: bytes) -> list[PdfPage]:
                 )
             )
     return pages
+
+
+def is_scanned_pdf(pages: list[PdfPage]) -> bool:
+    """Check if all extracted pages contain no selectable vector text (scanned raster PDF)."""
+    if not pages:
+        return True
+    return all(not p.text or not p.text.strip() for p in pages)
+

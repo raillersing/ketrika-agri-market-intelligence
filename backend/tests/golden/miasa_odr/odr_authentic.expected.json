@@ -1,0 +1,1319 @@
+{
+  "metadata": {
+    "source_id": "miasa_odr",
+    "corpus_type": "authentic_cc_r",
+    "total_editions": 2,
+    "annotator": "agent",
+    "human_reviewed": false,
+    "annotated_at": "2026-10-15T09:50:00Z",
+    "total_records": 75
+  },
+  "editions": {
+    "mai_2025": {
+      "filename": "odr_bulletin_authentique_mai_2025.pdf",
+      "content_sha256": "39ae11932915928bc138096e42bb036e6185306d2d6ee944e982712834d9e897",
+      "published_at": "2025-05-25T08:00:00Z",
+      "records_count": 55,
+      "records": [
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Alaotra Mangoro (Ambatondrazaka)",
+          "price_raw": "1 450",
+          "price_value": 1450.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Alaotra Mangoro (Ambatondrazaka) 1 450",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Alaotra Mangoro (Amparafaravola)",
+          "price_raw": "1 420",
+          "price_value": 1420.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Alaotra Mangoro (Amparafaravola) 1 420",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Boeny (Marovoay)",
+          "price_raw": "1 480",
+          "price_value": 1480.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Boeny (Marovoay) 1 480",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Boeny (Ambato Boeny)",
+          "price_raw": "1 440",
+          "price_value": 1440.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Boeny (Ambato Boeny) 1 440",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Vakinankaratra (Antsirabe II)",
+          "price_raw": "1 500",
+          "price_value": 1500.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Vakinankaratra (Antsirabe II) 1 500",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Vakinankaratra (Betafo)",
+          "price_raw": "ND",
+          "price_value": null,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": "ND",
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Vakinankaratra (Betafo) ND",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Itasy (Miarinarivo)",
+          "price_raw": "1 520",
+          "price_value": 1520.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Itasy (Miarinarivo) 1 520",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Itasy (Soavinandriana)",
+          "price_raw": "1 490",
+          "price_value": 1490.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Itasy (Soavinandriana) 1 490",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Menabe (Mahabo)",
+          "price_raw": "1 400",
+          "price_value": 1400.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Menabe (Mahabo) 1 400",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Sofia (Port-Bergé)",
+          "price_raw": "1 380",
+          "price_value": 1380.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Sofia (Port-Bergé) 1 380",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Atsinanana (Brickaville)",
+          "price_raw": "1 460",
+          "price_value": 1460.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Brickaville) 1 460",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "wholesale",
+          "location_raw": "Analamanga (Anosibe)",
+          "price_raw": "3 100",
+          "price_value": 3100.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Anosibe) 3 100"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "wholesale",
+          "location_raw": "Analamanga (Anosibe)",
+          "price_raw": "3 250",
+          "price_value": 3250.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Anosibe) 3 250"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "wholesale",
+          "location_raw": "Analamanga (Anosibe)",
+          "price_raw": "3 050",
+          "price_value": 3050.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Anosibe) 3 050"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "wholesale",
+          "location_raw": "Analamanga (Anosibe)",
+          "price_raw": "2 950",
+          "price_value": 2950.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Anosibe) 2 950"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "wholesale",
+          "location_raw": "Atsinanana (Bazar Be Toamasina)",
+          "price_raw": "3 200",
+          "price_value": 3200.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Bazar Be Toamasina) 3 200"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "wholesale",
+          "location_raw": "Atsinanana (Bazar Be Toamasina)",
+          "price_raw": "3 350",
+          "price_value": 3350.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Bazar Be Toamasina) 3 350"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "wholesale",
+          "location_raw": "Atsinanana (Bazar Be Toamasina)",
+          "price_raw": "3 150",
+          "price_value": 3150.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Bazar Be Toamasina) 3 150"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "wholesale",
+          "location_raw": "Atsinanana (Bazar Be Toamasina)",
+          "price_raw": "2 900",
+          "price_value": 2900.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Bazar Be Toamasina) 2 900"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "wholesale",
+          "location_raw": "Vakinankaratra (Antsirabe Asabotsy)",
+          "price_raw": "3 050",
+          "price_value": 3050.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Vakinankaratra (Antsirabe Asabotsy) 3 050"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "wholesale",
+          "location_raw": "Vakinankaratra (Antsirabe Asabotsy)",
+          "price_raw": "3 200",
+          "price_value": 3200.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Vakinankaratra (Antsirabe Asabotsy) 3 200"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "wholesale",
+          "location_raw": "Vakinankaratra (Antsirabe Asabotsy)",
+          "price_raw": "3 000",
+          "price_value": 3000.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Vakinankaratra (Antsirabe Asabotsy) 3 000"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "wholesale",
+          "location_raw": "Vakinankaratra (Antsirabe Asabotsy)",
+          "price_raw": "3 000",
+          "price_value": 3000.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Vakinankaratra (Antsirabe Asabotsy) 3 000"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "wholesale",
+          "location_raw": "Boeny (Mahajanga Tsaramandroso)",
+          "price_raw": "3 150",
+          "price_value": 3150.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Boeny (Mahajanga Tsaramandroso) 3 150"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "wholesale",
+          "location_raw": "Boeny (Mahajanga Tsaramandroso)",
+          "price_raw": "NA",
+          "price_value": null,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": "NA",
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Boeny (Mahajanga Tsaramandroso) NA"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "wholesale",
+          "location_raw": "Boeny (Mahajanga Tsaramandroso)",
+          "price_raw": "3 100",
+          "price_value": 3100.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Boeny (Mahajanga Tsaramandroso) 3 100"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "wholesale",
+          "location_raw": "Boeny (Mahajanga Tsaramandroso)",
+          "price_raw": "2 920",
+          "price_value": 2920.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Boeny (Mahajanga Tsaramandroso) 2 920"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "wholesale",
+          "location_raw": "Diana (Antsiranana Bazar)",
+          "price_raw": "3 250",
+          "price_value": 3250.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Diana (Antsiranana Bazar) 3 250"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "wholesale",
+          "location_raw": "Diana (Antsiranana Bazar)",
+          "price_raw": "3 400",
+          "price_value": 3400.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Diana (Antsiranana Bazar) 3 400"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "wholesale",
+          "location_raw": "Diana (Antsiranana Bazar)",
+          "price_raw": "3 200",
+          "price_value": 3200.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Diana (Antsiranana Bazar) 3 200"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "wholesale",
+          "location_raw": "Diana (Antsiranana Bazar)",
+          "price_raw": "3 050",
+          "price_value": 3050.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Diana (Antsiranana Bazar) 3 050"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "wholesale",
+          "location_raw": "Atsimo-Andrefana (Toliara Bazar)",
+          "price_raw": "3 200",
+          "price_value": 3200.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Atsimo-Andrefana (Toliara Bazar) 3 200"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "wholesale",
+          "location_raw": "Atsimo-Andrefana (Toliara Bazar)",
+          "price_raw": "3 350",
+          "price_value": 3350.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Atsimo-Andrefana (Toliara Bazar) 3 350"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "wholesale",
+          "location_raw": "Atsimo-Andrefana (Toliara Bazar)",
+          "price_raw": "3 150",
+          "price_value": 3150.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Atsimo-Andrefana (Toliara Bazar) 3 150"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "wholesale",
+          "location_raw": "Atsimo-Andrefana (Toliara Bazar)",
+          "price_raw": "3 000",
+          "price_value": 3000.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 1,
+            "text": "Atsimo-Andrefana (Toliara Bazar) 3 000"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "retail",
+          "location_raw": "Atsinanana (Toamasina I)",
+          "price_raw": "3 450",
+          "price_value": 3450.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Atsinanana (Toamasina I) 3 450"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "retail",
+          "location_raw": "Atsinanana (Toamasina I)",
+          "price_raw": "3 600",
+          "price_value": 3600.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Atsinanana (Toamasina I) 3 600"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "retail",
+          "location_raw": "Atsinanana (Toamasina I)",
+          "price_raw": "3 400",
+          "price_value": 3400.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Atsinanana (Toamasina I) 3 400"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "retail",
+          "location_raw": "Atsinanana (Toamasina I)",
+          "price_raw": "3 100",
+          "price_value": 3100.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Atsinanana (Toamasina I) 3 100"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "retail",
+          "location_raw": "Vakinankaratra (Antsirabe I)",
+          "price_raw": "3 300",
+          "price_value": 3300.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Vakinankaratra (Antsirabe I) 3 300"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "retail",
+          "location_raw": "Vakinankaratra (Antsirabe I)",
+          "price_raw": "3 450",
+          "price_value": 3450.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Vakinankaratra (Antsirabe I) 3 450"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "retail",
+          "location_raw": "Vakinankaratra (Antsirabe I)",
+          "price_raw": "3 250",
+          "price_value": 3250.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Vakinankaratra (Antsirabe I) 3 250"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "retail",
+          "location_raw": "Vakinankaratra (Antsirabe I)",
+          "price_raw": "3 200",
+          "price_value": 3200.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Vakinankaratra (Antsirabe I) 3 200"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "retail",
+          "location_raw": "Boeny (Mahajanga I)",
+          "price_raw": "3 400",
+          "price_value": 3400.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Boeny (Mahajanga I) 3 400"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "retail",
+          "location_raw": "Boeny (Mahajanga I)",
+          "price_raw": "3 550",
+          "price_value": 3550.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Boeny (Mahajanga I) 3 550"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "retail",
+          "location_raw": "Boeny (Mahajanga I)",
+          "price_raw": "3 350",
+          "price_value": 3350.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Boeny (Mahajanga I) 3 350"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "retail",
+          "location_raw": "Boeny (Mahajanga I)",
+          "price_raw": "3 120",
+          "price_value": 3120.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Boeny (Mahajanga I) 3 120"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "retail",
+          "location_raw": "Diana (Antsiranana I)",
+          "price_raw": "3 550",
+          "price_value": 3550.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Diana (Antsiranana I) 3 550"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "retail",
+          "location_raw": "Diana (Antsiranana I)",
+          "price_raw": "3 700",
+          "price_value": 3700.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Diana (Antsiranana I) 3 700"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "retail",
+          "location_raw": "Diana (Antsiranana I)",
+          "price_raw": "3 500",
+          "price_value": 3500.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Diana (Antsiranana I) 3 500"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "retail",
+          "location_raw": "Diana (Antsiranana I)",
+          "price_raw": "3 250",
+          "price_value": 3250.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Diana (Antsiranana I) 3 250"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "retail",
+          "location_raw": "Atsimo-Andrefana (Toliara I)",
+          "price_raw": "3 500",
+          "price_value": 3500.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Atsimo-Andrefana (Toliara I) 3 500"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "retail",
+          "location_raw": "Atsimo-Andrefana (Toliara I)",
+          "price_raw": "3 650",
+          "price_value": 3650.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Atsimo-Andrefana (Toliara I) 3 650"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "retail",
+          "location_raw": "Atsimo-Andrefana (Toliara I)",
+          "price_raw": "ND",
+          "price_value": null,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": "ND",
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Atsimo-Andrefana (Toliara I) ND"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "retail",
+          "location_raw": "Atsimo-Andrefana (Toliara I)",
+          "price_raw": "3 200",
+          "price_value": 3200.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2025-05-01",
+          "period_end": "2025-05-31",
+          "evidence": {
+            "page": 2,
+            "text": "Atsimo-Andrefana (Toliara I) 3 200"
+          }
+        }
+      ]
+    },
+    "fev_2024": {
+      "filename": "odr_bulletin_authentique_fev_2024.pdf",
+      "content_sha256": "472bba6cdd91b630af9fcc748a2ea95d6fa9b372ddd83f87d886913f902517b4",
+      "published_at": "2024-02-25T08:00:00Z",
+      "records_count": 20,
+      "records": [
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Alaotra Mangoro (Ambatondrazaka)",
+          "price_raw": "1 250",
+          "price_value": 1250.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Alaotra Mangoro (Ambatondrazaka) 1 250",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Boeny (Marovoay)",
+          "price_raw": "1 280",
+          "price_value": 1280.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Boeny (Marovoay) 1 280",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Vakinankaratra (Antsirabe II)",
+          "price_raw": "1 320",
+          "price_value": 1320.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Vakinankaratra (Antsirabe II) 1 320",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz paddy",
+          "variety": null,
+          "actor_level": "producer",
+          "location_raw": "Itasy (Miarinarivo)",
+          "price_raw": "1 300",
+          "price_value": 1300.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Itasy (Miarinarivo) 1 300",
+            "table": "producer"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "wholesale",
+          "location_raw": "Analamanga (Anosibe)",
+          "price_raw": "2 800",
+          "price_value": 2800.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Anosibe) 2 800"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "wholesale",
+          "location_raw": "Analamanga (Anosibe)",
+          "price_raw": "2 950",
+          "price_value": 2950.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Anosibe) 2 950"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "wholesale",
+          "location_raw": "Analamanga (Anosibe)",
+          "price_raw": "2 750",
+          "price_value": 2750.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Anosibe) 2 750"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "wholesale",
+          "location_raw": "Analamanga (Anosibe)",
+          "price_raw": "2 650",
+          "price_value": 2650.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Anosibe) 2 650"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "wholesale",
+          "location_raw": "Atsinanana (Bazar Be Toamasina)",
+          "price_raw": "2 850",
+          "price_value": 2850.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Bazar Be Toamasina) 2 850"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "wholesale",
+          "location_raw": "Atsinanana (Bazar Be Toamasina)",
+          "price_raw": "3 000",
+          "price_value": 3000.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Bazar Be Toamasina) 3 000"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "wholesale",
+          "location_raw": "Atsinanana (Bazar Be Toamasina)",
+          "price_raw": "2 800",
+          "price_value": 2800.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Bazar Be Toamasina) 2 800"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "wholesale",
+          "location_raw": "Atsinanana (Bazar Be Toamasina)",
+          "price_raw": "2 600",
+          "price_value": 2600.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Bazar Be Toamasina) 2 600"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "retail",
+          "location_raw": "Analamanga (Antananarivo Renivohitra)",
+          "price_raw": "3 050",
+          "price_value": 3050.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Antananarivo Renivohitra) 3 050"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "retail",
+          "location_raw": "Analamanga (Antananarivo Renivohitra)",
+          "price_raw": "3 200",
+          "price_value": 3200.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Antananarivo Renivohitra) 3 200"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "retail",
+          "location_raw": "Analamanga (Antananarivo Renivohitra)",
+          "price_raw": "3 000",
+          "price_value": 3000.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Antananarivo Renivohitra) 3 000"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "retail",
+          "location_raw": "Analamanga (Antananarivo Renivohitra)",
+          "price_raw": "2 850",
+          "price_value": 2850.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Analamanga (Antananarivo Renivohitra) 2 850"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Vary gasy)",
+          "variety": "Vary gasy",
+          "actor_level": "retail",
+          "location_raw": "Atsinanana (Toamasina I)",
+          "price_raw": "3 100",
+          "price_value": 3100.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Toamasina I) 3 100"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Makalioka)",
+          "variety": "Makalioka",
+          "actor_level": "retail",
+          "location_raw": "Atsinanana (Toamasina I)",
+          "price_raw": "3 250",
+          "price_value": 3250.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Toamasina I) 3 250"
+          }
+        },
+        {
+          "product_raw": "Riz blanc local (Tsipala)",
+          "variety": "Tsipala",
+          "actor_level": "retail",
+          "location_raw": "Atsinanana (Toamasina I)",
+          "price_raw": "3 050",
+          "price_value": 3050.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Toamasina I) 3 050"
+          }
+        },
+        {
+          "product_raw": "Riz importé (25% brisures)",
+          "variety": "25% brisures",
+          "actor_level": "retail",
+          "location_raw": "Atsinanana (Toamasina I)",
+          "price_raw": "2 800",
+          "price_value": 2800.0,
+          "unit_raw": "kg",
+          "currency_raw": "MGA",
+          "missing_code": null,
+          "period_start": "2024-02-01",
+          "period_end": "2024-02-29",
+          "evidence": {
+            "page": 1,
+            "text": "Atsinanana (Toamasina I) 2 800"
+          }
+        }
+      ]
+    }
+  }
+}
