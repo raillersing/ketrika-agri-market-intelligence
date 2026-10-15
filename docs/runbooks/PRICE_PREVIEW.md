@@ -53,6 +53,34 @@ Les tests et la réception complète restent des preuves distinctes de l'aperçu
 
 ## Suite du plan inchangé
 
+### Rejeu du clone vérifié le 2026-10-15
+
+Le serveur de consultation n'est jamais la destination de rejeu. Une autre instance
+PostgreSQL sans réseau, `ketrika-price-replay-db-20261015`, utilise ses propres
+volumes `ketrika_price_replay_pgdata_20261015` et `..._socket_20261015`.
+Copier uniquement les six schémas applicatifs avec `pg_dump --no-owner
+--no-privileges --schema=meta --schema=ref --schema=obs --schema=ml --schema=ops
+--schema=gold`, vers une base neuve de cette instance uniquement.
+
+Préconditions du clone : mêmes extensions PostgreSQL que la source (notamment
+pg_trgm, pgcrypto, unaccent, uuid-ossp, PostGIS), rôles locaux NOLOGIN
+ketrika_app et copilot_ro pour les GRANT Gold. Les rôles sont des objets cluster
+non inclus dans pg_dump. L'essai initial de restauration a été conservé par
+renommage, aucune donnée existante effacée. Ne pas restaurer les schémas tiger
+déjà fournis par l'image PostGIS.
+
+Le worker `backend/scripts/replay_price_preview.py` exige network=none,
+la destination socket dédiée et exactement deux SourceRecords WB. Monter la
+copie `/copy` readonly, le socket du clone, et un volume de rapports `/out` neuf.
+Le script initialise les vues du clone, reconstruit réellement Silver/Gold et
+écrit un nouveau rapport UUID sans écraser les précédents.
+
+Résultat1064 FINAL0 : deux SourceRecords rejoués, quinze prix insérés, zéro
+document ignoré/rejeté et dix-neuf manifestes identiques. Gold prix reste vide car
+les quinze lieux sont pending ; aucune qualification Gold implicite. Les révisions
+historiques réelles et la performance modèle ne sont pas prouvées par cet essai.
+Rapports originaux sous `docs/evidence/R0.8-authentic-price-replay*.json`.
+
 Réception complète du lot stabilisé avant intégration applicative main ; contexte
 structurel et chemin Silver natif à finaliser, qualification du rejeu et révisions
 réelles, puis suite R0–R6. Aucune prévision, fraîcheur de marché, revue humaine ou

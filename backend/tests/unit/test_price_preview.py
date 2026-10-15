@@ -1,12 +1,11 @@
 """Preview presentation/safety tests; SQL persistence is checked separately."""
 
 import runpy
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-PREVIEW = runpy.run_path(str(Path(__file__).parents[2] / "scripts" / "price_preview.py"))
+PREVIEW = runpy.run_path("/workspace/backend/scripts/price_preview.py")
 
 
 def test_preview_discloses_historical_imputed_and_pending_status():

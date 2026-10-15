@@ -19,7 +19,7 @@ from ketrika.connectors.registry import get_connector_class
 from ketrika.core.bronze import BronzeStore
 from ketrika.core.models.db import Base
 from ketrika.core.rebuild_bronze import LocalBronzeClient
-from ketrika.core.rebuild_manifest import capture_database, compare_manifests
+from ketrika.core.rebuild_manifest import OBS_COLUMNS, capture_database, compare_manifests
 from ketrika.pipelines.rebuild import rebuild_database
 
 DATABASE = "ketrika_rebuild_qualification"
@@ -28,6 +28,11 @@ SOCKET = "/run/ketrika-rebuild"
 
 class RebuildSafetyError(ValueError):
     """Stable diagnostic, no DSN/credentials/collected content."""
+
+
+def require_business_baseline(manifest: dict[str, Any]) -> None:
+    if not any(manifest["tables"][table]["count"] > 0 for table in OBS_COLUMNS):
+        raise RebuildSafetyError("rebuild_business_baseline_empty")
 
 
 def require_network_none(
@@ -108,6 +113,7 @@ def run_offline_replay(session: Session, store: BronzeStore) -> dict[str, Any]:
             raise RebuildSafetyError("rebuild_source_record_sha_mismatch")
     protected_before = protected_inventory(session)
     before = capture_database(session)
+    require_business_baseline(before)
     # Rebuild always wipes/replays the whole dedicated destination, even if populated.
     stats = rebuild_database(session=session, offline=True, bronze_store=store)
     session.expire_all()

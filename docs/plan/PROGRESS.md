@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T20:19:54Z] R0.8 — rejeu authentique fonctionnel ; correctif réception groupé
+
+- Instruction utilisateur : fonctionnalités minimales, plan conservé ; Antigravity travaille simultanément. Son worktree r1-sources-prep/d6057fe et changements UI/tests non committés laissés intacts ; coordination main COORDINATION_ACTIVE.md, Codex garde R0.8/R0.9. Ne pas redévelopper ses lots R1.
+- Check34991 FINAL1 avant tests : chemin script /app erroné ; lint297/types296 verts, pas backend/frontend reçus. B-R068 corrigé par chemin readonly /workspace, original XML conservé. 18301 FINAL0 :22 tests/8,39 s dont refus baseline métier vide avant wipe ; 18705 FINAL0 types qualificateur. Aucun check de base relancé.
+- Clone distinct de l'aperçu : DBnetworknone/volumes price_replay datés, export readonly des six schémas applicatifs, copie Bronze readonly. B-R069 : rôles/extensions cluster manquants corrigés selon source, essai restauré conservé par renommage, pas d'effacement. Rapport négatif86910 conservé : empreintes seules identiques ne suffisent pas, résultat bien refusé car un replay ignoré.
+- Worker1064 FINAL0 : deux SourceRecords rejoués, quinze insertions, zéro skip/rejet,19 manifestes identiques, réseau lo seulement ; rapport R0.8-authentic-price-replay.json. Inspect none/capdropALL/user0:0/copyRWfalse ; ne pas revendiquer non-root. Gold prix vide/pending, pas de révision réelle ni ML/humain qualifiés, R0.8 IN_PROGRESS. Aperçu toujours consultable.
+- Script replay_price_preview.py réutilisable et runbook complété ; 13951 types script verts avant seul changement du nom de rapport UUID. Figer ce lot correctif/diagnostic, une réception complète après stabilisation ; intégration et gate ne sont pas déduits de ces preuves partielles.
+
 ### [2026-10-15T19:29:48Z] R0.8 — tranche minimale utilisable, en développement
 
 - Priorité utilisateur : parcours fonctionnel avant perfectionnement, plan conservé. ADR-071 avant aperçu local isolé ; aucune dérogation à provenance/budgets ni réception anticipée.

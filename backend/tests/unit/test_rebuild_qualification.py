@@ -5,13 +5,26 @@ from types import SimpleNamespace
 import pytest
 from sqlalchemy.engine import make_url
 
+from ketrika.core.rebuild_manifest import OBS_COLUMNS
 from ketrika.pipelines.rebuild_qualification import (
     DATABASE,
     SOCKET,
     RebuildSafetyError,
+    require_business_baseline,
     require_destination,
     require_network_none,
 )
+
+
+@pytest.mark.parametrize("business_count", [0, 1])
+def test_replay_requires_nonempty_business_baseline_not_just_metadata(business_count):
+    manifest = {"tables": {table: {"count": business_count} for table in OBS_COLUMNS}}
+    if business_count:
+        require_business_baseline(manifest)
+    else:
+        with pytest.raises(RebuildSafetyError, match="business_baseline_empty"):
+            require_business_baseline(manifest)
+
 
 URL = f"postgresql+psycopg://ketrika:qa-local-only@/{DATABASE}?host={SOCKET}"
 
