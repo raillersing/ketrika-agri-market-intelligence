@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T14:47:46Z] R0.8 — réception du lot logiciel figé en cours
+
+- Branche work/r08-offline-rebuild-20261015, commit cff8010 après be587d1 ; nouveau worker/profil/commande rebuild-smoke, base distincte ketrika_rebuild_qualification reliée par socket Unix, Docker network=none, copie readonly/worker app/capdropALL. Rejeu Linux91244 FINAL0 puis Windows natif13060 FINAL0, deux éditions synthétiques/revisions2/1 et 19 manifestes identiques. Rapport natif /reports/runs/33a5fd81757f4a30bb92e014b0b51a98/replay.json ; conteneur ketrika-rebuild-replay-4e7cb899b57148be8a02cbf95e47be26 conservé. PARTIAL/synthetic, aucun DONE R0.8.
+- B-R065/066 sur branche : initdb transitoire puis permissions des volumes neufs, corrigés sans effacement ; préparation65086 FINAL0. 88914 FINAL0 : 77 tests/14,76 s et types huit fichiers ; manifest R0.8 minimum71, trois tests empreinte Compose/symlink ; scan97925 FINAL0/204597 octets/sans fuite.
+- Check Windows unique87212 EN COURS sur cff8010 figé : lint/format290 et mypy289 verts, 1612 tests collectés, backend démarré. Reprendre ce processus, aucun changement source/images/destination QA ni relance à la reprise. Pas d'intégration main ni réception globale avant code final/originaux/inclusion/couvertures/frontend/préservation.
+- Travail indépendant seulement : branche work/r08-corpus-acquisition-20261015, répertoire homonyme sous /home/raillersing/projects/ketrika-qa-worktrees. Recherche INSTAT publique et acquisition bornée via client HTTP durable sur SQL/socket du nouveau lab (pas DB QA du check). Script one-off : import ancien selectolax refusé avant réseau59311, adapté au backend Lexbor fourni ; acquisition69948 en cours, droits encore unverified. Pas de source privée/HDX/NASA, pas de corpus promu, ni autorisation humaine supplémentaire demandée.
+
 ### [2026-10-15T07:01:20Z] R0.8 — incrément isolé be587d1, non reçu main
 
 - Branche work/r08-offline-rebuild-20261015, commit `be587d1b1012f25a9497d3a4ff56d9eac7b83200`, worktree /home/raillersing/projects/ketrika-qa-worktrees/r08-offline-rebuild-20261015 (Git indépendant Linux partagé avec clone final R0.7). Source produit main442a20c inchangée ; aucune intégration applicative R0.8 sans check complet stabilisé.
