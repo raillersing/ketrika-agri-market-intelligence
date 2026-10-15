@@ -104,6 +104,15 @@ def bind_observation(table: str, observation: Any) -> ObservationClaim:
     policy = POLICIES.get(table)
     if policy is None or not isinstance(observation, policy.model):
         raise ProofError("unsupported_observation")
+    from ketrika.core.provenance_rtfp import bind_rtfp_observation, is_context_proof
+
+    source_proof = (getattr(observation, "evidence", None) or {}).get("provenance", {})
+    if (
+        table == "price_observation"
+        and isinstance(source_proof, dict)
+        and is_context_proof(source_proof)
+    ):
+        return bind_rtfp_observation(observation, source_proof)
     evidence = getattr(observation, "evidence", None)
     proof = evidence.get("provenance") if isinstance(evidence, dict) else None
     if not isinstance(proof, dict) or not isinstance(proof.get("cells"), list):
@@ -212,6 +221,11 @@ def audit_observation_provenance(
             )
         claims.append(claim)
     record_ids = {claim.source_record_id for claim in claims if claim.source_record_id}
+    from ketrika.core.provenance_rtfp import context_reference, is_context_proof
+
+    record_ids.update(
+        context_reference(claim.proof) for claim in claims if is_context_proof(claim.proof)
+    )
     records = (
         session.scalars(
             select(SourceRecord).where(SourceRecord.source_record_id.in_(record_ids))

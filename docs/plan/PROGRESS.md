@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T16:18:14Z] R0.8 — incrément provenance contextuelle et parseur API, non reçu main
+
+- ADR-070/SPECS avant code : preuves bornées à deux SourceRecords WB, cellules prix/date/lieu/devise et métadonnées produit/unité/ticker/pays. Vérification SHA/MIME fraîche sur les deux objets, réemploi du vérificateur classique et comptage par observation. Gold inclut désormais le contexte dans ses candidats au contrôle structurel. Arrondi explicite HALF_UP quatre décimales, lexème brut conservé ; unités inventées, acteur retail et statut observed interdits pour les close estimates.
+- Parseur déterministe séparé connectors/rtfp_json.py, version 2.0.0, encore non raccordé au connecteur historique/batch/rebuild. Dates mensuelles, nombre fini positif, précision compatible avec le transport PriceRecord et NUMERIC, contexte unique exigés ; aucun défaut d'unité/devise. Les contrats JSON déclarés acceptent scopes/alternatives non ambiguës et décimaux explicites ; empreinte v1 inchangée.
+- Docker76968 FINAL0 : 276 régressions ciblées/7,16 s, lint et mypy sept modules ; Docker5925 FINAL0 : 12 tests parseur/2,82 s, lint/types parseur ; Docker33661 FINAL0 : 29 tests provenance contextuelle/1,28 s et types acquisition/parseur verts. Aucun check complet supplémentaire ni réception produit déduit de ces résultats.
+- Docker55606 FINAL0 : diagnostic hors réseau sur les octets du nouveau paquet officiel38748 et étude existante, 15 prix parsés ; premier Alakamisy/2010-05/1082.69 MGA/KG, imputed/unknown. UUID de diagnostic seulement, pas de SourceRecord/SQL/Gold ni preuve de batch durable. Paquet original /out/wb-c1-20261015T160306Z dans ketrika-r08-wb-modeled-c1-20261015 conservé, promotion corpus/annotations encore à faire.
+- Suite exacte : promouvoir ce paquet et annoter ; contrat structurel WB versionné ; résolution du contexte depuis batch immuable au chargement et au rebuild ; baseline métier non vide avant wipe ; rejeu authentique isolé et réception complète unique du lot stabilisé. R0.8 IN_PROGRESS, aucune intégration applicative main, aucun tag, aucune performance marché/humaine revendiquée.
+
 ### [2026-10-15T15:37:16Z] R0.8 — corpus prix authentique vérifié, intégration à poursuivre
 
 - Branche indépendante work/r08-corpus-acquisition-20261015 ; lot logiciel cff8010 déjà reçu main ef626d2/Windows1612/35/build, ne pas répéter son check comme base. Source INSTAT arrêtée69948 sur challenge/status404, ADR-069 avant registre disabled ; fixture locale nommée et whitelist stricte adaptées, aucun contournement/réactivation publique.

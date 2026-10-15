@@ -2,6 +2,17 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-070 : preuve bornée données/contexte pour les prix RTFP natifs
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant code ; réception non acquise.
+- **Contexte :** l'API officielle observée ne correspond pas au CSV historique. Les prix sont des colonnes, les libellés/unités sont dans l'étude séparée. Ne pas inventer KG/retail ni traiter un close estimate comme une observation. Le corpus initial raw rice conserve une classification non qualifiée.
+- **Décision :** ajouter une preuve version2 rtfp_json_v1, réservée aux prix WB : référence primaire et référence de contexte sont des SourceRecord WB existants, chacun SHA/Bronze/MIME vérifié. Les cellules valeur/devise/date/lieu/pays appartiennent à la même ligne API ; produit/unité/ticker/pays à la même ligne ticker_info ; l'identifiant de l'étude MDG_2021_RTFP_v02_M est aussi vérifié. Champ valeur c_<ticker> strictement lié à rice/sugar/wheat_flour. Extraire seulement ces estimations explicitement modélisées, origin=imputed, actor=unknown, extraction déterministe ; aucun défaut observed/retail.
+- **Décimales :** conserver le lexème price_raw complet. Pour price_value NUMERIC(18,4), vérifier mécaniquement l'arrondi décimal HALF_UP à quatre décimales, sans modifier les autres preuves. Transformation déclarée seulement sur cellule number JSON price_value, raw_expected inchangé. Aucun facteur d'unité ou chiffre LLM implicite.
+- **Durabilité :** réutiliser le batch Bronze immuable pour associer une référence de contexte unique aux documents de données ; aucun nouveau schéma SQL ni inférence depuis une table obs déjà peuplée. Résolution avant parse et pendant rebuild ; absence/ambiguïté/mauvais SHA refusés. Le contrôle SQL de provenance et le gate structurel incluent aussi les références de contexte. Hors WB ou version inconnue : comportement de refus historique conservé.
+- **Structure :** ajouter des variantes de contrat JSON explicitement déclarées (page de données et table de contexte sélectionnée par un chemin code-owned), plus un scalaire décimal exact JSON number ou chaîne numérique. Les anciens contrats fermés/génériques restent inchangés ; ambiguïté, bool/non-fini, champ inconnu de données et contexte manquant refusés. Aucun contrat appris depuis le Bronze.
+- **Réception :** tests corruption/échange produit-unité/pays/champ, référence absente/autre source, quantification erronée, batch ambigu, legacy inchangé ; authentique parse/load/Gold puis vrai rejeu sans réseau, valeur modifiée à comptes égaux refusée. Corpus sans observations métier refusé avant wipe. Un seul check final du lot couplé, pas de réception par helper.
+- **Limites :** cette preuve qualifie les cellules et le rejeu logiciels, pas l'exactitude du modèle fournisseur, une source live complète, une révision historique réelle ni nos prévisions. Ces qualifications restent distinctes et explicites dans le plan.
+
 ## ADR-069 : arrêt INSTAT après challenge de la tentative de corpus R0.8
 
 - **Date/statut :** 2026-10-15 UTC, adopté avant changement du registre, branche indépendante de la réception cff8010.

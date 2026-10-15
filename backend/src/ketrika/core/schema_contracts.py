@@ -8,11 +8,11 @@ from dataclasses import dataclass, field
 from types import MappingProxyType
 
 from ketrika.core.schema_audit import CSVSchemaContract, SchemaContract
-from ketrika.core.schema_json import JSONSchemaContract
+from ketrika.core.schema_json import JSONSchemaAlternatives, JSONSchemaContract
 
 
 def contract_fingerprint(contract: SchemaContract) -> str:
-    if isinstance(contract, JSONSchemaContract):
+    if isinstance(contract, (JSONSchemaContract, JSONSchemaAlternatives)):
         return contract.sha256
     if not isinstance(contract, CSVSchemaContract):
         raise ValueError("schema_registry_invalid_contract")
@@ -51,7 +51,7 @@ class SchemaContractBinding:
         if not (
             isinstance(self.contract, CSVSchemaContract)
             and self.mime_type in {"text/csv", "application/csv"}
-            or isinstance(self.contract, JSONSchemaContract)
+            or isinstance(self.contract, (JSONSchemaContract, JSONSchemaAlternatives))
             and self.mime_type == "application/json"
         ):
             raise ValueError("schema_registry_invalid_format")

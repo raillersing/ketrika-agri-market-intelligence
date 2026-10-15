@@ -4,6 +4,7 @@ All data remain local/unpromoted until corpus and independent annotation checks.
 No private data, submission, S3 write, Silver load or instruction from content.
 """
 
+import argparse
 import hashlib
 import json
 from datetime import UTC, datetime
@@ -53,6 +54,16 @@ class TraceTransport(httpx.HTTPTransport):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--modeled-rice", action="store_true")
+    options = parser.parse_args()
+    parameters = dict(PARAMS)
+    if options.modeled_rice:
+        parameters.pop("c[rice]")
+        parameters["c[c_rice]"] = ">0"
+        parameters["fields"] = (
+            "ISO3,country,adm1_name,adm2_name,mkt_name,price_date,currency,c_rice,data_coverage,spatially_interpolated"
+        )
     output = Path("/out/wb-c1-" + datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ"))
     output.mkdir(exist_ok=False)
     engine = create_engine(get_settings().database_url)
@@ -71,7 +82,7 @@ def main():
             (
                 "sample.json",
                 "https://microdata.worldbank.org/api/tables/data/fcv/wld_2021_rtfp_v02_m",
-                PARAMS,
+                parameters,
             ),
             ("public-licenses.html", "https://datacatalog.worldbank.org/public-licenses", None),
         )

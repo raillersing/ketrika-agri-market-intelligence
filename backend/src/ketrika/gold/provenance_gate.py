@@ -92,4 +92,15 @@ def require_gold_provenance(
     receipt = audit_observation_provenance(session, reader, mode="incremental", targets=targets)
     if not receipt.report.passed:
         raise GoldProvenanceRejected(receipt)
+    # Auxiliary metadata must pass the same structural gate as primary data.
+    # Read references only after the fresh cell audit has validated the proof.
+    from ketrika.core.provenance_rtfp import context_reference, is_context_proof
+
+    for target in targets:
+        row = session.get(POLICIES[target.table].model, target.observation_id)
+        if row is None:
+            raise RuntimeError("gold_candidate_disappeared_after_audit")
+        proof = (row.evidence or {}).get("provenance", {})
+        if is_context_proof(proof):
+            candidate_ids.add(context_reference(proof))
     return PublicationCheck("cells_verified", tables, receipt, tuple(sorted(candidate_ids)))

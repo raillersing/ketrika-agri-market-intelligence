@@ -165,7 +165,7 @@
   name: "INSTAT Madagascar – Indice des Prix à la Consommation (NIPC)"
   owner: "Institut National de la Statistique de Madagascar (INSTAT)"
   priority: P1
-  status: active
+  status: disabled
   access_method: file
   connector: ketrika.connectors.instat_nipc:Connector
   cadence: monthly
@@ -191,7 +191,7 @@
   redistribution_allowed: yes
   legal_review_status: approved
   data_kinds: [cpi]
-  notes: "Indice national des prix à la consommation (NIPC global et indice alimentaire vivrier)."
+  notes: "NIPC global et vivrier ; acquisition corpus arrêtée sur challenge le 2026-10-15 (ADR-069), aucune reprise automatique ni collecte qualifiée."
 
 - source_id: miasa_odr
   name: "MiASA Observatoire du Riz (ODR) – Bulletins Périodiques"

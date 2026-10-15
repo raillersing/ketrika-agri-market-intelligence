@@ -1082,6 +1082,24 @@ s3://bronze/{source_id}/{yyyy}/{mm}/{sha256}.meta.json   # url, fetched_at, http
 
 ## 11. Extraction déterministe et LLM
 
+ADR-070 / R0.8 : preuve rtfp_json_v1 version2 pour PriceObservation WB,
+deux SourceRecord/objets vérifiés (données + étude), context_source_record_id
+explicite et groupe de cellules par portée JSON. Valeur c_<ticker> liée au
+ticker de la même ligne de contexte que product_raw/unit_raw ; ticker parmi
+rice/sugar/wheat_flour, pays MDG des deux côtés et study id exact. Seules les
+estimations close sont admises par ce nouveau chemin : imputed/actor unknown,
+jamais defaults observed/retail. Parser déterministe, contextes issus du même
+batch immuable ; référence absente/ambiguë/autre source refusée. Audit et
+structure Gold suivent le contexte ; aucune dépendance réseau au rejeu.
+Une cellule number JSON price_value peut déclarer normalization=
+quantize_4_half_up : attendu DB comparé au Decimal source arrondi HALF_UP à
+0.0001, lexème raw toujours comparé exactement. Toute autre transformation,
+champ/format ou valeur non finie refusé ; preuves existantes inchangées.
+Contrats JSON de contexte : scope tuple code-owned vers la table utilisée,
+SHA du document complet conservé ; variantes exactement une valide, scalaire
+decimal number/chaîne fini seulement. Pas d'apprentissage de schéma depuis
+contenu collecté. Contrats v1 sans scope gardent leur empreinte v1.
+
 ### 11.1 Ordre d'extraction
 
 1. **Déterministe :** tables CSV, XLSX, JSON ou HTML (`selectolax`), tables PDF (`pdfplumber` / `camelot`).

@@ -6,6 +6,7 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
+from ketrika.core.models.db import PriceObservation
 from ketrika.core.provenance import VerificationReport, VerificationResult
 from ketrika.core.provenance_audit import AuditReceipt
 from ketrika.gold.provenance_gate import (
@@ -40,6 +41,34 @@ def test_dependency_union_is_sorted_and_deduplicated() -> None:
         "stock_observation",
         "weather_observation",
     )
+
+
+def test_context_document_is_included_in_structural_publication_gate() -> None:
+    session = MagicMock(spec=Session)
+    primary, context, identity = uuid4(), uuid4(), uuid4()
+    row = PriceObservation(
+        observation_id=identity,
+        source_record_id=primary,
+        evidence={
+            "provenance": {
+                "version": 2,
+                "format": "rtfp_json_v1",
+                "context_source_record_id": str(context),
+            }
+        },
+    )
+    session.scalars.return_value.all.return_value = [row]
+    session.get.return_value = row
+    report = VerificationReport(
+        "incremental", (VerificationResult(identity, primary, True, None),), 2, 2
+    )
+    with patch(
+        "ketrika.gold.provenance_gate.audit_observation_provenance",
+        return_value=AuditReceipt(report, (), uuid4()),
+    ):
+        publication = require_gold_provenance(session, MagicMock(), ["price_monthly"])
+    assert set(publication.candidate_record_ids) == {primary, context}
+    session.commit.assert_not_called()
 
 
 def test_source_health_is_metadata_not_cell_certification() -> None:
