@@ -485,7 +485,7 @@
 | R1.12 | MUST | TODO | — | — | — | — | — |
 | R1.13 | MUST | TODO | — | — | — | — | — |
 | R2.1 | MUST | DONE | 2026-10-15T20:45:00Z | 2026-10-15T21:20:00Z | e513803 | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts | BL-013 résolu pour macro/temps |
-| R2.2 | MUST | DONE | 2026-10-15T21:30:00Z | 2026-10-15T22:00:00Z | ac46982 | Audit taxonomie, unités, grains, densités et gardes de comparabilité Gold | 38 tests verts, couverture 90%, 0 régression |
+| R2.2 | MUST | DONE | 2026-10-15T21:30:00Z | 2026-10-15T22:00:00Z | 54c24d1 | Audit taxonomie, unités, grains, densités et gardes de comparabilité Gold | 38 tests verts, couverture 90%, 0 régression |
 | R2.3 | MUST | TODO | — | — | — | — | — |
 | R2.4 | MUST | TODO | — | — | — | — | — |
 | R2.5 | MUST | TODO | — | — | — | — | — |
