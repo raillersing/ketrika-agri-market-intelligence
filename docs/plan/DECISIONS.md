@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-069 : arrêt INSTAT après challenge de la tentative de corpus R0.8
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant changement du registre, branche indépendante de la réception cff8010.
+- **Contexte :** client HTTP reçu, quotas SQL du lab dédié, tentative INSTAT69948 arrêtée sans fichier acquis. Journal SQL source instat_nipc et origine https://www.instat.mg, reason_code=challenge/status_code404/2026-10-15T14:48:29.947844Z. Le code HTTP seul ne prouve pas l'absence de challenge.
+- **Décision :** statut disabled au registre de cette branche et PolicyStop durable conservé. Aucun nouvel appel INSTAT, autre sous-domaine, transport ou archive pour contourner ce refus. Ne pas déduire une indisponibilité mondiale du site ni une permission de collecte des résultats d'un navigateur de recherche.
+- **Repli :** poursuivre les corpus publics d'autres institutions autorisées, garder les fixtures INSTAT unverified et les tests logiciels. Droits INSTAT non établis, aucune promotion C1, contact ou envoi externe. L'absence d'un corpus ne justifie pas encore un arrêt humain exclusif.
+- **Conséquences :** reçu négatif conservé ; registre modifié seulement hors source figée du check87212. Cette modification n'est pas qualifiée par ce check ni livrée sur main avant sa propre réception. R0.8 reste IN_PROGRESS.
+- **Isolation des tests :** le scénario INSTAT synthétique utilise le helper de namespace local déjà reçu pour NASA/WFP, avec même validation de profil et UUID strict ; aucune réactivation de la source publique, aucun plafond relevé ni test retiré. Les 189 lignes, idempotence, DQ et rejeu restent exigés.
+
 ## ADR-068 : preuve de rejeu par projection complète et confinement système
 
 - **Date/statut :** 2026-10-15 UTC, adopté avant implémentation R0.8 ; réception non acquise.

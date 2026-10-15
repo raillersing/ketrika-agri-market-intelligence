@@ -12,11 +12,13 @@ from ketrika.core.registry import find_repo_root
 def test_authentic_document_and_annotation() -> None:
     base = find_repo_root() / "backend"
     report = validate_manifest(base, load_manifest(base))
-    assert report["authentic_documents"] == [
-        "tests/fixtures/authentic/world_bank_wdi/wdi_mdg_gdp_2022_2023.json"
-    ]
-    assert report["authentic_annotations"] == 1
-    assert report["verified_annotation_cells"] == 10
+    assert set(report["authentic_documents"]) == {
+        "tests/fixtures/authentic/world_bank_rtfp/mdg_prices_20261015.json",
+        "tests/fixtures/authentic/world_bank_rtfp/mdg_study_20261005.json",
+        "tests/fixtures/authentic/world_bank_wdi/wdi_mdg_gdp_2022_2023.json",
+    }
+    assert report["authentic_annotations"] == 3
+    assert report["verified_annotation_cells"] == 38
 
 
 def test_golden_is_independent_and_bounded() -> None:

@@ -1,0 +1,24 @@
+{
+  "metadata": {
+    "document_path": "tests/fixtures/authentic/world_bank_rtfp/mdg_study_20261005.json",
+    "document_sha256": "4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860",
+    "annotator": "agent",
+    "human_reviewed": false,
+    "annotated_at": "2026-10-15T15:26:48Z",
+    "method": "independent_transcription",
+    "scope": "Ten study identity/version/product/unit metadata cells only; not full schema, observed versus estimated classification or a conversion ledger.",
+    "publication_time": null
+  },
+  "cells": [
+    {"path": ["study_desc", "title_statement", "idno"], "expected": "MDG_2021_RTFP_v02_M", "value_type": "text"},
+    {"path": ["study_desc", "version_statement", "version_date"], "expected": "2026/10/05", "value_type": "text"},
+    {"path": ["additional", "ticker_info", 2, "iso3"], "expected": "MDG", "value_type": "text"},
+    {"path": ["additional", "ticker_info", 2, "ticker"], "expected": "rice", "value_type": "text"},
+    {"path": ["additional", "ticker_info", 2, "full_name"], "expected": "Rice (local)", "value_type": "text"},
+    {"path": ["additional", "ticker_info", 2, "units"], "expected": "KG", "value_type": "text"},
+    {"path": ["additional", "ticker_info", 3, "ticker"], "expected": "sugar", "value_type": "text"},
+    {"path": ["additional", "ticker_info", 3, "units"], "expected": "KG", "value_type": "text"},
+    {"path": ["additional", "ticker_info", 4, "ticker"], "expected": "wheat_flour", "value_type": "text"},
+    {"path": ["additional", "ticker_info", 4, "units"], "expected": "KG", "value_type": "text"}
+  ]
+}

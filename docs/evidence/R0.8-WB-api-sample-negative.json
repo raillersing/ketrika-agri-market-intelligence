@@ -1,0 +1,23 @@
+{
+  "source_id": "wb_rtfp_mdg",
+  "status": "policy_stopped_or_sample_refused",
+  "receipts": [
+    {
+      "url": "https://microdata.worldbank.org/api/tables/info/fcv/wld_2021_rtfp_v02_m?data_dictionary=true",
+      "http_status": 200,
+      "sha256": "519a85fd72cc520c35c8fda82bc963784a852b376e2af620d654971dbabf9d9f",
+      "size_bytes": 356665,
+      "fetched_at": "2026-10-15T14:58:27.044332+00:00"
+    },
+    {
+      "url": "https://microdata.worldbank.org/api/tables/data/fcv/wld_2021_rtfp_v02_m?limit=15&filter=%7B%22ISO3%22%3A%22MDG%22%7D",
+      "http_status": 200,
+      "sha256": "c6c3cce5aef889800392d041e015e20ebb256d196d875dacc140616ab3f839f5",
+      "size_bytes": 260923,
+      "fetched_at": "2026-10-15T14:58:32.338027+00:00"
+    }
+  ],
+  "rights_status": "unverified",
+  "authenticity_qualified": false,
+  "limitations": "No C1 promotion, parser/revisions/model proof or form acceptance"
+}

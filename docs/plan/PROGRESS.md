@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T15:37:16Z] R0.8 — corpus prix authentique vérifié, intégration à poursuivre
+
+- Branche indépendante work/r08-corpus-acquisition-20261015 ; lot logiciel cff8010 déjà reçu main ef626d2/Windows1612/35/build, ne pas répéter son check comme base. Source INSTAT arrêtée69948 sur challenge/status404, ADR-069 avant registre disabled ; fixture locale nommée et whitelist stricte adaptées, aucun contournement/réactivation publique.
+- WB API public : filtre c[ISO3] et c[rice] documenté par code officiel NADA1bd31f72 ; deux réponses MDG refusées avant correction, puis quinze lignes pays et valeurs positives validées. Paquet28893 FINAL0 : source/origine/budgets/UA, cinq requêtes tracées, HTTP200 prix/étude/licence, robots404/200. Originaux dans fixtures/authentic/world_bank_rtfp et reçus corpus-evidence ; aucun objet Bronze actif ni observation créés.
+- Licence CC-BY4 avec termes additionnels et étude open data vérifiées sur les octets officiels ; aucune hypothèse de permission depuis un résultat de recherche. Annotation manuelle indépendante18 cellules prix/10 contexte, human_reviewed=false. 44107 FINAL0 : 80 tests/1,56 s, lint/format ; 39929 FINAL0 types quatre fichiers après fixture ; 10177 FINAL0 : 71 fichiers/576201 octets, six entrées authentiques (trois documents/trois annotations), 38 cellules avec WDI. Report R0.8-corpus-stage-report.json.
+- R0.8 reste IN_PROGRESS : format réel API large, unités et libellés dans métadonnées séparées, classification observé/estimé à lier explicitement ; CSV historique non qualifié pour ce JSON. Suite : contrat ADR/SPECS avant liaison de contexte durable depuis batch immuable, parseur déterministe et provenance bornée ; aucune unité/statut inventé, pas de défaut retail sur données sans acteur. Rejeu authentique et réception complète du lot stabilisé avant intégration main. Aucun tag ni source live/modèle/usage humain qualifié.
+
 ### [2026-10-15T14:43:27Z] R0.8 — rejeu réel sans réseau, lot logiciel à recevoir
 
 - ADR-068/SPECS complétés avant worker/profil/commande rebuild-smoke. Nouvelle base ketrika_rebuild_qualification, socket Unix dédiée, DB/worker Docker network=none ; copie locale readonly, worker app/capdropALL. Aucun accès ni migration active, aucun volume QA historique utilisé pour les données ; seul venv QA réutilisé readonly.

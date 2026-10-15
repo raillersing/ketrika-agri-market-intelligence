@@ -1,0 +1,17 @@
+{
+  "files": 71,
+  "size_bytes": 576201,
+  "counts": {
+    "authentic": 6,
+    "synthetic": 46,
+    "unverified": 19
+  },
+  "authentic_documents": [
+    "tests/fixtures/authentic/world_bank_rtfp/mdg_prices_20261015.json",
+    "tests/fixtures/authentic/world_bank_rtfp/mdg_study_20261005.json",
+    "tests/fixtures/authentic/world_bank_wdi/wdi_mdg_gdp_2022_2023.json"
+  ],
+  "authentic_annotations": 3,
+  "verified_annotation_cells": 38,
+  "scope": "offline artifact integrity only; not live collection or market performance"
+}

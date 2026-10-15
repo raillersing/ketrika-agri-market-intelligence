@@ -3,6 +3,8 @@
 > Format : `ID | tâche | date | symptôme | cause supposée | tentatives (1, 2, 3) | repli appliqué | statut`
 > Statut : `INVESTIGATING` | `RESOLVED_FALLBACK` | `RESOLVED_FIXED` | `BLOCKED`
 
+| B-R067 | R0.8 / acquisition INSTAT | 2026-10-15 | 69948 code0 mais policy_stopped, aucune feuille XLSX acquise ; journal SQL challenge/status404/source instat_nipc/origine www.instat.mg | Challenge détecté par client natif, pas assimilé à un simple 404 | 1 tentative d'acquisition, arrêt immédiat ; erreur import Modest59311 avant réseau corrigée par Lexbor fourni | ADR-069 : source disabled sur branche, arrêts SQL conservés, aucune relance/contournement ; autres sources publiques et logiciel continuent | RESOLVED_FALLBACK |
+
 | B-R065 | R0.8 / première disponibilité socket | 2026-10-15 | prepare20992 code1 : serveur temporaire PostgreSQL healthy puis arrêt pendant première initialisation | pg_isready seul accepte le serveur initdb transitoire | 1 : healthcheck exige PID1 postgres final, puis disponibilité socket ; aucune donnée supprimée | prepare65086 code0, replay91244 code0 sur même destination dédiée | RESOLVED_FIXED |
 | B-R066 | R0.8 / volumes neufs du smoke | 2026-10-15 | prepare49094 code1 : permission refusée sur /copy après migrations dédiées, transaction de fixtures annulée | Image non-root et volume neuf root-owned | 1 : prepare root sans capabilities, copie finale readonly, rapports dédiés sticky ; reprise seulement schéma/meta/ref/obs/ml vides, aucun effacement | prepare65086 code0, replay91244 code0 ; worker app/capdropALL/copy readonly inspectés18581 | RESOLVED_FIXED |
 

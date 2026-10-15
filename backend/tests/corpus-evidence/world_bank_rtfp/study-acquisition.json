@@ -1,0 +1,28 @@
+{
+  "source_id": "wb_rtfp_mdg",
+  "source_url": "https://microdata.worldbank.org/metadata/export/8240/json",
+  "catalogue_url": "https://microdata.worldbank.org/catalog/8240/study-description",
+  "discovered_at": "2026-10-15T15:25:09.046082Z",
+  "fetched_at": "2026-10-15T15:25:11.259953Z",
+  "published_at": null,
+  "bronze_object_key": null,
+  "access_method": "api",
+  "http_status": 200,
+  "mime_type": "application/json",
+  "headers_mime": "application/json; charset=utf-8",
+  "sha256": "4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860",
+  "size_bytes": 51241,
+  "allowed_hosts": ["microdata.worldbank.org"],
+  "redirect_chain": ["https://microdata.worldbank.org/metadata/export/8240/json"],
+  "user_agent": "KetrikaAgriBot/0.1 (+https://ketrika.ai/bot); contact@example.com",
+  "packet_request_count": 5,
+  "trace_reference": "docs/evidence/R0.8-WB-c1-packet-acquisition.json",
+  "rights": {
+    "status": "verified",
+    "licence": "CC BY 4.0 with World Bank additional dataset terms",
+    "evidence": "https://datacatalog.worldbank.org/public-licenses",
+    "redistribution_allowed": true,
+    "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."
+  },
+  "limitations": "Official context and units, not price observations. Version date is not assumed to be publication time. Complete HTTP trace and licensing SHA are recorded in the packet evidence."
+}

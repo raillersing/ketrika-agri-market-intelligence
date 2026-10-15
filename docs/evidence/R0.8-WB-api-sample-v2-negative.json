@@ -1,0 +1,36 @@
+{
+  "source_id": "wb_rtfp_mdg",
+  "status": "policy_stopped_or_sample_refused",
+  "receipts": [
+    {
+      "url": "https://microdata.worldbank.org/api/tables/data/fcv/wld_2021_rtfp_v02_m?limit=15&filter=%7B%22ISO3%22%3A%22MDG%22%7D",
+      "http_status": 200,
+      "sha256": "c6c3cce5aef889800392d041e015e20ebb256d196d875dacc140616ab3f839f5",
+      "size_bytes": 260923,
+      "fetched_at": "2026-10-15T15:00:19.900755+00:00",
+      "response_keys": [
+        "data",
+        "found",
+        "limit",
+        "offset",
+        "rows_count",
+        "total"
+      ],
+      "result_keys": [
+        "data",
+        "found",
+        "limit",
+        "offset",
+        "rows_count",
+        "total"
+      ]
+    },
+    {
+      "error_type": "PolicyStop",
+      "code": "corpus_sample_country_mismatch"
+    }
+  ],
+  "rights_status": "unverified",
+  "authenticity_qualified": false,
+  "limitations": "No C1 promotion, parser/revisions/model proof or form acceptance"
+}

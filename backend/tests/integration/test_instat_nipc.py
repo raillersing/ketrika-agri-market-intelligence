@@ -47,7 +47,9 @@ def csv_content() -> str:
 
 
 @pytest.mark.integration
-def test_instat_nipc_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, csv_content: str):
+def test_instat_nipc_backfill_dq_and_rebuild_lifecycle(
+    httpserver, db_session, csv_content: str, monkeypatch
+):
     """Verify CC3-CC6: backfill execution, idempotence, DQ checks and offline rebuild."""
     wipe_silver_gold_tables(db_session)
     db_session.commit()
@@ -63,10 +65,13 @@ def test_instat_nipc_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, c
     httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy = PolicyEngine()
     http_client = PoliteHttpClient(policy_engine=policy)
-    connector = InstatNipcConnector()
+    from tests.local_connector import local_connector
+
+    connector = local_connector(InstatNipcConnector, monkeypatch)
+    source_id = connector.source_id
 
     ctx = RunContext(
-        source_id="instat_nipc",
+        source_id=source_id,
         bronze_store=bronze_store,
         http_client=http_client,
         policy_engine=policy,
@@ -84,7 +89,7 @@ def test_instat_nipc_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, c
         select(CpiObservation)
         .join(SourceRecord, CpiObservation.source_record_id == SourceRecord.source_record_id)
         .where(
-            SourceRecord.source_id == "instat_nipc",
+            SourceRecord.source_id == source_id,
             CpiObservation.superseded_by.is_(None),
         )
     )
@@ -118,7 +123,7 @@ def test_instat_nipc_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, c
     assert stats2["n_skipped"] == 189
 
     # 4. CC6: Offline rebuild stable verification
-    rebuild_stats = rejected_legacy_rebuild(db_session, "instat_nipc")
+    rebuild_stats = rejected_legacy_rebuild(db_session, source_id)
     assert rebuild_stats["source_records_replayed"] >= 1
 
     obs_after = list(db_session.execute(stmt).scalars().all())

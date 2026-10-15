@@ -1,0 +1,41 @@
+{
+  "source_id": "wb_rtfp_mdg",
+  "status": "catalogue_only_no_download",
+  "authenticity_qualified": false,
+  "http_status": 200,
+  "url": "https://microdata.worldbank.org/catalog/8240/get-microdata",
+  "sha256": "153d6fc35e0a1e7d69720f06ee01609399b4f634835bcc4d6d65772b88c6d5f2",
+  "size_bytes": 32052,
+  "links": [
+    "https://microdata.worldbank.org/",
+    "https://microdata.worldbank.org//",
+    "https://microdata.worldbank.org//catalog",
+    "https://microdata.worldbank.org//catalog/8240",
+    "https://microdata.worldbank.org//catalog/FCV",
+    "https://microdata.worldbank.org/about",
+    "https://microdata.worldbank.org/auth/login",
+    "https://microdata.worldbank.org/catalog",
+    "https://microdata.worldbank.org/catalog/8240/data-api",
+    "https://microdata.worldbank.org/catalog/8240/data-dictionary",
+    "https://microdata.worldbank.org/catalog/8240/get-microdata",
+    "https://microdata.worldbank.org/catalog/8240/related-datasets",
+    "https://microdata.worldbank.org/catalog/8240/related-materials",
+    "https://microdata.worldbank.org/catalog/8240/study-description",
+    "https://microdata.worldbank.org/catalog/FCV",
+    "https://microdata.worldbank.org/citations",
+    "https://microdata.worldbank.org/collections",
+    "https://microdata.worldbank.org/collections/FCV",
+    "https://microdata.worldbank.org/metadata/export/8240/ddi",
+    "https://microdata.worldbank.org/metadata/export/8240/json",
+    "https://microdata.worldbank.org/terms-of-use"
+  ],
+  "forms": [
+    {
+      "method": "post",
+      "input_types": [
+        "hidden",
+        "submit"
+      ]
+    }
+  ]
+}
