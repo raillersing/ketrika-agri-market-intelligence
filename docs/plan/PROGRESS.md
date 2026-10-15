@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T16:18:14Z] R0.8 — corpus et adaptateur contextuel avancés sur branche indépendante
+
+- Worktree /home/raillersing/projects/ketrika-qa-worktrees/r08-corpus-acquisition-20261015, branche work/r08-corpus-acquisition-20261015 : corpus authentique committé5447504, puis provenance contextuelle/parseur b964e92db3c34fe0673f1cb949418f75c8175a99. Aucun de ces changements applicatifs intégré main ni qualifié par l'ancien check cff8010.
+- Corpus5447504 : trois documents officiels avec droits vérifiés et trois annotations indépendantes/human_reviewed=false, 38 cellules ; rapport 71 fichiers/576201 octets, six authentic/46 synthetic/19 unverified ; 80 tests ciblés verts. Source INSTAT arrêtée sur challenge, ADR-069/registre disabled sur branche, aucune reprise publique.
+- ADR-070/SPECS avant code b964e92 : preuve bornée prix et contexte séparés, deux SHA/MIME vérifiés, références contextuelles au gate structurel Gold ; arrondi HALF_UP quatre décimales avec lexème brut, imputed/unknown explicites. Parseur API séparé, pas encore raccordé au connecteur/batch/rebuild. Docker76968 FINAL0/276 tests/7,16 s/types sept modules ; 5925 FINAL0/12 tests/2,82 s/types parseur ; 33661 FINAL0/29 tests/1,28 s/types acquisition/parseur. Scan48950 FINAL0/63010 octets/sans fuite ; gouvernance52931 FINAL0/74 cohérents (7 DONE,1 IN_PROGRESS,66 TODO).
+- Diagnostic55606 FINAL0 : 15 prix officiels du paquet38748 parsés sans réseau, avec unité de l'étude et estimation signalée ; aucune écriture SourceRecord/Silver/Gold, UUID uniquement de diagnostic. Original conservé dans conteneur ketrika-r08-wb-modeled-c1-20261015:/out/wb-c1-20261015T160306Z ; annotations/promotion de ce paquet encore à faire.
+- Reprise : paquet modélisé/annotations, contrat structurel WB, contexte issu du batch immuable au chargement et au rebuild, refus baseline métier vide avant wipe, rejeu authentique/révisions réelles et réception complète unique stabilisée. Aucun nouveau check de base ni DONE/tag. Changements locaux préexistants main (huit __init__.py et openapi.json) et prompt utilisateur non suivis conservés, aucune intégration à travers ces modifications.
+
 ### [2026-10-15T15:17:47Z] R0.8 — mécanisme logiciel reçu main, corpus poursuivi
 
 - Livraison atomique main `ef626d2`, source reçue `cff8010ea027b524fed00a3dee6fbee0957f4f5b`, empreinte dd5a355d643d8a4857654b107d9a585472e27c75a5b2f71c6152ac142b452a03 exacte sur main86451 FINAL0. Windows87212 FINAL0 : 1612 backend/1031,27 s, zéro échec/skip ; inclusion R0.8 20+35+16=71 et 154 intégrations ; couvertures91,431/86,377/90,378 %. Front35/quatre suites/quatre étapes0/build15 ; CLI Windows13060 FINAL0, replay_passed true/PARTIAL/synthetic.
