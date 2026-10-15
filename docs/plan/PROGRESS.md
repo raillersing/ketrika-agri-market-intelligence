@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T20:02:00Z] R1.11 — DONE, qualification NASA POWER et ses révisions (cohérence physique, sentinelles, PolicyStop disabled et rejeu Bronze)
+
+- Dépendances relues : R1.2 (découverte dynamique), R1.10 (géographie), R2.1 (contrats temps).
+- Mini-plan exécuté : (1) connecteur nasa_power v1.1.0 avec levée PolicyStop si disabled en mode réseau (B-R010) et support replay offline BronzeStore ; (2) paramètres explicites début/fin, communauté AG et référence temporelle UTC sans assimiler LST au fuseau métier ; (3) déduplication des requêtes par cellule native avec préservation du lien vers zones ; (4) contrôle strict de cohérence physique (Tmin<=Tmax, precip>=0, 0<=RH<=100, filtrage des sentinelles -999.0 sans jamais convertir en 0) ; (5) suppression définitive du fallback arbitraire vers MDG1101 (émission issue unresolved_location_needs_review) ; (6) tests unitaires, golden test et couverture >= 80% ; (7) fiche source et rapport de preuve.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_nasa_power.py --cov=ketrika.connectors.nasa_power (exit 0, 10 passed in 9.65s, couverture 93 %) ; ruff check (exit 0) ; mypy (exit 0) ; uv run pytest -v tests/unit/test_weather_provenance.py tests/unit/test_weather_migration.py (exit 0, 19 passed in 9.21s).
+- Résultats : 10/10 tests unitaires verts ; 36 enregistrements extraits sur les 9 dates valides, filtrage strict de la sentinelle 2024-01-06 (-999.0 non converti en 0), rejet prouvé des violations physiques (Tmin>Tmax, precip<0, RH>100), point hors de Madagascar non assigné arbitrairement à MDG1101, couverture 93 %.
+- Qualification : Logiciel connecteur, validation physique et rejeu Bronze QUALIFIED (DONE) ; Collecte live réseau BLOCKED (incident B-R010, robots.txt Disallow: /api/, AGENTS §8.1).
+- État final : DONE (commit 95068e9).
+- Preuve : docs/evidence/R1.11/README.md.
+- Reprise : Tâche MUST éligible suivante R1.12 (Qualifier actualisation, reprise et santé des sources).
+
 ### [2026-10-15T19:48:00Z] R1.10 — DONE, requalification géographie et résolution (manifeste, 23 régions, refus d'imputation aveugle)
 
 - Dépendances relues : R1.1 (registre), R1.2 (découverte).
