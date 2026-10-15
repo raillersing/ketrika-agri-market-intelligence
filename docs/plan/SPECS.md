@@ -664,6 +664,35 @@ CREATE TABLE obs.cpi_observation (
 );
 CREATE UNIQUE INDEX cpi_current_uk ON obs.cpi_observation (natural_key) WHERE superseded_by IS NULL;
 
+-- ADR-069 : Métriques macroéconomiques génériques et contrats temps (C1-C4)
+CREATE TABLE obs.macro_observation (
+  observation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  source_record_id UUID NOT NULL REFERENCES meta.source_record,
+  natural_key TEXT NOT NULL,
+  indicator_code TEXT NOT NULL,  -- ex: GDP_NOMINAL_MGA, FX_USD_MGA, POLICY_RATE_PCT
+  indicator_name TEXT NOT NULL,  -- libellé clair
+  frequency TEXT NOT NULL,       -- daily | monthly | quarterly | annual | adhoc
+  unit TEXT NOT NULL,            -- MGA | USD | pct | index | ratio
+  base_period TEXT,              -- ex: '2016' ou '2020=100'
+  geo_scope TEXT NOT NULL,       -- national | <pcode>
+  period_start DATE NOT NULL,
+  period_end DATE NOT NULL,
+  published_at TIMESTAMPTZ,
+  first_available_at TIMESTAMPTZ NOT NULL, -- C2: première disponibilité prouvée (jamais antidatée)
+  ingested_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  vintage TEXT NOT NULL DEFAULT 'final',   -- preliminary | provisional | revised | final
+  value NUMERIC(20,4),
+  value_raw TEXT,
+  observed_or_imputed TEXT NOT NULL,      -- observed | imputed | estimated
+  extraction_method TEXT NOT NULL,
+  evidence JSONB,
+  confidence NUMERIC(3,2) NOT NULL,
+  review_status TEXT NOT NULL DEFAULT 'accepted',
+  superseded_by UUID REFERENCES obs.macro_observation
+);
+CREATE UNIQUE INDEX macro_obs_current_uk ON obs.macro_observation (natural_key) WHERE superseded_by IS NULL;
+CREATE INDEX ON obs.macro_observation (indicator_code, geo_scope, period_start);
+
 CREATE TABLE obs.event (
   event_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   source_record_id UUID NOT NULL REFERENCES meta.source_record,
@@ -1336,6 +1365,7 @@ Chaque valeur exposée inclut `value_kind` (`observed | imputed | forecast | com
 | GET | `/v1/observations/{id}` | **Provenance complète** : brut, preuve, méthode, `source_record`, URL d'origine, lien signé vers l'objet Bronze (15 min) |
 | GET | `/v1/stocks?product=&location=` | Stocks |
 | GET | `/v1/trade?product=&flow=&from=&to=` | Flux commerciaux |
+| GET | `/v1/macro?indicator=&geo_scope=&vintage=&from=&to=` | Séries macroéconomiques (`obs.macro_observation`) |
 | GET | `/v1/weather/anomalies?location=&from=&to=` | Anomalies météo |
 | GET | `/v1/kpis/market-health?product=&location=&month=` | Score + composantes |
 | GET | `/v1/forecasts?product=&location=&actor_level=` | p10/p50/p90 + métriques de backtest |

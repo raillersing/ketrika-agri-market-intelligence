@@ -2,6 +2,19 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-069 : formalisation des contrats temps, origine et métriques macroéconomiques (C1–C4)
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant migration et code R2.1 ; Phase R2.
+- **Contexte :** l'extension de Ketrika vers l'observatoire macroéconomique et l'aide à la décision (Phase R2) requiert l'ingestion d'indicateurs macroéconomiques généraux (PIB, taux de change, taux directeur BCM, agrégats). Détourner `price_observation` ou `cpi_observation` violerait les contrats de données et corromprait les séries de prix vivriers. De plus, la gestion temporelle pour le ML interdit tout antidatage de la disponibilité sur la simple date affichée dans un document (anti-leakage).
+- **Décision :**
+  1. **Table additive `obs.macro_observation` :** création de la table dédiée avec indicateur (`indicator_code`, `indicator_name`, `frequency`, `unit`, `base_period`), périmètre (`geo_scope`), vintage (`preliminary | provisional | revised | final`), valeurs brutes et numériques exactes (`NUMERIC(20,4)`), et provenance complète (`source_record_id`, `evidence`, `extraction_method`).
+  2. **Contrat de disponibilité temporelle (C2 / C4) :** distinction obligatoire entre période observée (`period_start`, `period_end`), date de publication officielle (`published_at`) et première disponibilité prouvée (`first_available_at`). En l'absence d'archive datée indépendante (Wayback, log immuable), `first_available_at` prend conservativement la date de première collecte UTC (`fetched_at`), sans jamais être antidatée.
+  3. **Immuabilité & Révisions :** révisions par insertion de nouvelle ligne et liaison `superseded_by` (trigger immuable interdisant les UPDATE destructifs). Les révisions météo NRT vers consolidé suivent ce même mécanisme sans écrasement.
+  4. **Famille de sources (C3) :** déclaration de `source_family` pour interdire la fausse confirmation d'indépendance entre sources dérivées (ex: RTFP et WFP).
+  5. **Droits :** permissions accordées à `ketrika_app` (SELECT, INSERT, UPDATE sur superseded_by) et `copilot_ro` (SELECT seul).
+- **Alternatives :** réutiliser `price_observation` avec des prix factices (rejeté), réécriture destructive des historiques (interdit par AGENTS §4.3).
+- **Conséquences :** séparation nette des grains, garantie d'intégrité sans régression sur l'historique et les tables existantes, conformité aux rôles DB.
+
 ## ADR-063 : garde HTTP durable, quotas atomiques et arrêt persistant
 
 - **Date/statut :** 2026-10-14, adopté avant code sur work/r06-http-takeover-20261014 ; aucune réception produit.

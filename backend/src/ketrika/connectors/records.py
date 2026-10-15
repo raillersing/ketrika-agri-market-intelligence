@@ -199,3 +199,32 @@ class EventRecord(RecordBase):
         if self.event_date is not None:
             self.period_start = self.event_date
             self.period_end = self.event_date
+
+
+class MacroRecord(RecordBase):
+    """Normalized macroeconomic observation record (matching obs.macro_observation)."""
+
+    natural_key_fields: ClassVar[tuple[str, ...]] = (
+        "indicator_code",
+        "geo_scope",
+        "frequency",
+        "vintage",
+        "period_start",
+        "period_end",
+    )
+
+    indicator_code: str
+    indicator_name: str
+    frequency: str = "monthly"  # daily | monthly | quarterly | annual | adhoc
+    unit: str  # MGA | USD | pct | index | ratio
+    geo_scope: str = "national"  # national | <pcode>
+    period_start: date
+    period_end: date
+    value_raw: str | None = None
+    value: float | None = None
+    base_period: str | None = None
+    vintage: str = "final"  # preliminary | provisional | revised | final
+    observed_or_imputed: str = "observed"  # observed | imputed | estimated
+    first_available_at: datetime | None = None
+    published_at: datetime | None = None
+

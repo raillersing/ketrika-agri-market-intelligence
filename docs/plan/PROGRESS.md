@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T21:20:00Z] R2.1 — DONE, formalisation des contrats temps, origine et macroéconomie (ADR-069, SPECS, MacroObservation, C1–C4)
+
+- Dépendances relues : R0.1, R0.2, R1.1, Gate R1.13 complétés.
+- Mini-plan exécuté : (1) rédaction ADR-069 dans DECISIONS.md et mise à jour SPECS §8/19 ; (2) modèles MacroObservation et MacroRecord avec clé naturelle déterministe ; (3) loader avec supersession load_macro_record_with_supersession et non-antidatage C2 ; (4) routeur REST GET /v1/macro et schéma MacroItem ; (5) migration Alembic 0011 avec trigger d'immuabilité et permissions rôles ; (6) tests unitaires, couverture 98 % et 0 régression sur 58 tests de prix/météo/IPC ; (7) rapport de preuve rédigé.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_contracts_time_origin_macro.py --cov=ketrika.connectors.records --cov=ketrika.core.models.db --cov=ketrika.api.routers.macro (exit 0, 6 passed in 37.32s, couverture 98 %) ; ruff check (exit 0) ; mypy (exit 0) ; tsc --noEmit (exit 0) ; uv run pytest -v tests/unit/test_weather_provenance.py tests/unit/test_weather_migration.py tests/unit/test_price_loader.py tests/unit/test_instat_nipc.py (exit 0, 58 passed in 10.13s).
+- Résultats : 6/6 tests unitaires passés ; 58/58 tests de non-régression passés ; table additive sans impact sur les tables de prix ; disponibilité C2 protégée contre l'antidatage ; trigger immuable actif.
+- Qualification : Contrats temps, origine et macroéconomie QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R2.1/README.md.
+- Reprise : Tâche MUST éligible suivante R2.2 (Auditer taxonomie, unités et grains).
+
 ### [2026-10-15T20:30:00Z] R1.13 — DONE, Gate de fin de phase R1 (Collecte réelle et qualification du socle des 9 sources)
 
 - Dépendances relues : R1.1 à R1.12 intégralement complétés.

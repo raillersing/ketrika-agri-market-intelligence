@@ -34,7 +34,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R1.11 | MUST | DONE | 95068e9 : qualification NASA POWER v1.1.0, cohérence physique, sentinelles -999, non-assignation aveugle, 10 tests verts, couverture 93% ; live BLOCKED (B-R010) |
 | R1.12 | MUST | DONE | actualisation, reprise, alertes Mailpit, santé UI/API, zéro requête sous PolicyStop, 5 tests verts |
 | R1.13 | MUST | DONE | Gate R1 validé : matrice 9 sources, 7 actives / 2 offline (B-R009, B-R010), 109 tests verts, tag mi-r1-qualified |
-| R2.1 | MUST | TODO | — |
+| R2.1 | MUST | DONE | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts |
 | R2.2 | MUST | TODO | — |
 | R2.3 | MUST | TODO | — |
 | R2.4 | MUST | TODO | — |

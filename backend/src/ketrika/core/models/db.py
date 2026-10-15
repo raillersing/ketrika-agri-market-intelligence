@@ -521,6 +521,50 @@ class Event(Base):
     ingested_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
 
 
+class MacroObservation(Base):
+    """Harmonized macroeconomic indicator observation (Silver layer, ADR-069)."""
+
+    __tablename__ = "macro_observation"
+    __table_args__ = (
+        Index("idx_macro_obs_ind_geo_period", "indicator_code", "geo_scope", "period_start"),
+        {"schema": "obs"},
+    )
+
+    observation_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    source_record_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("meta.source_record.source_record_id"),
+        nullable=False,
+    )
+    natural_key: Mapped[str] = mapped_column(TEXT, nullable=False)
+    indicator_code: Mapped[str] = mapped_column(TEXT, nullable=False)
+    indicator_name: Mapped[str] = mapped_column(TEXT, nullable=False)
+    frequency: Mapped[str] = mapped_column(TEXT, nullable=False)
+    unit: Mapped[str] = mapped_column(TEXT, nullable=False)
+    base_period: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    geo_scope: Mapped[str] = mapped_column(TEXT, nullable=False, default="national")
+    period_start: Mapped[date] = mapped_column(DATE, nullable=False)
+    period_end: Mapped[date] = mapped_column(DATE, nullable=False)
+    published_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    first_available_at: Mapped[datetime] = mapped_column(nullable=False)
+    ingested_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
+    vintage: Mapped[str] = mapped_column(TEXT, nullable=False, default="final")
+    value: Mapped[float | None] = mapped_column(NUMERIC(20, 4), nullable=True)
+    value_raw: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    observed_or_imputed: Mapped[str] = mapped_column(TEXT, nullable=False, default="observed")
+    extraction_method: Mapped[str] = mapped_column(TEXT, nullable=False)
+    evidence: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    confidence: Mapped[float] = mapped_column(NUMERIC(3, 2), nullable=False)
+    review_status: Mapped[str] = mapped_column(TEXT, nullable=False, default="accepted")
+    superseded_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("obs.macro_observation.observation_id"),
+        nullable=True,
+    )
+
+
 # ===================== ML SCHEMA =====================
 
 

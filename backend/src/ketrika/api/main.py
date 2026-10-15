@@ -27,6 +27,7 @@ from ketrika.api.routers import (
     forecasts,
     kpis,
     locations,
+    macro,
     prices,
     products,
     sources,
@@ -121,6 +122,7 @@ app.include_router(locations.router)
 app.include_router(prices.router)
 app.include_router(stocks.router)
 app.include_router(trade.router)
+app.include_router(macro.router)
 app.include_router(weather.router)
 app.include_router(kpis.router)
 app.include_router(forecasts.router)

@@ -19,6 +19,7 @@ from ketrika.connectors.base import (
 )
 from ketrika.connectors.records import (
     CpiRecord,
+    MacroRecord,
     PriceRecord,
     ProductionRecord,
     RecordBase,
@@ -31,6 +32,7 @@ from ketrika.core.models.db import (
     CpiObservation,
     IngestionRun,
     Location,
+    MacroObservation,
     PriceObservation,
     ProductionObservation,
     Source,
@@ -643,6 +645,103 @@ def load_weather_record_with_supersession(
     return "superseded" if current_obs is not None else "inserted", new_id
 
 
+def load_macro_record_with_supersession(
+    session: Session,
+    record: MacroRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    """Load MacroRecord into obs.macro_observation with supersession (ADR-069)."""
+    nk = record.compute_natural_key(source_id)
+    stmt = select(MacroObservation).where(
+        MacroObservation.natural_key == nk,
+        MacroObservation.superseded_by.is_(None),
+    )
+    current_obs = session.execute(stmt).scalar_one_or_none()
+
+    # C2 : first_available_at cannot be None, fallback conservative to fetched_at or now
+    first_avail = record.first_available_at
+    if first_avail is None:
+        sr = session.get(SourceRecord, source_record_id)
+        first_avail = sr.fetched_at if sr is not None else datetime.now(UTC)
+
+    v_val = record.value
+    if v_val is None and record.value_raw:
+        try:
+            v_val = float(record.value_raw.replace(" ", "").replace(",", "."))
+        except ValueError:
+            v_val = None
+
+    if current_obs is None:
+        new_obs = MacroObservation(
+            observation_id=uuid.uuid4(),
+            source_record_id=source_record_id,
+            natural_key=nk,
+            indicator_code=record.indicator_code,
+            indicator_name=record.indicator_name,
+            frequency=record.frequency,
+            unit=record.unit,
+            base_period=record.base_period,
+            geo_scope=record.geo_scope,
+            period_start=record.period_start,
+            period_end=record.period_end,
+            published_at=record.published_at,
+            first_available_at=first_avail,
+            vintage=record.vintage,
+            value=v_val,
+            value_raw=record.value_raw,
+            observed_or_imputed=record.observed_or_imputed,
+            extraction_method=record.extraction_method,
+            evidence=record.evidence,
+            confidence=record.confidence,
+            review_status="accepted",
+            superseded_by=None,
+        )
+        session.add(new_obs)
+        session.flush()
+        return "inserted", new_obs.observation_id
+
+    curr_val = float(current_obs.value) if current_obs.value is not None else None
+    if curr_val == v_val and current_obs.vintage == record.vintage:
+        return "idempotent_skipped", current_obs.observation_id
+
+    new_id = uuid.uuid4()
+    session.execute(
+        update(MacroObservation)
+        .where(MacroObservation.observation_id == current_obs.observation_id)
+        .values(superseded_by=new_id)
+    )
+    session.flush()
+
+    new_obs = MacroObservation(
+        observation_id=new_id,
+        source_record_id=source_record_id,
+        natural_key=nk,
+        indicator_code=record.indicator_code,
+        indicator_name=record.indicator_name,
+        frequency=record.frequency,
+        unit=record.unit,
+        base_period=record.base_period,
+        geo_scope=record.geo_scope,
+        period_start=record.period_start,
+        period_end=record.period_end,
+        published_at=record.published_at,
+        first_available_at=first_avail,
+        vintage=record.vintage,
+        value=v_val,
+        value_raw=record.value_raw,
+        observed_or_imputed=record.observed_or_imputed,
+        extraction_method=record.extraction_method,
+        evidence=record.evidence,
+        confidence=record.confidence,
+        review_status="accepted",
+        superseded_by=None,
+    )
+    session.add(new_obs)
+    session.flush()
+    return "superseded", new_id
+
+
 def load_record_with_supersession(
     session: Session,
     record: RecordBase,
@@ -664,6 +763,8 @@ def load_record_with_supersession(
         return load_cpi_record_with_supersession(session, record, source_id, source_record_id)
     elif isinstance(record, WeatherRecord):
         return load_weather_record_with_supersession(session, record, source_id, source_record_id)
+    elif isinstance(record, MacroRecord):
+        return load_macro_record_with_supersession(session, record, source_id, source_record_id)
     else:
         raise ValueError(f"Unsupported record type: {type(record)}")
 

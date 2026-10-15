@@ -306,3 +306,28 @@ class ReviewResolveRequest(BaseModel):
     status: Literal["approved", "rejected", "created_alias"]
     resolution_note: str | None = None
     alias_created: str | None = None
+
+
+# ===================== MACROECONOMIC (ADR-069) =====================
+
+
+class MacroItem(BaseModel):
+    """Macroeconomic observation item (SPECS §19, ADR-069)."""
+
+    observation_id: uuid.UUID
+    indicator_code: str
+    indicator_name: str
+    geo_scope: str
+    frequency: str
+    unit: str
+    base_period: str | None = None
+    period_start: str
+    period_end: str
+    vintage: str
+    value: float | None = None
+    value_raw: str | None = None
+    observed_or_imputed: str
+    first_available_at: datetime
+    published_at: datetime | None = None
+    sources: list[str] = Field(default_factory=list)
+
