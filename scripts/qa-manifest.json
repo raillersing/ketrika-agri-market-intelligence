@@ -2,6 +2,15 @@
   "version": 1,
   "scope": "software subsets; never automatic task, source, model or human certification",
   "tasks": {
+    "R0.7": {
+      "tests": [
+        "tests/unit/test_measured_qualification.py",
+        "tests/unit/test_qa_manifest.py",
+        "tests/unit/test_http_guard.py"
+      ],
+      "minimum_tests": 160,
+      "minimum_integration_tests": 0
+    },
     "R0.1": {
       "tests": ["tests/unit/test_execution_plan.py"],
       "minimum_tests": 19,

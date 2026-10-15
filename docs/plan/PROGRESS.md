@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-14T21:21:06Z] R0.7 — lot groupé figé, réception Windows connue
+
+- Dépôt Git isolé Linux r07-final-native-20261014, branche work/r07-final-native-20261015, commit `971702e202642cb6368f62aa6b2fc00ef6d24670`. ADR-067/SPECS avant périmètre cache, ADR-066 et seul correctif034947a repris ; dépôt original/caches/index main non détruits. Aucun code SQL Agy importé.
+- 27361 FINAL 0 : lint/types quatre fichiers, 115 tests/5,29 s (58 qualificateur, 57 garde HTTP). Cinq nouveaux cas cache/frontières/symlink et 18 cas clés API ; manifest R0.7 trois fichiers/160 minimum. Gouvernance 69493 FINAL 0/74 cohérents, scan26309 FINAL 0/10571 octets/sans fuite. JUnit temporaire non conservé, développement seulement.
+- Check Windows réel 18751 lancé sur 971702e figé : reprendre ce processus, aucun changement code/tests/runner/images ni QA mutante concurrente. Après vert : originaux/inclusion/couvertures/front/E2E/qualify négatif, neuf équivalences LF et empreinte main exacte, préservation/clôture. F4 reste réception antérieure, R0.7 IN_PROGRESS et R0.8 non éligible.
+
+
+### [2026-10-14T20:32:45Z] R0.7 — réception main refusée, lot correctif groupé
+
+- F4 check 34901 FINAL 0 reste valide pour sa source propre ; aucune réception main/DONE. Intégration des quatre commits --no-commit conserve index, HEAD main250c9d9 inchangé, seuls conflits journaux/miroir résolus en conservant les deux historiques.
+- B-R064 : empreinte sur dépôt hôte échoue PermissionError13 ; comparaison montre anciens caches ignorés par Git (.coverage/.hypothesis/test-results), source commune468 fichiers dont neuf CRLF uniquement. Aucun cache supprimé, aucune permission changée ni contenu utilisateur perdu. Corriger périmètre des sorties générées et reproduire l'identité exacte de la source testée avant réception.
+- Mini-plan groupé : clone Git isolé Linux depuis f1691a3 (62578, pas migration de la stack) ; ADR/SPECS pour sorties hors code ; tests de stabilité/hash/symlink ; importer correctif034947a des en-têtes ; lint/types/régressions ciblées puis un check complet stabilisé couvrant les deux corrections. Ne pas répéter le check F4 ni recevoir son état intermédiaire sur main.
+
+
 ### [2026-10-14T18:57:00Z] Correctif HTTP indépendant préparé pendant réception R0.7
 
 - Branche fix/r06-secret-header-audit-20261014, commit `034947a` basé 13a21f4 : ADR-066/SPECS avant ajout de cinq variantes de clés API à la purge finale cross-origin/robots. Aucun fichier ni destination QA du check R0.7 34901 modifié ; aucun cherry-pick Agy.
@@ -51,6 +65,48 @@
 - Windows qualify R0 56865 FINAL 1 attendu sans bundle : JSON/Markdown PARTIAL, aucune préparation/seed/SQL/réseau. Linux 9826 FINAL 1 identique. Diagnostic avant commit, pas une preuve de capacité reçue. Les sources planned/disabled, neuf sources et dix séries restent explicitement non compensées.
 - E2E Windows réel session 32999 lancé sur 28a65b9 figé pour recevoir le reporter navigateur. Reprendre ce processus, puis un seul check complet du lot stabilisé ; aucun code/test modifié pendant réception, aucune suite QA mutante concurrente. Manifest R0.7 91/0 ; produit R0.7 pas intégré ni DONE.
 - R0.6 main 173c41a et clôture d5665bf restent qualifiés, données actives inchangées ; main ne reçoit que ce checkpoint documentaire. Les incidents de développement détaillés sont dans le worktree.
+### [2026-10-14T21:09:59Z] R0.7 — corrections groupées dans dépôt Git Linux isolé
+
+- Clone 62578 FINAL 0, base f1691a360197957750f5c6912ce8d2bb7e8e5d60 ; branche work/r07-final-native-20261015. Dépôt original et caches conservés ; index main garde la réception F4 non committée, HEAD250c9d9, aucun DONE ni tag.
+- ADR-067/SPECS avant exclusion bornée de backend/.hypothesis, backend/.coverage/.coverage.*, web/test-results. Source sous src et symlinks restent contrôlés ; pas de chmod/suppression des caches hôtes. Import du seul correctif034947a des en-têtes (ADR-066), conflits documentaires résolus sans perdre les deux décisions/journaux ; aucun code SQL Agy intégré.
+- Mini-plan : cinq cas supplémentaires de stabilité/frontière/symlink ; 18 cas clés API ; lint/types/régressions ciblés, source figée puis un check complet et parcours navigateur lié au nouveau fingerprint, négatif qualify, identité main et clôture. Manifest R0.7 trois fichiers/160 cas minimum.
+- 27361 FINAL 0 : lint/types quatre fichiers, **115 tests /5,29 s** (58 qualificateur, 57 garde HTTP). JUnit temporaire non conservé ; développement seulement. Aucun QA SQL/S3 ni demande réseau réelle dans cette vérification. Nouvelle réception complète reste indispensable.
+
+
+### [2026-10-14T18:46:00Z] Correctif indépendant de l'audit HTTP Agy
+
+- Worktree fix/r06-secret-header-audit-20261014 basé 13a21f4 ; R0.7 f4a7294/check 34901 figé et destinations QA inchangées.
+- Mini-plan : ADR-066/SPECS avant code ; couvrir defaults/caller et casse sur cross-origin/robots/same-origin avec transport inerte ; ajouter la purge finale ; lint/types/tests ciblés, réception complète future avant main. Pas de nouveau statut DONE ni requalification R0.6 implicite.
+- Probe 95762 FINAL 1 attendu : cas X-API-Key cross-origin montre fuite de la valeur synthétique fixture-caller vers other.invalid, 7,91 s. Aucun réseau réel. Ajout de cinq variantes à la purge finale ; autres comportements du client et backend durable inchangés. Réception ciblée en cours, source R0.7 non modifiée.
+- Réception de développement 45842 FINAL 0 : lint/types deux fichiers, 57 tests du garde HTTP verts/21,27 s dont 18 nouveaux cas. Transport MockTransport et réseau Docker none, pas de SQL/S3 ni endpoint réel. JUnit temporaire du conteneur non archivé ; résultat ciblé ne remplace pas le check complet exigé avant main.
+
+### [2026-10-14T20:10:02Z] R0.7 — réception complète verte, intégration restante
+
+- Source f4a7294291f37c6c6504bb9eced8880d94c31150, Windows 34901 FINAL 0 : 1515 backend/2814,925 s/zéro échec-skip, 154 intégrations union 150/150 ; inclusion R0.7 53+45=98 ; mypy 283, format 284 ; core91,484/extraction86,377/normalize90,378 %. Front35/4, quatre étapes codes0, build15 pages. Originaux et six fichiers exacts vérifiés, réception docs/evidence/R0.7_RECEPTION.md.
+- Navigateur 36727 FINAL 0/9/48,122 s ; natifs qualify R0 60756 et all 78583 FINAL 1 attendus sans bundle, quatorze unknown/NULL, rapports négatifs JSON/Markdown conservés. B-R059/062/063 résolus par réception, aucun gain performance revendiqué depuis le profilage readonly.
+- Préservation active 24306 FINAL 0 : SR482/prix764 et empreintes inchangés ; Bronze674/1377481 octets/SHA83ae4ee1... inchangé. Head actif désormais0010 (ancien relevé0002), attribution inconnue, aucune migration active exécutée ici. Intégration atomique/finalscan/cohérence/mainhash et statut DONE restent à effectuer ; correctif034947a séparé, non inclus.
+
+
+### [2026-10-14T18:07:00Z] R0.7 — incident quota de fixture et correctif d'isolation
+
+- Check Windows c1a583c arrêté : 120 succès/un échec/1008,96 s, quota durable localhost épuisé lors de test_rebuild. XML original gzip conservé dans `docs/evidence/R0.7-backend-quota-red-tests.xml.gz`. Aucun frontend reçu ni succès global ; processus terminé, aucune interruption.
+- B-R063 / ADR-065 et SPECS avant code : adaptation test-only de clé domaine loopback par scénario intégration validé ; source/origine/limites/cadence/SQL inchangés, domaines publics/.invalid inchangés, aucun nettoyage historique. Six assertions paramétrées et regression rebuild/budget SQL requis ; manifest 98/0. Source R0.7 encore non reçue sur main.
+- Audit Agy livré séparément main af82e8f : défaut SQLAlchemy du paramètre DATE confirmé hors réseau, pas de fusion Agy. Lint initial imports deux erreurs, correction ordre des imports sans changement de comportement ; preuve ciblée puis réception complète restantes.
+- Correction ciblée : `bash scripts/dev.sh test tests/integration/test_rebuild.py tests/integration/test_http_budget_sql.py` 15818 FINAL 0, 11 passed/46,75 s. Mapping loopback 51208 FINAL 0, six cas/16,19 s ; lint et types deux fichiers verts, dernier typage de la fixture 96943 FINAL 0/un fichier. Diagnostics MYPYPATH absent et cache Ruff readonly corrigés dans les invocations, sans ignore ni modification produit. B-R063 corrigé, réception complète encore requise.
+
+
+### [2026-10-14T10:38:05Z] R0.7 — tests backend verts, réception refusée inventaire
+
+- Windows 59885 FINAL 1 sur 28a65b9 : 1508 backend/1280,83 s/zéro failure-error-skip, lint/format 284/types 283 ; footer refuse junit_inventory_incomplete, frontend non exécuté. Diagnostic readonly 9cd1cb FINAL 0 : inventaire remplacé par un seul test_marker, JUnit réel 1508.
+- B-R062 : pytest enfant du test normatif copie conftest et hérite destination reporter ; ownership absent. Correction PPID propriétaire dans reporter + runner et test enfant sans write, aucune relaxation de comparaison. QA R0.7 minimum 92/0 après ajout d'un test.
+- Trois originaux rouges conservés, XML gzip lossless ; code/tests/runner changés, nouvelle réception complète obligatoire sur commit corrigé. Ne pas réutiliser le rouge comme qualification ; R0.7 IN_PROGRESS et prochain lot non éligible.
+
+### [2026-10-14T09:53:23Z] R0.7 — qualificateur fonctionnel en développement
+
+- ADR-064/SPECS avant code, readers bornés/SHA/date/commit/environment et fingerprint code/configurations ; calculs des KPI depuis lignes et recomptage des cas. Source-cell réutilise binder/ProvenanceVerifier, corpus authentique lié aux SHA C1, scope synthétique/mixte = démonstration, aucun succès opérationnel.
+- Types cinq fichiers verts 7660 ; 16296 FINAL 0/46 nouveaux tests/4,86 s, diagnostics B-R059–061 tracés. Régression QA manifest 44 verts et cas enfant restant 10132 FINAL 0/1/13,08 s après invocation Docker corrigée (venv canonique), aucune suppression/assertion réduite.
+- Raccordements : dev.ps1/dev.sh qualify readonly sans prepare/seed/SQL/réseau ; reporters backend inventaire réel, frontend bindings et vérificateur commun, E2E reçu/adaptateur/scénarios déclarés. Windows réel qualify R0 56865 FINAL 1 attendu faute bundle, rapport JSON/Markdown /reports/qualification/0e01348799394815bbcdc9608ccaee95 ; gitdir Windows/WSL correctement lu. Aucune preuve opérationnelle inventée.
+- Lot pas reçu : durcissement des dénominateurs/LLM, vérifications ciblées finales, scripts/reporters/E2E, un seul check complet sur contenu stabilisé puis originaux et intégration restent requis. Main 9afa6c8 ne contient que statut IN_PROGRESS ; C 173c41a reste qualifié et aucune mutation active.
 
 ### [2026-10-14T08:46:31Z] R0.7 — IN_PROGRESS, qualification mesurée
 

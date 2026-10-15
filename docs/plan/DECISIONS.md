@@ -2,6 +2,39 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-067 : empreinte du code indépendante des sorties de tests
+
+- **Date/statut :** 2026-10-14 UTC, adopté avant correction B-R064 sur work/r07-final-native-20261015.
+- **Contexte :** le dépôt hôte contient des caches ignorés par Git, dont un fichier Hypothesis non lisible ; la qualification source échoue avant de produire son rapport. Le snapshot propre testé n'a pas ces sorties.
+- **Décision :** exclure uniquement backend/.hypothesis, backend/.coverage et backend/.coverage.*, web/test-results des entrées de l'empreinte. Les chemins similaires sous src restent inclus ; aucun autre fichier illisible ni symlink source n'est toléré. Sources, fixtures, configuration, images et rapports de preuves gardent leurs gardes existantes. Ne supprimer ni chmod les caches du dépôt hôte.
+- **Alternatives :** supprimer les sorties utilisateur, contourner toutes les permissions ou ignorer les erreurs de lecture refusés. Dépôt Git isolé Linux pour le développement, sans déplacer l'original ni les services.
+- **Réception :** stabilité face aux sorties générées non lisibles, modification de vrais fichiers toujours détectée, symlink source refusé ; purge d'en-têtes ADR-066 reçue dans le même lot stabilisé. Nouveau check complet, pas réutilisation des rapports F4 comme preuve du nouveau code.
+
+## ADR-065 : isolation des quotas des serveurs de fixtures loopback
+
+- **Date/statut :** 2026-10-14, adopté avant correctif de tests R0.7.
+- **Contexte :** nouveau check arrêté après 120 succès : historique durable de plusieurs suites consomme le plafond commun localhost. Les serveurs locaux de fixtures ne sont pas une source publique commune.
+- **Décision :** uniquement dans les tests d'intégration du profil validé, adapter la clé domaine d'admission SQL des hôtes exacts localhost/127.0.0.1/::1 en une identité synthétique unique par scénario. Conserver source, origine, plafond, cadence, backend SQL et transactions réels. Tous clients loopback d'un même scénario partagent cette identité ; domaines non loopback et tests durabilité/concurrence .invalid inchangés.
+- **Alternatives :** effacer l'historique, relever le plafond, mémoire globale ou supprimer le test refusés. Aucune adaptation du client produit ni de la collecte publique.
+- **Conséquences :** pas de nettoyage SQL/Bronze ; nouveau scénario conserve les preuves anciennes et dispose d'un budget de fixture distinct. Tests de mapping et conservation nécessaires, puis check complet après source figée.
+
+## ADR-064 : qualification par preuves importées, gates distincts
+
+- **Date/statut :** 2026-10-14, adopté avant code R0.7 sur work/r07-measured-qualification-20261014 ; non reçu.
+- **Contexte :** demo retiré, qualify indisponible ; R0.9 gate logiciel ne doit pas prétendre neuf sources live ni dix modèles de marché. Import de rapports autorisé par R0.7, aucun seed implicite.
+- **Décision :** commande qualify R0|all, lecteur offline readonly dans Docker, JSON/Markdown par UUID dans volume de rapports. Bundle interne version 1 lie commit exact, empreinte de source, identité publique environnement, dataset authentic/synthetic/mixed et date UTC ; chaque fichier référencé a chemin relatif borné, SHA et type connu. Inconnu, ancien, incomplet, rouge, vide ou falsifié : état unknown/failed et code non nul pour gate concerné. Aucun contenu collecté n'est une commande.
+- **Mesures :** calculées depuis cas JUnit/inventaire collecté, réponses Vitest, lignes de résultats/cellules/golden, runs, projections rebuild, séries/backtests, timings, questions SQL et faits de bulletin. Aucun effectif réel de tests/golden codé en dur ; seuils normatifs conservés. Registre actif ne prouve pas collecte qualifiée, planned/disabled exclus ; preuve source absente reste inconnue.
+- **Gates :** R0 vérifie backend/frontend/E2E, corpus authentique et rejeu source-cell/contenu hors réseau ; all vérifie tous les KPI MVP §1.3, sans prétendre terminer R6.11. Les KPI marché restent visibles dans R0 même non gate. Synthétique/mixte porte démonstration logicielle, jamais qualification opérationnelle ; aucune compensation des cibles neuf sources/dix séries.
+- **Réception :** vérificateurs JUnit/frontend réutilisés par check ; inventaire collecté et bindings conservés par les reporters. Aucun seed ni prepare dans qualify, aucun réseau et aucune dépendance nouvelle. Reçus importés sont artefacts internes, pas déclarations issues de pages ; empreinte/date ne prouvent pas à elles seules un essai humain ni une source live.
+- **Alternatives :** réexécuter toutes les suites à chaque qualification et coder des nombres de succès rejetés. R0.8/R1 fournissent les preuves authentiques encore absentes ; sans elles report PARTIAL, jamais faux succès.
+## ADR-066 : clés API confinées à la requête documentaire de même origine
+
+- **Date/statut :** 2026-10-14, adopté avant correction sur fix/r06-secret-header-audit-20261014 ; réception non acquise.
+- **Contexte :** audit statique 5efd36b : la purge coordinateur couvre auth/cookie/conditions mais omet les variantes de clés API. La branche Agy entière n'est pas compatible avec le backend durable reçu.
+- **Décision :** ajouter à la purge finale `x-api-key`, `api-key`, `apikey`, `x-auth-token`, `token`, insensible à la casse via HTTPX. Suppression sur robots et redirection inter-origines après fusion des en-têtes client/appel ; conservation sur document et redirect de même origine. Aucun token dans les preuves, uniquement valeurs synthétiques de tests.
+- **Alternatives :** fusion globale Agy, suppression de tous les en-têtes ou purge avant fusion rejetées. Aucun quota/policy/schema modifié.
+- **Réception :** tests transport inerte defaults/caller/mixed-case/robots/cross-origin/same-origin ; source R0.7 figée inchangée, aucun QA SQL concurrent. Réception complète requise avant intégration du correctif.
+
 ## ADR-063 : garde HTTP durable, quotas atomiques et arrêt persistant
 
 - **Date/statut :** 2026-10-14, adopté avant code sur work/r06-http-takeover-20261014 ; aucune réception produit.

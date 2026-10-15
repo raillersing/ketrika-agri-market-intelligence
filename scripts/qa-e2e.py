@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -9,8 +10,10 @@ import time
 import uuid
 from pathlib import Path
 
-from ketrika.core.qualification import validate_environment
 from playwright.sync_api import expect, sync_playwright
+
+from ketrika.core.qualification import validate_environment
+from ketrika.core.qualification_reports import E2E_SCENARIOS, capture_binding
 
 
 def main() -> int:
@@ -18,6 +21,9 @@ def main() -> int:
     directory = Path("/app/.venv/qa-browser-results") / uuid.uuid4().hex
     directory.mkdir(parents=True, exist_ok=False)
     receipt: dict = {"scope": "Docker browser software, synthetic QA environment", "passed": False}
+    if os.environ.get("KETRIKA_SOURCE_COMMIT"):
+        receipt.update(capture_binding(Path("/workspace"), os.environ["KETRIKA_SOURCE_COMMIT"]))
+    receipt["expected_checks"] = list(E2E_SCENARIOS)
     started = time.monotonic()
     errors: list[str] = []
     completed: list[str] = []
@@ -88,6 +94,11 @@ def main() -> int:
         completed_checks=completed,
         checks=len(completed),
     )
+    if (directory / "trace.zip").is_file():
+        receipt["trace"] = {
+            "path": "trace.zip",
+            "sha256": hashlib.sha256((directory / "trace.zip").read_bytes()).hexdigest(),
+        }
     (directory / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
     print(json.dumps(receipt))
     return 0 if receipt["passed"] else 1

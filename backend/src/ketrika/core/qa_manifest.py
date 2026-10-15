@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from ketrika.core.qualification import QualificationSafetyError, validate_environment
+from ketrika.core.qualification_reports import junit_counts
 
 
 @dataclass(frozen=True)
@@ -62,41 +63,8 @@ def select_suite(document: Mapping[str, Any], task_id: str, root: Path) -> Suite
 
 
 def read_junit(path: Path, suite: Suite) -> dict[str, int]:
-    """Recount case outcomes and reject missing, inconsistent or stale summaries."""
-    tree = ET.parse(path).getroot()
-    cases = list(tree.iter("testcase"))
-    leaves = [node for node in tree.iter("testsuite") if not list(node.findall("testsuite"))]
-    if not leaves or sum(int(node.attrib["tests"]) for node in leaves) != len(cases):
-        raise QualificationSafetyError("JUnit summary does not match measured cases")
-    marked = [
-        any(
-            prop.get("name") == "ketrika.integration" and prop.get("value") == "true"
-            for prop in node.findall("./properties/property")
-        )
-        for node in cases
-    ]
-    by_layout = [".integration." in node.get("classname", "") for node in cases]
-    counts = {
-        "tests": len(cases),
-        "failures": sum(node.find("failure") is not None for node in cases),
-        "errors": sum(node.find("error") is not None for node in cases),
-        "skipped": sum(node.find("skipped") is not None for node in cases),
-        "integration_by_layout": sum(by_layout),
-        "integration_by_marker": sum(marked),
-        "integration_tests": sum(
-            layout or marker for layout, marker in zip(by_layout, marked, strict=True)
-        ),
-    }
-    for key in ("failures", "errors", "skipped"):
-        if sum(int(node.attrib[key]) for node in leaves) != counts[key]:
-            raise QualificationSafetyError("JUnit outcomes are inconsistent")
-    if any(counts[key] for key in ("failures", "errors", "skipped")):
-        raise QualificationSafetyError("Required tests failed, errored or were skipped")
-    if counts["tests"] < suite.minimum_tests:
-        raise QualificationSafetyError("Required suite is empty or below its test minimum")
-    if counts["integration_tests"] < suite.minimum_integration_tests:
-        raise QualificationSafetyError("Required integration tests were not executed")
-    return counts
+    """Use the same outcome verifier as measured qualification."""
+    return junit_counts(path, suite.minimum_tests, suite.minimum_integration_tests)
 
 
 def run_suite(suite: Suite, task_id: str, root: Path, reports: Path) -> dict[str, Any]:

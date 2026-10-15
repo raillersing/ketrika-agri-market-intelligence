@@ -97,6 +97,40 @@ def test_httpx_automatic_redirect_configuration_is_overridden():
     assert len(requests) == 2
 
 
+@pytest.mark.parametrize(
+    "header", ["X-API-Key", "x-api-key", "API-Key", "ApiKey", "X-Auth-Token", "Token"]
+)
+@pytest.mark.parametrize("mode", ["cross_origin", "same_origin", "robots"])
+def test_credential_headers_are_confined_to_same_origin_documents(header, mode):
+    requests = []
+
+    def handle(request):
+        requests.append(request)
+        if request.url.path == "/robots.txt":
+            return httpx.Response(404)
+        if request.url.path == "/data" and mode != "robots":
+            location = "https://other.invalid/next" if mode == "cross_origin" else "/next"
+            return httpx.Response(302, headers={"Location": location})
+        return httpx.Response(200)
+
+    with make_client(handle) as client:
+        if mode != "robots":
+            allow(client)
+        allow(client, "https://other.invalid")
+        client._client.headers[header] = "fixture-default"
+        client._client.headers["X-Request-ID"] = "fixture-request"
+        client.get("https://example.invalid/data", headers={header.swapcase(): "fixture-caller"})
+        documents = [request for request in requests if request.url.path != "/robots.txt"]
+        assert documents[0].headers[header] == "fixture-caller"
+        if mode == "cross_origin":
+            assert header not in documents[1].headers
+        elif mode == "same_origin":
+            assert documents[1].headers[header] == "fixture-caller"
+        else:
+            assert header not in requests[0].headers
+        assert all(request.headers["X-Request-ID"] == "fixture-request" for request in requests)
+
+
 def test_cross_origin_strips_merged_defaults_auth_cookie_and_conditions():
     requests = []
 

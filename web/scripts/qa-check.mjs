@@ -41,6 +41,21 @@ export function runChecks() {
   mkdirSync(directory, { recursive: true });
   const reportFile = resolve(directory, "vitest.json");
   const receipt = { execution_id: executionId, scope: "frontend software only", passed: false, steps: [] };
+  if (process.env.KETRIKA_SOURCE_COMMIT) {
+    receipt.version = 1;
+    receipt.commit = process.env.KETRIKA_SOURCE_COMMIT;
+    receipt.source_fingerprint = process.env.KETRIKA_SOURCE_FINGERPRINT;
+    receipt.dataset = "mixed";
+    receipt.captured_at = new Date().toISOString();
+    receipt.environment = {
+      project: "ketrika-qualification", database: "ketrika_qualification",
+      bronze_bucket: "ketrika-qa-bronze", network: "ketrika_qualification_network",
+      dataset_mode: "test",
+      backend_image_id: process.env.KETRIKA_PROOF_BACKEND_IMAGE_ID,
+      web_image_id: process.env.KETRIKA_PROOF_WEB_IMAGE_ID,
+      browser_image_id: process.env.KETRIKA_PROOF_BROWSER_IMAGE_ID,
+    };
+  }
   const commands = [
     ["lint"], ["typecheck"],
     ["run", "test", "--reporter=default", "--reporter=json", `--outputFile=${reportFile}`],
@@ -60,6 +75,7 @@ export function runChecks() {
     receipt.reason = String(error);
   }
   writeFileSync(resolve(directory, "receipt.json"), JSON.stringify(receipt, null, 2) + "\n");
+  writeFileSync(resolve("node_modules/.qa-results/latest.json"), JSON.stringify({ execution_id: executionId }) + "\n");
   process.stdout.write(JSON.stringify(receipt) + "\n");
   return receipt.passed ? 0 : 1;
 }

@@ -132,6 +132,42 @@ Image multi-stage `python:3.12-slim`. Dépendances système : `libpq`, `gdal` (s
 
 ### 3.3 `scripts/dev.ps1` : commandes obligatoires
 
+ADR-064 : qualify R0|all [répertoire relatif de preuves] est readonly/offline,
+sans Compose prepare, seed, reset, restore, rebuild ou collecte. Docker réseau
+none, source readonly et rapport dans volume nommé ; sortie JSON et Markdown
+version 1, critère = id, état passed/failed/unknown, mesure, seuil, dataset,
+preuve et raison, numérateur/dénominateur explicites. Code 0 seulement si tous
+les critères du gate choisi passent avec corpus authentique ; démonstration
+synthétique/mixte et preuve manquante/ancienne/incomplète ne qualifient pas.
+R0 gate de fiabilité logicielle distinct des KPI opérationnels MVP visibles ;
+all ne qualifie pas automatiquement R6.11 ni déploiement/essai humain.
+
+ADR-067 : l'empreinte exclut les seules sorties générées backend/.hypothesis,
+backend/.coverage, backend/.coverage.* et web/test-results. Les mêmes noms
+sous src restent des entrées ; lecture impossible ou symlink d'une vraie
+source reste refusé. Aucun cache hôte supprimé ni permission modifiée.
+
+Bundle interne version 1 : commit SHA-1 exact, source_fingerprint SHA-256,
+environment identité publique du profil de qualification, dataset
+authentic/synthetic/mixed, captured_at UTC (au plus 24 h, futur refusé),
+evidence dictionnaire fermé par type ; chaque référence path relatif, sha256
+des octets. Fichiers JSON/JUnit bornés 16 MiB, chemins/symlinks hors racine
+refusés ; aucune instruction, URL ou requête issue d'un rapport n'est exécutée.
+Rapports backend et E2E : JUnit plus inventaire des cas réellement collectés,
+aucun cas absent accepté ; frontend : receipt quatre étapes et Vitest brut,
+résumés recomptés et steps vérifiés. Vérificateurs communs avec check.
+Les rapports métriques contiennent les lignes/échantillons ayant servi aux
+calculs, pas seulement un booléen passed ; bruts/SHA/dataset et absence de
+preuve restent visibles. Statut active du registre seul ne compte pas une
+source qualifiée. Les scopes synthétiques restent démonstration logicielle.
+
+Le runner Playwright historique produit un reçu JSON, pas JUnit : adaptateur
+e2e_receipt accepté avec bindings identiques, liste des scénarios déclarés dans
+le runner, completed_checks exacts, checks recomptés, browser_errors vide et
+trace SHA conservée. Aucun nombre de scénarios réussis codé en dur. Les images
+backend/web/browser et configuration de qualification font partie de
+l'identité publique d'environnement/capture ; aucun secret n'y figure.
+
 ADR-057 : méthode de lots/validation proportionnée définie par AGENTS §3.3.
 `qa-profile <rapport.xml>` : diagnostic readonly des durées JUnit archivées,
 Docker réseau none/bind readonly, sans Compose/seed ni réexécution. Chemin
@@ -145,6 +181,13 @@ same-origin `/api/v1/*`, backend interne uniquement (`API_INTERNAL_URL` puis
 de l'API transmis, aucun JWT créé/écrit par JS ; login vérifie le champ `token`
 du contrat existant. Logout attend l'API. Le proxy n'est pas une nouvelle API
 métier et ne modifie aucun endpoint/backend ni règle de rôle.
+
+ADR-065 : les tests d'intégration sur environnement de qualification validé
+isolent la clé domaine des serveurs de fixtures loopback exacts (localhost,
+127.0.0.1, ::1) par scénario, sans changer la source, l'origine, les limites,
+la cadence ou les transactions SQL. Les clients d'un même scénario partagent
+la clé ; domaines publics et .invalid inchangés. Aucun nettoyage de quotas
+historiques ni modification du chemin HTTP produit.
 
 ADR-012 : le compteur integration_tests est l'union des dossiers intégration
 et des propriétés JUnit ketrika.integration=true enregistrées depuis le vrai
@@ -1068,6 +1111,12 @@ Retry-After entier ou date HTTP, attente maximale locale 300 s : au-delà refus
 temporaire sans désactivation. Header/cookie/auth cross-origin supprimés après
 construction du request, identité bot réinjectée. Tests inertes peuvent injecter
 backend mémoire explicitement ; cette injection ne qualifie pas la durabilité.
+
+ADR-066 : purge finale insensible à la casse de `x-api-key`, `api-key`,
+`apikey`, `x-auth-token`, `token`, en complément auth/cookie/conditions,
+pour robots et redirection inter-origines. Les clés API restent présentes
+sur le document et les redirections de même origine ; en-têtes client et
+appel fusionnés avant purge, aucun secret journalisé.
 
 - `User-Agent` : `"{BOT_USER_AGENT}; {BOT_CONTACT_EMAIL}"`. Jamais d'UA de navigateur usurpé.
 - `robots.txt` lu (`protego`) et mis en cache 24 h. URL refusée : `PolicyStop`, aucune requête.

@@ -1,0 +1,42 @@
+{
+  "scope": "Docker browser software, synthetic QA environment",
+  "passed": false,
+  "version": 1,
+  "commit": "f4a7294291f37c6c6504bb9eced8880d94c31150",
+  "source_fingerprint": "ab0b134b2cb85a44a5fccea9d16fd080b122b648b0cd44f37f54c8989fd20a9f",
+  "environment": {
+    "project": "ketrika-qualification",
+    "database": "ketrika_qualification",
+    "bronze_bucket": "ketrika-qa-bronze",
+    "network": "ketrika_qualification_network",
+    "dataset_mode": "test",
+    "backend_image_id": "sha256:493523bfd299513b1287f6bf4a94cf2ae07ac14daa6da5c622735d8eb9e1d5a7",
+    "web_image_id": "sha256:c45a054e8c6299b89b47979a87d4f4d0f4e3fd62dcf71fd03e23bafee5159a91",
+    "browser_image_id": "sha256:2646169d3348b9d52388664d307e05e38b18e0a72869dcdae906cdece75f66cf"
+  },
+  "dataset": "mixed",
+  "captured_at": "2026-10-14T18:21:23.291643+00:00",
+  "expected_checks": [
+    "protected UI redirects without a session",
+    "form login establishes HttpOnly session",
+    "reload retains authentication",
+    "protected profile authenticates the browser session",
+    "authenticated same-origin prices API",
+    "price explorer renders",
+    "UI logout removes session",
+    "API rejects access after logout",
+    "UI remains protected after logout"
+  ],
+  "prices_status": 200,
+  "reason": "Page.goto: Timeout 120000ms exceeded.\nCall log:\n  - navigating to \"http://web:3000/prices\", waiting until \"load\"\n",
+  "duration_seconds": 486.993,
+  "browser_errors": [],
+  "completed_checks": [
+    "protected UI redirects without a session",
+    "form login establishes HttpOnly session",
+    "reload retains authentication",
+    "protected profile authenticates the browser session",
+    "authenticated same-origin prices API"
+  ],
+  "checks": 5
+}

@@ -12,6 +12,25 @@ qa_compose() {
   docker compose --env-file "$REPO_ROOT/scripts/qualification.env" --project-name ketrika-qualification -f "$REPO_ROOT/docker-compose.qualification.yml" "$@"
 }
 
+qa_proof_args() {
+  qa_commit="$(git -C "$REPO_ROOT" rev-parse HEAD)"
+  qa_dirty="$(git -C "$REPO_ROOT" status --porcelain --untracked-files=normal -- backend web scripts registry taxonomy geo docker docker-compose.qualification.yml .gitattributes)"
+  [ -z "$qa_dirty" ] || { echo "Source changes must be committed before qualification" >&2; exit 1; }
+  qa_fingerprint="$(docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-r03 python -m ketrika.core.qualification_reports fingerprint /workspace)"
+  [[ "$qa_commit" =~ ^[0-9a-f]{40}$ && "$qa_fingerprint" =~ ^[0-9a-f]{64}$ ]] || { echo "Cannot bind source proof" >&2; exit 1; }
+  QA_PROOF_ARGS=(-e "KETRIKA_SOURCE_COMMIT=$qa_commit" -e "KETRIKA_SOURCE_FINGERPRINT=$qa_fingerprint")
+  for qa_role in BACKEND WEB BROWSER; do
+    case "$qa_role" in
+      BACKEND) qa_image=ketrika-backend:qa-r03 ;;
+      WEB) qa_image=ketrika-web:qa-r03 ;;
+      BROWSER) qa_image=ketrika-backend:qa-browser-r03 ;;
+    esac
+    qa_image_id="$(docker image inspect --format '{{.Id}}' "$qa_image")"
+    [[ "$qa_image_id" =~ ^sha256:[0-9a-f]{64}$ ]] || { echo "Cannot bind runtime image" >&2; exit 1; }
+    QA_PROOF_ARGS+=(-e "KETRIKA_PROOF_${qa_role}_IMAGE_ID=$qa_image_id")
+  done
+}
+
 qa_owned_resource() {
   resource_kind="$1"
   resource_name="$2"
@@ -58,16 +77,19 @@ qa_isolated() {
   qa_prepare "$qa_action"
   case "$qa_action" in
     check)
-      qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh check
-      qa_compose run --rm --no-deps web sh /workspace/scripts/qa-web.sh check
+      qa_proof_args
+      qa_compose run --rm --no-deps "${QA_PROOF_ARGS[@]}" api sh /workspace/scripts/qa-backend.sh check
+      qa_compose run --rm --no-deps "${QA_PROOF_ARGS[@]}" web sh /workspace/scripts/qa-web.sh check
+      docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" --mount type=volume,source=ketrika_qualification_web_node_modules_r03,target=/frontend,readonly -e PYTHONPATH=/workspace/backend/src "${QA_PROOF_ARGS[@]}" ketrika-backend:qa-r03 python -m ketrika.core.qualification_reports check-frontend /frontend/.qa-results --commit "$qa_commit"
       ;;
     test) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh test "$@" ;;
     governance) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh governance ;;
     qa) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh qa "$@" ;;
     negative-build) qa_compose run --rm --no-deps web sh /workspace/scripts/qa-web.sh negative-build ;;
     e2e)
+      qa_proof_args
       qa_compose up -d --no-deps --force-recreate api web
-      qa_compose run --rm --no-deps browser
+      qa_compose run --rm --no-deps "${QA_PROOF_ARGS[@]}" browser
       ;;
     prepare) echo "Dedicated qualification environment ready; no live source/model qualified" ;;
   esac
@@ -157,8 +179,11 @@ case "$COMMAND" in
     docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-r03 python -m ketrika.core.qa_profile "$1"
     ;;
   qualify)
-    echo "Command not yet qualified; no implicit success. See the R0 task status." >&2
-    exit 1
+    [ "$#" -ge 1 ] && [ "$#" -le 2 ] || { echo "qualify requires R0|all and optional relative evidence directory" >&2; exit 1; }
+    case "$1" in R0|all) ;; *) echo "Unavailable qualification phase" >&2; exit 1 ;; esac
+    qa_owned_resource volume ketrika_qualification_backend_venv_r03
+    qa_proof_args
+    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" --mount type=volume,source=ketrika_qualification_backend_venv_r03,target=/reports -e PYTHONPATH=/workspace/backend/src "${QA_PROOF_ARGS[@]}" ketrika-backend:qa-r03 python -m ketrika.core.qualify "$1" --commit "$qa_commit" --evidence "${2:-docs/evidence/qualification}"
     ;;
   test-network)
     docker compose exec -T api pytest -m "network"

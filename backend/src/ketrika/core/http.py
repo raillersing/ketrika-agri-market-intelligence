@@ -206,6 +206,11 @@ class PoliteHttpClient:
                     "authorization",
                     "proxy-authorization",
                     "cookie",
+                    "x-api-key",
+                    "api-key",
+                    "apikey",
+                    "x-auth-token",
+                    "token",
                     "if-none-match",
                     "if-modified-since",
                 ):
