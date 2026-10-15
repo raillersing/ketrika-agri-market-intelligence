@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T19:34:00Z] R1.8 — DONE, qualification Banque mondiale RTFP (schéma C3, traçabilité et rejouabilité)
+
+- Dépendances relues : R1.2 (découverte dynamique).
+- Mini-plan exécuté : (1) connecteur wb_rtfp_mdg v1.1.0 avec support CatalogDiscoveryEngine et offline ; (2) validation stricte de value_kind (refus de promotion de flags inconnus en observed) ; (3) traçabilité C3 de la dépendance WFP/FAO et exclusion des imputations de la vérité terrain prévisionnelle ; (4) refus d'imputation géographique aveugle ; (5) tests unitaires, golden test et couverture ; (6) fiche source et preuve.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_wb_rtfp_mdg.py (exit 0, 10 passed in 14.48s) ; ruff check (exit 0) ; mypy (exit 0) ; pytest --cov (exit 0, couverture 95 %).
+- Résultats : 10/10 tests verts ; Golden set 36 enregistrements, 288 champs vérifiés, Exactitude 100 %, Rappel 100 % ; détection de flag inconnu (unknown_value_kind_needs_review), rejet de lieu manquant (unresolved_location_needs_review), traçabilité C3 validée.
+- Qualification : Logiciel connecteur, règles de normalisation C3, détection d'imputation et rejouabilité Bronze QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R1.8/README.md.
+- Reprise : Tâche MUST éligible suivante R1.9 (Qualifier FAOSTAT).
+
 ### [2026-10-15T19:24:00Z] R1.7 — BLOCKED (Collecte live) / QUALIFIED (Connecteur & parsing offline)
 
 - Dépendances relues : R1.1 (registre sources.yaml), R1.2 (découverte).
