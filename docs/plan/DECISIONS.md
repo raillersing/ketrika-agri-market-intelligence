@@ -2,6 +2,13 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-073 : rejeu des référentiels configurés par registre immuable
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant code.
+- **Décision :** pour WB JSON natif, retrouver l'identité du référentiel depuis les membres des tentatives Silver réussies, valider la processing_key et exiger une seule empreinte. Résoudre son objet reference_manifest depuis la copie Bronze fermée (ou liste S3 bornée), puis vérifier les octets et le référentiel SQL verrouillé avant wipe. Aucun choix depuis les anciennes observations, aucune réécriture Bronze, aucun repli silencieux si archive absente/ambiguë ou référentiels modifiés.
+- **Compatibilité :** une ingestion minimale sans registre de traitement reste sans snapshot, comme l'aperçu historique ; elle n'acquiert pas rétroactivement une preuve de référentiel. Le contexte produit/unité WB reste un SourceRecord séparé du même batch. Le qualificateur admet les seuls objets internes supplémentaires ainsi vérifiés ; les autres clés restent refusées.
+- **Limites :** changement de référentiel ou plusieurs identités pour un même document refusés explicitement, pas de fausse reconstruction historique. Le support général des révisions de référentiels n'est pas déduit de ce parcours borné. Aucun nouveau schéma SQL ni dépendance.
+
 ## ADR-072 : contrat natif JSON WB explicite, distinct du CSV historique
 
 - **Date/statut :** 2026-10-15 UTC, adopté avant code du raccordement natif.

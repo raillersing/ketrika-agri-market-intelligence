@@ -1111,6 +1111,14 @@ application/json, variantes exactement une valide : data et additional.ticker_in
 Contrats fermés dans leur portée ; narratifs non exécutables hors de cette portée.
 Ne pas autoriser les formats CSV ou une autre version par analogie.
 
+ADR-073 : au rejeu natif, l'archive de normalisation est identifiée par la
+processing_key du registre Silver réussi, jamais depuis une observation.
+Empreinte unique, objet Bronze unique, contenu et référentiel SQL verrouillé
+identiques sont requis avant wipe. Lire l'archive existante sans PUT ; échec
+explicite si absente, ambiguë ou divergente. Sans identité enregistrée, conserver
+le parcours minimal sans snapshot sans le requalifier. L'inventaire de copie
+peut contenir uniquement ces archives validées en plus des SourceRecords.
+
 ### 11.1 Ordre d'extraction
 
 1. **Déterministe :** tables CSV, XLSX, JSON ou HTML (`selectolax`), tables PDF (`pdfplumber` / `camelot`).

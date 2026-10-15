@@ -1,5 +1,7 @@
 """Prepared transaction-bound configured references; not institutional provenance."""
 
+import hashlib
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -73,3 +75,31 @@ def reference_snapshot_evidence(session: Session, snapshot: ReferenceSnapshot) -
         "scope": "transaction_bound_configured_references_not_institutional_provenance",
         "source_verified": False,
     }
+
+
+def reopen_reference_snapshot(
+    session: Session, store: BronzeStore, object_key: str, expected_sha256: str
+) -> ReferenceSnapshot:
+    """Read an existing archive against locked references; never PUT during replay."""
+    from ketrika.core.provenance_bronze import BronzeProofReader
+
+    require_clean_reference_state(session)
+    if session.in_nested_transaction():
+        raise ValueError("normalization_reference_nested_transaction")
+    if not re.fullmatch(r"[0-9a-f]{64}", expected_sha256) or not re.fullmatch(
+        rf"reference_manifest/\d{{4}}/(?:0[1-9]|1[0-2])/{expected_sha256}\.json", object_key
+    ):
+        raise ValueError("normalization_reference_archive_invalid")
+    manifest = lock_reference_manifest(session)
+    transaction = session.get_transaction()
+    if transaction is None or not transaction.is_active or not manifest.row_count:
+        raise ValueError("normalization_reference_transaction_required")
+    if manifest.sha256 != expected_sha256:
+        raise ValueError("normalization_reference_manifest_changed")
+    content = BronzeProofReader(store).get(object_key)
+    if content != manifest.content or hashlib.sha256(content).hexdigest() != expected_sha256:
+        raise ValueError("normalization_reference_archive_mismatch")
+    archive = ArchivedReferenceManifest(
+        manifest.sha256, object_key, manifest.row_count, manifest.counts
+    )
+    return ReferenceSnapshot(manifest, archive, session, transaction)

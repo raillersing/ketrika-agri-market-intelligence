@@ -11,13 +11,13 @@ import json
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.orm import Session
 
 from ketrika.connectors.registry import get_connector_class
 from ketrika.core.bronze import BronzeStore
-from ketrika.core.models.db import Base
+from ketrika.core.models.db import Base, SourceRecord
 from ketrika.core.rebuild_bronze import LocalBronzeClient
 from ketrika.core.rebuild_manifest import OBS_COLUMNS, capture_database, compare_manifests
 from ketrika.pipelines.rebuild import rebuild_database
@@ -105,6 +105,12 @@ def run_offline_replay(session: Session, store: BronzeStore) -> dict[str, Any]:
     if any(get_connector_class(row["source_id"]) is None for row in descriptors):
         raise RebuildSafetyError("rebuild_connector_missing")
     keys = {row["object_key"] for row in descriptors}
+    from ketrika.connectors.rebuild_references import resolve_snapshot_keys
+
+    reference_keys = resolve_snapshot_keys(
+        session, list(session.scalars(select(SourceRecord))), store
+    )
+    keys.update(key for key, _ in reference_keys.values())
     if keys != set(store.client.objects):
         raise RebuildSafetyError("rebuild_bronze_inventory_mismatch")
     for row in descriptors:

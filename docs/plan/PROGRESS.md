@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T21:52:34Z] R0.8 — réouverture des référentiels au rejeu implémentée
+
+- ADR-073/SPECS : résolution depuis les identités immuables des tentatives Silver réussies ; archive unique vérifiée contre les référentiels SQL verrouillés avant wipe. Lecture seule Bronze, aucun PUT ; inventaire de copie inclut uniquement les archives nécessaires. Ancien aperçu sans identité enregistrée conservé.
+- Développement Docker hors réseau : session85910 FINAL0,48 tests/13,98 s et mypy quatre modules verts ; session19097 FINAL0,108 tests/12,21 s. Scénarios positifs et refus sur identité ambiguë/forgée, archive absente/dupliquée, changement de références, transaction et octets altérés ; aucune qualification live déduite des doubles.
+- SQL/S3 isolés : session93187 FINAL0,1 test/10,12 s (3 désélectionnés) ; archive effectivement relue puis consommée par le normaliseur, idempotence et expiration transactionnelle conservées. Compose a recréé le seul conteneur DB QA avec son volume existant, sans suppression de données ; aucune destination active touchée.
+- Check10643 terminé FINAL1 :547 passed/1 failed/936,77 s, troisième assertion historique de six sources dans test_gold_dependency_graph. Correction cinq sources et exclusion INSTAT explicite incluse dans les48 tests verts ; original conservé dans R0.8-gold-source-count-red.xml. Aucun nouveau check complet lancé pour ce lot encore en développement.
+- R0.8 reste IN_PROGRESS : parcours natif durable complet et clone hors réseau avec snapshot, révisions authentiques et réception globale restent à qualifier. Travail Antigravity inchangé ; aucun tag ni statut DONE.
+
 ### [2026-10-15T21:07:49Z] R0.8 — raccordement natif préparé hors source figée
 
 - Worktree indépendant r08-native-qualification-20261016, branche work/r08-native-qualification-20261016 depuis04f1d39 ; check10643 conserve source et destination QA exclusives. Aucun fichier du check ou d'Antigravity modifié.
