@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T20:21:35Z] R0.8 — rejeu de quinze prix réussi, réception corrective connue
+
+- Instruction utilisateur : garder le plan, livrer minimum fonctionnel et reporter les raffinements hors critères ; Antigravity travaille simultanément. COORDINATION_ACTIVE.md : Codex R0.8/R0.9, Antigravity r1-sources-prep/d6057fe, journal R1.12 en cours et changements UI/tests préservés. Aucun statut local R1 reçu automatiquement sur main, aucune fusion de travail en cours.
+- Check34991 FINAL1 : chemin du test aperçu /app/scripts absent, avant exécution backend ; lint297/types296 verts. Correction /workspace/backend/scripts ; original XML rouge archivé. 18301 FINAL0/22 tests/8,39 s et 18705 types qualificateur verts ; refus baseline métier vide ajouté avant wipe. Pas de check de base répété.
+- Clone indépendant ketrika-price-replay-db-20261015, nouveaux volumes/socket et copie readonly ; incidents de restauration rôles/extensions corrigés sur clone, essai raté préservé par renommage, aucune suppression. Worker1064 FINAL0 : 2 documents rejoués,15 insertions,0 skip/rejet,19 manifestes identiques. Rapport R0.8-authentic-price-replay.json sur branche. Négatif86910 conservé : compte/hash identiques mais replay ignoré, résultat bien refusé. Inspect none/capdropALL/user0:0/copyRWfalse, pas de revendication non-root.
+- Aperçu localhost:18877 reste disponible ; prix historiques imputed/pending, Gold prix vide, aucune révision réelle/ML/humain qualifiés. Code7154d92930dec56351293e7e4a73c35392d3b53c figé sur branche corpus ; scan25254 FINAL0/767833 octets/sans fuite.
+- Nouveau check Windows11394 EN COURS sur7154d92 : reprendre ce processus, aucun code/test/image/QA mutante concurrente. Le check34991 est terminé rouge, ne pas le relancer. R0.8 reste IN_PROGRESS, aucun tag ni réception applicative main ; autres critères et réception conservés.
+
 ### [2026-10-15T19:38:13Z] R0.8 — aperçu minimal utilisable, réception complète en cours
 
 - Priorité utilisateur appliquée : tranche de bout en bout avant perfectionnement, plan conservé. Branche work/r08-corpus-acquisition-20261015, commit figé 4b520c3d458ed9ead39c5c67169a85276ab36a08 après b964e92 ; ADR-071/SPECS avant aperçu, worktree /home/raillersing/projects/ketrika-qa-worktrees/r08-corpus-acquisition-20261015. Aucun changement applicatif reçu main à ce stade.
