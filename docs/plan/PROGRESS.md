@@ -3,6 +3,12 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T21:03:10Z] R0.8 — correction groupée des assertions de planification
+
+- Reprise11394 FINAL1 :427 passed/1 failed/702 s, test_document_partitions attendait six jobs malgré INSTAT disabled (ADR-069). Aucun frontend reçu. Original R0.8-disabled-source-count-red.xml conservé ; pas de check de base.
+- B-R070 : seuls tests document_partitions/source_definitions modifiés ; cinq sources autorisées exactes,13 assets/10 checks/5 schedules et exclusion INSTAT explicites, relations par source conservées. 59574 :34 tests/14,46 s et lint verts ; code applicatif inchangé. Aucun test scientifique supprimé ni seuil réduit.
+- Worktree Antigravity r1-sources-prep observé16262ee, propre, livraison R1.13 préparée ; aucun fichier ni statut de cette branche fusionné pendant la réception R0.8. Main et prompt utilisateur préservés. R0.8 reste IN_PROGRESS jusqu'aux critères et à la réception complète, pas de tag.
+
 ### [2026-10-15T20:19:54Z] R0.8 — rejeu authentique fonctionnel ; correctif réception groupé
 
 - Instruction utilisateur : fonctionnalités minimales, plan conservé ; Antigravity travaille simultanément. Son worktree r1-sources-prep/d6057fe et changements UI/tests non committés laissés intacts ; coordination main COORDINATION_ACTIVE.md, Codex garde R0.8/R0.9. Ne pas redévelopper ses lots R1.

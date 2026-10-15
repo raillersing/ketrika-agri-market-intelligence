@@ -40,14 +40,16 @@ def test_actual_definitions_inventory_matches_eligible_registered_sources():
     }
     included = {entry.source_id for entry in source_inventory if entry.included}
     assert included == eligible
-    assert len(all_assets) == 3 + 2 * len(eligible) == 15
-    assert len(all_checks) == 2 * len(eligible) == 12
-    assert len(all_schedules) == len(eligible) == 6
+    assert included == {"wb_rtfp_mdg", "faostat", "miasa_odr", "mincc_ppn", "douanes_stats"}
+    assert len(all_assets) == 3 + 2 * len(eligible) == 13
+    assert len(all_checks) == 2 * len(eligible) == 10
+    assert len(all_schedules) == len(eligible) == 5
     assert {schedule.name for schedule in all_schedules} == {
         f"{source_id}__schedule" for source_id in eligible
     }
     excluded = {entry.source_id: entry.reason for entry in source_inventory if not entry.included}
     assert excluded["nasa_power"] == excluded["wfp_hdx_mdg"] == "disabled"
+    assert excluded["instat_nipc"] == "disabled"
     assert excluded["dummy_csv"] == "fixture"
     assert all(schedule.execution_timezone == "Indian/Antananarivo" for schedule in all_schedules)
     assert defs.get_repository_def() is not None

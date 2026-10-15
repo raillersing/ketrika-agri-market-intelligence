@@ -3,6 +3,8 @@
 > Format : `ID | tâche | date | symptôme | cause supposée | tentatives (1, 2, 3) | repli appliqué | statut`
 > Statut : `INVESTIGATING` | `RESOLVED_FALLBACK` | `RESOLVED_FIXED` | `BLOCKED`
 
+| B-R070 | R0.8 / inventaire Dagster après arrêt INSTAT | 2026-10-15 UTC | Check11394 FINAL1 :427 passed/1 failed/702 s, six jobs attendus contre cinq | Assertions historiques non synchronisées avec ADR-069 disabled INSTAT | Deux fichiers corrigés ensemble : cinq sources exactes,13 assets/10 checks/5 schedules, exclusion INSTAT explicite ; 59574/34 tests verts/14,46 s | Aucun comportement de collecte modifié ni seuil scientifique réduit ; XML rouge conservé, réception stabilisée requise | RESOLVED_FIXED |
+
 | B-R068 | R0.8 / collecte des tests aperçu | 2026-10-15 | Check34991 FINAL1, FileNotFoundError /app/scripts/price_preview.py, tests non exécutés ; lint297/types296 verts | Script volontairement lu depuis source readonly /workspace, pas copié dans snapshot /app | 1 : chemin /workspace/backend/scripts conforme aux autres tests scripts ; 18301 FINAL0/22 tests dont quatre aperçu | Original R0.8-preview-collection-red.xml conservé ; nouvelle réception groupée requise | RESOLVED_FIXED |
 | B-R069 | R0.8 / préparation clone rejeu | 2026-10-15 | Restauration rencontre schéma tiger existant/ACL, init Gold60484 refuse rôle puis86910 refuse fonction similarity | Image PostGIS initialisée ; rôles et extensions public non inclus dans export applicatif | Six schémas --no-owner --no-privileges ; essai conservé par renommage, base neuve ; rôles NOLOGIN et extensions observées sur source recréés dans clone seulement | 1064 FINAL0 : deux documents/quinze prix, manifestes identiques ; négatif conservé, aucun effacement ni écriture dans aperçu/actif | RESOLVED_FIXED |
 
