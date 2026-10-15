@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T19:40:00Z] R1.9 — DONE, qualification FAOSTAT (production, commerce, flags stricts et distinction paddy/blanchi)
+
+- Dépendances relues : R1.2 (découverte dynamique).
+- Mini-plan exécuté : (1) connecteur faostat v1.1.0 avec support multi-domaines (QCL/TM/FBS) et offline ; (2) validation stricte des drapeaux FAOSTAT (drapeau inconnu non promu en observed, issue émise) ; (3) distinction rigoureuse riz paddy vs riz blanchi sans ratio de conversion implicite ; (4) vérification de la série continue de riz paddy sur 20 années (2004–2023) ; (5) tests unitaires, golden test et couverture ; (6) fiche source et preuve.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_faostat.py (exit 0, 7 passed in 14.64s) ; ruff check (exit 0) ; mypy (exit 0) ; pytest --cov (exit 0, couverture 81 %).
+- Résultats : 7/7 tests verts ; Golden set 36 enregistrements, 260 champs vérifiés, Exactitude 100 %, Rappel 100 % ; distinction paddy/blanchi validée, rejouabilité Bronze validée, flags officiels A/P/X/vide vs imputés E/I/F/T/M/Q validés.
+- Qualification : Logiciel connecteur, règles de normalisation C3, détection d'imputation et rejouabilité Bronze QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R1.9/README.md.
+- Reprise : Tâche MUST éligible suivante R1.10 (Requalifier géographie et résolution).
+
 ### [2026-10-15T19:34:00Z] R1.8 — DONE, qualification Banque mondiale RTFP (schéma C3, traçabilité et rejouabilité)
 
 - Dépendances relues : R1.2 (découverte dynamique).

@@ -29,7 +29,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R1.6 | MUST | DONE | cbb91b0 : qualification Douanes Stats, flux vs totaux annuels, SH vérifiés (74 valeurs, 100% exactitude) |
 | R1.7 | MUST | BLOCKED | 6 tests verts, couverture 88%, golden 100% ; collecte live BLOCKED (B-R009, HDX 403, AGENTS §8.1) |
 | R1.8 | MUST | DONE | qualification Banque mondiale RTFP, schéma C3 (wfp_fao), 10 tests verts, couverture 95%, golden 100% |
-| R1.9 | MUST | TODO | — |
+| R1.9 | MUST | DONE | qualification FAOSTAT, distinction paddy/blanchi, 20 ans riz (2004-2023), 7 tests verts, couverture 81%, golden 100% |
 | R1.10 | MUST | TODO | — |
 | R1.11 | MUST | TODO | — |
 | R1.12 | MUST | TODO | — |
