@@ -3,6 +3,12 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T06:50:00Z] R0.7 DONE ; R0.8 IN_PROGRESS
+
+- R0.7 intégré atomiquement main `442a20c`, source reçue `971702e`, empreinte main exacte c996b439cd1fb6be68d38c5e4b53fd6e04f5f063bf3435b4517454ee869c36ed. Windows18751 FINAL0 : 1538 backend/1395,526 s, inclusion160, couvertures91,515/86,377/90,378 %, 35 web/build15 ; E2E76493 FINAL0/9/136,27 s. Qualify R0/all codes1 attendus sans preuves ; aucun gate marché reçu.
+- Originaux et commandes dans docs/evidence/R0.7_FINAL_RECEPTION.md ; gitleaks4671 FINAL0/2137117 octets/sans fuite ; gouvernance51039 FINAL0/74 statuts cohérents avant clôture. Préservation16713 FINAL0 : 482 SR/764 prix/674 versions Bronze, empreintes inchangées. Head actif0010 déjà observé avant intégration, pas de migration active réalisée. B-R064 résolu, aucun tag phase/final.
+- R0.8 mini-plan : auditer corpus authentique compatible et révisions ; définir projections métier/UUID et contrat de confinement avant code ; implémenter réception de rejeu sur clone dédié ; comparer Silver/Gold/révisions et Bronze ; tester dérive à compte égal et accès réseau interdit ; recevoir un seul lot stabilisé. Aucun rebuild sur destination active. L'absence actuelle de corpus de prix authentique reste une limite à résoudre, pas une preuve fabriquée.
+
 ### [2026-10-14T21:21:06Z] R0.7 — lot groupé figé, réception Windows connue
 
 - Dépôt Git isolé Linux r07-final-native-20261014, branche work/r07-final-native-20261015, commit `971702e202642cb6368f62aa6b2fc00ef6d24670`. ADR-067/SPECS avant périmètre cache, ADR-066 et seul correctif034947a repris ; dépôt original/caches/index main non détruits. Aucun code SQL Agy importé.
@@ -423,8 +429,8 @@
 | R0.4 | MUST | DONE | 2026-10-09T19:33:57Z | 2026-10-09T21:21:58Z | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 | docs/evidence/R0.4/README.md : 65 fichiers / dix cellules ; check Windows 411/35 code 0, QA 72 code 0, couvertures ≥80 %, DB/S3 préservés, gitleaks 0 | B-R009/010 replis portés R1 ; B-R011/012/013 résolus |
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
 | R0.6 | MUST | DONE | 2026-10-10T19:32:37Z | 2026-10-14T08:38:21Z | 173c41a | A/B1/B2/C intégrés ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118, vingt fichiers exacts et données actives préservées ; voir LOT_C_RECEPTION.md | B-R054–058 résolus ; BL-010/016 résolus ; BL-013 partiel/R2.1 ; pas de collecte live/modèle/humain qualifié |
-| R0.7 | MUST | IN_PROGRESS | 2026-10-14T08:46:31Z | — | — | Qualification mesurée sur work/r07-measured-qualification-20261014, ADR/SPECS avant commande ; réception requise | Aucun KPI opérationnel déclaré atteint sans preuve |
-| R0.8 | MUST | TODO | — | — | — | — | — |
+| R0.7 | MUST | DONE | 2026-10-14T08:46:31Z | 2026-10-15T06:50:00Z | 442a20c | R0.7_FINAL_RECEPTION.md : Windows1538/35/build, E2E9, inclusion160, empreinte main exacte, gitleaks0 et préservation | Qualify sans bundle PARTIAL/code1 attendu ; aucune qualification opérationnelle |
+| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | — | Audit corpus/rejeu ; clone dédié, confinement réseau et comparaison contenu à implémenter | Aucun rebuild actif autorisé |
 | R0.9 | MUST | TODO | — | — | — | — | — |
 | R1.1 | MUST | TODO | — | — | — | — | — |
 | R1.2 | MUST | TODO | — | — | — | — | — |

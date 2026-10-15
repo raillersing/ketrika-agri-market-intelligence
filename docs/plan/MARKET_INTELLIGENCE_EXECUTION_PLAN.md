@@ -2,7 +2,7 @@
 
 Date : 2026-10-09. Version du plan : 1.0. Langue de travail : français.
 
-**Statut : exécution autorisée le 2026-10-09 ; R0.1–R0.5 DONE, R0.6 IN_PROGRESS.** Ce plan décrit 74 tâches R0.1–R6.11, dont les gates. Il ne recertifie pas les statuts historiques T0–T11 et n'élargit aucune autorisation de diffusion. La gouvernance du programme est intégrée en R0.1 ; les extensions des contrats de données restent soumises à ADR/SPECS avant code.
+**Statut : exécution autorisée le 2026-10-09 ; R0.1–R0.7 DONE, R0.8 IN_PROGRESS.** Ce plan décrit 74 tâches R0.1–R6.11, dont les gates. Il ne recertifie pas les statuts historiques T0–T11 et n'élargit aucune autorisation de diffusion. La gouvernance du programme est intégrée en R0.1 ; les extensions des contrats de données restent soumises à ADR/SPECS avant code.
 
 Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MVP](MVP_EXECUTION_PLAN.md), [PROGRESS](PROGRESS.md), [BLOCKERS](BLOCKERS.md), [DECISIONS](DECISIONS.md), [audit et recherche du 9 octobre](../research/2026-10-09-market-intelligence-audit.md). Les faits d'audit sont des constats statiques à revérifier, pas une photographie certifiée de la base en fonctionnement.
 
@@ -18,8 +18,8 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.4 | MUST | DONE | 8f8f1d15d8dce4dc4acc84e4dda7a30e77b41482 ; 65 fichiers / dix cellules, check 411/35 et QA 72 codes 0, données actives préservées |
 | R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
 | R0.6 | MUST | DONE | A/B1/B2/C intégrés main 173c41a ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118/snapshot exact/actif préservé ; logiciel reçu, pas de collecte live/modèle/humain qualifié |
-| R0.7 | MUST | IN_PROGRESS | 971702e, Windows18751 FINAL0/1538 backend/35 web/build ; identité main et E2E en réception, B-R064 clôture restante ; aucun KPI marché qualifié |
-| R0.8 | MUST | TODO | — |
+| R0.7 | MUST | DONE | main442a20c, source971702e : Windows1538/35/build, E2E9, inclusion160, empreinte exacte, préservation et gitleaks0 ; aucun KPI marché qualifié |
+| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z : audit corpus authentique/rejeu, confinement et manifestes métier sur clone dédié |
 | R0.9 | MUST | TODO | — |
 | R1.1 | MUST | TODO | — |
 | R1.2 | MUST | TODO | — |

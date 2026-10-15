@@ -3,7 +3,18 @@
 > **Statut :** Document normatif de passation du MVP Ketrika Agri Market Intelligence (AGENTS.md §3.2 & §5.3).
 > Ce document récapitule l'état de livraison du MVP, les pré-requis humains pour la phase d'exploitation, ainsi que les gates d'autorité (H1 à H7) nécessitant une intervention humaine.
 
-## État courant du programme autorisé R0–R6 — 2026-10-14
+## État courant du programme autorisé R0–R6 — 2026-10-15
+
+R0.7 reçu main442a20c, source971702e : 1538 backend/35 frontend/build,
+neuf E2E, inclusion160, empreinte exacte et préservation des données actives.
+Voir docs/evidence/R0.7_FINAL_RECEPTION.md. Qualify R0/all sans bundle refuse
+avec PARTIAL/code1 : pas de gate R0, ni source/modèle/usage humain qualifié.
+R0.1–R0.7 DONE ; R0.8 IN_PROGRESS (rejeu hors ligne sur contenu).
+Head actif observé0010, déjà présent avant intégration : évolution externe
+par rapport au constat historique0002 ci-dessous, aucune migration active
+faite ou annulée par cette réception. Aucun tag final.
+
+### Historique de réception R0.6 (constats du 14 octobre)
 
 Lot B2 reçu et intégré atomiquement main 03e5750 : Windows 48496 FINAL 0
 sur code 9d2076b, 1396 backend/35 frontend/build, manifest R0.6 inclus
@@ -40,7 +51,7 @@ rapports existants en lecture seule ; aucune nouvelle qualification délivrée.
 Les sections MVP ci-dessous décrivent la livraison historique T. Elles ne
 constituent pas une qualification actuelle des sources, des modèles, du
 déploiement ou d'un usage humain. Le programme R n'est pas terminé :
-R0.1–R0.5 sont DONE ; R0.6 reste IN_PROGRESS et R0.7–R6.11 restent TODO.
+L'état actuel figure en tête ; les paragraphes historiques suivants ne le remplacent pas.
 
 Lot B1 reçu main 97f8eb8 le 2026-10-13 : f7b3b32/Windows 76875 FINAL 0,
 1348 backend/35 frontend/build ; inclusion R0.6 57 fichiers/684 cas/90
