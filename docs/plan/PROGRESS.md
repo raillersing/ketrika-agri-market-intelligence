@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T07:01:20Z] R0.8 — incrément isolé be587d1, non reçu main
+
+- Branche work/r08-offline-rebuild-20261015, commit `be587d1b1012f25a9497d3a4ff56d9eac7b83200`, worktree /home/raillersing/projects/ketrika-qa-worktrees/r08-offline-rebuild-20261015 (Git indépendant Linux partagé avec clone final R0.7). Source produit main442a20c inchangée ; aucune intégration applicative R0.8 sans check complet stabilisé.
+- ADR-068/SPECS avant code sur branche : manifestes complets sept obs/douze Gold, comparaison valeurs/révisions/liens à comptes égaux ; client Bronze local GET/HEAD readonly avec SHA frais ; même store injecté parse et deux gardes Gold. Docker41582 FINAL0 : 55 tests/7,41 s, lint/format cinq fichiers et mypy trois modules verts. Gitleaks78311 FINAL0/45323 octets/sans fuite ; gouvernance6114 FINAL0/74 cohérents, statuts inchangés.
+- Docker42666 FINAL0 : capture réelle PostgreSQL QA en REPEATABLE READ READ ONLY, 19 relations, SHA003b3a46b5caa1c88402ff4587dd64977b0f9fdc40d2117082bed647e11cf0db ; 237 prix Silver/235 Gold courant/39 prévisions. Aucun wipe/restore/rebuild ni accès actif. Snapshot mixed, pas preuve offline/authentique.
+- Reprise au runbook de branche docs/runbooks/OFFLINE_REBUILD_QUALIFICATION.md : confinement Docker network=none + socket PostgreSQL sur nouvelle destination, corpus de prix C1/révisions, inventaires Bronze/ref/SR inchangés, prévisions séparées puis réception unique. Lecture catalogue RTFP officielle possible, HTML/JSON de versions différentes ; aucun prix acquis/promu ni URL CSV ancienne déclarée vérifiée. Aucune cause humaine exclusive ni arrêt final revendiqués. R0.8 reste IN_PROGRESS, aucun tag.
+
 ### [2026-10-15T06:50:00Z] R0.7 DONE ; R0.8 IN_PROGRESS
 
 - R0.7 intégré atomiquement main `442a20c`, source reçue `971702e`, empreinte main exacte c996b439cd1fb6be68d38c5e4b53fd6e04f5f063bf3435b4517454ee869c36ed. Windows18751 FINAL0 : 1538 backend/1395,526 s, inclusion160, couvertures91,515/86,377/90,378 %, 35 web/build15 ; E2E76493 FINAL0/9/136,27 s. Qualify R0/all codes1 attendus sans preuves ; aucun gate marché reçu.
