@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T20:25:00Z] R1.12 — DONE, qualification actualisation, reprise et santé des sources (catalogue, Mailpit, PolicyStop, UI/API)
+
+- Dépendances relues : R1.2 (découverte dynamique), R0.6 (client poli & quotas SQL atomiques), connecteurs R1.3–R1.11.
+- Mini-plan exécuté : (1) test détection nouvelle édition catalogue au cycle suivant sans duplication historique ; (2) test panne fetch avec passage run failed, alerte Mailpit (H3) et reprise idempotente ; (3) test visibilité stale (>SLA) et disabled dans API /v1/sources et /v1/sources/{id}/health ; (4) test 0 requêtes réseau HTTP sous PolicyStop ; (5) badge UI neutralisé "Désactivée (PolicyStop)" et alerte stale dans web/src/app/sources/page.tsx concordant avec SQL ; (6) tests types/lint verts (ruff, mypy, tsc, next lint) et rapport de preuve.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_source_health_and_refresh.py (exit 0, 5 passed in 17.06s) ; ruff check (exit 0) ; mypy (exit 0) ; tsc --noEmit (exit 0) ; next lint (exit 0).
+- Résultats : 5/5 tests unitaires passés ; 0 régression frontend/backend ; badge UI disabled correctement neutralisé ; preuves consignées.
+- Qualification : Actualisation, reprise, monitoring santé et garde PolicyStop QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R1.12/README.md.
+- Reprise : Tâche MUST éligible suivante R1.13 (Gate de fin de phase R1 - validation matrice des 9 sources du socle).
+
 ### [2026-10-15T20:02:00Z] R1.11 — DONE, qualification NASA POWER et ses révisions (cohérence physique, sentinelles, PolicyStop disabled et rejeu Bronze)
 
 - Dépendances relues : R1.2 (découverte dynamique), R1.10 (géographie), R2.1 (contrats temps).

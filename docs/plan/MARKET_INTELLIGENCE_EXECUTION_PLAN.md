@@ -32,7 +32,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R1.9 | MUST | DONE | qualification FAOSTAT, distinction paddy/blanchi, 20 ans riz (2004-2023), 7 tests verts, couverture 81%, golden 100% |
 | R1.10 | MUST | DONE | requalification géographie, manifeste machine, 23 régions Loi 2021-010, non-assignation aveugle, 16 tests verts, couverture 90% |
 | R1.11 | MUST | DONE | 95068e9 : qualification NASA POWER v1.1.0, cohérence physique, sentinelles -999, non-assignation aveugle, 10 tests verts, couverture 93% ; live BLOCKED (B-R010) |
-| R1.12 | MUST | TODO | — |
+| R1.12 | MUST | DONE | actualisation, reprise, alertes Mailpit, santé UI/API, zéro requête sous PolicyStop, 5 tests verts |
 | R1.13 | MUST | TODO | — |
 | R2.1 | MUST | TODO | — |
 | R2.2 | MUST | TODO | — |
