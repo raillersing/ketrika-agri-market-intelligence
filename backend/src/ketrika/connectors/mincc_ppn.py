@@ -18,6 +18,7 @@ from ketrika.connectors.base import (
     RawArtifact,
     RunContext,
 )
+from ketrika.connectors.discovery import CatalogDiscoveryEngine
 from ketrika.connectors.records import PriceRecord, RecordBase, StockRecord
 from ketrika.core.registry import find_repo_root
 from ketrika.extraction.evidence import verify_evidence
@@ -26,12 +27,34 @@ from ketrika.extraction.llm.base import LLMPart
 from ketrika.extraction.llm.replay import ReplayClient
 
 
+def _scrub_pii(text: str) -> str:
+    """Scrub personal names, email addresses, and phone numbers (H4, pii_class: none)."""
+    if not text:
+        return ""
+    # Email addresses
+    text = re.sub(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+", "[EMAIL_REDACTED]", text)
+    # Malagasy phone numbers
+    text = re.sub(
+        r"(?:\+261|0)\s*(?:32|33|34|38|20)\s*\d{2}\s*\d{3}\s*\d{2}",
+        "[PHONE_REDACTED]",
+        text,
+    )
+    # Personal names preceded by title
+    text = re.sub(
+        r"(?:M\.|Mme|Monsieur|Madame|Dr\.|Inspecteur|Directeur)\s+[A-Z][a-zÀ-ÿ]+(?:\s+[A-Z][a-zÀ-ÿ]+)*",
+        "[NAME_REDACTED]",
+        text,
+    )
+    return text
+
+
 class MinccLlmPriceItem(BaseModel):
     """Pydantic model representing a price item extracted from narrative text by LLM."""
 
     product_raw: str
     location_raw: str
     actor_level: str = "retail"
+    value_kind: str = "point"  # point | max
     price_raw: str
     price_value: float | None = None
     unit_raw: str = "kg"
@@ -46,7 +69,7 @@ class MinccLlmStockItem(BaseModel):
     location_raw: str
     quantity_raw: str | None = None
     quantity_value: float | None = None
-    unit_raw: str | None = "tonne"
+    unit_raw: str | None = None  # None for ordinal stock, "tonne" for physical volume
     stock_status: str | None = None  # sufficient | tight | shortage | unknown
     coverage_days: float | None = None
     evidence_text: str
@@ -150,10 +173,72 @@ class MinccPpnConnector(Connector):
     """Connector for Ministry of Commerce (MinCC) / DRCC regional PPN prices and warehouse stocks."""
 
     source_id: ClassVar[str] = "mincc_ppn"
-    parser_version: ClassVar[str] = "1.0.0"
+    parser_version: ClassVar[str] = "1.1.0"
 
     def discover(self, ctx: RunContext) -> Iterable[DiscoveredItem]:
-        """Discover available regional MinCC publications (HTML tables and communiques)."""
+        """Discover available regional MinCC publications via dynamic catalog discovery or explicit targets."""
+        # 1. Explicit targets in metadata
+        file_urls = ctx.metadata.get("file_urls")
+        if file_urls and isinstance(file_urls, list):
+            for u in file_urls:
+                url_str = str(u)
+                slug = Path(url_str).stem
+                yield DiscoveredItem(
+                    url=url_str,
+                    partition_key=slug,
+                    hints={"publisher": "MinCC/DRCC", "format": "html"},
+                )
+            return
+
+        file_url = ctx.metadata.get("file_url")
+        if file_url:
+            url_str = str(file_url)
+            slug = Path(url_str).stem
+            yield DiscoveredItem(
+                url=url_str,
+                partition_key=slug,
+                hints={"publisher": "MinCC/DRCC", "format": "html"},
+            )
+            return
+
+        # 2. Dynamic catalog discovery (R1.2, R1.5)
+        catalog_url = ctx.metadata.get("catalog_url")
+        if catalog_url or (not ctx.offline and ctx.http_client is not None):
+            target_cat_url = catalog_url or "http://www.commerce.gov.mg/ppn/actualites"
+            allow_loopback = ctx.metadata.get("allow_loopback", False)
+            allowed_domains: list[str] = list(
+                ctx.metadata.get("allowed_domains") or ["commerce.gov.mg"]
+            )
+
+            engine = CatalogDiscoveryEngine(
+                http_client=ctx.http_client,
+                source_id=self.source_id,
+                allowed_domains=allowed_domains,
+                allow_loopback=allow_loopback,
+                max_pages=20,
+            )
+
+            discovery_res = engine.discover_html_editions(
+                start_url=target_cat_url,
+                link_pattern=r"/ppn/.*(?:\.html|\.pdf)",
+            )
+            for edition in discovery_res.editions:
+                slug = Path(edition.url).stem
+                hints = {
+                    "publisher": "MinCC/DRCC",
+                    "format": "html" if ".html" in edition.url else "pdf",
+                }
+                if edition.title:
+                    hints["title"] = edition.title
+                yield DiscoveredItem(
+                    url=edition.url,
+                    partition_key=slug,
+                    published_at=edition.published_at,
+                    hints=hints,
+                )
+            return
+
+        # 3. Static historical publications fallback
         publications = [
             ("mincc_pub_01_analamanga_html", datetime(2024, 2, 5, 8, 0, tzinfo=UTC), "Analamanga"),
             ("mincc_pub_02_atsinanana_html", datetime(2024, 2, 6, 8, 0, tzinfo=UTC), "Atsinanana"),
@@ -199,13 +284,9 @@ class MinccPpnConnector(Connector):
         """Fetch document into Bronze storage respecting polite rate limits."""
         content_bytes: bytes
 
-        if ctx.offline:
+        if ctx.offline or ctx.http_client is None:
             root = find_repo_root()
-            base_dir = (
-                Path("/app")
-                if Path("/app/tests").exists()
-                else (root / "backend" if (root / "backend").exists() else root)
-            )
+            base_dir = root / "backend" if (root / "backend").exists() else root
             fixture_path = (
                 base_dir / "tests" / "fixtures" / "mincc_ppn" / f"{item.partition_key}.html"
             )
@@ -324,10 +405,73 @@ class MinccPpnConnector(Connector):
                             else "kg"
                         )
 
+                        # Detect price ceiling / regulated price vs observed market price
+                        hdr_prix = header_row[col_prix] if col_prix < len(header_row) else ""
+                        is_observed_stage = any(
+                            k in stade_str
+                            for k in (
+                                "constaté",
+                                "constate",
+                                "relevé",
+                                "releve",
+                                "tsena",
+                                "antsinjarany",
+                                "détail",
+                                "detail",
+                                "gros",
+                                "ambongadiny",
+                            )
+                        ) and not any(
+                            k in stade_str
+                            for k in (
+                                "plafond",
+                                "farany ambony",
+                                "administré",
+                                "administre",
+                                "réglementé",
+                                "reglemente",
+                            )
+                        )
+                        is_ceiling_stage = any(
+                            k in stade_str
+                            for k in (
+                                "plafond",
+                                "farany ambony",
+                                "administré",
+                                "administre",
+                                "réglementé",
+                                "reglemente",
+                                "arrêté",
+                                "arrete",
+                                "décret",
+                                "decret",
+                            )
+                        )
+                        is_ceiling_hdr = any(
+                            k in hdr_prix
+                            for k in (
+                                "plafond",
+                                "farany ambony",
+                                "administré",
+                                "administre",
+                                "réglementé",
+                                "reglemente",
+                            )
+                        )
+                        if is_ceiling_stage:
+                            is_ceiling = True
+                        elif is_observed_stage:
+                            is_ceiling = False
+                        else:
+                            is_ceiling = is_ceiling_hdr
+
+                        value_kind = "max" if is_ceiling else "point"
+                        price_actor_level = "official_ppn" if is_ceiling else actor_level
+
                         price_rec = PriceRecord(
-                            product_raw=prod_raw,
-                            actor_level=actor_level,
-                            location_raw=region,
+                            product_raw=_scrub_pii(prod_raw),
+                            actor_level=price_actor_level,
+                            location_raw=_scrub_pii(region),
                             period_start=period_start,
                             period_end=period_end,
                             published_at=artifact.published_at,
@@ -336,8 +480,9 @@ class MinccPpnConnector(Connector):
                             unit_raw=unit_raw,
                             currency_raw="MGA",
                             observed_or_imputed="observed",
+                            value_kind=value_kind,
                             extraction_method="deterministic",
-                            evidence={"row": row_idx, "cells": row},
+                            evidence={"row": row_idx, "cells": [_scrub_pii(str(c)) for c in row]},
                             confidence=1.0,
                         )
                         records.append(price_rec)
@@ -345,32 +490,68 @@ class MinccPpnConnector(Connector):
                     # 2. Stock record
                     if col_stock != -1 and col_stock < len(row):
                         stock_raw = _clean_cell(row[col_stock])
+                        missing_values = {
+                            "",
+                            "-",
+                            "--",
+                            "—",
+                            "none",
+                            "nd",
+                            "na",
+                            "n.d.",
+                            "n.a.",
+                            "..",
+                            "null",
+                            "/",
+                            "vide",
+                            "n/a",
+                            "neant",
+                            "néant",
+                        }
+                        if stock_raw.lower() in missing_values:
+                            stock_raw = ""
                         stock_val = _parse_numeric(stock_raw)
 
-                        coverage_days = None
-                        if col_couv != -1 and col_couv < len(row):
-                            coverage_days = _parse_numeric(_clean_cell(row[col_couv]))
-
-                        stock_status = "sufficient"
-                        if col_statut != -1 and col_statut < len(row):
-                            stock_status = _map_stock_status(_clean_cell(row[col_statut]))
-
-                        stock_rec = StockRecord(
-                            product_raw=prod_raw,
-                            location_raw=region,
-                            period_start=period_start,
-                            period_end=period_end,
-                            published_at=artifact.published_at,
-                            quantity_raw=stock_raw,
-                            quantity_value=stock_val,
-                            unit_raw="tonne",
-                            stock_status=stock_status,
-                            coverage_days=coverage_days,
-                            extraction_method="deterministic",
-                            evidence={"row": row_idx, "cells": row},
-                            confidence=1.0,
+                        stat_raw = (
+                            _clean_cell(row[col_statut])
+                            if col_statut != -1 and col_statut < len(row)
+                            else ""
                         )
-                        records.append(stock_rec)
+                        if stat_raw.lower() in missing_values:
+                            stat_raw = ""
+
+                        stock_status: str | None = None
+                        if stat_raw:
+                            stock_status = _map_stock_status(stat_raw)
+                        elif stock_val is not None:
+                            # Physical quantity specified in tabular format without explicit status
+                            stock_status = "sufficient"
+
+                        # Strict stock rule: do NOT emit a stock record on pure silence (no volume, no status)
+                        if stock_raw or stock_status:
+                            coverage_days = None
+                            if col_couv != -1 and col_couv < len(row):
+                                coverage_days = _parse_numeric(_clean_cell(row[col_couv]))
+
+                            # Strict physical vs ordinal rule: unit_raw is 'tonne' only when quantity_value exists
+                            unit_raw_stock = "tonne" if stock_val is not None else None
+
+                            stock_rec = StockRecord(
+                                product_raw=_scrub_pii(prod_raw),
+                                location_raw=_scrub_pii(region),
+                                period_start=period_start,
+                                period_end=period_end,
+                                published_at=artifact.published_at,
+                                quantity_raw=stock_raw or None,
+                                quantity_value=stock_val,
+                                unit_raw=unit_raw_stock,
+                                stock_status=stock_status or "unknown",
+                                coverage_days=coverage_days,
+                                extraction_method="deterministic",
+                                evidence={"row": row_idx, "cells": [_scrub_pii(str(c)) for c in row]},
+                                confidence=1.0,
+                            )
+                            records.append(stock_rec)
 
         # 2. Textual narrative extraction via LLM with mechanically verified evidence
         else:
@@ -403,11 +584,33 @@ class MinccPpnConnector(Connector):
                         )
                         continue
 
+                    ev_lower = p_item.evidence_text.lower()
+                    is_ceiling = (
+                        getattr(p_item, "value_kind", "point") == "max"
+                        or any(
+                            k in ev_lower
+                            for k in (
+                                "plafond",
+                                "farany ambony",
+                                "administré",
+                                "administre",
+                                "réglementé",
+                                "reglemente",
+                                "arrêté",
+                                "arrete",
+                                "décret",
+                                "decret",
+                            )
+                        )
+                    )
+                    value_kind = "max" if is_ceiling else "point"
+                    act_level = "official_ppn" if is_ceiling else (p_item.actor_level or "retail")
+
                     records.append(
                         PriceRecord(
-                            product_raw=p_item.product_raw,
-                            actor_level=p_item.actor_level or "retail",
-                            location_raw=p_item.location_raw or region,
+                            product_raw=_scrub_pii(p_item.product_raw),
+                            actor_level=act_level,
+                            location_raw=_scrub_pii(p_item.location_raw or region),
                             period_start=period_start,
                             period_end=period_end,
                             published_at=artifact.published_at,
@@ -416,43 +619,55 @@ class MinccPpnConnector(Connector):
                             unit_raw=p_item.unit_raw,
                             currency_raw=p_item.currency_raw,
                             observed_or_imputed="observed",
+                            value_kind=value_kind,
                             extraction_method="llm_verified",
-                            evidence={"text": p_item.evidence_text, "page": 1},
+                            evidence={"text": _scrub_pii(p_item.evidence_text), "page": 1},
                             confidence=0.95,
                         )
                     )
 
                 # Process stock records
                 for s_item in llm_data.stocks:
-                    evidence_valid = verify_evidence(
-                        value=s_item.quantity_value,
-                        evidence={"text": s_item.evidence_text},
-                        page_text=html_content.text,
-                    )
+                    if s_item.quantity_value is not None:
+                        evidence_valid = verify_evidence(
+                            value=s_item.quantity_value,
+                            evidence={"text": s_item.evidence_text},
+                            page_text=html_content.text,
+                        )
+                    else:
+                        norm_page = html_content.text.lower()
+                        norm_ev = s_item.evidence_text.lower()
+                        evidence_valid = norm_ev in norm_page or any(
+                            word in norm_page for word in norm_ev.split() if len(word) >= 4
+                        )
+
                     if not evidence_valid:
                         issues.append(
                             {
                                 "kind": "unverified_evidence",
                                 "item": s_item.model_dump(),
-                                "reason": f"Evidence '{s_item.evidence_text}' could not be verified for stock {s_item.quantity_value}",
+                                "reason": f"Evidence '{s_item.evidence_text}' could not be verified for stock {s_item.quantity_value or s_item.stock_status}",
                             }
                         )
                         continue
 
+                    # Strict ordinal rule: unit_raw is 'tonne' only when quantity_value exists
+                    unit_raw_stock = "tonne" if s_item.quantity_value is not None else None
+
                     records.append(
                         StockRecord(
-                            product_raw=s_item.product_raw,
-                            location_raw=s_item.location_raw or region,
+                            product_raw=_scrub_pii(s_item.product_raw),
+                            location_raw=_scrub_pii(s_item.location_raw or region),
                             period_start=period_start,
                             period_end=period_end,
                             published_at=artifact.published_at,
                             quantity_raw=s_item.quantity_raw,
                             quantity_value=s_item.quantity_value,
-                            unit_raw=s_item.unit_raw or "tonne",
-                            stock_status=s_item.stock_status or "sufficient",
+                            unit_raw=unit_raw_stock,
+                            stock_status=s_item.stock_status or "unknown",
                             coverage_days=s_item.coverage_days,
                             extraction_method="llm_verified",
-                            evidence={"text": s_item.evidence_text, "page": 1},
+                            evidence={"text": _scrub_pii(s_item.evidence_text), "page": 1},
                             confidence=0.95,
                         )
                     )
@@ -464,6 +679,15 @@ class MinccPpnConnector(Connector):
                         "error": str(e),
                     }
                 )
+
+        # 3. Document without useful price or stock observations (R1.5)
+        if len(records) == 0 and len(issues) == 0:
+            issues.append(
+                {
+                    "kind": "no_observations_found",
+                    "detail": "MinCC publication contains no structured price or stock observations",
+                }
+            )
 
         return ParseResult(
             records=records,

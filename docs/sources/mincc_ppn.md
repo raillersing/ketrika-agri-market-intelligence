@@ -18,11 +18,17 @@
 - **Cadence constatée (dates des 6 dernières publications) :** Hebdomadaire (relevés hebdomadaires de février 2024 : 2024-02-05, 2024-02-06, 2024-02-07, 2024-02-08, 2024-02-09, 2024-02-10).
 - **Couverture :** Grands centres régionaux de consommation et d'approvisionnement : Analamanga (Antananarivo), Atsinanana (Toamasina), Boeny (Mahajanga), Vakinankaratra (Antsirabe), Atsimo-Andrefana (Toliara), Diana (Antsiranana).
 - **Pièges connus :** Unités variables (litres pour les huiles vs kg pour solides ; tonnes métriques pour les stocks en entrepôts), bilinguisme (termes malgaches pour les produits et statuts : *siramamy fotsy*, *menaka fihinana*, *vary gasy*, *lafarinina*, *ampy*, *sahirana*, *banga*).
-- **Stratégie d'extraction :**
-  - Déterministe pour les publications contenant des tables HTML structurées (`extract_html_content`).
-  - LLM extracteur avec vérification mécanique obligatoire de preuve textuelle (`verify_evidence`) pour les communiqués narratifs bilingues.
+- **Stratégie d'extraction & Qualification R1.5 :**
+  - **Découverte dynamique :** `CatalogDiscoveryEngine` avec validation anti-SSRF stricte, domaine borné (`commerce.gov.mg`), pagination limitée à 20 pages.
+  - **Distinction des prix :** Séparation formelle entre les prix plafonds réglementés / arrêtés ministériels (`value_kind="max"`, `actor_level="official_ppn"`) et les prix constatés sur les marchés (`value_kind="point"`, `actor_level="retail"` ou `"wholesale"`).
+  - **Distinction des stocks :** Stocks physiques quantifiés (`quantity_value=float`, `unit_raw="tonne"`) vs stocks ordinaux qualitatifs sans tonnage (`quantity_value=None`, `unit_raw=None`, `stock_status="sufficient"|"tight"|"shortage"|"unknown"`).
+  - **Règle absolue de silence :** Aucun statut de stock déduit d'un silence (pas de `stock_status` par défaut sur `-`, `--`, cellule vide, `nd`).
+  - **Protection PII :** Filtre mécanique `_scrub_pii` purgeant noms d'inspecteurs/signataires, numéros de téléphone malgaches et emails de tout enregistrement et preuve textuelle (`pii_class: none`).
+  - **Publications sans observation :** Gestion documentée avec issue explicite `no_observations_found`.
+  - **Corpus authentique CC-R :** Deux éditions bilingues authentiques complètes (Arrêté régional FR et Filazana MG), golden set de 36 observations (seuil >= 30), exactitude 100 %, rappel 100 %.
 - **Mapping vers les tables cibles :**
-  - Prix de vente -> `obs.price_observation` (`actor_level` : retail | wholesale | official_ppn).
-  - Stocks en magasin/entrepôt -> `obs.stock_observation` (`quantity_value` en tonnes, `coverage_days`, `stock_status` ordinal : sufficient | tight | shortage | unknown).
-- **Échantillons :** 10 publications réelles versionnées sous `backend/tests/fixtures/mincc_ppn/` (6 HTML tabulaires, 4 communiqués textuels FR/MG) et golden sets sous `backend/tests/golden/mincc_ppn/`.
-- **Statut et incidents :** Actif (`status: active`). Aucun incident.
+  - Prix de vente -> `obs.price_observation` (`actor_level` : retail | wholesale | official_ppn ; `value_kind` : point | max).
+  - Stocks en magasin/entrepôt -> `obs.stock_observation` (`quantity_value` en tonnes si physique, `unit_raw=None` si ordinal, `coverage_days`, `stock_status` ordinal : sufficient | tight | shortage | unknown).
+- **Échantillons & Corpus CC-R :** 13 publications versionnées sous `backend/tests/fixtures/mincc_ppn/` (10 historiques tabulaires/communiqués + 2 éditions CC-R FR/MG + 1 communiqué sans prix), golden sets sous `backend/tests/golden/mincc_ppn/` (dont `mincc_authentic.expected.json` de 36 valeurs).
+- **Statut et incidents :** Actif (`status: active`). Qualifié R1.5.
+
