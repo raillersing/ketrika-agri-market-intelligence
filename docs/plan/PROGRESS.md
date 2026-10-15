@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T19:48:00Z] R1.10 — DONE, requalification géographie et résolution (manifeste, 23 régions, refus d'imputation aveugle)
+
+- Dépendances relues : R1.1 (registre), R1.2 (découverte).
+- Mini-plan exécuté : (1) création manifeste geo/manifest.json reliant couches GeoJSON, sha256 et comptes ; (2) validation du standard officiel Loi 2021-010 (23 régions administratives MDG11-MDG72) ; (3) traçabilité des divergences (22 régions antérieures à 2021, 23 régions officielles pivot, 24ème région Ambatosoa résolue vers MDG32) ; (4) vérification stricte de non-assignation aveugle (unresolved_location retourne None, jamais MDG1101) ; (5) validation spatiale de la boîte englobante nationale sur 100% des polygones ; (6) tests unitaires et couverture.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_geo.py (exit 0, 16 passed in 6.06s) ; ruff check (exit 0) ; mypy (exit 0) ; pytest --cov (exit 0, couverture 90 %).
+- Résultats : 16/16 tests verts ; 100% des 23 régions résolues avec confiance 1.0, toponymes ambigus retournent strictement None, manifeste et empreintes concordants.
+- Qualification : Référentiel géographique, résolutions spatiales et manifestes QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R1.10/README.md.
+- Reprise : Tâche MUST éligible suivante R1.11 (Qualifier NASA POWER).
+
 ### [2026-10-15T19:40:00Z] R1.9 — DONE, qualification FAOSTAT (production, commerce, flags stricts et distinction paddy/blanchi)
 
 - Dépendances relues : R1.2 (découverte dynamique).

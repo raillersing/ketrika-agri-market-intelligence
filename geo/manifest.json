@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "dataset_id": "ocha_codab_mdg",
+  "publisher": "OCHA Madagascar / BNGRC / Foiben-Taosarintanin'i Madagasikara (FTM)",
+  "boundary_version": "2024.1",
+  "admin_law_version": "Loi n° 2021-010 (23 regions)",
+  "crs": "EPSG:4326",
+  "geographic_bounding_box": {
+    "min_longitude": 43.1,
+    "min_latitude": -25.7,
+    "max_longitude": 50.6,
+    "max_latitude": -11.9
+  },
+  "levels": {
+    "admin0": {
+      "file": "processed/admin0.geojson",
+      "sha256": "068239dd491d672717bcf4af4ce67d98050133e853e5ceed8be209272fcbaefe",
+      "feature_count": 1,
+      "pcode_field": "ADM0_PCODE",
+      "description": "Contour national de la République de Madagascar"
+    },
+    "admin1": {
+      "file": "processed/admin1.geojson",
+      "sha256": "96060f6dc1e0414dd212c5c17b59edba24c295bc88affdc97c1eca87ff1530c3",
+      "feature_count": 23,
+      "pcode_field": "ADM1_PCODE",
+      "description": "Les 23 regions officielles de Madagascar selon la Loi 2021-010"
+    },
+    "admin2": {
+      "file": "processed/admin2.geojson",
+      "sha256": "a2bc1d38acb7368fb522648e3a4336aae30a26bdbf71cf3aae6caef1558ba1b5",
+      "feature_count": 3,
+      "pcode_field": "ADM2_PCODE",
+      "description": "Echantillon et centroides des districts urbains de reference"
+    },
+    "admin3": {
+      "file": "processed/admin3.geojson",
+      "sha256": "04eb1316a2f979681d75adf42cd1eab7c01d4215aad4eda59a975858ee19ac04",
+      "feature_count": 3,
+      "pcode_field": "ADM3_PCODE",
+      "description": "Echantillon des communes urbaines de reference"
+    }
+  },
+  "historical_divergences": {
+    "22_regions": "Periode 2004-2021 : Vatovavy-Fitovinany constituait une region unique. Les series historiques de marche anterieures a 2021 l'agregent.",
+    "23_regions": "Standard pivot Ketrika (Loi 2021-010) : scission officielle en Vatovavy (MDG23) et Fitovinany (MDG24).",
+    "24_regions": "Annee 2024 : Creation de la 24eme region Ambatosoa scindee d'Analanjirofo (MDG32). Les series historiques n'ont pas d'historique individualise ; liaison vers MDG32."
+  },
+  "resolution_rules": {
+    "no_arbitrary_default": "Une localisation ambiguë ou non reconnue retourne None et est routee vers la revue humaine sans jamais tomber par defaut sur MDG1101 ou une region parente.",
+    "min_confidence_official": 0.9,
+    "min_confidence_alias": 0.8
+  }
+}
