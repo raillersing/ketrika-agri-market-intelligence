@@ -45,6 +45,31 @@ def workspace(tmp_path):
     return tmp_path
 
 
+@pytest.mark.parametrize(
+    "name",
+    [
+        "docker-compose.qualification.yml",
+        "docker-compose.rebuild-qualification.yml",
+        ".gitattributes",
+    ],
+)
+def test_fingerprint_covers_root_configuration_and_refuses_symlink(tmp_path, name):
+    root = workspace(tmp_path)
+    before = source_fingerprint(root)
+    path = root / name
+    path.write_text("version one\n")
+    after = source_fingerprint(root)
+    assert before != after
+    path.write_text("version two\n")
+    assert after != source_fingerprint(root)
+    path.unlink()  # Own temporary fixture only.
+    target = tmp_path / "external-config"
+    target.write_text("external\n")
+    path.symlink_to(target)
+    with pytest.raises(QualificationSafetyError, match="source_symlink_forbidden"):
+        source_fingerprint(root)
+
+
 def test_source_fingerprint_ignores_unreadable_generated_test_outputs(tmp_path):
     root = workspace(tmp_path)
     expected = source_fingerprint(root)

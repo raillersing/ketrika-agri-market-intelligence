@@ -103,7 +103,13 @@ def source_fingerprint(root: Path) -> str:
                 if path.is_symlink():
                     raise QualificationSafetyError("source_symlink_forbidden")
                 paths.append(path)
-    for name in ("docker-compose.qualification.yml", ".gitattributes"):
+    for name in (
+        "docker-compose.qualification.yml",
+        "docker-compose.rebuild-qualification.yml",
+        ".gitattributes",
+    ):
+        if (root / name).is_symlink():
+            raise QualificationSafetyError("source_symlink_forbidden")
         if (root / name).is_file():
             paths.append(root / name)
     if not paths:

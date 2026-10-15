@@ -1,0 +1,67 @@
+# Dedicated software smoke only. No active/ordinary QA database or Bronze volume.
+name: ketrika-rebuild-qualification
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    network_mode: none
+    environment:
+      POSTGRES_USER: ketrika
+      POSTGRES_PASSWORD: qa-local-only
+      POSTGRES_DB: ketrika_rebuild_qualification
+    command: [postgres, -c, "listen_addresses="]
+    volumes:
+      - rebuild_pgdata:/var/lib/postgresql/data
+      - rebuild_socket:/var/run/postgresql
+    healthcheck:
+      test: [CMD-SHELL, "[ \"$$(cat /proc/1/comm)\" = postgres ] && pg_isready -h /var/run/postgresql -U ketrika -d ketrika_rebuild_qualification"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  worker:
+    image: ketrika-backend:qa-r03
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    working_dir: /workspace/backend
+    environment:
+      APP_ENV: test
+      DATABASE_URL: postgresql+psycopg://ketrika:qa-local-only@/ketrika_rebuild_qualification?host=/run/ketrika-rebuild
+      LLM_PROVIDER: replay
+      EXTERNAL_SEND_ENABLED: "0"
+      PYTHONPATH: /workspace/backend/src
+      KETRIKA_REPO_ROOT: /workspace
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes:
+      - ./:/workspace:ro
+      - rebuild_venv:/app/.venv:ro
+      - rebuild_socket:/run/ketrika-rebuild
+      - rebuild_copy:/copy:ro
+      - rebuild_reports:/reports
+    tmpfs: [/tmp]
+    depends_on:
+      db: {condition: service_healthy}
+    command: [/app/.venv/bin/python, /workspace/backend/scripts/rebuild_offline_smoke.py, replay]
+  prepare:
+    extends: worker
+    user: "0:0"
+    # Fixture creation only: explicitly synthetic, before readonly replay worker.
+    volumes:
+      - rebuild_copy:/copy
+    command: [/app/.venv/bin/python, /workspace/backend/scripts/rebuild_offline_smoke.py, prepare]
+volumes:
+  rebuild_pgdata:
+    name: ketrika_rebuild_qualification_pgdata
+    labels: {ketrika.scope: rebuild-qualification}
+  rebuild_socket:
+    name: ketrika_rebuild_qualification_socket
+    labels: {ketrika.scope: rebuild-qualification}
+  rebuild_copy:
+    name: ketrika_rebuild_qualification_copy
+    labels: {ketrika.scope: rebuild-qualification}
+  rebuild_reports:
+    name: ketrika_rebuild_qualification_reports
+    labels: {ketrika.scope: rebuild-qualification}
+  rebuild_venv:
+    name: ketrika_qualification_backend_venv_r03
+    external: true

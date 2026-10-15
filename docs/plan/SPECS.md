@@ -1021,6 +1021,47 @@ contrat ne qualifie ni source live ni checks mesurés, partitions ou durabilité
 
 ## 10. Layout Bronze
 
+R0.8 / ADR-068 : projection de rejeu version 1, tables obs complètes (price,
+stock, trade, production, weather, cpi, event) et douze vues Gold, colonnes
+réelles intégrales. Seul ingested_at est omis sur obs et price_obs_current.
+Les identifiants obs sont remplacés par une empreinte des autres colonnes
+(hors superseded_by) ; liens de supersession et identifiant Gold sont résolus
+contre cette bijection, doublon ou cible absente refusés. Aucun effacement
+des UUID SourceRecord/référentiels ni des dates économiques. Inventaires de
+ceux-ci et des versions Bronze à conserver séparément ; clone seul autorisé.
+La comparaison restitue comptes, SHA métier et diff machine par table ;
+table/colonne absente, flottant non fini ou valeur non sérialisable refusés.
+network=none et socket Unix PostgreSQL dédiée pour la preuve système ;
+objets Bronze préexportés readonly et vérifiés, pas de client S3 réseau dans
+la phase de rejeu. Prévisions recalculées depuis modèle/dataset versionnés
+séparément ; leur absence ne vaut pas réception R0.8 complète.
+L'API interne rebuild accepte un BronzeStore injecté, utilisé également par
+les deux gardes Gold ; le défaut S3 reste inchangé. Son client local de
+qualification expose seulement GET/HEAD sur un inventaire fermé clé/SHA/taille,
+lit les fichiers SHA sans symlink et revérifie les octets à chaque GET. Aucun
+PUT ni fallback S3 ; objet absent/corrompu refuse le rejeu. Ce lecteur seul
+ne certifie ni authenticité ni confinement système.
+Le worker de preuve refuse avant tout wipe une cible autre que
+ketrika_rebuild_qualification, utilisateur ketrika/mot de passe public
+qa-local-only, socket /run/ketrika-rebuild (aucun hôte IP). Il confirme
+current_database() et inet_server_addr() NULL, ainsi que seule interface lo
+et absence de route IPv4 hors lo. Inventaires ref, meta.source et
+meta.source_record comparés sans exclusion. Toutes sources doivent être
+rejouables et chaque objet local doit avoir son SHA correct avant destruction.
+Sa réussite logicielle ne qualifie pas le corpus ou la restauration ML ;
+rapport explicitement PARTIAL tant que ces preuves séparées restent absentes.
+Commande logicielle distincte `scripts/dev.ps1 rebuild-smoke prepare|replay`
+(Linux dev.sh identique) : profile Compose ketrika-rebuild-qualification,
+volumes pgdata/socket/copy/reports étiquetés et dédiés, seul venv QA existant
+réutilisé readonly. Prepare crée explicitement deux éditions synthétiques
+sur base neuve, refuse toute réinitialisation ; replay copie readonly, aucun
+seed implicite, conteneurs conservés pour inspect. Ce smoke ne reçoit pas R0.8.
+Reprise prepare permise après interruption seulement si schéma présent mais
+toutes tables meta/ref/obs/ml strictement vides et aucun inventaire créé ;
+aucun effacement. Prepare root sans capabilities initialise seulement les
+volumes dédiés ; worker non-root, copie readonly, rapports sous runs sticky.
+Le fichier Compose dédié fait partie de l'empreinte de source.
+
 ADR-052 : archive interne des manifestes sous reference_manifest/yyyy/mm/SHA.json,
 application/json, URL vide, manual_upload/http_status 0, en-tête
 internal-snapshot;source_verified=false. Aucun Source/SourceRecord fictif créé.

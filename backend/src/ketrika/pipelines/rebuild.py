@@ -20,6 +20,8 @@ from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import get_session
 from ketrika.core.models.db import SourceRecord
 from ketrika.core.policy import PolicyEngine
+from ketrika.core.provenance import ArtifactReader
+from ketrika.core.provenance_bronze import BronzeProofReader
 from ketrika.gold.provenance_gate import GoldProvenanceRejected
 from ketrika.gold.refresh import refresh_gold_views
 from ketrika.gold.schema_gate import GoldSchemaRejected
@@ -27,7 +29,9 @@ from ketrika.gold.schema_gate import GoldSchemaRejected
 logger = logging.getLogger("ketrika.rebuild")
 
 
-def wipe_silver_gold_tables(session: Session) -> dict[str, int]:
+def wipe_silver_gold_tables(
+    session: Session, *, reader: ArtifactReader | None = None
+) -> dict[str, int]:
     """Wipe all observation and ML tables, and refresh/truncate Gold views (SPECS §3.3, T2.6).
 
     Uses TRUNCATE CASCADE to safely bypass row-level immutability triggers on obs tables.
@@ -64,7 +68,7 @@ def wipe_silver_gold_tables(session: Session) -> dict[str, int]:
     for tbl in gold_tables:
         session.execute(text(f"TRUNCATE TABLE gold.{tbl} CASCADE;"))
 
-    refresh_res = refresh_gold_views(session)
+    refresh_res = refresh_gold_views(session, reader=reader)
     session.flush()
     logger.info("Successfully wiped Silver and refreshed Gold tables.")
     return {
@@ -77,20 +81,24 @@ def rebuild_database(
     session: Session | None = None,
     offline: bool = True,
     source_id: str | None = None,
+    *,
+    bronze_store: BronzeStore | None = None,
 ) -> dict[str, Any]:
     """Rebuild Silver/Gold layers offline from Bronze storage and meta.source_record.
 
     Guarantees:
-    - Zero network calls (HTTP_OFFLINE=1).
+    - Policy HTTP calls refused when offline=True (HTTP_OFFLINE=1).
+      System-level network isolation is the caller's responsibility (ADR-068).
     - Fully deterministic replay in chronological order.
     - Exact preservation of supersession history.
     """
-    bronze_store = BronzeStore()
+    bronze_store = bronze_store if bronze_store is not None else BronzeStore()
+    proof_reader = BronzeProofReader(bronze_store)
     policy_engine = PolicyEngine()
 
     def _execute(s: Session) -> dict[str, Any]:
         # 1. Wipe Silver & Gold tables
-        wipe_stats = wipe_silver_gold_tables(s)
+        wipe_stats = wipe_silver_gold_tables(s, reader=proof_reader)
 
         # 2. Query all source records chronologically (fetched_at ASC)
         stmt = select(SourceRecord)
@@ -178,7 +186,7 @@ def rebuild_database(
         s.commit()
         # Refresh Gold views to reflect replayed records
         try:
-            gold_refresh = refresh_gold_views(s)
+            gold_refresh = refresh_gold_views(s, reader=proof_reader)
         except (GoldProvenanceRejected, GoldSchemaRejected) as exc:
             exc.replay_stats = {
                 **stats,
