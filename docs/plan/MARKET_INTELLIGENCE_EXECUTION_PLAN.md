@@ -21,13 +21,13 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.7 | MUST | IN_PROGRESS | branche work/r07-measured-qualification-20261014/c1a583c ; 59885 refus footer malgré 1508 verts, inventaire enfant corrigé/probe natif vert ; E2E 58740 en cours puis nouveau check complet ; aucun KPI opérationnel déduit des fixtures |
 | R0.8 | MUST | TODO | — |
 | R0.9 | MUST | TODO | — |
-| R1.1 | MUST | TODO | — |
-| R1.2 | MUST | TODO | — |
-| R1.3 | MUST | TODO | — |
-| R1.4 | MUST | TODO | — |
-| R1.5 | MUST | TODO | — |
-| R1.6 | MUST | TODO | — |
-| R1.7 | MUST | TODO | — |
+| R1.1 | MUST | DONE | 15a8e75 : registre sources.yaml requalifié, familles anti-fuite, cadences distinctes |
+| R1.2 | MUST | DONE | 2f9d872 : moteur CatalogDiscoveryEngine, pagination bornée, anti-SSRF validé |
+| R1.3 | MUST | DONE | d5c4124 : qualification INSTAT NIPC, découverte dynamique, multi-feuilles |
+| R1.4 | MUST | DONE | 1ef3119 : qualification MiASA ODR, CC-R authentique (75 valeurs, 100% exactitude/rappel) |
+| R1.5 | MUST | DONE | c39ae82 : qualification MinCC PPN, prix max vs constatés, anti-PII, silence stock respecté |
+| R1.6 | MUST | DONE | cbb91b0 : qualification Douanes Stats, flux vs totaux annuels, SH vérifiés (74 valeurs, 100% exactitude) |
+| R1.7 | MUST | BLOCKED | 6 tests verts, couverture 88%, golden 100% ; collecte live BLOCKED (B-R009, HDX 403, AGENTS §8.1) |
 | R1.8 | MUST | TODO | — |
 | R1.9 | MUST | TODO | — |
 | R1.10 | MUST | TODO | — |

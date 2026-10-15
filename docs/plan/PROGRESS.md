@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T19:24:00Z] R1.7 — BLOCKED (Collecte live) / QUALIFIED (Connecteur & parsing offline)
+
+- Dépendances relues : R1.1 (registre sources.yaml), R1.2 (découverte).
+- Mini-plan exécuté : (1) Contrôle statut disabled et levée PolicyStop ; (2) parsing HXL ; (3) dérivation actor_level et observed_or_imputed ; (4) refus d'imputation géographique aveugle (issue unresolved_market_needs_review) ; (5) tests unitaires et golden set ; (6) fiche source et preuve.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_wfp_hdx_mdg.py (exit 0, 6 passed in 6.65s) ; ruff check (exit 0) ; mypy (exit 0) ; pytest --cov (exit 0, couverture 88 %).
+- Résultats : 6/6 tests verts ; Golden set 36 enregistrements, 252 champs vérifiés, Exactitude 100 %, Rappel 100 %.
+- Qualification : Logiciel connecteur QUALIFIED sur fixture Bronze rejouable ; Collecte live réseau BLOCKED (incident B-R009, HTTP 403 Cloudflare sur catalogue/download HDX, interdiction de contournement AGENTS §8.1).
+- État final : BLOCKED pour la collecte live conformément à R1.7 et B-R009 ; sous-livrables connecteur et parsing validés.
+- Preuve : docs/evidence/R1.7/README.md.
+- Reprise : Tâche MUST éligible suivante R1.8 (Qualifier Banque mondiale RTFP).
+
 ### [2026-10-14T18:33:00Z] R0.7 — navigateur reçu et check complet connu
 
 - Windows E2E 21709 FINAL 1 sur f4a7294 : cinq scénarios/486,993 s, navigation prices timeout 120 s, compilation froide observée 108,8 s, zéro browser_errors. Reçu rouge original conservé dans worktree ; aucune hausse du délai.
