@@ -24,3 +24,5 @@ Mise à jour 2026-10-15. Ce document ne qualifie aucune tâche produit.
 - Chaque livraison indique branche/commit, fichiers, tests ciblés et limites.
   Le coordinateur synchronise PROGRESS et plan ; ne pas remplacer les journaux
   concurrents ni déclarer DONE une capacité encore partielle.
+- Lecture ciblée d'intégration : voir ANTIGRAVITY_INTEGRATION_NOTES.md ; conserver
+  les fixtures INSTAT générées mais les qualifier synthetic, pas authentic.
