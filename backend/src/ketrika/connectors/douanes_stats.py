@@ -6,10 +6,11 @@ import calendar
 import csv
 import hashlib
 import io
+import re
 from collections.abc import Iterable
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from ketrika.connectors.base import (
     Connector,
@@ -18,8 +19,25 @@ from ketrika.connectors.base import (
     RawArtifact,
     RunContext,
 )
+from ketrika.connectors.discovery import CatalogDiscoveryEngine
 from ketrika.connectors.records import TradeFlowRecord
 from ketrika.core.registry import find_repo_root
+
+KNOWN_PPN_HS_CHAPTERS: set[str] = {"07", "10", "11", "12", "15", "17"}
+
+
+def _validate_hs_code(hs_code: str) -> tuple[bool, str | None]:
+    """Validate HS code format and chapter consistency (SPECS §5.2, R1.6)."""
+    clean = re.sub(r"[^0-9]", "", hs_code)
+    if len(clean) not in (6, 8):
+        return False, f"Invalid HS code length ({len(clean)} digits, expected 6 or 8)"
+    chapter = clean[:2]
+    if chapter not in KNOWN_PPN_HS_CHAPTERS:
+        return (
+            False,
+            f"HS chapter {chapter} is outside agricultural PPN chapters (07, 10, 11, 12, 15, 17)",
+        )
+    return True, None
 
 
 def _clean_str(val: str | None) -> str:
@@ -42,17 +60,84 @@ class DouanesStatsConnector(Connector):
     """Connector for official Direction Générale des Douanes (DGD) import/export monthly data."""
 
     source_id: ClassVar[str] = "douanes_stats"
-    parser_version: ClassVar[str] = "1.0.0"
+    parser_version: ClassVar[str] = "1.1.0"
 
     def discover(self, ctx: RunContext) -> Iterable[DiscoveredItem]:
-        """Discover monthly trade statistics artifacts."""
-        # Main dataset of PPN commodities
-        yield DiscoveredItem(
-            url="https://www.douanes.gov.mg/stats/douanes_stats_2024.csv",
-            partition_key="douanes_stats_2024",
-            published_at=datetime(2024, 4, 1, 8, 0, tzinfo=UTC),
-            hints={"year": "2024"},
-        )
+        """Discover trade statistics editions via dynamic catalog or explicit targets."""
+        # 1. Explicit file targets in metadata
+        file_urls = ctx.metadata.get("file_urls")
+        if file_urls and isinstance(file_urls, list):
+            for u in file_urls:
+                url_str = str(u)
+                slug = Path(url_str).stem
+                yield DiscoveredItem(
+                    url=url_str,
+                    partition_key=slug,
+                    hints={"publisher": "Douanes Malagasy / DGD", "format": "csv"},
+                )
+            return
+
+        file_url = ctx.metadata.get("file_url")
+        if file_url:
+            url_str = str(file_url)
+            slug = Path(url_str).stem
+            yield DiscoveredItem(
+                url=url_str,
+                partition_key=slug,
+                hints={"publisher": "Douanes Malagasy / DGD", "format": "csv"},
+            )
+            return
+
+        # 2. Dynamic catalog discovery (R1.2, R1.6)
+        catalog_url = ctx.metadata.get("catalog_url")
+        if catalog_url or (not ctx.offline and ctx.http_client is not None):
+            target_cat_url = catalog_url or "https://www.douanes.gov.mg/statistiques"
+            allow_loopback = ctx.metadata.get("allow_loopback", False)
+            allowed_domains: list[str] = list(
+                ctx.metadata.get("allowed_domains") or ["douanes.gov.mg"]
+            )
+
+            engine = CatalogDiscoveryEngine(
+                http_client=ctx.http_client,
+                source_id=self.source_id,
+                allowed_domains=allowed_domains,
+                allow_loopback=allow_loopback,
+                max_pages=20,
+            )
+
+            discovery_res = engine.discover_html_editions(
+                start_url=target_cat_url,
+                link_pattern=r"/stats/.*(?:\.csv|\.xlsx)",
+            )
+            for edition in discovery_res.editions:
+                slug = Path(edition.url).stem
+                hints = {
+                    "publisher": "Douanes Malagasy / DGD",
+                    "format": "csv" if ".csv" in edition.url else "xlsx",
+                }
+                if edition.title:
+                    hints["title"] = edition.title
+                yield DiscoveredItem(
+                    url=edition.url,
+                    partition_key=slug,
+                    published_at=edition.published_at,
+                    hints=hints,
+                )
+            return
+
+        # 3. Static historical datasets fallback
+        publications = [
+            ("douanes_stats_2024", datetime(2024, 4, 1, 8, 0, tzinfo=UTC), "2024"),
+            ("douanes_stats_2023", datetime(2024, 1, 15, 8, 0, tzinfo=UTC), "2023"),
+        ]
+
+        for partition_key, pub_date, year in publications:
+            yield DiscoveredItem(
+                url=f"https://www.douanes.gov.mg/stats/{partition_key}.csv",
+                partition_key=partition_key,
+                published_at=pub_date,
+                hints={"year": year, "publisher": "Douanes Malagasy / DGD"},
+            )
 
     def fetch(self, item: DiscoveredItem, ctx: RunContext) -> RawArtifact:
         """Fetch trade data CSV into Bronze storage respecting polite rate limits."""
@@ -60,11 +145,7 @@ class DouanesStatsConnector(Connector):
 
         if ctx.offline:
             root = find_repo_root()
-            base_dir = (
-                Path("/app")
-                if Path("/app/tests").exists()
-                else (root / "backend" if (root / "backend").exists() else root)
-            )
+            base_dir = root / "backend" if (root / "backend").exists() else root
             fixture_path = (
                 base_dir / "tests" / "fixtures" / "douanes_stats" / f"{item.partition_key}.csv"
             )
@@ -112,40 +193,81 @@ class DouanesStatsConnector(Connector):
         content_str = content_bytes.decode("utf-8", errors="replace")
 
         records: list[TradeFlowRecord] = []
-        issues: list[dict[str, str]] = []
+        issues: list[dict[str, Any]] = []
 
         reader = csv.DictReader(io.StringIO(content_str))
 
         for row_idx, row in enumerate(reader, start=1):
             year_val = _parse_float(row.get("annee"))
-            month_val = _parse_float(row.get("mois"))
-
-            if year_val is None or month_val is None:
+            if year_val is None:
                 issues.append(
                     {
                         "kind": "missing_period",
                         "row": str(row_idx),
-                        "details": f"Missing year or month in row: {row}",
+                        "details": f"Missing year in row: {row}",
                     }
                 )
                 continue
 
             year = int(year_val)
-            month = int(month_val)
-            last_day = calendar.monthrange(year, month)[1]
-            period_start = date(year, month, 1)
-            period_end = date(year, month, last_day)
+            raw_month = _clean_str(row.get("mois")).upper()
+
+            # Separate annual totals from monthly flows to prevent double-counting (R1.6)
+            is_annual = raw_month in {
+                "",
+                "0",
+                "13",
+                "AN",
+                "ANNUEL",
+                "TOTAL",
+                "ANNEE",
+                "ANNÉE",
+                "ALL",
+            }
+            if is_annual:
+                period_start = date(year, 1, 1)
+                period_end = date(year, 12, 31)
+                aggregation_level = "annual_total"
+            else:
+                month_val = _parse_float(raw_month)
+                if month_val is None or not (1 <= int(month_val) <= 12):
+                    issues.append(
+                        {
+                            "kind": "invalid_month",
+                            "row": str(row_idx),
+                            "details": f"Invalid month value '{raw_month}' in row {row_idx}",
+                        }
+                    )
+                    continue
+                month = int(month_val)
+                last_day = calendar.monthrange(year, month)[1]
+                period_start = date(year, month, 1)
+                period_end = date(year, month, last_day)
+                aggregation_level = "monthly"
 
             raw_flow = _clean_str(row.get("flux") or "import").lower()
             flow = "export" if "export" in raw_flow else "import"
 
             hs_code = _clean_str(row.get("code_sh"))
+            is_valid_hs, hs_issue = _validate_hs_code(hs_code)
+            if not is_valid_hs and hs_code:
+                issues.append(
+                    {
+                        "kind": "unverified_hs_code",
+                        "row": str(row_idx),
+                        "hs_code": hs_code,
+                        "details": hs_issue or "Unverified HS code",
+                    }
+                )
+
             product_raw = _clean_str(row.get("designation_produit"))
             if not product_raw:
                 product_raw = f"Produit SH {hs_code}"
 
             partner_raw = _clean_str(
-                row.get("pays_partenaire") or row.get("pays_origine") or row.get("pays_destination")
+                row.get("pays_partenaire")
+                or row.get("pays_origine")
+                or row.get("pays_destination")
             )
             partner_iso3 = _clean_str(row.get("code_iso3_pays") or "")
 
@@ -178,8 +300,13 @@ class DouanesStatsConnector(Connector):
                     weight_raw=weight_raw or None,
                     weight_kg=weight_kg,
                     extraction_method="deterministic",
-                    evidence={"row": row_idx, "hs_code": hs_code, "partner": partner_raw},
-                    confidence=1.0,
+                    evidence={
+                        "row": row_idx,
+                        "hs_code": hs_code,
+                        "partner": partner_raw,
+                        "aggregation_level": aggregation_level,
+                    },
+                    confidence=1.0 if is_valid_hs else 0.5,
                 )
             )
 

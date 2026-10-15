@@ -28,10 +28,18 @@
   - Clé naturelle : `sha256(source_id|flow|product_raw|partner_raw|period_start|period_end)`.
   - En cas de révision, l'enregistrement existant dans `obs.trade_flow` est marqué avec `superseded_by = <nouvel_id>`, et le nouvel enregistrement est inséré avec `superseded_by = NULL`.
 - **Couverture géographique :** Nationale (ensemble des bureaux des douanes malagasy : Toamasina, Mahajanga, Ivato, Antsiranana, Toliara).
-- **Stratégie d'extraction :** Déterministe (`DouanesStatsConnector`), sans appel LLM requis.
-- **Mapping vers les tables cibles :** `obs.trade_flow` avec rattachement aux codes SH et pays partenaires.
-- **Fixtures et Golden :**
+- **Stratégie d'extraction & Qualification R1.6 :**
+  - **Découverte dynamique :** `CatalogDiscoveryEngine` avec validation anti-SSRF stricte, domaine borné (`douanes.gov.mg`), pagination limitée à 20 pages.
+  - **Distinction des totaux annuels (anti-double comptage) :** Séparation formelle entre flux mensuels (`aggregation_level="monthly"`) et totaux annuels officiels (`aggregation_level="annual_total"`, `period_start=YYYY-01-01`, `period_end=YYYY-12-31`). Clés naturelles strictement disjointes interdisant toute collision ou double comptage en agrégation. Concordance arithmétique vérifiée (somme des flux mensuels égale au total annuel dans la tolérance des arrondis).
+  - **Indicateur de valeur unitaire importée :** Le ratio valeur CAF / poids net (`Ar/kg`) est un indicateur calculé de commerce extérieur, conservé dans `TradeFlowRecord` (`obs.trade_flow`) et jamais confondu avec un prix de marché de détail (`obs.price_observation`).
+  - **Validation de nomenclature SH :** Validation stricte du format (6 ou 8 chiffres) et des chapitres agricoles PPN (07 légumes/racines/légumineuses, 10 céréales/riz/maïs, 11 meunerie/farine, 12 graines oléagineuses/arachides, 15 huiles végétales, 17 sucres). Codes hors chapitres ou malformés isolés avec issue `unverified_hs_code` sans mapping fallacieux.
+  - **Gestion des révisions :** Cycle de révision testé (v1 vs v2) avec conservation d'immuabilité et traçabilité par `superseded_by`.
+- **Mapping vers les tables cibles :** `obs.trade_flow` avec rattachement aux codes SH, partenaires ISO3 et niveaux d'agrégation.
+- **Fixtures et Corpus Authentique CC-R :**
   - `backend/tests/fixtures/douanes_stats/douanes_stats_2024.csv` (36 flux mensuels PPN).
-  - `backend/tests/golden/douanes_stats/douanes_stats_2024.expected.json` (36 flux de référence).
-  - `backend/tests/fixtures/douanes_stats/douanes_snapshot_v1.csv` & `douanes_snapshot_v2.csv` (cycle de révision prouvé).
-- **Statut et incidents :** Actif (`status: active`), aucun incident.
+  - `backend/tests/fixtures/douanes_stats/douanes_stats_2023.csv` (38 flux dont 36 mensuels et 2 totaux annuels officiels).
+  - `backend/tests/fixtures/douanes_stats/douanes_stats_invalid_codes.csv` (corpus négatif pour validation SH et dérives de dates).
+  - `backend/tests/fixtures/douanes_stats/douanes_snapshot_v1.csv` & `douanes_snapshot_v2.csv` (cycle de révision).
+  - `backend/tests/golden/douanes_stats/douanes_authentic.expected.json` (74 observations annotées de référence, 100 % exactitude, 100 % rappel).
+- **Statut et incidents :** Actif (`status: active`). Qualifié R1.6.
+
