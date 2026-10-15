@@ -5,6 +5,18 @@
 
 ## État courant du programme autorisé R0–R6 — 2026-10-15
 
+R0.8 mécanisme logiciel reçu main ef626d2, source cff8010 : Windows1612
+backend/35 web/build, inclusion71, CLI Windows sans réseau et deux révisions
+synthétiques identiques après rejeu complet. R0.8 reste IN_PROGRESS ; voir
+R0.8_SOFTWARE_RECEPTION.md. Aucun corpus authentique, modèle ni gate R0.9
+déduit de ce smoke. Données actives/Bronze conservés, pas de migration active.
+Acquisition indépendante : /home/raillersing/projects/ketrika-qa-worktrees/
+r08-corpus-acquisition-20261015, branche homonyme work/r08-corpus-acquisition-20261015.
+INSTAT arrêté sur challenge (ADR-069/registre disabled en préparation sur cette
+branche, pas encore intégré main) : aucune reprise autorisée. API WB : 15
+lignes MDG avec valeurs riz acquises mais droits/format/provenance/révisions
+encore non qualifiés. Ne pas les promouvoir ni les utiliser pour des décisions.
+
 R0.7 reçu main442a20c, source971702e : 1538 backend/35 frontend/build,
 neuf E2E, inclusion160, empreinte exacte et préservation des données actives.
 Voir docs/evidence/R0.7_FINAL_RECEPTION.md. Qualify R0/all sans bundle refuse

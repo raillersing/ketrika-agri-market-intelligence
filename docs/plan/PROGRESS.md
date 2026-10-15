@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T15:17:47Z] R0.8 — mécanisme logiciel reçu main, corpus poursuivi
+
+- Livraison atomique main `ef626d2`, source reçue `cff8010ea027b524fed00a3dee6fbee0957f4f5b`, empreinte dd5a355d643d8a4857654b107d9a585472e27c75a5b2f71c6152ac142b452a03 exacte sur main86451 FINAL0. Windows87212 FINAL0 : 1612 backend/1031,27 s, zéro échec/skip ; inclusion R0.8 20+35+16=71 et 154 intégrations ; couvertures91,431/86,377/90,378 %. Front35/quatre suites/quatre étapes0/build15 ; CLI Windows13060 FINAL0, replay_passed true/PARTIAL/synthetic.
+- Originaux R0.8-software-* et R0.8_SOFTWARE_RECEPTION.md ; scan99785 FINAL0/1188692 octets/sans fuite et gouvernance56080 FINAL0/74 cohérents. Contrôles actifs postintégration34004 FINAL0 : 482 SR/764 prix/674 versions Bronze et toutes empreintes antérieures inchangées, head0010 déjà présent. Aucun tag ni DONE R0.8 : corpus authentique/révisions originales/ML restent non qualifiés.
+- Branche indépendante work/r08-corpus-acquisition-20261015 : INSTAT69948 arrêté sur challenge/status404, source/origine inscrites dans le lab dédié ; ADR-069 et registre disabled préparés hors code reçu, aucune relance. WB catalogue/API HTTP200 ; deux réponses rejetées par contrôle MDG (filtre JSON ignoré), correction documentée par code NADA officiel1bd31f72e9b7c6df6799b4ad7edec208c0203f4b : c[ISO3], pas filter JSON.
+- Acquisition84580 FINAL0 : 15 lignes MDG mais champs prix vides ; acquisition52912 FINAL0 avec c[rice]=>0 : 15 lignes MDG/riz positifs, fichiers SHA conservés en docs/evidence de la branche et volume ketrika_r08_corpus_acquisition_20261015. Droits/authenticité encore unverified, aucun Silver/Gold ni corpus C1 promu. Reprise : vérifier droits et sémantique/unités/format réel avant adaptateur/provenance et révisions ; ne pas réutiliser le check cff pour une modification future de registre/parseur.
+
 ### [2026-10-15T14:47:46Z] R0.8 — réception du lot logiciel figé en cours
 
 - Branche work/r08-offline-rebuild-20261015, commit cff8010 après be587d1 ; nouveau worker/profil/commande rebuild-smoke, base distincte ketrika_rebuild_qualification reliée par socket Unix, Docker network=none, copie readonly/worker app/capdropALL. Rejeu Linux91244 FINAL0 puis Windows natif13060 FINAL0, deux éditions synthétiques/revisions2/1 et 19 manifestes identiques. Rapport natif /reports/runs/33a5fd81757f4a30bb92e014b0b51a98/replay.json ; conteneur ketrika-rebuild-replay-4e7cb899b57148be8a02cbf95e47be26 conservé. PARTIAL/synthetic, aucun DONE R0.8.
@@ -458,7 +465,7 @@
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
 | R0.6 | MUST | DONE | 2026-10-10T19:32:37Z | 2026-10-14T08:38:21Z | 173c41a | A/B1/B2/C intégrés ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118, vingt fichiers exacts et données actives préservées ; voir LOT_C_RECEPTION.md | B-R054–058 résolus ; BL-010/016 résolus ; BL-013 partiel/R2.1 ; pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | 2026-10-14T08:46:31Z | 2026-10-15T06:50:00Z | 442a20c | R0.7_FINAL_RECEPTION.md : Windows1538/35/build, E2E9, inclusion160, empreinte main exacte, gitleaks0 et préservation | Qualify sans bundle PARTIAL/code1 attendu ; aucune qualification opérationnelle |
-| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | — | Audit corpus/rejeu ; clone dédié, confinement réseau et comparaison contenu à implémenter | Aucun rebuild actif autorisé |
+| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | ef626d2 (lot logiciel seulement) | Windows1612/35/build, inclusion71, rejeu CLI natif sans réseau et manifestes identiques ; R0.8_SOFTWARE_RECEPTION.md | Corpus authentique/révisions réelles/ML non qualifiés ; aucun rebuild actif |
 | R0.9 | MUST | TODO | — | — | — | — | — |
 | R1.1 | MUST | TODO | — | — | — | — | — |
 | R1.2 | MUST | TODO | — | — | — | — | — |
