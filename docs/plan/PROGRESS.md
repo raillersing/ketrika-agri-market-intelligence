@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T19:38:13Z] R0.8 — aperçu minimal utilisable, réception complète en cours
+
+- Priorité utilisateur appliquée : tranche de bout en bout avant perfectionnement, plan conservé. Branche work/r08-corpus-acquisition-20261015, commit figé 4b520c3d458ed9ead39c5c67169a85276ab36a08 après b964e92 ; ADR-071/SPECS avant aperçu, worktree /home/raillersing/projects/ketrika-qa-worktrees/r08-corpus-acquisition-20261015. Aucun changement applicatif reçu main à ce stade.
+- http://localhost:18877 et /api/prices : quinze estimations de riz local/Alakamisy/mai2010-juillet2011, imputed/unknown/pending explicitement affichés ; pas prix actuels ni Gold accepté. Paquet officiel SHA épinglés, deux SourceRecords et batch immuable, parseur contextuel, normalisation/revue puis audit cellule complet avant commit. Préparation80052 FINAL0. Base et copie dédiées, DB networknone/socket, HTTP127.0.0.1 seulement ; aucune destination existante migrée/écrite.
+- SQL46578 FINAL0/15 prix imputés/pending et deux membres batch. Navigateur81062 FINAL0 : HTTP200/15 lignes/15 reload/15 JSON/390x844/zéro erreur JS ; redémarrage35505 FINAL0 et relecture49333 FINAL0/cmp identique/Windows15. Rebuild version2 raccordé au même parseur persisté et normaliseur, mais qualification du rejeu non déduite de la page.
+- 38549 FINAL0/49 tests/6,71 s ; 96149 FINAL0/4 tests présentation/sécurité/readonly et types trois fichiers ; 96161 FINAL0/quatre tests fingerprint root ; format/lint sept fichiers47892 FINAL0. Scan47440 FINAL0/34507 octets/sans fuite. Runbook PRICE_PREVIEW.md sur branche ; pas de tests de base répétés.
+- Check Windows réel unique34991 EN COURS sur source4b520c3 figée, commande powershell.exe -File <worktree>/scripts/dev.ps1 check. Reprendre ce processus sans modifier code/tests/images/destination QA ni relancer de suite mutante. L'aperçu utilise une autre DB et peut rester ouvert. R0.8 IN_PROGRESS, aucun tag/DONE/réception globale ; corpus/rejeu/révisions, contexte structurel et Silver natif restent au plan.
+
 ### [2026-10-15T16:18:14Z] R0.8 — corpus et adaptateur contextuel avancés sur branche indépendante
 
 - Worktree /home/raillersing/projects/ketrika-qa-worktrees/r08-corpus-acquisition-20261015, branche work/r08-corpus-acquisition-20261015 : corpus authentique committé5447504, puis provenance contextuelle/parseur b964e92db3c34fe0673f1cb949418f75c8175a99. Aucun de ces changements applicatifs intégré main ni qualifié par l'ancien check cff8010.
