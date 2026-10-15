@@ -16,7 +16,7 @@
   lang: mg
   product_code: RICE_WHITE_IMPORTED
   confidence: 0.85
-  note: ""
+  note: "Dénomination vernaculaire du riz importé ; revue requise si taux de brisures non spécifié"
   evidence: "Dénomination malagasy du riz blanc importé."
 
 - alias: "akotry"
@@ -86,7 +86,7 @@
   lang: mg
   product_code: MAIZE_GRAIN
   confidence: 0.85
-  note: ""
+  note: "Terme générique pour maïs ; revue requise si maïs grain vs farine ou épis non spécifié"
   evidence: "Terme malagasy pour le maïs en grain."
 
 - alias: "Maize"
@@ -107,7 +107,7 @@
   lang: mg
   product_code: VEG_OIL
   confidence: 0.8
-  note: ""
+  note: "Huile alimentaire indéterminée (vrac, palme ou soja) ; confirmation requise"
   evidence: "Terme malagasy pour huile alimentaire."
 
 - alias: "Huile alimentaire vrac"
@@ -177,7 +177,7 @@
   lang: mg
   product_code: BEANS_DRY
   confidence: 0.85
-  note: ""
+  note: "Terme générique pour haricots secs ; variété spécifique non précisée"
   evidence: "Terme malagasy désignant le haricot sec."
 
 - alias: "voanjobory"
@@ -191,28 +191,28 @@
   lang: mg
   product_code: GROUNDNUT
   confidence: 0.85
-  note: ""
+  note: "Arachide non spécifiée (coques vs décortiquées)"
   evidence: "Terme malagasy pour l'arachide."
 
 - alias: "kabaro"
   lang: mg
   product_code: LIMA_BEANS
   confidence: 0.85
-  note: ""
+  note: "Pois du Cap ; confirmation variété et zone de production requise"
   evidence: "Désignation malagasy du pois du Cap."
 
 - alias: "vomanga"
   lang: mg
   product_code: SWEET_POTATO
   confidence: 0.85
-  note: ""
+  note: "Patate douce fraîche ; variété chair blanche vs orange non précisée"
   evidence: "Terme malagasy désignant la patate douce."
 
 - alias: "lafarinina"
   lang: mg
   product_code: WHEAT_FLOUR
   confidence: 0.8
-  note: ""
+  note: "Terme malagasy général pour farine ; contrôle requis si blé, maïs ou manioc"
   evidence: "Terme malagasy désignant la farine."
 
 - alias: "Farine de ble"

@@ -161,6 +161,27 @@ def validate_taxonomy(taxonomy_dir: Path | str | None = None) -> list[str]:
             errors.append(f"Duplicate product_code in products.yaml: '{p.product_code}'")
         product_codes.add(p.product_code)
 
+        if p.base_unit not in {"kg", "l"}:
+            errors.append(
+                f"Product '{p.product_code}' has invalid base_unit '{p.base_unit}' (must be kg or l)"
+            )
+
+        for hs in p.hs6_codes:
+            if not (isinstance(hs, str) and len(hs) == 6 and hs.isdigit()):
+                errors.append(
+                    f"Product '{p.product_code}' has invalid HS6 code: '{hs}' (must be 6 digits)"
+                )
+
+        for fao in p.faostat_item_codes:
+            if not (isinstance(fao, int) and fao > 0):
+                errors.append(f"Product '{p.product_code}' has invalid FAOSTAT item code: '{fao}'")
+
+    # Strict separation of rice products
+    core_rice = {"RICE_PADDY", "RICE_WHITE_LOCAL", "RICE_WHITE_IMPORTED"}
+    for r_code in core_rice:
+        if r_code not in product_codes:
+            errors.append(f"Core rice product '{r_code}' missing from products.yaml")
+
     normalized_aliases: set[str] = set()
     for a in aliases:
         if a.product_code not in product_codes:
@@ -173,10 +194,44 @@ def validate_taxonomy(taxonomy_dir: Path | str | None = None) -> list[str]:
             errors.append(f"Duplicate normalized alias in aliases.yaml: '{a.alias}' ({norm})")
         normalized_aliases.add(norm)
 
+        # Rule R2.2: Aliases >= 0.9 MUST have verifiable evidence
+        if a.confidence >= 0.9:
+            if not a.evidence or len(a.evidence.strip()) < 5:
+                errors.append(
+                    f"Alias '{a.alias}' has confidence {a.confidence} >= 0.9 but missing or insufficient evidence"
+                )
+        else:
+            # Rule R2.2: Aliases < 0.9 must have explanatory note for review rationale
+            if not a.note or len(a.note.strip()) < 3:
+                errors.append(
+                    f"Alias '{a.alias}' has confidence {a.confidence} < 0.9 but missing disambiguation note"
+                )
+
+        # R2.2 Rice vs Paddy distinction
+        norm_alias = norm.lower()
+        if a.product_code == "RICE_PADDY" and any(k in norm_alias for k in ("blanc", "white", "blanchi")):
+            errors.append(
+                f"Paddy alias '{a.alias}' mistakenly references milled white rice characteristics"
+            )
+        if a.product_code in {"RICE_WHITE_LOCAL", "RICE_WHITE_IMPORTED"} and any(
+            k in norm_alias for k in ("paddy", "akotry")
+        ):
+            errors.append(
+                f"Milled rice alias '{a.alias}' mistakenly references unmilled paddy characteristics"
+            )
+
     variety_codes: set[str] = set()
     for v in varieties:
         if v.variety_code in variety_codes:
             errors.append(f"Duplicate variety_code in rice_varieties.yaml: '{v.variety_code}'")
         variety_codes.add(v.variety_code)
+
+        if v.variety_code in product_codes:
+            errors.append(
+                f"Rice variety '{v.variety_code}' must not collide with product_code '{v.variety_code}'"
+            )
+
+        if v.rice_type not in {"local", "imported", "paddy"}:
+            errors.append(f"Rice variety '{v.variety_code}' has invalid rice_type: '{v.rice_type}'")
 
     return errors

@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T22:00:00Z] R2.2 — DONE, audit taxonomie, unités, grains et gardes de comparabilité Gold
+
+- Dépendances relues : R2.1 (DONE), R0.4 (DONE).
+- Mini-plan exécuté : (1) renforcement de validate_taxonomy dans backend/src/ketrika/core/taxonomy.py (validation stricte base_unit kg/l, HS6 à 6 chiffres, FAOSTAT > 0, séparation riz/paddy/variétés, preuves alias >= 0.90 et notes < 0.90) ; (2) renforcement de backend/src/ketrika/core/units.py et backend/src/ketrika/normalize/units.py avec refus strict des conversions massiques/volumiques sans densité prouvée ; (3) création de backend/src/ketrika/core/aggregation.py avec les gardes Gold interdisant le mélange de devises, d'unités physiques hétérogènes, d'indices vs prix nominaux, ou d'acteurs économiques incompatibles ; (4) intégration dans backend/src/ketrika/normalize/price_loader.py pour orienter systématiquement tout alias < 0.90 vers la file de revue (review_status='pending') avec exclusion du prix comparable ; (5) création de la suite backend/tests/unit/test_taxonomy_units_audit.py (24 tests unitaires et de propriétés Hypothesis) ; (6) validation de 38/38 tests d'audit, couverture de 90 % sur les modules core, 99/99 tests de non-régression, ruff, mypy et tsc 100 % verts ; (7) rédaction du rapport de preuve docs/evidence/R2.2/README.md.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_taxonomy_units_audit.py tests/unit/test_taxonomy.py tests/unit/test_units.py --cov=ketrika.core.taxonomy --cov=ketrika.core.units --cov=ketrika.core.aggregation --cov-report=term-missing (exit 0, 38 passed in 56.45s, couverture 90 %) ; ruff check (exit 0) ; mypy (exit 0) ; tsc --noEmit (exit 0) ; non-régression 99 passed in 34.06s.
+- Résultats : 100 % des libellés résolus ou en revue ; conversions faible confiance (< 0.80) et alias < 0.90 exclus des prix comparables ; conversions masse/volume sans densité refusées ; moyennes incompatibles bloquées ; ND et inconnus préservés sans 0 par défaut.
+- Qualification : Taxonomie, unités et grains QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R2.2/README.md.
+- Reprise : Tâche MUST éligible suivante R2.3 (Auditer les doublons exacts, variations et révisions).
+
 ### [2026-10-15T21:20:00Z] R2.1 — DONE, formalisation des contrats temps, origine et macroéconomie (ADR-069, SPECS, MacroObservation, C1–C4)
 
 - Dépendances relues : R0.1, R0.2, R1.1, Gate R1.13 complétés.
@@ -472,8 +484,8 @@
 | R1.11 | MUST | TODO | — | — | — | — | — |
 | R1.12 | MUST | TODO | — | — | — | — | — |
 | R1.13 | MUST | TODO | — | — | — | — | — |
-| R2.1 | MUST | TODO | — | — | — | — | — |
-| R2.2 | MUST | TODO | — | — | — | — | — |
+| R2.1 | MUST | DONE | 2026-10-15T20:45:00Z | 2026-10-15T21:20:00Z | e513803 | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts | BL-013 résolu pour macro/temps |
+| R2.2 | MUST | DONE | 2026-10-15T21:30:00Z | 2026-10-15T22:00:00Z | ac46982 | Audit taxonomie, unités, grains, densités et gardes de comparabilité Gold | 38 tests verts, couverture 90%, 0 régression |
 | R2.3 | MUST | TODO | — | — | — | — | — |
 | R2.4 | MUST | TODO | — | — | — | — | — |
 | R2.5 | MUST | TODO | — | — | — | — | — |

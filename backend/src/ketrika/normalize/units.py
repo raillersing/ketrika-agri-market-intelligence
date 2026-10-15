@@ -101,8 +101,27 @@ class UnitConverter:
         u_norm = unit_raw.strip().lower()
         # Direct base unit match
         if u_norm in {"kg", "kilogramme", "kilo"}:
+            if product_code:
+                try:
+                    from ketrika.core.taxonomy import get_product
+
+                    prod = get_product(product_code)
+                    if prod.base_unit != "kg":
+                        return None, "kg", "uncertain", 0.0
+                except (KeyError, FileNotFoundError):
+                    pass
             return price_mga, "kg", "exact", 1.0
+
         if u_norm in {"l", "litre", "liter"}:
+            if product_code:
+                try:
+                    from ketrika.core.taxonomy import get_product
+
+                    prod = get_product(product_code)
+                    if prod.base_unit != "l":
+                        return None, "l", "uncertain", 0.0
+                except (KeyError, FileNotFoundError):
+                    pass
             return price_mga, "l", "exact", 1.0
 
         # Look up in taxonomy
@@ -138,6 +157,15 @@ class UnitConverter:
         # 2. Generic conversion
         elif unit_def.factor is not None and unit_def.target_unit is not None:
             base_u = unit_def.target_unit
+            if product_code:
+                try:
+                    from ketrika.core.taxonomy import get_product
+
+                    prod = get_product(product_code)
+                    if prod.base_unit != base_u:
+                        return None, base_u, "uncertain", conf
+                except (KeyError, FileNotFoundError):
+                    pass
             factor = unit_def.factor
             conf = unit_def.confidence
 
