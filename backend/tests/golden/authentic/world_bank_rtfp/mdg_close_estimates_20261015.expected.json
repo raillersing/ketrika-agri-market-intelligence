@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "document_path": "tests/fixtures/authentic/world_bank_rtfp/mdg_close_estimates_20261015.json",
+    "document_sha256": "bc4a01e5f443898a916678c84213ab29f30534b642f8da3b7ea6ca509c566c15",
+    "annotator": "agent",
+    "human_reviewed": false,
+    "annotated_at": "2026-10-15T21:07:49Z",
+    "method": "independent_transcription",
+    "scope": "Five raw cells in each of the first three historical rows, transcribed independently from acquired API JSON, not parser output. Partial scope, not recall, model accuracy or current prices. c_rice is a modeled close estimate, not an observation.",
+    "records_in_document": 15,
+    "records_annotated": 3,
+    "publication_time": null
+  },
+  "cells": [
+    {"path": ["data", 0, "ISO3"], "expected": "MDG", "value_type": "text"},
+    {"path": ["data", 0, "price_date"], "expected": "2010-05-01", "value_type": "text"},
+    {"path": ["data", 0, "mkt_name"], "expected": "Alakamisy", "value_type": "text"},
+    {"path": ["data", 0, "currency"], "expected": "MGA", "value_type": "text"},
+    {"path": ["data", 0, "c_rice"], "expected": "1082.69", "value_type": "text"},
+    {"path": ["data", 1, "ISO3"], "expected": "MDG", "value_type": "text"},
+    {"path": ["data", 1, "price_date"], "expected": "2010-06-01", "value_type": "text"},
+    {"path": ["data", 1, "mkt_name"], "expected": "Alakamisy", "value_type": "text"},
+    {"path": ["data", 1, "currency"], "expected": "MGA", "value_type": "text"},
+    {"path": ["data", 1, "c_rice"], "expected": "1046.47", "value_type": "text"},
+    {"path": ["data", 2, "ISO3"], "expected": "MDG", "value_type": "text"},
+    {"path": ["data", 2, "price_date"], "expected": "2010-07-01", "value_type": "text"},
+    {"path": ["data", 2, "mkt_name"], "expected": "Alakamisy", "value_type": "text"},
+    {"path": ["data", 2, "currency"], "expected": "MGA", "value_type": "text"},
+    {"path": ["data", 2, "c_rice"], "expected": "1113.51", "value_type": "text"}
+  ]
+}

@@ -9,6 +9,7 @@ from types import MappingProxyType
 
 from ketrika.core.schema_audit import CSVSchemaContract, SchemaContract
 from ketrika.core.schema_json import JSONSchemaAlternatives, JSONSchemaContract
+from ketrika.core.schema_rtfp import WB_RTFP_JSON
 
 
 def contract_fingerprint(contract: SchemaContract) -> str:
@@ -87,9 +88,11 @@ class SchemaContractRegistry:
         return self._lookup.get((source_id, parser_version, mime_type))
 
 
-# Add declarations only through reviewed, versioned changes with source-format evidence.
-# Empty is deliberate: no public format has been qualified by this software delivery.
-DEFAULT_SCHEMA_CONTRACT_REGISTRY = SchemaContractRegistry()
+# Exact archived JSON contract only; no CSV or other source inferred from it.
+DECLARED_SCHEMA_BINDINGS = (
+    SchemaContractBinding("wb_rtfp_mdg", "2.0.0", "application/json", WB_RTFP_JSON),
+)
+DEFAULT_SCHEMA_CONTRACT_REGISTRY = SchemaContractRegistry(DECLARED_SCHEMA_BINDINGS)
 
 
 def get_schema_contract_registry() -> SchemaContractRegistry:

@@ -1106,6 +1106,11 @@ SHA du document complet conservé ; variantes exactement une valide, scalaire
 decimal number/chaîne fini seulement. Pas d'apprentissage de schéma depuis
 contenu collecté. Contrats v1 sans scope gardent leur empreinte v1.
 
+ADR-072 : déclaration structurelle limitée au triplet wb_rtfp_mdg/2.0.0/
+application/json, variantes exactement une valide : data et additional.ticker_info.
+Contrats fermés dans leur portée ; narratifs non exécutables hors de cette portée.
+Ne pas autoriser les formats CSV ou une autre version par analogie.
+
 ### 11.1 Ordre d'extraction
 
 1. **Déterministe :** tables CSV, XLSX, JSON ou HTML (`selectolax`), tables PDF (`pdfplumber` / `camelot`).

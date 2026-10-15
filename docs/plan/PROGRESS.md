@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T21:07:49Z] R0.8 — raccordement natif préparé hors source figée
+
+- Worktree indépendant r08-native-qualification-20261016, branche work/r08-native-qualification-20261016 depuis04f1d39 ; check10643 conserve source et destination QA exclusives. Aucun fichier du check ou d'Antigravity modifié.
+- Mini-plan du lot : promouvoir les octets c_rice déjà acquis et annoter indépendamment ; déclarer données/contexte JSON fermés et versionnés ; raccorder le parseur au chargement normal avec batch vérifié ; conserver snapshot de normalisation au rejeu ; vérifier parcours et refus ensemble avant réception. Pas de nouveau fetch, pas de lieu inventé, aucun statut DONE anticipé.
+- Incrément indépendant : ADR-072/SPECS avant déclaration du seul triplet WB/2.0.0/JSON et variantes fermées data/ticker_info. Le chemin Silver délègue cette version au parseur du batch SQL, garde le CSV existant et ses refus ; aucun contexte de page exécuté. Nouveau paquet officiel brut SHA bc4a01e5 et annotation indépendante15 cellules, droits reliés aux mêmes documents licence/étude déjà vérifiés ; reçu original conserve son flag initial unverified, vérification dérivée séparée.
+- 69400 FINAL0 :129 tests/19,63 s (corpus, annotations, mutations de schéma, registre, routage Silver), lint/format et mypy trois modules verts. Premier diagnostic99 verts/1 rouge dû au registre vide de la fixture autouse : tester les déclarations explicites sans enlever cette isolation. 12638 FINAL0 :73 fichiers/581673 octets,8 authentic (4 documents/4 annotations),53 cellules vérifiées,46 synthetic/19 unverified.
+- Réception non acquise : conserver et relire l'archive des référentiels de normalisation au rejeu natif reste à finir, puis parcours SQL/S3 isolé groupé. Le rejeu15 prix déjà reçu en développement concernait le parcours aperçu sans ce snapshot ; ne pas l'attribuer à ce nouveau chemin. Aucun nouveau check complet lancé ni mutation de la QA10643. R0.8 IN_PROGRESS.
+
 ### [2026-10-15T21:03:10Z] R0.8 — correction groupée des assertions de planification
 
 - Reprise11394 FINAL1 :427 passed/1 failed/702 s, test_document_partitions attendait six jobs malgré INSTAT disabled (ADR-069). Aucun frontend reçu. Original R0.8-disabled-source-count-red.xml conservé ; pas de check de base.

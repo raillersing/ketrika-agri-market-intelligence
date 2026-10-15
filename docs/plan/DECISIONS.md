@@ -2,6 +2,13 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-072 : contrat natif JSON WB explicite, distinct du CSV historique
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant code du raccordement natif.
+- **Décision :** autoriser uniquement le triplet wb_rtfp_mdg/2.0.0/application/json dans le registre structurel, sur les portées données.data et étude.additional.ticker_info observées dans le paquet officiel acquis. Propriétés fermées, scalaires déclarés, ambiguïté et champs nouveaux refusés. Aucun contrat du CSV historique ou d'une autre source inféré depuis ces octets.
+- **Chargement :** même parseur contextuel depuis le batch immuable au chemin natif et au rejeu ; aucun accès réseau durant Silver. Conserver les archives de référentiels configurés et leur identité, sans les confondre avec les métadonnées institutionnelles produit/unité. Une entrée contextuelle produit zéro observation mais n'est pas un échec de parsing prix.
+- **Réception :** corpus et annotations partiels vérifiés mécaniquement, mutants de structure et contexte refusés, legacy inchangé, parcours groupé avant réception. Le contrat ne qualifie ni performance du modèle fournisseur, ni fraîcheur, ni revue humaine, ni publication Gold de lieux non résolus.
+
 ## ADR-071 : tranche minimale locale de consultation des prix authentiques
 
 - **Date/statut :** 2026-10-15, adopté avant implémentation de la tranche minimale demandée par l'utilisateur.
