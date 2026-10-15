@@ -2,11 +2,15 @@
 
 import hashlib
 import json
+from dataclasses import replace
+from unittest.mock import MagicMock, patch
+from uuid import uuid4
 
 import pytest
 
 from ketrika.connectors.base import RawArtifact
-from ketrika.connectors.rtfp_json import parse_close_estimates
+from ketrika.connectors.rtfp_json import parse_close_estimates, parse_persisted
+from ketrika.connectors.stages import BronzeBatch
 from ketrika.core.provenance import ProofError
 from tests.unit.test_provenance_rtfp import Reader, sample
 
@@ -23,6 +27,50 @@ def artifacts(references):
         )
         for item in references.values()
     )
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        "valid",
+        "context_only",
+        "missing_batch",
+        "ambiguous_batch",
+        "wrong_parser",
+        "wrong_source",
+        "changed_primary",
+        "missing_context",
+    ],
+)
+def test_context_is_resolved_from_persisted_batch_not_caller_metadata(case):
+    _, _, references, objects = sample()
+    primary, context = artifacts(references)
+    run_id = uuid4()
+    session = MagicMock()
+    session.scalars.return_value = (
+        []
+        if case == "missing_batch"
+        else [run_id, uuid4()]
+        if case == "ambiguous_batch"
+        else [run_id]
+    )
+    batch = BronzeBatch(
+        "other" if case == "wrong_source" else "wb_rtfp_mdg",
+        run_id,
+        "1.0.0" if case == "wrong_parser" else "2.0.0",
+        (primary, primary) if case == "missing_context" else (primary, context),
+    )
+    if case == "changed_primary":
+        primary = replace(primary, url="https://example.invalid/changed")
+    with patch("ketrika.connectors.batch_ledger.read_bronze_batch", return_value=batch):
+        if case in {"valid", "context_only"}:
+            result = parse_persisted(
+                session, context if case == "context_only" else primary, Reader(objects)
+            )
+            assert len(result.records) == (0 if case == "context_only" else 1)
+        else:
+            with pytest.raises(ProofError):
+                parse_persisted(session, primary, Reader(objects))
 
 
 def test_close_estimate_preserves_raw_and_explicit_imputed_unknown_actor():

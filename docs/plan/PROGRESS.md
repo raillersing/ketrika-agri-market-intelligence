@@ -3,6 +3,19 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T19:29:48Z] R0.8 — tranche minimale utilisable, en développement
+
+- Priorité utilisateur : parcours fonctionnel avant perfectionnement, plan conservé. ADR-071 avant aperçu local isolé ; aucune dérogation à provenance/budgets ni réception anticipée.
+- Mini-plan : raccorder parseur au batch SQL et au rebuild ; charger les octets officiels dans un nouveau lab ; vérifier chaque cellule avant Silver ; servir une consultation readonly avec prix bruts/périodes/imputé/revue et provenance ; vérifier la persistance par relecture. Garder R0.8 IN_PROGRESS jusqu'à sa réception complète et ses autres critères.
+
+### [2026-10-15T19:37:18Z] R0.8 — premier aperçu fonctionnel, réception globale restante
+
+- Parcours réel : paquet WB épinglé (study SHA4a9e254e/sample SHAbc4a01e5), copie locale immuable, deux SourceRecords/batch SQL validé, parseur contextuel persisté, normalisation/revue et audit complet des cellules avant commit. Préparation80052 FINAL0 ; PostgreSQL quinze prix 2010-05 à 2011-07, tous imputed/pending, deux membres batch ; aucune destination existante réutilisée.
+- Projet Docker ketrika-price-preview, volumes dédiés 20261015 ; DB networknone/socket Unix, serveur copie readonly/port127.0.0.1:18877. Page http://localhost:18877, JSON /api/prices : historique partiel, acteur inconnu, pending visible, pas de Gold ni prix actuel revendiqué. Chemin de parse/normalisation version2 réutilisé dans rebuild, legacy inchangé ; réception de rejeu restant distincte.
+- Navigateur81062 FINAL0 : HTTP200, quinze lignes/après reload/JSON, 390x844, zéro erreur JS. Redémarrage35505 FINAL0 ; relecture49333 FINAL0 identique octet pour octet (cmp0), Windows Invoke-RestMethod quinze prix. Aucun réimport au redémarrage.
+- Développement : 38549 FINAL0/49 tests parseur/provenance en6,71 s ; 96149 FINAL0/4 tests présentation/readonly/refus overwrite,8,70 s et types trois fichiers ; 96161 FINAL0/4 cas fingerprint root,3,11 s ; 47892 lint/format sept fichiers verts. Aucun check de base répété. Profil aperçu inclus dans empreinte source ; runbook PRICE_PREVIEW.md.
+- Tranche fonctionnelle seulement, non réception produit main : R0.8 IN_PROGRESS et miroir conservé. Prochain travail : réception complète du lot figé, puis contexte structurel/Silver natif et rejeu authentique/révisions selon plan. Aucun tag, qualification scientifique ou revue humaine.
+
 ### [2026-10-15T16:18:14Z] R0.8 — incrément provenance contextuelle et parseur API, non reçu main
 
 - ADR-070/SPECS avant code : preuves bornées à deux SourceRecords WB, cellules prix/date/lieu/devise et métadonnées produit/unité/ticker/pays. Vérification SHA/MIME fraîche sur les deux objets, réemploi du vérificateur classique et comptage par observation. Gold inclut désormais le contexte dans ses candidats au contrôle structurel. Arrondi explicite HALF_UP quatre décimales, lexème brut conservé ; unités inventées, acteur retail et statut observed interdits pour les close estimates.

@@ -50,6 +50,7 @@ def workspace(tmp_path):
     [
         "docker-compose.qualification.yml",
         "docker-compose.rebuild-qualification.yml",
+        "docker-compose.price-preview.yml",
         ".gitattributes",
     ],
 )

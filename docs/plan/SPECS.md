@@ -1082,6 +1082,12 @@ s3://bronze/{source_id}/{yyyy}/{mm}/{sha256}.meta.json   # url, fetched_at, http
 
 ## 11. Extraction déterministe et LLM
 
+ADR-071 : tranche de consultation locale expérimentale, PostgreSQL/socket et copie
+Bronze dédiés ; batch durable et preuves vérifiées avant persistance. Consultation
+HTTP loopback readonly, jamais API de production ni publication Gold implicite.
+Les prix historiques imputés, les lieux non résolus et la revue non humaine sont
+affichés explicitement. Pas de nouvelle collecte ni de remplacement des gates R.
+
 ADR-070 / R0.8 : preuve rtfp_json_v1 version2 pour PriceObservation WB,
 deux SourceRecord/objets vérifiés (données + étude), context_source_record_id
 explicite et groupe de cellules par portée JSON. Valeur c_<ticker> liée au

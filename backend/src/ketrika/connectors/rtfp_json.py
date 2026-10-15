@@ -7,6 +7,9 @@ from datetime import date
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation, localcontext
 from uuid import UUID, uuid5
 
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
 from ketrika.connectors.base import ParseResult, RawArtifact
 from ketrika.connectors.records import PriceRecord
 from ketrika.core.provenance import (
@@ -24,6 +27,47 @@ from ketrika.core.provenance import (
 from ketrika.core.provenance_rtfp import FIELDS
 
 PARSER_VERSION = "2.0.0"
+
+
+def parse_persisted(session: Session, primary: RawArtifact, reader: ArtifactReader) -> ParseResult:
+    """Resolve context from the verified immutable ledger, never caller metadata."""
+    from ketrika.connectors.batch_ledger import read_bronze_batch
+    from ketrika.core.models.ingestion_batch import IngestionBatchMember
+
+    run_ids = list(
+        session.scalars(
+            select(IngestionBatchMember.run_id)
+            .where(IngestionBatchMember.source_record_id == UUID(primary.source_record_id))
+            .limit(2)
+        )
+    )
+    if len(run_ids) != 1:
+        raise ProofError("rtfp_batch_ambiguous_or_missing")
+    batch = read_bronze_batch(session, run_ids[0])
+    if (
+        batch.source_id != "wb_rtfp_mdg"
+        or batch.parser_version != PARSER_VERSION
+        or not 2 <= len(batch.artifacts) <= 16
+    ):
+        raise ProofError("rtfp_batch_invalid")
+    matches = [
+        item for item in batch.artifacts if item.source_record_id == primary.source_record_id
+    ]
+    if len(matches) != 1 or any(
+        getattr(matches[0], field) != getattr(primary, field)
+        for field in ("object_key", "content_sha256", "mime_type", "url", "published_at")
+    ):
+        raise ProofError("rtfp_batch_reference_mismatch")
+    contexts = []
+    for artifact in batch.artifacts:
+        document = _document(reader, artifact)
+        if isinstance(document, dict) and "study_desc" in document and "additional" in document:
+            contexts.append(artifact)
+    if len(contexts) != 1:
+        raise ProofError("rtfp_context_ambiguous_or_missing")
+    if contexts[0].source_record_id == primary.source_record_id:
+        return ParseResult(records=[], parser_version=PARSER_VERSION)
+    return parse_close_estimates(primary, contexts[0], reader)
 
 
 def _document(reader: ArtifactReader, artifact: RawArtifact):

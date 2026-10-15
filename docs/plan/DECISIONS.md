@@ -2,6 +2,13 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-071 : tranche minimale locale de consultation des prix authentiques
+
+- **Date/statut :** 2026-10-15, adopté avant implémentation de la tranche minimale demandée par l'utilisateur.
+- **Décision :** charger le paquet public déjà acquis dans une base PostgreSQL et une copie Bronze locales dédiées, enregistrer le batch immuable et vérifier les cellules avant persistance. Fournir une consultation HTTP locale readonly des prix bruts, provenance, périodes, statut imputé et revue. Aucun faux lieu/alias pour forcer Gold, aucun enrichissement LLM ni nouvel appel réseau requis.
+- **Isolation :** nouveau projet/volumes Docker, DB sans réseau accessible par socket Unix, aucun reset/rebuild/écriture sur les destinations existantes. Initialisation sur tables vides seulement ; relecture et redémarrage ne réimportent pas. HTTP exposé uniquement sur loopback, aucun envoi externe ni déploiement public.
+- **Limites :** aperçu historique partiel et non qualifié, distinct de l'API et du dashboard de production ; ce résultat ne clôt pas R0.8 et ne remplace ni la réception complète, ni les révisions réelles, ni les critères Gold/modèles. Pas de nouvel endpoint de production. Réutiliser le parseur persisté au rebuild pour éviter une voie de parsing divergente.
+
 ## ADR-070 : preuve bornée données/contexte pour les prix RTFP natifs
 
 - **Date/statut :** 2026-10-15 UTC, adopté avant code ; réception non acquise.

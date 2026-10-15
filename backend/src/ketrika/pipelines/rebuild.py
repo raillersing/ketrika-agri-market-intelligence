@@ -154,14 +154,30 @@ def rebuild_database(
             )
 
             try:
-                parse_res = connector.parse(raw_artifact, ctx)
+                if s_rec.source_id == "wb_rtfp_mdg" and s_rec.parser_version == "2.0.0":
+                    from ketrika.connectors.rtfp_json import parse_persisted
+
+                    parse_res = parse_persisted(s, raw_artifact, proof_reader)
+                else:
+                    parse_res = connector.parse(raw_artifact, ctx)
                 for rec in parse_res.records:
-                    action, _ = load_record_with_supersession(
-                        session=s,
-                        record=rec,
-                        source_id=s_rec.source_id,
-                        source_record_id=s_rec.source_record_id,
-                    )
+                    if s_rec.source_id == "wb_rtfp_mdg" and s_rec.parser_version == "2.0.0":
+                        from ketrika.connectors.records import PriceRecord
+                        from ketrika.normalize.price_loader import load_normalized_price
+
+                        if not isinstance(rec, PriceRecord):
+                            raise ValueError("rtfp_price_record_required")
+                        loaded = load_normalized_price(
+                            s, rec, s_rec.source_id, s_rec.source_record_id
+                        )
+                        action = loaded.action
+                    else:
+                        action, _ = load_record_with_supersession(
+                            session=s,
+                            record=rec,
+                            source_id=s_rec.source_id,
+                            source_record_id=s_rec.source_record_id,
+                        )
                     if action == "inserted":
                         stats["records_inserted"] += 1
                     elif action == "superseded":
