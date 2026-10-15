@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-068 : preuve de rejeu par projection complète et confinement système
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant implémentation R0.8 ; réception non acquise.
+- **Contexte :** le rebuild actuel vérifie HTTP_OFFLINE et certains comptes ; cela ne démontre ni absence de socket réseau ni identité du contenu. Le seul document authentique C1 actuel est du PIB, incompatible avec les observations existantes.
+- **Décision :** produire des projections de toutes les colonnes des sept tables obs et des douze vues Gold, même vides. Canonicaliser seulement observation_id/event_id par empreinte du contenu métier de leur ligne, et superseded_by/observation_id Gold par ce mapping contrôlé. Seul ingested_at est exclu des observations et de gold.price_obs_current. SourceRecord et référentiels restent ceux du clone et leurs UUID ne sont pas ignorés ; leurs inventaires doivent rester identiques. Valeurs nulles, bruts, unités, périodes, provenance, evidence, statuts et révisions sont conservés. Une référence absente/ambiguë, colonne ou table manquante refuse la projection. Aucun arrondi des montants.
+- **Confinement :** phase parse/normalize/load dans un conteneur Docker network=none, accès PostgreSQL par socket Unix dédiée ; copie locale readonly des objets Bronze vérifiés avant confinement. Un HTTP_OFFLINE seul ou un mock n'est jamais une preuve réseau. Vérifier avant/après toutes versions Bronze ; aucune écriture à l'original. Prévisions et modèle/dataset versionnés restent une étape séparée explicite, pas une exclusion silencieuse d'une réussite complète.
+- **Réception :** dérive d'une valeur à comptes égaux et rupture d'un lien détectées ; UUID/heure d'ingestion seulement différents acceptés. Corpus synthétique sert aux tests logiciels, jamais à DONE R0.8 ni au gate authentique. Acquisition publique conforme à traiter avant qualification ; aucune reclassification du PIB en prix, aucune réactivation de HDX/NASA désactivés.
+- **Alternatives/conséquences :** hash des seuls comptes, effacement global des UUID/horodatages, rejeu sur base active et fausse authenticité refusés. Pas de nouveau schéma métier ni de dépendance. Extension de contrat ci-dessous documentée dans SPECS avant code.
+
 ## ADR-067 : empreinte du code indépendante des sorties de tests
 
 - **Date/statut :** 2026-10-14 UTC, adopté avant correction B-R064 sur work/r07-final-native-20261015.

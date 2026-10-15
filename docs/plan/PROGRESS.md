@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T07:01:20Z] R0.8 — incrément de développement, pas réception
+
+- Worktree isolé work/r08-offline-rebuild-20261015 basé main3a3ccba, sous /home/raillersing/projects/ketrika-qa-worktrees/r08-offline-rebuild-20261015 ; ancien clone et ses exports non suivis conservés (switch refusé sans écraser, nouveau worktree créé). ADR-068/SPECS avant code ; capture complète19 tables/vues, mapping révisions/Gold, diff à comptes égaux et client Bronze local readonly, injection même store parse/Gold.
+- Docker41582 FINAL0 : format/lint cinq fichiers, 55 tests/7,41 s et mypy trois modules verts ; pas de check complet répété ni livraison main/DONE. Diagnostics ciblés seulement. Ancienne erreur mypy RowMapping corrigée en projection dict explicite, aucun ignore.
+- Docker42666 FINAL0 : transaction PostgreSQL QA REPEATABLE READ READ ONLY, 19 relations capturées, empreinte003b3a46b5caa1c88402ff4587dd64977b0f9fdc40d2117082bed647e11cf0db ; 237 prix Silver/235 Gold courant/39 prévisions/2326 santé source. Aucun wipe/restore/rebuild ni modification active ; snapshot QA mixed, pas preuve offline/authentique.
+- Suite : runbook OFFLINE_REBUILD_QUALIFICATION.md détaille confinement système/socket Unix/destination distincte, paquet C1 et révisions, inventaires puis réception finale. Lecture publique RTFP possible mais métadonnées web de versions différentes : pas de CSV acquis ni corpus promu. Aucun arrêt humain exclusif déclaré ; tâches restantes conservées.
+
 ### [2026-10-15T06:50:00Z] R0.7 DONE ; R0.8 IN_PROGRESS
 
 - R0.7 intégré atomiquement main `442a20c`, source reçue `971702e`, empreinte main exacte c996b439cd1fb6be68d38c5e4b53fd6e04f5f063bf3435b4517454ee869c36ed. Windows18751 FINAL0 : 1538 backend/1395,526 s, inclusion160, couvertures91,515/86,377/90,378 %, 35 web/build15 ; E2E76493 FINAL0/9/136,27 s. Qualify R0/all codes1 attendus sans preuves ; aucun gate marché reçu.
