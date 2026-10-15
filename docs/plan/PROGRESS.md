@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T21:17:31Z] R0.8 — raccordement natif développé en parallèle de la réception
+
+- Check10643 poursuit sa suite sur04f1d39 figé (1694 collectés, lint297/types296 verts, intégrations en cours). Source/worktree/destination QA inchangés ; aucune relance ni interruption. La correction des comptes de sources n'est pas encore reçue globalement.
+- Nouveau worktree indépendant r08-native-qualification-20261016, branche work/r08-native-qualification-20261016, commit7d8ad753fff4461c1ac30aae140707e142816c6b. ADR-072/SPECS avant contrat JSON WB2.0.0 limité données/contexte ; anciens CSV non autorisés implicitement. Le chemin Silver natif délègue au parseur du batch SQL, pas à la découverte réseau.
+- Octets officiels c_rice acquis précédemment promus au corpus, annotation indépendante15 cellules et preuve de droits reliée aux octets licence/étude identiques ; aucun nouveau fetch. 12638 FINAL0 :73 fichiers/581673 octets,4 documents authentiques/4 annotations,53 cellules,8 authentic/46 synthetic/19 unverified. Rapport original d'acquisition conserve son état initial non qualifié ; validation dérivée séparée.
+- 69400 FINAL0 :129 tests/19,63 s, lint/format et types trois modules verts. Fixture autouse de registre vide conservée ; déclarations explicites testées séparément. Scan98630 FINAL0/34209 octets/sans fuite. Aucun statut produit DONE ni nouvelle réception globale déduit de cet incrément.
+- Suite précise du lot natif : conserver et relire le snapshot de référentiels au rejeu (le parcours aperçu15 prix n'en utilisait pas), puis parcours SQL/S3 isolé groupé et critères restants. Pas de lieu inventé ni passage pending vers Gold. Antigravity r1-sources-prep16262ee et ses fichiers restent intacts.
+
 ### [2026-10-15T21:04:43Z] R0.8 — inventaire des sources corrigé, réception figée reprise
 
 - Check11394 FINAL1 :427 tests verts/1 échec/702 s, assertion six jobs contre cinq après INSTAT disabled. Pas de frontend reçu. Original R0.8-disabled-source-count-red.xml conservé sur branche ; B-R070 documenté. Source déjà arrêtée selon ADR-069, aucune réactivation.

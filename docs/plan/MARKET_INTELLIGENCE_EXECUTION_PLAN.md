@@ -19,7 +19,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
 | R0.6 | MUST | DONE | A/B1/B2/C intégrés main 173c41a ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118/snapshot exact/actif préservé ; logiciel reçu, pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | main442a20c, source971702e : Windows1538/35/build, E2E9, inclusion160, empreinte exacte, préservation et gitleaks0 ; aucun KPI marché qualifié |
-| R0.8 | MUST | IN_PROGRESS | Aperçu15 prix/rejeu clone vérifiés ; inventaire sources corrigé04f1d39 après11394 rouge (427/1),34 tests ciblés verts ; check Windows10643 en cours, révisions/autres critères restants |
+| R0.8 | MUST | IN_PROGRESS | Check10643 sur04f1d39 en cours ; lot natif7d8ad75 indépendant (53 cellules/129 tests/contrat JSON/routage Silver), snapshot normalisation au rejeu/SQL-S3/révisions/réception restants |
 | R0.9 | MUST | TODO | — |
 | R1.1 | MUST | TODO | — |
 | R1.2 | MUST | TODO | — |
