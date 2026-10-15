@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-15T21:04:43Z] R0.8 — inventaire des sources corrigé, réception figée reprise
+
+- Check11394 FINAL1 :427 tests verts/1 échec/702 s, assertion six jobs contre cinq après INSTAT disabled. Pas de frontend reçu. Original R0.8-disabled-source-count-red.xml conservé sur branche ; B-R070 documenté. Source déjà arrêtée selon ADR-069, aucune réactivation.
+- Correctif test04f1d39ff819c0158461a528aa4a5d3f1a6040ca : inventaire exact cinq sources,13 assets/10 checks/5 schedules et exclusion INSTAT explicite. 59574 FINAL0/34 tests/14,46 s/lint0 ; scan49876 FINAL0/103051 octets/sans fuite. Aucun changement applicatif ni seuil scientifique, blanc terminal du XML original conservé sans réécrire la preuve.
+- Nouveau check Windows10643 EN COURS sur04f1d39 figé, même worktree corpus. Reprendre ce processus, ne pas modifier source/tests/images ni lancer de QA mutante concurrente. Antigravity r1-sources-prep observé16262ee (R1.13), propre ; aucun de ses fichiers importé/modifié.
+- Aperçu et rejeu15 prix restent les preuves fonctionnelles précédentes, pas réception globale ni révision réelle. R0.8 IN_PROGRESS, aucun tag et aucune clôture produit anticipée.
+
 ### [2026-10-15T20:21:35Z] R0.8 — rejeu de quinze prix réussi, réception corrective connue
 
 - Instruction utilisateur : garder le plan, livrer minimum fonctionnel et reporter les raffinements hors critères ; Antigravity travaille simultanément. COORDINATION_ACTIVE.md : Codex R0.8/R0.9, Antigravity r1-sources-prep/d6057fe, journal R1.12 en cours et changements UI/tests préservés. Aucun statut local R1 reçu automatiquement sur main, aucune fusion de travail en cours.
