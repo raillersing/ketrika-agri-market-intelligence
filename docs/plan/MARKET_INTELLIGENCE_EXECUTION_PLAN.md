@@ -66,7 +66,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R4.11 | MUST | DONE | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie, 7 tests verts, couverture 92% |
 | R4.12 | MUST | DONE | Gate agroclimat/météo validé, 8 critères normatifs prouvés, couverture ketrika.geo 92%, tag mi-r4-qualified, 8 tests dédiés verts, 66 tests agroclimat verts, 0 fausse probabilité, zéro faux zéro |
 | R5.1 | MUST | DONE | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole de relevé anti-PII, prévention double comptage, 7 tests verts, couverture 93% |
-| R5.2 | MUST | TODO | — |
+| R5.2 | MUST | DONE | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 |
 | R5.3 | MUST | TODO | — |
 | R5.4 | MUST | TODO | — |
 | R5.5 | SHOULD | TODO | — |

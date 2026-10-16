@@ -64,6 +64,7 @@ class StockRecord(RecordBase):
         "location_raw",
         "period_start",
         "period_end",
+        "target",
     )
 
     product_raw: str
@@ -76,6 +77,10 @@ class StockRecord(RecordBase):
     stock_status: str | None = None  # sufficient | tight | shortage | unknown
     coverage_days: float | None = None
     published_at: datetime | None = None
+    target: str = "stock_inventory"  # stock_inventory | inflow_arrival | harvest_volume | outflow_sales
+    measurement_mode: str = "declared_trader"  # measured_scale | declared_trader | estimated_survey
+    market_type: str | None = None  # primary_collection | regional_wholesale | terminal_urban | retail_local
+    market_code: str | None = None
 
 
 class TradeFlowRecord(RecordBase):

@@ -3,6 +3,22 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T02:11:00Z] R5.2 — DONE, importation des quantités légalement disponibles et extension StockRecord
+
+- Dépendances relues : R5.1 (DONE), R1.2 (DONE), R2.1 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-089 dans `docs/plan/DECISIONS.md` (extension de `StockRecord` et `obs.stock_observation` avec `target`, `measurement_mode`, `market_type` ; connecteur `MarketSupplyConnector` pour imports publics et dépôts institutionnels, traçabilité Bronze SHA-256 intégrale, validation anti-PII automatique et supersession non destructrice).
+  2. Créer la migration Alembic `backend/alembic/versions/0016_supply_arrival_and_stock_targets.py` et appliquer la migration sur PostgreSQL (`alembic upgrade head`).
+  3. Mettre à jour le modèle SQLAlchemy `StockObservation` dans `backend/src/ketrika/core/models/db.py`.
+  4. Mettre à jour le modèle Pydantic `StockRecord` dans `backend/src/ketrika/connectors/records.py`.
+  5. Implémenter le connecteur `backend/src/ketrika/connectors/market_supply.py` et l'enregistrer dans `backend/src/ketrika/connectors/registry.py`.
+  6. Déposer le corpus authentique dans `backend/tests/fixtures/market_supply/` (relevés ODR Anosibe et Ambatondrazaka 2024, et cas de test de rejet PII).
+  7. Écrire la suite de tests unitaires `backend/tests/unit/test_connector_market_supply.py` incluant l'insertion, l'idempotence et la supersession non-destructrice.
+  8. Valider Ruff clean et Mypy strict clean (0 warning, 0 error).
+  9. Rédiger le dossier de preuve normatif `docs/evidence/R5.2/README.md`.
+- Résultat : Tâche R5.2 entièrement qualifiée et validée (DONE). 13/13 tests passés en 11.86s, couverture `ketrika.connectors.market_supply` 84%, `ketrika.supply` 94%.
+- Preuve : `docs/evidence/R5.2/README.md`.
+
 ### [2026-10-17T02:00:00Z] R5.1 — DONE, définition des cibles et protocole de relevé des quantités et approvisionnements
 
 - Dépendances relues : R2.1 (DONE), R2.4 (DONE), R4.7 (DONE).
@@ -1034,7 +1050,7 @@
 | R4.11 | MUST | DONE | 2026-10-16T22:05:00Z | 2026-10-16T22:30:00Z | ddcf4fd | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie | 7 tests dédiés verts, 39 tests web verts, Next build 16 routes, couverture 92% |
 | R4.12 | MUST | DONE | 2026-10-17T01:35:00Z | 2026-10-17T01:50:00Z | 7c4fcfe | Gate agroclimat/météo validé, 8 critères normatifs prouvés, couverture ketrika.geo 92%, tag mi-r4-qualified | 8 tests dédiés verts, 66 tests agroclimat verts, 0 fausse probabilité, zéro faux zéro |
 | R5.1 | MUST | DONE | 2026-10-17T02:00:00Z | 2026-10-17T02:15:00Z | 4a6a28c | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole de relevé anti-PII, prévention double comptage | 7 tests dédiés verts, couverture ketrika.supply 93% |
-| R5.2 | MUST | TODO | — | — | — | — | — |
+| R5.2 | MUST | DONE | 2026-10-17T02:11:00Z | [evidence](file:///home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep/docs/evidence/R5.2/README.md) | commit_pending | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 | Qualifié, 13/13 tests verts, 84% cov |
 | R5.3 | MUST | TODO | — | — | — | — | — |
 | R5.4 | MUST | TODO | — | — | — | — | — |
 | R5.5 | SHOULD | TODO | — | — | — | — | — |

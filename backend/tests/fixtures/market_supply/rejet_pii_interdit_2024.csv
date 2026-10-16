@@ -1,0 +1,2 @@
+target,measurement_mode,market_type,market_code,location_raw,product_raw,period_start,period_end,quantity_raw,unit_raw,trader_name,phone
+inflow_arrival,measured_scale,terminal_urban,MKT_ANOSIBE,Anosibe,rice_vary_gasy,2024-05-01,2024-05-07,100.0,tonne,Jean Rakoto,0341234567

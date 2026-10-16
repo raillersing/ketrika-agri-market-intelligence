@@ -15,6 +15,7 @@ from ketrika.connectors.faostat import FaostatConnector
 from ketrika.connectors.fewsnet_ipc import FewsnetConnector, IpcConnector
 from ketrika.connectors.instat_nipc import InstatNipcConnector
 from ketrika.connectors.instat_tbe import Connector as InstatTbeConnector
+from ketrika.connectors.market_supply import MarketSupplyConnector
 from ketrika.connectors.meteo_mg import MeteoMgConnector
 from ketrika.connectors.miasa_odr import MiasaOdrConnector
 from ketrika.connectors.mincc_ppn import MinccPpnConnector
@@ -46,6 +47,7 @@ _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "miasa_odr": MiasaOdrConnector,
     "mincc_ppn": MinccPpnConnector,
     "douanes_stats": DouanesStatsConnector,
+    "market_supply": MarketSupplyConnector,
 }
 
 

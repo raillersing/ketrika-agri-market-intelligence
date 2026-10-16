@@ -2,6 +2,29 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-089 : extension de StockRecord et ingestion des flux d'arrivages et stocks légaux (R5.2)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.2 ; Phase R5.
+- **Contexte :** La tâche R5.2 impose d'importer les quantités physiques légalement disponibles (ODR, MinAE, dépôts institutionnels) et de relier ces observations à la couche Bronze immuable avec calcul automatique d'empreinte SHA-256. Le modèle `obs.stock_observation` existant ne distingue pas explicitement la cible métrologique (`stock_inventory` vs `inflow_arrival` vs `harvest_volume`) ni le mode de mesure (`measured_scale` vs `declared_trader` vs `estimated_survey`), ce qui limite la granularité d'analyse demandée par SPECS §27 et expose aux risques d'agrégation hybride.
+- **Décision :**
+  1. **Migration Alembic 0016 (`0016_supply_arrival_and_stock_targets.py`) :**
+     - Ajouter les colonnes `target TEXT NOT NULL DEFAULT 'stock_inventory'`, `measurement_mode TEXT NOT NULL DEFAULT 'declared_trader'`, `market_type TEXT` à `obs.stock_observation`.
+     - Index partiel unique `uq_stock_observation_active` sur `(natural_key, target)` où `superseded_by IS NULL` pour garantir l'unicité par cible tout en conservant les versions historiques.
+  2. **Extension du modèle `StockRecord` (`ketrika.connectors.records`) :**
+     - Intégrer les champs optionnels rétrocompatibles `target: str = "stock_inventory"`, `measurement_mode: str = "declared_trader"`, `market_type: str | None = None`.
+  3. **Création du connecteur `MarketSupplyConnector` (`source_id="market_supply"`) :**
+     - Connecteur public et d'import institutionnel ingérant les fichiers de relevés de marchés (arrivages et stocks d'Anosibe, Boeny, Alaotra).
+     - Vérification anti-PII stricte via `validate_payload_no_pii` avant toute écriture.
+     - Écriture Bronze immuable et liaison `meta.source_record`.
+     - Normalisation en `StockRecord` avec conversions métriques en kilogrammes et calcul de l'empreinte `natural_key`.
+     - Support complet de la supersession non destructrice (`superseded_by`).
+- **Alternatives rejetées :**
+  - Créer une table `obs.arrival_observation` séparée dupliquant 90% des colonnes de `obs.stock_observation` (rejeté, complexification inutile du schéma et des requêtes analytiques Gold).
+  - Utiliser des données de quantités synthétiques pour qualification (rejeté, formellement prohibé par AGENTS.md §3.1 et R5.2).
+- **Conséquences :**
+  - `obs.stock_observation` devient le conteneur unifié des stocks et des flux d'arrivages de marché.
+  - La provenance Bronze SHA-256 est garantie à 100%.
+
 ## ADR-088 : architecture de relevé des quantités, cibles d'approvisionnement, contrat anti-PII et prévention du double comptage (R5.1)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R5.1 ; Phase R5.

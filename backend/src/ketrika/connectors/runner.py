@@ -257,6 +257,9 @@ def load_stock_record_with_supersession(
         except ValueError:
             q_val = None
 
+    target_val = record.target or "stock_inventory"
+    measurement_mode_val = record.measurement_mode or "declared_trader"
+
     if current_obs is None:
         new_obs = StockObservation(
             observation_id=uuid.uuid4(),
@@ -272,6 +275,10 @@ def load_stock_record_with_supersession(
             unit_raw=record.unit_raw,
             stock_status=record.stock_status,
             coverage_days=record.coverage_days,
+            target=target_val,
+            measurement_mode=measurement_mode_val,
+            market_type=record.market_type,
+            market_code=record.market_code,
             extraction_method=record.extraction_method,
             evidence=record.evidence,
             confidence=record.confidence,
@@ -290,6 +297,9 @@ def load_stock_record_with_supersession(
         and current_val == q_val
         and current_obs.unit_raw == record.unit_raw
         and current_obs.stock_status == record.stock_status
+        and getattr(current_obs, "target", None) == target_val
+        and getattr(current_obs, "measurement_mode", None) == measurement_mode_val
+        and getattr(current_obs, "market_code", None) == record.market_code
     ):
         return "idempotent_skipped", current_obs.observation_id
 
@@ -315,6 +325,10 @@ def load_stock_record_with_supersession(
         unit_raw=record.unit_raw,
         stock_status=record.stock_status,
         coverage_days=record.coverage_days,
+        target=target_val,
+        measurement_mode=measurement_mode_val,
+        market_type=record.market_type,
+        market_code=record.market_code,
         extraction_method=record.extraction_method,
         evidence=record.evidence,
         confidence=record.confidence,

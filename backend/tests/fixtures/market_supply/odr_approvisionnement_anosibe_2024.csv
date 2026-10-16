@@ -1,0 +1,8 @@
+target,measurement_mode,market_type,market_code,location_raw,product_raw,period_start,period_end,quantity_raw,unit_raw,stock_status,published_at
+inflow_arrival,measured_scale,terminal_urban,MKT_ANOSIBE,Marché Anosibe Antananarivo,rice_vary_gasy,2024-05-01,2024-05-07,180.0,tonne,sufficient,2024-05-08T00:00:00Z
+inflow_arrival,measured_scale,terminal_urban,MKT_ANOSIBE,Marché Anosibe Antananarivo,rice_makalioka,2024-05-01,2024-05-07,95.0,tonne,sufficient,2024-05-08T00:00:00Z
+inflow_arrival,measured_scale,terminal_urban,MKT_ANOSIBE,Marché Anosibe Antananarivo,maize,2024-05-01,2024-05-07,600.0,bag_50kg,sufficient,2024-05-08T00:00:00Z
+stock_inventory,declared_trader,terminal_urban,MKT_ANOSIBE,Marché Anosibe Antananarivo,rice_vary_gasy,2024-05-07,2024-05-07,450.0,tonne,sufficient,2024-05-08T00:00:00Z
+stock_inventory,declared_trader,terminal_urban,MKT_ANOSIBE,Marché Anosibe Antananarivo,rice_makalioka,2024-05-07,2024-05-07,210.0,tonne,sufficient,2024-05-08T00:00:00Z
+inflow_arrival,measured_scale,terminal_urban,MKT_ANOSIBE,Marché Anosibe Antananarivo,rice_vary_gasy,2024-05-08,2024-05-14,210.0,tonne,sufficient,2024-05-15T00:00:00Z
+stock_inventory,declared_trader,terminal_urban,MKT_ANOSIBE,Marché Anosibe Antananarivo,rice_vary_gasy,2024-05-14,2024-05-14,520.0,tonne,sufficient,2024-05-15T00:00:00Z
