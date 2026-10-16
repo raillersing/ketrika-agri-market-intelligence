@@ -2,6 +2,19 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-072 : vues marché et observatoire économique, route dédiée `/economy`, fiches métriques et transparence de couverture (R2.10)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R2.10 ; Phase R2.
+- **Contexte :** La phase R2 requiert l'exposition frontend des observatoires de marché et d'économie (directive R2.10). Les visualisations doivent refléter fidèlement les principes d'honnêteté et de traçabilité : filtres cohérents, séparation stricte des dimensions macroéconomiques sans score synthétique inventé, intégration de la matrice de couverture et des lacunes calendaires, présence systématique de la provenance et des badges de typage (`ValueKindBadge`), et conformité mobile/accessibilité WCAG AA.
+- **Décision :**
+  1. **Nouvelle route `/economy` (`web/src/app/economy/page.tsx`) :** Observatoire économique interprétable articulé autour des 5 dimensions étanches d'ADR-070 (`inflation`, `exchange_rate`, `fuel_energy`, `external_trade`, `real_activity`). Chaque dimension expose son statut de complétude (`complete`, `partial`, `no_data`), ses indicateurs avec unités et sources réelles, ses fiches métriques normatives (formule, lag de publication, limitations) et le contexte d'articulation de transmission sur le pilote rizicole (ex: comparaison du coût CAF à l'importation avec le prix de marché local).
+  2. **Navigation globale (`web/src/components/layout/Sidebar.tsx`) :** Raccordement de `/economy` sous le libellé « Économie & Conjoncture » avec icône adaptée.
+  3. **Enrichissement de la vue Marché (`web/src/app/prices/page.tsx`) :** Intégration d'un composant de couverture de marché restituant la complétude des séries (sources indépendantes, familles, part imputée, ancienneté et lacunes calendaires).
+  4. **Transparence et provenance totale :** Utilisation systématique de `ValueKindBadge` et de `ProvenanceLink` vers `/observations/[id]` sur chaque chiffre et graphique. Interdiction formelle de valeurs de remplissage ou de graphiques fictifs.
+  5. **Mise à jour des spécifications :** Formalisation de `/economy` dans `docs/plan/SPECS.md` §22.
+- **Alternatives rejetées :** Synthétiser un indice unique de performance économique (rejeté par R2.8/R2.10), superposer des courbes d'inflation et de prix au kilo sur un même axe sans avertissement (rejeté pour cause d'incompatibilité dimensionnelle).
+- **Conséquences :** Expérience utilisateur fluide et pédagogique, clarté absolue sur la provenance et les limites méthodologiques des données macroéconomiques et de marché.
+
 ## ADR-071 : extension des contrats d'API, pagination normative, export CSV et exposition systématique des métadonnées de qualification (R2.9)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R2.9 ; Phase R2.

@@ -7,6 +7,7 @@ import {
   Activity,
   AlertTriangle,
   ArrowLeftRight,
+  BarChart3,
   CheckSquare,
   CloudSun,
   Cpu,
@@ -38,6 +39,7 @@ const NAV_SECTIONS: NavSection[] = [
     items: [
       { label: "Vue d'ensemble", href: "/", icon: LayoutDashboard },
       { label: "Prix vivriers", href: "/prices", icon: TrendingUp },
+      { label: "Économie & Conjoncture", href: "/economy", icon: BarChart3 },
       { label: "Carte des marchés", href: "/map", icon: Map },
       { label: "Commerce extérieur", href: "/trade", icon: ArrowLeftRight },
     ],

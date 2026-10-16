@@ -1413,7 +1413,8 @@ Formats : nombres en `fr-FR` avec espace fine (`2 850 Ar/kg`), dates `MMM yyyy`.
 |---|---|---|
 | `/login` | Formulaire email + mot de passe | public |
 | `/` (Vue d'ensemble) | Filtres (produit, région, niveau d'acteur). Cartes KPI : Market Health (avec composantes), prix médian, variation m/m et a/a, alertes actives, fraîcheur des données. Carte choroplèthe régionale. Courbe de prix avec bande de prévision p10–p90. Dernières alertes | client |
-| `/prices` | Explorateur multi-séries (par niveau d'acteur et par source), tableau, export CSV | client |
+| `/prices` | Explorateur multi-séries (par niveau d'acteur et par source), matrice de couverture et lacunes calendaires, tableau, export CSV (R2.4, R2.10) | client |
+| `/economy` | Observatoire économique par dimension étanche (inflation, change, carburants, commerce, activité), fiches métriques normatives, articulation de transmission pilote rizicole (ADR-070, ADR-072, R2.10) | client |
 | `/map` | Carte plein écran, sélecteur produit/mois, infobulle avec lien vers les observations | client |
 | `/trade` | Imports/exports mensuels par produit, dépendance aux importations | client |
 | `/climate` | Anomalies de pluie par district, calendrier cultural | client |

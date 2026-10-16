@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Download, RefreshCw, Search, Table, TrendingUp } from "lucide-react";
+import { Activity, CheckCircle2, Download, Layers, RefreshCw, Search, Table, TrendingUp } from "lucide-react";
 import { formatMonthYear, formatPrice } from "@/lib/formatters";
 import { ValueKindBadge } from "@/components/ui/ValueKindBadge";
 import { SourceBadge } from "@/components/ui/SourceBadge";
@@ -22,6 +22,20 @@ interface PriceRow {
   observationId?: string;
 }
 
+interface SeriesCoverageGaps {
+  product_code: string;
+  location_pcode: string;
+  location_name?: string | null;
+  actor_level: string;
+  expected_months: number;
+  observed_months: number;
+  missing_months: number;
+  coverage_ratio: number;
+  missing_months_list: string[];
+  source_families: string[];
+  is_pilot_candidate: boolean;
+}
+
 function PricesContent() {
   const searchParams = useSearchParams();
   const product = searchParams.get("product") || "rice_milled";
@@ -32,6 +46,7 @@ function PricesContent() {
   const [error, setError] = useState<string | null>(null);
   const [chartData, setChartData] = useState<PriceDataPoint[]>([]);
   const [tableData, setTableData] = useState<PriceRow[]>([]);
+  const [coverageGaps, setCoverageGaps] = useState<SeriesCoverageGaps | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -45,9 +60,17 @@ function PricesContent() {
         if (region) params.set("location", region);
         if (actor) params.set("actor_level", actor);
 
-        const res = await fetch(`${apiUrl}/v1/prices?${params.toString()}`, {
-          credentials: "include",
-        });
+        const [res, gapsRes] = await Promise.all([
+          fetch(`${apiUrl}/v1/prices?${params.toString()}`, { credentials: "include" }),
+          fetch(
+            `${apiUrl}/v1/market/coverage/gaps?product=${encodeURIComponent(
+              product
+            )}&location=${encodeURIComponent(region || "MDG11")}&actor_level=${encodeURIComponent(
+              actor || "retail"
+            )}`,
+            { credentials: "include" }
+          ).catch(() => null),
+        ]);
 
         if (!res.ok) {
           throw new Error(`Erreur API: ${res.statusText}`);
@@ -77,6 +100,13 @@ function PricesContent() {
           sourceId: r.sourceId,
         }));
         setChartData(chartPts);
+
+        if (gapsRes && gapsRes.ok) {
+          const gapsData: SeriesCoverageGaps = await gapsRes.json();
+          setCoverageGaps(gapsData);
+        } else {
+          setCoverageGaps(null);
+        }
       } catch (err: any) {
         setError(err.message || "Impossible de charger les données de prix");
       } finally {
@@ -135,6 +165,83 @@ function PricesContent() {
       {error && (
         <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs flex items-center justify-between">
           <span>{error}</span>
+        </div>
+      )}
+
+      {/* Series Coverage and Quality Metrics (R2.4, R2.10) */}
+      {coverageGaps && (
+        <div className="glass-card rounded-2xl p-4 border border-white/[0.08] bg-slate-900/40">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-emerald-400" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-white font-mono">
+                Couverture de Série & Audit des Lacunes Calendaires (R2.4)
+              </h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <span
+                className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono border ${
+                  coverageGaps.is_pilot_candidate
+                    ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
+                    : "bg-slate-800 text-slate-400 border-white/[0.05]"
+                }`}
+              >
+                {coverageGaps.is_pilot_candidate ? "✓ Candidat Pilote ML" : "Série Hors Pilote"}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
+            <div className="bg-slate-950/60 p-2.5 rounded-xl border border-white/[0.04]">
+              <span className="text-[10px] font-mono text-slate-400 block">Complétude</span>
+              <span className="text-base font-bold font-mono text-emerald-400 mt-0.5 block">
+                {(coverageGaps.coverage_ratio * 100).toFixed(1)} %
+              </span>
+            </div>
+
+            <div className="bg-slate-950/60 p-2.5 rounded-xl border border-white/[0.04]">
+              <span className="text-[10px] font-mono text-slate-400 block">Continuité</span>
+              <span className="text-base font-bold font-mono text-white mt-0.5 block">
+                {coverageGaps.observed_months} / {coverageGaps.expected_months} mois
+              </span>
+            </div>
+
+            <div className="bg-slate-950/60 p-2.5 rounded-xl border border-white/[0.04]">
+              <span className="text-[10px] font-mono text-slate-400 block">Lacunes Calendaires</span>
+              <span
+                className={`text-base font-bold font-mono mt-0.5 block ${
+                  coverageGaps.missing_months === 0 ? "text-emerald-400" : "text-amber-400"
+                }`}
+              >
+                {coverageGaps.missing_months} mois
+              </span>
+            </div>
+
+            <div className="bg-slate-950/60 p-2.5 rounded-xl border border-white/[0.04]">
+              <span className="text-[10px] font-mono text-slate-400 block">Familles Sources</span>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {coverageGaps.source_families.length > 0 ? (
+                  coverageGaps.source_families.map((fam) => (
+                    <span
+                      key={fam}
+                      className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-slate-800 text-slate-300 border border-white/[0.05]"
+                    >
+                      {fam}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xs text-slate-500">—</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {coverageGaps.missing_months_list.length > 0 && (
+            <div className="mt-3 pt-2.5 border-t border-white/[0.04] text-[11px] text-amber-300/90 flex items-center gap-1.5 font-mono">
+              <span className="font-semibold">Mois manquants sans observation :</span>
+              <span>{coverageGaps.missing_months_list.join(", ")}</span>
+            </div>
+          )}
         </div>
       )}
 

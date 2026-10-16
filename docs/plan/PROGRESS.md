@@ -3,6 +3,34 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T12:08:00Z] R2.10 — DONE, livraison des vues marché et économie
+
+- Dépendances relues : R2.9 (exposition API / limites / pagination / CSV).
+- Mini-plan exécuté :
+  1. Rédiger ADR-072 dans `docs/plan/DECISIONS.md` et mettre à jour `docs/plan/SPECS.md` (§22) pour la route `/economy`.
+  2. Créer la page de l'observatoire économique `web/src/app/economy/page.tsx` articulée autour des 5 dimensions autonomes.
+  3. Intégrer les fiches métriques normatives ADR-070, contextes de transmission et gestion des valeurs nulles/raisons.
+  4. Enrichir la vue marché (`web/src/app/prices/page.tsx`) avec la couverture de séries, lacunes et part imputée.
+  5. Systématiser les badges `ValueKindBadge` et liens `ProvenanceLink` vers `/observations/[id]` sur chaque chiffre.
+  6. Raccorder la route `/economy` dans la barre de navigation latérale `web/src/components/layout/Sidebar.tsx`.
+  7. Assurer le respect des règles d'accessibilité WCAG AA, responsive mobile >= 390px et états d'erreur/absence explicites.
+  8. Valider le typage strict TypeScript (`tsc --noEmit` code 0) et le linting frontend (`next lint` code 0).
+  9. Développer et valider les tests unitaires et d'intégration frontend (`web/src/economy.test.ts`, 39 tests vitest verts) et étendre `scripts/qa-e2e.py`.
+  10. Valider la non-régression globale backend (143 tests verts) et rédiger le dossier de preuve `docs/evidence/R2.10/README.md`.
+- Environnement : Docker ketrika-web:dev, ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes :
+  - `npm run typecheck` (tsc --noEmit, exit 0, 0 erreur)
+  - `npm run test` (vitest run, 39 passed in 5 files, exit 0)
+  - `npm run lint` (next lint, exit 0, 0 warning, 0 error)
+  - `npm run build` (next build, exit 0, 16 routes compilées)
+  - `uv run ruff check /workspace/scripts/qa-e2e.py` (exit 0)
+  - Suite de non-régression backend 143 passed in 49.46s (exit 0).
+- Résultats : Vues marché et économie opérationnelles ; route `/economy` déployée avec ses 5 dimensions étanches, 14 fiches métriques normatives et contexte pilote ; vue `/prices` enrichie avec complétude et lacunes calendaires ; parité mobile 390px validée.
+- Qualification : Vues marché et économie QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R2.10/README.md.
+- Reprise : Tâche MUST éligible suivante R2.11 (Gate observatoire décisionnel).
+
 ### [2026-10-16T11:48:00Z] R2.9 — DONE, exposition des données et de leurs limites dans l'API
 
 - Dépendances relues : R2.3 (DQ/agrégations), R2.4 (couverture/pilote), R2.8 (tableau économique).
