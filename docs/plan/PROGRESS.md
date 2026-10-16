@@ -1050,7 +1050,7 @@
 | R4.11 | MUST | DONE | 2026-10-16T22:05:00Z | 2026-10-16T22:30:00Z | ddcf4fd | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie | 7 tests dédiés verts, 39 tests web verts, Next build 16 routes, couverture 92% |
 | R4.12 | MUST | DONE | 2026-10-17T01:35:00Z | 2026-10-17T01:50:00Z | 7c4fcfe | Gate agroclimat/météo validé, 8 critères normatifs prouvés, couverture ketrika.geo 92%, tag mi-r4-qualified | 8 tests dédiés verts, 66 tests agroclimat verts, 0 fausse probabilité, zéro faux zéro |
 | R5.1 | MUST | DONE | 2026-10-17T02:00:00Z | 2026-10-17T02:15:00Z | 4a6a28c | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole de relevé anti-PII, prévention double comptage | 7 tests dédiés verts, couverture ketrika.supply 93% |
-| R5.2 | MUST | DONE | 2026-10-17T02:11:00Z | [evidence](file:///home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep/docs/evidence/R5.2/README.md) | commit_pending | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 | Qualifié, 13/13 tests verts, 84% cov |
+| R5.2 | MUST | DONE | 2026-10-17T02:11:00Z | 2026-10-17T02:12:00Z | d52bef0 | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 | Qualifié, 13/13 tests verts, 84% cov |
 | R5.3 | MUST | TODO | — | — | — | — | — |
 | R5.4 | MUST | TODO | — | — | — | — | — |
 | R5.5 | SHOULD | TODO | — | — | — | — | — |
