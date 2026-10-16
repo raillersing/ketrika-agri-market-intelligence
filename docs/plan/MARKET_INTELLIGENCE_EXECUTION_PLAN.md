@@ -19,7 +19,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
 | R0.6 | MUST | DONE | A/B1/B2/C intégrés main 173c41a ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118/snapshot exact/actif préservé ; logiciel reçu, pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | main442a20c, source971702e : Windows1538/35/build, E2E9, inclusion160, empreinte exacte, préservation et gitleaks0 ; aucun KPI marché qualifié |
-| R0.8 | MUST | IN_PROGRESS | f230a50 : check3355 FINAL0/1721 backend/35 web/build ; rejeu15022 sans réseau,15 prix et snapshot,19 projections identiques. Révisions authentiques/inventaire S3 original/recalcul scientifique restants |
+| R0.8 | MUST | IN_PROGRESS | Correction ADR-074 contexte partagé :32 unités/corpus et1 SQL/S3 verts,1 supersession/14 inchangés/retry15 skips ; réception du nouveau lot à suivre. Révisions authentiques/recalcul scientifique non qualifiés |
 | R0.9 | MUST | TODO | — |
 | R1.1 | MUST | TODO | — |
 | R1.2 | MUST | TODO | — |

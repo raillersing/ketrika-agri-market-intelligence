@@ -101,3 +101,15 @@ du paquet vérifié, avec un identifiant de scénario, afin de respecter l'unici
 source/SHA. Ces octets dérivés sont explicitement synthetic/manual_upload ; ils
 ne qualifient jamais une acquisition officielle ou une révision historique.
 Les octets institutionnels inchangés restent contrôlés dans le corpus authentique.
+
+### Éditions successives et contexte partagé (ADR-074)
+
+Réutiliser le SourceRecord de l'étude si ses octets sont inchangés : ne pas
+dupliquer l'identité source/SHA. Le parseur traite une étude pure sans générer
+de prix même si elle appartient à plusieurs lots. Une donnée réutilisée doit
+retrouver le même contexte exact dans tous ses lots vérifiés (borne1000) ;
+divergence ou corruption refuse, sans choisir la dernière version arbitrairement.
+Le scénario SQL de deux éditions synthetic conserve l'ancienne valeur, crée
+une supersession pour la seule valeur modifiée, conserve les quatorze autres,
+et ne crée aucun doublon à la tentative suivante. Cette preuve logicielle ne
+remplace toujours pas une paire d'éditions officielles anciennes/nouvelles.

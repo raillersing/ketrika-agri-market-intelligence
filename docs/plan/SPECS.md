@@ -1127,6 +1127,13 @@ qualificateur de clone garde son inventaire complet sans filtre.
 
 ### 11.1 Ordre d'extraction
 
+ADR-074 : une étude WB inchangée peut appartenir à plusieurs lots ; vérifier
+ses octets et son appartenance immuable avant retour sans prix. Une donnée
+multilot est acceptée uniquement si chaque lot vérifié possède un contexte
+identique sur UUID/objet/SHA/MIME/URL/publication ; au plus1000 lots, sinon refus.
+Contexte absent, divergent ou lot invalide : refus, sans choix chronologique
+implicite. Cette compatibilité ne qualifie pas une édition historique réelle.
+
 1. **Déterministe :** tables CSV, XLSX, JSON ou HTML (`selectolax`), tables PDF (`pdfplumber` / `camelot`).
 2. **LLM** (si le déterministe échoue, est partiel, ou si `dual_extraction: true` pour la source) : document envoyé **page par page** (texte + image de la page si PDF), avec un **schéma JSON strict** dérivé du modèle Pydantic cible.
 3. **Réconciliation** (`reconcile.py`) :

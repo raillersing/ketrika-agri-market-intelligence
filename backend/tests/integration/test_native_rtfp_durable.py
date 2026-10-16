@@ -3,6 +3,7 @@
 import hashlib
 import json
 from datetime import UTC, datetime
+from decimal import Decimal
 from uuid import uuid4
 
 import pytest
@@ -134,3 +135,90 @@ def test_native_batch_records_reusable_reference_identity_without_collecting(mon
         if stats["n_inserted"]:
             assert len(rows) == 15
         assert all(row.observed_or_imputed == "imputed" for row in rows)
+
+    # A synthetic revised edition reuses exactly the SAME study SourceRecord.
+    # This tests append-only mechanics, not institutional historical revisions.
+    document = json.loads(store.get(artifacts[0].object_key))
+    original_price = Decimal(str(document["data"][0]["c_rice"]))
+    document["data"][0]["c_rice"] = str(original_price + 1)
+    document["_ketrika_test"]["edition"] = "synthetic-revision"
+    archived = store.put(
+        source_id="wb_rtfp_mdg",
+        content=json.dumps(document).encode(),
+        mime_type="application/json",
+        url=artifacts[0].url,
+        retrieved_via="manual_upload",
+        fetched_at=datetime.now(UTC),
+        http_status=0,
+        http_headers={"x-ketrika-scope": "synthetic-revision-not-official"},
+    )
+    revised_id = uuid4()
+    revised = RawArtifact(
+        str(revised_id),
+        archived.object_key,
+        archived.content_sha256,
+        "application/json",
+        artifacts[0].url,
+        True,
+    )
+    with get_session() as session:
+        session.add(
+            SourceRecord(
+                source_record_id=revised_id,
+                source_id="wb_rtfp_mdg",
+                source_url=revised.url,
+                object_key=revised.object_key,
+                content_sha256=revised.content_sha256,
+                mime_type="application/json",
+                fetched_at=datetime.now(UTC),
+                parser_version="2.0.0",
+                extraction_status="pending",
+                retrieved_via="manual_upload",
+            )
+        )
+
+    def register_edition(new_artifacts):
+        identifier = uuid4()
+        with get_session() as session:
+            session.add(
+                IngestionRun(
+                    run_id=identifier,
+                    source_id="wb_rtfp_mdg",
+                    started_at=datetime.now(UTC),
+                    status="running",
+                    n_fetched=2,
+                    n_new_artifacts=0,
+                )
+            )
+            session.flush()
+            edition = BronzeBatch("wb_rtfp_mdg", identifier, "2.0.0", new_artifacts)
+            persist_bronze_batch(session, edition)
+            register_document_partitions(session, edition)
+        return edition
+
+    revised_batch = register_edition((revised, artifacts[1]))
+    revised_stats = execute_durable_silver(connector, context, revised_batch)
+    assert revised_stats["n_superseded"] == 1
+    assert revised_stats["n_skipped"] == 14
+    assert revised_stats["n_rejected"] == 0
+    retry_batch = register_edition((revised, artifacts[1]))
+    retry_stats = execute_durable_silver(connector, context, retry_batch)
+    assert retry_stats["n_skipped"] == 15
+    assert retry_stats["n_inserted"] == retry_stats["n_superseded"] == 0
+    with get_session() as session:
+        latest = session.scalar(
+            select(PriceObservation).where(
+                PriceObservation.source_record_id == revised_id,
+                PriceObservation.superseded_by.is_(None),
+            )
+        )
+        assert latest is not None and latest.price_value == original_price + 1
+        previous = session.scalar(
+            select(PriceObservation).where(
+                PriceObservation.superseded_by == latest.observation_id,
+            )
+        )
+        assert previous is not None and previous.price_value == original_price
+        revised_record = session.get(SourceRecord, revised_id)
+        assert revised_record is not None
+        assert revised_id in resolve_snapshot_keys(session, [revised_record], store)

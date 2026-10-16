@@ -2,6 +2,14 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-074 : contexte WB réutilisé entre éditions et tentatives
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code.
+- **Contexte :** l'unicité source/SHA implique qu'une étude inchangée est réutilisée par plusieurs lots ; le refus de tout SourceRecord multilot empêche les éditions suivantes et leur rejeu.
+- **Décision :** une étude pure valide sa propre appartenance à un lot immuable et produit zéro prix ; les documents de données peuvent appartenir à plusieurs lots seulement si tous les lots vérifiés lient exactement le même contexte (UUID, objet, SHA, MIME, URL, publication). Toute divergence, absence, lot corrompu ou version inconnue refuse. Parcours données borné à1000 lots, dépassement explicite, jamais sélection arbitraire du plus récent.
+- **Limites :** aucun prix ni ancienne édition fabriqué ; les nouveaux tests de deux éditions restent synthetic. Référentiels de normalisation et identité de traitement conservent leurs gardes ; pas de qualification automatique des révisions institutionnelles.
+- **Alternative rejetée :** prendre le premier/dernier contexte pour une donnée ambiguë, ou dupliquer le SourceRecord malgré l'unicité source/SHA.
+
 ## ADR-073 : rejeu des référentiels configurés par registre immuable
 
 - **Date/statut :** 2026-10-15 UTC, adopté avant code.

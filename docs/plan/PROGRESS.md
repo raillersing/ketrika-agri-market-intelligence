@@ -3,6 +3,11 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T10:44:54Z] R0.8 — prise en charge des contextes partagés entre éditions
+
+- Mini-plan : reproduire deux lots utilisant la même étude ; ADR-074/SPECS avant correction ; accepter uniquement un contexte identique pour une donnée multilot ; vérifier anciennes/nouvelles valeurs et refus ambigus ; figer le lot et recevoir une fois. Les éditions de test restent synthetic, pas de fausse archive officielle. R0.8 IN_PROGRESS.
+- 85728 :32 tests/10,00 s et types du parseur verts ;98366 FINAL0 :1 SQL/S3/48,99 s,une supersession/quatorze prix inchangés,ancienne valeur conservée,contexte SourceRecord partagé et troisième lot de nouvelle tentative/15 skips/0 insertion-supersession. Aucun wipe ni modification active. Typage élargi9400 et réception complète du lot stabilisé à suivre.
+
 ### [2026-10-16T10:28:40Z] R0.8 — réception logicielle verte et rejeu natif authentique avec snapshot
 
 - Mini-plan : archiver les originaux3355 sans relance ; préparer une base neuve distincte avec octets C1 inchangés et identité de normalisation native ; exporter trois objets ; reconstruire réseau none et comparer ; conserver les critères non prouvés ouverts.

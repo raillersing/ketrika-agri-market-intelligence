@@ -95,6 +95,38 @@ def test_close_estimate_preserves_raw_and_explicit_imputed_unknown_actor():
 
 
 @pytest.mark.parametrize(
+    "case", ["repeated_data", "shared_context", "conflicting_context", "limit"]
+)
+def test_multiple_batches_require_same_context_not_arbitrary_latest(case):
+    _, _, references, objects = sample()
+    primary, context = artifacts(references)
+    first_id, second_id = uuid4(), uuid4()
+    first = BronzeBatch("wb_rtfp_mdg", first_id, "2.0.0", (primary, context))
+    other_context = (
+        replace(context, url="https://example.invalid/another-edition")
+        if case == "conflicting_context"
+        else context
+    )
+    second = BronzeBatch("wb_rtfp_mdg", second_id, "2.0.0", (primary, other_context))
+    session = MagicMock()
+    session.scalars.return_value = [first_id] * 1001 if case == "limit" else [first_id, second_id]
+    with patch(
+        "ketrika.connectors.batch_ledger.read_bronze_batch", side_effect=[first, second]
+    ) as read:
+        if case in {"conflicting_context", "limit"}:
+            with pytest.raises(ProofError):
+                parse_persisted(session, primary, Reader(objects))
+            if case == "limit":
+                read.assert_not_called()
+        else:
+            result = parse_persisted(
+                session, context if case == "shared_context" else primary, Reader(objects)
+            )
+            assert len(result.records) == (0 if case == "shared_context" else 1)
+            assert read.call_count == (1 if case == "shared_context" else 2)
+
+
+@pytest.mark.parametrize(
     "case",
     [
         "country",
