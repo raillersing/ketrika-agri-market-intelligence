@@ -19,6 +19,7 @@ from ketrika.connectors.base import (
 )
 from ketrika.connectors.records import (
     CpiRecord,
+    EventRecord,
     MacroRecord,
     PriceRecord,
     ProductionRecord,
@@ -30,6 +31,7 @@ from ketrika.connectors.records import (
 from ketrika.core.logging import bind_context, clear_context
 from ketrika.core.models.db import (
     CpiObservation,
+    Event,
     IngestionRun,
     Location,
     MacroObservation,
@@ -750,6 +752,78 @@ def load_macro_record_with_supersession(
     return "superseded", new_id
 
 
+def load_event_record_with_supersession(
+    session: Session,
+    record: EventRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    """Load EventRecord into obs.event."""
+    product_ids: list[uuid.UUID] = []
+    location_ids: list[uuid.UUID] = []
+
+    if record.location_raw:
+        from ketrika.core.models.db import LocationAlias
+
+        loc_alias = session.execute(
+            select(LocationAlias.location_id).where(
+                LocationAlias.alias_norm == record.location_raw.strip().lower()
+            )
+        ).scalar_one_or_none()
+        if loc_alias is not None:
+            location_ids.append(loc_alias)
+
+    if record.product_raw:
+        from ketrika.core.models.db import ProductAlias
+
+        prod_alias = session.execute(
+            select(ProductAlias.product_id).where(
+                ProductAlias.alias_norm == record.product_raw.strip().lower()
+            )
+        ).scalar_one_or_none()
+        if prod_alias is not None:
+            product_ids.append(prod_alias)
+
+    stmt = select(Event).where(
+        Event.source_record_id == source_record_id,
+        Event.title == record.title,
+        Event.event_type == record.event_type,
+    )
+    existing_event = session.execute(stmt).scalar_one_or_none()
+    if existing_event is not None:
+        return "idempotent_skipped", existing_event.event_id
+
+    ev_data = deepcopy(record.evidence) if record.evidence else {}
+    ev_data["is_projected"] = record.is_projected
+    if record.location_raw:
+        ev_data["location_raw"] = record.location_raw
+    if record.product_raw:
+        ev_data["product_raw"] = record.product_raw
+    if record.period_start:
+        ev_data["period_start"] = record.period_start.isoformat()
+    if record.period_end:
+        ev_data["period_end"] = record.period_end.isoformat()
+
+    new_id = uuid.uuid4()
+    new_event = Event(
+        event_id=new_id,
+        source_record_id=source_record_id,
+        event_type=record.event_type,
+        title=record.title,
+        summary=record.summary,
+        product_ids=product_ids,
+        location_ids=location_ids,
+        event_date=record.event_date,
+        severity=record.severity,
+        extraction_method=record.extraction_method,
+        evidence=ev_data,
+        confidence=record.confidence,
+    )
+    session.add(new_event)
+    session.flush()
+    return "inserted", new_id
+
+
 def load_record_with_supersession(
     session: Session,
     record: RecordBase,
@@ -773,6 +847,8 @@ def load_record_with_supersession(
         return load_weather_record_with_supersession(session, record, source_id, source_record_id)
     elif isinstance(record, MacroRecord):
         return load_macro_record_with_supersession(session, record, source_id, source_record_id)
+    elif isinstance(record, EventRecord):
+        return load_event_record_with_supersession(session, record, source_id, source_record_id)
     else:
         raise ValueError(f"Unsupported record type: {type(record)}")
 

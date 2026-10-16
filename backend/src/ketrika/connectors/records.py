@@ -182,26 +182,33 @@ class CpiRecord(RecordBase):
 
 
 class EventRecord(RecordBase):
-    """Normalized market/policy event record (matching obs.event)."""
+    """Normalized market/policy/climate/food security event record (matching obs.event)."""
 
     natural_key_fields: ClassVar[tuple[str, ...]] = (
         "event_type",
         "title",
-        "event_date",
+        "location_raw",
+        "period_start",
+        "period_end",
+        "is_projected",
     )
 
-    event_type: str  # regulatory | climate | market_disruption | policy | other
+    event_type: str  # regulatory | climate | market_disruption | policy | food_security_ipc | other
     title: str
     summary: str | None = None
+    location_raw: str | None = None
+    product_raw: str | None = None
+    is_projected: bool = False
     event_date: date | None = None
     severity: int | None = None  # 1..5
+    published_at: datetime | None = None
 
-    period_start: date = Field(default_factory=lambda: date.today())
-    period_end: date = Field(default_factory=lambda: date.today())
+    period_start: date = Field(default_factory=date.today)
+    period_end: date = Field(default_factory=date.today)
 
     def model_post_init(self, __context: object) -> None:
-        """Align period_start and period_end with event_date if set."""
-        if self.event_date is not None:
+        """Align period_start and period_end with event_date if set and at default."""
+        if self.event_date is not None and self.period_start == date.today() and self.period_end == date.today():
             self.period_start = self.event_date
             self.period_end = self.event_date
 

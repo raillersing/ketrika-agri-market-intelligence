@@ -520,3 +520,77 @@
   data_kinds: [weather, event]
   notes: "Bulletins agro-météorologiques décadaires et mensuels officiels de Madagascar."
 
+- source_id: fewsnet_mdg
+  name: "FEWS NET Madagascar – Food Security Outlook & Alerts"
+  owner: "USAID / Famine Early Warning Systems Network"
+  source_family: fewsnet
+  priority: P2
+  status: active
+  access_method: file
+  connector: ketrika.connectors.fewsnet_ipc:Connector
+  cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: monthly
+  freshness_sla_days: 90
+  partitioning: per_document
+  entrypoints:
+    - url: "https://fews.net/east-africa/madagascar"
+      kind: landing
+      verified_at: "2026-10-16T00:00:00Z"
+      verified: true
+  languages: [en, fr]
+  licence: "Public domain / US Government Work (Open Data)"
+  tos_url: "https://fews.net/about-us"
+  tos_sha256: null
+  tos_checked_at: "2026-10-16T00:00:00Z"
+  robots_checked_at: "2026-10-16T00:00:00Z"
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [event]
+  notes: "Perspectives de sécurité alimentaire et alertes de chocs de marché à Madagascar."
+
+- source_id: ipc_mdg
+  name: "IPC Madagascar – Integrated Food Security Phase Classification"
+  owner: "Cadre Intégré de Classification de la Sécurité Alimentaire (IPC Global / Madagascar Technical Working Group)"
+  source_family: ipc
+  priority: P2
+  status: active
+  access_method: file
+  connector: ketrika.connectors.fewsnet_ipc:Connector
+  cadence: quarterly
+  collection_cadence: monthly
+  observation_cadence: quarterly
+  publication_cadence: quarterly
+  freshness_sla_days: 120
+  partitioning: per_document
+  entrypoints:
+    - url: "https://www.ipcinfo.org/ipc-country-analysis/details-map/fr/c/1155986/"
+      kind: landing
+      verified_at: "2026-10-16T00:00:00Z"
+      verified: true
+  languages: [fr, en]
+  licence: "Open Access Data (IPC Global Partnership / FAO)"
+  tos_url: "https://www.ipcinfo.org/ipcinfo-website/terms-of-use/en/"
+  tos_sha256: null
+  tos_checked_at: "2026-10-16T00:00:00Z"
+  robots_checked_at: "2026-10-16T00:00:00Z"
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [event]
+  notes: "Analyses de l'insécurité alimentaire aiguë actuelle et projetée à Madagascar (phases IPC 1 à 5)."
+

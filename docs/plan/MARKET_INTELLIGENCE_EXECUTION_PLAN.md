@@ -56,7 +56,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R4.1 | MUST | DONE | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, séparation météo observée vs prévue, calendriers culturaux, migration 0014, 8 tests verts, couverture 94% |
 | R4.2 | MUST | DONE | ADR-081, SPECS §26, connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage raster Madagascar, 7 tests verts, couverture 85% |
 | R4.3 | MUST | DONE | ADR-082, SPECS §26, connecteur meteo_mg, extraction déterministe bulletins DGM, séparation émission/validité, refus probabilités inventées, 6 tests verts, couverture 89% |
-| R4.4 | MUST | TODO | — |
+| R4.4 | MUST | DONE | ADR-083, SPECS §26, connecteurs fewsnet_mdg et ipc_mdg, séparation stricte courant vs projeté, 8 tests verts, couverture 91% |
 | R4.5 | MUST | TODO | — |
 | R4.6 | MUST | TODO | — |
 | R4.7 | MUST | TODO | — |

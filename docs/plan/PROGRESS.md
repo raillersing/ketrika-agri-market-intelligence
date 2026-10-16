@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T21:25:00Z] R4.4 — DONE, intégration des événements et perspectives FEWS NET/IPC
+
+- Dépendances relues : R4.1 (DONE), R1.2 (DONE), R2.1 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-083 dans `docs/plan/DECISIONS.md` (séparation stricte situation courante vs perspective projetée avec flag `is_projected`, extraction déterministe des phases IPC et facteurs de bascule, ancrage géographique aux zones malgaches, refus d'inventions numériques).
+  2. Enregistrer les sources officielles `fewsnet_mdg` et `ipc_mdg` dans `registry/sources.yaml` et `backend/src/ketrika/connectors/registry.py`.
+  3. Implémenter les connecteurs `FewsnetConnector` et `IpcConnector` dans `backend/src/ketrika/connectors/fewsnet_ipc.py`.
+  4. Étendre `EventRecord` dans `backend/src/ketrika/connectors/records.py` (`location_raw`, `product_raw`, `is_projected`, `published_at`, clé naturelle à 6 composantes) et implémenter `load_event_record_with_supersession` dans `backend/src/ketrika/connectors/runner.py`.
+  5. Créer les fixtures représentatives `fewsnet_mdg_outlook_2024_02.json`, `ipc_mdg_analysis_2024.json` et `fewsnet_unavailable.json` dans `backend/tests/fixtures/fewsnet_ipc/`.
+  6. Écrire la suite de tests unitaires et de chargement `backend/tests/unit/test_fewsnet_ipc.py` (8/8 tests passés en 15.81s, couverture `ketrika.connectors.fewsnet_ipc` à 91%).
+  7. Valider Ruff clean et Mypy strict clean (5 source files sans erreur).
+  8. Rédiger le dossier de preuve `docs/evidence/R4.4/README.md`.
+- Résultat : Tâche R4.4 entièrement qualifiée et validée (DONE).
+
 ### [2026-10-16T21:15:00Z] R4.3 — DONE, qualification des bulletins Météo Madagascar (DGM)
 
 - Dépendances relues : R4.1 (DONE), R1.2 (DONE).
