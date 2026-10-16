@@ -7,7 +7,11 @@ Lire `docs/research/2026-10-16-antigravity-r1-r2-audit.md` : sept groupes
 d'écarts bloquent l'intégration, dont publication Gold sans provenance macro,
 fixtures générées étiquetées authentiques et preuve de qualification surestimée.
 Ne pas importer ses statuts/tags ni écraser ADR069–074 de main. Son worktree
-et son PROGRESS non committé sont préservés ; corrections à réaliser de son côté.
+et ses travaux sont préservés. À la demande utilisateur, Codex corrige désormais
+ces écarts dans `agy-publication-audit-20261016`, branche
+`fix/agy-publication-audit-20261016`, base figée `3c8958f` (R3.7).
+Ce worktree est réservé aux corrections Codex ; ne pas intégrer ses statuts
+préparatoires à main. Aucun contrôle SQL/S3 mutant n'y a encore été lancé.
 Le check Codex78714 est terminé FINAL0/1725 backend/35 frontend/build ;
 plus de réservation de la destination QA pour cette exécution, aucune relance.
 

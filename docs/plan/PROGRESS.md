@@ -3,6 +3,16 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T19:01:16Z] Corrections Antigravity autorisées — IN_PROGRESS, sans réception produit
+
+- Travail isolé : `agy-publication-audit-20261016`, branche `fix/agy-publication-audit-20261016`, base figée `3c8958f` (Antigravity a avancé à R3.7). Aucun fichier de son worktree actif modifié.
+- Mini-plan : sécuriser publication/lecture macro ; retirer l'authenticité par nom de source ; réparer filtres datés et jointures natives ; rectifier les preuves synthétiques ; tests ciblés et SQL isolé ; poursuivre ensuite raccordement provenance/API et réconciliation avant réception globale unique.
+- Incrément : refus explicite des caches/publications macro non qualifiés, HTTP503 sur dashboard/contexte ; refresh des vues prises en charge maintenu avec `withheld_views` explicite ; pilote sans reçu vérifié non authentique ; binds CAST datés ; SQL séparé par source/unité/fréquence/base et périodes natives, identifiants contributeurs conservés. Générateurs INSTAT étiquetés synthétiques, aucun classeur ni Bronze réécrit.
+- Validation intermédiaire : Docker62086 FINAL0/4 nouveaux tests ;27406 FINAL0/mypy cinq modules. SQL jetable85934 : neuf entrées synthétiques/huit sorties attendues, séparation source-unité-base-fréquence, fin de mois et IDs contrôlés, transaction annulée. PostgreSQL dédié network=none/socket dédié, aucune destination active touchée.
+- Régressions de développement :22988/30171/85934 ont signalé anciennes assertions de qualification/format d'erreur ; corrigées au contrat fail-closed. Un health-check Hypothesis too_slow observé sur22988 ne s'est pas reproduit sur30171/85934 ; aucun seuil/scénario réduit. JUnit rouge conservé dans le worktree. Réception ciblée consolidée68904 FINAL0 : 49 tests/22,45 s, mypy six modules verts ; check complet non lancé sur un lot encore incomplet.
+- R0.8 reste IN_PROGRESS ; sept DONE canoniques inchangés. Aucun DONE/gate/tag Antigravity importé. Raccordement complet macro, contrat API/provenance, inventaire corpus et réconciliation ADR demeurent à réaliser avant intégration.
+- Sauvegarde intermédiaire : commit `f2b7d41` dans le worktree de correction, non intégré à main ; gitleaks96032 FINAL0/58118 octets/sans fuite ; cohérence canonique6264 FINAL0/74 statuts. PostgreSQL jetable arrêté après rollback (conteneur conservé), aucune donnée Bronze supprimée. Dernière réception applicative main inchangée :8de251f reçue pard898b6d/1725 backend/35 web/build ; cette preuve ne qualifie pas le nouveau lot.
+
 ### [2026-10-16T12:25:31Z] Audit Antigravity et réception du correctif R0.8
 
 - Demande : vérifier Antigravity puis poursuivre. Audit readonly du worktree r1-sources-prep,HEAD6f11f5d/codebb62799,R2.10 ; modification de son PROGRESS préservée, aucun fichier de cette branche édité. Rapport research/2026-10-16-antigravity-r1-r2-audit.md et probes JSON conservés.
