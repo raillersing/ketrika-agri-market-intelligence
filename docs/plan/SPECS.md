@@ -716,12 +716,23 @@ CREATE TABLE ml.model_run (
 CREATE TABLE ml.forecast (
   forecast_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   model_run_id UUID NOT NULL REFERENCES ml.model_run,
-  series_key TEXT NOT NULL,      -- product_code|location_pcode|actor_level
+  series_key TEXT NOT NULL,      -- product_code|quality_grade|actor_level|location_pcode|unit
   product_id UUID NOT NULL REFERENCES ref.product,
   location_id UUID REFERENCES ref.location,
   actor_level TEXT NOT NULL,
   target_period DATE NOT NULL, horizon SMALLINT NOT NULL,
   p10 NUMERIC(18,4), p50 NUMERIC(18,4), p90 NUMERIC(18,4),
+  model_requested TEXT,
+  model_effective TEXT,
+  is_baseline BOOLEAN NOT NULL DEFAULT FALSE,
+  is_calibrated BOOLEAN NOT NULL DEFAULT FALSE,
+  calibration_sample_size INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'nominal', -- nominal | baseline_fallback | experimental_insufficient_windows | abstained
+  fallback_reason TEXT,
+  currency TEXT NOT NULL DEFAULT 'MGA',
+  unit TEXT NOT NULL DEFAULT 'kg',
+  interval_width NUMERIC(18,4),
+  coverage_rate_80 NUMERIC(6,4),
   generated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -1419,7 +1430,9 @@ Chaque valeur exposée inclut `value_kind` (`observed | imputed | forecast | com
 | GET | `/v1/economic/indicators?format=json\|csv` · `/v1/economic/dashboard` · `/v1/economic/pilot-context` | Tableau économique interprétable par dimension étanche (ADR-070, ADR-071, R2.8) |
 | GET | `/v1/weather/anomalies?location=&from=&to=` | Anomalies météo |
 | GET | `/v1/kpis/market-health?product=&location=&month=` | Score + composantes |
-| GET | `/v1/forecasts?product=&location=&actor_level=` | p10/p50/p90 + métriques de backtest |
+| GET | `/v1/forecasts?product=&location=&actor_level=&model_run_id=&limit=&offset=&format=json\|csv` | Dernières prévisions conformes (`gold.forecast_latest`), intervalles p10/p50/p90, modèle effectif, calibration (ADR-078) |
+| GET | `/v1/forecasts/runs?limit=&offset=&format=json\|csv` · `/v1/forecasts/runs/{id}` | Historique des runs (`ml.model_run`), dataset C4 fingerprint, métriques par horizon, récupération de vieux runs (ADR-078) |
+| GET | `/v1/forecasts/abstentions?limit=&offset=&format=json\|csv` | Séries exclues ou abstentions avec motifs normatifs (ADR-078) |
 | GET | `/v1/alerts?severity=&state=` · PATCH `/v1/alerts/{id}` (admin) | Alertes |
 | GET | `/v1/bulletins` · `/v1/bulletins/{id}` · POST `/v1/bulletins/{id}/approve` (admin) | Bulletins |
 | POST | `/v1/copilot/ask` | Copilote (§21) |

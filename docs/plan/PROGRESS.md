@@ -38,6 +38,33 @@
 - Preuve : docs/evidence/R2.11/README.md.
 - Tag jalon : `mi-r2-qualified` (posé).
 
+### [2026-10-16T17:35:00Z] R3.7 — DONE, publication des prévisions, limites et abstentions
+
+- Dépendances relues : R3.4 (protocole d'évaluation), R3.5 (calibration conforme), R2.9 (contrats API), R2.10 (vues interface).
+- Mini-plan exécuté :
+  1. Formaliser ADR-078 (Publication des prévisions, traçabilité des limites, gestion des abstentions et intégrité visuelle sans extrapolation) dans `docs/plan/DECISIONS.md`.
+  2. Mettre à jour `docs/plan/SPECS.md` (§17, §19) avec les contrats de données de prévision, schéma `ml.forecast`, vue `gold.forecast_latest`, endpoints REST et abstentions.
+  3. Créer la migration Alembic `backend/alembic/versions/0012_forecast_metadata_and_abstentions.py` et synchroniser `backend/src/ketrika/gold/sql/012_forecast_latest.sql` (colonnes `model_requested`, `model_effective`, `is_baseline`, `is_calibrated`, `calibration_sample_size`, `status`, `fallback_reason`, `interval_width`, `coverage_rate_80`, `dataset_fingerprint`, `cohort`).
+  4. Mettre à jour `backend/src/ketrika/core/models/db.py` pour enrichir le modèle SQLAlchemy `Forecast`.
+  5. Refondre l'orchestrateur `backend/src/ketrika/ml/forecast.py` (`run_price_forecasting_pipeline`) pour intégrer l'empreinte canonique SHA-256 de lignée C4, la calibration conforme, le catalogage des abstentions et l'immutabilité des runs (aucun écrasement).
+  6. Refondre le routeur REST `backend/src/ketrika/api/routers/forecasts.py` avec `GET /v1/forecasts` (filtrage par `model_run_id` pour requêter de vieux runs, pagination [1, 1000], export CSV/JSON), `GET /v1/forecasts/runs` (historique des runs C4), `GET /v1/forecasts/runs/{id}`, `GET /v1/forecasts/abstentions`.
+  7. Enrichir `web/src/components/charts/PriceChart.tsx` pour distinguer les points de prévision des observations et afficher dans le tooltip le modèle effectif, baseline, statut de calibration conforme, et motif de repli.
+  8. Mettre à jour `web/src/app/prices/page.tsx` pour afficher les prévisions réelles, et un encart d'abstention loyale en l'absence de prévision certifiée, sans aucune courbe d'extrapolation artificielle UI/LLM.
+  9. Exporter la spécification OpenAPI (`export_openapi.py`) et régénérer les types TypeScript (`openapi-typescript`).
+  10. Développer la suite de tests de qualification `test_ml_forecast_publication.py` (4 tests), exécuter la suite ML complète (53 tests passés, couverture ML+API à 92%), valider les contrôles statiques backend (ruff clean, mypy clean) et frontend (typecheck clean, vitest 39 tests verts, next build 16 routes compilées). Rédiger `docs/evidence/R3.7/README.md`.
+- Environnement : Docker ketrika-backend:dev, ketrika-web:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes :
+  - `docker run ... python -m pytest tests/unit/test_ml_forecast_publication.py tests/unit/test_ml_conformal_intervals.py tests/unit/test_ml_backtest_protocol.py tests/unit/test_ml_as_of_dataset.py tests/unit/test_ml_series_eligibility.py tests/unit/test_ml_anomalies.py tests/unit/test_ml_forecast.py tests/unit/test_ml_models_conformance.py -m "not integration" -v --cov=ketrika.ml --cov=ketrika.api.routers.forecasts --cov-report=term-missing` (exit 0, 53 passed in 81.60s)
+  - `docker run ... uv run ruff check src/ketrika/ml/forecast.py src/ketrika/api/routers/forecasts.py src/ketrika/api/schemas.py src/ketrika/core/models/db.py alembic/versions/0012_forecast_metadata_and_abstentions.py tests/unit/test_ml_forecast_publication.py` (exit 0, clean)
+  - `docker run ... uv run mypy src/ketrika/ml/forecast.py src/ketrika/api/routers/forecasts.py src/ketrika/api/schemas.py src/ketrika/core/models/db.py alembic/versions/0012_forecast_metadata_and_abstentions.py tests/unit/test_ml_forecast_publication.py` (exit 0, clean)
+  - `docker run ... npm run typecheck` (tsc --noEmit, exit 0, clean)
+  - `docker run ... npm run lint` (next lint, exit 0, clean)
+  - `docker run ... npm run test` (vitest run, exit 0, 39 passed in 5 files)
+  - `docker run ... npm run build` (next build, exit 0, 16 routes compilées avec succès)
+- Résultats : 4/4 tests dédiés R3.7 passés ; 53/53 tests ML globaux passés ; couverture globale à 92% ; immutabilité des runs archivés C4 prouvée ; vieux runs récupérables ; traçabilité model_requested vs model_effective validée ; abstentions documentées exposées ; zéro courbe extrapolée produite par le front.
+- État : DONE.
+- Preuve : `docs/evidence/R3.7/README.md`.
+
 ### [2026-10-16T16:55:00Z] R3.5 — DONE, calibration des intervalles conformes et surveillance de couverture empirique
 
 - Dépendances relues : R3.4 (protocole d'évaluation trois phases étanches).
@@ -782,7 +809,7 @@
 | R3.4 | MUST | DONE | 2026-10-16T16:35:00Z | 2026-10-16T16:40:00Z | c2f9f15 | Protocole d'évaluation en trois phases, étanchéité de sélection, holdout test, décomposition par horizon, anti-fuite | 6 tests verts, couverture backtest 96%, 44 tests ML verts |
 | R3.5 | MUST | DONE | 2026-10-16T16:45:00Z | 2026-10-16T16:55:00Z | e604fae | ADR-077, SPECS §17.3, intervalles conformes, seuil N_calib >= 8, uncalibrated_heuristic, Wilson 95%, audits couverture | 5 tests verts, couverture conformal 96%, 49 tests ML verts |
 | R3.6 | SHOULD | TODO | — | — | — | — | — |
-| R3.7 | MUST | TODO | — | — | — | — | — |
+| R3.7 | MUST | DONE | 2026-10-16T17:10:00Z | 2026-10-16T17:35:00Z | 11b15d0 | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation | 4 tests verts, 53 tests ML verts, couverture 92%, Next build 16 routes |
 | R3.8 | MUST | TODO | — | — | — | — | — |
 | R3.9 | MUST | TODO | — | — | — | — | — |
 | R4.1 | MUST | TODO | — | — | — | — | — |

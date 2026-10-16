@@ -206,17 +206,71 @@ class MarketHealthItem(BaseModel):
 
 
 class ForecastItem(BaseModel):
-    """Price forecast horizons and quantiles."""
+    """Price forecast horizons, quantiles, and conformal metadata (SPECS §17, §19, ADR-078)."""
 
+    forecast_id: uuid.UUID | None = None
+    model_run_id: uuid.UUID | None = None
+    series_key: str | None = None
     product_code: str
+    product_name: str | None = None
     location_pcode: str
+    location_name: str | None = None
+    actor_level: str = "retail"
     horizon: int
     target_period: str
-    p10: float
+    p10: float | None = None
     p50: float
-    p90: float
-    model_name: str
+    p90: float | None = None
+    model_requested: str | None = None
+    model_effective: str = "NaiveLast"
+    model_name: str = "NaiveLast"
+    is_baseline: bool = False
+    is_calibrated: bool = False
+    calibration_sample_size: int = 0
+    status: str = "nominal"
+    fallback_reason: str | None = None
+    currency: str = "MGA"
+    unit: str = "kg"
+    interval_width: float | None = None
+    coverage_rate_80: float | None = None
+    data_cutoff: str | None = None
+    dataset_fingerprint: str | None = None
+    cohort: str | None = None
     value_kind: ValueKind = "forecast"
+
+
+class ModelRunSummaryItem(BaseModel):
+    """Forecasting model run summary (C4 audit trail)."""
+
+    model_run_id: uuid.UUID
+    task: str
+    model_name: str
+    model_version: str
+    data_cutoff: str
+    trained_at: datetime
+    dataset_fingerprint: str | None = None
+    cohort: str | None = None
+    params: dict[str, Any] = Field(default_factory=dict)
+    metrics: dict[str, Any] = Field(default_factory=dict)
+
+
+class ModelRunDetailResponse(BaseModel):
+    """Detailed model run information including forecasts and metrics decomposition."""
+
+    run: ModelRunSummaryItem
+    forecasts: list[ForecastItem] = Field(default_factory=list)
+
+
+class ForecastAbstentionItem(BaseModel):
+    """Documented series abstention or exclusion with normative reasons."""
+
+    series_key: str
+    product_code: str
+    location_pcode: str
+    actor_level: str
+    reason: str
+    points_count: int = 0
+
 
 
 # ===================== OPS & ALERTS =====================

@@ -415,9 +415,69 @@ export interface paths {
         };
         /**
          * Get Forecasts
-         * @description Retrieve the latest price forecasts, prediction intervals and models (SPECS §17, §19).
+         * @description Retrieve the latest or historical price forecasts with conformal intervals (SPECS §17, §19, ADR-078).
          */
         get: operations["get_forecasts_v1_forecasts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/forecasts/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Forecast Runs
+         * @description Retrieve historical forecasting model runs and lineage fingerprints (SPECS §17, ADR-078).
+         */
+        get: operations["get_forecast_runs_v1_forecasts_runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/forecasts/runs/{model_run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Forecast Run Detail
+         * @description Retrieve detailed execution information and predictions for a specific run.
+         */
+        get: operations["get_forecast_run_detail_v1_forecasts_runs__model_run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/forecasts/abstentions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Forecast Abstentions
+         * @description Retrieve series exclusions and abstentions documented during the latest forecasting run.
+         */
+        get: operations["get_forecast_abstentions_v1_forecasts_abstentions_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -854,26 +914,114 @@ export interface components {
             limitations: string;
         };
         /**
-         * ForecastItem
-         * @description Price forecast horizons and quantiles.
+         * ForecastAbstentionItem
+         * @description Documented series abstention or exclusion with normative reasons.
          */
-        ForecastItem: {
+        ForecastAbstentionItem: {
+            /** Series Key */
+            series_key: string;
             /** Product Code */
             product_code: string;
             /** Location Pcode */
             location_pcode: string;
+            /** Actor Level */
+            actor_level: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Points Count
+             * @default 0
+             */
+            points_count: number;
+        };
+        /**
+         * ForecastItem
+         * @description Price forecast horizons, quantiles, and conformal metadata (SPECS §17, §19, ADR-078).
+         */
+        ForecastItem: {
+            /** Forecast Id */
+            forecast_id?: string | null;
+            /** Model Run Id */
+            model_run_id?: string | null;
+            /** Series Key */
+            series_key?: string | null;
+            /** Product Code */
+            product_code: string;
+            /** Product Name */
+            product_name?: string | null;
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name?: string | null;
+            /**
+             * Actor Level
+             * @default retail
+             */
+            actor_level: string;
             /** Horizon */
             horizon: number;
             /** Target Period */
             target_period: string;
             /** P10 */
-            p10: number;
+            p10?: number | null;
             /** P50 */
             p50: number;
             /** P90 */
-            p90: number;
-            /** Model Name */
+            p90?: number | null;
+            /** Model Requested */
+            model_requested?: string | null;
+            /**
+             * Model Effective
+             * @default NaiveLast
+             */
+            model_effective: string;
+            /**
+             * Model Name
+             * @default NaiveLast
+             */
             model_name: string;
+            /**
+             * Is Baseline
+             * @default false
+             */
+            is_baseline: boolean;
+            /**
+             * Is Calibrated
+             * @default false
+             */
+            is_calibrated: boolean;
+            /**
+             * Calibration Sample Size
+             * @default 0
+             */
+            calibration_sample_size: number;
+            /**
+             * Status
+             * @default nominal
+             */
+            status: string;
+            /** Fallback Reason */
+            fallback_reason?: string | null;
+            /**
+             * Currency
+             * @default MGA
+             */
+            currency: string;
+            /**
+             * Unit
+             * @default kg
+             */
+            unit: string;
+            /** Interval Width */
+            interval_width?: number | null;
+            /** Coverage Rate 80 */
+            coverage_rate_80?: number | null;
+            /** Data Cutoff */
+            data_cutoff?: string | null;
+            /** Dataset Fingerprint */
+            dataset_fingerprint?: string | null;
+            /** Cohort */
+            cohort?: string | null;
             /**
              * Value Kind
              * @default forecast
@@ -1084,6 +1232,51 @@ export interface components {
             value_kind: "observed" | "imputed" | "forecast" | "composite";
             /** Components Present */
             components_present?: string[];
+        };
+        /**
+         * ModelRunDetailResponse
+         * @description Detailed model run information including forecasts and metrics decomposition.
+         */
+        ModelRunDetailResponse: {
+            run: components["schemas"]["ModelRunSummaryItem"];
+            /** Forecasts */
+            forecasts?: components["schemas"]["ForecastItem"][];
+        };
+        /**
+         * ModelRunSummaryItem
+         * @description Forecasting model run summary (C4 audit trail).
+         */
+        ModelRunSummaryItem: {
+            /**
+             * Model Run Id
+             * Format: uuid
+             */
+            model_run_id: string;
+            /** Task */
+            task: string;
+            /** Model Name */
+            model_name: string;
+            /** Model Version */
+            model_version: string;
+            /** Data Cutoff */
+            data_cutoff: string;
+            /**
+             * Trained At
+             * Format: date-time
+             */
+            trained_at: string;
+            /** Dataset Fingerprint */
+            dataset_fingerprint?: string | null;
+            /** Cohort */
+            cohort?: string | null;
+            /** Params */
+            params?: {
+                [key: string]: unknown;
+            };
+            /** Metrics */
+            metrics?: {
+                [key: string]: unknown;
+            };
         };
         /**
          * ObservationDetailResponse
@@ -2223,6 +2416,14 @@ export interface operations {
                 location?: string | null;
                 /** @description Actor level (e.g. retail, wholesale) */
                 actor_level?: string | null;
+                /** @description Specific historical model_run_id (UUID) */
+                model_run_id?: string | null;
+                /** @description Page limit (default 100, max 1000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
             };
             header?: never;
             path?: never;
@@ -2237,6 +2438,113 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ForecastItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_forecast_runs_v1_forecasts_runs_get: {
+        parameters: {
+            query?: {
+                /** @description Page limit (default 50, max 1000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelRunSummaryItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_forecast_run_detail_v1_forecasts_runs__model_run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                model_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelRunDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_forecast_abstentions_v1_forecasts_abstentions_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by product code */
+                product?: string | null;
+                /** @description Filter by location P-code */
+                location?: string | null;
+                /** @description Page limit (default 100, max 1000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastAbstentionItem"][];
                 };
             };
             /** @description Validation Error */

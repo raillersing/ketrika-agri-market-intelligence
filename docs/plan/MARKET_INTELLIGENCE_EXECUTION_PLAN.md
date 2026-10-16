@@ -50,7 +50,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R3.4 | MUST | DONE | ADR-076, SPECS §17.3, protocole d'évaluation trois phases, 6 fenêtres rolling-origin, étanchéité de sélection, holdout out-of-sample, décomposition par horizon, 6 tests verts, couverture 96% |
 | R3.5 | MUST | DONE | ADR-077, SPECS §17.3, intervalles conformes non paramétriques, seuil N_calib >= 8, uncalibrated_heuristic, intervalle Wilson 95%, audits couverture/largeur, 5 tests verts, couverture 96% |
 | R3.6 | SHOULD | TODO | — |
-| R3.7 | MUST | TODO | — |
+| R3.7 | MUST | DONE | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation, 4 tests verts, 53 tests ML verts, couverture 92% |
 | R3.8 | MUST | TODO | — |
 | R3.9 | MUST | TODO | — |
 | R4.1 | MUST | TODO | — |

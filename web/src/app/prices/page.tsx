@@ -36,6 +36,15 @@ interface SeriesCoverageGaps {
   is_pilot_candidate: boolean;
 }
 
+interface ForecastAbstention {
+  series_key: string;
+  product_code: string;
+  location_pcode: string;
+  actor_level: string;
+  reason: string;
+  points_count: number;
+}
+
 function PricesContent() {
   const searchParams = useSearchParams();
   const product = searchParams.get("product") || "rice_milled";
@@ -47,12 +56,16 @@ function PricesContent() {
   const [chartData, setChartData] = useState<PriceDataPoint[]>([]);
   const [tableData, setTableData] = useState<PriceRow[]>([]);
   const [coverageGaps, setCoverageGaps] = useState<SeriesCoverageGaps | null>(null);
+  const [abstentionInfo, setAbstentionInfo] = useState<ForecastAbstention | null>(null);
+  const [hasForecasts, setHasForecasts] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     async function fetchPrices() {
       setLoading(true);
       setError(null);
+      setAbstentionInfo(null);
+      setHasForecasts(false);
       try {
         const apiUrl = "/api";
         const params = new URLSearchParams();
@@ -60,7 +73,7 @@ function PricesContent() {
         if (region) params.set("location", region);
         if (actor) params.set("actor_level", actor);
 
-        const [res, gapsRes] = await Promise.all([
+        const [res, gapsRes, fcRes, absRes] = await Promise.all([
           fetch(`${apiUrl}/v1/prices?${params.toString()}`, { credentials: "include" }),
           fetch(
             `${apiUrl}/v1/market/coverage/gaps?product=${encodeURIComponent(
@@ -70,6 +83,8 @@ function PricesContent() {
             )}`,
             { credentials: "include" }
           ).catch(() => null),
+          fetch(`${apiUrl}/v1/forecasts?${params.toString()}`, { credentials: "include" }).catch(() => null),
+          fetch(`${apiUrl}/v1/forecasts/abstentions?product=${encodeURIComponent(product)}`, { credentials: "include" }).catch(() => null),
         ]);
 
         if (!res.ok) {
@@ -99,6 +114,49 @@ function PricesContent() {
           valueKind: r.valueKind,
           sourceId: r.sourceId,
         }));
+
+        // Parse and append genuine conformal forecasts if available
+        let foundForecasts = false;
+        if (fcRes && fcRes.ok) {
+          const fcData = await fcRes.json();
+          if (Array.isArray(fcData) && fcData.length > 0) {
+            foundForecasts = true;
+            setHasForecasts(true);
+            const fcPts: PriceDataPoint[] = fcData.map((f: any) => ({
+              month: f.target_period,
+              medianPrice: f.p50,
+              p10Price: f.p10,
+              p90Price: f.p90,
+              valueKind: "forecast",
+              modelEffective: f.model_effective,
+              modelRequested: f.model_requested,
+              isBaseline: f.is_baseline,
+              isCalibrated: f.is_calibrated,
+              calibrationSampleSize: f.calibration_sample_size,
+              fallbackReason: f.fallback_reason,
+              horizon: f.horizon,
+              datasetFingerprint: f.dataset_fingerprint,
+              sourceId: `ml.${f.model_effective || "forecast"}`,
+            }));
+            chartPts.push(...fcPts);
+          }
+        }
+
+        // Check for documented abstentions if no forecasts were present
+        if (!foundForecasts && absRes && absRes.ok) {
+          const absData = await absRes.json();
+          if (Array.isArray(absData) && absData.length > 0) {
+            const match = absData.find(
+              (a: any) =>
+                a.product_code === product &&
+                (!region || a.location_pcode === region)
+            );
+            if (match) {
+              setAbstentionInfo(match);
+            }
+          }
+        }
+
         setChartData(chartPts);
 
         if (gapsRes && gapsRes.ok) {
@@ -251,6 +309,35 @@ function PricesContent() {
         data={chartData}
         productName={product}
       />
+
+      {/* Honest Forecasting Status & Abstention Panel (ADR-078) */}
+      {hasForecasts ? (
+        <div className="glass-panel p-3.5 rounded-xl border border-purple-500/20 bg-purple-950/20 text-xs flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+            <span className="text-purple-200 font-semibold">Prévisions de prix intégrées :</span>
+            <span className="text-slate-300">
+              Modèles statistiques normatifs (horizons h=1..3) avec bandes conformes à 80% et zéro chiffre inventé.
+            </span>
+          </div>
+          <span className="text-[10px] font-mono text-purple-300/80">
+            Source : ml.price_forecast • Évaluation rolling-origin
+          </span>
+        </div>
+      ) : abstentionInfo ? (
+        <div className="glass-panel p-3.5 rounded-xl border border-amber-500/20 bg-amber-950/20 text-xs flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <span className="text-amber-200 font-semibold">Abstention méthodologique :</span>
+            <span className="text-slate-300">
+              Prévision non certifiée pour cette série ({abstentionInfo.reason}, {abstentionInfo.points_count} points disponibles).
+            </span>
+          </div>
+          <span className="text-[10px] font-mono text-amber-300/80">
+            Conformité SPECS §17 : aucune extrapolation artificielle produite
+          </span>
+        </div>
+      ) : null}
 
       {/* Data Table */}
       <div className="glass-card rounded-2xl overflow-hidden">

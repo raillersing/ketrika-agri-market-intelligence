@@ -1511,7 +1511,7 @@
           "forecasts"
         ],
         "summary": "Get Forecasts",
-        "description": "Retrieve the latest price forecasts, prediction intervals and models (SPECS \u00a717, \u00a719).",
+        "description": "Retrieve the latest or historical price forecasts with conformal intervals (SPECS \u00a717, \u00a719, ADR-078).",
         "operationId": "get_forecasts_v1_forecasts_get",
         "parameters": [
           {
@@ -1567,6 +1567,64 @@
               "title": "Actor Level"
             },
             "description": "Actor level (e.g. retail, wholesale)"
+          },
+          {
+            "name": "model_run_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Specific historical model_run_id (UUID)",
+              "title": "Model Run Id"
+            },
+            "description": "Specific historical model_run_id (UUID)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "description": "Page limit (default 100, max 1000)",
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Page limit (default 100, max 1000)"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Page offset (default 0)",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Page offset (default 0)"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(json|csv)$",
+              "description": "Output format (json or csv)",
+              "default": "json",
+              "title": "Format"
+            },
+            "description": "Output format (json or csv)"
           }
         ],
         "responses": {
@@ -1580,6 +1638,242 @@
                     "$ref": "#/components/schemas/ForecastItem"
                   },
                   "title": "Response Get Forecasts V1 Forecasts Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/forecasts/runs": {
+      "get": {
+        "tags": [
+          "forecasts"
+        ],
+        "summary": "Get Forecast Runs",
+        "description": "Retrieve historical forecasting model runs and lineage fingerprints (SPECS \u00a717, ADR-078).",
+        "operationId": "get_forecast_runs_v1_forecasts_runs_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "description": "Page limit (default 50, max 1000)",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Page limit (default 50, max 1000)"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Page offset (default 0)",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Page offset (default 0)"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(json|csv)$",
+              "description": "Output format (json or csv)",
+              "default": "json",
+              "title": "Format"
+            },
+            "description": "Output format (json or csv)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ModelRunSummaryItem"
+                  },
+                  "title": "Response Get Forecast Runs V1 Forecasts Runs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/forecasts/runs/{model_run_id}": {
+      "get": {
+        "tags": [
+          "forecasts"
+        ],
+        "summary": "Get Forecast Run Detail",
+        "description": "Retrieve detailed execution information and predictions for a specific run.",
+        "operationId": "get_forecast_run_detail_v1_forecasts_runs__model_run_id__get",
+        "parameters": [
+          {
+            "name": "model_run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Model Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelRunDetailResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/forecasts/abstentions": {
+      "get": {
+        "tags": [
+          "forecasts"
+        ],
+        "summary": "Get Forecast Abstentions",
+        "description": "Retrieve series exclusions and abstentions documented during the latest forecasting run.",
+        "operationId": "get_forecast_abstentions_v1_forecasts_abstentions_get",
+        "parameters": [
+          {
+            "name": "product",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by product code",
+              "title": "Product"
+            },
+            "description": "Filter by product code"
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by location P-code",
+              "title": "Location"
+            },
+            "description": "Filter by location P-code"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "description": "Page limit (default 100, max 1000)",
+              "default": 100,
+              "title": "Limit"
+            },
+            "description": "Page limit (default 100, max 1000)"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Page offset (default 0)",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Page offset (default 0)"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(json|csv)$",
+              "description": "Output format (json or csv)",
+              "default": "json",
+              "title": "Format"
+            },
+            "description": "Output format (json or csv)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForecastAbstentionItem"
+                  },
+                  "title": "Response Get Forecast Abstentions V1 Forecasts Abstentions Get"
                 }
               }
             }
@@ -2726,8 +3020,12 @@
         "title": "EconomicMetricCardItem",
         "description": "Specification of an economic metric card (ADR-070)."
       },
-      "ForecastItem": {
+      "ForecastAbstentionItem": {
         "properties": {
+          "series_key": {
+            "type": "string",
+            "title": "Series Key"
+          },
           "product_code": {
             "type": "string",
             "title": "Product Code"
@@ -2735,6 +3033,103 @@
           "location_pcode": {
             "type": "string",
             "title": "Location Pcode"
+          },
+          "actor_level": {
+            "type": "string",
+            "title": "Actor Level"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "points_count": {
+            "type": "integer",
+            "title": "Points Count",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "series_key",
+          "product_code",
+          "location_pcode",
+          "actor_level",
+          "reason"
+        ],
+        "title": "ForecastAbstentionItem",
+        "description": "Documented series abstention or exclusion with normative reasons."
+      },
+      "ForecastItem": {
+        "properties": {
+          "forecast_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Id"
+          },
+          "model_run_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Run Id"
+          },
+          "series_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Series Key"
+          },
+          "product_code": {
+            "type": "string",
+            "title": "Product Code"
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name"
+          },
+          "location_pcode": {
+            "type": "string",
+            "title": "Location Pcode"
+          },
+          "location_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Name"
+          },
+          "actor_level": {
+            "type": "string",
+            "title": "Actor Level",
+            "default": "retail"
           },
           "horizon": {
             "type": "integer",
@@ -2745,7 +3140,14 @@
             "title": "Target Period"
           },
           "p10": {
-            "type": "number",
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "P10"
           },
           "p50": {
@@ -2753,12 +3155,132 @@
             "title": "P50"
           },
           "p90": {
-            "type": "number",
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "P90"
+          },
+          "model_requested": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Requested"
+          },
+          "model_effective": {
+            "type": "string",
+            "title": "Model Effective",
+            "default": "NaiveLast"
           },
           "model_name": {
             "type": "string",
-            "title": "Model Name"
+            "title": "Model Name",
+            "default": "NaiveLast"
+          },
+          "is_baseline": {
+            "type": "boolean",
+            "title": "Is Baseline",
+            "default": false
+          },
+          "is_calibrated": {
+            "type": "boolean",
+            "title": "Is Calibrated",
+            "default": false
+          },
+          "calibration_sample_size": {
+            "type": "integer",
+            "title": "Calibration Sample Size",
+            "default": 0
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "nominal"
+          },
+          "fallback_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fallback Reason"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "default": "MGA"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit",
+            "default": "kg"
+          },
+          "interval_width": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval Width"
+          },
+          "coverage_rate_80": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Rate 80"
+          },
+          "data_cutoff": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Cutoff"
+          },
+          "dataset_fingerprint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Fingerprint"
+          },
+          "cohort": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cohort"
           },
           "value_kind": {
             "type": "string",
@@ -2778,13 +3300,10 @@
           "location_pcode",
           "horizon",
           "target_period",
-          "p10",
-          "p50",
-          "p90",
-          "model_name"
+          "p50"
         ],
         "title": "ForecastItem",
-        "description": "Price forecast horizons and quantiles."
+        "description": "Price forecast horizons, quantiles, and conformal metadata (SPECS \u00a717, \u00a719, ADR-078)."
       },
       "HTTPValidationError": {
         "properties": {
@@ -3363,6 +3882,99 @@
         ],
         "title": "MarketHealthItem",
         "description": "Composite Market Health Score item."
+      },
+      "ModelRunDetailResponse": {
+        "properties": {
+          "run": {
+            "$ref": "#/components/schemas/ModelRunSummaryItem"
+          },
+          "forecasts": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastItem"
+            },
+            "type": "array",
+            "title": "Forecasts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run"
+        ],
+        "title": "ModelRunDetailResponse",
+        "description": "Detailed model run information including forecasts and metrics decomposition."
+      },
+      "ModelRunSummaryItem": {
+        "properties": {
+          "model_run_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Model Run Id"
+          },
+          "task": {
+            "type": "string",
+            "title": "Task"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "data_cutoff": {
+            "type": "string",
+            "title": "Data Cutoff"
+          },
+          "trained_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Trained At"
+          },
+          "dataset_fingerprint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Fingerprint"
+          },
+          "cohort": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cohort"
+          },
+          "params": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Params"
+          },
+          "metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metrics"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model_run_id",
+          "task",
+          "model_name",
+          "model_version",
+          "data_cutoff",
+          "trained_at"
+        ],
+        "title": "ModelRunSummaryItem",
+        "description": "Forecasting model run summary (C4 audit trail)."
       },
       "ObservationDetailResponse": {
         "properties": {

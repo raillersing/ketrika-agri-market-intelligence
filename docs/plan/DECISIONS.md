@@ -2,6 +2,28 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-078 : publication des prévisions, traçabilité des limites, gestion des abstentions et intégrité visuelle sans extrapolation (R3.7)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.7 ; Phase R3.
+- **Contexte :** La mise à disposition des prévisions de prix de marché ne doit jamais donner l'illusion d'une certitude ou d'une continuité artificielle (directives R3.7, R2.9, R2.10, constats d'audit A08 et A09). Pour satisfaire les principes de transparence et de provenance totale :
+  1. **Conservation immuable de l'historique des runs (C4) :** Chaque exécution de prévision crée un nouveau `model_run_id` horodaté rattaché à l'empreinte canonique du dataset as-of (`dataset_fingerprint`). Les prévisions antérieures ne sont jamais écrasées destructivement, permettant la reproductibilité et l'audit rétrospectif.
+  2. **Exposition exhaustive des limites et modèles :** Chaque prévision publiée expose obligatoirement son horizon ($h \in \{1, 2, 3\}$), sa cible temporelle (`target_period`), son origine (`data_cutoff`), son modèle effectif (`model_effective`), son statut de baseline (`is_baseline`), son statut de calibration conforme (`is_calibrated`), l'effectif d'étalonnage (`calibration_sample_size`), l'intervalle `[p10, p90]`, la largeur d'intervalle, la cohorte d'entraînement (`pure_observed` vs `mixed_cohort`), la devise (`currency`), l'unité physique (`unit`), et toute cause de repli (`fallback_reason`).
+  3. **Traçabilité des abstentions loyales :** Lorsqu'une série ne répond pas aux critères d'éligibilité normatifs (moins de 36 mois, absence de 12 mois récents, ou granularité non régionale/nationale) ou qu'elle présente trop de lacunes (> 30%), le système publie explicitement son abstention (`status: abstained` ou `experimental_insufficient_windows`) avec la raison méthodologique (`abstention_reason`), sans jamais tenter d'inventer une valeur.
+  4. **Intégrité visuelle absolue (Zéro courbe de remplacement LLM/UI) :** L'interface utilisateur (`PriceChart`, `/prices`) affiche distinctement les points observés et les prévisions avec leurs bandes conformes. En l'absence de prévision certifiée, l'UI affiche un panneau d'abstention loyale et s'interdit formellement de générer une courbe d'extrapolation ou d'interpolation artificielle par le front ou un LLM.
+- **Décision :**
+  1. Étendre `ml.forecast` (migration 0012) et `gold.forecast_latest` avec les colonnes de métadonnées conformes : `model_requested`, `model_effective`, `is_baseline`, `is_calibrated`, `calibration_sample_size`, `status`, `fallback_reason`, `currency`, `unit`, `interval_width`, `coverage_rate_80`.
+  2. Étendre l'API `/v1/forecasts` avec :
+     - `GET /v1/forecasts` (support filtres `product`, `location`, `actor_level`, `model_run_id`, pagination `limit`, `offset`, formats `json` et `csv`).
+     - `GET /v1/forecasts/runs` (historique des model runs, récupération de vieux runs avec empreinte `dataset_fingerprint`).
+     - `GET /v1/forecasts/runs/{model_run_id}` (détail et métriques d'un run archivé).
+     - `GET /v1/forecasts/abstentions` (catalogue des séries écartées ou abstentions avec motifs normatifs).
+  3. Enrichir `web/src/components/charts/PriceChart.tsx` pour afficher fidèlement le modèle effectif, le statut calibré/heuristique et le disclaimer en cas de repli.
+  4. Mettre à jour `web/src/app/prices/page.tsx` pour intégrer les prévisions réelles de l'API et l'affichage d'abstention loyale sans falsification de courbe.
+- **Alternatives rejetées :**
+  - Écraser les runs précédents par un simple `UPDATE` (rejeté, viole l'immutabilité et l'audit C4).
+  - Tracer une courbe continue entre le dernier point observé et les prévisions manquantes avec une heuristique front (rejeté, création de fausse information).
+- **Conséquences :** Clarté absolue pour l'analyste, auditabilité rétrospective de chaque run de modèle, conformité contractuelle totale avec SPECS §17 et §19.
+
 ## ADR-077 : calibration conforme des intervalles de prévision, élimination des replis arbitraires +-10% et surveillance de couverture (R3.5)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R3.5 ; Phase R3.

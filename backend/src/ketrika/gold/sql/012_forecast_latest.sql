@@ -1,6 +1,6 @@
 -- 012_forecast_latest.sql
 -- Grain: série × horizon
--- Contenu: dernier model_run pour chaque série
+-- Contenu: dernier model_run pour chaque série avec métadonnées conformes (ADR-078)
 
 DROP MATERIALIZED VIEW IF EXISTS gold.forecast_latest CASCADE;
 
@@ -21,12 +21,25 @@ WITH latest_runs AS (
         f.p10,
         f.p50,
         f.p90,
+        f.model_requested,
+        COALESCE(f.model_effective, mr.model_name) AS model_effective,
+        f.is_baseline,
+        f.is_calibrated,
+        f.calibration_sample_size,
+        f.status,
+        f.fallback_reason,
+        f.currency,
+        f.unit,
+        f.interval_width,
+        f.coverage_rate_80,
         f.generated_at,
         mr.model_run_id,
         mr.model_name,
         mr.model_version,
         mr.data_cutoff,
         mr.trained_at,
+        mr.params->>'dataset_fingerprint' AS dataset_fingerprint,
+        mr.params->>'cohort' AS cohort,
         ROW_NUMBER() OVER (
             PARTITION BY f.series_key, f.horizon, f.target_period
             ORDER BY mr.trained_at DESC, f.generated_at DESC
@@ -52,11 +65,24 @@ SELECT
     p10,
     p50,
     p90,
+    model_requested,
+    model_effective,
+    is_baseline,
+    is_calibrated,
+    calibration_sample_size,
+    status,
+    fallback_reason,
+    currency,
+    unit,
+    interval_width,
+    coverage_rate_80,
     model_name,
     model_version,
     data_cutoff,
     trained_at,
-    generated_at
+    generated_at,
+    dataset_fingerprint,
+    cohort
 FROM latest_runs
 WHERE rn = 1
 WITH NO DATA;
