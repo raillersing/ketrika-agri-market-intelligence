@@ -36,7 +36,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R1.13 | MUST | DONE | Gate R1 validé : matrice 9 sources, 7 actives / 2 offline (B-R009, B-R010), 109 tests verts, tag mi-r1-qualified |
 | R2.1 | MUST | DONE | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts |
 | R2.2 | MUST | DONE | Taxonomie auditée, conversions avec preuves empiriques, gardes physiques massique/volumique, gardes d'agrégation Gold, file de revue des alias < 0.90, 38 tests verts, 90% couverture core |
-| R2.3 | MUST | IN_PROGRESS | 2026-10-16T07:35:00Z |
+| R2.3 | MUST | DONE | DQ, agrégations, alignement calendaire, indépendance de familles, 59 tests verts, 95% couverture |
 | R2.4 | MUST | TODO | — |
 | R2.5 | MUST | TODO | — |
 | R2.6 | MUST | TODO | — |
