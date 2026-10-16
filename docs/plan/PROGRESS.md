@@ -11,7 +11,7 @@
 - Commandes : uv run pytest -v tests/unit/test_omh_public.py --cov=ketrika.connectors.omh_public --cov-report=term-missing (exit 0, 14 passed in 48.13s, couverture 81 %) ; ruff check (exit 0) ; mypy (exit 0) ; non-régression 118 passed in 73.72s.
 - Résultats : 14/14 tests verts ; connecteur opérationnel ; séries Gazole, Super 95 et Pétrole lampant extraites avec statut de prix administré ; date d'effet rigoureusement séparée de la date de publication ; aucune rupture déduite sans acte officiel.
 - Qualification : Connecteur Office Malgache des Hydrocarbures (OMH Public) QUALIFIED (DONE).
-- État final : DONE.
+- État final : DONE (commit 9e82d83).
 - Preuve : docs/evidence/R2.7/README.md.
 - Reprise : Tâche MUST éligible suivante R2.8 (Construire le tableau économique interprétable).
 
