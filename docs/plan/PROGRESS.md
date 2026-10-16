@@ -3,6 +3,19 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T21:15:00Z] R4.3 — DONE, qualification des bulletins Météo Madagascar (DGM)
+
+- Dépendances relues : R4.1 (DONE), R1.2 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-082 dans `docs/plan/DECISIONS.md` (qualification Météo Madagascar, extraction déterministe, disjonction stricte issued_at vs valid_from/valid_to, refus catégorique de fabriquer des probabilités numériques sur des catégories qualitatives, fail-safe unavailable).
+  2. Enregistrer la source officielle `meteo_mg` dans `registry/sources.yaml` et dans `backend/src/ketrika/connectors/registry.py`.
+  3. Implémenter le connecteur `backend/src/ketrika/connectors/meteo_mg.py` (`MeteoMgConnector`, `Connector = MeteoMgConnector`).
+  4. Créer les fixtures officielles de test `bulletin_decadaire_2024_01_d1.json` et `bulletin_unavailable.json` dans `backend/tests/fixtures/meteo_mg/`.
+  5. Écrire la suite de tests unitaires `backend/tests/unit/test_meteo_mg.py` (6/6 tests passés en 16.45s, couverture `ketrika.connectors.meteo_mg` à 89%).
+  6. Valider Ruff clean et Mypy strict clean (2 source files sans erreur).
+  7. Rédiger le dossier de preuve `docs/evidence/R4.3/README.md`.
+- Résultat : Tâche R4.3 entièrement qualifiée et validée (DONE).
+
 ### [2026-10-16T21:05:00Z] R4.2 — DONE, qualification CHIRPS et ses versions
 
 - Dépendances relues : R4.1 (DONE), R1.2 (DONE).
@@ -900,7 +913,7 @@
 | R3.9 | MUST | DONE | 2026-10-16T20:05:00Z | 2026-10-16T20:15:00Z | bcf2985 | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified | 6 tests dédiés verts, 66 tests ML verts, zéro fuite certifiée |
 | R4.1 | MUST | DONE | 2026-10-16T20:30:00Z | 2026-10-16T20:50:00Z | f11de9b | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, modèle météo observée vs prévue, calendriers culturaux, migration 0014 | 8 tests dédiés verts, couverture ketrika.geo 94%, migration 0014 appliquée |
 | R4.2 | MUST | DONE | 2026-10-16T20:55:00Z | 2026-10-16T21:05:00Z | fbf16c6 | ADR-081, SPECS §26, connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage raster Madagascar | 7 tests dédiés verts, couverture chirps 85%, supersession C2/C4 validée |
-| R4.3 | MUST | TODO | — | — | — | — | — |
+| R4.3 | MUST | IN_PROGRESS | 2026-10-16T21:10:00Z | — | — | Qualifier les bulletins Météo Madagascar, extraction déterministe, séparation émission/validité, refus probabilités inventées | En cours |
 | R4.4 | MUST | TODO | — | — | — | — | — |
 | R4.5 | MUST | TODO | — | — | — | — | — |
 | R4.6 | MUST | TODO | — | — | — | — | — |

@@ -482,3 +482,41 @@
   legal_review_status: approved
   data_kinds: [weather]
   notes: "Estimations satellitaires et stations des précipitations mensuelles et décadaires."
+
+- source_id: meteo_mg
+  name: "Météo Madagascar – Direction Générale de la Météorologie"
+  owner: "Ministère des Transports et de la Météorologie (Madagascar)"
+  source_family: dgm_madagascar
+  priority: P2
+  status: planned
+  access_method: file
+  connector: ketrika.connectors.meteo_mg:Connector
+  cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: monthly
+  freshness_sla_days: 62
+  partitioning: monthly
+  entrypoints:
+    - url: "https://www.meteomadagascar.mg/"
+      kind: landing
+      verified_at: "2026-10-16T00:00:00Z"
+      verified: true
+  languages: [fr, mg]
+  licence: "Information publique officielle (Gouvernement de Madagascar)"
+  tos_url: "https://www.meteomadagascar.mg/mentions-legales"
+  tos_sha256: null
+  tos_checked_at: "2026-10-16T00:00:00Z"
+  robots_checked_at: "2026-10-16T00:00:00Z"
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [weather, event]
+  notes: "Bulletins agro-météorologiques décadaires et mensuels officiels de Madagascar."
+

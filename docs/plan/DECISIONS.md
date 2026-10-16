@@ -2,6 +2,24 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-082 : qualification de la source officielle Météo Madagascar, extraction déterministe et intégrité métrologique des bulletins agroclimatiques (R4.3)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.3 ; Phase R4.
+- **Contexte :** L'intégration des bulletins agro-météorologiques et des perspectives climatiques publiés par la Direction Générale de la Météorologie de Madagascar (DGM / Météo Madagascar, `https://www.meteomadagascar.mg/`) impose des garanties strictes de fidélité documentaire et métrologique (directives R4.3, règles 1, 7, 8, 9 et 10 d'AGENTS.md) :
+  1. **Disjonction formelle entre date d'émission et période de validité :** Un bulletin publié le 10 janvier 2024 portant sur la décade du 1er au 10 janvier (`valid_from: 2024-01-01`, `valid_to: 2024-01-10`) ne doit pas voir sa date d'observation confondue avec sa date de publication (`issued_at: 2024-01-10`).
+  2. **Interdiction de fabriquer des probabilités à partir de catégories qualitatives :** Les cartes et textes décrivant des catégories (ex: « pluies normales à supérieures », « déficit hydrique modéré ») doivent être consignés textuellement avec citation exacte et extrait de page. Il est strictement interdit de convertir une catégorie qualitative ou une couleur de carte en fausse probabilité numérique (ex: « 75 % ») absente du document source officiel.
+  3. **Principe de fidélité au réel et absence de document :** Si aucun bulletin officiel n'est publié ou accessible pour une période donnée, l'état pour cette période est obligatoirement étiqueté `unavailable` avec raison documentée. Il est strictement interdit d'inventer un bulletin de remplacement ou un calendrier fictif.
+  4. **Provenance vérifiable à 100 % (Règle 1) :** Chaque observation ou avis extrait référence obligatoirement le `source_record_id` de l'artefact Bronze original (PDF ou bulletin HTML officiel), son empreinte SHA-256, le numéro de page, et l'extrait textuel verbatim.
+- **Décision :**
+  1. Déclarer la source `meteo_mg` dans `registry/sources.yaml` avec priorité P2, entrée `https://www.meteomadagascar.mg/`, cadence mensuelle/décadaire, licence publique officielle.
+  2. Implémenter le connecteur `ketrika.connectors.meteo_mg.MeteoMgConnector` (`Connector = MeteoMgConnector`).
+  3. Extraire de façon déterministe les cumuls pluviométriques observés chiffrés en `WeatherRecord` (`provider='meteo_mg'`), et consigner les perspectives et alertes zonales dans des enregistrements d'événements/perspectives structurés avec preuves citations exactes.
+  4. Rédiger la suite de tests validant la séparation émission/validité, la conservation des citations, le rejet de probabilités inventées, et le comportement `unavailable` en l'absence de document.
+- **Alternatives rejetées :**
+  - Fabriquer une prévision probabiliste continue à partir des cartes qualitatives (rejeté, violation de la règle 10 d'AGENTS.md).
+  - Utiliser un modèle météo non institutionnel en prétendant qu'il s'agit du service officiel malgache (rejeté, hérésie de provenance).
+- **Conséquences :** Intégration certifiée de la parole officielle de Météo Madagascar, distinction absolue entre faits observés et perspectives qualitatives.
+
 ## ADR-081 : qualification du connecteur CHIRPS v2.0, double versioning préliminaire/finale et distinction stricte pluie nulle vs nodata (R4.2)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R4.2 ; Phase R4.
