@@ -3,6 +3,33 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T11:48:00Z] R2.9 — DONE, exposition des données et de leurs limites dans l'API
+
+- Dépendances relues : R2.3 (DQ/agrégations), R2.4 (couverture/pilote), R2.8 (tableau économique).
+- Mini-plan exécuté :
+  1. Rédiger ADR-071 dans `docs/plan/DECISIONS.md` et mettre à jour `docs/plan/SPECS.md` (§19).
+  2. Étendre `/v1/macro` avec `limit` (1-1000), `offset` (>=0) et `format=json|csv` sans casser les clients existants.
+  3. Étendre `/v1/market/coverage` avec `limit`, `offset` et `format=json|csv`.
+  4. Étendre `/v1/economic/indicators` avec `limit`, `offset` et `format=json|csv`.
+  5. S'assurer que chaque valeur expose son typage (`observed_or_imputed`), ses unités, sa temporalité et sa provenance.
+  6. Garantir que les routes d'administration `/v1/admin/*` restent strictement protégées par le rôle admin (401/403 unauthenticated).
+  7. Exporter le schéma OpenAPI mis à jour dans `web/src/lib/api/openapi.json`.
+  8. Régénérer les types TypeScript dans `web/src/lib/api/schema.d.ts` et vérifier `tsc --noEmit` (exit 0).
+  9. Développer la suite de tests de qualification CC-R `backend/tests/unit/test_api_extensions_and_limits.py` (6 tests).
+  10. Valider couverture >= 80% (macro: 100%, coverage: 82%, economic: 95%, total: 94%), ruff (exit 0), mypy (exit 0), non-régression globale (143/143 tests verts) et rédiger `docs/evidence/R2.9/README.md`.
+- Environnement : Docker ketrika-backend:dev, ketrika-web:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes :
+  - `uv run pytest -v tests/unit/test_api_extensions_and_limits.py tests/unit/test_economic_dashboard.py --cov=ketrika.api.routers.macro --cov=ketrika.api.routers.coverage --cov=ketrika.api.routers.economic --cov-report=term-missing` (exit 0, 25 passed, couverture 94%)
+  - `uv run ruff check src/ketrika/api/routers/ tests/unit/test_api_extensions_and_limits.py` (exit 0, clean)
+  - `uv run mypy src/ketrika/api/routers/macro.py src/ketrika/api/routers/coverage.py src/ketrika/api/routers/economic.py tests/unit/test_api_extensions_and_limits.py` (exit 0, 4 source files clean)
+  - `npm run typecheck` (tsc --noEmit, exit 0)
+  - Suite de non-régression 143 tests passés en 122s.
+- Résultats : Tous les endpoints `/v1/macro`, `/v1/market/coverage`, `/v1/economic/indicators` paginés et exportables en CSV avec métadonnées exhaustives ; conformité OpenAPI/TypeScript assurée ; validation des bornes de pagination (RFC 7807) ; protection stricte des endpoints admin.
+- Qualification : Exposition des données et de leurs limites dans l'API QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R2.9/README.md.
+- Reprise : Tâche MUST éligible suivante R2.10 (Livrer les vues marché et économie).
+
 ### [2026-10-16T11:20:00Z] R2.8 — DONE, construction du tableau économique interprétable
 
 - Dépendances relues : R2.3 (DQ/agrégations), R1.3 (NIPC), R1.6 (conversions/gardes), R2.5 (TBE), R2.6 (BFM), R2.7 (OMH).

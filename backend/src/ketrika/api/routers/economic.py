@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import datetime as dt
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from ketrika.api.csv_utils import export_csv_response
 from ketrika.api.schemas import (
     DimensionSummaryOut,
     EconomicDashboardOut,
@@ -31,9 +33,13 @@ router = APIRouter(prefix="/v1/economic", tags=["economic"])
 
 
 @router.get("/indicators", response_model=list[EconomicMetricCardItem])
-def get_economic_indicators() -> list[EconomicMetricCardItem]:
-    """Return the normative catalog of economic metric cards."""
-    return [
+def get_economic_indicators(
+    limit: int = Query(100, ge=1, le=1000, description="Page limit (default 100, max 1000)"),
+    offset: int = Query(0, ge=0, description="Page offset (default 0)"),
+    format: str = Query("json", description="Output format (json or csv)"),
+) -> Any:
+    """Return the normative catalog of economic metric cards with pagination and CSV export (ADR-071)."""
+    cards = [
         EconomicMetricCardItem(
             metric_id=card.metric_id,
             dimension=card.dimension,
@@ -50,6 +56,15 @@ def get_economic_indicators() -> list[EconomicMetricCardItem]:
         )
         for card in ECONOMIC_METRIC_CARDS.values()
     ]
+    actual_limit = int(limit.default) if hasattr(limit, "default") else int(limit)
+    actual_offset = int(offset.default) if hasattr(offset, "default") else int(offset)
+    actual_format = str(format.default) if hasattr(format, "default") else str(format)
+
+    paged = cards[actual_offset : actual_offset + actual_limit]
+    if actual_format == "csv":
+        data = [item.model_dump() for item in paged]
+        return export_csv_response(data, filename="economic_indicators.csv")
+    return paged
 
 
 @router.get("/dashboard", response_model=EconomicDashboardOut)

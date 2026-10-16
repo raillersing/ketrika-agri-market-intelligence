@@ -42,7 +42,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R2.6 | MUST | DONE | Nouveau connecteur bfm_public, cours journaliers USD/EUR, respect des jours ouvrés sans interpolation, conventions achat/vente/moyen, 17 tests verts, 85% couverture |
 | R2.7 | MUST | DONE | Nouveau connecteur omh_public, gazole/super/pétrole, prix réglementés, séparation date d'effet vs publication, 14 tests verts, 81% couverture |
 | R2.8 | MUST | DONE | Tableau économique interprétable, dimensions étanches, fiches métriques, gestion stricte nullité, 19 tests verts, 97% couverture |
-| R2.9 | MUST | TODO | — |
+| R2.9 | MUST | DONE | Exposition données/limites API, pagination [1, 1000], export CSV /v1/macro /v1/market/coverage /v1/economic/indicators, types OpenAPI/TS synchronisés, 6 tests verts, couverture 94% |
 | R2.10 | MUST | TODO | — |
 | R2.11 | MUST | TODO | — |
 | R3.1 | MUST | TODO | — |

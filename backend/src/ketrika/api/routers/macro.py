@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from ketrika.api.csv_utils import export_csv_response
 from ketrika.api.schemas import MacroItem
 from ketrika.core.db import get_db
 
@@ -22,9 +23,12 @@ def get_macro(
     vintage: str | None = Query(None, description="Vintage / release status (e.g. preliminary, final)"),
     from_date: dt.date | None = Query(None, alias="from", description="Start date (YYYY-MM-DD)"),
     to_date: dt.date | None = Query(None, alias="to", description="End date (YYYY-MM-DD)"),
+    limit: int = Query(100, ge=1, le=1000, description="Page limit (default 100, max 1000)"),
+    offset: int = Query(0, ge=0, description="Page offset (default 0)"),
+    format: str = Query("json", description="Output format (json or csv)"),
     session: Session = Depends(get_db),
-) -> list[MacroItem]:
-    """Retrieve macroeconomic observations (SPECS §19, ADR-069)."""
+) -> Any:
+    """Retrieve macroeconomic observations with pagination and CSV export (SPECS §19, ADR-069, ADR-071)."""
     sql = """
         SELECT
             m.observation_id,
@@ -64,7 +68,13 @@ def get_macro(
         sql += " AND m.period_start <= :to_date"
         params["to_date"] = to_date
 
-    sql += " ORDER BY m.indicator_code, m.period_start ASC, m.vintage ASC;"
+    actual_limit = int(limit.default) if hasattr(limit, "default") else int(limit)
+    actual_offset = int(offset.default) if hasattr(offset, "default") else int(offset)
+    actual_format = str(format.default) if hasattr(format, "default") else str(format)
+
+    sql += " ORDER BY m.indicator_code, m.period_start ASC, m.vintage ASC LIMIT :limit OFFSET :offset;"
+    params["limit"] = actual_limit
+    params["offset"] = actual_offset
     rows = session.execute(text(sql), params).fetchall()
 
     results: list[MacroItem] = []
@@ -89,4 +99,9 @@ def get_macro(
                 sources=[r[15]] if r[15] else [],
             )
         )
+
+    if actual_format == "csv":
+        data = [item.model_dump() for item in results]
+        return export_csv_response(data, filename="macro_observations.csv")
+
     return results

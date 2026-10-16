@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from ketrika.api.csv_utils import export_csv_response
 from ketrika.api.schemas import (
     ImpossibleCapabilityItem,
     MarketCoverageItem,
@@ -30,9 +33,12 @@ def get_market_coverage(
     actor_level: str | None = Query(None, description="Actor level (e.g. retail, wholesale)"),
     from_date: str | None = Query(None, alias="from", description="Start month (YYYY-MM-01)"),
     to_date: str | None = Query(None, alias="to", description="End month (YYYY-MM-01)"),
+    limit: int = Query(100, ge=1, le=1000, description="Page limit (default 100, max 1000)"),
+    offset: int = Query(0, ge=0, description="Page offset (default 0)"),
+    format: str = Query("json", description="Output format (json or csv)"),
     session: Session = Depends(get_db),
-) -> list[MarketCoverageItem]:
-    """Retrieve market coverage matrix cells from gold.market_coverage."""
+) -> Any:
+    """Retrieve market coverage matrix cells with pagination and CSV export (SPECS §19, R2.4, ADR-071)."""
     rows = query_market_coverage_matrix(
         session=session,
         product_code=product,
@@ -41,7 +47,7 @@ def get_market_coverage(
         from_month=from_date,
         to_month=to_date,
     )
-    return [
+    items = [
         MarketCoverageItem(
             product_code=r.product_code,
             product_name=r.product_name,
@@ -65,6 +71,18 @@ def get_market_coverage(
         )
         for r in rows
     ]
+
+    actual_limit = int(limit.default) if hasattr(limit, "default") else int(limit)
+    actual_offset = int(offset.default) if hasattr(offset, "default") else int(offset)
+    actual_format = str(format.default) if hasattr(format, "default") else str(format)
+
+    paged_items = items[actual_offset : actual_offset + actual_limit]
+
+    if actual_format == "csv":
+        data = [item.model_dump() for item in paged_items]
+        return export_csv_response(data, filename="market_coverage.csv")
+
+    return paged_items
 
 
 @router.get("/coverage/gaps", response_model=SeriesCoverageSummaryItem)

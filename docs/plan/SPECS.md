@@ -1367,8 +1367,9 @@ Chaque valeur exposée inclut `value_kind` (`observed | imputed | forecast | com
 | GET | `/v1/observations/{id}` | **Provenance complète** : brut, preuve, méthode, `source_record`, URL d'origine, lien signé vers l'objet Bronze (15 min) |
 | GET | `/v1/stocks?product=&location=` | Stocks |
 | GET | `/v1/trade?product=&flow=&from=&to=` | Flux commerciaux |
-| GET | `/v1/macro?indicator=&geo_scope=&vintage=&from=&to=` | Séries macroéconomiques (`obs.macro_observation`) |
-| GET | `/v1/economic/indicators` · `/v1/economic/dashboard` · `/v1/economic/pilot-context` | Tableau économique interprétable par dimension étanche (ADR-070, R2.8) |
+| GET | `/v1/macro?indicator=&geo_scope=&vintage=&from=&to=&limit=&offset=&format=json\|csv` | Séries macroéconomiques (`obs.macro_observation`), avec pagination et export CSV (ADR-071, R2.9) |
+| GET | `/v1/market/coverage?product=&location=&actor_level=&from=&to=&limit=&offset=&format=json\|csv` | Matrice de couverture, complétude et lacunes (R2.4, ADR-071) |
+| GET | `/v1/economic/indicators?format=json\|csv` · `/v1/economic/dashboard` · `/v1/economic/pilot-context` | Tableau économique interprétable par dimension étanche (ADR-070, ADR-071, R2.8) |
 | GET | `/v1/weather/anomalies?location=&from=&to=` | Anomalies météo |
 | GET | `/v1/kpis/market-health?product=&location=&month=` | Score + composantes |
 | GET | `/v1/forecasts?product=&location=&actor_level=` | p10/p50/p90 + métriques de backtest |

@@ -2,6 +2,19 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-071 : extension des contrats d'API, pagination normative, export CSV et exposition systématique des métadonnées de qualification (R2.9)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R2.9 ; Phase R2.
+- **Contexte :** La phase R2 requiert l'exposition uniforme des séries macroéconomiques, de couverture de marché, de disponibilité temporelle et de qualification à travers l'API REST sans rupture pour les clients existants (directive R2.9). De plus, les règles de rigueur et d'intégrité doivent être strictement partagées entre les formats JSON et CSV, la pagination doit être stable et prédictible, et les endpoints administratifs doivent rester protégés.
+- **Décision :**
+  1. **Extension non-cassante des routes existantes :** Ajout des paramètres de pagination standardisés `limit` (défaut 100, minimum 1, maximum 1000) et `offset` (défaut 0, minimum 0) sur `/v1/macro`, `/v1/market/coverage`, et `/v1/economic/indicators`.
+  2. **Parité stricte CSV / JSON :** Ajout du paramètre `format=json|csv` sur les routes de séries (`/v1/macro`, `/v1/market/coverage`, `/v1/economic/indicators`). L'export CSV applique les mêmes filtres, pagination, préservations des valeurs nulles et sérialisations de listes que le JSON, avec en-têtes HTTP `Content-Type: text/csv` et `Content-Disposition`.
+  3. **Exposition exhaustive des métadonnées de qualification :** Chaque observation exposée maintient son typage d'observation (`observed_or_imputed`, `value_kind`), son unité physique et devise, sa résolution géographique réelle (sans assignation aveugle), sa temporalité native (`period_start`, `period_end`, `frequency`, `base_period`) et ses jalons de disponibilité (`published_at`, `first_available_at`).
+  4. **Contrôle d'accès et non-exposition publique d'administration :** Les routes `/v1/admin/*` exigent strictement le rôle `admin` et ne sont jamais exposées publiquement sans authentification.
+  5. **Synchronisation du schéma OpenAPI :** Régénération systématique de `web/src/lib/api/openapi.json` et des types TypeScript correspondants dans `web/src/lib/api/schema.d.ts`.
+- **Alternatives rejetées :** Création d'une nouvelle version majeure d'API /v2 (rejeté, complexité injustifiée, clients existants préservés), exclusion du format CSV pour les séries macro (rejeté, parité exigée par SPECS §19).
+- **Conséquences :** API totalement homogène, contrats de pagination et d'export robustes, intégration front-end garantie par TypeScript strict.
+
 ## ADR-070 : tableau économique interprétable, fiches métriques et gestion stricte des dimensions non combinables (R2.8)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R2.8 ; Phase R2.
