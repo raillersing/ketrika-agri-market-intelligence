@@ -614,6 +614,10 @@ def load_weather_record_with_supersession(
         and current_obs.source_record_id == source_record_id
         and current_obs.location_raw == record.location_raw
         and current_obs.value_raw == record.value_raw
+        and current_obs.stage == getattr(record, "stage", "final")
+        and current_obs.spatial_resolution == getattr(record, "spatial_resolution", None)
+        and current_obs.coverage_ratio == getattr(record, "coverage_ratio", None)
+        and current_obs.raster_source_record_id == getattr(record, "raster_source_record_id", None)
         and current_obs.extraction_method == record.extraction_method
         and current_obs.evidence == record.evidence
     ):
@@ -637,6 +641,10 @@ def load_weather_record_with_supersession(
         value_raw=record.value_raw,
         method=record.method,
         provider=record.provider,
+        stage=getattr(record, "stage", "final"),
+        spatial_resolution=getattr(record, "spatial_resolution", None),
+        coverage_ratio=getattr(record, "coverage_ratio", None),
+        raster_source_record_id=getattr(record, "raster_source_record_id", None),
         evidence=deepcopy(record.evidence),
         extraction_method=record.extraction_method,
     )

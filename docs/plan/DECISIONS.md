@@ -2,6 +2,24 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-081 : qualification du connecteur CHIRPS v2.0, double versioning préliminaire/finale et distinction stricte pluie nulle vs nodata (R4.2)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.2 ; Phase R4.
+- **Contexte :** L'intégration du produit satellitaire et stationnaire CHIRPS v2.0 (Climate Hazards Center, UC Santa Barbara) exige des garanties métrologiques strictes (directives R4.2, règles 1, 3, 8 et 9 d'AGENTS.md) :
+  1. **Gestion du double cycle temporel préliminaire vs final (C2/C4) :** CHIRPS produit d'abord une version préliminaire rapide (`chirps-v2.0.prelim`) disponible 2 à 5 jours après la fin du mois, puis une version définitive (`chirps-v2.0.final`) vers le 15 du mois suivant après assimilation des stations pluviométriques au sol. En application de la règle 3 (Append-only) et de l'auditabilité C4, la publication définitive ne détruit pas la version préliminaire : elle l'archive avec `superseded_by` pointant vers la définitive, garantissant la traçabilité des séries as-of.
+  2. **Distinction physique stricte entre pluie nulle ($0{,}0\text{ mm}$) et nodata ($-9999{,}0$) :** En climatologie tropicale et dans le Grand Sud malgache, $0{,}0\text{ mm}$ représente une observation avérée d'absence de pluie (sécheresse météorologique), tandis que $-9999{,}0$ est la valeur sentinelle nodata désignant un pixel hors masque maritime ou sans acquisition. Les confondre corromprait gravement le calcul des anomalies pluviométriques et le suivi des sécheresses.
+  3. **Découpage spatial systématique (budget Bronze raster) :** Les rasters d'origine (continentaux ou globaux) sont bornés à la BBOX officielle Madagascar `[43.0, -25.8, 50.8, -11.8]` avant stockage et agrégation, garantissant un volume inférieur au plafond de 50 Mo.
+  4. **Agrégation zonale traçable vers les entités administratives :** L'agrégation zonale calcule la moyenne spatiale des pixels valides sur chaque région (`admin1`) et district (`admin2`) avec rapport de couverture spatiale (`coverage_ratio`).
+- **Décision :**
+  1. Implémenter le connecteur `ketrika.connectors.chirps.ChirpsConnector` avec support complet des partitions préliminaires et finales.
+  2. Produire des `WeatherRecord` typés avec `provider='chirps'`, `variable='precip_mm'`, `method='zonal_mean'`, `spatial_resolution='0.05_deg'`, `stage='preliminary'|'final'`, et preuve structurée incluant l'empreinte SHA-256 du raster.
+  3. Valider la supersession dans `load_weather_record_with_supersession` afin qu'une mise à jour finale conserve l'historique préliminaire sans écrasement destructif.
+- **Alternatives rejetées :**
+  - Attendre uniquement la version définitive (rejeté, priverait le système de réactivité opérationnelle précoce à J+5).
+  - Écraser la version préliminaire en base sans historisation (rejeté, viole l'Append-only et l'auditabilité C2/C4).
+  - Imputer les valeurs nodata à 0 mm (rejeté, hérésie métrologique).
+- **Conséquences :** Disponibilité précoce et définitive des précipitations, auditabilité totale des sources CHIRPS Bronze et Silver.
+
 ## ADR-080 : formalisation des contrats géospatiaux, agroclimatiques et séparation stricte météo observée vs prévue (R4.1)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R4.1 ; Phase R4.

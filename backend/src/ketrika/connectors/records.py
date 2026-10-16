@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import uuid
 from datetime import date, datetime
 from typing import ClassVar
 
@@ -144,6 +145,10 @@ class WeatherRecord(RecordBase):
     value_raw: str | None = None
     method: str = "point_centroid"  # point_centroid | zonal_mean
     provider: str = "nasa_power"  # nasa_power | chirps
+    stage: str = "final"  # preliminary | final (double-version provider handling)
+    spatial_resolution: str | None = None
+    coverage_ratio: float | None = None
+    raster_source_record_id: uuid.UUID | None = None
 
     # Provide period_start and period_end defaulting to date
     period_start: dt.date = Field(default_factory=dt.date.today)
@@ -227,4 +232,3 @@ class MacroRecord(RecordBase):
     observed_or_imputed: str = "observed"  # observed | imputed | estimated
     first_available_at: datetime | None = None
     published_at: datetime | None = None
-

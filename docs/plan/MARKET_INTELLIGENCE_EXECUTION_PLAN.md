@@ -54,7 +54,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R3.8 | MUST | DONE | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines, 7 tests verts, couverture ML 92%, rapport publié |
 | R3.9 | MUST | DONE | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified |
 | R4.1 | MUST | DONE | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, séparation météo observée vs prévue, calendriers culturaux, migration 0014, 8 tests verts, couverture 94% |
-| R4.2 | MUST | TODO | — |
+| R4.2 | MUST | DONE | ADR-081, SPECS §26, connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage raster Madagascar, 7 tests verts, couverture 85% |
 | R4.3 | MUST | TODO | — |
 | R4.4 | MUST | TODO | — |
 | R4.5 | MUST | TODO | — |

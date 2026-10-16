@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T21:05:00Z] R4.2 — DONE, qualification CHIRPS et ses versions
+
+- Dépendances relues : R4.1 (DONE), R1.2 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-081 dans `docs/plan/DECISIONS.md` (cycle double préliminaire/final CHIRPS v2.0, non-écrasement C2/C4, distinction stricte pluie nulle 0.0 mm vs nodata -9999.0, découpage BBOX Madagascar, budget <= 50 Mo).
+  2. Implémenter `backend/src/ketrika/connectors/chirps.py` (`ChirpsConnector`, `Connector = ChirpsConnector`).
+  3. Enregistrer `chirps` dans `backend/src/ketrika/connectors/registry.py`.
+  4. Étendre `WeatherRecord` et `load_weather_record_with_supersession` pour transmettre et persister `stage`, `spatial_resolution`, `coverage_ratio`, et `raster_source_record_id`.
+  5. Créer les fixtures représentatives `chirps_prelim_sample.json` et `chirps_final_sample.json` dans `backend/tests/fixtures/chirps/`.
+  6. Écrire la suite de tests unitaires `backend/tests/unit/test_chirps.py` (7/7 tests passés en 16.52s, couverture `ketrika.connectors.chirps` à 85%).
+  7. Valider Ruff clean et Mypy strict clean (4 source files sans erreur).
+  8. Rédiger le dossier de preuve `docs/evidence/R4.2/README.md`.
+- Résultat : Tâche R4.2 entièrement qualifiée et validée (DONE).
+
 ### [2026-10-16T20:50:00Z] R4.1 — DONE, formalisation des contrats géospatiaux et agroclimatiques
 
 - Dépendances relues : R2.1 (DONE), R1.10 (DONE).
@@ -885,7 +899,7 @@
 | R3.8 | MUST | DONE | 2026-10-16T19:40:00Z | 2026-10-16T20:00:00Z | 08d24e6 | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines | 7 tests dédiés verts, 60 tests ML verts, couverture evaluation 92%, API /v1/forecasts/performance |
 | R3.9 | MUST | DONE | 2026-10-16T20:05:00Z | 2026-10-16T20:15:00Z | bcf2985 | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified | 6 tests dédiés verts, 66 tests ML verts, zéro fuite certifiée |
 | R4.1 | MUST | DONE | 2026-10-16T20:30:00Z | 2026-10-16T20:50:00Z | f11de9b | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, modèle météo observée vs prévue, calendriers culturaux, migration 0014 | 8 tests dédiés verts, couverture ketrika.geo 94%, migration 0014 appliquée |
-| R4.2 | MUST | TODO | — | — | — | — | — |
+| R4.2 | MUST | DONE | 2026-10-16T20:55:00Z | 2026-10-16T21:05:00Z | a85c3b1 | ADR-081, SPECS §26, connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage raster Madagascar | 7 tests dédiés verts, couverture chirps 85%, supersession C2/C4 validée |
 | R4.3 | MUST | TODO | — | — | — | — | — |
 | R4.4 | MUST | TODO | — | — | — | — | — |
 | R4.5 | MUST | TODO | — | — | — | — | — |
