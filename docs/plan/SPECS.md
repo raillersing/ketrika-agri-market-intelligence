@@ -1119,6 +1119,12 @@ explicite si absente, ambiguë ou divergente. Sans identité enregistrée, conse
 le parcours minimal sans snapshot sans le requalifier. L'inventaire de copie
 peut contenir uniquement ces archives validées en plus des SourceRecords.
 
+Isolation des scénarios historiques (ADR-015/072) : le test CSV WB rejoue
+uniquement son SourceRecord acquis dans le scénario, pas les lots JSON natifs
+conservés par d'autres scénarios SQL. Assertions métier et refus Gold inchangés.
+Cette sélection de test ne constitue jamais la preuve intégrale R0.8 ; le
+qualificateur de clone garde son inventaire complet sans filtre.
+
 ### 11.1 Ordre d'extraction
 
 1. **Déterministe :** tables CSV, XLSX, JSON ou HTML (`selectolax`), tables PDF (`pdfplumber` / `camelot`).

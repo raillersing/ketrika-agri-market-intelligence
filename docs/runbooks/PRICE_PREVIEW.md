@@ -85,3 +85,19 @@ Réception complète du lot stabilisé avant intégration applicative main ; con
 structurel et chemin Silver natif à finaliser, qualification du rejeu et révisions
 réelles, puis suite R0–R6. Aucune prévision, fraîcheur de marché, revue humaine ou
 performance du modèle fournisseur déduite de cet aperçu.
+
+### Parcours Silver natif durable
+
+Le point d'entrée `execute_durable_silver` admet aussi le batch WB JSON2.0.0
+déjà enregistré ; toute autre version non compatible reste refusée. Il ne
+déclenche ni découverte, ni téléchargement, ni parseur CSV. Le batch doit
+posséder ses partitions documentaires immuables avant l'exécution Silver.
+La réussite conserve les identités des référentiels et un second appel relit
+le reçu sans normaliser à nouveau. Le rejeu rouvre l'archive existante en
+lecture seule et refuse les références divergentes avant reconstruction.
+
+Le test SQL/S3 répétable utilise des enveloppes synthétiques autour des valeurs
+du paquet vérifié, avec un identifiant de scénario, afin de respecter l'unicité
+source/SHA. Ces octets dérivés sont explicitement synthetic/manual_upload ; ils
+ne qualifient jamais une acquisition officielle ou une révision historique.
+Les octets institutionnels inchangés restent contrôlés dans le corpus authentique.

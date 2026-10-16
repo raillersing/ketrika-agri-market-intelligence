@@ -1,6 +1,7 @@
 """Transaction ordering simulated; this is not SQL durability evidence."""
 
 from contextlib import contextmanager
+from dataclasses import replace
 from datetime import UTC, datetime
 from unittest.mock import Mock
 from uuid import uuid4
@@ -214,6 +215,31 @@ def test_changed_parser_cannot_reuse_an_old_success_receipt(setup_owner, monkeyp
     with pytest.raises(ValueError, match="silver_batch_parser_mismatch"):
         execute_durable_silver(connector, context, batch)
     read.assert_not_called()
+    assert events == []
+
+
+@pytest.mark.parametrize(
+    "source,version,allowed",
+    [
+        ("wb_rtfp_mdg", "2.0.0", True),
+        ("wb_rtfp_mdg", "2.1.0", False),
+        ("other_source", "2.0.0", False),
+    ],
+)
+def test_native_parser_exception_is_exactly_scoped(
+    source, version, allowed, setup_owner, monkeypatch
+):
+    connector, context, batch, _, events, _, _, _ = setup_owner
+    connector.source_id = context.source_id = source
+    batch = replace(batch, source_id=source, parser_version=version)
+    read = Mock(return_value={"n_inserted": 15})
+    monkeypatch.setattr(MODULE + "read_success", read)
+    if allowed:
+        assert execute_durable_silver(connector, context, batch) == {"n_inserted": 15}
+    else:
+        with pytest.raises(ValueError, match="silver_batch_parser_mismatch"):
+            execute_durable_silver(connector, context, batch)
+        read.assert_not_called()
     assert events == []
 
 

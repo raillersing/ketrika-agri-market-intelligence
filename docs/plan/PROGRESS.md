@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T09:04:49Z] R0.8 — parcours natif durable raccordé et coexistence CSV vérifiée
+
+- Mini-plan : vérifier le batch JSON natif au véritable propriétaire Silver ; corriger uniquement le raccordement manquant ; tester reçu/idempotence/référentiel et coexistence CSV ; figer puis recevoir le lot complet une fois. Aucun développement R1 concurrent modifié.
+- Correction ADR-072 : execute_durable_silver accepte exactement WB/2.0.0, comme son consommateur Silver ; version/source différentes refusées avant lecture du reçu. CSV historique inchangé. Runbook enrichi.
+- SQL/S362177 FINAL0 :1 test/20,88 s,15 valeurs traitées,second appel sur reçu et archive réouverte ; données de test dérivées dans enveloppes synthetic explicites, pas acquisition authentique. Première préparation8328 refusée faute de partitions documentaires FK ; deuxième64063 refusée par unicité source/SHA, d'où enveloppes de scénario plutôt que falsification d'une archive officielle. Aucune suppression de Bronze ou historique SQL.
+- CSV32320 FINAL0 :1 test/42,91 s ; replay borné à son SourceRecord (SPECS avant modification, précédent ADR-015), exactement1 document et36 prix, refus Gold conservé. Ce scénario ne prouve pas le clone complet R0.8. Lancement66609 refusé avant collecte pour plugin pytest chargé deux fois ; relance avec autoload désactivé, aucun code applicatif modifié pour cela.
+- Unités72427 FINAL0 :19 tests/5,89 s ; contrôles92874/28079 FINAL0 :lint/format302 fichiers puis trois modules typés,19 unités incluent refus source/version inconnues. Réception complète sur source figée à lancer ; R0.8 IN_PROGRESS, ni clone natif complet ni révisions authentiques ni modèle qualifiés.
+
 ### [2026-10-15T21:52:34Z] R0.8 — réouverture des référentiels au rejeu implémentée
 
 - ADR-073/SPECS : résolution depuis les identités immuables des tentatives Silver réussies ; archive unique vérifiée contre les référentiels SQL verrouillés avant wipe. Lecture seule Bronze, aucun PUT ; inventaire de copie inclut uniquement les archives nécessaires. Ancien aperçu sans identité enregistrée conservé.
