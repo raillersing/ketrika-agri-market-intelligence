@@ -44,7 +44,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R2.8 | MUST | DONE | Tableau économique interprétable, dimensions étanches, fiches métriques, gestion stricte nullité, 19 tests verts, 97% couverture |
 | R2.9 | MUST | DONE | Exposition données/limites API, pagination [1, 1000], export CSV /v1/macro /v1/market/coverage /v1/economic/indicators, types OpenAPI/TS synchronisés, 6 tests verts, couverture 94% |
 | R2.10 | MUST | DONE | Vues marché et économie livrées, route /economy, 5 dimensions, 14 fiches métriques, complétude, 39 tests vitest verts, responsive 390px validé |
-| R2.11 | MUST | TODO | — |
+| R2.11 | MUST | DONE | Gate observatoire décisionnel validé, 5 questions calculables prouvées, zéro score composite, tag mi-r2-qualified |
 | R3.1 | MUST | TODO | — |
 | R3.2 | MUST | TODO | — |
 | R3.3 | MUST | TODO | — |

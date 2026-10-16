@@ -3,6 +3,41 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T12:38:00Z] Phase R2 Done & Gate R2.11 Qualifié (Tag: mi-r2-qualified)
+
+- **Résumé de phase R2 (<= 15 lignes) :**
+  - **Livré :** Cadre macroéconomique et temporel C1–C4 (`obs.macro_observation`, ADR-069) ; taxonomie et conversions physiques auditées (gardes massique/volumique, revue des alias < 0,90) ; matrice de couverture de marché SQL (`gold.market_coverage`, lacunes calendaires indépendantes, R2.4) et sélection du pilote rizicole ; trois nouveaux connecteurs qualifiés (`instat_tbe` fréquences natives, `bfm_public` jours ouvrés réels et parités inverses, `omh_public` carburants avec distinction prix administré vs marché et dates d'effet vs publication) ; tableau de bord économique interprétable (ADR-070) articulé en 5 dimensions étanches sans score global inventé ; contrats d'API paginés avec export CSV (`/v1/macro`, `/v1/market/coverage`, `/v1/economic/indicators`, ADR-071) ; interfaces web `/prices` (audit de couverture) et `/economy` (14 fiches métriques normatives, contexte de transmission, ADR-072) ; validation formelle des 5 questions décisionnelles du pilote (Gate R2.11).
+  - **Chiffres clés :** 11/11 tâches R2 DONE (100%) ; 149 tests backend unitaires/intégration 100% verts ; 39 tests vitest frontend 100% verts ; couverture `ketrika.gold.economic` à 96% (seuil >= 80%) ; 16 routes web Next.js compilées ; conformité mobile 390px validée ; 0 valeur inventée ou extrapolée.
+  - **Dettes & Risques :** Sources externes WFP et NASA POWER maintenues documentées avec replay local suite aux incidents B-R009 et B-R010.
+  - **Tag :** `mi-r2-qualified`.
+
+### [2026-10-16T12:35:00Z] R2.11 — DONE, Gate observatoire décisionnel
+
+- Dépendances relues : R2.1 à R2.10 (toutes DONE).
+- Mini-plan exécuté :
+  1. Établir formellement 5 questions décisionnelles calculables du pilote rizicole dans `docs/evidence/R2.11/README.md`.
+  2. Développer la suite de tests de qualification `backend/tests/unit/test_gate_r2_decision_observatory.py` prouvant mécaniquement les 5 réponses (6 tests verts).
+  3. Vérifier pour chaque question l'absence de chiffre inventé, la provenance exacte et le typage observé/imputé/réglementé.
+  4. Vérifier l'étanchéité des domaines manquants (maintien du statut unavailable/code de nullité explicite sans fausse complétude).
+  5. Exécuter l'ensemble des tests backend de la phase R2 avec couverture (96% sur `gold.economic` et `routers.economic`).
+  6. Exécuter les contrôles statiques backend (ruff clean, mypy strict clean) et frontend (typecheck clean, vitest 39 tests verts, next build 16 routes clean).
+  7. Exécuter la suite complète de non-régression (149 tests verts en 50.10s).
+  8. Rédiger le rapport de synthèse du Gate R2 dans `docs/evidence/R2.11/README.md`.
+  9. Mettre à jour `PROGRESS.md` avec le résumé de phase R2 (<= 15 lignes) et `MARKET_INTELLIGENCE_EXECUTION_PLAN.md` (R2.11 DONE).
+  10. Committer et poser le tag de jalon `mi-r2-qualified`.
+- Environnement : Docker ketrika-backend:dev, ketrika-web:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes :
+  - `uv run pytest -v tests/unit/test_gate_r2_decision_observatory.py` (exit 0, 6 passed in 51s)
+  - `uv run pytest -v tests/unit/test_economic_dashboard.py tests/unit/test_gate_r2_decision_observatory.py --cov=ketrika.gold.economic --cov=ketrika.api.routers.economic --cov-report=term-missing` (exit 0, 25 passed, couverture 96%)
+  - `uv run ruff check tests/unit/test_gate_r2_decision_observatory.py` (exit 0, clean)
+  - `MYPYPATH=src uv run mypy tests/unit/test_gate_r2_decision_observatory.py` (exit 0, clean)
+  - Suite de non-régression 149 passed in 50.10s (exit 0).
+- Résultats : 5/5 questions décisionnelles du pilote validées avec exactitude ; zéro score synthétique global ; 14 fiches métriques normatives conformes ; conformité du tableau économique et des interfaces de marché.
+- Qualification : Gate observatoire décisionnel QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R2.11/README.md.
+- Reprise : Phase R3 — Prévisions de prix évaluées et honnêtes (première tâche MUST : R3.1).
+
 ### [2026-10-16T12:08:00Z] R2.10 — DONE, livraison des vues marché et économie
 
 - Dépendances relues : R2.9 (exposition API / limites / pagination / CSV).
