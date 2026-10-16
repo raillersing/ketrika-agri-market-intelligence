@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T10:35:00Z] R2.6 — DONE, intégration change et contexte monétaire BFM
+
+- Dépendances relues : R1.2 (découverte dynamique), R2.1 (contrats temps, origine et macroéconomie).
+- Mini-plan exécuté : (1) enregistrement de `bfm_public` dans `registry/sources.yaml` (famille `bfm`, priorité `P1`) et fiche source `docs/sources/bfm_public.md` ; (2) création des fixtures authentiques mai 2026 (CSV multijours et bulletin HTML du 18 mai 2026) et du golden set `bfm_sample.expected.json` ; (3) implémentation du connecteur `backend/src/ketrika/connectors/bfm_public.py` avec découverte HTML et parsing multi-formats CSV/HTML ; (4) extraction des cours journaliers USD/MGA et EUR/MGA en achat, vente et moyen pondéré MID ; (5) respect strict des jours ouvrés réels avec omission prouvée des samedis, dimanches et jours fériés (aucun forward-fill ni interpolation) ; (6) calcul et certification documentaire des parités inverses dans `evidence` ($\text{rate} \times \text{inverse} = 1.0$) ; (7) raccordement dans `registry.py` et le runner d'ingestion `MacroObservation` ; (8) suite de qualification `backend/tests/unit/test_bfm_public.py` (17 tests, couverture 85 %) ; (9) contrôles statiques verts (ruff, mypy) et non-régression (104/104 tests verts) ; (10) dossier de preuve `docs/evidence/R2.6/README.md`.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_bfm_public.py --cov=ketrika.connectors.bfm_public --cov-report=term-missing (exit 0, 17 passed in 58.28s, couverture 85 %) ; ruff check (exit 0) ; mypy (exit 0) ; non-régression 104 passed in 43.81s.
+- Résultats : 17/17 tests verts ; connecteur opérationnel ; devises USD/EUR extraites avec séparation achat/vente/moyen ; aucun jour de week-end interpolé ; parité inverse vérifiée ; traçabilité C3 BFM assignée.
+- Qualification : Connecteur Banky Foiben'i Madagasikara (BFM Public) QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R2.6/README.md.
+- Reprise : Tâche MUST éligible suivante R2.7 (Intégrer carburants OMH et événements réglementaires).
+
 ### [2026-10-16T10:15:00Z] R2.5 — DONE, intégration INSTAT Tableau de bord économique (TBE) avec fréquences natives
 
 - Dépendances relues : R1.2 (découverte dynamique), R1.3 (NIPC), R2.1 (contrats macro/temps obs.macro_observation).
@@ -525,7 +537,7 @@
 | R2.3 | MUST | DONE | 2026-10-16T07:35:00Z | 2026-10-16T07:55:00Z | b4aa80a | DQ, agrégations, alignement calendaire, indépendance de familles | 59 tests verts, 95% couverture, 114 non-régression |
 | R2.4 | MUST | DONE | 2026-10-16T08:58:00Z | 2026-10-16T09:12:00Z | 399f566 | Matrice couverture SQL gold.market_coverage, lacunes indépendantes, pilote riz local/importé (MDG11/31/33/0), garde authenticité | 16 tests verts, 94% couverture, 111 non-régression |
 | R2.5 | MUST | DONE | 2026-10-16T09:55:00Z | 2026-10-16T10:15:00Z | d0aa07b | Connecteur INSTAT TBE, séries macro, fréquences réelles sans faux mois, traçabilité institution primaire | 15 tests verts, couverture 97%, 87 non-régression |
-| R2.6 | MUST | TODO | — | — | — | — | — |
+| R2.6 | MUST | DONE | 2026-10-16T10:20:00Z | 2026-10-16T10:35:00Z | 9ad16a9 | Connecteur BFM change et séries monétaires, conventions achat/vente/moyen, jours ouvrés stricts | 17 tests verts, couverture 85%, 104 non-régression |
 | R2.7 | MUST | TODO | — | — | — | — | — |
 | R2.8 | MUST | TODO | — | — | — | — | — |
 | R2.9 | MUST | TODO | — | — | — | — | — |

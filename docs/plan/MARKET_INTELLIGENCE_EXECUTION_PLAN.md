@@ -39,7 +39,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R2.3 | MUST | DONE | DQ, agrégations, alignement calendaire, indépendance de familles, 59 tests verts, 95% couverture |
 | R2.4 | MUST | DONE | Matrice de couverture SQL gold.market_coverage, lacunes indépendantes, pilote riz local/importé (Analamanga, Alaotra-Mangoro, Atsinanana + National), garde authenticité, 16 tests verts, couverture 94% |
 | R2.5 | MUST | DONE | Nouveau connecteur instat_tbe, ingestion Excel multi-éditions, conservation fréquences réelles sans faux mois, traçabilité institution primaire, 15 tests verts, 97% couverture |
-| R2.6 | MUST | TODO | — |
+| R2.6 | MUST | DONE | Nouveau connecteur bfm_public, cours journaliers USD/EUR, respect des jours ouvrés sans interpolation, conventions achat/vente/moyen, 17 tests verts, 85% couverture |
 | R2.7 | MUST | TODO | — |
 | R2.8 | MUST | TODO | — |
 | R2.9 | MUST | TODO | — |
