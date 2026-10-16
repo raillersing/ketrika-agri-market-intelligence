@@ -1,0 +1,75 @@
+{
+  "source_id": "bfm_public",
+  "source_family": "bfm",
+  "expected_currencies": ["USD", "EUR"],
+  "expected_indicators": [
+    "EXCHANGE_RATE_USD_MGA",
+    "EXCHANGE_RATE_USD_MGA_BUY",
+    "EXCHANGE_RATE_USD_MGA_SELL",
+    "EXCHANGE_RATE_EUR_MGA",
+    "EXCHANGE_RATE_EUR_MGA_BUY",
+    "EXCHANGE_RATE_EUR_MGA_SELL"
+  ],
+  "sample_records": [
+    {
+      "indicator_code": "EXCHANGE_RATE_USD_MGA",
+      "indicator_name": "Cours de Change USD/MGA Moyen",
+      "frequency": "daily",
+      "unit": "MGA",
+      "period_start": "2026-05-04",
+      "period_end": "2026-05-04",
+      "value": 4620.50,
+      "primary_institution": "Banky Foiben'i Madagasikara"
+    },
+    {
+      "indicator_code": "EXCHANGE_RATE_USD_MGA_BUY",
+      "indicator_name": "Cours de Change USD/MGA Achat",
+      "frequency": "daily",
+      "unit": "MGA",
+      "period_start": "2026-05-04",
+      "period_end": "2026-05-04",
+      "value": 4600.00,
+      "primary_institution": "Banky Foiben'i Madagasikara"
+    },
+    {
+      "indicator_code": "EXCHANGE_RATE_USD_MGA_SELL",
+      "indicator_name": "Cours de Change USD/MGA Vente",
+      "frequency": "daily",
+      "unit": "MGA",
+      "period_start": "2026-05-04",
+      "period_end": "2026-05-04",
+      "value": 4641.00,
+      "primary_institution": "Banky Foiben'i Madagasikara"
+    },
+    {
+      "indicator_code": "EXCHANGE_RATE_EUR_MGA",
+      "indicator_name": "Cours de Change EUR/MGA Moyen",
+      "frequency": "daily",
+      "unit": "MGA",
+      "period_start": "2026-05-04",
+      "period_end": "2026-05-04",
+      "value": 4985.20,
+      "primary_institution": "Banky Foiben'i Madagasikara"
+    },
+    {
+      "indicator_code": "EXCHANGE_RATE_USD_MGA",
+      "indicator_name": "Cours de Change USD/MGA Moyen",
+      "frequency": "daily",
+      "unit": "MGA",
+      "period_start": "2026-05-18",
+      "period_end": "2026-05-18",
+      "value": 4645.50,
+      "primary_institution": "Banky Foiben'i Madagasikara"
+    }
+  ],
+  "weekend_and_holiday_dates_must_be_missing": [
+    "2026-05-01",
+    "2026-05-02",
+    "2026-05-03",
+    "2026-05-09",
+    "2026-05-10",
+    "2026-05-14",
+    "2026-05-16",
+    "2026-05-17"
+  ]
+}

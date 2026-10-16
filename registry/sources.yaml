@@ -261,6 +261,43 @@
   data_kinds: [macro]
   notes: "Tableau de bord de l'économie malagasy : séries de conjoncture réelle (IPI, ciment, électricité), commerce extérieur (riz, biens), monétaire et prix."
 
+- source_id: bfm_public
+  name: "Banky Foiben'i Madagasikara – Cours de Change et Statistiques Monétaires"
+  owner: "Banky Foiben'i Madagasikara (Banque Centrale de Madagascar)"
+  source_family: bfm
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.bfm_public:Connector
+  cadence: daily
+  collection_cadence: daily
+  observation_cadence: daily
+  publication_cadence: daily
+  freshness_sla_days: 5
+  partitioning: per_document
+  entrypoints:
+    - url: "https://www.banky-foibe.mg/cours-de-change"
+      kind: landing
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
+  languages: [fr, mg]
+  licence: "Données publiques officielles de la Banque Centrale"
+  tos_url: "https://www.banky-foibe.mg/mentions-legales"
+  tos_sha256: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.2
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [macro]
+  notes: "Cours de change officiels journaliers (USD/MGA, EUR/MGA : moyen, achat, vente) issus du Marché Interbancaire de Devises (MID) et indicateurs monétaires."
+
 - source_id: miasa_odr
   name: "MiASA Observatoire du Riz (ODR) – Bulletins Périodiques"
   owner: "Ministère de l'Agriculture et de l'Élevage (MiASA) / Observatoire du Riz"

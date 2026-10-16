@@ -6,6 +6,7 @@ import logging
 import os
 from typing import TYPE_CHECKING
 
+from ketrika.connectors.bfm_public import Connector as BfmPublicConnector
 from ketrika.connectors.douanes_stats import DouanesStatsConnector
 from ketrika.connectors.dummy_csv import DummyCsvConnector
 from ketrika.connectors.faostat import FaostatConnector
@@ -30,6 +31,7 @@ _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "nasa_power": NasaPowerConnector,
     "instat_nipc": InstatNipcConnector,
     "instat_tbe": InstatTbeConnector,
+    "bfm_public": BfmPublicConnector,
     "miasa_odr": MiasaOdrConnector,
     "mincc_ppn": MinccPpnConnector,
     "douanes_stats": DouanesStatsConnector,

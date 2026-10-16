@@ -18,7 +18,7 @@ def test_registry_file_validates_without_errors() -> None:
 def test_all_sources_define_source_family() -> None:
     """Verify every registered source specifies a source_family (C3 anti-leakage rule)."""
     sources = load_sources()
-    assert len(sources) == 11
+    assert len(sources) == 12
 
     for s in sources:
         assert s.source_family is not None, f"Source '{s.source_id}' is missing source_family"
@@ -29,6 +29,7 @@ def test_all_sources_define_source_family() -> None:
     assert family_map["wfp_hdx_mdg"] == "un_wfp"
     assert family_map["wb_rtfp_mdg"] == "world_bank"
     assert family_map["wfp_hdx_mdg"] != family_map["wb_rtfp_mdg"]
+    assert family_map["bfm_public"] == "bfm"
 
     # Verify national Madagascar sources share madagascar_gov family
     gov_sources = ["instat_nipc", "miasa_odr", "mincc_ppn", "douanes_stats", "instat_tbe"]
