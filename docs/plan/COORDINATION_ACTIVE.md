@@ -2,6 +2,13 @@
 
 Mise à jour 2026-10-15. Ce document ne qualifie aucune tâche produit.
 
+Actualisation 2026-10-16 : Codex reçoit le correctif ADR-074 contexte partagé,
+worktree `r08-revision-context-20261016`, branche du même nom préfixée `work/`,
+commit `8de251f`, check Windows session `78714`. Source figée et destination
+`ketrika-qualification` réservée pendant ce processus ; ne pas y lancer de suite
+mutante concurrente. Livraison main précédente `bc0f947` reçue ; les travaux
+Antigravity dans son propre worktree restent indépendants et non importés.
+
 - Priorité utilisateur : finir les fonctionnalités prévues dans leur version
   minimale utilisable ; reporter les raffinements hors critères de réception.
   Pas de nouveaux composants alternatifs ni refonte sans blocage concret.

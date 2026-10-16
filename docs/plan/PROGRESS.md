@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T10:47:09Z] R0.8 — correction des éditions à contexte partagé préparée
+
+- Demande utilisateur : réaliser les révisions nécessaires. Défaut reproduit par lecture et test : une étude inchangée a légitimement plusieurs membres batch, mais le parseur exigeait un seul lot. Worktree isolé r08-revision-context-20261016, branche work/r08-revision-context-20261016,commit8de251f ; aucune modification applicative main ni Antigravity.
+- ADR-074/SPECS avant code : étude sans prix validée dans un lot immuable ; donnée multilot exige même contexte exact dans tous ses lots (borne1000), contexte divergent/version inconnue/corruption refusés. Pas de sélection silencieuse du dernier contexte ni duplication source/SHA.
+- 85728 FINAL0 :32 tests/10,00 s et types parseur ;98366 FINAL0 :1 SQL/S3/48,99 s,une supersession/quatorze inchangés,ancienne valeur conservée,contexte partagé et troisième lot/15 skips/0 insertion-supersession. 9400 FINAL0 lint/format et types trois fichiers ;8045 FINAL0,74 statuts cohérents. Scénarios synthetic explicitement, pas révisions institutionnelles qualifiées.
+- Pistes catalogue WB global, related-materials MDG et réplication Zenodo examinées ; aucune paire MDG comparable acquise. Rapport 2026-10-16-r08-revision-review.md sur branche. Le recalcul scientifique reste distinct, aucune nouvelle performance de marché revendiquée.
+- Check Windows78714 EN COURS sur8de251f figé : reprendre ce processus, ne pas modifier ses sources ni exécuter de QA mutante concurrente sur sa destination. Main conserve la réception précédente bc0f947 ; R0.8 IN_PROGRESS, aucun DONE/tag anticipé.
+
 ### [2026-10-16T10:37:10Z] R0.8 — lot intégré et inventaire Bronze original préservé
 
 - Main bc0f947 reçoit le lot natif validé sur f230a50 ; empreinte exacte5694 FINAL0,1721 backend/35 frontend/build verts conservés sans nouvelle exécution. Huit __init__.py,openapi.json et prompt utilisateur restent hors livraison ; Antigravity intact.
