@@ -26,7 +26,7 @@
   - Suite de non-régression 143 tests passés en 122s.
 - Résultats : Tous les endpoints `/v1/macro`, `/v1/market/coverage`, `/v1/economic/indicators` paginés et exportables en CSV avec métadonnées exhaustives ; conformité OpenAPI/TypeScript assurée ; validation des bornes de pagination (RFC 7807) ; protection stricte des endpoints admin.
 - Qualification : Exposition des données et de leurs limites dans l'API QUALIFIED (DONE).
-- État final : DONE.
+- État final : DONE (commit 1837189).
 - Preuve : docs/evidence/R2.9/README.md.
 - Reprise : Tâche MUST éligible suivante R2.10 (Livrer les vues marché et économie).
 
