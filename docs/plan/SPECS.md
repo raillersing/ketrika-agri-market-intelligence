@@ -1357,7 +1357,12 @@ L'UI **DOIT** toujours afficher les composantes à côté du score.
 - **Règle d'intégrité des origines :** Si une série ne dispose pas d'assez de recul pour 6 fenêtres avec un train $\ge 24$ mois, le statut est marqué `experimental_insufficient_windows` et s'abstient de certification normative (pas de réduction discrète à 1-2 fenêtres).
 - **Décomposition des métriques :** WAPE, MAE, sMAPE et couverture sont calculés globalement et déclinés par horizon ($h=1, h=2, h=3$). En cas de dénominateur nul ou d'absence de cible observée, la métrique renvoie `None`/`NaN` (jamais faux 0.0).
 - **Sélection :** Par série, le modèle de plus faible WAPE sur les fenêtres de sélection. En cas d'écart $\le 0.01$ (1 point de pourcentage), critère de parcimonie : `NaiveLast` prioritaire sur `SeasonalNaive`, puis `AutoETS`, puis `AutoARIMA`.
-- **Intervalles :** conformes (`ConformalIntervals`), niveau 80 : `p10` = lo-80, `p90` = hi-80, `p50` = moyenne ou médiane.
+- **Calibration conforme des intervalles et surveillance de couverture (ADR-077, R3.5) :**
+  - **Niveau nominal 80 % :** $p10$ = borne inférieure, $p50$ = prévision centrale (moyenne ou médiane), $p90$ = borne supérieure. Respect strict de $0 \le p10 \le p50 \le p90$, valeurs réelles finies.
+  - **Étalonnage non-paramétrique sur résidus :** Quantile conforme empirique $\hat{q}$ calculé sur la série des résidus d'erreurs passés $e_t = y_t - \hat{y}_t$ des fenêtres de validation antérieures.
+  - **Interdiction des replis arbitraires $\pm 10\%$ :** Aucun raccourci arbitraire $\pm 10\%$ n'est autorisé comme intervalle conforme. En cas de résidus insuffisants ($N_{\text{calib}} < 8$), le résultat porte obligatoirement `is_calibrated = False` et statut `uncalibrated_heuristic`.
+  - **Mesure de couverture et largeur :** Suivi systématique de la couverture empirique ($y \in [p10, p90]$), de la largeur brute ($p90 - p10$) et de la largeur relative ($(p90 - p10)/p50$) globalement et par horizon $h \in \{1, 2, 3\}$.
+  - **Incertitude binomiale :** Publication de l'intervalle de confiance à 95% de Wilson sur la couverture réelle estimée.
 - **Contraintes :** aucune donnée postérieure à `data_cutoff`. `model_version` = `"{model}@{git_sha_court}"`. Résultats dans `ml.model_run` et `ml.forecast`.
 - **Anomalies :** `|z| > 3` sur le z-score robuste (§16) → candidat `PRICE_SPIKE`.
 

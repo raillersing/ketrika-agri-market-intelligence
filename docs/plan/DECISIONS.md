@@ -2,6 +2,25 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-077 : calibration conforme des intervalles de prévision, élimination des replis arbitraires +-10% et surveillance de couverture (R3.5)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.5 ; Phase R3.
+- **Contexte :** L'estimation de l'incertitude des prévisions de prix ne peut reposer sur des heuristiques arbitraires non vérifiées (constat d'audit A09, directives R3.5). L'ancien code utilisait un repli artificiel $\pm 10\%$ (`p10 = mean * 0.9`, `p90 = mean * 1.1`) lorsque StatsForecast n'était pas disponible ou en cas d'échec. R3.5 prescrit :
+  1. **Calibration conforme rigoureuse :** Les intervalles à 80% doivent être étalonnés sur les résidus d'erreurs empiriques réels observés sur les fenêtres de backtest antérieures ($e_t = y_t - \hat{y}_t$), selon les principes de la prédiction conforme (Conformal Prediction pour séries temporelles).
+  2. **Interdiction formelle des replis arbitraires :** Aucun intervalle $\pm 10\%$ ne peut recevoir le label `calibrated`. Tout intervalle non étalonné sur des résidus authentiques porte obligatoirement `is_calibrated = False` et un statut explicite `uncalibrated_heuristic`.
+  3. **Garanties structurelles des quantiles :** Respect strict de $0 \le p10 \le p50 \le p90$, valeurs finies non nulles.
+  4. **Seuil d'échantillon minimal et étanchéité :** Au moins $N_{\text{calib}} \ge 8$ résidus antérieurs requis pour prétendre à un étalonnage conforme valide. Les résidus sont collectés strictement avant la cible évaluée.
+  5. **Surveillance et incertitude binomiale :** Mesure systématique de la couverture empirique et de la largeur d'intervalle par horizon ($h=1, 2, 3$). Publication de l'intervalle de confiance binomial à 95% de Wilson sur la couverture réelle mesurée, afin de refléter l'incertitude statistique sur la couverture elle-même.
+- **Décision :**
+  1. Créer le module `backend/src/ketrika/ml/conformal.py` contenant `ConformalCalibrator`, `ConformalIntervalResult`, `compute_wilson_score_interval` et la fonction de calcul de quantiles conformes `calibrate_conformal_bounds`.
+  2. Enrichir `ForecastPrediction` et `ModelForecastResult` avec `is_calibrated`, `calibration_sample_size`, `interval_width`, `binomial_ci_95`.
+  3. Raccorder `ConformalCalibrator` dans l'orchestrateur de prévision `forecast.py` et les modèles statistiques.
+  4. Couvrir l'ensemble des règles de calibration dans `backend/tests/unit/test_ml_conformal_intervals.py`.
+- **Alternatives rejetées :**
+  - Conserver le repli $\pm 10\%$ sans métadonnées d'alerte (rejeté formellement par A09).
+  - Présenter des quantiles gaussiens théoriques comme conformes sans vérification des résidus réels (rejeté par directive R3.5).
+- **Conséquences :** Honnêteté statistique exemplaire sur l'incertitude, traçabilité indiscutable de la calibration, refus de toute promesse abusive de couverture.
+
 ## ADR-076 : protocole d'évaluation temporelle en trois phases étanches, sélection rolling-origin à 6 fenêtres, calibration conforme et évaluation finale hors-échantillon (R3.4)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R3.4 ; Phase R3.

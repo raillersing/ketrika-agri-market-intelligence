@@ -26,16 +26,19 @@ except ImportError:
 
 @dataclass(frozen=True)
 class ForecastPrediction:
-    """Prediction quantiles for horizons 1..h."""
+    """Prediction quantiles for horizons 1..h with conformal calibration metadata (ADR-077)."""
 
     mean: np.ndarray  # p50 central forecast
     p10: np.ndarray  # p10 lower bound (80% conformal interval)
     p90: np.ndarray  # p90 upper bound (80% conformal interval)
+    is_calibrated: bool = False  # True only if calibrated on >= 8 past residuals
+    calibration_sample_size: int = 0
+    interval_width: list[float] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
 class ModelForecastResult:
-    """Detailed forecast result enforcing ADR-075 transparency and traceability.
+    """Detailed forecast result enforcing ADR-075 and ADR-077 transparency.
 
     Attributes:
         model_requested: Name of the model requested by the caller.
@@ -69,6 +72,18 @@ class ModelForecastResult:
     def p90(self) -> np.ndarray:
         return self.prediction.p90
 
+    @property
+    def is_calibrated(self) -> bool:
+        return self.prediction.is_calibrated
+
+    @property
+    def calibration_sample_size(self) -> int:
+        return self.prediction.calibration_sample_size
+
+    @property
+    def interval_width(self) -> list[float]:
+        return self.prediction.interval_width
+
 
 class ForecastModel(Protocol):
     """Protocol for candidate forecast models."""
@@ -89,6 +104,8 @@ def _clean_quantiles(
     mean: np.ndarray,
     lo_80: np.ndarray | None,
     hi_80: np.ndarray | None,
+    is_calibrated: bool = False,
+    calibration_sample_size: int = 0,
 ) -> ForecastPrediction:
     """Sanitize predictions: ensure positivity, correct bounds (p10 <= p50 <= p90)."""
     mean_clean = np.maximum(mean, 0.0)
@@ -104,7 +121,15 @@ def _clean_quantiles(
     else:
         p90 = np.maximum(hi_80, mean_clean)
 
-    return ForecastPrediction(mean=mean_clean, p10=p10, p90=p90)
+    widths = (p90 - p10).tolist()
+    return ForecastPrediction(
+        mean=mean_clean,
+        p10=p10,
+        p90=p90,
+        is_calibrated=is_calibrated,
+        calibration_sample_size=calibration_sample_size,
+        interval_width=widths,
+    )
 
 
 def impute_training_gaps(

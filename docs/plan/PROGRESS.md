@@ -38,6 +38,28 @@
 - Preuve : docs/evidence/R2.11/README.md.
 - Tag jalon : `mi-r2-qualified` (posé).
 
+### [2026-10-16T16:55:00Z] R3.5 — DONE, calibration des intervalles conformes et surveillance de couverture empirique
+
+- Dépendances relues : R3.4 (protocole d'évaluation trois phases étanches).
+- Mini-plan exécuté :
+  1. Formaliser ADR-077 (Calibration conforme des intervalles de prévision, élimination des replis heuristiques non documentés, seuil d'échantillon minimal et audit statistique de couverture avec intervalle de Wilson à 95%) dans `docs/plan/DECISIONS.md`.
+  2. Mettre à jour `docs/plan/SPECS.md` §17.3 avec les contrats normatifs des quantiles conformes et des diagnostics de couverture.
+  3. Concevoir `backend/src/ketrika/ml/conformal.py` avec `ConformalIntervalResult`, `CoverageReport`, `calibrate_conformal_bounds`, `compute_wilson_score_interval`, `audit_interval_coverage`.
+  4. Mettre à jour `ForecastPrediction` et `ModelForecastResult` dans `backend/src/ketrika/ml/models.py` avec `is_calibrated`, `calibration_sample_size`, `interval_width`.
+  5. Imposer le seuil strict $N_{\text{calib}} \ge 8$ pour autoriser le label `is_calibrated = True` (sinon `uncalibrated_heuristic` avec avertissement explicite, rejetant le repli arbitraire $\pm 10\%$).
+  6. Implémenter l'intervalle de Wilson asymptotiquement exact pour qualifier l'incertitude binomiale sur la couverture empirique observée.
+  7. Implémenter l'audit multi-niveaux (50%, 80%, 95%) et la détection des sous-couvertures significatives (`severe_undercoverage`, `mild_undercoverage`).
+  8. Développer la suite de tests unitaires `test_ml_conformal_intervals.py` (5 tests) et valider ruff, mypy et pytest.
+  9. Exécuter l'ensemble de la suite ML (49 tests passés en 31.30s, couverture `ketrika.ml.conformal` à 96%, ML globale à 87%) et rédiger `docs/evidence/R3.5/README.md`.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes :
+  - `docker run ... uv run ruff check src/ketrika/ml/conformal.py src/ketrika/ml/models.py src/ketrika/ml/__init__.py tests/unit/test_ml_conformal_intervals.py` (exit 0, clean)
+  - `docker run ... uv run mypy src/ketrika/ml/conformal.py src/ketrika/ml/models.py src/ketrika/ml/__init__.py tests/unit/test_ml_conformal_intervals.py` (exit 0, clean)
+  - `docker run ... python -m pytest tests/unit/test_ml_conformal_intervals.py tests/unit/test_ml_backtest_protocol.py tests/unit/test_ml_as_of_dataset.py tests/unit/test_ml_series_eligibility.py tests/unit/test_ml_anomalies.py tests/unit/test_ml_forecast.py tests/unit/test_ml_models_conformance.py -m "not integration" -v --cov=ketrika.ml --cov-report=term-missing` (exit 0, 49 passed in 31.30s)
+- Résultats : 5/5 tests dédiés R3.5 passés ; 49/49 tests ML globaux passés ; couverture `ketrika.ml.conformal` à 96% ; couverture globale `ketrika.ml` à 87% (seuil >= 80%) ; monotonie stricte des quantiles validée ; rejet systématique du label calibré si $N_{\text{calib}} < 8$ ; intervalle de Wilson analytiquement exact.
+- État : DONE.
+- Preuve : `docs/evidence/R3.5/README.md`.
+
 ### [2026-10-16T16:40:00Z] R3.4 — DONE, protocole d'évaluation en trois phases, étanchéité de sélection et holdout test
 
 - Dépendances relues : R3.2 (datasets as-of), R3.3 (modèles conformes).
@@ -758,7 +780,7 @@
 | R3.2 | MUST | DONE | 2026-10-16T16:10:00Z | 2026-10-16T16:18:00Z | a5054c4 | Datasets historiques as-of (C2/C4, traçabilité temporelle, empreinte SHA-256 canonique, partitionnement sans fuite) | 8 tests verts, couverture 92%, 29 tests ML verts |
 | R3.3 | MUST | DONE | 2026-10-16T16:20:00Z | 2026-10-16T16:32:00Z | f107d9a | Références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, imputation sans fuite | 9 tests verts, couverture ML 84%, 38 tests ML verts |
 | R3.4 | MUST | DONE | 2026-10-16T16:35:00Z | 2026-10-16T16:40:00Z | c2f9f15 | Protocole d'évaluation en trois phases, étanchéité de sélection, holdout test, décomposition par horizon, anti-fuite | 6 tests verts, couverture backtest 96%, 44 tests ML verts |
-| R3.5 | MUST | TODO | — | — | — | — | — |
+| R3.5 | MUST | DONE | 2026-10-16T16:45:00Z | 2026-10-16T16:55:00Z | e604fae | ADR-077, SPECS §17.3, intervalles conformes, seuil N_calib >= 8, uncalibrated_heuristic, Wilson 95%, audits couverture | 5 tests verts, couverture conformal 96%, 49 tests ML verts |
 | R3.6 | SHOULD | TODO | — | — | — | — | — |
 | R3.7 | MUST | TODO | — | — | — | — | — |
 | R3.8 | MUST | TODO | — | — | — | — | — |

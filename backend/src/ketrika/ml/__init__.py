@@ -14,6 +14,13 @@ from ketrika.ml.backtest import (
     partition_backtest_windows,
     select_best_model,
 )
+from ketrika.ml.conformal import (
+    ConformalIntervalResult,
+    CoverageReport,
+    audit_interval_coverage,
+    calibrate_conformal_bounds,
+    compute_wilson_score_interval,
+)
 from ketrika.ml.dataset import (
     AsOfDataset,
     DatasetRecord,
@@ -51,6 +58,8 @@ __all__ = [
     "AutoARIMAModel",
     "AutoETSModel",
     "BacktestResult",
+    "ConformalIntervalResult",
+    "CoverageReport",
     "DatasetRecord",
     "DatasetSplit",
     "DeterministicBaselineModel",
@@ -66,10 +75,13 @@ __all__ = [
     "SeriesEligibilityReport",
     "SeriesMetrics",
     "WindowEvaluation",
+    "audit_interval_coverage",
     "audit_series_eligibility",
     "build_as_of_dataset",
     "build_series_key",
+    "calibrate_conformal_bounds",
     "compute_canonical_fingerprint",
+    "compute_wilson_score_interval",
     "detect_price_anomalies",
     "evaluate_final_holdout",
     "evaluate_series_eligibility_records",
