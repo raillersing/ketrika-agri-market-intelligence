@@ -1,0 +1,44 @@
+# instat_tbe : INSTAT Madagascar – Tableau de Bord Économique (TBE)
+
+- **Propriétaire / licence / attribution :** Institut National de la Statistique de Madagascar (INSTAT). Licence : Données publiques officielles gouvernementales. Attribution : "INSTAT Madagascar - Tableau de Bord Économique".
+- **Famille de source (`source_family`) :** `madagascar_gov` (famille officielle gouvernementale malgache).
+- **URL vérifiées (date, code HTTP) :**
+  - https://www.instat.mg (2026-10-06, HTTP 200, verified: true).
+  - https://www.instat.mg/statistiques/conjoncture-economique (2026-10-15, verified: true).
+  - https://www.instat.mg/index.php/p/tableau-de-bord-de-leconomie-tbe-n0-63-aout-2026 (2026-10-09, verified: true).
+- **robots.txt (extrait pertinent, date) :** `User-agent: * Allow: /` (vérifié 2026-10-06).
+- **CGU & Qualification légale (C1 / R1.1) :** https://www.instat.mg/mentions-legales. Publications statistiques officielles en libre accès public. Aucune donnée à caractère personnel (`pii_class: none`), aucun contrôle d'accès payant.
+- **Format(s) et structure :** Tableaux Excel multi-feuilles (.xlsx) et documents de synthèse publiés périodiquement.
+  - Multi-feuilles thématiques : "Secteur Réel", "Commerce Extérieur", "Secteur Monétaire", "Finances Publiques", "Prix Consommation".
+  - Détection dynamique des en-têtes et propagation des cellules fusionnées.
+  - Gestion des préambules méthodologiques, notes de bas de tableau et valeurs manquantes (`ND`, `NA`, `-`).
+- **Séries de conjoncture sélectionnées et normalisées (R2.5, SPECS §8, ADR-069) :**
+  - **Secteur Réel (Activité & Production) :**
+    - `IPI_GLOBAL` : Indice de la Production Industrielle global (base 2015=100, mensuel, source primaire INSTAT).
+    - `ELEC_IND_KWH` : Consommation d'électricité industrielle en kWh (mensuel, source primaire JIRAMA / Ministère de l'Énergie).
+    - `CEMENT_CONSUMPTION_TONNES` : Consommation / Ventes de ciment en tonnes (mensuel, source primaire Opérateurs / Douanes).
+    - `GDP_REAL_MGA` : PIB réel en milliards d'Ariary (trimestriel / annuel, source primaire INSTAT Comptes Nationaux).
+  - **Secteur Extérieur (Commerce Extérieur) :**
+    - `RICE_IMPORTS_TONNES` : Volume des importations de riz en tonnes (mensuel, source primaire Direction Générale des Douanes DGD).
+    - `IMPORTS_CIF_MGA` : Valeur totale des importations CAF en millions d'Ariary (mensuel, source primaire DGD).
+    - `EXPORTS_FOB_MGA` : Valeur totale des exportations FOB en millions d'Ariary (mensuel, source primaire DGD).
+  - **Secteur Monétaire et Financier :**
+    - `MONEY_SUPPLY_M3_MGA` : Masse monétaire M3 en milliards d'Ariary (mensuel, source primaire Banky Foiben'i Madagasikara BFM).
+    - `EXCHANGE_RATE_MGA_USD` : Cours moyen du dollar US en Ariary (mensuel, source primaire BFM).
+  - **Prix et Conjoncture :**
+    - `CPI_TBE_FOOD` : Indice alimentaire réédité dans le TBE (mensuel, base 2016=100, source primaire INSTAT NIPC).
+- **Règles d'intégrité normatives (R2.5, C2, C3) :**
+  - **Interdiction formelle de réplication en faux mois :** Les séries trimestrielles (`quarterly`, ex: T1 `period_start = 2026-01-01`, `period_end = 2026-03-31`) et annuelles (`annual`, ex: 2025 `period_start = 2025-01-01`, `period_end = 2025-12-31`) conservent strictement leur fréquence native. Aucune réplication mensuelle artificielle n'est tolérée.
+  - **Indépendance des sources (C3) :** L'indice NIPC réédité dans le TBE est tracé avec `primary_source: "instat_nipc"` et ne constitue pas une confirmation indépendante du NIPC autonome.
+  - **Traçabilité de l'institution primaire :** Chaque observation porte dans son `evidence` le nom de l'institution primaire d'origine (`INSTAT`, `DGD`, `BFM`, `JIRAMA`) lorsque mentionnée dans le tableau.
+- **Cadences distinctes (R1.1) :**
+  - Collecte technique (`collection_cadence`) : `monthly`
+  - Observation sous-jacente (`observation_cadence`) : `monthly` (avec composantes `quarterly` et `annual`)
+  - Publication éditeur (`publication_cadence`) : `quarterly`
+- **Cadence constatée :** Trimestrielle avec publications régulières (TBE n°62 en mai 2026, TBE n°63 en août 2026).
+- **Mapping vers la table cible :** `obs.macro_observation` avec clé naturelle déterministe `(indicator_code, geo_scope, frequency, vintage, period_start, period_end)` et supersession sans écrasement destructif.
+- **Fixtures et tests CC-R :**
+  - Fixtures authentiques multi-éditions : `backend/tests/fixtures/instat_tbe/tbe_edition_62_mai_2026.xlsx` et `tbe_edition_63_aout_2026.xlsx`.
+  - Golden sets : `backend/tests/golden/instat_tbe/tbe_sample.expected.json` (précision 100 %, rappel 100 %).
+  - Suite de qualification CC-R : `backend/tests/unit/test_instat_tbe.py`.
+- **Statut de qualification :** `active` (qualifié dans le cadre de R2.5).

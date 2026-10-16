@@ -17,7 +17,7 @@ CrawlPermission = Literal[
 PiiClass = Literal["none", "indirect", "direct"]
 RedistributionAllowed = Literal["yes", "no", "unknown"]
 LegalReviewStatus = Literal["not_required", "pending", "approved", "rejected"]
-DataKind = Literal["price", "stock", "trade", "production", "weather", "event", "cpi", "boundary"]
+DataKind = Literal["price", "stock", "trade", "production", "weather", "event", "cpi", "boundary", "macro"]
 
 
 class SourceEntrypoint(BaseModel):

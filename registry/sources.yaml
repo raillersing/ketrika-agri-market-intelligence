@@ -224,6 +224,43 @@
   data_kinds: [cpi]
   notes: "Indice national des prix à la consommation (NIPC global et indice alimentaire vivrier)."
 
+- source_id: instat_tbe
+  name: "INSTAT Madagascar – Tableau de Bord Économique (TBE)"
+  owner: "Institut National de la Statistique de Madagascar (INSTAT)"
+  source_family: madagascar_gov
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.instat_tbe:Connector
+  cadence: quarterly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: quarterly
+  freshness_sla_days: 120
+  partitioning: per_document
+  entrypoints:
+    - url: "https://www.instat.mg/statistiques/conjoncture-economique"
+      kind: landing
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
+  languages: [fr]
+  licence: "Données publiques officielles gouvernementales"
+  tos_url: "https://www.instat.mg/mentions-legales"
+  tos_sha256: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.2
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [macro]
+  notes: "Tableau de bord de l'économie malagasy : séries de conjoncture réelle (IPI, ciment, électricité), commerce extérieur (riz, biens), monétaire et prix."
+
 - source_id: miasa_odr
   name: "MiASA Observatoire du Riz (ODR) – Bulletins Périodiques"
   owner: "Ministère de l'Agriculture et de l'Élevage (MiASA) / Observatoire du Riz"
