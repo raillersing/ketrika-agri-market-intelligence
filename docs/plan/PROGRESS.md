@@ -3,6 +3,36 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T20:15:00Z] Phase R3 Done & Gate R3.9 Qualifié (Tag: mi-r3-qualified)
+
+- **Résumé de phase R3 (<= 15 lignes) :**
+  - **Livré :** Éligibilité stricte des séries ($N \ge 36$ mois, récence 12/24 mois, rejet district) ; Datasets historiques as-of C2/C4 avec empreinte canonique SHA-256 sans fuite temporelle ; Modèles statistiques conformes (`NaiveLast`, `SeasonalNaive` annuel, `AutoETS`, `AutoARIMA`), transparence `model_requested` vs `model_effective` et refus de masquer un repli ; Protocole d'évaluation en 3 phases temporelles étanches (sélection rolling-origin 6 fenêtres, calibration conforme, holdout out-of-sample) ; Calibration conforme non-paramétrique sur résidus passés ($N_{\text{calib}} \ge 8$), rejet formel de $\pm 10\%$, statut `uncalibrated_heuristic`, intervalle de Wilson à 95% ; Publication immuable des runs C4 (`ml.forecast`, `gold.forecast_latest`), catalogue des abstentions, API `/v1/forecasts`, `PriceChart` transparent sans extrapolation UI/LLM ; Table `ml.forecast_evaluation` (migration 0013), suivi des erreurs maturées, décomposition 4D intégrale (produit, région, horizon 1..3, saisonnalité soudure vs récolte), benchmarking loyal face aux baselines avec seuil de parcimonie $\Delta\text{WAPE} > 0{,}01$ ; Rapport métrologique `docs/reports/market_forecast_evaluation.md`.
+  - **Chiffres clés :** 7/7 tâches MUST R3 DONE (100%) ; 66 tests unitaires/qualification ML 100% verts ; couverture `ketrika.ml` à 92% (seuil >= 80%) ; 39 tests vitest 100% verts ; 16 routes web compilées ; migrations Alembic 0011, 0012, 0013 appliquées.
+  - **Tag :** `mi-r3-qualified`.
+
+### [2026-10-16T20:10:00Z] R3.9 — DONE, Gate de prévision des prix
+
+- Dépendances relues : R3.1 à R3.5, R3.7, R3.8 (toutes DONE).
+- Mini-plan exécuté :
+  1. Développer la suite de tests de qualification de Gate `backend/tests/unit/test_gate_r3_price_forecast.py` validant formellement les 6 critères normatifs de la Phase R3.
+  2. Valider le critère C1 (éligibilité séries, rejet 35 points, rejet manque de récence, rejet district `admin_level=2`).
+  3. Valider le critère C2 (as-of datasets C2/C4, exclusion publications futures, empreinte canonique déterministe SHA-256).
+  4. Valider le critère C3 (modèles conformes, repli transparent AutoARIMA -> NaiveLast si $N < 24$, NaiveLast exact).
+  5. Valider le critère C4 (séparation temporelle stricte 3 phases : sélection 6 fenêtres, calibration, holdout disjoint).
+  6. Valider le critère C5 (calibration conforme empirique, rejet des heuristiques $\pm 10\%$, Wilson 95%, $0 \le p10 \le p50 \le p90$).
+  7. Valider le critère C6 (évaluation maturée, décomposition 4D produit/région/horizon/saisonnalité, seuil de parcimonie $\Delta\text{WAPE} > 0{,}01$).
+  8. Exécuter l'ensemble de la suite ML avec couverture (66 tests passés en 70.73s, couverture `ketrika.ml` à 92%).
+  9. Rédiger le rapport de synthèse du Gate R3 dans `docs/evidence/R3.9/README.md`.
+  10. Mettre à jour `PROGRESS.md` avec le résumé de phase R3 (<= 15 lignes) et `MARKET_INTELLIGENCE_EXECUTION_PLAN.md` (R3.9 DONE), puis poser le tag de jalon `mi-r3-qualified`.
+- Environnement : Docker ketrika-backend:dev, ketrika-web:dev, PostgreSQL aiagent-db-1, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes :
+  - `docker run ... python -m pytest tests/unit/test_gate_r3_price_forecast.py -v` (exit 0, 6 passed in 28.14s)
+  - `docker run ... bash -c "python -m pytest tests/unit/test_ml_*.py tests/unit/test_gate_r3_price_forecast.py -m 'not integration' --cov=ketrika.ml --cov-report=term-missing"` (exit 0, 66 passed in 70.73s, couverture ML 92%)
+- Résultats : 6/6 critères normatifs du Gate R3 validés sans réserve ; 66/66 tests ML passés ; couverture `ketrika.ml` à 92% ; intégrité de la prévision et des erreurs maturées certifiée.
+- État : DONE.
+- Preuve : `docs/evidence/R3.9/README.md`.
+- Tag jalon : `mi-r3-qualified`.
+
 ### [2026-10-16T12:38:00Z] Phase R2 Done & Gate R2.11 Qualifié (Tag: mi-r2-qualified)
 
 - **Résumé de phase R2 (<= 15 lignes) :**
@@ -838,7 +868,7 @@
 | R3.6 | SHOULD | TODO | — | — | — | — | — |
 | R3.7 | MUST | DONE | 2026-10-16T17:10:00Z | 2026-10-16T17:35:00Z | 11b15d0 | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation | 4 tests verts, 53 tests ML verts, couverture 92%, Next build 16 routes |
 | R3.8 | MUST | DONE | 2026-10-16T19:40:00Z | 2026-10-16T20:00:00Z | 08d24e6 | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines | 7 tests dédiés verts, 60 tests ML verts, couverture evaluation 92%, API /v1/forecasts/performance |
-| R3.9 | MUST | TODO | — | — | — | — | — |
+| R3.9 | MUST | DONE | 2026-10-16T20:05:00Z | 2026-10-16T20:15:00Z | bcf2985 | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified | 6 tests dédiés verts, 66 tests ML verts, zéro fuite certifiée |
 | R4.1 | MUST | TODO | — | — | — | — | — |
 | R4.2 | MUST | TODO | — | — | — | — | — |
 | R4.3 | MUST | TODO | — | — | — | — | — |
