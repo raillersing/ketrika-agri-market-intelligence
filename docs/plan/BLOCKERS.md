@@ -3,6 +3,8 @@
 > Format : `ID | tâche | date | symptôme | cause supposée | tentatives (1, 2, 3) | repli appliqué | statut`
 > Statut : `INVESTIGATING` | `RESOLVED_FALLBACK` | `RESOLVED_FIXED` | `BLOCKED`
 
+| B-R072 | R0.8 / entrée Silver native | 2026-10-16 UTC | Consommateur admet WB JSON2.0.0 mais propriétaire durable exige encore version CSV du connecteur | Contrôle de version non raccordé à ADR-072 | f230a50 : exception bornée WB/2.0.0,19 unités dont versions/source refusées ; parcours SQL/S3 natif62177 vert et CSV32320 vert | Préparation test corrigée pour partitions FK et enveloppes synthétiques uniques, sans effacement ; check3355 en cours, réception globale non acquise | RESOLVED_FIXED |
+
 | B-R071 | R0.8 / graphe Gold après arrêt INSTAT | 2026-10-15 UTC | Check10643 FINAL1 :547 passed/1 failed/936,77 s | Troisième assertion historique six sources malgré cinq autorisées | Correction dans0aae91c : cinq et exclusion INSTAT explicite ; six tests graphe inclus dans48 verts85910 | XML rouge conservé sur branche native ; correction ciblée seulement, nouvelle réception globale requise | RESOLVED_FIXED |
 
 | B-R065 | R0.8 / première disponibilité socket | 2026-10-15 | prepare20992 code1 : serveur temporaire PostgreSQL healthy puis arrêt pendant première initialisation | pg_isready seul accepte le serveur initdb transitoire | 1 : healthcheck exige PID1 postgres final, puis disponibilité socket ; aucune donnée supprimée | prepare65086 code0, replay91244 code0 sur même destination dédiée | RESOLVED_FIXED |
