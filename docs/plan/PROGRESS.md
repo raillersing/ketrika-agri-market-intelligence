@@ -997,7 +997,7 @@
 | R4.8 | SHOULD | TODO | — | — | — | — | — |
 | R4.9 | SHOULD | TODO | — | — | — | — | — |
 | R4.10 | SHOULD | TODO | — | — | — | — | — |
-| R4.11 | MUST | DONE | 2026-10-16T22:05:00Z | 2026-10-16T22:30:00Z | pending | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie | 7 tests dédiés verts, 39 tests web verts, Next build 16 routes, couverture 92% |
+| R4.11 | MUST | DONE | 2026-10-16T22:05:00Z | 2026-10-16T22:30:00Z | ddcf4fd | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie | 7 tests dédiés verts, 39 tests web verts, Next build 16 routes, couverture 92% |
 | R4.12 | MUST | TODO | — | — | — | — | — |
 | R5.1 | MUST | TODO | — | — | — | — | — |
 | R5.2 | MUST | TODO | — | — | — | — | — |
