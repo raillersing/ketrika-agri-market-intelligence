@@ -3,6 +3,12 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T10:37:10Z] R0.8 — lot intégré et inventaire Bronze original préservé
+
+- Main bc0f947 reçoit le lot natif validé sur f230a50 ; empreinte exacte5694 FINAL0,1721 backend/35 frontend/build verts conservés sans nouvelle exécution. Huit __init__.py,openapi.json et prompt utilisateur restent hors livraison ; Antigravity intact.
+- Contrôle manquant Bronze original réalisé, sans nouvelle suite applicative : lecture S3 avant2792 FINAL0, replay48026 FINAL0 sur seul clone dédié (networknone/copyreadonly/15 insertions/19 projections identiques), lecture après84513 FINAL0. Comparaison40589 FINAL0 : inventaires JSON égaux,7295 versions/0 suppression/62935739 octets,SHA cc8d2fbf5deb3e6314f392e3597435f00e2ad89b3792aebfadb056cafece75ca ; trois objets du corpus relus/SHA valides.
+- Rapports originaux native-s3-* et réception mis à jour ; indicateur générique négatif du rapport brut conservé, preuve séparée positive. Logiciel et rejeu avec snapshot désormais reçus ; révisions officielles et recalcul scientifique distinct restent non qualifiés. R0.8 IN_PROGRESS, pas de gate/tag anticipé.
+
 ### [2026-10-16T10:28:40Z] R0.8 — réception native et rejeu avec référentiel consolidés
 
 - Réception3355 FINAL0 de f230a50893f88c4cadd83652870de769eb46cc00 :1721 backend/1626,589 s/0 erreur-échec-skip ;35 web/build15,lint302/mypy301. Originaux native-full-* et rapport R0.8_NATIVE_RECEPTION.md conservés. Aucun nouveau check applicatif relancé après cette réception.

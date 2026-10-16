@@ -1,0 +1,12 @@
+{
+  "bucket": "ketrika-qa-bronze",
+  "corpus_objects": 3,
+  "delete_markers": 0,
+  "historical_revisions_qualified": false,
+  "inventory_sha256": "cc8d2fbf5deb3e6314f392e3597435f00e2ad89b3792aebfadb056cafece75ca",
+  "original_s3_inventory_unchanged": true,
+  "passed": true,
+  "replay_passed": true,
+  "size_bytes": 62935739,
+  "versions": 7295
+}

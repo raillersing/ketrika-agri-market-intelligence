@@ -1,0 +1,51 @@
+{
+  "corpus_objects": {
+    "reference_manifest/2026/10/3fbd0663a26b4417494bbc890e63a48028c65c07b7009d43d2354cd77794701d.json": {
+      "sha256": "3fbd0663a26b4417494bbc890e63a48028c65c07b7009d43d2354cd77794701d",
+      "size_bytes": 39669,
+      "versions": [
+        [
+          "Versions",
+          "reference_manifest/2026/10/3fbd0663a26b4417494bbc890e63a48028c65c07b7009d43d2354cd77794701d.json",
+          "4bf62b01-77a2-497d-9eb2-fe4870355d24",
+          true,
+          39669,
+          "\"58b0e1376768fa1eb2bda63dfb13c167\""
+        ]
+      ]
+    },
+    "wb_rtfp_mdg/2026/10/4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860.json": {
+      "sha256": "4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860",
+      "size_bytes": 51241,
+      "versions": [
+        [
+          "Versions",
+          "wb_rtfp_mdg/2026/10/4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860.json",
+          "89ca1bad-4780-4a06-bc35-e49057bcdc90",
+          true,
+          51241,
+          "\"8a1f26830d51b6631585153393e73407\""
+        ]
+      ]
+    },
+    "wb_rtfp_mdg/2026/10/bc4a01e5f443898a916678c84213ab29f30534b642f8da3b7ea6ca509c566c15.json": {
+      "sha256": "bc4a01e5f443898a916678c84213ab29f30534b642f8da3b7ea6ca509c566c15",
+      "size_bytes": 3511,
+      "versions": [
+        [
+          "Versions",
+          "wb_rtfp_mdg/2026/10/bc4a01e5f443898a916678c84213ab29f30534b642f8da3b7ea6ca509c566c15.json",
+          "b4a05d96-56a5-4b5c-a565-80eb197dfe71",
+          true,
+          3511,
+          "\"f71c403d9908545749fc24819ccef2c1\""
+        ]
+      ]
+    }
+  },
+  "delete_markers": 0,
+  "scope": "original qualification bucket readonly full version inventory and selected corpus objects",
+  "size_bytes": 62935739,
+  "version_inventory_sha256": "cc8d2fbf5deb3e6314f392e3597435f00e2ad89b3792aebfadb056cafece75ca",
+  "versions": 7295
+}
