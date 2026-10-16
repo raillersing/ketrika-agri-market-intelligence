@@ -33,6 +33,7 @@ VIEW_TABLES: dict[str, frozenset[str]] = {
     "cpi_food": frozenset({"cpi_observation"}),
     "market_health": frozenset({"price_observation", "stock_observation", "weather_observation"}),
     "source_health": frozenset(),
+    "market_coverage": frozenset({"price_observation"}),
     # Price cells are necessary but insufficient for qualifying forecasts.
     "forecast_latest": frozenset({"price_observation"}),
 }

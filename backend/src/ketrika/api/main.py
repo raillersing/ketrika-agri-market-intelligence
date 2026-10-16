@@ -24,6 +24,7 @@ from ketrika.api.routers import (
     auth,
     bulletins,
     copilot,
+    coverage,
     forecasts,
     kpis,
     locations,
@@ -120,6 +121,7 @@ app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(locations.router)
 app.include_router(prices.router)
+app.include_router(coverage.router)
 app.include_router(stocks.router)
 app.include_router(trade.router)
 app.include_router(macro.router)

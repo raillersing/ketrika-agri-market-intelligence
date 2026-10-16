@@ -1,0 +1,106 @@
+# Configuration et contrat du pilote Ketrika Agri Market Intelligence (R2.4)
+# Conforme à AGENTS.md, SPECS.md et MARKET_INTELLIGENCE_EXECUTION_PLAN.md
+
+pilot_id: "pilot_rice_2026"
+version: "1.0.0"
+title: "Pilote Observatoire Vivrier du Riz à Madagascar"
+description: >
+  Pilote d'analyse de marché ciblé sur le riz blanc local et importé à travers
+  les trois bassins économiques déterminants (production, consommation, import)
+  et la référence nationale.
+
+products:
+  - product_code: "RICE_WHITE_LOCAL"
+    canonical_name_fr: "Riz blanc local"
+    role: "production_locale_vivriere"
+    category: "cereal"
+    base_unit: "kg"
+    justification: >
+      Aliment de base de la population malagasy, indicateur central de la production
+      agricole intérieure, de l'état des récoltes et de la sécurité alimentaire.
+  - product_code: "RICE_WHITE_IMPORTED"
+    canonical_name_fr: "Riz blanc importé"
+    role: "regulation_et_importation"
+    category: "cereal"
+    base_unit: "kg"
+    justification: >
+      Produit régulateur de marché ("vary tsinjo", "vary stock") indispensable en période
+      de soudure et dans les zones déficitaires ; marqueur direct de la parité d'importation
+      et du taux de change du Franc Malagasy / Ariary.
+
+locations:
+  - pcode: "MDG11"
+    name: "Analamanga"
+    admin_level: 1
+    economic_role: "bassin_consommation_urbain"
+    justification: >
+      Bassin de consommation urbain majeur (Antananarivo, 3,6+ millions d'habitants).
+      Zone structurellement déficitaire en production vivrière, dépendant à plus de 80%
+      des transferts régionaux et des arrivages portuaires. Sensibilité maximale aux tensions
+      de prix de détail.
+  - pcode: "MDG31"
+    name: "Alaotra-Mangoro"
+    admin_level: 1
+    economic_role: "bassin_production_agricole"
+    justification: >
+      Premier grenier à riz de Madagascar (bassin de production excédentaire par excellence,
+      plaine du lac Alaotra / Ambatondrazaka). Zone d'origine des flux de riz local alimentant
+      les Hautes Terres. Référence indispensable pour la formation des prix à la production et grossiste.
+  - pcode: "MDG33"
+    name: "Atsinanana"
+    admin_level: 1
+    economic_role: "port_entree_importations"
+    justification: >
+      Pôle maritime majeur (Toamasina - Grand Port de Madagascar). Point de débarquement
+      des cargaisons de riz importé et tête du couloir logistique RN2 vers Antananarivo.
+      Permet de mesurer le prix au débarquement et la transmission des variations des cours mondiaux.
+  - pcode: "MDG0"
+    name: "Madagascar (National)"
+    admin_level: 0
+    economic_role: "synthese_macroeconomique"
+    justification: >
+      Moyenne nationale de référence permettant d'apprécier la tendance macroéconomique
+      sans inventer de marchés locaux fictifs.
+
+complementarity_rationale: >
+  L'articulation Alaotra-Mangoro (production excédentaire) <-> Atsinanana (porte d'entrée des importations)
+  <-> Analamanga (consommation urbaine finale) forme le triangle structurel fondamental du marché du riz
+  à Madagascar. Elle permet de mesurer les différentiels de prix spatiaux, les marges de transport et
+  d'arbitrage, et la substitution entre riz local et riz importé.
+
+impossible_capabilities:
+  - capability: "granularite_infra_regionale_continue"
+    status: "impossible"
+    scope: ["admin2_district", "admin3_commune"]
+    reason: >
+      Les sources publiques et officielles authentiques disponibles (ODR, WB RTFP, MINCC)
+      collectent de façon fiable au niveau régional (admin1) ou sur un échantillon restreint
+      de chefs-lieux. La publication continue au niveau des 119 districts ou 1600+ communes
+      présenterait un taux de lacunes supérieur à 90% et ne peut être certifiée sans interpolation non prouvée.
+  - capability: "acteurs_intermediaires_informels"
+    status: "impossible"
+    scope: ["collecteurs_brousse", "transporteurs_piste", "meuniers_artisanaux"]
+    reason: >
+      Les circuits informels de collecte de brousse et de transport ne font l'objet d'aucun
+      relevé statistique officiel public régulier. Seuls les stades producteur (paddy),
+      grossiste (wholesale) et détaillant (retail) sont vérifiables.
+  - capability: "frequence_journaliere_continue"
+    status: "impossible"
+    scope: ["daily_continuous_series"]
+    reason: >
+      Les relevés continus multi-annuels ne sont certifiés qu'au grain mensuel dans les sources
+      officielles. Les données infra-mensuelles (hebdomadaires ODR) sont trop discontinues
+      pour garantir une série continue sans trous calendaires majeurs.
+
+authenticity_requirements:
+  minimum_authentic_sources: 1
+  allowed_authentic_sources:
+    - "miasa_odr"
+    - "wb_rtfp_mdg"
+    - "mincc_ppn"
+    - "wfp_hdx_mdg"
+  disallow_synthetic_seed_substitution: true
+  blocking_rule: >
+    Si aucune observation authentique issue des sources qualifiées n'est présente en base,
+    le pilote est STRICTEMENT BLOQUÉ (BLOCKED_NO_AUTHENTIC_DATA). Aucun jeu de test synthétique
+    ne peut être utilisé pour certifier la couverture réelle de marché.

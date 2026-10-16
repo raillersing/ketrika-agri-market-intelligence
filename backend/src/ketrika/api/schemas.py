@@ -331,3 +331,97 @@ class MacroItem(BaseModel):
     published_at: datetime | None = None
     sources: list[str] = Field(default_factory=list)
 
+
+# ===================== MARKET COVERAGE & PILOT (R2.4) =====================
+
+
+class MarketCoverageItem(BaseModel):
+    """Market coverage matrix cell (SPECS §19, R2.4)."""
+
+    product_code: str
+    product_name: str
+    location_pcode: str | None = None
+    location_name: str | None = None
+    admin_level: int | None = None
+    actor_level: str
+    month: str
+    n_sources: int
+    n_families: int
+    sources: str
+    source_families: str
+    n_obs: int
+    imputed_share: float
+    has_observed: bool
+    observed_or_imputed: str
+    min_price: float | None = None
+    max_price: float | None = None
+    median_price: float | None = None
+    age_days: int
+
+
+class SeriesCoverageSummaryItem(BaseModel):
+    """Independent series coverage and gap evaluation."""
+
+    product_code: str
+    location_pcode: str
+    location_name: str | None = None
+    actor_level: str
+    admin_level: int | None = None
+    start_month: str | None = None
+    end_month: str | None = None
+    expected_months: int
+    observed_months: int
+    missing_months: int
+    coverage_ratio: float
+    missing_months_list: list[str] = Field(default_factory=list)
+    source_families: list[str] = Field(default_factory=list)
+    is_pilot_candidate: bool
+
+
+class PilotProductItem(BaseModel):
+    """Pilot product definition."""
+
+    product_code: str
+    canonical_name_fr: str
+    role: str
+    category: str
+    base_unit: str
+    justification: str
+
+
+class PilotLocationItem(BaseModel):
+    """Pilot location definition."""
+
+    pcode: str
+    name: str
+    admin_level: int
+    economic_role: str
+    justification: str
+
+
+class ImpossibleCapabilityItem(BaseModel):
+    """Explicitly documented impossible capability."""
+
+    capability: str
+    status: str
+    scope: list[str]
+    reason: str
+
+
+class PilotConfigResponse(BaseModel):
+    """Pilot configuration with products, locations, complementarity and impossible capabilities."""
+
+    pilot_id: str
+    version: str
+    title: str
+    description: str
+    products: list[PilotProductItem]
+    locations: list[PilotLocationItem]
+    complementarity_rationale: str
+    impossible_capabilities: list[ImpossibleCapabilityItem]
+    authenticity_status: str
+    authentic_sources_found: list[str]
+    authentic_observations_count: int
+    synthetic_observations_count: int
+
+

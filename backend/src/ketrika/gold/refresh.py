@@ -38,6 +38,7 @@ ORDERED_GOLD_VIEWS: list[str] = [
     "market_health",
     "source_health",
     "forecast_latest",
+    "market_coverage",
 ]
 
 GOLD_DEPENDENCIES: dict[str, tuple[str, ...]] = {
@@ -45,6 +46,7 @@ GOLD_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "price_monthly_best": ("price_monthly",),
     "price_changes": ("price_monthly_best",),
     "market_health": ("price_changes", "stock_latest", "weather_monthly"),
+    "market_coverage": ("price_monthly",),
 }
 
 
