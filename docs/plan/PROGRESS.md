@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T21:45:00Z] R4.6 — DONE, calcul rigoureux des anomalies agroclimatiques et des agrégations zonales
+
+- Dépendances relues : R4.1 (DONE), R4.2 (DONE), R1.10 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-085 dans `docs/plan/DECISIONS.md` (seuil minimal d'historique climatologique $N \ge 10$ années, abstention formelle si insuffisant, formules différenciées pluie/température, ratio de couverture spatiale et agrégation zonale testée sur grille synthétique).
+  2. Ajouter les énumérations `AgroClimateRiskLevel` et `ClimateAnomalyMethod` dans `backend/src/ketrika/geo/contracts.py`.
+  3. Implémenter le module `backend/src/ketrika/geo/anomalies.py` (`ClimateBaseline`, `ClimateAnomalyResult`, `compute_climate_baseline`, `compute_climate_anomaly`, `classify_rainfall_anomaly`, `MIN_BASELINE_YEARS = 10`).
+  4. Exposer les nouveaux contrats et fonctions dans `backend/src/ketrika/geo/__init__.py`.
+  5. Développer la suite de tests unitaires et de vérification mathématique `backend/tests/unit/test_geo_anomalies.py` (7 tests dédiés + 8 tests géospatiaux existants = 15/15 tests passés en 10.57s, 92% de couverture globale sur `ketrika.geo`).
+  6. Valider Ruff clean et Mypy strict clean (4 source files sans erreur).
+  7. Rédiger le dossier de preuve `docs/evidence/R4.6/README.md`.
+- Résultat : Tâche R4.6 entièrement qualifiée et validée (DONE).
+- Preuve : `docs/evidence/R4.6/README.md`.
+
 ### [2026-10-16T21:35:00Z] R4.5 — DONE, qualification d'une météo prévue archivable (ECMWF Open Data)
 
 - Dépendances relues : R4.1 (DONE), R1.2 (DONE).

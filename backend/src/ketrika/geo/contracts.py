@@ -63,6 +63,23 @@ class CropRegime(StrEnum):
     LOWLAND = "lowland"
 
 
+class AgroClimateRiskLevel(StrEnum):
+    """Categorical risk level for agro-climatic anomalies and shocks."""
+
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+
+class ClimateAnomalyMethod(StrEnum):
+    """Method used for climate anomaly computation."""
+
+    PERCENT_OF_NORMAL = "percent_of_normal"
+    ABSOLUTE_DELTA = "absolute_delta"
+    STANDARDIZED_ZSCORE = "standardized_zscore"
+
+
 class GeoBoundingBox(BaseModel):
     """Geographical bounding box in EPSG:4326 coordinates."""
 

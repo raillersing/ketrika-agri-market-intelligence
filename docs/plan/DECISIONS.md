@@ -2,6 +2,34 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-085 : calcul rigoureux des anomalies agroclimatiques, seuils minimaux de référence historique et agrégations zonales fiables (R4.6)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.6 ; Phase R4.
+- **Contexte :** Le calcul des anomalies agroclimatiques (pluviométrie, températures) et l'agrégation spatiale sur les régions et districts agricoles de Madagascar exigent une métrologie sans faille (directives R4.6, règles 1, 8, 9 et 10 d'AGENTS.md) :
+  1. **Seuil minimal de climatologie de référence ($N \ge 10$ années) :**
+     - Une anomalie (écart absolu, pourcentage de la normale, z-score standardisé) n'a de validité scientifique que si elle s'appuie sur une climatologie de référence homogène (même source, même version).
+     - Si l'historique disponible compte moins de 10 années de référence pour le mois ou la décade concernée, le calcul d'anomalie s'abstient formellement (`status: insufficient_history`, valeurs d'anomalies à `None`). Il est formellement interdit d'inventer une climatologie synthétique.
+  2. **Somme pluviométrique vs Moyenne thermique :**
+     - Précipitations : cumul ou somme décadaire/mensuelle. L'anomalie s'exprime en écart absolu ($P - \bar{P}$ en mm), en pourcentage de la normale ($P / \bar{P} \times 100\%$), et en indice standardisé $Z = (P - \mu) / \sigma$.
+     - Températures : moyenne arithmétique. L'anomalie s'exprime en écart absolu ($T - \bar{T}$ en °C) et en z-score standardisé.
+  3. **Agrégation zonale rigoureuse et ratio de couverture spatiale :**
+     - Une moyenne zonale n'est déclarée représentative que si le ratio de couverture des pixels valides satisfait `coverage_ratio >= 0.5`. En deçà, l'agrégation est signalée comme couverture incomplète (`incomplete_coverage`).
+     - Refus catégorique de déguiser une grille lâche en pluie de station locale.
+  4. **Strict respect des sources et versions :**
+     - Interdiction de mélanger les versions de fournisseurs pour calculer une anomalie (ex: comparer CHIRPS v2.0 à une baseline NASA POWER).
+- **Décision :**
+  1. Implémenter le module `ketrika.geo.anomalies` fournissant `ClimateBaseline`, `ClimateAnomalyResult`, `compute_climate_baseline`, `compute_climate_anomaly`, `classify_rainfall_anomaly`.
+  2. Imposer le seuil strict $N_{\text{min}} = 10$ années pour toute climatologie de référence.
+  3. Fournir une suite de tests unitaires validant :
+     - le calcul exact des anomalies sur un jeu de données connu à la main,
+     - l'abstention formelle lorsque $N < 10$,
+     - la classification agronomique des déficits et excédents hydriques,
+     - l'agrégation zonale à surface corrigée et le comportement en présence de nodata et frontières côtières.
+- **Alternatives rejetées :**
+  - Calculer des anomalies avec seulement 2 ou 3 ans d'historique (rejeté, bruit statistique non représentatif du climat).
+  - Imputer les années manquantes par la moyenne globale (rejeté, falsification de données météo).
+- **Conséquences :** Alertes de sécheresse et d'excès pluviométrique certifiées, transparentes et scientifiquement fondées.
+
 ## ADR-084 : qualification de la météo prévue archivable, intégration ECMWF Open Data et étanchéité prévisionnelle (R4.5)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R4.5 ; Phase R4.

@@ -5,6 +5,8 @@ from ketrika.geo.contracts import (
     CRS_WGS84,
     MAX_RASTER_FILE_SIZE_BYTES,
     AggregationMethod,
+    AgroClimateRiskLevel,
+    ClimateAnomalyMethod,
     CropCalendarRecord,
     CropRegime,
     GeoBoundingBox,
@@ -31,6 +33,8 @@ __all__ = [
     "WeatherVariable",
     "SpatialResolution",
     "CropRegime",
+    "AgroClimateRiskLevel",
+    "ClimateAnomalyMethod",
     "GeoBoundingBox",
     "WeatherForecastRecord",
     "CropCalendarRecord",
@@ -40,4 +44,19 @@ __all__ = [
     "validate_bbox",
     "aggregate_zonal",
     "compute_dry_spells",
+    "ClimateBaseline",
+    "ClimateAnomalyResult",
+    "compute_climate_baseline",
+    "compute_climate_anomaly",
+    "classify_rainfall_anomaly",
+    "MIN_BASELINE_YEARS",
 ]
+
+from ketrika.geo.anomalies import (
+    MIN_BASELINE_YEARS,
+    ClimateAnomalyResult,
+    ClimateBaseline,
+    classify_rainfall_anomaly,
+    compute_climate_anomaly,
+    compute_climate_baseline,
+)
