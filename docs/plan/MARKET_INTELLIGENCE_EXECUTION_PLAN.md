@@ -63,7 +63,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R4.8 | SHOULD | TODO | — |
 | R4.9 | SHOULD | TODO | — |
 | R4.10 | SHOULD | TODO | — |
-| R4.11 | MUST | TODO | — |
+| R4.11 | MUST | DONE | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie, 7 tests verts, couverture 92% |
 | R4.12 | MUST | TODO | — |
 | R5.1 | MUST | TODO | — |
 | R5.2 | MUST | TODO | — |

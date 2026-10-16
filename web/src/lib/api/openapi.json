@@ -1413,6 +1413,477 @@
         }
       }
     },
+    "/v1/climate/summary": {
+      "get": {
+        "tags": [
+          "climate"
+        ],
+        "summary": "Get Climate Summary",
+        "description": "Consolidated agroclimate summary by zone explaining observed, forecasted and phenological states.",
+        "operationId": "get_climate_summary_v1_climate_summary_get",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "District or Region P-code (e.g. MDG11)",
+              "default": "MDG11",
+              "title": "Location"
+            },
+            "description": "District or Region P-code (e.g. MDG11)"
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Reference month (YYYY-MM-01), defaults to latest available",
+              "title": "Month"
+            },
+            "description": "Reference month (YYYY-MM-01), defaults to latest available"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClimateSummaryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/climate/anomalies": {
+      "get": {
+        "tags": [
+          "climate"
+        ],
+        "summary": "Get Climate Anomalies",
+        "description": "Retrieve detailed climate anomalies with baseline reference and categorical risk.",
+        "operationId": "get_climate_anomalies_v1_climate_anomalies_get",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "District or Region P-code",
+              "title": "Location"
+            },
+            "description": "District or Region P-code"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Start month (YYYY-MM-01)",
+              "title": "From"
+            },
+            "description": "Start month (YYYY-MM-01)"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "End month (YYYY-MM-01)",
+              "title": "To"
+            },
+            "description": "End month (YYYY-MM-01)"
+          },
+          {
+            "name": "variable",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Climate variable (precip_mm | t2m_c)",
+              "default": "precip_mm",
+              "title": "Variable"
+            },
+            "description": "Climate variable (precip_mm | t2m_c)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClimateAnomalyDetailItem"
+                  },
+                  "title": "Response Get Climate Anomalies V1 Climate Anomalies Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/climate/forecasts": {
+      "get": {
+        "tags": [
+          "climate"
+        ],
+        "summary": "Get Climate Forecasts",
+        "description": "Retrieve archived numerical weather forecasts (obs.weather_forecast, ADR-084).",
+        "operationId": "get_climate_forecasts_v1_climate_forecasts_get",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "District or Region P-code",
+              "title": "Location"
+            },
+            "description": "District or Region P-code"
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Numerical weather prediction model e.g. ecmwf_ifs",
+              "title": "Model"
+            },
+            "description": "Numerical weather prediction model e.g. ecmwf_ifs"
+          },
+          {
+            "name": "variable",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Weather variable e.g. precip_mm",
+              "title": "Variable"
+            },
+            "description": "Weather variable e.g. precip_mm"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClimateForecastItem"
+                  },
+                  "title": "Response Get Climate Forecasts V1 Climate Forecasts Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/climate/calendars": {
+      "get": {
+        "tags": [
+          "climate"
+        ],
+        "summary": "Get Crop Calendars",
+        "description": "Retrieve verified crop calendars, active phenological phases and trade corridors (ADR-086).",
+        "operationId": "get_crop_calendars_v1_climate_calendars_get",
+        "parameters": [
+          {
+            "name": "zone_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Basin code e.g. ZONE_ALAOTRA",
+              "title": "Zone Code"
+            },
+            "description": "Basin code e.g. ZONE_ALAOTRA"
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Product code e.g. RICE_PADDY",
+              "title": "Product"
+            },
+            "description": "Product code e.g. RICE_PADDY"
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 12,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Month for active stage detection (1-12)",
+              "title": "Month"
+            },
+            "description": "Month for active stage detection (1-12)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CropCalendarItem"
+                  },
+                  "title": "Response Get Crop Calendars V1 Climate Calendars Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/climate/events": {
+      "get": {
+        "tags": [
+          "climate"
+        ],
+        "summary": "Get Climate Events",
+        "description": "Retrieve food security outlooks and agroclimatic events (FEWS NET / IPC, obs.event).",
+        "operationId": "get_climate_events_v1_climate_events_get",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "District or Region P-code",
+              "title": "Location"
+            },
+            "description": "District or Region P-code"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClimateEventItem"
+                  },
+                  "title": "Response Get Climate Events V1 Climate Events Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/climate/facultative-status": {
+      "get": {
+        "tags": [
+          "climate"
+        ],
+        "summary": "Get Facultative Sources Status",
+        "description": "Report transparent status for optional environmental sources (FIRMS, GloFAS, NDVI).",
+        "operationId": "get_facultative_sources_status_v1_climate_facultative_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FacultativeSourceStatus"
+                  },
+                  "type": "array",
+                  "title": "Response Get Facultative Sources Status V1 Climate Facultative Status Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/kpis/market-health": {
       "get": {
         "tags": [
@@ -2979,6 +3450,502 @@
         "title": "BulletinItem",
         "description": "Automated market intelligence bulletin."
       },
+      "ClimateAnomalyDetailItem": {
+        "properties": {
+          "location_pcode": {
+            "type": "string",
+            "title": "Location Pcode"
+          },
+          "location_name": {
+            "type": "string",
+            "title": "Location Name"
+          },
+          "month": {
+            "type": "string",
+            "title": "Month"
+          },
+          "variable": {
+            "type": "string",
+            "title": "Variable"
+          },
+          "observed_value": {
+            "type": "number",
+            "title": "Observed Value"
+          },
+          "baseline_mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Mean"
+          },
+          "baseline_years": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Years"
+          },
+          "anomaly_delta": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anomaly Delta"
+          },
+          "anomaly_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anomaly Pct"
+          },
+          "standardized_zscore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Standardized Zscore"
+          },
+          "risk_level": {
+            "type": "string",
+            "title": "Risk Level",
+            "default": "low"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "computed"
+          },
+          "aggregation_method": {
+            "type": "string",
+            "title": "Aggregation Method",
+            "default": "zonal_mean"
+          },
+          "cropland_mask_applied": {
+            "type": "boolean",
+            "title": "Cropland Mask Applied",
+            "default": false
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "value_kind": {
+            "type": "string",
+            "enum": [
+              "observed",
+              "imputed",
+              "forecast",
+              "composite"
+            ],
+            "title": "Value Kind",
+            "default": "observed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "location_pcode",
+          "location_name",
+          "month",
+          "variable",
+          "observed_value"
+        ],
+        "title": "ClimateAnomalyDetailItem",
+        "description": "Detailed climate anomaly measurement (ADR-085, ADR-087)."
+      },
+      "ClimateEventItem": {
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "location_pcode": {
+            "type": "string",
+            "title": "Location Pcode"
+          },
+          "location_name": {
+            "type": "string",
+            "title": "Location Name"
+          },
+          "event_type": {
+            "type": "string",
+            "title": "Event Type"
+          },
+          "severity": {
+            "type": "string",
+            "title": "Severity"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "published_at": {
+            "type": "string",
+            "title": "Published At"
+          },
+          "is_projected": {
+            "type": "boolean",
+            "title": "Is Projected",
+            "default": false
+          },
+          "ipc_phase": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ipc Phase"
+          },
+          "source_reference": {
+            "type": "string",
+            "title": "Source Reference"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event_id",
+          "source_id",
+          "location_pcode",
+          "location_name",
+          "event_type",
+          "severity",
+          "title",
+          "description",
+          "published_at",
+          "source_reference"
+        ],
+        "title": "ClimateEventItem",
+        "description": "Food security outlook and environmental event item (obs.event, ADR-083, ADR-087)."
+      },
+      "ClimateForecastItem": {
+        "properties": {
+          "forecast_id": {
+            "type": "string",
+            "title": "Forecast Id"
+          },
+          "location_pcode": {
+            "type": "string",
+            "title": "Location Pcode"
+          },
+          "location_name": {
+            "type": "string",
+            "title": "Location Name"
+          },
+          "issued_at": {
+            "type": "string",
+            "title": "Issued At"
+          },
+          "valid_from": {
+            "type": "string",
+            "title": "Valid From"
+          },
+          "valid_to": {
+            "type": "string",
+            "title": "Valid To"
+          },
+          "horizon_hours": {
+            "type": "integer",
+            "title": "Horizon Hours"
+          },
+          "variable": {
+            "type": "string",
+            "title": "Variable"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "predicted_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Value"
+          },
+          "predicted_p10": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted P10"
+          },
+          "predicted_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted P90"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "spatial_resolution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spatial Resolution"
+          },
+          "value_kind": {
+            "type": "string",
+            "enum": [
+              "observed",
+              "imputed",
+              "forecast",
+              "composite"
+            ],
+            "title": "Value Kind",
+            "default": "projected"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "default": "ecmwf_open"
+          }
+        },
+        "type": "object",
+        "required": [
+          "forecast_id",
+          "location_pcode",
+          "location_name",
+          "issued_at",
+          "valid_from",
+          "valid_to",
+          "horizon_hours",
+          "variable",
+          "model_name",
+          "unit",
+          "method"
+        ],
+        "title": "ClimateForecastItem",
+        "description": "Archived numerical weather forecast item (obs.weather_forecast, ADR-084, ADR-087)."
+      },
+      "ClimateSummaryResponse": {
+        "properties": {
+          "location_pcode": {
+            "type": "string",
+            "title": "Location Pcode"
+          },
+          "location_name": {
+            "type": "string",
+            "title": "Location Name"
+          },
+          "current_month": {
+            "type": "string",
+            "title": "Current Month"
+          },
+          "observed_precipitation_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed Precipitation Mm"
+          },
+          "precipitation_anomaly_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precipitation Anomaly Pct"
+          },
+          "precipitation_risk_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precipitation Risk Level"
+          },
+          "aggregation_method": {
+            "type": "string",
+            "title": "Aggregation Method",
+            "default": "zonal_mean"
+          },
+          "cropland_mask_applied": {
+            "type": "boolean",
+            "title": "Cropland Mask Applied",
+            "default": false
+          },
+          "observed_source": {
+            "type": "string",
+            "title": "Observed Source",
+            "default": "chirps"
+          },
+          "temperature_mean_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature Mean C"
+          },
+          "forecast_next_72h_precip_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Next 72H Precip Mm"
+          },
+          "forecast_p10_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast P10 Mm"
+          },
+          "forecast_p90_mm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast P90 Mm"
+          },
+          "forecast_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Model"
+          },
+          "forecast_issued_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Issued At"
+          },
+          "forecast_value_kind": {
+            "type": "string",
+            "enum": [
+              "observed",
+              "imputed",
+              "forecast",
+              "composite"
+            ],
+            "title": "Forecast Value Kind",
+            "default": "projected"
+          },
+          "active_crop_cycles": {
+            "items": {
+              "$ref": "#/components/schemas/CropCalendarItem"
+            },
+            "type": "array",
+            "title": "Active Crop Cycles"
+          },
+          "events_and_outlooks": {
+            "items": {
+              "$ref": "#/components/schemas/ClimateEventItem"
+            },
+            "type": "array",
+            "title": "Events And Outlooks"
+          },
+          "facultative_sources": {
+            "items": {
+              "$ref": "#/components/schemas/FacultativeSourceStatus"
+            },
+            "type": "array",
+            "title": "Facultative Sources"
+          }
+        },
+        "type": "object",
+        "required": [
+          "location_pcode",
+          "location_name",
+          "current_month"
+        ],
+        "title": "ClimateSummaryResponse",
+        "description": "Consolidated agroclimate summary for decision-support (ADR-087, R4.11)."
+      },
       "CopilotAskRequest": {
         "properties": {
           "question": {
@@ -3037,6 +4004,148 @@
         ],
         "title": "CopilotAskResponse",
         "description": "Copilot query answer, SQL query and structured citations."
+      },
+      "CropCalendarItem": {
+        "properties": {
+          "zone_code": {
+            "type": "string",
+            "title": "Zone Code"
+          },
+          "zone_name": {
+            "type": "string",
+            "title": "Zone Name"
+          },
+          "crop": {
+            "type": "string",
+            "title": "Crop"
+          },
+          "product_code": {
+            "type": "string",
+            "title": "Product Code"
+          },
+          "crop_cycle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crop Cycle"
+          },
+          "season_name": {
+            "type": "string",
+            "title": "Season Name"
+          },
+          "crop_regime": {
+            "type": "string",
+            "title": "Crop Regime"
+          },
+          "calendar_version": {
+            "type": "string",
+            "title": "Calendar Version",
+            "default": "v1.0"
+          },
+          "calendar_type": {
+            "type": "string",
+            "title": "Calendar Type",
+            "default": "traditional_baseline"
+          },
+          "campaign": {
+            "type": "string",
+            "title": "Campaign",
+            "default": "baseline_permanent"
+          },
+          "variety": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variety"
+          },
+          "current_phenological_stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Phenological Stage"
+          },
+          "planting_months": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Planting Months"
+          },
+          "harvest_months": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Harvest Months"
+          },
+          "peak_harvest_month": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Peak Harvest Month"
+          },
+          "water_sensitivity_profile": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Water Sensitivity Profile"
+          },
+          "market_links": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Market Links"
+          },
+          "source_reference": {
+            "type": "string",
+            "title": "Source Reference"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified",
+            "default": true
+          },
+          "eligible_for_alerts": {
+            "type": "boolean",
+            "title": "Eligible For Alerts",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "zone_code",
+          "zone_name",
+          "crop",
+          "product_code",
+          "season_name",
+          "crop_regime",
+          "source_reference"
+        ],
+        "title": "CropCalendarItem",
+        "description": "Crop calendar phenological cycle and trade corridors (ADR-086, ADR-087)."
       },
       "DimensionSummaryOut": {
         "properties": {
@@ -3167,6 +4276,40 @@
         ],
         "title": "EconomicMetricCardItem",
         "description": "Specification of an economic metric card (ADR-070)."
+      },
+      "FacultativeSourceStatus": {
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "source_name": {
+            "type": "string",
+            "title": "Source Name"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "unavailable"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "data_available": {
+            "type": "boolean",
+            "title": "Data Available",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_id",
+          "source_name",
+          "reason"
+        ],
+        "title": "FacultativeSourceStatus",
+        "description": "Status descriptor for facultative environmental sources (ADR-087)."
       },
       "ForecastAbstentionItem": {
         "properties": {

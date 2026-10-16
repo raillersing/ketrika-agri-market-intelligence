@@ -3,6 +3,23 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T22:30:00Z] R4.11 — DONE, livraison de la vue agroclimatique explicable et de l'API /v1/climate
+
+- Dépendances relues : R4.1 (DONE), R4.2 (DONE), R4.5 (DONE), R4.6 (DONE), R4.7 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-087 dans `docs/plan/DECISIONS.md` (vue agroclimatique multicouche explicable, étanchéité absolue météo observée vs prévue, statut formel des sources facultatives non intégrées sans valeur nulle de substitution, exposition des corridors et stades phénologiques documentés).
+  2. Mettre à jour `docs/plan/SPECS.md` (§19 et §26.5) avec les contrats d'API `/v1/climate/*`.
+  3. Définir les schémas Pydantic dans `backend/src/ketrika/api/schemas.py` (`ClimateForecastItem`, `CropCalendarItem`, `ClimateEventItem`, `FacultativeSourceStatus`, `ClimateAnomalyDetailItem`, `ClimateSummaryResponse`, extension de `ValueKind` incluant `"projected"`).
+  4. Implémenter le routeur `backend/src/ketrika/api/routers/climate.py` avec 6 endpoints (`/summary`, `/anomalies`, `/forecasts`, `/calendars`, `/events`, `/facultative-status`) et l'enregistrer dans `backend/src/ketrika/api/main.py`.
+  5. Exporter la spécification OpenAPI à jour dans `web/src/lib/api/openapi.json` et régénérer les types TypeScript dans `web/src/lib/api/schema.d.ts`.
+  6. Développer l'interface interactive `web/src/app/climate/page.tsx` avec badges de statut, sélection temporelle et spatiale, transparence sur l'absence de substitution pour sources facultatives (FIRMS, GloFAS, Copernicus).
+  7. Écrire la suite de tests unitaires `backend/tests/unit/test_api_climate.py` (7/7 tests passés en 26.23s, couverture 92%).
+  8. Valider les tests frontend `pnpm test` (39/39 tests passés) et le build frontend `pnpm run build` (16/16 routes générées avec succès).
+  9. Vérifier Ruff clean et Mypy strict clean sur les fichiers API et tests.
+  10. Rédiger le dossier de preuve normatif `docs/evidence/R4.11/README.md`.
+- Résultat : Tâche R4.11 entièrement qualifiée et validée (DONE).
+- Preuve : `docs/evidence/R4.11/README.md`.
+
 ### [2026-10-16T22:00:00Z] R4.7 — DONE, versioning des calendriers culturaux, stades phénologiques et corridors commerciaux
 
 - Dépendances relues : R4.3 (DONE), R4.4 (DONE), R2.2 (DONE).
@@ -972,15 +989,15 @@
 | R3.9 | MUST | DONE | 2026-10-16T20:05:00Z | 2026-10-16T20:15:00Z | bcf2985 | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified | 6 tests dédiés verts, 66 tests ML verts, zéro fuite certifiée |
 | R4.1 | MUST | DONE | 2026-10-16T20:30:00Z | 2026-10-16T20:50:00Z | f11de9b | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, modèle météo observée vs prévue, calendriers culturaux, migration 0014 | 8 tests dédiés verts, couverture ketrika.geo 94%, migration 0014 appliquée |
 | R4.2 | MUST | DONE | 2026-10-16T20:55:00Z | 2026-10-16T21:05:00Z | fbf16c6 | ADR-081, SPECS §26, connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage raster Madagascar | 7 tests dédiés verts, couverture chirps 85%, supersession C2/C4 validée |
-| R4.3 | MUST | IN_PROGRESS | 2026-10-16T21:10:00Z | — | — | Qualifier les bulletins Météo Madagascar, extraction déterministe, séparation émission/validité, refus probabilités inventées | En cours |
-| R4.4 | MUST | TODO | — | — | — | — | — |
-| R4.5 | MUST | TODO | — | — | — | — | — |
-| R4.6 | MUST | TODO | — | — | — | — | — |
-| R4.7 | MUST | TODO | — | — | — | — | — |
+| R4.3 | MUST | DONE | 2026-10-16T21:10:00Z | 2026-10-16T21:15:00Z | e8ff241 | ADR-082, SPECS §26, connecteur meteo_mg, extraction déterministe bulletins DGM, séparation émission/validité, refus probabilités inventées | 6 tests dédiés verts, couverture 89% |
+| R4.4 | MUST | DONE | 2026-10-16T21:20:00Z | 2026-10-16T21:25:00Z | 57309b6 | ADR-083, SPECS §26, connecteurs fewsnet_mdg et ipc_mdg, séparation stricte courant vs projeté | 8 tests dédiés verts, couverture 91% |
+| R4.5 | MUST | DONE | 2026-10-16T21:30:00Z | 2026-10-16T21:35:00Z | f497f76 | ADR-084, SPECS §26, connecteur ecmwf_open, météo prévue archivable obs.weather_forecast | 7 tests dédiés verts, couverture 89% |
+| R4.6 | MUST | DONE | 2026-10-16T21:40:00Z | 2026-10-16T21:45:00Z | bd1696d | ADR-085, SPECS §26, module ketrika.geo.anomalies, seuil baseline N>=10 ans, abstention si insuffisant, anomalies pluie/température, agrégation zonale vérifiée | 15 tests verts, couverture 92% |
+| R4.7 | MUST | DONE | 2026-10-16T21:50:00Z | 2026-10-16T22:00:00Z | 4aec8c4 | ADR-086, SPECS §26, versioning calendriers culturaux, disjonction baseline vs recommandation, corridors commerciaux prouvés, migration 0015 | 23 tests verts, couverture 92% |
 | R4.8 | SHOULD | TODO | — | — | — | — | — |
 | R4.9 | SHOULD | TODO | — | — | — | — | — |
 | R4.10 | SHOULD | TODO | — | — | — | — | — |
-| R4.11 | MUST | TODO | — | — | — | — | — |
+| R4.11 | MUST | DONE | 2026-10-16T22:05:00Z | 2026-10-16T22:30:00Z | pending | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie | 7 tests dédiés verts, 39 tests web verts, Next build 16 routes, couverture 92% |
 | R4.12 | MUST | TODO | — | — | — | — | — |
 | R5.1 | MUST | TODO | — | — | — | — | — |
 | R5.2 | MUST | TODO | — | — | — | — | — |

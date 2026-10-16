@@ -2,6 +2,35 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-087 : architecture de la vue agroclimatique explicable, étanchéité multi-couches et transparence des sources facultatives (R4.11)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.11 ; Phase R4.
+- **Contexte :** La vue agroclimatique consolidée `/climate` et ses endpoints REST associés `/v1/climate/*` constituent le point de contact opérationnel entre données satellitaires, stations météo, modèles numériques NWP, calendriers culturaux et documents d'alerte précoce. Les directives normatives de R4.11, SPECS §19, §26 et les principes d'AGENTS.md imposent :
+  1. **Disjonction stricte en 4 couches de données indépendantes :**
+     - **Couche 1 (Météo observée et estimée) :** Précipitations et températures mesurées ou estimées par satellite (CHIRPS, DGM). Méthode d'agrégation explicite (`zonal_mean` avec avertissement sur l'absence de masque agricole si non vérifié).
+     - **Couche 2 (Anomalies climatiques rigoureuses) :** Écart en mm/°C, % de la normale, z-score, risque catégoriel, référence climatologique documentée ($N \ge 10$ ans) ou statut explicite `insufficient_history`.
+     - **Couche 3 (Météo prévue numérique archivable) :** Prévisions NWP (ECMWF IFS Open Data), étanches des observations, avec `issued_at`, `valid_from`, `valid_to`, horizon en heures, quantiles p10/médiane/p90, et flag `value_kind: projected`.
+     - **Couche 4 (Calendrier cultural et corridors commerciaux) :** Stades phénologiques calculés dynamiquement pour le mois actif (`peak_harvest`, `harvest`, `planting`, `growing`), typologie baseline vs recommandation, corridors d'approvisionnement documentés.
+     - **Couche 5 (Événements et perspectives FEWS NET/IPC) :** Phases IPC, alertes documentées, statut de projection explicite.
+  2. **Transparence absolue sur les sources facultatives non intégrées :**
+     - Les sources optionnelles (FIRMS pour les feux, GloFAS pour les inondations, Copernicus NDVI pour la biomasse) sont affichées avec leur statut exact (`unavailable` / non configuré) et leur justification, et JAMAIS avec des valeurs numériques nulles (0 feux ou 0 mm) qui donneraient une fausse impression de risque zéro.
+     - Interdiction formelle de fabriquer un « indice global de santé environnementale » synthétique non étayé.
+- **Décision :**
+  1. Créer le routeur FastAPI `backend/src/ketrika/api/routers/climate.py` exposant :
+     - `GET /v1/climate/summary` (vue consolidée explicable par zone/district),
+     - `GET /v1/climate/anomalies` (séries temporelles d'anomalies observées avec baseline),
+     - `GET /v1/climate/forecasts` (prévisions numériques archivées),
+     - `GET /v1/climate/calendars` (calendriers culturaux et corridors d'approvisionnement),
+     - `GET /v1/climate/events` (événements et perspectives FEWS NET/IPC),
+     - `GET /v1/climate/facultative-status` (statut transparent des sources facultatives).
+  2. Maintenir la compatibilité ascendante sur `/v1/weather/anomalies`.
+  3. Mettre à jour `web/src/app/climate/page.tsx` pour consommer ces contrats certifiés, afficher les badges `observed` / `projected`, expliciter la méthode d'agrégation et rendre consultables les corridors commerciaux sans inventer de métriques.
+- **Alternatives rejetées :**
+  - Fusionner prévisions et observations dans une seule courbe temporelle (rejeté, violation de la règle 9 d'AGENTS.md).
+  - Afficher 0 feux pour FIRMS lorsque l'API n'est pas connectée (rejeté, falsification de sécurité).
+  - Maintenir un calendrier statique hardcodé dans le frontend (rejeté, découplage de la taxonomie vérifiée).
+- **Conséquences :** Vue agroclimatique 100% explicable, traçable, auditée et conforme aux exigences agronomiques malgaches.
+
 ## ADR-086 : versioning des calendriers culturaux, typologie traditionnelle vs recommandations saisonnières et liaisons de corridors commerciaux prouvés (R4.7)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R4.7 ; Phase R4.

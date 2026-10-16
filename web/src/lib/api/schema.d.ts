@@ -386,6 +386,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/climate/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Climate Summary
+         * @description Consolidated agroclimate summary by zone explaining observed, forecasted and phenological states.
+         */
+        get: operations["get_climate_summary_v1_climate_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/anomalies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Climate Anomalies
+         * @description Retrieve detailed climate anomalies with baseline reference and categorical risk.
+         */
+        get: operations["get_climate_anomalies_v1_climate_anomalies_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/forecasts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Climate Forecasts
+         * @description Retrieve archived numerical weather forecasts (obs.weather_forecast, ADR-084).
+         */
+        get: operations["get_climate_forecasts_v1_climate_forecasts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/calendars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Crop Calendars
+         * @description Retrieve verified crop calendars, active phenological phases and trade corridors (ADR-086).
+         */
+        get: operations["get_crop_calendars_v1_climate_calendars_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Climate Events
+         * @description Retrieve food security outlooks and agroclimatic events (FEWS NET / IPC, obs.event).
+         */
+        get: operations["get_climate_events_v1_climate_events_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/facultative-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Facultative Sources Status
+         * @description Report transparent status for optional environmental sources (FIRMS, GloFAS, NDVI).
+         */
+        get: operations["get_facultative_sources_status_v1_climate_facultative_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/kpis/market-health": {
         parameters: {
             query?: never;
@@ -846,6 +966,197 @@ export interface components {
             approved_by?: string | null;
         };
         /**
+         * ClimateAnomalyDetailItem
+         * @description Detailed climate anomaly measurement (ADR-085, ADR-087).
+         */
+        ClimateAnomalyDetailItem: {
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name: string;
+            /** Month */
+            month: string;
+            /** Variable */
+            variable: string;
+            /** Observed Value */
+            observed_value: number;
+            /** Baseline Mean */
+            baseline_mean?: number | null;
+            /** Baseline Years */
+            baseline_years?: number | null;
+            /** Anomaly Delta */
+            anomaly_delta?: number | null;
+            /** Anomaly Pct */
+            anomaly_pct?: number | null;
+            /** Standardized Zscore */
+            standardized_zscore?: number | null;
+            /**
+             * Risk Level
+             * @default low
+             */
+            risk_level: string;
+            /**
+             * Status
+             * @default computed
+             */
+            status: string;
+            /**
+             * Aggregation Method
+             * @default zonal_mean
+             */
+            aggregation_method: string;
+            /**
+             * Cropland Mask Applied
+             * @default false
+             */
+            cropland_mask_applied: boolean;
+            /** Sources */
+            sources?: string[];
+            /**
+             * Value Kind
+             * @default observed
+             * @enum {string}
+             */
+            value_kind: "observed" | "imputed" | "forecast" | "composite";
+        };
+        /**
+         * ClimateEventItem
+         * @description Food security outlook and environmental event item (obs.event, ADR-083, ADR-087).
+         */
+        ClimateEventItem: {
+            /** Event Id */
+            event_id: string;
+            /** Source Id */
+            source_id: string;
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name: string;
+            /** Event Type */
+            event_type: string;
+            /** Severity */
+            severity: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description: string;
+            /** Published At */
+            published_at: string;
+            /**
+             * Is Projected
+             * @default false
+             */
+            is_projected: boolean;
+            /** Ipc Phase */
+            ipc_phase?: number | null;
+            /** Source Reference */
+            source_reference: string;
+        };
+        /**
+         * ClimateForecastItem
+         * @description Archived numerical weather forecast item (obs.weather_forecast, ADR-084, ADR-087).
+         */
+        ClimateForecastItem: {
+            /** Forecast Id */
+            forecast_id: string;
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name: string;
+            /** Issued At */
+            issued_at: string;
+            /** Valid From */
+            valid_from: string;
+            /** Valid To */
+            valid_to: string;
+            /** Horizon Hours */
+            horizon_hours: number;
+            /** Variable */
+            variable: string;
+            /** Model Name */
+            model_name: string;
+            /** Predicted Value */
+            predicted_value?: number | null;
+            /** Predicted P10 */
+            predicted_p10?: number | null;
+            /** Predicted P90 */
+            predicted_p90?: number | null;
+            /** Unit */
+            unit: string;
+            /** Method */
+            method: string;
+            /** Spatial Resolution */
+            spatial_resolution?: string | null;
+            /**
+             * Value Kind
+             * @default projected
+             * @enum {string}
+             */
+            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            /**
+             * Source
+             * @default ecmwf_open
+             */
+            source: string;
+        };
+        /**
+         * ClimateSummaryResponse
+         * @description Consolidated agroclimate summary for decision-support (ADR-087, R4.11).
+         */
+        ClimateSummaryResponse: {
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name: string;
+            /** Current Month */
+            current_month: string;
+            /** Observed Precipitation Mm */
+            observed_precipitation_mm?: number | null;
+            /** Precipitation Anomaly Pct */
+            precipitation_anomaly_pct?: number | null;
+            /** Precipitation Risk Level */
+            precipitation_risk_level?: string | null;
+            /**
+             * Aggregation Method
+             * @default zonal_mean
+             */
+            aggregation_method: string;
+            /**
+             * Cropland Mask Applied
+             * @default false
+             */
+            cropland_mask_applied: boolean;
+            /**
+             * Observed Source
+             * @default chirps
+             */
+            observed_source: string;
+            /** Temperature Mean C */
+            temperature_mean_c?: number | null;
+            /** Forecast Next 72H Precip Mm */
+            forecast_next_72h_precip_mm?: number | null;
+            /** Forecast P10 Mm */
+            forecast_p10_mm?: number | null;
+            /** Forecast P90 Mm */
+            forecast_p90_mm?: number | null;
+            /** Forecast Model */
+            forecast_model?: string | null;
+            /** Forecast Issued At */
+            forecast_issued_at?: string | null;
+            /**
+             * Forecast Value Kind
+             * @default projected
+             * @enum {string}
+             */
+            forecast_value_kind: "observed" | "imputed" | "forecast" | "composite";
+            /** Active Crop Cycles */
+            active_crop_cycles?: components["schemas"]["CropCalendarItem"][];
+            /** Events And Outlooks */
+            events_and_outlooks?: components["schemas"]["ClimateEventItem"][];
+            /** Facultative Sources */
+            facultative_sources?: components["schemas"]["FacultativeSourceStatus"][];
+        };
+        /**
          * CopilotAskRequest
          * @description Copilot query request.
          */
@@ -872,6 +1183,71 @@ export interface components {
             }[];
             /** Value Kinds */
             value_kinds: string[];
+        };
+        /**
+         * CropCalendarItem
+         * @description Crop calendar phenological cycle and trade corridors (ADR-086, ADR-087).
+         */
+        CropCalendarItem: {
+            /** Zone Code */
+            zone_code: string;
+            /** Zone Name */
+            zone_name: string;
+            /** Crop */
+            crop: string;
+            /** Product Code */
+            product_code: string;
+            /** Crop Cycle */
+            crop_cycle?: string | null;
+            /** Season Name */
+            season_name: string;
+            /** Crop Regime */
+            crop_regime: string;
+            /**
+             * Calendar Version
+             * @default v1.0
+             */
+            calendar_version: string;
+            /**
+             * Calendar Type
+             * @default traditional_baseline
+             */
+            calendar_type: string;
+            /**
+             * Campaign
+             * @default baseline_permanent
+             */
+            campaign: string;
+            /** Variety */
+            variety?: string | null;
+            /** Current Phenological Stage */
+            current_phenological_stage?: string | null;
+            /** Planting Months */
+            planting_months?: number[];
+            /** Harvest Months */
+            harvest_months?: number[];
+            /** Peak Harvest Month */
+            peak_harvest_month?: number | null;
+            /** Water Sensitivity Profile */
+            water_sensitivity_profile?: {
+                [key: string]: string;
+            };
+            /** Market Links */
+            market_links?: {
+                [key: string]: unknown;
+            }[];
+            /** Source Reference */
+            source_reference: string;
+            /**
+             * Verified
+             * @default true
+             */
+            verified: boolean;
+            /**
+             * Eligible For Alerts
+             * @default true
+             */
+            eligible_for_alerts: boolean;
         };
         /**
          * DimensionSummaryOut
@@ -932,6 +1308,28 @@ export interface components {
             publication_lag_days: number;
             /** Limitations */
             limitations: string;
+        };
+        /**
+         * FacultativeSourceStatus
+         * @description Status descriptor for facultative environmental sources (ADR-087).
+         */
+        FacultativeSourceStatus: {
+            /** Source Id */
+            source_id: string;
+            /** Source Name */
+            source_name: string;
+            /**
+             * Status
+             * @default unavailable
+             */
+            status: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Data Available
+             * @default false
+             */
+            data_available: boolean;
         };
         /**
          * ForecastAbstentionItem
@@ -2497,6 +2895,205 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_climate_summary_v1_climate_summary_get: {
+        parameters: {
+            query?: {
+                /** @description District or Region P-code (e.g. MDG11) */
+                location?: string;
+                /** @description Reference month (YYYY-MM-01), defaults to latest available */
+                month?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClimateSummaryResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_climate_anomalies_v1_climate_anomalies_get: {
+        parameters: {
+            query?: {
+                /** @description District or Region P-code */
+                location?: string | null;
+                /** @description Start month (YYYY-MM-01) */
+                from?: string | null;
+                /** @description End month (YYYY-MM-01) */
+                to?: string | null;
+                /** @description Climate variable (precip_mm | t2m_c) */
+                variable?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClimateAnomalyDetailItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_climate_forecasts_v1_climate_forecasts_get: {
+        parameters: {
+            query?: {
+                /** @description District or Region P-code */
+                location?: string | null;
+                /** @description Numerical weather prediction model e.g. ecmwf_ifs */
+                model?: string | null;
+                /** @description Weather variable e.g. precip_mm */
+                variable?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClimateForecastItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_crop_calendars_v1_climate_calendars_get: {
+        parameters: {
+            query?: {
+                /** @description Basin code e.g. ZONE_ALAOTRA */
+                zone_code?: string | null;
+                /** @description Product code e.g. RICE_PADDY */
+                product?: string | null;
+                /** @description Month for active stage detection (1-12) */
+                month?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CropCalendarItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_climate_events_v1_climate_events_get: {
+        parameters: {
+            query?: {
+                /** @description District or Region P-code */
+                location?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClimateEventItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_facultative_sources_status_v1_climate_facultative_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FacultativeSourceStatus"][];
                 };
             };
         };

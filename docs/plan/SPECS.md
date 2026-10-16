@@ -1468,7 +1468,13 @@ Chaque valeur exposée inclut `value_kind` (`observed | imputed | forecast | com
 | GET | `/v1/macro?indicator=&geo_scope=&vintage=&from=&to=&limit=&offset=&format=json\|csv` | Séries macroéconomiques (`obs.macro_observation`), avec pagination et export CSV (ADR-071, R2.9) |
 | GET | `/v1/market/coverage?product=&location=&actor_level=&from=&to=&limit=&offset=&format=json\|csv` | Matrice de couverture, complétude et lacunes (R2.4, ADR-071) |
 | GET | `/v1/economic/indicators?format=json\|csv` · `/v1/economic/dashboard` · `/v1/economic/pilot-context` | Tableau économique interprétable par dimension étanche (ADR-070, ADR-071, R2.8) |
-| GET | `/v1/weather/anomalies?location=&from=&to=` | Anomalies météo |
+| GET | `/v1/weather/anomalies?location=&from=&to=` | Anomalies météo (compatibilité ascendante) |
+| GET | `/v1/climate/summary?location=&month=` | Vue agroclimatique consolidée par zone : météo observée, anomalies, prévisions ECMWF, stades phénologiques actifs, alertes et transparence des sources facultatives (R4.11, ADR-087) |
+| GET | `/v1/climate/anomalies?location=&from=&to=&variable=` | Séries temporelles d'anomalies agroclimatiques rigoureuses (cumuls pluie, deltas T°, Z-scores, niveaux de risque, méthode d'agrégation) (ADR-085, ADR-087) |
+| GET | `/v1/climate/forecasts?location=&model=&variable=&limit=&offset=` | Prévisions météorologiques numériques archivées (`obs.weather_forecast`, ECMWF IFS Open Data), quantiles p10/p90, horizon (ADR-084, ADR-087) |
+| GET | `/v1/climate/calendars?zone_code=&product=&month=` | Calendriers culturaux versionnés, stades phénologiques actifs pour le mois, et corridors commerciaux prouvés (ADR-086, ADR-087) |
+| GET | `/v1/climate/events?location=&limit=` | Événements et perspectives d'insécurité alimentaire FEWS NET / IPC (`obs.event`) (ADR-083, ADR-087) |
+| GET | `/v1/climate/facultative-status` | Statut transparent des sources facultatives non intégrées (FIRMS, GloFAS, Copernicus NDVI) avec motif explicite (ADR-087) |
 | GET | `/v1/kpis/market-health?product=&location=&month=` | Score + composantes |
 | GET | `/v1/forecasts?product=&location=&actor_level=&model_run_id=&limit=&offset=&format=json\|csv` | Dernières prévisions conformes (`gold.forecast_latest`), intervalles p10/p50/p90, modèle effectif, calibration (ADR-078) |
 | GET | `/v1/forecasts/runs?limit=&offset=&format=json\|csv` · `/v1/forecasts/runs/{id}` | Historique des runs (`ml.model_run`), dataset C4 fingerprint, métriques par horizon, récupération de vieux runs (ADR-078) |
@@ -1641,4 +1647,18 @@ En vertu des principes 1, 3, 8 et 9 d'AGENTS.md, la météo observée et la mét
   - `zonal_mean` : moyenne spatiale non pondérée des cellules intersectant la zone polygonale.
   - `cropland_weighted_mean` : moyenne pondérée par la densité de terres cultivées issue d'un masque agricole (`cropland_mask`).
 - Règle de véracité agronomique : L'usage de `cropland_weighted_mean` exige la présence vérifiée d'un raster de masque agricole. À défaut, l'agrégation est étiquetée `zonal_mean`.
+
+### 26.5 Endpoints API Agroclimat (`/v1/climate`, ADR-087, R4.11)
+- `/v1/climate/summary` : vue synthétique et explicable par district/région articulant :
+  1. observation et estimation (CHIRPS, DGM), méthode d'agrégation et signalement d'absence de masque agricole ;
+  2. anomalie rigoureuse vs baseline 1991-2020 ($N \ge 10$ ans) ou statut explicite `insufficient_history` ;
+  3. prévision NWP archivable (ECMWF IFS), dates `issued_at`, `valid_from`, `valid_to`, horizon et quantiles p10/p90 (`value_kind: projected`) ;
+  4. cycles culturaux actifs avec calcul dynamique du stade phénologique du mois (`peak_harvest`, `harvest`, `planting`, `growing`) et corridors commerciaux documentés ;
+  5. alertes FEWS NET / IPC avec statut projeté certifié ;
+  6. statut transparent des sources environnementales facultatives non intégrées (FIRMS, GloFAS, Copernicus NDVI) affichées comme indisponibles sans fabrication de zéros fictifs ni indice composite non étayé.
+- `/v1/climate/anomalies` : séries temporelles d'anomalies pluviométriques et thermiques.
+- `/v1/climate/forecasts` : prévisions numériques archivées (`obs.weather_forecast`).
+- `/v1/climate/calendars` : calendriers culturaux et corridors d'approvisionnement.
+- `/v1/climate/events` : événements et perspectives FEWS NET / IPC.
+- `/v1/climate/facultative-status` : transparence des capacités environnementales optionnelles.
 

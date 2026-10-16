@@ -8,7 +8,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-ValueKind = Literal["observed", "imputed", "forecast", "composite"]
+ValueKind = Literal["observed", "imputed", "forecast", "projected", "composite"]
 
 
 # ===================== AUTH =====================
@@ -186,6 +186,125 @@ class WeatherAnomalyItem(BaseModel):
     t2m_mean: float | None = None
     value_kind: ValueKind = "observed"
     sources: list[str] = Field(default_factory=list)
+
+
+class ClimateForecastItem(BaseModel):
+    """Archived numerical weather forecast item (obs.weather_forecast, ADR-084, ADR-087)."""
+
+    forecast_id: str
+    location_pcode: str
+    location_name: str
+    issued_at: str
+    valid_from: str
+    valid_to: str
+    horizon_hours: int
+    variable: str
+    model_name: str
+    predicted_value: float | None = None
+    predicted_p10: float | None = None
+    predicted_p90: float | None = None
+    unit: str
+    method: str
+    spatial_resolution: str | None = None
+    value_kind: ValueKind = "projected"
+    source: str = "ecmwf_open"
+
+
+class CropCalendarItem(BaseModel):
+    """Crop calendar phenological cycle and trade corridors (ADR-086, ADR-087)."""
+
+    zone_code: str
+    zone_name: str
+    crop: str
+    product_code: str
+    crop_cycle: str | None = None
+    season_name: str
+    crop_regime: str
+    calendar_version: str = "v1.0"
+    calendar_type: str = "traditional_baseline"
+    campaign: str = "baseline_permanent"
+    variety: str | None = None
+    current_phenological_stage: str | None = None
+    planting_months: list[int] = Field(default_factory=list)
+    harvest_months: list[int] = Field(default_factory=list)
+    peak_harvest_month: int | None = None
+    water_sensitivity_profile: dict[str, str] = Field(default_factory=dict)
+    market_links: list[dict[str, Any]] = Field(default_factory=list)
+    source_reference: str
+    verified: bool = True
+    eligible_for_alerts: bool = True
+
+
+class ClimateEventItem(BaseModel):
+    """Food security outlook and environmental event item (obs.event, ADR-083, ADR-087)."""
+
+    event_id: str
+    source_id: str
+    location_pcode: str
+    location_name: str
+    event_type: str
+    severity: str
+    title: str
+    description: str
+    published_at: str
+    is_projected: bool = False
+    ipc_phase: int | None = None
+    source_reference: str
+
+
+class FacultativeSourceStatus(BaseModel):
+    """Status descriptor for facultative environmental sources (ADR-087)."""
+
+    source_id: str
+    source_name: str
+    status: str = "unavailable"
+    reason: str
+    data_available: bool = False
+
+
+class ClimateAnomalyDetailItem(BaseModel):
+    """Detailed climate anomaly measurement (ADR-085, ADR-087)."""
+
+    location_pcode: str
+    location_name: str
+    month: str
+    variable: str
+    observed_value: float
+    baseline_mean: float | None = None
+    baseline_years: int | None = None
+    anomaly_delta: float | None = None
+    anomaly_pct: float | None = None
+    standardized_zscore: float | None = None
+    risk_level: str = "low"
+    status: str = "computed"
+    aggregation_method: str = "zonal_mean"
+    cropland_mask_applied: bool = False
+    sources: list[str] = Field(default_factory=list)
+    value_kind: ValueKind = "observed"
+
+
+class ClimateSummaryResponse(BaseModel):
+    """Consolidated agroclimate summary for decision-support (ADR-087, R4.11)."""
+
+    location_pcode: str
+    location_name: str
+    current_month: str
+    observed_precipitation_mm: float | None = None
+    precipitation_anomaly_pct: float | None = None
+    precipitation_risk_level: str | None = None
+    aggregation_method: str = "zonal_mean"
+    cropland_mask_applied: bool = False
+    observed_source: str = "chirps"
+    temperature_mean_c: float | None = None
+    forecast_next_72h_precip_mm: float | None = None
+    forecast_p10_mm: float | None = None
+    forecast_p90_mm: float | None = None
+    forecast_model: str | None = None
+    forecast_issued_at: str | None = None
+    forecast_value_kind: ValueKind = "projected"
+    active_crop_cycles: list[CropCalendarItem] = Field(default_factory=list)
+    events_and_outlooks: list[ClimateEventItem] = Field(default_factory=list)
+    facultative_sources: list[FacultativeSourceStatus] = Field(default_factory=list)
 
 
 class MarketHealthItem(BaseModel):
