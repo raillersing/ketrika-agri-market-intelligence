@@ -734,7 +734,7 @@
 | R2.11 | MUST | DONE | 2026-10-16T12:40:00Z | 2026-10-16T13:00:00Z | 79338e1 | Gate observatoire décisionnel validé, 5 questions décisionnelles calculables du pilote rizicole prouvées, zéro score composite, tag mi-r2-qualified | 6 tests verts, 149 backend passés, 96% couverture |
 | R3.1 | MUST | DONE | 2026-10-16T15:45:00Z | 2026-10-16T16:05:00Z | b7aa7ba | ADR-073, SPECS §17, clé 5 composantes, grille sans compression, 36m min, 12m récents, cohortes | 16 tests verts, couverture 98%, 21 tests ML verts |
 | R3.2 | MUST | DONE | 2026-10-16T16:10:00Z | 2026-10-16T16:18:00Z | a5054c4 | Datasets historiques as-of (C2/C4, traçabilité temporelle, empreinte SHA-256 canonique, partitionnement sans fuite) | 8 tests verts, couverture 92%, 29 tests ML verts |
-| R3.3 | MUST | DONE | 2026-10-16T16:20:00Z | 2026-10-16T16:32:00Z | (commit à venir) | Références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, imputation sans fuite | 9 tests verts, couverture ML 84%, 38 tests ML verts |
+| R3.3 | MUST | DONE | 2026-10-16T16:20:00Z | 2026-10-16T16:32:00Z | f107d9a | Références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, imputation sans fuite | 9 tests verts, couverture ML 84%, 38 tests ML verts |
 | R3.4 | MUST | TODO | — | — | — | — | — |
 | R3.5 | MUST | TODO | — | — | — | — | — |
 | R3.6 | SHOULD | TODO | — | — | — | — | — |
