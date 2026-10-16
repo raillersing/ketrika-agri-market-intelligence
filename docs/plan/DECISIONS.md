@@ -2,6 +2,24 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-074 : constructeur de datasets d'entraînement as-of, traçabilité temporelle C2/C4 et partitionnement sans fuite (R3.2)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.2 ; Phase R3.
+- **Contexte :** L'apprentissage machine et l'évaluation des modèles de prévision de prix requièrent des jeux de données d'entraînement rigoureusement gelés au point dans le temps (`as_of`) sans fuite d'informations futures (directives R3.2, contrats C2 et C4). Trois impératifs techniques s'imposent :
+  1. **Étanchéité temporelle C2 :** Seules les observations effectivement publiées ou disponibles à la date `as_of` (`first_available_at <= as_of` ou `published_at <= as_of` et `ingested_at <= as_of`) peuvent faire partie du dataset. Tout prix observé pour un mois antérieur mais publié ultérieurement (ex: prix de janvier publié en mars) doit être strictement exclu d'un dataset as-of de février.
+  2. **Résolution historique des révisions :** Le stockage Bronze/Silver étant en ajout seul (append-only avec `superseded_by`), une révision ultérieure (ex: révision intervenue en avril sur une observation de mars) ne doit pas rétroactivement altérer le dataset as-of de mars. Au temps `as_of`, c'est la version qui était active à ce moment-là qui doit être sélectionnée (`ingested_at <= as_of` et (`superseded_by IS NULL` ou remplacement postérieur à `as_of`)).
+  3. **Traçabilité et empreinte canonique C4 :** Chaque dataset d'entraînement porte un identifiant unique, une version, un mode d'origine (`as_of_point_in_time` ou `retrospective`), la liste exhaustive des `observation_ids` et des clés d'artefacts Bronze sources, les règles de sélection, et une empreinte canonique SHA-256 (`canonical_fingerprint`) calculée sur les enregistrements triés de façon déterministe. Deux constructions au même `as_of` doivent produire exactement la même empreinte.
+  4. **Partitionnement temporel étanche :** Découpage formel en sous-ensembles `train`, `calibration` et `test` respectant strictement la chronologie sans chevauchement ni utilisation de données futures pour l'étalonnage.
+- **Décision :**
+  1. Création du module `backend/src/ketrika/ml/dataset.py` avec `DatasetRecord`, `DatasetSplit`, `AsOfDataset` et la fonction constructeur `build_as_of_dataset`.
+  2. Requête SQL et filtrage en mémoire point-in-time joignant `obs.price_observation`, `meta.source_record` et `obs.macro_observation`.
+  3. Reconstitution déterministe de la clé canonique et de l'empreinte SHA-256 (tri par natural_key/observation_id, sérialisation JSON canonique UTF-8 sans blancs inutiles).
+  4. Partitionnement temporel strict par fenêtres calendaires disjointes.
+- **Alternatives rejetées :**
+  - Utiliser la vue `gold.price_obs_current` sans filtre temporel de révision (rejeté, fuite de données de révisions futures).
+  - Déduire la disponibilité temporelle uniquement du champ `month` (rejeté par C2, interdiction d'antidatage).
+- **Conséquences :** Reproductibilité absolue des datasets d'apprentissage, élimination radicale des fuites d'information, alignement parfait avec les exigences d'évaluation scientifique de R3.4 et R3.5.
+
 ## ADR-073 : éligibilité, calendrier régulier et audit d'exclusion des séries de prévision de prix (R3.1)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R3.1 ; Phase R3.

@@ -1324,7 +1324,16 @@ L'UI **DOIT** toujours afficher les composantes à côté du score.
 - **Séparation des cohortes :** Vérité terrain d'évaluation réservée aux observations observées (`observed_or_imputed == 'observed'`). Cohorte purement observée (`cohort = 'observed'`) vs cohorte composite/imputée (`cohort = 'mixed'`).
 - **Audit et rapport d'exclusions :** Toute extraction produit un `SeriesEligibilityReport` recensant les séries éligibles et les séries exclues avec leurs motifs précis (`insufficient_total_points`, `insufficient_recency`, `ineligible_geo_granularity`, `forbidden_price_type`). Aucune série n'est fabriquée artificiellement pour atteindre un quota.
 
-### 17.2 Modèles, backtest et intervalles (SPECS MVP)
+### 17.2 Datasets historiques as-of et contrats C2/C4 (ADR-074, R3.2)
+
+- **Principe as-of strict (C2) :** Un dataset d'entraînement à la date `as_of` ne contient que les observations dont la disponibilité prouvée est antérieure ou égale à `as_of` (`published_at <= as_of` ou `first_available_at <= as_of`, et `ingested_at <= as_of`). Un prix de janvier publié en mars est formellement absent d'un dataset as-of de février.
+- **Résolution des révisions :** Les révisions intervenues après `as_of` sont ignorées. La version active au moment `as_of` est celle dont `ingested_at <= as_of` et dont le remplacement éventuel (`superseded_at` ou création du superseded_by) est postérieur à `as_of`.
+- **Structure canonique du dataset (C4) :**
+  - Métadonnées complètes : `dataset_id`, `name`, `version`, `as_of`, `origin_mode` (`as_of_point_in_time | retrospective`), `canonical_fingerprint` (SHA-256 déterministe), `observations_count`, `observation_ids`, `artefacts` (clés/SHA Bronze), `source_ids`, `selection_rules`.
+  - Empreinte reproductible : Sérialisation JSON UTF-8 canonique triée sur les clés naturelles et identifiants, sans blancs superflus. Deux constructions au même `as_of` produisent une empreinte identique à 100 %.
+- **Partitionnement étanche sans fuite :** Découpage temporel net en sous-ensembles `train`, `calibration`, `test` selon des origines calendaires fixes et disjointes. Aucune donnée de la fenêtre de test n'est accessible lors de l'entraînement ou du calibrage.
+
+### 17.3 Modèles, backtest et intervalles (SPECS MVP)
 
 - **Modèles candidats :** `SeasonalNaive(season_length=12)`, `AutoETS(season_length=12)`, `AutoARIMA(season_length=12)`. En option (SHOULD), `mlforecast` + LightGBM global avec lags {1, 2, 3, 12} et variables exogènes connues (mois).
 - **Backtest :** rolling-origin, 6 fenêtres, horizon h = 3, pas = 1 mois. Métriques : WAPE (principale), MAE, sMAPE, couverture empirique de l'intervalle 80 %.

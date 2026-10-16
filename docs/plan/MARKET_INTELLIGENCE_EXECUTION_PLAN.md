@@ -45,7 +45,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R2.9 | MUST | DONE | Exposition données/limites API, pagination [1, 1000], export CSV /v1/macro /v1/market/coverage /v1/economic/indicators, types OpenAPI/TS synchronisés, 6 tests verts, couverture 94% |
 | R2.10 | MUST | DONE | Vues marché et économie livrées, route /economy, 5 dimensions, 14 fiches métriques, complétude, 39 tests vitest verts, responsive 390px validé |
 | R3.1 | MUST | DONE | ADR-073, SPECS §17, clé explicite 5 composantes, national/régional, grille sans trous compressés, 36 mois min, 12 récents, cohortes, 16 tests verts, couverture 98% |
-| R3.2 | MUST | TODO | — |
+| R3.2 | MUST | DONE | ADR-074, SPECS §17.2, datasets historiques as-of C2/C4, traçabilité temporelle, empreinte SHA-256 canonique, partitionnement sans fuite, 8 tests verts, couverture 92% |
 | R3.3 | MUST | TODO | — |
 | R3.4 | MUST | TODO | — |
 | R3.5 | MUST | TODO | — |
