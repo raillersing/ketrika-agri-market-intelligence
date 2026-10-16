@@ -14,15 +14,31 @@ from ketrika.supply.contracts import (
     validate_no_double_counting,
     validate_payload_no_pii,
 )
+from ketrika.supply.quality import (
+    MarketCoverageStats,
+    MarketPeriodCell,
+    ObservationPresence,
+    SupplyDataQualityReport,
+    SupplyQualityChecker,
+    TemporalDoubleCountViolation,
+    UnitConversionAudit,
+)
 
 __all__ = [
     "FORBIDDEN_PII_FIELDS",
+    "MarketCoverageStats",
+    "MarketPeriodCell",
     "MarketType",
+    "ObservationPresence",
     "QuantityMeasurementMode",
     "QuantityObservationRecord",
     "QuantityTarget",
     "QuantityUnit",
+    "SupplyDataQualityReport",
+    "SupplyQualityChecker",
     "SurveyMetadata",
+    "TemporalDoubleCountViolation",
+    "UnitConversionAudit",
     "convert_quantity_to_kg",
     "validate_no_double_counting",
     "validate_payload_no_pii",

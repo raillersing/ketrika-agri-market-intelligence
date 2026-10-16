@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T02:17:00Z] R5.3 — DONE, contrôle qualité des quantités, matrice marché × période et taux de couverture
+
+- Dépendances relues : R5.2 (DONE), R2.2 (DONE), R2.3 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-090 dans `docs/plan/DECISIONS.md` (métrologie DQ quantités, distinction stricte absence de relevé vs zéro arrivage, matrice marché × période, prévention formelle du double comptage temporel, vérification des conversions d'unités locales).
+  2. Créer le module `backend/src/ketrika/supply/quality.py` avec les modèles Pydantic (`SupplyDataQualityReport`, `MarketCoverageStats`, `TemporalDoubleCountViolation`, `QuantityAuditIssue`) et la classe `SupplyQualityChecker`.
+  3. Implémenter l'algorithme d'audit de matrice marché × période séparant explicitement `missing_survey` et `zero_inflow`.
+  4. Implémenter la détection de chevauchement temporel (cumul mensuel vs somme des relevés quotidiens).
+  5. Écrire la suite de tests unitaires `backend/tests/unit/test_supply_quality_and_coverage.py`.
+  6. Valider Ruff clean et Mypy strict clean (0 warning, 0 error).
+  7. Rédiger le dossier de preuve normatif `docs/evidence/R5.3/README.md`.
+- Résultat : Tâche R5.3 entièrement qualifiée et validée (DONE). 6/6 tests dédiés verts, 19/19 tests R5 passés, couverture `ketrika.supply.quality` 96%, couverture globale 92%.
+- Preuve : `docs/evidence/R5.3/README.md`.
+
 ### [2026-10-17T02:11:00Z] R5.2 — DONE, importation des quantités légalement disponibles et extension StockRecord
 
 - Dépendances relues : R5.1 (DONE), R1.2 (DONE), R2.1 (DONE).
@@ -1051,7 +1065,7 @@
 | R4.12 | MUST | DONE | 2026-10-17T01:35:00Z | 2026-10-17T01:50:00Z | 7c4fcfe | Gate agroclimat/météo validé, 8 critères normatifs prouvés, couverture ketrika.geo 92%, tag mi-r4-qualified | 8 tests dédiés verts, 66 tests agroclimat verts, 0 fausse probabilité, zéro faux zéro |
 | R5.1 | MUST | DONE | 2026-10-17T02:00:00Z | 2026-10-17T02:15:00Z | 4a6a28c | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole de relevé anti-PII, prévention double comptage | 7 tests dédiés verts, couverture ketrika.supply 93% |
 | R5.2 | MUST | DONE | 2026-10-17T02:11:00Z | 2026-10-17T02:12:00Z | d52bef0 | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 | Qualifié, 13/13 tests verts, 84% cov |
-| R5.3 | MUST | TODO | — | — | — | — | — |
+| R5.3 | MUST | DONE | 2026-10-17T02:17:00Z | [evidence](file:///home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep/docs/evidence/R5.3/README.md) | commit_pending | Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels | Qualifié, 6/6 tests verts, 96% cov |
 | R5.4 | MUST | TODO | — | — | — | — | — |
 | R5.5 | SHOULD | TODO | — | — | — | — | — |
 | R5.6 | MUST | TODO | — | — | — | — | — |

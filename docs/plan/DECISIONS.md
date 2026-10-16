@@ -2,6 +2,35 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-090 : contrôle qualité des quantités, matrice spatio-temporelle marché × période, taux de couverture d'échantillonnage et distinction stricte absence de relevé vs zéro arrivage (R5.3)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.3 ; Phase R5.
+- **Contexte :** La tâche R5.3 impose de contrôler les quantités physiques d'approvisionnement et leur représentativité spatio-temporelle. Les directives de R5.3 et SPECS §27 imposent de :
+  1. Distinguer formellement relevé ponctuel (`spot_reading`) et période cumulée (`cumulative_period`), stock résiduel (`stock_inventory`) et flux logistique (`inflow_arrival`).
+  2. Valider rigoureusement les conversions métriques des unités physiques locales (kg, tonne, sac 50kg, sac 100kg, gony, kapoaka) et interdire toute modification de conditionnement sans preuve documentée.
+  3. Construire une matrice marché × période pour quantifier la complétude des enquêtes et expliciter les jours non enquêtés.
+  4. Règle métrologique non négociable : **absence de relevé ≠ zéro arrivage**. Un jour sans relevé d'enquêteur n'est ni un stock vide ni une rupture d'approvisionnement, c'est une absence d'observation (`missing_survey`).
+  5. Quantifier la représentativité via le taux de couverture d'échantillonnage ($N_{\text{observés}} / N_{\text{attendus}}$) et expliciter la part déclarée (`declared_trader`) vs mesurée (`measured_scale`), sans jamais transformer du déclaratif en mesure certifiée.
+  6. Détecter et empêcher le double comptage temporel (ex: sommer simultanément les relevés journaliers et un total hebdomadaire ou mensuel).
+- **Décision :**
+  1. **Création du module `backend/src/ketrika/supply/quality.py` :**
+     - Modèles de données Pydantic : `MarketCoverageStats`, `TemporalDoubleCountViolation`, `QuantityAuditIssue`, `SupplyDataQualityReport`.
+     - Validateur `SupplyQualityChecker` implémentant :
+       - `build_market_period_matrix(records, start_date, end_date)` : construction de la grille calendrier des relevés par marché et produit vivrier.
+       - `evaluate_missing_vs_zero(matrix)` : séparation formelle des zéros réels vérifiés (`zero_inflow`, pesée 0 kg) et des absences d'observation (`missing_survey`, aucun enquêteur). Interdiction absolue d'imputer 0 kg en l'absence de relevé.
+       - `detect_temporal_overlap_double_counting(records)` : algorithme de détection des chevauchements d'intervalles $[start, end]$ pour une même cible et un même marché prévenant toute double sommation.
+       - `compute_sampling_coverage_rate(market_code, records, start_date, end_date, expected_days)` : calcul exact de la représentativité d'échantillonnage et ventilation métrologique (`measured_scale`, `declared_trader`, `estimated_survey`).
+       - `audit_unit_conversions(records)` : vérification stricte que chaque conversion vers le kilogramme respecte la table de densité produit et n'utilise pas de ratio arbitraire.
+  2. **Interdiction d'extrapolation non pondérée :**
+     - Le système signale le taux de couverture d'échantillonnage comme métrique de confiance sans extrapoler à l'ensemble du marché sauf modèle de pondération formellement qualifié.
+- **Alternatives rejetées :**
+  - Remplacer les jours non enquêtés par des zéros pour faciliter les graphiques (rejeté, falsification grossière de l'activité économique de marché).
+  - Fusionner les tonnages mesurés sur bascule et les tonnages déclarés verbalement sans distinction de confiance (rejeté, violation de SPECS §27).
+- **Conséquences :**
+  - Traçabilité et auditabilité totales des séries temporelles de flux et stocks.
+  - Prévention mécanique du double comptage temporel et spatial.
+
+
 ## ADR-089 : extension de StockRecord et ingestion des flux d'arrivages et stocks légaux (R5.2)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R5.2 ; Phase R5.
