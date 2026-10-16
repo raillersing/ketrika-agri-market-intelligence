@@ -160,6 +160,41 @@ class WeatherRecord(RecordBase):
         self.period_end = self.date
 
 
+class WeatherForecastRecord(RecordBase):
+    """Normalized numerical weather prediction record (matching obs.weather_forecast)."""
+
+    natural_key_fields: ClassVar[tuple[str, ...]] = (
+        "location_raw",
+        "issued_at",
+        "valid_from",
+        "horizon_hours",
+        "variable",
+        "model_name",
+    )
+
+    location_raw: str
+    issued_at: datetime
+    valid_from: datetime
+    valid_to: datetime
+    horizon_hours: int
+    variable: str  # precip_mm | t2m_max_c | t2m_min_c | rh2m_pct
+    model_name: str = "ecmwf_ifs_open"  # ecmwf_ifs_open | noaa_gfs
+    predicted_value: float | None = None
+    predicted_p10: float | None = None
+    predicted_p90: float | None = None
+    method: str = "point_centroid"  # point_centroid | zonal_mean
+    spatial_resolution: str | None = None
+    unit: str = "mm"
+
+    period_start: date = Field(default_factory=date.today)
+    period_end: date = Field(default_factory=date.today)
+
+    def model_post_init(self, __context: object) -> None:
+        """Align period_start and period_end with valid_from/valid_to dates."""
+        self.period_start = self.valid_from.date()
+        self.period_end = self.valid_to.date()
+
+
 class CpiRecord(RecordBase):
     """Normalized consumer price index record (matching obs.cpi_observation)."""
 

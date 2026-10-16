@@ -1,0 +1,21 @@
+{
+  "model_name": "ecmwf_ifs_open",
+  "issued_at": "2024-03-01T00:00:00Z",
+  "status": "published",
+  "forecasts": [
+    {
+      "location_raw": "Analamanga",
+      "horizon_hours": 24,
+      "variable": "precip_mm",
+      "predicted_value": -12.5,
+      "unit": "mm"
+    },
+    {
+      "location_raw": "Androy",
+      "horizon_hours": 24,
+      "variable": "t2m_max_c",
+      "predicted_value": 78.5,
+      "unit": "C"
+    }
+  ]
+}

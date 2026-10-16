@@ -1,0 +1,53 @@
+{
+  "model_name": "ecmwf_ifs_open",
+  "issued_at": "2024-03-01T00:00:00Z",
+  "cycle": "00z",
+  "spatial_resolution": "0.4_deg",
+  "status": "published",
+  "forecasts": [
+    {
+      "location_raw": "Analamanga",
+      "horizon_hours": 24,
+      "valid_from": "2024-03-02T00:00:00Z",
+      "valid_to": "2024-03-03T00:00:00Z",
+      "variable": "precip_mm",
+      "predicted_value": 14.5,
+      "predicted_p10": 4.0,
+      "predicted_p90": 26.2,
+      "unit": "mm"
+    },
+    {
+      "location_raw": "Analamanga",
+      "horizon_hours": 24,
+      "valid_from": "2024-03-02T00:00:00Z",
+      "valid_to": "2024-03-03T00:00:00Z",
+      "variable": "t2m_max_c",
+      "predicted_value": 26.8,
+      "predicted_p10": 25.0,
+      "predicted_p90": 28.5,
+      "unit": "C"
+    },
+    {
+      "location_raw": "Alaotra-Mangoro",
+      "horizon_hours": 48,
+      "valid_from": "2024-03-03T00:00:00Z",
+      "valid_to": "2024-03-04T00:00:00Z",
+      "variable": "precip_mm",
+      "predicted_value": 32.0,
+      "predicted_p10": 18.5,
+      "predicted_p90": 55.0,
+      "unit": "mm"
+    },
+    {
+      "location_raw": "Androy",
+      "horizon_hours": 72,
+      "valid_from": "2024-03-04T00:00:00Z",
+      "valid_to": "2024-03-05T00:00:00Z",
+      "variable": "precip_mm",
+      "predicted_value": 0.0,
+      "predicted_p10": 0.0,
+      "predicted_p90": 2.1,
+      "unit": "mm"
+    }
+  ]
+}

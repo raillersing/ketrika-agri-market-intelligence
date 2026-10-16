@@ -2,6 +2,32 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-084 : qualification de la météo prévue archivable, intégration ECMWF Open Data et étanchéité prévisionnelle (R4.5)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.5 ; Phase R4.
+- **Contexte :** L'anticipation agroclimatique requiert des prévisions météorologiques à court et moyen terme (1 à 14 jours) issues de centres mondiaux de référence (ECMWF, NOAA/NCEP). Leur intégration impose des règles strictes (directives R4.5, règles 1, 3, 8, 9 et 10 d'AGENTS.md) :
+  1. **Séparation étanche météo observée vs météo prévue (Règle 9) :**
+     - Les prévisions sont exclusivement enregistrées dans la table dédiée `obs.weather_forecast` (créée en R4.1 via la migration 0014).
+     - Il est strictement interdit d'insérer une prévision dans `obs.weather_observation` ou de la présenter comme un fait météorologique mesuré.
+  2. **Archivage Bronze immuable avant expiration glissante (Règle 2 & 4) :**
+     - Les API de prévision écrasent typiquement leurs runs toutes les 6 à 12 heures. Ketrika archive chaque payload brut sous Bronze (`bronze/weather_forecast/...`) avec son horodatage d'émission officiel (`issued_at`), son empreinte SHA-256 et sa validité (`valid_from`, `valid_to`), rendant le rejeu hors ligne 100 % reproductible sans réseau.
+  3. **Quantiles d'incertitude et horizons temporels :**
+     - Conservation de l'horizon de prévision en heures (`horizon_hours` : 24, 48, 72, 168, etc.), de la valeur médiane/attendue (`predicted_value`), et des quantiles probabilistes d'ensemble (`predicted_p10`, `predicted_p90`).
+  4. **Interdiction de fabriquer des pseudo-hindcasts :**
+     - Il est strictement interdit de reconstituer artificiellement un run de prévision du passé en utilisant les observations réalisées réelles (anti-triche A09, Règle 10).
+  5. **Contrôles de cohérence physique :**
+     - Rejet ou alerte sur valeurs physiquement impossibles (précipitations négatives, températures supérieures à 55 °C ou inférieures à -10 °C à Madagascar).
+- **Décision :**
+  1. Déclarer la source officielle `ecmwf_open` dans `registry/sources.yaml` avec priorité P2, licence CC-BY-4.0 / WMO Essential.
+  2. Créer le type `WeatherForecastRecord` dans `backend/src/ketrika/connectors/records.py`.
+  3. Implémenter le connecteur `ketrika.connectors.ecmwf_open.EcmwfOpenConnector` gérant l'ingestion Bronze et l'extraction des horizons multi-variables (précipitations, températures min/max, humidité).
+  4. Implémenter `load_weather_forecast_record_with_supersession` dans `backend/src/ketrika/connectors/runner.py` pour alimenter `obs.weather_forecast`.
+  5. Développer la suite de tests unitaires et de contrats validant la distinction météo observée vs prévue, l'archivage de runs successifs, et la détection d'anomalies d'unités ou de valeurs.
+- **Alternatives rejetées :**
+  - Utiliser un service météo payant imposant des clés secrètes non fournies (rejeté, respect de H1/H2).
+  - Fusionner les prévisions dans `obs.weather_observation` avec un flag (rejeté, risque d'altération silencieuse des séries historiques).
+- **Conséquences :** Anticipation des chocs climatiques avec conservation historique complète des prévisions émises et zéro ambiguïté prévision vs observation.
+
 ## ADR-083 : intégration des événements, perspectives et classifications de sécurité alimentaire FEWS NET et IPC Madagascar (R4.4)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R4.4 ; Phase R4.

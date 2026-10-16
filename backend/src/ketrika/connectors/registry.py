@@ -10,6 +10,7 @@ from ketrika.connectors.bfm_public import Connector as BfmPublicConnector
 from ketrika.connectors.chirps import ChirpsConnector
 from ketrika.connectors.douanes_stats import DouanesStatsConnector
 from ketrika.connectors.dummy_csv import DummyCsvConnector
+from ketrika.connectors.ecmwf_open import EcmwfOpenConnector
 from ketrika.connectors.faostat import FaostatConnector
 from ketrika.connectors.fewsnet_ipc import FewsnetConnector, IpcConnector
 from ketrika.connectors.instat_nipc import InstatNipcConnector
@@ -37,6 +38,7 @@ _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "meteo_mg": MeteoMgConnector,
     "fewsnet_mdg": FewsnetConnector,
     "ipc_mdg": IpcConnector,
+    "ecmwf_open": EcmwfOpenConnector,
     "instat_nipc": InstatNipcConnector,
     "instat_tbe": InstatTbeConnector,
     "bfm_public": BfmPublicConnector,

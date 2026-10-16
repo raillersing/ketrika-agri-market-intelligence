@@ -594,3 +594,40 @@
   data_kinds: [event]
   notes: "Analyses de l'insécurité alimentaire aiguë actuelle et projetée à Madagascar (phases IPC 1 à 5)."
 
+- source_id: ecmwf_open
+  name: "ECMWF Open Data – Integrated Forecasting System (IFS)"
+  owner: "European Centre for Medium-Range Weather Forecasts (ECMWF)"
+  source_family: ecmwf
+  priority: P2
+  status: active
+  access_method: api
+  connector: ketrika.connectors.ecmwf_open:Connector
+  cadence: daily
+  collection_cadence: daily
+  observation_cadence: daily
+  publication_cadence: daily
+  freshness_sla_days: 2
+  partitioning: daily
+  entrypoints:
+    - url: "https://data.ecmwf.int/forecasts"
+      kind: landing
+      verified_at: "2026-10-16T00:00:00Z"
+      verified: true
+  languages: [en]
+  licence: "CC-BY-4.0 / WMO Essential Weather Data"
+  tos_url: "https://www.ecmwf.int/en/terms-use"
+  tos_sha256: null
+  tos_checked_at: "2026-10-16T00:00:00Z"
+  robots_checked_at: "2026-10-16T00:00:00Z"
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 1.0
+  daily_request_budget: 200
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [weather_forecast]
+  notes: "Prévisions météorologiques numériques globales ouvertes (précipitations, températures, humidité, horizons 24h à 168h)."
+

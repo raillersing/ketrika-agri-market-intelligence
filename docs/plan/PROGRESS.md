@@ -3,6 +3,21 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T21:35:00Z] R4.5 — DONE, qualification d'une météo prévue archivable (ECMWF Open Data)
+
+- Dépendances relues : R4.1 (DONE), R1.2 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-084 dans `docs/plan/DECISIONS.md` (séparation étanche météo observée vs prévue dans obs.weather_forecast, archivage Bronze immuable des runs NWP, quantiles d'incertitude p10/p90, contrôles de cohérence physique et rejet de faux hindcasts).
+  2. Enregistrer la source officielle `ecmwf_open` dans `registry/sources.yaml` et `backend/src/ketrika/connectors/registry.py`.
+  3. Définir `WeatherForecastRecord` dans `backend/src/ketrika/connectors/records.py`.
+  4. Implémenter le connecteur `backend/src/ketrika/connectors/ecmwf_open.py` (`EcmwfOpenConnector`, `Connector = EcmwfOpenConnector`).
+  5. Implémenter `load_weather_forecast_record_with_supersession` dans `backend/src/ketrika/connectors/runner.py`.
+  6. Créer les fixtures représentatives `ecmwf_ifs_20240301_00z.json`, `ecmwf_ifs_20240301_12z.json`, `ecmwf_unavailable.json` et `ecmwf_invalid_physical.json` dans `backend/tests/fixtures/ecmwf_open/`.
+  7. Écrire la suite de tests unitaires et de contrats `backend/tests/unit/test_ecmwf_open.py` (7/7 tests passés en 16.90s, couverture `ketrika.connectors.ecmwf_open` à 89%).
+  8. Valider Ruff clean et Mypy strict clean (5 source files sans erreur).
+  9. Rédiger le dossier de preuve `docs/evidence/R4.5/README.md`.
+- Résultat : Tâche R4.5 entièrement qualifiée et validée (DONE).
+
 ### [2026-10-16T21:25:00Z] R4.4 — DONE, intégration des événements et perspectives FEWS NET/IPC
 
 - Dépendances relues : R4.1 (DONE), R1.2 (DONE), R2.1 (DONE).

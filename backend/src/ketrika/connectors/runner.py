@@ -26,6 +26,7 @@ from ketrika.connectors.records import (
     RecordBase,
     StockRecord,
     TradeFlowRecord,
+    WeatherForecastRecord,
     WeatherRecord,
 )
 from ketrika.core.logging import bind_context, clear_context
@@ -41,6 +42,7 @@ from ketrika.core.models.db import (
     SourceRecord,
     StockObservation,
     TradeFlow,
+    WeatherForecast,
     WeatherObservation,
 )
 from ketrika.normalize.price_bridge import identity_evidence, resolve_price_identity
@@ -824,6 +826,80 @@ def load_event_record_with_supersession(
     return "inserted", new_id
 
 
+def load_weather_forecast_record_with_supersession(
+    session: Session,
+    record: WeatherForecastRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    loc_stmt = select(Location).where(
+        or_(
+            Location.pcode == record.location_raw,
+            Location.name == record.location_raw,
+        )
+    )
+    location = session.execute(loc_stmt).scalars().first()
+    if location is None:
+        try:
+            loc_uuid = uuid.UUID(record.location_raw)
+            location = session.get(Location, loc_uuid)
+        except ValueError:
+            pass
+
+    loc_id: uuid.UUID = location.location_id if location is not None else uuid.uuid4()
+
+    stmt = select(WeatherForecast).where(
+        WeatherForecast.location_id == loc_id,
+        WeatherForecast.issued_at == record.issued_at,
+        WeatherForecast.horizon_hours == record.horizon_hours,
+        WeatherForecast.variable == record.variable,
+        WeatherForecast.model_name == record.model_name,
+        WeatherForecast.superseded_by.is_(None),
+    )
+    current_fc = session.execute(stmt).scalar_one_or_none()
+
+    if (
+        current_fc is not None
+        and current_fc.predicted_value == record.predicted_value
+        and current_fc.predicted_p10 == record.predicted_p10
+        and current_fc.predicted_p90 == record.predicted_p90
+        and current_fc.source_record_id == source_record_id
+    ):
+        return "idempotent_skipped", current_fc.forecast_id
+
+    new_id = uuid.uuid4()
+    if current_fc is not None:
+        session.execute(
+            update(WeatherForecast)
+            .where(WeatherForecast.forecast_id == current_fc.forecast_id)
+            .values(superseded_by=new_id)
+        )
+        session.flush()
+
+    new_fc = WeatherForecast(
+        forecast_id=new_id,
+        source_record_id=source_record_id,
+        location_id=loc_id,
+        issued_at=record.issued_at,
+        valid_from=record.valid_from,
+        valid_to=record.valid_to,
+        horizon_hours=record.horizon_hours,
+        variable=record.variable,
+        model_name=record.model_name,
+        predicted_value=record.predicted_value,
+        predicted_p10=record.predicted_p10,
+        predicted_p90=record.predicted_p90,
+        method=record.method,
+        spatial_resolution=record.spatial_resolution,
+        unit=record.unit,
+        evidence=deepcopy(record.evidence) if record.evidence else None,
+        superseded_by=None,
+    )
+    session.add(new_fc)
+    session.flush()
+    return "superseded" if current_fc is not None else "inserted", new_id
+
+
 def load_record_with_supersession(
     session: Session,
     record: RecordBase,
@@ -849,6 +925,10 @@ def load_record_with_supersession(
         return load_macro_record_with_supersession(session, record, source_id, source_record_id)
     elif isinstance(record, EventRecord):
         return load_event_record_with_supersession(session, record, source_id, source_record_id)
+    elif isinstance(record, WeatherForecastRecord):
+        return load_weather_forecast_record_with_supersession(
+            session, record, source_id, source_record_id
+        )
     else:
         raise ValueError(f"Unsupported record type: {type(record)}")
 
