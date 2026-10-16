@@ -884,7 +884,7 @@
 | R3.7 | MUST | DONE | 2026-10-16T17:10:00Z | 2026-10-16T17:35:00Z | 11b15d0 | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation | 4 tests verts, 53 tests ML verts, couverture 92%, Next build 16 routes |
 | R3.8 | MUST | DONE | 2026-10-16T19:40:00Z | 2026-10-16T20:00:00Z | 08d24e6 | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines | 7 tests dédiés verts, 60 tests ML verts, couverture evaluation 92%, API /v1/forecasts/performance |
 | R3.9 | MUST | DONE | 2026-10-16T20:05:00Z | 2026-10-16T20:15:00Z | bcf2985 | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified | 6 tests dédiés verts, 66 tests ML verts, zéro fuite certifiée |
-| R4.1 | MUST | DONE | 2026-10-16T20:30:00Z | 2026-10-16T20:50:00Z | e024b31 | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, modèle météo observée vs prévue, calendriers culturaux, migration 0014 | 8 tests dédiés verts, couverture ketrika.geo 94%, migration 0014 appliquée |
+| R4.1 | MUST | DONE | 2026-10-16T20:30:00Z | 2026-10-16T20:50:00Z | f11de9b | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, modèle météo observée vs prévue, calendriers culturaux, migration 0014 | 8 tests dédiés verts, couverture ketrika.geo 94%, migration 0014 appliquée |
 | R4.2 | MUST | TODO | — | — | — | — | — |
 | R4.3 | MUST | TODO | — | — | — | — | — |
 | R4.4 | MUST | TODO | — | — | — | — | — |
