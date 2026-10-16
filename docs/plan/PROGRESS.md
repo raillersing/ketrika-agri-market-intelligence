@@ -34,7 +34,7 @@
   - Suite de non-régression 149 passed in 50.10s (exit 0).
 - Résultats : 5/5 questions décisionnelles du pilote validées avec exactitude ; zéro score synthétique global ; 14 fiches métriques normatives conformes ; conformité du tableau économique et des interfaces de marché.
 - Qualification : Gate observatoire décisionnel QUALIFIED (DONE).
-- État final : DONE.
+- État final : DONE (commit 79338e1).
 - Preuve : docs/evidence/R2.11/README.md.
 - Reprise : Phase R3 — Prévisions de prix évaluées et honnêtes (première tâche MUST : R3.1).
 
