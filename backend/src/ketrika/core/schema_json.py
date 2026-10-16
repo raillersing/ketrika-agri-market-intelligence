@@ -2,13 +2,15 @@
 
 import hashlib
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from decimal import Decimal, InvalidOperation
 from typing import Any
 
 from ketrika.core.provenance import (
     MAX_CONTENT_BYTES,
     JsonNumberToken,
     ProofError,
+    _at,
     _check_json_depth,
     _reject_constant,
     _unique_json_object,
@@ -39,7 +41,8 @@ def _canonical_shape(root: JSONShape) -> Any:
         if (
             not isinstance(node, JSONShape)
             or not isinstance(node.kind, str)
-            or node.kind not in {"object", "array", "tuple", "string", "number", "boolean", "null"}
+            or node.kind
+            not in {"object", "array", "tuple", "string", "number", "decimal", "boolean", "null"}
             or type(node.nullable) is not bool
             or not isinstance(node.properties, tuple)
             or not isinstance(node.prefix, tuple)
@@ -84,6 +87,7 @@ def _canonical_shape(root: JSONShape) -> Any:
 class JSONSchemaContract:
     version: str
     root: JSONShape
+    scope: tuple[str | int, ...] = ()
 
     def __post_init__(self) -> None:
         if (
@@ -95,15 +99,72 @@ class JSONSchemaContract:
         ):
             raise ValueError("json_contract_invalid_version")
         _canonical_shape(self.root)
+        if (
+            not isinstance(self.scope, tuple)
+            or len(self.scope) > MAX_SHAPE_DEPTH
+            or any(
+                type(key) not in (str, int)
+                or (type(key) is int and key < 0)
+                or (isinstance(key, str) and (not key or len(key) > 256))
+                for key in self.scope
+            )
+        ):
+            raise ValueError("json_contract_invalid_scope")
+
+    @property
+    def sha256(self) -> str:
+        frame = ["json_structure_contract_v1", self.version, _canonical_shape(self.root)]
+        if self.scope:
+            frame = [
+                "json_structure_contract_v2",
+                self.version,
+                list(self.scope),
+                _canonical_shape(self.root),
+            ]
+        return hashlib.sha256(
+            json.dumps(
+                frame,
+                ensure_ascii=False,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest()
+
+
+@dataclass(frozen=True)
+class JSONSchemaAlternatives:
+    version: str
+    alternatives: tuple[JSONSchemaContract, ...]
+
+    def __post_init__(self) -> None:
+        if (
+            not isinstance(self.version, str)
+            or not self.version
+            or len(self.version) > 128
+            or self.version != self.version.strip()
+            or any(ord(c) < 32 or ord(c) == 127 for c in self.version)
+        ):
+            raise ValueError("json_contract_invalid_version")
+        if (
+            not isinstance(self.alternatives, tuple)
+            or not 1 <= len(self.alternatives) <= 8
+            or any(not isinstance(contract, JSONSchemaContract) for contract in self.alternatives)
+        ):
+            raise ValueError("json_contract_invalid_alternatives")
+        if len({contract.sha256 for contract in self.alternatives}) != len(self.alternatives):
+            raise ValueError("json_contract_duplicate_alternative")
 
     @property
     def sha256(self) -> str:
         return hashlib.sha256(
             json.dumps(
-                ["json_structure_contract_v1", self.version, _canonical_shape(self.root)],
-                ensure_ascii=False,
+                [
+                    "json_structure_alternatives_v1",
+                    self.version,
+                    [item.sha256 for item in self.alternatives],
+                ],
                 separators=(",", ":"),
-            ).encode("utf-8")
+                ensure_ascii=False,
+            ).encode()
         ).hexdigest()
 
 
@@ -126,10 +187,27 @@ class JSONSchemaInspection:
 
 
 def inspect_json_schema(
-    content: bytes, contract: JSONSchemaContract | None
+    content: bytes, contract: JSONSchemaContract | JSONSchemaAlternatives | None
 ) -> JSONSchemaInspection:
     if not isinstance(content, bytes):
         raise ValueError("schema_content_requires_bytes")
+    if isinstance(contract, JSONSchemaAlternatives):
+        inspections = [inspect_json_schema(content, item) for item in contract.alternatives]
+        valid = [item for item in inspections if item.passed]
+        if len(valid) == 1:
+            return replace(valid[0], contract_sha256=contract.sha256)
+        return JSONSchemaInspection(
+            "drift",
+            hashlib.sha256(content).hexdigest(),
+            contract.sha256,
+            sum(item.nodes_visited for item in inspections),
+            sum(item.objects for item in inspections),
+            sum(item.arrays for item in inspections),
+            sum(item.missing_fields for item in inspections),
+            sum(item.unexpected_fields for item in inspections),
+            sum(item.invalid_types for item in inspections),
+            ("schema_ambiguous_variant" if valid else "schema_no_variant",),
+        )
     if contract is not None and not isinstance(contract, JSONSchemaContract):
         raise ValueError("json_contract_invalid_type")
     digest = hashlib.sha256(content).hexdigest()
@@ -166,6 +244,11 @@ def inspect_json_schema(
         )
     except (ProofError, ValueError, RecursionError):
         return result(("schema_invalid_json",))
+    if contract.scope:
+        try:
+            payload = _at(payload, contract.scope)
+        except ProofError:
+            return result(("schema_scope_missing",))
 
     def visit(value: Any, node: JSONShape) -> None:
         counts["nodes_visited"] += 1
@@ -192,6 +275,13 @@ def inspect_json_schema(
                 counts["invalid_types"] += int(len(value) != len(node.prefix))
                 for item, child in zip(value, node.prefix, strict=False):
                     visit(item, child)
+        elif node.kind == "decimal":
+            raw = value.raw if isinstance(value, JsonNumberToken) else value
+            try:
+                valid = isinstance(raw, str) and len(raw) <= 128 and Decimal(raw).is_finite()
+            except InvalidOperation:
+                valid = False
+            counts["invalid_types"] += int(not valid)
         elif (
             (node.kind == "string" and isinstance(value, str))
             or (node.kind == "number" and isinstance(value, JsonNumberToken))

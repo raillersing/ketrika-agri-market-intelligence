@@ -146,6 +146,31 @@ def test_silver_consumes_verified_bytes_and_does_not_touch_collection_context():
         parse_ctx.bronze_store.put(source_id="other", content=b"x", mime_type="text/plain", url="")
 
 
+def test_native_wb_batch_dispatches_to_persisted_context_parser_not_legacy_csv():
+    connector, ctx, session, batch, run, reference, _ = fixture()
+    source_id = "wb_rtfp_mdg"
+    connector.source_id = ctx.source_id = run.source_id = reference.source_id = source_id
+    reference.parser_version = "2.0.0"
+    artifact = replace(
+        batch.artifacts[0],
+        object_key=batch.artifacts[0].object_key.replace("dummy_stages", source_id),
+        mime_type="application/json",
+    )
+    reference.object_key, reference.mime_type = artifact.object_key, artifact.mime_type
+    batch = replace(batch, source_id=source_id, parser_version="2.0.0", artifacts=(artifact,))
+    with patch(
+        "ketrika.connectors.rtfp_json.parse_persisted",
+        return_value=ParseResult(parser_version="2.0.0"),
+    ) as parse:
+        stats = consume_connector_silver(connector, ctx, session, batch)
+    assert parse.call_args.args[:2] == (session, artifact)
+    assert stats["n_inserted"] == 0
+    connector.parse.assert_not_called()
+    connector.discover.assert_not_called()
+    connector.fetch.assert_not_called()
+    session.commit.assert_not_called()
+
+
 @pytest.mark.parametrize(
     "field,value",
     [

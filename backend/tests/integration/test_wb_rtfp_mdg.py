@@ -16,6 +16,7 @@ from ketrika.core.models.db import PriceObservation, SourceRecord
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.registry import find_repo_root
 from ketrika.core.settings import get_settings
+from ketrika.pipelines import rebuild as rebuild_module
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
 from tests.legacy_replay import rejected_legacy_rebuild
 
@@ -47,7 +48,9 @@ def csv_content() -> str:
 
 
 @pytest.mark.integration
-def test_wb_rtfp_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, csv_content: str):
+def test_wb_rtfp_backfill_dq_and_rebuild_lifecycle(
+    httpserver, db_session, csv_content: str, monkeypatch
+):
     """Verify CC3-CC6: backfill execution, idempotence, supersession, DQ checks and offline rebuild."""
     # Ensure fresh Silver/Gold state
     wipe_silver_gold_tables(db_session)
@@ -79,6 +82,12 @@ def test_wb_rtfp_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, csv_c
     db_session.commit()
     assert stats1["n_inserted"] == 36
     assert stats1["n_new_artifacts"] == 1
+    fixture_reference = db_session.scalar(
+        select(SourceRecord.source_record_id).where(
+            SourceRecord.source_id == "wb_rtfp_mdg", SourceRecord.source_url == csv_url
+        )
+    )
+    assert fixture_reference is not None
 
     # Check active observations in Silver
     stmt = (
@@ -129,8 +138,14 @@ def test_wb_rtfp_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, csv_c
     assert stats2["n_skipped"] == 36
 
     # 4. CC6: Rebuild stable verification
+    # Replay this CSV scenario, not JSON runs retained by independent tests.
+    def select_fixture(entity):
+        assert entity is SourceRecord
+        return select(entity).where(entity.source_record_id == fixture_reference)
+
+    monkeypatch.setattr(rebuild_module, "select", select_fixture)
     rebuild_stats = rejected_legacy_rebuild(db_session, "wb_rtfp_mdg", allow_empty=True)
-    assert rebuild_stats["source_records_replayed"] >= 1
+    assert rebuild_stats["source_records_replayed"] == 1
 
     obs_after_rebuild = list(db_session.execute(stmt).scalars().all())
     assert len(obs_after_rebuild) == 36

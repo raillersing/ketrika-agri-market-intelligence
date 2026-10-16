@@ -14,6 +14,7 @@ from ketrika.normalize.reference_snapshot import (
     ReferenceSnapshot,
     prepare_reference_snapshot,
     reference_snapshot_evidence,
+    reopen_reference_snapshot,
 )
 
 
@@ -144,4 +145,41 @@ def test_evidence_is_computed_from_verified_context_not_collected_fields():
     assert evidence["object_key"] == snapshot.archive.object_key
     assert evidence["counts"]["product"] == 1
     assert evidence["source_verified"] is False
+    session.commit.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "variant", ["valid", "bytes", "references", "nested", "transaction", "path"]
+)
+def test_reopen_reads_exact_archive_without_writing(variant):
+    session, snapshot = context()
+    store = Mock(spec=BronzeStore)
+    key = snapshot.archive.object_key
+    if variant == "nested":
+        session.in_nested_transaction.return_value = True
+    elif variant == "transaction":
+        session.get_transaction.return_value = None
+    elif variant == "path":
+        key = key.replace("/10/", "/13/")
+    manifest = snapshot.manifest
+    if variant == "references":
+        manifest = build_reference_manifest([ReferenceRow("product", "different", "{}")])
+    with (
+        patch(
+            "ketrika.normalize.reference_snapshot.lock_reference_manifest", return_value=manifest
+        ),
+        patch("ketrika.core.provenance_bronze.BronzeProofReader") as reader,
+    ):
+        reader.return_value.get.return_value = (
+            b"corrupt" if variant == "bytes" else snapshot.manifest.content
+        )
+        if variant == "valid":
+            assert (
+                reopen_reference_snapshot(session, store, key, snapshot.manifest.sha256) == snapshot
+            )
+            reader.return_value.get.assert_called_once_with(key)
+        else:
+            with pytest.raises(ValueError, match="normalization_reference_"):
+                reopen_reference_snapshot(session, store, key, snapshot.manifest.sha256)
+    store.put.assert_not_called()
     session.commit.assert_not_called()

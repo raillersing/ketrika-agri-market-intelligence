@@ -14,7 +14,10 @@ from ketrika.core.provenance_bronze import BronzeProofReader
 from ketrika.core.qualification import require_synthetic_test_database
 from ketrika.normalize.price_loader import load_normalized_price
 from ketrika.normalize.products import normalize_product_string
-from ketrika.normalize.reference_snapshot import prepare_reference_snapshot
+from ketrika.normalize.reference_snapshot import (
+    prepare_reference_snapshot,
+    reopen_reference_snapshot,
+)
 from tests.integration.test_normalized_price_load import persist_artifact
 
 
@@ -102,8 +105,12 @@ def test_normalizer_snapshot_reloaded_and_retry_without_duplicate_then_context_e
         assert content == snapshot.manifest.content
         assert hashlib.sha256(content).hexdigest() == evidence["sha256"]
         renewed = prepare_reference_snapshot(session, store)
+        reopened = reopen_reference_snapshot(
+            session, store, renewed.archive.object_key, renewed.manifest.sha256
+        )
+        assert reopened == renewed
         retried = load_normalized_price(
-            session, record, source_id, reference_id, reference_snapshot=renewed
+            session, record, source_id, reference_id, reference_snapshot=reopened
         )
         assert (
             retried.action == "idempotent_skipped"

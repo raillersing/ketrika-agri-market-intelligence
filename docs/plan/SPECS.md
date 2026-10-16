@@ -1082,6 +1082,49 @@ s3://bronze/{source_id}/{yyyy}/{mm}/{sha256}.meta.json   # url, fetched_at, http
 
 ## 11. Extraction déterministe et LLM
 
+ADR-071 : tranche de consultation locale expérimentale, PostgreSQL/socket et copie
+Bronze dédiés ; batch durable et preuves vérifiées avant persistance. Consultation
+HTTP loopback readonly, jamais API de production ni publication Gold implicite.
+Les prix historiques imputés, les lieux non résolus et la revue non humaine sont
+affichés explicitement. Pas de nouvelle collecte ni de remplacement des gates R.
+
+ADR-070 / R0.8 : preuve rtfp_json_v1 version2 pour PriceObservation WB,
+deux SourceRecord/objets vérifiés (données + étude), context_source_record_id
+explicite et groupe de cellules par portée JSON. Valeur c_<ticker> liée au
+ticker de la même ligne de contexte que product_raw/unit_raw ; ticker parmi
+rice/sugar/wheat_flour, pays MDG des deux côtés et study id exact. Seules les
+estimations close sont admises par ce nouveau chemin : imputed/actor unknown,
+jamais defaults observed/retail. Parser déterministe, contextes issus du même
+batch immuable ; référence absente/ambiguë/autre source refusée. Audit et
+structure Gold suivent le contexte ; aucune dépendance réseau au rejeu.
+Une cellule number JSON price_value peut déclarer normalization=
+quantize_4_half_up : attendu DB comparé au Decimal source arrondi HALF_UP à
+0.0001, lexème raw toujours comparé exactement. Toute autre transformation,
+champ/format ou valeur non finie refusé ; preuves existantes inchangées.
+Contrats JSON de contexte : scope tuple code-owned vers la table utilisée,
+SHA du document complet conservé ; variantes exactement une valide, scalaire
+decimal number/chaîne fini seulement. Pas d'apprentissage de schéma depuis
+contenu collecté. Contrats v1 sans scope gardent leur empreinte v1.
+
+ADR-072 : déclaration structurelle limitée au triplet wb_rtfp_mdg/2.0.0/
+application/json, variantes exactement une valide : data et additional.ticker_info.
+Contrats fermés dans leur portée ; narratifs non exécutables hors de cette portée.
+Ne pas autoriser les formats CSV ou une autre version par analogie.
+
+ADR-073 : au rejeu natif, l'archive de normalisation est identifiée par la
+processing_key du registre Silver réussi, jamais depuis une observation.
+Empreinte unique, objet Bronze unique, contenu et référentiel SQL verrouillé
+identiques sont requis avant wipe. Lire l'archive existante sans PUT ; échec
+explicite si absente, ambiguë ou divergente. Sans identité enregistrée, conserver
+le parcours minimal sans snapshot sans le requalifier. L'inventaire de copie
+peut contenir uniquement ces archives validées en plus des SourceRecords.
+
+Isolation des scénarios historiques (ADR-015/072) : le test CSV WB rejoue
+uniquement son SourceRecord acquis dans le scénario, pas les lots JSON natifs
+conservés par d'autres scénarios SQL. Assertions métier et refus Gold inchangés.
+Cette sélection de test ne constitue jamais la preuve intégrale R0.8 ; le
+qualificateur de clone garde son inventaire complet sans filtre.
+
 ### 11.1 Ordre d'extraction
 
 1. **Déterministe :** tables CSV, XLSX, JSON ou HTML (`selectolax`), tables PDF (`pdfplumber` / `camelot`).

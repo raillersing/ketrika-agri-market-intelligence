@@ -106,6 +106,7 @@ def source_fingerprint(root: Path) -> str:
     for name in (
         "docker-compose.qualification.yml",
         "docker-compose.rebuild-qualification.yml",
+        "docker-compose.price-preview.yml",
         ".gitattributes",
     ):
         if (root / name).is_symlink():

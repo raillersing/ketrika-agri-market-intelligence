@@ -1,0 +1,79 @@
+name: ketrika-price-preview
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    network_mode: none
+    environment:
+      POSTGRES_USER: ketrika
+      POSTGRES_PASSWORD: qa-local-only
+      POSTGRES_DB: ketrika_rebuild_qualification
+    command: [postgres, -c, "listen_addresses="]
+    volumes:
+      - preview_pgdata:/var/lib/postgresql/data
+      - preview_socket:/var/run/postgresql
+    healthcheck:
+      test: [CMD-SHELL, "[ \"$$(cat /proc/1/comm)\" = postgres ] && pg_isready -h /var/run/postgresql -U ketrika -d ketrika_rebuild_qualification"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  web:
+    image: ketrika-backend:qa-r03
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    working_dir: /workspace/backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://ketrika:qa-local-only@/ketrika_rebuild_qualification?host=/run/ketrika-rebuild
+      APP_ENV: test
+      LLM_PROVIDER: replay
+      EXTERNAL_SEND_ENABLED: "0"
+      PYTHONPATH: /workspace/backend/src
+      KETRIKA_REPO_ROOT: /workspace
+      PYTHONDONTWRITEBYTECODE: "1"
+    ports: ["127.0.0.1:18877:8080"]
+    volumes:
+      - ./:/workspace:ro
+      - preview_venv:/app/.venv:ro
+      - preview_socket:/run/ketrika-rebuild
+      - preview_copy:/copy:ro
+    tmpfs: [/tmp]
+    depends_on:
+      db: {condition: service_healthy}
+    command: [/app/.venv/bin/python, /workspace/backend/scripts/price_preview.py, serve]
+  prepare:
+    image: ketrika-backend:qa-r03
+    user: "0:0"
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    working_dir: /workspace/backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://ketrika:qa-local-only@/ketrika_rebuild_qualification?host=/run/ketrika-rebuild
+      APP_ENV: test
+      PYTHONPATH: /workspace/backend/src
+      KETRIKA_REPO_ROOT: /workspace
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes:
+      - ./:/workspace:ro
+      - /tmp/ketrika-r08-modeled-packet:/packet:ro
+      - preview_venv:/app/.venv:ro
+      - preview_socket:/run/ketrika-rebuild
+      - preview_copy:/copy
+    tmpfs: [/tmp]
+    depends_on:
+      db: {condition: service_healthy}
+    command: [/app/.venv/bin/python, /workspace/backend/scripts/price_preview.py, prepare]
+volumes:
+  preview_pgdata:
+    name: ketrika_price_preview_pgdata_20261015
+    labels: {ketrika.scope: price-preview}
+  preview_socket:
+    name: ketrika_price_preview_socket_20261015
+    labels: {ketrika.scope: price-preview}
+  preview_copy:
+    name: ketrika_price_preview_copy_20261015
+    labels: {ketrika.scope: price-preview}
+  preview_venv:
+    name: ketrika_qualification_backend_venv_r03
+    external: true

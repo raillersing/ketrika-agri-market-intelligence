@@ -1,0 +1,32 @@
+{
+  "source_id": "wb_rtfp_mdg",
+  "status": "sample_downloaded_unverified",
+  "receipts": [
+    {
+      "url": "https://microdata.worldbank.org/api/tables/data/fcv/wld_2021_rtfp_v02_m?limit=15&c%5BISO3%5D=MDG&fields=ISO3%2Ccountry%2Cadm1_name%2Cadm2_name%2Cmkt_name%2Cprice_date%2Ccurrency%2Crice%2Csugar%2Cwheat_flour%2Cdata_coverage%2Cspatially_interpolated&c%5Brice%5D=%3E0",
+      "http_status": 200,
+      "sha256": "1644f468dce4e737cbdc95a158983ed3b0d360f511bbb418ffee3ffeb4b32898",
+      "size_bytes": 4244,
+      "fetched_at": "2026-10-15T15:17:43.450239+00:00",
+      "response_keys": [
+        "data",
+        "found",
+        "limit",
+        "offset",
+        "rows_count",
+        "total"
+      ],
+      "result_keys": [
+        "data",
+        "found",
+        "limit",
+        "offset",
+        "rows_count",
+        "total"
+      ]
+    }
+  ],
+  "rights_status": "unverified",
+  "authenticity_qualified": false,
+  "limitations": "No C1 promotion, parser/revisions/model proof or form acceptance"
+}

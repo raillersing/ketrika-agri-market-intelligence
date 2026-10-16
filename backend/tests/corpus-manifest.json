@@ -2,6 +2,88 @@
   "version": 1,
   "entries": [
     {
+      "path": "tests/fixtures/authentic/world_bank_rtfp/mdg_close_estimates_20261015.json",
+      "sha256": "bc4a01e5f443898a916678c84213ab29f30534b642f8da3b7ea6ca509c566c15",
+      "size_bytes": 3511,
+      "artifact_type": "json",
+      "authenticity": "authentic",
+      "origin": {
+        "kind": "official_acquisition",
+        "reference": "tests/corpus-evidence/world_bank_rtfp/close-estimates-acquisition.json",
+        "limitations": "Fifteen historical modeled close estimates, not observed prices or a live/model qualification."
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "CC BY 4.0 with World Bank additional dataset terms",
+        "evidence": "https://datacatalog.worldbank.org/public-licenses",
+        "redistribution_allowed": true,
+        "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/authentic/world_bank_rtfp/mdg_close_estimates_20261015.expected.json",
+      "sha256": "301032b5de015faf9d94c8b48c1b1b83eaf792b79630afafc1e8bbacf9896c81",
+      "size_bytes": 1961,
+      "artifact_type": "json",
+      "authenticity": "authentic",
+      "origin": {
+        "kind": "independent_annotation",
+        "reference": "tests/fixtures/authentic/world_bank_rtfp/mdg_close_estimates_20261015.json",
+        "limitations": "Fifteen cells from three of fifteen rows only; no recall or market-performance claim."
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "CC BY 4.0 with World Bank additional dataset terms",
+        "evidence": "https://datacatalog.worldbank.org/public-licenses",
+        "redistribution_allowed": true,
+        "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/authentic/world_bank_rtfp/mdg_prices_20261015.json",
+      "sha256": "1644f468dce4e737cbdc95a158983ed3b0d360f511bbb418ffee3ffeb4b32898",
+      "size_bytes": 4244,
+      "artifact_type": "json",
+      "authenticity": "authentic",
+      "origin": {"kind": "official_acquisition", "reference": "tests/corpus-evidence/world_bank_rtfp/prices-acquisition.json", "limitations": "Bounded historical sample, no live source/parser/model qualification."},
+      "rights": {"status": "verified", "licence": "CC BY 4.0 with World Bank additional dataset terms", "evidence": "https://datacatalog.worldbank.org/public-licenses", "redistribution_allowed": true, "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."},
+      "annotator": "agent", "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/authentic/world_bank_rtfp/mdg_study_20261005.json",
+      "sha256": "4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860",
+      "size_bytes": 51241,
+      "artifact_type": "json",
+      "authenticity": "authentic",
+      "origin": {"kind": "official_acquisition", "reference": "tests/corpus-evidence/world_bank_rtfp/study-acquisition.json", "limitations": "Official product/unit context, not price observations or original publication time."},
+      "rights": {"status": "verified", "licence": "CC BY 4.0 with World Bank additional dataset terms", "evidence": "https://datacatalog.worldbank.org/public-licenses", "redistribution_allowed": true, "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."},
+      "annotator": "agent", "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/authentic/world_bank_rtfp/mdg_prices_20261015.expected.json",
+      "sha256": "79cd2587b001cdf83fb8d2cf340c22044d63c754d071cfafc296731cb35926cd",
+      "size_bytes": 2207,
+      "artifact_type": "json",
+      "authenticity": "authentic",
+      "origin": {"kind": "independent_annotation", "reference": "tests/fixtures/authentic/world_bank_rtfp/mdg_prices_20261015.json", "limitations": "18 cells, first three of fifteen historical rows only; no recall/accuracy qualification."},
+      "rights": {"status": "verified", "licence": "CC BY 4.0 with World Bank additional dataset terms", "evidence": "https://datacatalog.worldbank.org/public-licenses", "redistribution_allowed": true, "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."},
+      "annotator": "agent", "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/authentic/world_bank_rtfp/mdg_study_20261005.expected.json",
+      "sha256": "517d68c9a04fed0cb14200923fd82652fcd20ec843151351e55d8276e4534b31",
+      "size_bytes": 1587,
+      "artifact_type": "json",
+      "authenticity": "authentic",
+      "origin": {"kind": "independent_annotation", "reference": "tests/fixtures/authentic/world_bank_rtfp/mdg_study_20261005.json", "limitations": "Ten context cells only, not a complete schema or observed/estimated classification."},
+      "rights": {"status": "verified", "licence": "CC BY 4.0 with World Bank additional dataset terms", "evidence": "https://datacatalog.worldbank.org/public-licenses", "redistribution_allowed": true, "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."},
+      "annotator": "agent", "human_reviewed": false
+    },
+    {
       "path": "scripts/generate_douanes_fixtures.py",
       "sha256": "5af4276feeb2271ce20bbd89da2769d2475006c25f269e99c91e8fb0aefbe5c6",
       "size_bytes": 7658,

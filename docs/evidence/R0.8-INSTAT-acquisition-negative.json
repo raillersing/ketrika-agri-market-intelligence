@@ -1,0 +1,12 @@
+{
+  "source_id": "instat_nipc",
+  "status": "policy_stopped",
+  "receipts": [
+    {
+      "error_type": "PolicyStop"
+    }
+  ],
+  "rights_status": "unverified",
+  "authenticity_qualified": false,
+  "limitations": "No corpus promotion, parser/revision proof or source qualification"
+}

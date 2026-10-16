@@ -97,15 +97,21 @@ def rebuild_database(
     policy_engine = PolicyEngine()
 
     def _execute(s: Session) -> dict[str, Any]:
-        # 1. Wipe Silver & Gold tables
-        wipe_stats = wipe_silver_gold_tables(s, reader=proof_reader)
-
-        # 2. Query all source records chronologically (fetched_at ASC)
+        # Resolve immutable input/reference identities before any destructive replay step.
         stmt = select(SourceRecord)
         if source_id is not None:
             stmt = stmt.where(SourceRecord.source_id == source_id)
         stmt = stmt.order_by(SourceRecord.fetched_at.asc(), SourceRecord.source_record_id.asc())
         source_records = list(s.execute(stmt).scalars().all())
+        from ketrika.connectors.rebuild_references import resolve_snapshot_keys
+        from ketrika.normalize.reference_snapshot import reopen_reference_snapshot
+
+        reference_keys = resolve_snapshot_keys(s, source_records, bronze_store)
+        snapshots = {
+            identifier: reopen_reference_snapshot(s, bronze_store, key, digest)
+            for identifier, (key, digest) in reference_keys.items()
+        }
+        wipe_stats = wipe_silver_gold_tables(s, reader=proof_reader)
         logger.info("Found %d source records to replay from Bronze", len(source_records))
 
         stats: dict[str, Any] = {
@@ -154,14 +160,34 @@ def rebuild_database(
             )
 
             try:
-                parse_res = connector.parse(raw_artifact, ctx)
+                if s_rec.source_id == "wb_rtfp_mdg" and s_rec.parser_version == "2.0.0":
+                    from ketrika.connectors.rtfp_json import parse_persisted
+
+                    parse_res = parse_persisted(s, raw_artifact, proof_reader)
+                else:
+                    parse_res = connector.parse(raw_artifact, ctx)
                 for rec in parse_res.records:
-                    action, _ = load_record_with_supersession(
-                        session=s,
-                        record=rec,
-                        source_id=s_rec.source_id,
-                        source_record_id=s_rec.source_record_id,
-                    )
+                    if s_rec.source_id == "wb_rtfp_mdg" and s_rec.parser_version == "2.0.0":
+                        from ketrika.connectors.records import PriceRecord
+                        from ketrika.normalize.price_loader import load_normalized_price
+
+                        if not isinstance(rec, PriceRecord):
+                            raise ValueError("rtfp_price_record_required")
+                        loaded = load_normalized_price(
+                            s,
+                            rec,
+                            s_rec.source_id,
+                            s_rec.source_record_id,
+                            reference_snapshot=snapshots.get(s_rec.source_record_id),
+                        )
+                        action = loaded.action
+                    else:
+                        action, _ = load_record_with_supersession(
+                            session=s,
+                            record=rec,
+                            source_id=s_rec.source_id,
+                            source_record_id=s_rec.source_record_id,
+                        )
                     if action == "inserted":
                         stats["records_inserted"] += 1
                     elif action == "superseded":

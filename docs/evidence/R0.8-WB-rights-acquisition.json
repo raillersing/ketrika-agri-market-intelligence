@@ -1,0 +1,23 @@
+{
+  "status": "context_downloaded_pending_review",
+  "receipts": [
+    {
+      "url": "https://microdata.worldbank.org/metadata/export/8240/json",
+      "final_url": "https://microdata.worldbank.org/metadata/export/8240/json",
+      "http_status": 200,
+      "fetched_at": "2026-10-15T15:22:50.124473+00:00",
+      "sha256": "4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860",
+      "size_bytes": 51241
+    },
+    {
+      "url": "https://datacatalog.worldbank.org/public-licenses",
+      "final_url": "https://datacatalog.worldbank.org/public-licenses",
+      "http_status": 200,
+      "fetched_at": "2026-10-15T15:22:52.536577+00:00",
+      "sha256": "c7c9b31441ea4a1fa27990f4b11f385587469c5c2bda4ec4fc7a6561db6d2422",
+      "size_bytes": 17119
+    }
+  ],
+  "rights_status": "unverified",
+  "authenticity_qualified": false
+}

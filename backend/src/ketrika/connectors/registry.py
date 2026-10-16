@@ -52,7 +52,7 @@ def get_connector_class(source_id: str) -> type[Connector] | None:
             validate_environment(os.environ)
         except QualificationSafetyError:
             return None
-        for original_id in ("nasa_power", "wfp_hdx_mdg"):
+        for original_id in ("nasa_power", "wfp_hdx_mdg", "instat_nipc"):
             prefix = f"fixture_{original_id}_"
             suffix = source_id.removeprefix(prefix)
             if (

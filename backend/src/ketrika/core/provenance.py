@@ -14,7 +14,7 @@ import unicodedata
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date
-from decimal import Decimal, InvalidOperation
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation, localcontext
 from typing import Any, Literal, Protocol
 from uuid import UUID
 
@@ -288,7 +288,21 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
             style = (
                 proof.get("number_style", "decimal_dot") if format_name != "json" else "decimal_dot"
             )
-            if _decimal(actual, style) != _decimal(expected):
+            numeric = _decimal(actual, style)
+            if "normalization" in cell:
+                if (
+                    format_name != "json"
+                    or field != "price_value"
+                    or cell["normalization"] != "quantize_4_half_up"
+                ):
+                    raise ProofError("unsupported_normalization")
+                try:
+                    with localcontext() as context:
+                        context.prec = 64
+                        numeric = numeric.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+                except InvalidOperation:
+                    raise ProofError("invalid_number") from None
+            if numeric != _decimal(expected):
                 raise ProofError("value_mismatch")
             if "raw_expected" in cell:
                 raw_expected = cell["raw_expected"]
@@ -303,6 +317,8 @@ def verify_cells(content: bytes, mime_type: str, proof: Mapping[str, Any]) -> in
                 )
         else:
             raise ProofError("unsupported_cell_kind")
+        if "normalization" in cell and cell.get("kind") != "number":
+            raise ProofError("unsupported_normalization")
         verified_values.append(str(actual))
     if "llm_evidence" in proof:
         from ketrika.core.provenance_llm import verify_llm_evidence
@@ -354,6 +370,10 @@ class ProvenanceVerifier:
     ) -> VerificationReport:
         if mode not in ("complete", "incremental"):
             raise ValueError("Unsupported verification mode")
+        from ketrika.core.provenance_rtfp import is_context_proof, verify_context_batch
+
+        if any(is_context_proof(claim.proof) for claim in claims):
+            return verify_context_batch(self, claims, mode)
         seen: set[UUID] = set()
         results: dict[int, VerificationResult] = {}
         groups: dict[str, list[tuple[int, ObservationClaim, ArtifactReference, str]]] = {}

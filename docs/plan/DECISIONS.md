@@ -2,6 +2,47 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-073 : rejeu des référentiels configurés par registre immuable
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant code.
+- **Décision :** pour WB JSON natif, retrouver l'identité du référentiel depuis les membres des tentatives Silver réussies, valider la processing_key et exiger une seule empreinte. Résoudre son objet reference_manifest depuis la copie Bronze fermée (ou liste S3 bornée), puis vérifier les octets et le référentiel SQL verrouillé avant wipe. Aucun choix depuis les anciennes observations, aucune réécriture Bronze, aucun repli silencieux si archive absente/ambiguë ou référentiels modifiés.
+- **Compatibilité :** une ingestion minimale sans registre de traitement reste sans snapshot, comme l'aperçu historique ; elle n'acquiert pas rétroactivement une preuve de référentiel. Le contexte produit/unité WB reste un SourceRecord séparé du même batch. Le qualificateur admet les seuls objets internes supplémentaires ainsi vérifiés ; les autres clés restent refusées.
+- **Limites :** changement de référentiel ou plusieurs identités pour un même document refusés explicitement, pas de fausse reconstruction historique. Le support général des révisions de référentiels n'est pas déduit de ce parcours borné. Aucun nouveau schéma SQL ni dépendance.
+
+## ADR-072 : contrat natif JSON WB explicite, distinct du CSV historique
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant code du raccordement natif.
+- **Décision :** autoriser uniquement le triplet wb_rtfp_mdg/2.0.0/application/json dans le registre structurel, sur les portées données.data et étude.additional.ticker_info observées dans le paquet officiel acquis. Propriétés fermées, scalaires déclarés, ambiguïté et champs nouveaux refusés. Aucun contrat du CSV historique ou d'une autre source inféré depuis ces octets.
+- **Chargement :** même parseur contextuel depuis le batch immuable au chemin natif et au rejeu ; aucun accès réseau durant Silver. Conserver les archives de référentiels configurés et leur identité, sans les confondre avec les métadonnées institutionnelles produit/unité. Une entrée contextuelle produit zéro observation mais n'est pas un échec de parsing prix.
+- **Réception :** corpus et annotations partiels vérifiés mécaniquement, mutants de structure et contexte refusés, legacy inchangé, parcours groupé avant réception. Le contrat ne qualifie ni performance du modèle fournisseur, ni fraîcheur, ni revue humaine, ni publication Gold de lieux non résolus.
+
+## ADR-071 : tranche minimale locale de consultation des prix authentiques
+
+- **Date/statut :** 2026-10-15, adopté avant implémentation de la tranche minimale demandée par l'utilisateur.
+- **Décision :** charger le paquet public déjà acquis dans une base PostgreSQL et une copie Bronze locales dédiées, enregistrer le batch immuable et vérifier les cellules avant persistance. Fournir une consultation HTTP locale readonly des prix bruts, provenance, périodes, statut imputé et revue. Aucun faux lieu/alias pour forcer Gold, aucun enrichissement LLM ni nouvel appel réseau requis.
+- **Isolation :** nouveau projet/volumes Docker, DB sans réseau accessible par socket Unix, aucun reset/rebuild/écriture sur les destinations existantes. Initialisation sur tables vides seulement ; relecture et redémarrage ne réimportent pas. HTTP exposé uniquement sur loopback, aucun envoi externe ni déploiement public.
+- **Limites :** aperçu historique partiel et non qualifié, distinct de l'API et du dashboard de production ; ce résultat ne clôt pas R0.8 et ne remplace ni la réception complète, ni les révisions réelles, ni les critères Gold/modèles. Pas de nouvel endpoint de production. Réutiliser le parseur persisté au rebuild pour éviter une voie de parsing divergente.
+
+## ADR-070 : preuve bornée données/contexte pour les prix RTFP natifs
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant code ; réception non acquise.
+- **Contexte :** l'API officielle observée ne correspond pas au CSV historique. Les prix sont des colonnes, les libellés/unités sont dans l'étude séparée. Ne pas inventer KG/retail ni traiter un close estimate comme une observation. Le corpus initial raw rice conserve une classification non qualifiée.
+- **Décision :** ajouter une preuve version2 rtfp_json_v1, réservée aux prix WB : référence primaire et référence de contexte sont des SourceRecord WB existants, chacun SHA/Bronze/MIME vérifié. Les cellules valeur/devise/date/lieu/pays appartiennent à la même ligne API ; produit/unité/ticker/pays à la même ligne ticker_info ; l'identifiant de l'étude MDG_2021_RTFP_v02_M est aussi vérifié. Champ valeur c_<ticker> strictement lié à rice/sugar/wheat_flour. Extraire seulement ces estimations explicitement modélisées, origin=imputed, actor=unknown, extraction déterministe ; aucun défaut observed/retail.
+- **Décimales :** conserver le lexème price_raw complet. Pour price_value NUMERIC(18,4), vérifier mécaniquement l'arrondi décimal HALF_UP à quatre décimales, sans modifier les autres preuves. Transformation déclarée seulement sur cellule number JSON price_value, raw_expected inchangé. Aucun facteur d'unité ou chiffre LLM implicite.
+- **Durabilité :** réutiliser le batch Bronze immuable pour associer une référence de contexte unique aux documents de données ; aucun nouveau schéma SQL ni inférence depuis une table obs déjà peuplée. Résolution avant parse et pendant rebuild ; absence/ambiguïté/mauvais SHA refusés. Le contrôle SQL de provenance et le gate structurel incluent aussi les références de contexte. Hors WB ou version inconnue : comportement de refus historique conservé.
+- **Structure :** ajouter des variantes de contrat JSON explicitement déclarées (page de données et table de contexte sélectionnée par un chemin code-owned), plus un scalaire décimal exact JSON number ou chaîne numérique. Les anciens contrats fermés/génériques restent inchangés ; ambiguïté, bool/non-fini, champ inconnu de données et contexte manquant refusés. Aucun contrat appris depuis le Bronze.
+- **Réception :** tests corruption/échange produit-unité/pays/champ, référence absente/autre source, quantification erronée, batch ambigu, legacy inchangé ; authentique parse/load/Gold puis vrai rejeu sans réseau, valeur modifiée à comptes égaux refusée. Corpus sans observations métier refusé avant wipe. Un seul check final du lot couplé, pas de réception par helper.
+- **Limites :** cette preuve qualifie les cellules et le rejeu logiciels, pas l'exactitude du modèle fournisseur, une source live complète, une révision historique réelle ni nos prévisions. Ces qualifications restent distinctes et explicites dans le plan.
+
+## ADR-069 : arrêt INSTAT après challenge de la tentative de corpus R0.8
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant changement du registre, branche indépendante de la réception cff8010.
+- **Contexte :** client HTTP reçu, quotas SQL du lab dédié, tentative INSTAT69948 arrêtée sans fichier acquis. Journal SQL source instat_nipc et origine https://www.instat.mg, reason_code=challenge/status_code404/2026-10-15T14:48:29.947844Z. Le code HTTP seul ne prouve pas l'absence de challenge.
+- **Décision :** statut disabled au registre de cette branche et PolicyStop durable conservé. Aucun nouvel appel INSTAT, autre sous-domaine, transport ou archive pour contourner ce refus. Ne pas déduire une indisponibilité mondiale du site ni une permission de collecte des résultats d'un navigateur de recherche.
+- **Repli :** poursuivre les corpus publics d'autres institutions autorisées, garder les fixtures INSTAT unverified et les tests logiciels. Droits INSTAT non établis, aucune promotion C1, contact ou envoi externe. L'absence d'un corpus ne justifie pas encore un arrêt humain exclusif.
+- **Conséquences :** reçu négatif conservé ; registre modifié seulement hors source figée du check87212. Cette modification n'est pas qualifiée par ce check ni livrée sur main avant sa propre réception. R0.8 reste IN_PROGRESS.
+- **Isolation des tests :** le scénario INSTAT synthétique utilise le helper de namespace local déjà reçu pour NASA/WFP, avec même validation de profil et UUID strict ; aucune réactivation de la source publique, aucun plafond relevé ni test retiré. Les 189 lignes, idempotence, DQ et rejeu restent exigés.
+
 ## ADR-068 : preuve de rejeu par projection complète et confinement système
 
 - **Date/statut :** 2026-10-15 UTC, adopté avant implémentation R0.8 ; réception non acquise.

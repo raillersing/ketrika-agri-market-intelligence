@@ -18,7 +18,7 @@ from ketrika.core.provenance import (
 )
 from ketrika.core.provenance_audit import POLICIES
 from ketrika.core.schema_drift import MAX_BYTES, inspect_csv_schema
-from ketrika.core.schema_json import JSONSchemaContract, inspect_json_schema
+from ketrika.core.schema_json import JSONSchemaAlternatives, JSONSchemaContract, inspect_json_schema
 
 MAX_ARTIFACTS = 100_000
 
@@ -52,7 +52,7 @@ class CSVSchemaContract:
         )
 
 
-SchemaContract = CSVSchemaContract | JSONSchemaContract
+SchemaContract = CSVSchemaContract | JSONSchemaContract | JSONSchemaAlternatives
 
 
 @dataclass(frozen=True)
@@ -94,7 +94,9 @@ def audit_source_schema(
         get_schema_contract_registry,
     )
 
-    if contract is not None and not isinstance(contract, (CSVSchemaContract, JSONSchemaContract)):
+    if contract is not None and not isinstance(
+        contract, (CSVSchemaContract, JSONSchemaContract, JSONSchemaAlternatives)
+    ):
         raise ValueError("schema_audit_invalid_contract")
     if not isinstance(source_id, str) or not source_id:
         raise ValueError("schema_audit_invalid_source")
@@ -194,7 +196,9 @@ def audit_source_schema(
                             result = asdict(inspection)
                             result["contract_version"] = selected_contract.version
                         elif (
-                            isinstance(selected_contract, JSONSchemaContract)
+                            isinstance(
+                                selected_contract, (JSONSchemaContract, JSONSchemaAlternatives)
+                            )
                             and reference.mime_type == "application/json"
                         ):
                             json_inspection = inspect_json_schema(content, selected_contract)
