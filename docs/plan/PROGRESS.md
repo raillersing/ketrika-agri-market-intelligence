@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T11:20:00Z] R2.8 — DONE, construction du tableau économique interprétable
+
+- Dépendances relues : R2.3 (DQ/agrégations), R1.3 (NIPC), R1.6 (conversions/gardes), R2.5 (TBE), R2.6 (BFM), R2.7 (OMH).
+- Mini-plan exécuté : (1) rédaction de l'ADR-070 dans `docs/plan/DECISIONS.md` et mise à jour de `docs/plan/SPECS.md` (§15, §19) ; (2) spécification des 14 fiches métriques normatives dans `docs/metrics/economic_indicators.md` ; (3) structuration en 5 dimensions autonomes (`inflation`, `exchange_rate`, `fuel_energy`, `external_trade`, `real_activity`) sans score synthétique global inventé ; (4) application stricte de la séparation entre inflation NIPC et variation de prix marché vivrier ; (5) protection contre le raccordement implicite de bases d'indices (`base_shift`), contrôle d'incompatibilité d'unités physiques (`incompatible_units`) et gestion rigoureuse des dénominateurs nuls (`zero_denominator`) ; (6) création de la vue matérialisée `gold.economic_dashboard` (`014_economic_dashboard.sql`) et raccordement dans `refresh.py` et `provenance_gate.py` ; (7) implémentation du module métier `backend/src/ketrika/gold/economic.py` avec articulation de transmission sur le pilote rizicole ; (8) implémentation des schémas Pydantic et des routes REST `/v1/economic/indicators`, `/v1/economic/dashboard`, `/v1/economic/pilot-context` dans `economic.py` ; (9) suite de qualification `backend/tests/unit/test_economic_dashboard.py` (19 tests, couverture 97 %) ; (10) contrôles statiques verts (ruff, mypy) et non-régression globale (166/166 tests verts) ; (11) rédaction du dossier de preuve `docs/evidence/R2.8/README.md`.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_economic_dashboard.py --cov=ketrika.gold.economic --cov=ketrika.api.routers.economic --cov-report=term-missing (exit 0, 19 passed in 30.73s, couverture 97 %) ; ruff check (exit 0) ; mypy (exit 0) ; non-régression 166 passed in 48.74s.
+- Résultats : 19/19 tests verts ; tableau de bord opérationnel ; 14 fiches métriques exposées ; dimensions étanches avec statut de complétude ; gestion stricte des valeurs manquantes et ruptures de base sans inventer de score global.
+- Qualification : Tableau économique interprétable QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R2.8/README.md.
+- Reprise : Tâche MUST éligible suivante R2.9 (Exposer les données et leurs limites dans l'API).
+
 ### [2026-10-16T11:00:00Z] R2.7 — DONE, intégration carburants OMH et événements réglementaires
 
 - Dépendances relues : R1.2 (découverte dynamique), R2.1 (contrats temps, origine et macroéconomie).

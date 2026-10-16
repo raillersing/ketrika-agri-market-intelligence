@@ -425,3 +425,72 @@ class PilotConfigResponse(BaseModel):
     synthetic_observations_count: int
 
 
+class EconomicMetricCardItem(BaseModel):
+    """Specification of an economic metric card (ADR-070)."""
+
+    metric_id: str
+    dimension: str
+    title: str
+    definition: str
+    formula: str
+    unit: str
+    frequency: str
+    geo_scope: str
+    primary_source: str
+    source_family: str
+    publication_lag_days: int
+    limitations: str
+
+
+class IndicatorObservationOut(BaseModel):
+    """Observation item for an economic indicator."""
+
+    indicator_code: str
+    dimension: str
+    title: str
+    unit: str
+    frequency: str
+    geo_scope: str
+    period_month: str
+    current_value: float | None = None
+    base_period: str | None = None
+    chg_1m: float | None = None
+    chg_12m: float | None = None
+    null_reason: str | None = None
+    source_id: str | None = None
+    source_family: str | None = None
+    is_administered: bool = False
+
+
+class DimensionSummaryOut(BaseModel):
+    """Summary of an economic dimension."""
+
+    dimension: str
+    completeness: str  # complete, partial, no_data
+    indicators: list[IndicatorObservationOut] = Field(default_factory=list)
+
+
+class EconomicDashboardOut(BaseModel):
+    """Consolidated response for the interpretable economic dashboard."""
+
+    overall_status: str  # complete, partial, no_data
+    period_month: str
+    dimensions: dict[str, DimensionSummaryOut]
+    metric_catalog: dict[str, EconomicMetricCardItem]
+
+
+class PilotEconomicContextOut(BaseModel):
+    """Articulation between macro indicators and the rice pilot (R2.8)."""
+
+    pilot_id: str
+    target_month: str
+    fx_usd_mga: float | None = None
+    fuel_diesel_ceiling_mga: float | None = None
+    rice_import_unit_cost_mga_per_kg: float | None = None
+    cpi_food_chg_12m_pct: float | None = None
+    local_rice_market_price_mga_per_kg: float | None = None
+    local_rice_price_chg_12m_pct: float | None = None
+    distinctness_audit: dict[str, Any] = Field(default_factory=dict)
+    status: str
+
+

@@ -2,6 +2,24 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-070 : tableau économique interprétable, fiches métriques et gestion stricte des dimensions non combinables (R2.8)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R2.8 ; Phase R2.
+- **Contexte :** La phase R2 exige la constitution d'un tableau économique interprétable articulant l'inflation (NIPC), le change (BFM), l'énergie/carburants (OMH) et le commerce extérieur/activité (TBE) avec le marché vivrier de référence (pilote rizicole R2.4).
+  Afin de préserver l'intégrité analytique et d'éviter les dérives d'interprétation, les directives du plan R2.8 imposent des règles strictes :
+  1. Interdiction formelle d'inventer un « score global de santé macroéconomique » synthétique : les dimensions économiques sont structurellement hétérogènes et doivent rester affichées séparément.
+  2. Distinction absolue entre inflation (taux de variation d'un indice de prix à la consommation NIPC) et variation de prix de marché vivrier au kg : ne jamais les confondre ou les moyenner.
+  3. Distinction des flux commerciaux en volume (tonnes métriques) et en valeur (monnaie/devises) ; interdiction des ratios d'importation sur des unités incompatibles.
+  4. Interdiction de raccorder implicitement des indices de bases différentes (ex: base 2016 vs base 2024).
+  5. Règle de nullité stricte : tout dénominateur nul, période non alignée ou série manquante doit produire `NULL` accompagné d'un code de raison standardisé (`zero_denominator`, `missing_denominator`, `base_shift`, `incompatible_units`, `unaligned_period`, `missing_series`). L'absence de séries BFM/OMH ne produit ni zéro ni estimation LLM.
+- **Décision :**
+  1. **Fiches métriques normatives (`EconomicMetricCard`) :** Définition formelle de 12 fiches métriques canoniques réparties en 5 dimensions autonomes (`inflation`, `exchange_rate`, `fuel_energy`, `external_trade`, `real_activity`), chacune documentant : définition, formule, unité, fréquence, périmètre géographique, publication/source primaire et limites d'interprétation.
+  2. **Vue SQL matérialisée `gold.economic_dashboard` (`014_economic_dashboard.sql`) :** Agrégation ensembliste déterministe recomputable depuis `obs.macro_observation`, `obs.cpi_observation`, `obs.trade_flow` et `gold.price_monthly_best`, intégrant le statut de complétude (`complete`, `partial`, `no_data`).
+  3. **Module métier `backend/src/ketrika/gold/economic.py` :** Moteur d'évaluation robuste des métriques, de détection des changements de base, de calcul des variations calendaires sécurisées et d'articulation de transmission économique pour le pilote rizicole (ex: comparaison du coût unitaire CAF d'importation avec le prix de détail local).
+  4. **Contrats API REST (`/v1/economic/indicators`, `/v1/economic/dashboard`, `/v1/economic/pilot-context`) :** Endpoints typés exposant les fiches métriques et les observations avec traçabilité et codes de nullité explicites.
+- **Alternatives rejetées :** Calculer un indice composite unique pondéré (rejeté par directive R2.8), interpolation des séries manquantes par la dernière valeur connue (rejeté, fausse stabilité), raccordement aveugle des bases d'indices (rejeté, fausse continuité).
+- **Conséquences :** Tableau économique rigoureusement traçable, respect absolu de la nature multidimensionnelle de l'économie, transparence totale sur les lacunes et les limites méthodologiques.
+
 ## ADR-069 : formalisation des contrats temps, origine et métriques macroéconomiques (C1–C4)
 
 - **Date/statut :** 2026-10-15 UTC, adopté avant migration et code R2.1 ; Phase R2.

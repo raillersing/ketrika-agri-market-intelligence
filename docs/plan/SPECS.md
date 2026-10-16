@@ -1285,6 +1285,8 @@ Ce sont des **vues matérialisées**, rafraîchies par l'asset Dagster `gold__re
 | `gold.market_health` | product × région × mois | composantes + score (§16) |
 | `gold.source_health` | source | dernier run, statut, fraîcheur vs SLA, n_records sur 30 j, taux de parse, éléments de revue ouverts |
 | `gold.forecast_latest` | série × horizon | dernier `model_run` pour chaque série |
+| `gold.market_coverage` | product × location × actor_level × mois | matrice de couverture, n_obs, n_sources, n_families, lacunes calendaires (R2.4) |
+| `gold.economic_dashboard` | indicator × dimension × mois | tableau économique interprétable par dimension étanche, sans score synthétique, avec fiches métriques et gestion stricte des valeurs nulles (R2.8, ADR-070) |
 
 ---
 
@@ -1366,6 +1368,7 @@ Chaque valeur exposée inclut `value_kind` (`observed | imputed | forecast | com
 | GET | `/v1/stocks?product=&location=` | Stocks |
 | GET | `/v1/trade?product=&flow=&from=&to=` | Flux commerciaux |
 | GET | `/v1/macro?indicator=&geo_scope=&vintage=&from=&to=` | Séries macroéconomiques (`obs.macro_observation`) |
+| GET | `/v1/economic/indicators` · `/v1/economic/dashboard` · `/v1/economic/pilot-context` | Tableau économique interprétable par dimension étanche (ADR-070, R2.8) |
 | GET | `/v1/weather/anomalies?location=&from=&to=` | Anomalies météo |
 | GET | `/v1/kpis/market-health?product=&location=&month=` | Score + composantes |
 | GET | `/v1/forecasts?product=&location=&actor_level=` | p10/p50/p90 + métriques de backtest |

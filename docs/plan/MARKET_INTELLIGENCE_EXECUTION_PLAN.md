@@ -41,7 +41,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R2.5 | MUST | DONE | Nouveau connecteur instat_tbe, ingestion Excel multi-éditions, conservation fréquences réelles sans faux mois, traçabilité institution primaire, 15 tests verts, 97% couverture |
 | R2.6 | MUST | DONE | Nouveau connecteur bfm_public, cours journaliers USD/EUR, respect des jours ouvrés sans interpolation, conventions achat/vente/moyen, 17 tests verts, 85% couverture |
 | R2.7 | MUST | DONE | Nouveau connecteur omh_public, gazole/super/pétrole, prix réglementés, séparation date d'effet vs publication, 14 tests verts, 81% couverture |
-| R2.8 | MUST | TODO | — |
+| R2.8 | MUST | DONE | Tableau économique interprétable, dimensions étanches, fiches métriques, gestion stricte nullité, 19 tests verts, 97% couverture |
 | R2.9 | MUST | TODO | — |
 | R2.10 | MUST | TODO | — |
 | R2.11 | MUST | TODO | — |

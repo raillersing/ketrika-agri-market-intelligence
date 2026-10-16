@@ -36,6 +36,7 @@ VIEW_TABLES: dict[str, frozenset[str]] = {
     "market_coverage": frozenset({"price_observation"}),
     # Price cells are necessary but insufficient for qualifying forecasts.
     "forecast_latest": frozenset({"price_observation"}),
+    "economic_dashboard": frozenset(),
 }
 
 
