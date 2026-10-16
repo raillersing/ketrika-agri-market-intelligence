@@ -11,7 +11,7 @@
 - Commandes : uv run pytest -v tests/unit/test_economic_dashboard.py --cov=ketrika.gold.economic --cov=ketrika.api.routers.economic --cov-report=term-missing (exit 0, 19 passed in 30.73s, couverture 97 %) ; ruff check (exit 0) ; mypy (exit 0) ; non-régression 166 passed in 48.74s.
 - Résultats : 19/19 tests verts ; tableau de bord opérationnel ; 14 fiches métriques exposées ; dimensions étanches avec statut de complétude ; gestion stricte des valeurs manquantes et ruptures de base sans inventer de score global.
 - Qualification : Tableau économique interprétable QUALIFIED (DONE).
-- État final : DONE.
+- État final : DONE (commit 36b39a6).
 - Preuve : docs/evidence/R2.8/README.md.
 - Reprise : Tâche MUST éligible suivante R2.9 (Exposer les données et leurs limites dans l'API).
 
