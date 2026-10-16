@@ -3,6 +3,14 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T10:28:40Z] R0.8 — réception logicielle verte et rejeu natif authentique avec snapshot
+
+- Mini-plan : archiver les originaux3355 sans relance ; préparer une base neuve distincte avec octets C1 inchangés et identité de normalisation native ; exporter trois objets ; reconstruire réseau none et comparer ; conserver les critères non prouvés ouverts.
+- Check3355 FINAL0 sur f230a50893f88c4cadd83652870de769eb46cc00 :1721 backend/1626,589 s/zéro erreur-échec-skip,35 web/build15 pages,lint302/mypy301. Empreinte f45237976c105473a2f5bcb5b85e78bb05264af932f3f1e5285583228b496c7c ; originaux native-full-* et R0.8_NATIVE_RECEPTION.md archivés. Couvertures core91,484/extraction86,377/normalize90,606 %. Aucune suite répétée.
+- Base neuve ketrika-native-replay-db-20261016-v1, volumes dédiés ; migrations et références configurées, deux documents institutionnels inchangés/15 insertions et identité Silver réelle. Export initial80159 refusé par permissions volume neuf ; reprise export seul65552 FINAL0 après correction sticky du seul volume copy, pas de réingestion/effacement.
+- Worker15022 FINAL0 :2 documents/15 insertions/0 skip/0 rejet,19 projections identiques et inventaires protégés identiques. Empreinte métier36146d8eaf1e00f4e157448143895938fe4cd34be31cbfe12c7586276b3b1edb. Inspect none/capdropALL/user0:0/copyRWfalse ; rapport native-reference-replay et driver capturé comme texte. Référentiel archivé réellement rouvert, aucun PUT pendant replay.
+- R0.8 IN_PROGRESS : révisions officielles anciennes/nouvelles et inventaire original S3 du corpus restent à qualifier, recalcul scientifique versionné distinct. Gold prix vide/pending, pas de publication acceptée ni de modèle qualifié. Pas de tag/gate anticipé ; fichiers Antigravity intacts.
+
 ### [2026-10-16T09:04:49Z] R0.8 — parcours natif durable raccordé et coexistence CSV vérifiée
 
 - Mini-plan : vérifier le batch JSON natif au véritable propriétaire Silver ; corriger uniquement le raccordement manquant ; tester reçu/idempotence/référentiel et coexistence CSV ; figer puis recevoir le lot complet une fois. Aucun développement R1 concurrent modifié.

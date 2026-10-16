@@ -1,0 +1,95 @@
+"""One-off evidence runner: dedicated clone, unchanged official archived bytes."""
+import hashlib
+import json
+from datetime import UTC, datetime
+from pathlib import Path
+from uuid import uuid4
+
+from alembic.config import Config
+from alembic import command
+from sqlalchemy import select, text
+
+from ketrika.core.db import get_session
+from ketrika.core.bronze import BronzeStore
+from ketrika.core.models.db import Source, SourceRecord, IngestionRun
+from ketrika.core.provenance_bronze import BronzeProofReader
+from ketrika.core.rebuild_bronze import LocalBronzeClient
+from ketrika.connectors.base import RawArtifact, RunContext
+from ketrika.connectors.batch_ledger import persist_bronze_batch
+from ketrika.connectors.document_partitions import register_document_partitions
+from ketrika.connectors.durable_phases import execute_durable_silver
+from ketrika.connectors.rebuild_references import resolve_snapshot_keys
+from ketrika.connectors.stages import BronzeBatch
+from ketrika.connectors.wb_rtfp_mdg import WbRtfpMdgConnector
+from ketrika.normalize.loader import seed_products, seed_units, seed_locations
+from ketrika.gold.refresh import init_gold_views, refresh_gold_views
+from ketrika.pipelines.rebuild_qualification import require_destination, run_offline_replay
+
+import sys
+action = sys.argv[1]
+root = Path('/workspace/backend')
+if action == 'prepare':
+    with get_session() as session:
+        require_destination(session)
+        if session.scalar(text("SELECT to_regclass('meta.source_record')")) is not None:
+            raise ValueError('fresh_clone_required_no_overwrite')
+    config = Config(str(root / 'alembic.ini'))
+    config.set_main_option('script_location', str(root / 'alembic'))
+    command.upgrade(config, 'head')
+    store = BronzeStore()
+    assert store.bucket == 'ketrika-qa-bronze'
+    with get_session() as session:
+        seed_units(session, seed_products(session))
+        seed_locations(session)
+        session.add(Source(source_id='wb_rtfp_mdg', status='active', spec={'scope':'archived authentic packet, not live qualification'}))
+    run = uuid4()
+    artifacts = []
+    with get_session() as session:
+        session.add(IngestionRun(run_id=run, source_id='wb_rtfp_mdg', status='running', started_at=datetime.now(UTC), n_fetched=2,n_new_artifacts=2))
+        session.flush()
+        for filename, receipt_name in [('mdg_close_estimates_20261015.json','close-estimates-acquisition.json'),('mdg_study_20261005.json','study-acquisition.json')]:
+            content = (root / 'tests/fixtures/authentic/world_bank_rtfp' / filename).read_bytes()
+            receipt = json.loads((root / 'tests/corpus-evidence/world_bank_rtfp' / receipt_name).read_text())
+            assert hashlib.sha256(content).hexdigest() == receipt['sha256']
+            obj = store.put(source_id='wb_rtfp_mdg',content=content,mime_type='application/json',url=receipt['source_url'],retrieved_via='manual_upload',http_status=0,http_headers={'x-ketrika-scope':'unchanged-official-archive-not-new-fetch'},fetched_at=datetime.now(UTC))
+            uid = uuid4()
+            session.add(SourceRecord(source_record_id=uid,source_id='wb_rtfp_mdg',source_url=receipt['source_url'],object_key=obj.object_key,content_sha256=obj.content_sha256,mime_type='application/json',fetched_at=datetime.now(UTC),parser_version='2.0.0',extraction_status='pending',retrieved_via='manual_upload'))
+            artifacts.append(RawArtifact(str(uid),obj.object_key,obj.content_sha256,'application/json',receipt['source_url'],True))
+        session.flush()
+        batch = BronzeBatch('wb_rtfp_mdg',run,'2.0.0',tuple(artifacts))
+        persist_bronze_batch(session,batch)
+        register_document_partitions(session,batch)
+    stats = execute_durable_silver(WbRtfpMdgConnector(),RunContext(source_id='wb_rtfp_mdg',bronze_store=store,offline=True),batch)
+    assert stats['n_inserted'] == 15 and stats['n_rejected'] == 0
+if action in ('prepare', 'export'):
+    store = BronzeStore()
+    with get_session() as session:
+        records = list(session.scalars(select(SourceRecord)))
+        refs = resolve_snapshot_keys(session,records,store)
+        keys = {row.object_key:row.content_sha256 for row in records}
+        keys.update({key:sha for key,sha in refs.values()})
+        assert len(keys) == 3 and len(refs) == 1
+        inventory = {}
+        for key, digest in keys.items():
+            content = BronzeProofReader(store).get(key)
+            assert hashlib.sha256(content).hexdigest() == digest
+            with (Path('/copy') / (digest+'.blob')).open('xb') as output:
+                output.write(content)
+            inventory[key] = {'sha256':digest,'size_bytes':len(content)}
+        with Path('/copy/inventory.json').open('x') as output:
+            json.dump({'objects':inventory},output)
+        init_gold_views(session)
+        refresh_gold_views(session,reader=BronzeProofReader(store))
+    print(json.dumps({'prepared':True,'bronze_objects':len(keys),'reference_identities':len(refs)}))
+elif action == 'replay':
+    inventory = json.loads(Path('/copy/inventory.json').read_text())['objects']
+    store = BronzeStore(bucket_name='native-replay-copy',client=LocalBronzeClient(Path('/copy'),'native-replay-copy',inventory))
+    with get_session() as session:
+        result = run_offline_replay(session,store)
+        result['dataset'] = 'unchanged authentic WB historical sample with recorded normalization snapshot'
+        result['historical_revisions_qualified'] = False
+        with Path('/out/native-replay.json').open('x') as output:
+            json.dump(result,output,indent=2,sort_keys=True)
+        print(json.dumps({'replay_passed':result['replay_passed'],'stats':result['replay_stats'],'diff':result['diff']}))
+        if not result['replay_passed']:
+            raise SystemExit(1)
