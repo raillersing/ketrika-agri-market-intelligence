@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T10:15:00Z] R2.5 — DONE, intégration INSTAT Tableau de bord économique (TBE) avec fréquences natives
+
+- Dépendances relues : R1.2 (découverte dynamique), R1.3 (NIPC), R2.1 (contrats macro/temps obs.macro_observation).
+- Mini-plan exécuté : (1) enregistrement de `instat_tbe` dans `registry/sources.yaml` et fiche source `docs/sources/instat_tbe.md` ; (2) extension de `DataKind` avec `'macro'` dans `core/models/source.py` ; (3) création des fixtures authentiques N°62 et N°63 et du golden set `tbe_sample.expected.json` ; (4) implémentation du connecteur `backend/src/ketrika/connectors/instat_tbe.py` avec découverte HTML et parsing multi-feuilles openpyxl ; (5) extraction des séries réelles (IPI, élec, ciment, PIB réel trimestriel), commerce extérieur (riz, CAF, FOB), monétaires (M3, USD) et CPI réédité tracé vers `instat_nipc` ; (6) préservation stricte des fréquences natives sans division en faux mois calendaires ; (7) attribution rigoureuse de la provenance C3 vers chaque institution primaire ; (8) tests unitaires et de robustesse (15 tests, couverture 97 %) ; (9) contrôles statiques verts (ruff, mypy) et non-régression (87/87 tests verts) ; (10) dossier de preuve `docs/evidence/R2.5/README.md`.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_instat_tbe.py --cov=ketrika.connectors.instat_tbe --cov-report=term-missing (exit 0, 15 passed in 18.27s, couverture 97 %) ; ruff check (exit 0) ; mypy (exit 0) ; non-régression 87 passed in 17.99s.
+- Résultats : 15/15 tests verts ; connecteur opérationnel ; séries réelles, commerciales et monétaires extraites avec traçabilité de révision N°62/N°63 ; aucune conversion artificielle de trimestre en mois ; CPI réédité non doublé.
+- Qualification : Connecteur INSTAT TBE et préservation des fréquences natives QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R2.5/README.md.
+- Reprise : Tâche MUST éligible suivante R2.6 (Intégrer change et contexte monétaire BFM).
+
 ### [2026-10-16T09:12:00Z] R2.4 — DONE, mesure de couverture de marché SQL, lacunes indépendantes et sélection du pilote
 
 - Dépendances relues : R2.3 (DONE), R1.12 (DONE), sources authentiques qualifiées (MIASA ODR, WB RTFP, MINCC).
@@ -512,7 +524,7 @@
 | R2.2 | MUST | DONE | 2026-10-15T21:30:00Z | 2026-10-15T22:00:00Z | 54c24d1 | Audit taxonomie, unités, grains, densités et gardes de comparabilité Gold | 38 tests verts, couverture 90%, 0 régression |
 | R2.3 | MUST | DONE | 2026-10-16T07:35:00Z | 2026-10-16T07:55:00Z | b4aa80a | DQ, agrégations, alignement calendaire, indépendance de familles | 59 tests verts, 95% couverture, 114 non-régression |
 | R2.4 | MUST | DONE | 2026-10-16T08:58:00Z | 2026-10-16T09:12:00Z | 399f566 | Matrice couverture SQL gold.market_coverage, lacunes indépendantes, pilote riz local/importé (MDG11/31/33/0), garde authenticité | 16 tests verts, 94% couverture, 111 non-régression |
-| R2.5 | MUST | TODO | — | — | — | — | — |
+| R2.5 | MUST | DONE | 2026-10-16T09:55:00Z | 2026-10-16T10:15:00Z | d0aa07b | Connecteur INSTAT TBE, séries macro, fréquences réelles sans faux mois, traçabilité institution primaire | 15 tests verts, couverture 97%, 87 non-régression |
 | R2.6 | MUST | TODO | — | — | — | — | — |
 | R2.7 | MUST | TODO | — | — | — | — | — |
 | R2.8 | MUST | TODO | — | — | — | — | — |
