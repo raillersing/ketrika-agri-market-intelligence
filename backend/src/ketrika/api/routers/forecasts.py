@@ -16,11 +16,19 @@ from sqlalchemy.orm import Session
 from ketrika.api.csv_utils import export_csv_response
 from ketrika.api.schemas import (
     ForecastAbstentionItem,
+    ForecastEvaluationItem,
     ForecastItem,
+    ForecastPerformanceResponse,
     ModelRunDetailResponse,
     ModelRunSummaryItem,
+    PerformanceMetricsSummary,
 )
 from ketrika.core.db import get_db
+from ketrika.ml.evaluation import (
+    EvaluationRecord,
+    MaturedForecastEvaluator,
+    compute_performance_decomposition,
+)
 
 router = APIRouter(prefix="/v1/forecasts", tags=["forecasts"])
 
@@ -213,20 +221,22 @@ def get_forecast_runs(
             metrics=metrics_dict,
         )
         results.append(item)
-        csv_rows.append({
-            "model_run_id": str(r[0]),
-            "task": r[1],
-            "model_name": r[2],
-            "model_version": r[3],
-            "data_cutoff": str(r[4]),
-            "trained_at": r[5].isoformat() if r[5] else None,
-            "dataset_fingerprint": params_dict.get("dataset_fingerprint"),
-            "cohort": params_dict.get("cohort"),
-            "wape": metrics_dict.get("wape"),
-            "mae": metrics_dict.get("mae"),
-            "coverage_80": metrics_dict.get("coverage_80"),
-            "n_series": metrics_dict.get("n_series"),
-        })
+        csv_rows.append(
+            {
+                "model_run_id": str(r[0]),
+                "task": r[1],
+                "model_name": r[2],
+                "model_version": r[3],
+                "data_cutoff": str(r[4]),
+                "trained_at": r[5].isoformat() if r[5] else None,
+                "dataset_fingerprint": params_dict.get("dataset_fingerprint"),
+                "cohort": params_dict.get("cohort"),
+                "wape": metrics_dict.get("wape"),
+                "mae": metrics_dict.get("mae"),
+                "coverage_80": metrics_dict.get("coverage_80"),
+                "n_series": metrics_dict.get("n_series"),
+            }
+        )
 
     if format == "csv":
         return export_csv_response(csv_rows, filename="forecast_runs.csv")
@@ -397,3 +407,171 @@ def get_forecast_abstentions(
         return export_csv_response(csv_rows, filename="forecast_abstentions.csv")
 
     return paginated
+
+
+@router.get("/performance", response_model=ForecastPerformanceResponse)
+def get_forecast_performance(
+    product: str | None = Query(None, description="Filter by product code"),
+    location: str | None = Query(None, description="Filter by location P-code"),
+    horizon: int | None = Query(None, ge=1, le=12, description="Filter by forecast horizon"),
+    evaluation_kind: str | None = Query(
+        None,
+        description="Filter by evaluation kind: as_of_holdout | matured_actual | prospective_pending",
+    ),
+    limit: int = Query(500, ge=1, le=2000, description="Page limit (default 500, max 2000)"),
+    offset: int = Query(0, ge=0, description="Page offset (default 0)"),
+    format: str = Query("json", pattern="^(json|csv)$", description="Output format (json or csv)"),
+    session: Session = Depends(get_db),
+) -> Any:
+    """Retrieve multidimensional forecast performance evaluation metrics and records (SPECS §17.4, ADR-079, R3.8)."""
+    # Check if any evaluations exist, otherwise evaluate
+    count_sql = "SELECT COUNT(*) FROM ml.forecast_evaluation;"
+    count_evals = 0
+    try:
+        count_res = session.execute(text(count_sql)).fetchone()
+        count_evals = int(count_res[0]) if count_res else 0
+    except Exception:
+        # Table might not exist or empty
+        count_evals = 0
+
+    if count_evals == 0:
+        # Check if forecasts exist to evaluate
+        fc_count_sql = "SELECT COUNT(*) FROM ml.forecast;"
+        fc_count = 0
+        try:
+            fc_res = session.execute(text(fc_count_sql)).fetchone()
+            fc_count = int(fc_res[0]) if fc_res else 0
+        except Exception:
+            fc_count = 0
+
+        if fc_count > 0:
+            evaluator = MaturedForecastEvaluator(session)
+            evaluator.evaluate_forecasts(persist=True)
+
+    # Fetch evaluations from table
+    sql = """
+        SELECT
+            fe.evaluation_id,
+            fe.forecast_id,
+            fe.model_run_id,
+            fe.series_key,
+            fe.product_code,
+            fe.location_pcode,
+            fe.actor_level,
+            fe.target_period,
+            fe.horizon,
+            fe.evaluation_kind,
+            fe.model_name,
+            fe.is_baseline,
+            fe.predicted_p50::float,
+            fe.predicted_p10::float,
+            fe.predicted_p90::float,
+            fe.actual_price::float,
+            fe.actual_observation_id,
+            fe.absolute_error::float,
+            fe.percentage_error::float,
+            fe.is_covered_80,
+            fe.evaluated_at
+        FROM ml.forecast_evaluation fe
+        WHERE 1=1
+    """
+    params: dict[str, Any] = {}
+    if product:
+        sql += " AND fe.product_code = :product"
+        params["product"] = product
+    if location:
+        sql += " AND fe.location_pcode = :location"
+        params["location"] = location
+    if horizon:
+        sql += " AND fe.horizon = :horizon"
+        params["horizon"] = horizon
+    if evaluation_kind:
+        sql += " AND fe.evaluation_kind = :eval_kind"
+        params["eval_kind"] = evaluation_kind
+
+    sql += " ORDER BY fe.target_period ASC, fe.horizon ASC;"
+
+    rows = session.execute(text(sql), params).fetchall()
+
+    records: list[EvaluationRecord] = []
+    items: list[ForecastEvaluationItem] = []
+
+    for r in rows:
+        rec = EvaluationRecord(
+            evaluation_id=r.evaluation_id,
+            forecast_id=r.forecast_id,
+            model_run_id=r.model_run_id,
+            series_key=r.series_key,
+            product_code=r.product_code,
+            location_pcode=r.location_pcode,
+            actor_level=r.actor_level,
+            target_period=r.target_period,
+            horizon=int(r.horizon),
+            evaluation_kind=r.evaluation_kind,
+            model_name=r.model_name,
+            is_baseline=bool(r.is_baseline),
+            predicted_p50=r.predicted_p50,
+            predicted_p10=r.predicted_p10,
+            predicted_p90=r.predicted_p90,
+            actual_price=r.actual_price,
+            actual_observation_id=r.actual_observation_id,
+            absolute_error=r.absolute_error,
+            percentage_error=r.percentage_error,
+            is_covered_80=r.is_covered_80,
+            evaluated_at=r.evaluated_at,
+        )
+        records.append(rec)
+        items.append(
+            ForecastEvaluationItem(
+                evaluation_id=r.evaluation_id,
+                forecast_id=r.forecast_id,
+                model_run_id=r.model_run_id,
+                series_key=r.series_key,
+                product_code=r.product_code,
+                location_pcode=r.location_pcode,
+                actor_level=r.actor_level,
+                target_period=r.target_period.isoformat(),
+                horizon=int(r.horizon),
+                evaluation_kind=r.evaluation_kind,
+                model_name=r.model_name,
+                is_baseline=bool(r.is_baseline),
+                predicted_p50=r.predicted_p50,
+                predicted_p10=r.predicted_p10,
+                predicted_p90=r.predicted_p90,
+                actual_price=r.actual_price,
+                actual_observation_id=r.actual_observation_id,
+                absolute_error=r.absolute_error,
+                percentage_error=r.percentage_error,
+                is_covered_80=r.is_covered_80,
+                evaluated_at=r.evaluated_at.isoformat() if r.evaluated_at else None,
+            )
+        )
+
+    perf_table = compute_performance_decomposition(records)
+
+    paginated_items = items[offset : offset + limit]
+
+    if format == "csv":
+        csv_rows = [it.model_dump() for it in paginated_items]
+        return export_csv_response(csv_rows, filename="forecast_performance_evaluations.csv")
+
+    def _to_summary_schema(m: Any) -> PerformanceMetricsSummary:
+        return PerformanceMetricsSummary(
+            wape=m.wape,
+            mae=m.mae,
+            smape=m.smape,
+            coverage_80=m.coverage_80,
+            coverage_ci_95=list(m.coverage_ci_95) if m.coverage_ci_95 else None,
+            mean_interval_width=m.mean_interval_width,
+            sample_size=m.sample_size,
+        )
+
+    return ForecastPerformanceResponse(
+        summary=_to_summary_schema(perf_table.summary),
+        by_product={k: _to_summary_schema(v) for k, v in perf_table.by_product.items()},
+        by_location={k: _to_summary_schema(v) for k, v in perf_table.by_location.items()},
+        by_horizon={str(k): _to_summary_schema(v) for k, v in perf_table.by_horizon.items()},
+        by_seasonality={k: _to_summary_schema(v) for k, v in perf_table.by_seasonality.items()},
+        evaluations=paginated_items,
+        total_evaluations=len(items),
+    )

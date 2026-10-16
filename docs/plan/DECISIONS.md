@@ -2,6 +2,33 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-079 : évaluation réelle et suivi des erreurs maturées, décomposition multidimensionnelle et benchmarking loyal face aux baselines (R3.8)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.8 ; Phase R3.
+- **Contexte :** L'évaluation de la performance d'un modèle prédictif ne peut se résumer à des métriques in-sample ou à un unique score agrégé flatteur (directives R3.8, constats d'audit A08 et A09). Pour garantir une évaluation scientifique intègre des prévisions de prix :
+  1. **Suivi des erreurs maturées sans rétroaction temporelle (C2/C4) :** Lorsqu'une date cible $T_{\text{target}}$ est franchie dans le temps réel ($T_{\text{target}} \le T_{\text{evaluation}}$), la prévision passée est confrontée à l'observation authentique devenue disponible (`actual_price`). Ces observations futures ne doivent en aucun cas être réinjectées rétroactivement dans le passé connu de l'entraînement du run initial.
+  2. **Classification chronologique tripartite :**
+     - `as_of_holdout` : évaluation sur la partition de test as-of certifiée (Phase 3 out-of-sample).
+     - `matured_actual` : prévision de production confrontée à l'observation réelle après échéance.
+     - `prospective_pending` : prévision en cours d'attente d'échéance ($T_{\text{target}} > T_{\text{evaluation}}$).
+  3. **Décomposition multidimensionnelle obligatoire :** Tout rapport ou tableau d'évaluation doit obligatoirement ventiler les métriques (WAPE, MAE, sMAPE, couverture 80%, largeur) :
+     - par produit (`product_code`),
+     - par région géographique (`location_pcode`),
+     - par horizon temporel ($h=1, 2, 3$),
+     - par régime saisonnier (soudure vs récolte).
+     Aucun score moyen global ne peut être présenté de manière isolée sans sa table de décomposition.
+  4. **Benchmarking loyal et primauté de la parcimonie :** Tout candidat statistique (`AutoETS`, `AutoARIMA`) doit être comparé frontalement aux baselines de référence (`NaiveLast`, `SeasonalNaive`). Si un modèle complexe ne dégage aucun gain statistiquement significatif ($\Delta\text{WAPE} \le 0.01$), le modèle naïf est déclaré vainqueur par parcimonie. Aucun gain imaginaire ou surestimé ne peut être attribué.
+  5. **Traçabilité de provenance totale (Règle 1 AGENTS.md) :** Chaque ligne d'évaluation référence explicitement le `forecast_id`, le `model_run_id`, et l'`observation_id` de la valeur réelle constatée.
+- **Décision :**
+  1. Créer la table `ml.forecast_evaluation` (migration Alembic 0013) stockant chaque évaluation individuelle d'horizon ($e_{\text{abs}}$, $e_{\text{pct}}$, `is_covered_80`, `actual_observation_id`).
+  2. Implémenter le module `backend/src/ketrika/ml/evaluation.py` avec `MaturedForecastEvaluator`, `PerformanceTable`, `compute_evaluation_metrics`.
+  3. Étendre l'API avec la route `GET /v1/forecasts/performance` (filtrage par produit, zone, horizon, régime, format CSV/JSON).
+  4. Publier le rapport de référence `docs/reports/market_forecast_evaluation.md`.
+- **Alternatives rejetées :**
+  - Réévaluer le modèle en ré-entraînant sur toute la série incluant la période de test (rejeté, fuite de données flagrante).
+  - Présenter uniquement un WAPE moyen agrégé masquant des divergences régionales ou des horizons $h=3$ dégradés (rejeté, violation de transparence).
+- **Conséquences :** Auditabilité totale des erreurs constatées, fidélité exemplaire envers les baselines, détection rapide de toute dérive de prévision.
+
 ## ADR-078 : publication des prévisions, traçabilité des limites, gestion des abstentions et intégrité visuelle sans extrapolation (R3.7)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R3.7 ; Phase R3.

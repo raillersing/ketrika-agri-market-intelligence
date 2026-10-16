@@ -1891,6 +1891,154 @@
         }
       }
     },
+    "/v1/forecasts/performance": {
+      "get": {
+        "tags": [
+          "forecasts"
+        ],
+        "summary": "Get Forecast Performance",
+        "description": "Retrieve multidimensional forecast performance evaluation metrics and records (SPECS \u00a717.4, ADR-079, R3.8).",
+        "operationId": "get_forecast_performance_v1_forecasts_performance_get",
+        "parameters": [
+          {
+            "name": "product",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by product code",
+              "title": "Product"
+            },
+            "description": "Filter by product code"
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by location P-code",
+              "title": "Location"
+            },
+            "description": "Filter by location P-code"
+          },
+          {
+            "name": "horizon",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 12,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by forecast horizon",
+              "title": "Horizon"
+            },
+            "description": "Filter by forecast horizon"
+          },
+          {
+            "name": "evaluation_kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter by evaluation kind: as_of_holdout | matured_actual | prospective_pending",
+              "title": "Evaluation Kind"
+            },
+            "description": "Filter by evaluation kind: as_of_holdout | matured_actual | prospective_pending"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2000,
+              "minimum": 1,
+              "description": "Page limit (default 500, max 2000)",
+              "default": 500,
+              "title": "Limit"
+            },
+            "description": "Page limit (default 500, max 2000)"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Page offset (default 0)",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Page offset (default 0)"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(json|csv)$",
+              "description": "Output format (json or csv)",
+              "default": "json",
+              "title": "Format"
+            },
+            "description": "Output format (json or csv)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastPerformanceResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/alerts": {
       "get": {
         "tags": [
@@ -3059,6 +3207,190 @@
         "title": "ForecastAbstentionItem",
         "description": "Documented series abstention or exclusion with normative reasons."
       },
+      "ForecastEvaluationItem": {
+        "properties": {
+          "evaluation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluation Id"
+          },
+          "forecast_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Forecast Id"
+          },
+          "model_run_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Model Run Id"
+          },
+          "series_key": {
+            "type": "string",
+            "title": "Series Key"
+          },
+          "product_code": {
+            "type": "string",
+            "title": "Product Code"
+          },
+          "location_pcode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Pcode"
+          },
+          "actor_level": {
+            "type": "string",
+            "title": "Actor Level"
+          },
+          "target_period": {
+            "type": "string",
+            "title": "Target Period"
+          },
+          "horizon": {
+            "type": "integer",
+            "title": "Horizon"
+          },
+          "evaluation_kind": {
+            "type": "string",
+            "title": "Evaluation Kind"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "is_baseline": {
+            "type": "boolean",
+            "title": "Is Baseline",
+            "default": false
+          },
+          "predicted_p50": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted P50"
+          },
+          "predicted_p10": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted P10"
+          },
+          "predicted_p90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted P90"
+          },
+          "actual_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Price"
+          },
+          "actual_observation_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Observation Id"
+          },
+          "absolute_error": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Absolute Error"
+          },
+          "percentage_error": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Percentage Error"
+          },
+          "is_covered_80": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Covered 80"
+          },
+          "evaluated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "forecast_id",
+          "model_run_id",
+          "series_key",
+          "product_code",
+          "actor_level",
+          "target_period",
+          "horizon",
+          "evaluation_kind",
+          "model_name"
+        ],
+        "title": "ForecastEvaluationItem",
+        "description": "Individual forecast evaluation record against actual ground truth."
+      },
       "ForecastItem": {
         "properties": {
           "forecast_id": {
@@ -3304,6 +3636,59 @@
         ],
         "title": "ForecastItem",
         "description": "Price forecast horizons, quantiles, and conformal metadata (SPECS \u00a717, \u00a719, ADR-078)."
+      },
+      "ForecastPerformanceResponse": {
+        "properties": {
+          "summary": {
+            "$ref": "#/components/schemas/PerformanceMetricsSummary"
+          },
+          "by_product": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PerformanceMetricsSummary"
+            },
+            "type": "object",
+            "title": "By Product"
+          },
+          "by_location": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PerformanceMetricsSummary"
+            },
+            "type": "object",
+            "title": "By Location"
+          },
+          "by_horizon": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PerformanceMetricsSummary"
+            },
+            "type": "object",
+            "title": "By Horizon"
+          },
+          "by_seasonality": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PerformanceMetricsSummary"
+            },
+            "type": "object",
+            "title": "By Seasonality"
+          },
+          "evaluations": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastEvaluationItem"
+            },
+            "type": "array",
+            "title": "Evaluations"
+          },
+          "total_evaluations": {
+            "type": "integer",
+            "title": "Total Evaluations",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "summary"
+        ],
+        "title": "ForecastPerformanceResponse",
+        "description": "Multidimensional forecast performance report (ADR-079, R3.8)."
       },
       "HTTPValidationError": {
         "properties": {
@@ -4098,6 +4483,87 @@
         ],
         "title": "ObservationDetailResponse",
         "description": "Complete observation provenance and raw audit trail (SPECS \u00a719)."
+      },
+      "PerformanceMetricsSummary": {
+        "properties": {
+          "wape": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wape"
+          },
+          "mae": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mae"
+          },
+          "smape": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Smape"
+          },
+          "coverage_80": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage 80"
+          },
+          "coverage_ci_95": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Ci 95"
+          },
+          "mean_interval_width": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Interval Width"
+          },
+          "sample_size": {
+            "type": "integer",
+            "title": "Sample Size",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "PerformanceMetricsSummary",
+        "description": "Statistical summary metrics for evaluated forecasts (SPECS \u00a717.4, ADR-079)."
       },
       "PilotConfigResponse": {
         "properties": {

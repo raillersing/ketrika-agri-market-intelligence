@@ -38,6 +38,33 @@
 - Preuve : docs/evidence/R2.11/README.md.
 - Tag jalon : `mi-r2-qualified` (posé).
 
+### [2026-10-16T20:00:00Z] R3.8 — DONE, évaluation réelle et suivi des erreurs maturées
+
+- Dépendances relues : R3.7 (publication prévisions/abstentions), R3.2 (datasets as-of C2/C4).
+- Mini-plan exécuté :
+  1. Formaliser ADR-079 (Évaluation réelle et suivi des erreurs maturées, décomposition multidimensionnelle et benchmarking loyal face aux baselines) dans `docs/plan/DECISIONS.md`.
+  2. Mettre à jour `docs/plan/SPECS.md` (§17.4, DDL §13, §19) pour intégrer la table `ml.forecast_evaluation`, la classification tripartite et l'endpoint `/v1/forecasts/performance`.
+  3. Créer la migration Alembic `backend/alembic/versions/0013_forecast_evaluations.py` et le modèle SQLAlchemy `ForecastEvaluation` dans `backend/src/ketrika/core/models/db.py`.
+  4. Implémenter le module d'évaluation `backend/src/ketrika/ml/evaluation.py` avec `MaturedForecastEvaluator`, `EvaluationRecord`, `compute_performance_decomposition` (produit, région, horizon 1..3, saisonnalité soudure nov-mars vs récolte avr-oct), `benchmark_against_baselines` (seuil de parcimonie $\Delta\text{WAPE} > 0{,}01$).
+  5. Étendre les schémas Pydantic `backend/src/ketrika/api/schemas.py` et implémenter la route `GET /v1/forecasts/performance` dans `backend/src/ketrika/api/routers/forecasts.py` avec pagination et export CSV.
+  6. Élargir dynamiquement la colonne `alembic_version.version_num` à `VARCHAR(128)` dans `backend/alembic/env.py` et appliquer les migrations 0011, 0012, 0013 sur PostgreSQL (`alembic upgrade head`).
+  7. Développer la suite de tests unitaires `backend/tests/unit/test_ml_matured_evaluation.py` (7 tests passés en 26.17s) couvrant le calcul exact des erreurs, le Wilson score 95%, la décomposition multidimensionnelle, la règle de parcimonie et la route API.
+  8. Exécuter l'ensemble des 60 tests unitaires ML (exit 0 en 66.37s) avec une couverture de code de 92% sur `ketrika.ml` et 92% sur `ketrika.ml.evaluation`.
+  9. Régénérer la spécification `openapi.json` et les types TypeScript `schema.d.ts` dans `web/`, valider vitest (39 tests verts) et le build Next.js (16 routes compilées).
+  10. Publier le rapport de référence `docs/reports/market_forecast_evaluation.md` et le dossier de preuve `docs/evidence/R3.8/README.md`.
+- Environnement : Docker ketrika-backend:dev, ketrika-web:dev, PostgreSQL aiagent-db-1, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes :
+  - `docker run ... python -m pytest tests/unit/test_ml_matured_evaluation.py -v` (exit 0, 7 passed in 26.17s)
+  - `docker run ... bash -c "python -m pytest tests/unit/test_ml_*.py -m 'not integration' --cov=ketrika.ml --cov-report=term-missing"` (exit 0, 60 passed in 66.37s, couverture ML 92%)
+  - `docker run ... ruff check ... && ruff format --check ...` (exit 0, clean)
+  - `docker run ... mypy src/ketrika tests/unit/test_ml_matured_evaluation.py` (exit 0, no issues found in 153 source files)
+  - `docker run ... npx openapi-typescript src/lib/api/openapi.json -o src/lib/api/schema.d.ts` (exit 0)
+  - `docker run ... pnpm test` (vitest, exit 0, 39 passed)
+  - `docker run ... pnpm run build` (next build, exit 0, 16/16 routes générées)
+- Résultats : 7/7 tests dédiés R3.8 passés ; 60/60 tests ML passés ; couverture `ketrika.ml.evaluation` à 92% (seuil >= 80%) ; décomposition 4D intégrale sans score moyen unique isolé ; respect strict du principe de parcimonie (gain < 1% donne la victoire à la baseline) ; provenance totale à 100%.
+- État : DONE.
+- Preuve : `docs/evidence/R3.8/README.md`.
+
 ### [2026-10-16T17:35:00Z] R3.7 — DONE, publication des prévisions, limites et abstentions
 
 - Dépendances relues : R3.4 (protocole d'évaluation), R3.5 (calibration conforme), R2.9 (contrats API), R2.10 (vues interface).
@@ -810,7 +837,7 @@
 | R3.5 | MUST | DONE | 2026-10-16T16:45:00Z | 2026-10-16T16:55:00Z | e604fae | ADR-077, SPECS §17.3, intervalles conformes, seuil N_calib >= 8, uncalibrated_heuristic, Wilson 95%, audits couverture | 5 tests verts, couverture conformal 96%, 49 tests ML verts |
 | R3.6 | SHOULD | TODO | — | — | — | — | — |
 | R3.7 | MUST | DONE | 2026-10-16T17:10:00Z | 2026-10-16T17:35:00Z | 11b15d0 | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation | 4 tests verts, 53 tests ML verts, couverture 92%, Next build 16 routes |
-| R3.8 | MUST | TODO | — | — | — | — | — |
+| R3.8 | MUST | DONE | 2026-10-16T19:40:00Z | 2026-10-16T20:00:00Z | 08d24e6 | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines | 7 tests dédiés verts, 60 tests ML verts, couverture evaluation 92%, API /v1/forecasts/performance |
 | R3.9 | MUST | TODO | — | — | — | — | — |
 | R4.1 | MUST | TODO | — | — | — | — | — |
 | R4.2 | MUST | TODO | — | — | — | — | — |

@@ -736,6 +736,32 @@ CREATE TABLE ml.forecast (
   generated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE ml.forecast_evaluation (
+  evaluation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  forecast_id UUID NOT NULL REFERENCES ml.forecast,
+  model_run_id UUID NOT NULL REFERENCES ml.model_run,
+  series_key TEXT NOT NULL,
+  product_code TEXT NOT NULL,
+  location_pcode TEXT,
+  actor_level TEXT NOT NULL,
+  target_period DATE NOT NULL,
+  horizon SMALLINT NOT NULL,
+  evaluation_kind TEXT NOT NULL,   -- as_of_holdout | matured_actual | prospective_pending
+  model_name TEXT NOT NULL,
+  is_baseline BOOLEAN NOT NULL DEFAULT FALSE,
+  predicted_p50 NUMERIC(18,4),
+  predicted_p10 NUMERIC(18,4),
+  predicted_p90 NUMERIC(18,4),
+  actual_price NUMERIC(18,4),
+  actual_observation_id UUID REFERENCES obs.price_observation(observation_id),
+  absolute_error NUMERIC(18,4),
+  percentage_error NUMERIC(8,4),
+  is_covered_80 BOOLEAN,
+  evaluated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX idx_forecast_eval_matured ON ml.forecast_evaluation (series_key, target_period, horizon);
+CREATE INDEX idx_forecast_eval_kind ON ml.forecast_evaluation (evaluation_kind, model_name);
+
 -- ===================== OPS =====================
 CREATE TABLE ops.review_item (
   review_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -1374,7 +1400,21 @@ L'UI **DOIT** toujours afficher les composantes à côté du score.
   - **Interdiction des replis arbitraires $\pm 10\%$ :** Aucun raccourci arbitraire $\pm 10\%$ n'est autorisé comme intervalle conforme. En cas de résidus insuffisants ($N_{\text{calib}} < 8$), le résultat porte obligatoirement `is_calibrated = False` et statut `uncalibrated_heuristic`.
   - **Mesure de couverture et largeur :** Suivi systématique de la couverture empirique ($y \in [p10, p90]$), de la largeur brute ($p90 - p10$) et de la largeur relative ($(p90 - p10)/p50$) globalement et par horizon $h \in \{1, 2, 3\}$.
   - **Incertitude binomiale :** Publication de l'intervalle de confiance à 95% de Wilson sur la couverture réelle estimée.
-- **Contraintes :** aucune donnée postérieure à `data_cutoff`. `model_version` = `"{model}@{git_sha_court}"`. Résultats dans `ml.model_run` et `ml.forecast`.
+- **Évaluation réelle et suivi des erreurs maturées (ADR-079, R3.8) :**
+  - **Suivi sans rétroaction temporelle (C2/C4) :** À chaque échéance $T_{\text{target}} \le T_{\text{evaluation}}$, confrontation stricte de la prévision passée avec l'observation réelle authentique (`actual_price`), sans réinjection de cette réalisation dans le jeu d'entraînement passé du run initial.
+  - **Statuts chronologiques tripartites :**
+    - `as_of_holdout` : évaluation sur la partition de test as-of certifiée (Phase 3 out-of-sample).
+    - `matured_actual` : prévision de production confrontée à l'observation réelle après échéance.
+    - `prospective_pending` : prévision en cours d'attente d'échéance ($T_{\text{target}} > T_{\text{evaluation}}$).
+  - **Décomposition multidimensionnelle obligatoire :** Tout rapport ou export de performance ventile obligatoirement WAPE, MAE, sMAPE, couverture 80%, largeur d'intervalle et effectifs selon :
+    - le produit (`product_code`),
+    - la région géographique (`location_pcode`),
+    - l'horizon temporel ($h=1, 2, 3$),
+    - le régime saisonnier (soudure nov-mars vs récolte avr-oct).
+    Interdiction absolue d'un unique score synthétique global non ventilé.
+  - **Benchmarking loyal et règle de parcimonie :** Confrontation systématique des candidats statistiques (`AutoETS`, `AutoARIMA`) aux baselines de référence (`NaiveLast`, `SeasonalNaive`). Si l'écart de performance $\Delta\text{WAPE} \le 0.01$ (1 point de pourcentage), la baseline est déclarée gagnante.
+  - **Provenance totale (Règle 1 AGENTS.md) :** Chaque ligne de `ml.forecast_evaluation` référence explicitement le `forecast_id`, le `model_run_id`, et l'`actual_observation_id`.
+- **Contraintes :** aucune donnée postérieure à `data_cutoff`. `model_version` = `"{model}@{git_sha_court}"`. Résultats dans `ml.model_run`, `ml.forecast` et `ml.forecast_evaluation`.
 - **Anomalies :** `|z| > 3` sur le z-score robuste (§16) → candidat `PRICE_SPIKE`.
 
 ---
@@ -1433,6 +1473,7 @@ Chaque valeur exposée inclut `value_kind` (`observed | imputed | forecast | com
 | GET | `/v1/forecasts?product=&location=&actor_level=&model_run_id=&limit=&offset=&format=json\|csv` | Dernières prévisions conformes (`gold.forecast_latest`), intervalles p10/p50/p90, modèle effectif, calibration (ADR-078) |
 | GET | `/v1/forecasts/runs?limit=&offset=&format=json\|csv` · `/v1/forecasts/runs/{id}` | Historique des runs (`ml.model_run`), dataset C4 fingerprint, métriques par horizon, récupération de vieux runs (ADR-078) |
 | GET | `/v1/forecasts/abstentions?limit=&offset=&format=json\|csv` | Séries exclues ou abstentions avec motifs normatifs (ADR-078) |
+| GET | `/v1/forecasts/performance?product=&location=&horizon=&evaluation_kind=&limit=&offset=&format=json\|csv` | Évaluation réelle et suivi des erreurs maturées décomposées (WAPE, MAE, sMAPE, couverture 80%, largeur, Wilson 95%) par produit/zone/horizon/saison (ADR-079, R3.8) |
 | GET | `/v1/alerts?severity=&state=` · PATCH `/v1/alerts/{id}` (admin) | Alertes |
 | GET | `/v1/bulletins` · `/v1/bulletins/{id}` · POST `/v1/bulletins/{id}/approve` (admin) | Bulletins |
 | POST | `/v1/copilot/ask` | Copilote (§21) |

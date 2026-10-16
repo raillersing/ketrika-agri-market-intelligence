@@ -46,6 +46,18 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
+        from sqlalchemy import text
+
+        try:
+            connection.execute(
+                text(
+                    "ALTER TABLE IF EXISTS alembic_version ALTER COLUMN version_num TYPE character varying(128);"
+                )
+            )
+            connection.commit()
+        except Exception:
+            pass
+
         context.configure(
             connection=connection,
             target_metadata=target_metadata,

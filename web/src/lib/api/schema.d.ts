@@ -486,6 +486,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/forecasts/performance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Forecast Performance
+         * @description Retrieve multidimensional forecast performance evaluation metrics and records (SPECS §17.4, ADR-079, R3.8).
+         */
+        get: operations["get_forecast_performance_v1_forecasts_performance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/alerts": {
         parameters: {
             query?: never;
@@ -935,6 +955,63 @@ export interface components {
             points_count: number;
         };
         /**
+         * ForecastEvaluationItem
+         * @description Individual forecast evaluation record against actual ground truth.
+         */
+        ForecastEvaluationItem: {
+            /** Evaluation Id */
+            evaluation_id?: string | null;
+            /**
+             * Forecast Id
+             * Format: uuid
+             */
+            forecast_id: string;
+            /**
+             * Model Run Id
+             * Format: uuid
+             */
+            model_run_id: string;
+            /** Series Key */
+            series_key: string;
+            /** Product Code */
+            product_code: string;
+            /** Location Pcode */
+            location_pcode?: string | null;
+            /** Actor Level */
+            actor_level: string;
+            /** Target Period */
+            target_period: string;
+            /** Horizon */
+            horizon: number;
+            /** Evaluation Kind */
+            evaluation_kind: string;
+            /** Model Name */
+            model_name: string;
+            /**
+             * Is Baseline
+             * @default false
+             */
+            is_baseline: boolean;
+            /** Predicted P50 */
+            predicted_p50?: number | null;
+            /** Predicted P10 */
+            predicted_p10?: number | null;
+            /** Predicted P90 */
+            predicted_p90?: number | null;
+            /** Actual Price */
+            actual_price?: number | null;
+            /** Actual Observation Id */
+            actual_observation_id?: string | null;
+            /** Absolute Error */
+            absolute_error?: number | null;
+            /** Percentage Error */
+            percentage_error?: number | null;
+            /** Is Covered 80 */
+            is_covered_80?: boolean | null;
+            /** Evaluated At */
+            evaluated_at?: string | null;
+        };
+        /**
          * ForecastItem
          * @description Price forecast horizons, quantiles, and conformal metadata (SPECS §17, §19, ADR-078).
          */
@@ -1028,6 +1105,36 @@ export interface components {
              * @enum {string}
              */
             value_kind: "observed" | "imputed" | "forecast" | "composite";
+        };
+        /**
+         * ForecastPerformanceResponse
+         * @description Multidimensional forecast performance report (ADR-079, R3.8).
+         */
+        ForecastPerformanceResponse: {
+            summary: components["schemas"]["PerformanceMetricsSummary"];
+            /** By Product */
+            by_product?: {
+                [key: string]: components["schemas"]["PerformanceMetricsSummary"];
+            };
+            /** By Location */
+            by_location?: {
+                [key: string]: components["schemas"]["PerformanceMetricsSummary"];
+            };
+            /** By Horizon */
+            by_horizon?: {
+                [key: string]: components["schemas"]["PerformanceMetricsSummary"];
+            };
+            /** By Seasonality */
+            by_seasonality?: {
+                [key: string]: components["schemas"]["PerformanceMetricsSummary"];
+            };
+            /** Evaluations */
+            evaluations?: components["schemas"]["ForecastEvaluationItem"][];
+            /**
+             * Total Evaluations
+             * @default 0
+             */
+            total_evaluations: number;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1330,6 +1437,29 @@ export interface components {
             };
             /** Bronze Presigned Url */
             bronze_presigned_url: string;
+        };
+        /**
+         * PerformanceMetricsSummary
+         * @description Statistical summary metrics for evaluated forecasts (SPECS §17.4, ADR-079).
+         */
+        PerformanceMetricsSummary: {
+            /** Wape */
+            wape?: number | null;
+            /** Mae */
+            mae?: number | null;
+            /** Smape */
+            smape?: number | null;
+            /** Coverage 80 */
+            coverage_80?: number | null;
+            /** Coverage Ci 95 */
+            coverage_ci_95?: number[] | null;
+            /** Mean Interval Width */
+            mean_interval_width?: number | null;
+            /**
+             * Sample Size
+             * @default 0
+             */
+            sample_size: number;
         };
         /**
          * PilotConfigResponse
@@ -2545,6 +2675,50 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ForecastAbstentionItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_forecast_performance_v1_forecasts_performance_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by product code */
+                product?: string | null;
+                /** @description Filter by location P-code */
+                location?: string | null;
+                /** @description Filter by forecast horizon */
+                horizon?: number | null;
+                /** @description Filter by evaluation kind: as_of_holdout | matured_actual | prospective_pending */
+                evaluation_kind?: string | null;
+                /** @description Page limit (default 500, max 2000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastPerformanceResponse"];
                 };
             };
             /** @description Validation Error */

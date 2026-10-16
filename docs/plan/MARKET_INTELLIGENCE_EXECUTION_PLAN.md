@@ -51,7 +51,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R3.5 | MUST | DONE | ADR-077, SPECS §17.3, intervalles conformes non paramétriques, seuil N_calib >= 8, uncalibrated_heuristic, intervalle Wilson 95%, audits couverture/largeur, 5 tests verts, couverture 96% |
 | R3.6 | SHOULD | TODO | — |
 | R3.7 | MUST | DONE | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation, 4 tests verts, 53 tests ML verts, couverture 92% |
-| R3.8 | MUST | TODO | — |
+| R3.8 | MUST | DONE | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines, 7 tests verts, couverture ML 92%, rapport publié |
 | R3.9 | MUST | TODO | — |
 | R4.1 | MUST | TODO | — |
 | R4.2 | MUST | TODO | — |

@@ -272,6 +272,55 @@ class ForecastAbstentionItem(BaseModel):
     points_count: int = 0
 
 
+class PerformanceMetricsSummary(BaseModel):
+    """Statistical summary metrics for evaluated forecasts (SPECS §17.4, ADR-079)."""
+
+    wape: float | None = None
+    mae: float | None = None
+    smape: float | None = None
+    coverage_80: float | None = None
+    coverage_ci_95: list[float] | None = None
+    mean_interval_width: float | None = None
+    sample_size: int = 0
+
+
+class ForecastEvaluationItem(BaseModel):
+    """Individual forecast evaluation record against actual ground truth."""
+
+    evaluation_id: uuid.UUID | None = None
+    forecast_id: uuid.UUID
+    model_run_id: uuid.UUID
+    series_key: str
+    product_code: str
+    location_pcode: str | None = None
+    actor_level: str
+    target_period: str
+    horizon: int
+    evaluation_kind: str  # as_of_holdout | matured_actual | prospective_pending
+    model_name: str
+    is_baseline: bool = False
+    predicted_p50: float | None = None
+    predicted_p10: float | None = None
+    predicted_p90: float | None = None
+    actual_price: float | None = None
+    actual_observation_id: uuid.UUID | None = None
+    absolute_error: float | None = None
+    percentage_error: float | None = None
+    is_covered_80: bool | None = None
+    evaluated_at: str | None = None
+
+
+class ForecastPerformanceResponse(BaseModel):
+    """Multidimensional forecast performance report (ADR-079, R3.8)."""
+
+    summary: PerformanceMetricsSummary
+    by_product: dict[str, PerformanceMetricsSummary] = Field(default_factory=dict)
+    by_location: dict[str, PerformanceMetricsSummary] = Field(default_factory=dict)
+    by_horizon: dict[str, PerformanceMetricsSummary] = Field(default_factory=dict)
+    by_seasonality: dict[str, PerformanceMetricsSummary] = Field(default_factory=dict)
+    evaluations: list[ForecastEvaluationItem] = Field(default_factory=list)
+    total_evaluations: int = 0
+
 
 # ===================== OPS & ALERTS =====================
 
@@ -546,5 +595,3 @@ class PilotEconomicContextOut(BaseModel):
     local_rice_price_chg_12m_pct: float | None = None
     distinctness_audit: dict[str, Any] = Field(default_factory=dict)
     status: str
-
-
