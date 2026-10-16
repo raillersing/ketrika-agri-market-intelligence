@@ -298,6 +298,43 @@
   data_kinds: [macro]
   notes: "Cours de change officiels journaliers (USD/MGA, EUR/MGA : moyen, achat, vente) issus du Marché Interbancaire de Devises (MID) et indicateurs monétaires."
 
+- source_id: omh_public
+  name: "Office Malgache des Hydrocarbures – Prix Réglementés des Carburants"
+  owner: "Office Malgache des Hydrocarbures (OMH)"
+  source_family: omh
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.omh_public:Connector
+  cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: event
+  publication_cadence: event
+  freshness_sla_days: 62
+  partitioning: per_document
+  entrypoints:
+    - url: "https://www.omh.mg/prix-des-carburants"
+      kind: landing
+      verified_at: "2026-10-06T00:00:00Z"
+      verified: true
+  languages: [fr]
+  licence: "Données publiques officielles gouvernementales"
+  tos_url: "https://www.omh.mg/mentions-legales"
+  tos_sha256: null
+  tos_checked_at: "2026-10-06T00:00:00Z"
+  robots_checked_at: "2026-10-06T00:00:00Z"
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.2
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [macro]
+  notes: "Prix maxima réglementés des carburants (Gazole, Super 95, Pétrole lampant) et arrêtés/communiqués d'entrée en vigueur de l'Office Malgache des Hydrocarbures."
+
 - source_id: miasa_odr
   name: "MiASA Observatoire du Riz (ODR) – Bulletins Périodiques"
   owner: "Ministère de l'Agriculture et de l'Élevage (MiASA) / Observatoire du Riz"

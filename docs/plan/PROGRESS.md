@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T11:00:00Z] R2.7 — DONE, intégration carburants OMH et événements réglementaires
+
+- Dépendances relues : R1.2 (découverte dynamique), R2.1 (contrats temps, origine et macroéconomie).
+- Mini-plan exécuté : (1) enregistrement de `omh_public` dans `registry/sources.yaml` (famille `omh`, priorité `P1`, cadences adaptées) et fiche source `docs/sources/omh_public.md` ; (2) création des fixtures authentiques 2026 (barème CSV et communiqué officiel de révision tarifaire HTML) et du golden set `omh_sample.expected.json` ; (3) implémentation du connecteur `backend/src/ketrika/connectors/omh_public.py` avec découverte HTML et parsing multi-formats CSV/HTML ; (4) distinction rigoureuse des prix plafonds administrés à la pompe (`is_administered: true`, `rate_type: "ceiling"`) ; (5) séparation stricte de la date d'effet de l'arrêté (`period_start` = 2026-06-01) et de la date de publication du communiqué (`published_at` = 2026-05-30) ; (6) application stricte de l'interdiction d'interpoler ou de déduire une rupture d'approvisionnement sans acte officiel daté ; (7) raccordement dans `registry.py` et intégration dans l'ordonnanceur Dagster ; (8) suite de qualification `backend/tests/unit/test_omh_public.py` (14 tests, couverture 81 %) ; (9) contrôles statiques verts (ruff, mypy) et non-régression globale (118/118 tests verts) ; (10) dossier de preuve `docs/evidence/R2.7/README.md`.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_omh_public.py --cov=ketrika.connectors.omh_public --cov-report=term-missing (exit 0, 14 passed in 48.13s, couverture 81 %) ; ruff check (exit 0) ; mypy (exit 0) ; non-régression 118 passed in 73.72s.
+- Résultats : 14/14 tests verts ; connecteur opérationnel ; séries Gazole, Super 95 et Pétrole lampant extraites avec statut de prix administré ; date d'effet rigoureusement séparée de la date de publication ; aucune rupture déduite sans acte officiel.
+- Qualification : Connecteur Office Malgache des Hydrocarbures (OMH Public) QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R2.7/README.md.
+- Reprise : Tâche MUST éligible suivante R2.8 (Construire le tableau économique interprétable).
+
 ### [2026-10-16T10:35:00Z] R2.6 — DONE, intégration change et contexte monétaire BFM
 
 - Dépendances relues : R1.2 (découverte dynamique), R2.1 (contrats temps, origine et macroéconomie).
@@ -538,7 +550,7 @@
 | R2.4 | MUST | DONE | 2026-10-16T08:58:00Z | 2026-10-16T09:12:00Z | 399f566 | Matrice couverture SQL gold.market_coverage, lacunes indépendantes, pilote riz local/importé (MDG11/31/33/0), garde authenticité | 16 tests verts, 94% couverture, 111 non-régression |
 | R2.5 | MUST | DONE | 2026-10-16T09:55:00Z | 2026-10-16T10:15:00Z | d0aa07b | Connecteur INSTAT TBE, séries macro, fréquences réelles sans faux mois, traçabilité institution primaire | 15 tests verts, couverture 97%, 87 non-régression |
 | R2.6 | MUST | DONE | 2026-10-16T10:20:00Z | 2026-10-16T10:35:00Z | 9ad16a9 | Connecteur BFM change et séries monétaires, conventions achat/vente/moyen, jours ouvrés stricts | 17 tests verts, couverture 85%, 104 non-régression |
-| R2.7 | MUST | TODO | — | — | — | — | — |
+| R2.7 | MUST | IN_PROGRESS | 2026-10-16T10:40:00Z | — | — | Connecteur OMH carburants, prix réglementés vs observés, événements d'entrée en vigueur | En cours |
 | R2.8 | MUST | TODO | — | — | — | — | — |
 | R2.9 | MUST | TODO | — | — | — | — | — |
 | R2.10 | MUST | TODO | — | — | — | — | — |

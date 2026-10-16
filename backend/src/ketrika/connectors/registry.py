@@ -15,6 +15,7 @@ from ketrika.connectors.instat_tbe import Connector as InstatTbeConnector
 from ketrika.connectors.miasa_odr import MiasaOdrConnector
 from ketrika.connectors.mincc_ppn import MinccPpnConnector
 from ketrika.connectors.nasa_power import NasaPowerConnector
+from ketrika.connectors.omh_public import Connector as OmhPublicConnector
 from ketrika.connectors.wb_rtfp_mdg import WbRtfpMdgConnector
 from ketrika.connectors.wfp_hdx_mdg import WfpHdxMdgConnector
 
@@ -32,6 +33,7 @@ _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "instat_nipc": InstatNipcConnector,
     "instat_tbe": InstatTbeConnector,
     "bfm_public": BfmPublicConnector,
+    "omh_public": OmhPublicConnector,
     "miasa_odr": MiasaOdrConnector,
     "mincc_ppn": MinccPpnConnector,
     "douanes_stats": DouanesStatsConnector,
