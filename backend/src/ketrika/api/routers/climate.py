@@ -40,31 +40,34 @@ PCODE_TO_BASIN: dict[str, str] = {
 }
 
 
+FACULTATIVE_SOURCES: list[FacultativeSourceStatus] = [
+    FacultativeSourceStatus(
+        source_id="firms_mdg",
+        source_name="NASA FIRMS (Détection thermique & feux)",
+        status="unavailable",
+        reason="Source facultative non intégrée (clé d'accès NASA LANCE optionnelle). Aucun faux zéro fabriqué.",
+        data_available=False,
+    ),
+    FacultativeSourceStatus(
+        source_id="glofas_mdg",
+        source_name="Copernicus GloFAS (Débit & inondations)",
+        status="unavailable",
+        reason="Source facultative non configurée (modélisation hydrologique globale optionnelle).",
+        data_available=False,
+    ),
+    FacultativeSourceStatus(
+        source_id="copernicus_ndvi",
+        source_name="Copernicus Sentinel-2 NDVI (Biomasse)",
+        status="unavailable",
+        reason="Source facultative non configurée (télédétection haute résolution optionnelle).",
+        data_available=False,
+    ),
+]
+
+
 def _get_facultative_sources() -> list[FacultativeSourceStatus]:
     """Return explicit transparent status for unintegrated optional environmental sources (ADR-087)."""
-    return [
-        FacultativeSourceStatus(
-            source_id="firms_mdg",
-            source_name="NASA FIRMS (Détection thermique & feux)",
-            status="unavailable",
-            reason="Source facultative non intégrée (clé d'accès NASA LANCE optionnelle). Aucun faux zéro fabriqué.",
-            data_available=False,
-        ),
-        FacultativeSourceStatus(
-            source_id="glofas_mdg",
-            source_name="Copernicus GloFAS (Débit & inondations)",
-            status="unavailable",
-            reason="Source facultative non configurée (modélisation hydrologique globale optionnelle).",
-            data_available=False,
-        ),
-        FacultativeSourceStatus(
-            source_id="copernicus_ndvi",
-            source_name="Copernicus Sentinel-2 NDVI (Biomasse)",
-            status="unavailable",
-            reason="Source facultative non configurée (télédétection haute résolution optionnelle).",
-            data_available=False,
-        ),
-    ]
+    return list(FACULTATIVE_SOURCES)
 
 
 @router.get("/summary", response_model=ClimateSummaryResponse)

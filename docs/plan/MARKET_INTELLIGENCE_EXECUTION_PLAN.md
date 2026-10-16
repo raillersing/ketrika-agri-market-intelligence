@@ -64,7 +64,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R4.9 | SHOULD | TODO | — |
 | R4.10 | SHOULD | TODO | — |
 | R4.11 | MUST | DONE | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie, 7 tests verts, couverture 92% |
-| R4.12 | MUST | TODO | — |
+| R4.12 | MUST | DONE | Gate agroclimat/météo validé, 8 critères normatifs prouvés, couverture ketrika.geo 92%, tag mi-r4-qualified, 8 tests dédiés verts, 66 tests agroclimat verts, 0 fausse probabilité, zéro faux zéro |
 | R5.1 | MUST | TODO | — |
 | R5.2 | MUST | TODO | — |
 | R5.3 | MUST | TODO | — |

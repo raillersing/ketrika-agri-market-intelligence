@@ -3,6 +3,26 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T01:50:00Z] R4.12 — DONE, Gate Agroclimat/Météo & Clôture de la Phase R4
+
+- Dépendances relues : R4.1 à R4.7 (DONE), R4.11 (DONE).
+- Mini-plan exécuté :
+  1. Implémenter la suite unifiée de test de Gate `backend/tests/unit/test_gate_r4_agroclimate.py` validant sans dérogation les 8 critères normatifs (contrats spatiaux, double cycle CHIRPS, bulletins DGM Météo, événements FEWS NET/IPC, prévisions ECMWF ensemble quantiles, anomalies basées sur baseline N>=10 ans, versioning des calendriers et corridors documentés, transparence des sources facultatives).
+  2. Valider l'exécution des 8 tests du Gate (8/8 passés en 25.05s).
+  3. Exécuter la suite complète de la phase R4 (66/66 tests passés en 29.12s, couverture globale sur `ketrika.geo` et l'API à 92%).
+  4. Valider la propreté statique Ruff clean et Mypy strict clean (0 warning, 0 error).
+  5. Rédiger le dossier de preuve normatif `docs/evidence/R4.12/README.md`.
+  6. Déclarer le statut de qualification de la phase R4 QUALIFIED et sceller avec le tag `mi-r4-qualified`.
+- Résultat : Gate R4 validé avec succès (DONE).
+- Preuve : `docs/evidence/R4.12/README.md`.
+
+### [2026-10-17T01:50:00Z] Gate de fin de Phase R4 & Scellement de l'Observatoire Agroclimatique
+- **Résumé de phase (≤ 15 lignes) :**
+  - **Livré :** Observatoire agroclimatique complet et contrats géospatiaux (SPECS §26, ADR-080 à ADR-087, migrations Alembic 0014 et 0015) ; connecteur CHIRPS v2.0 gérant le double cycle préliminaire/final et la conservation stricte des 0.0 mm réels vs nodata -9999.0 ; connecteur déterministe pour bulletins agrométéorologiques DGM Météo Madagascar sans probabilités inventées ; connecteurs FEWS NET et IPC avec phases 1 à 5 et séparation stricte période courante vs projetée ; connecteur de prévisions numériques ECMWF IFS Open Data avec ensemble de quantiles p10/p50/p90 non croisés et horizons 24h à 240h ; moteur d'anomalies agroclimatiques imposant un historique minimal N>=10 ans de baseline avec abstention explicite en deçà ; versioning des calendriers culturaux distinguant baseline traditionnelle et recommandation saisonnière 2023/2024, stades phénologiques calendaires et corridors d'approvisionnement prouvés ; API REST `/v1/climate/*` à 6 endpoints et interface web interactive multicouche avec statut formel des sources facultatives sans faux zéros.
+  - **Chiffres clés :** 66 tests unitaires et d'intégration agroclimatiques passants (100% verts), couverture de code `ketrika.geo` et API climate à 92% (seuil ≥ 80%), 0 régression sur les 39 tests web vitest et build Next.js 16/16 routes générées, 0 valeur nulle de substitution sur sources non intégrées, migrations 0014 et 0015 appliquées avec succès.
+  - **Dettes & Risques :** Aucune dette masquée ; sources environnementales facultatives (NASA FIRMS, GloFAS, Copernicus) clairement répertoriées avec statut unavailable transparent et motif d'indisponibilité documenté sans impact bloquant.
+  - **Tags :** `mi-r4-qualified`.
+
 ### [2026-10-16T22:30:00Z] R4.11 — DONE, livraison de la vue agroclimatique explicable et de l'API /v1/climate
 
 - Dépendances relues : R4.1 (DONE), R4.2 (DONE), R4.5 (DONE), R4.6 (DONE), R4.7 (DONE).
@@ -998,7 +1018,7 @@
 | R4.9 | SHOULD | TODO | — | — | — | — | — |
 | R4.10 | SHOULD | TODO | — | — | — | — | — |
 | R4.11 | MUST | DONE | 2026-10-16T22:05:00Z | 2026-10-16T22:30:00Z | ddcf4fd | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie | 7 tests dédiés verts, 39 tests web verts, Next build 16 routes, couverture 92% |
-| R4.12 | MUST | TODO | — | — | — | — | — |
+| R4.12 | MUST | DONE | 2026-10-17T01:35:00Z | 2026-10-17T01:50:00Z | pending | Gate agroclimat/météo validé, 8 critères normatifs prouvés, couverture ketrika.geo 92%, tag mi-r4-qualified | 8 tests dédiés verts, 66 tests agroclimat verts, 0 fausse probabilité, zéro faux zéro |
 | R5.1 | MUST | TODO | — | — | — | — | — |
 | R5.2 | MUST | TODO | — | — | — | — | — |
 | R5.3 | MUST | TODO | — | — | — | — | — |
