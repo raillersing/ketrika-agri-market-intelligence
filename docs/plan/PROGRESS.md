@@ -3,6 +3,22 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T22:00:00Z] R4.7 — DONE, versioning des calendriers culturaux, stades phénologiques et corridors commerciaux
+
+- Dépendances relues : R4.3 (DONE), R4.4 (DONE), R2.2 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-086 dans `docs/plan/DECISIONS.md` (versioning des calendriers, typologie traditional_baseline vs seasonal_recommendation, immutabilité et visibilité des versions passées, exclusion des entrées non vérifiées des alertes, liaison bassin-marchés avec corridors commerciaux prouvés, refus catégorique des conjectures de proximité ou de dérivation de tonnages/prix).
+  2. Créer la migration Alembic `backend/alembic/versions/0015_crop_calendar_versioning_and_market_links.py` et appliquer la migration sur PostgreSQL (`alembic upgrade head`).
+  3. Mettre à jour le modèle SQLAlchemy `CropCalendar` dans `backend/src/ketrika/core/models/db.py` (`calendar_version`, `calendar_type`, `campaign`, `variety`, `eligible_for_alerts`, `is_active`, `superseded_by`, `market_links`, index partiel unique).
+  4. Étendre `CropCalendarRecord`, `CalendarType`, `MarketLinkProofStatus`, et `MarketLink` dans `backend/src/ketrika/geo/contracts.py` avec `extra="forbid"` et validateur d'intégrité rejetant toute donnée économique extrapolée.
+  5. Implémenter le moteur phénologique et de corridors `backend/src/ketrika/geo/calendar.py` (`is_month_in_window`, `detect_phenological_stage`, `get_documented_trade_corridors_for_market`, `supersede_calendar_record`, `get_alert_eligible_calendars`, `get_calendar_history`).
+  6. Enrichir la taxonomie `taxonomy/crop_calendar.yaml` avec métadonnées de versioning, recommandation saisonnière 2023/2024 et corridors documentés des bassins clés (Alaotra, Boeny/Marovoay, Hauts Plateaux, Côte Est, Grand Sud).
+  7. Écrire la suite de tests unitaires `backend/tests/unit/test_crop_calendar_versioning.py` (8/8 tests passés en 13.90s, couverture globale sur `ketrika.geo` à 92%).
+  8. Valider Ruff clean et Mypy strict clean (8 source files sans erreur).
+  9. Rédiger le dossier de preuve `docs/evidence/R4.7/README.md`.
+- Résultat : Tâche R4.7 entièrement qualifiée et validée (DONE).
+- Preuve : `docs/evidence/R4.7/README.md`.
+
 ### [2026-10-16T21:45:00Z] R4.6 — DONE, calcul rigoureux des anomalies agroclimatiques et des agrégations zonales
 
 - Dépendances relues : R4.1 (DONE), R4.2 (DONE), R1.10 (DONE).

@@ -14,7 +14,6 @@ from sqlalchemy import (
     TEXT,
     ForeignKey,
     Index,
-    UniqueConstraint,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -241,12 +240,14 @@ class CropCalendar(Base):
 
     __tablename__ = "crop_calendar"
     __table_args__ = (
-        UniqueConstraint(
+        Index(
+            "uq_crop_calendar_active",
             "product_id",
             "location_id",
             "season_name",
             "crop_regime",
-            name="uq_crop_calendar",
+            unique=True,
+            postgresql_where=text("is_active = TRUE"),
         ),
         {"schema": "ref"},
     )
@@ -262,6 +263,10 @@ class CropCalendar(Base):
     )
     season_name: Mapped[str] = mapped_column(TEXT, nullable=False)
     crop_regime: Mapped[str] = mapped_column(TEXT, nullable=False)
+    calendar_version: Mapped[str] = mapped_column(TEXT, nullable=False, default="v1.0")
+    calendar_type: Mapped[str] = mapped_column(TEXT, nullable=False, default="traditional_baseline")
+    campaign: Mapped[str] = mapped_column(TEXT, nullable=False, default="baseline_permanent")
+    variety: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     planting_start_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
     planting_end_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
     growing_start_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
@@ -272,6 +277,13 @@ class CropCalendar(Base):
     water_sensitivity_profile: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
     source_reference: Mapped[str] = mapped_column(TEXT, nullable=False)
     verified: Mapped[bool] = mapped_column(BOOLEAN, default=True)
+    eligible_for_alerts: Mapped[bool] = mapped_column(BOOLEAN, default=True)
+    is_active: Mapped[bool] = mapped_column(BOOLEAN, default=True)
+    superseded_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ref.crop_calendar.calendar_id"), nullable=True
+    )
+    basin_code: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    market_links: Mapped[list[dict[str, Any]] | None] = mapped_column(JSONB, nullable=True)
     notes: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
     updated_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))

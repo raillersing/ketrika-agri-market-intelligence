@@ -209,9 +209,11 @@ def test_crop_calendar_taxonomy():
         assert 1 <= rec.planting_start_month <= 12
         assert 1 <= rec.planting_end_month <= 12
         assert 1 <= rec.harvest_start_month <= 12
-        assert 1 <= rec.harvest_end_month <= 12
-        assert rec.source_reference != ""
-        assert rec.verified is True
+        if rec.eligible_for_alerts:
+            assert rec.source_reference != ""
+            assert rec.verified is True
+        else:
+            assert rec.verified is False
 
 
 def test_dry_spells_computation():

@@ -2,6 +2,34 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-086 : versioning des calendriers culturaux, typologie traditionnelle vs recommandations saisonnières et liaisons de corridors commerciaux prouvés (R4.7)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.7 ; Phase R4.
+- **Contexte :** Les calendriers culturaux fournissent les fenêtres phénologiques critiques (semis, croissance/tallage, floraison, récolte, pic de récolte) et la sensibilité hydrique par bassin de production et régime (irrigué, pluvial, bas-fond) à Madagascar. Les directives normatives de R4.7, SPECS §26 et les principes d'AGENTS.md imposent :
+  1. **Disjonction stricte entre calendrier traditionnel (baseline) et recommandation saisonnière :**
+     - Le calendrier traditionnel reflète les pratiques agronomiques pérennes (`calendar_type: traditional_baseline`, `campaign: baseline_permanent`).
+     - Les avis ou recommandations spécifiques pour une campagne donnée (`calendar_type: seasonal_recommendation`, ex: campagne 2023/2024 émise par le MinAE face à un retard de pluies) sont versionnés avec leur campagne et ne modifient pas la baseline traditionnelle.
+  2. **Immutabilité, révision et visibilité des versions passées (Principe 3 d'AGENTS.md) :**
+     - Aucun remplacement destructif. Une révision crée une nouvelle entrée avec `superseded_by` pointant vers la nouvelle version, tandis que l'ancienne reste consultable avec `is_active = False`.
+  3. **Attribution spatiale sans extrapolation géographique :**
+     - Tout calendrier est formellement rattaché à un bassin/zone spécifique (`zone_code`, ex: `ZONE_ALAOTRA`, `ZONE_CENTRE`, `ZONE_BOENY`, `ZONE_EST`, `ZONE_SUD`).
+     - Interdiction absolue d'appliquer un calendrier unique ou générique à l'ensemble du territoire national.
+  4. **Liaison explicite bassin de production -> marchés de consommation avec statut de preuve :**
+     - Les corridors d'approvisionnement entre bassins producteurs et marchés récepteurs (`market_links`) exigent une référence documentée (`proof_status: documented_trade_corridor`, `official_supply_basin`, `unverified_assumption`).
+     - Rejet catégorique de l'attribution de corridors par simple proximité géographique sans preuve.
+  5. **Éligibilité aux alertes automatiques et gestion du verified/review :**
+     - Une entrée sans source officielle ou comportant une interprétation non mécanique a `verified: false` et est formellement exclue des alertes automatiques de marché (`eligible_for_alerts: false`).
+  6. **Interdiction stricte de dérivation de tonnages ou de prix :**
+     - Un calendrier cultural fournit exclusivement des fenêtres phénologiques temporelles. Il ne contient ni ne produit aucune estimation de tonnage de récolte, ni de prévision de prix, ni de pic de volume de marché inventé.
+- **Décision :**
+  1. Étendre `CropCalendarRecord` et le schéma SQL `ref.crop_calendar` (migration 0015) avec `calendar_version`, `calendar_type`, `campaign`, `variety`, `eligible_for_alerts`, `is_active`, `superseded_by`, et `market_links`.
+  2. Implémenter le module `ketrika.geo.calendar` gérant la détection des stades phénologiques, les chevauchements inter-annuels, la consultation des versions passées et la traçabilité des corridors commerciaux.
+  3. Enrichir `taxonomy/crop_calendar.yaml` avec les métadonnées de versioning et les corridors documentés des principaux bassins de Madagascar (Alaotra, Boeny/Marovoay, Hauts Plateaux, Est, Sud).
+- **Alternatives rejetées :**
+  - Écraser les calendriers lors d'une nouvelle campagne (rejeté, violation de l'immutabilité et de l'auditabilité historique).
+  - Déduire les flux commerciaux par calcul de distance euclidienne (rejeté, méconnaissance des infrastructures réelles et des flux fluviaux/routiers malgaches).
+- **Conséquences :** Calendriers culturaux auditables, versions antérieures préservées, alertes précoces fiables et modélisation réaliste des flux de denrées sans conjectures.
+
 ## ADR-085 : calcul rigoureux des anomalies agroclimatiques, seuils minimaux de référence historique et agrégations zonales fiables (R4.6)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R4.6 ; Phase R4.

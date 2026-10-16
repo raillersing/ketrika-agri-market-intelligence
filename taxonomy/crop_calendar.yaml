@@ -1,5 +1,5 @@
 # Calendrier cultural officiel Madagascar (MinAE, FAO GIEWS, FEWS NET, ODR, FOFIFA)
-# Norme : ADR-080, SPECS §26 (R4.1)
+# Norme : ADR-080, ADR-086, SPECS §26 (R4.1, R4.7)
 
 - zone_code: ZONE_CENTRE
   zone_name: "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)"
@@ -8,6 +8,10 @@
   crop_cycle: "vakiambiaty"
   season_name: "vakiambiaty"
   crop_regime: "irrigated"
+  calendar_version: "v1.0"
+  calendar_type: "traditional_baseline"
+  campaign: "baseline_permanent"
+  variety: "Variétés locales de saison (Makalioka, Sebota)"
   planting_months: [10, 11, 12]
   planting_start_month: 10
   planting_end_month: 12
@@ -24,6 +28,19 @@
   source: "FAO GIEWS Country Brief / ODR Rapports Annuels"
   source_reference: "MinAE / FAO GIEWS Madagascar 2021"
   verified: true
+  eligible_for_alerts: true
+  is_active: true
+  market_links:
+    - location_code: "MDG11"
+      location_name: "Antananarivo"
+      flow_role: "primary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "ODR Bulletin de suivi des flux Hauts Plateaux vers Analamanga"
+    - location_code: "MDG12"
+      location_name: "Antsirabe"
+      flow_role: "primary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "MinAE DRDA Vakinankaratra Bilan Vivrier"
   notes: "Grande saison rizicole irriguée des Hauts Plateaux (semis oct-nov, récolte avril-mai)."
 
 - zone_code: ZONE_CENTRE
@@ -33,6 +50,10 @@
   crop_cycle: "hosy"
   season_name: "hosy"
   crop_regime: "irrigated"
+  calendar_version: "v1.0"
+  calendar_type: "traditional_baseline"
+  campaign: "baseline_permanent"
+  variety: "Riz précoce (Mailaka)"
   planting_months: [6, 7]
   planting_start_month: 6
   planting_end_month: 7
@@ -49,6 +70,14 @@
   source: "ODR Bulletin de suivi des riz précoces"
   source_reference: "ODR Bulletin de suivi des riz précoces"
   verified: true
+  eligible_for_alerts: true
+  is_active: true
+  market_links:
+    - location_code: "MDG11"
+      location_name: "Antananarivo"
+      flow_role: "primary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "ODR Suivi des arrivages hosy sur les marchés urbains d'Antananarivo"
   notes: "Riz précoce irrigué (hosy) atténuant la période de soudure sur les Hauts Plateaux."
 
 - zone_code: ZONE_CENTRE
@@ -58,6 +87,10 @@
   crop_cycle: "principale"
   season_name: "principale"
   crop_regime: "rainfed"
+  calendar_version: "v1.0"
+  calendar_type: "traditional_baseline"
+  campaign: "baseline_permanent"
+  variety: "Maïs jaune et blanc local"
   planting_months: [10, 11, 12]
   planting_start_month: 10
   planting_end_month: 12
@@ -74,6 +107,14 @@
   source: "FEWS NET Madagascar Seasonal Calendar"
   source_reference: "FEWS NET Madagascar Seasonal Calendar"
   verified: true
+  eligible_for_alerts: true
+  is_active: true
+  market_links:
+    - location_code: "MDG12"
+      location_name: "Antsirabe"
+      flow_role: "primary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "FEWS NET Livelihood Zone MG07 Central Highlands Maize"
   notes: "Maïs pluvial de saison principale dans le Vakinankaratra et l'Itasy."
 
 - zone_code: ZONE_EST
@@ -83,6 +124,10 @@
   crop_cycle: "asara"
   season_name: "asara"
   crop_regime: "rainfed"
+  calendar_version: "v1.0"
+  calendar_type: "traditional_baseline"
+  campaign: "baseline_permanent"
+  variety: "Riz de tanety et bas-fond"
   planting_months: [11, 12, 1]
   planting_start_month: 11
   planting_end_month: 1
@@ -99,6 +144,14 @@
   source: "FAO GIEWS / MiASA DRDA Est"
   source_reference: "FAO GIEWS / MinAE DRDA Est"
   verified: true
+  eligible_for_alerts: true
+  is_active: true
+  market_links:
+    - location_code: "MDG31"
+      location_name: "Toamasina"
+      flow_role: "primary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "MinAE DRDA Atsinanana Marchés Côtiers"
   notes: "Riz pluvial de grande saison (asara) sur tanety et bas-fonds de la côte orientale."
 
 - zone_code: ZONE_EST
@@ -108,6 +161,10 @@
   crop_cycle: "hosy"
   season_name: "hosy"
   crop_regime: "lowland"
+  calendar_version: "v1.0"
+  calendar_type: "traditional_baseline"
+  campaign: "baseline_permanent"
+  variety: "Riz précoce de bas-fond"
   planting_months: [5, 6]
   planting_start_month: 5
   planting_end_month: 6
@@ -124,6 +181,14 @@
   source: "FAO GIEWS / MiASA"
   source_reference: "FAO GIEWS / MinAE"
   verified: true
+  eligible_for_alerts: true
+  is_active: true
+  market_links:
+    - location_code: "MDG33"
+      location_name: "Manakara"
+      flow_role: "primary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "DRDA Vatovavy-Fitovinany Bulletin Vivrier"
   notes: "Riz précoce de contre-saison en bas-fond sur la façade Est."
 
 - zone_code: ZONE_SUD
@@ -133,6 +198,10 @@
   crop_cycle: "saison_pluvieuse"
   season_name: "saison_pluvieuse"
   crop_regime: "rainfed"
+  calendar_version: "v1.0"
+  calendar_type: "traditional_baseline"
+  campaign: "baseline_permanent"
+  variety: "Maïs sec résistant à la sécheresse"
   planting_months: [11, 12]
   planting_start_month: 11
   planting_end_month: 12
@@ -149,6 +218,19 @@
   source: "FEWS NET Grand Sud Seasonal Livelihood Profiles"
   source_reference: "FEWS NET Grand Sud Seasonal Livelihood Profiles"
   verified: true
+  eligible_for_alerts: true
+  is_active: true
+  market_links:
+    - location_code: "MDG53"
+      location_name: "Ambovombe"
+      flow_role: "primary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "FEWS NET Grand Sud Livelihoods MG20"
+    - location_code: "MDG51"
+      location_name: "Toliara"
+      flow_role: "secondary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "PAM Madagascar Suivi des marchés Sud"
   notes: "Maïs pluvial du Grand Sud, hautement dépendant des pluies de nov-déc et vulnérable aux sécheresses."
 
 - zone_code: ZONE_SUD
@@ -158,6 +240,10 @@
   crop_cycle: "principale"
   season_name: "principale"
   crop_regime: "rainfed"
+  calendar_version: "v1.0"
+  calendar_type: "traditional_baseline"
+  campaign: "baseline_permanent"
+  variety: "Manioc doux et amer"
   planting_months: [10, 11, 12]
   planting_start_month: 10
   planting_end_month: 12
@@ -173,6 +259,14 @@
   source: "FAO / PAM Évaluation de la sécurité alimentaire Sud Madagascar"
   source_reference: "FAO / PAM Madagascar 2022"
   verified: true
+  eligible_for_alerts: true
+  is_active: true
+  market_links:
+    - location_code: "MDG53"
+      location_name: "Ambovombe"
+      flow_role: "primary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "FAO / PAM Évaluation Sécurité Alimentaire Grand Sud 2022"
   notes: "Manioc du Sud, culture vivrière pilier de soudure, récolte étalée sur la saison sèche."
 
 - zone_code: ZONE_ALAOTRA
@@ -182,6 +276,10 @@
   crop_cycle: "saison_principale"
   season_name: "saison_principale"
   crop_regime: "irrigated"
+  calendar_version: "v1.0"
+  calendar_type: "traditional_baseline"
+  campaign: "baseline_permanent"
+  variety: "Makalioka 34, Sebota 281"
   planting_months: [11, 12, 1]
   planting_start_month: 11
   planting_end_month: 1
@@ -198,6 +296,19 @@
   source: "ODR Monographie Régionale Alaotra Mangoro"
   source_reference: "ODR Monographie Régionale Alaotra Mangoro"
   verified: true
+  eligible_for_alerts: true
+  is_active: true
+  market_links:
+    - location_code: "MDG11"
+      location_name: "Antananarivo"
+      flow_role: "primary_supply"
+      proof_status: "documented_trade_corridor"
+      source_evidence: "ODR / MinAE Diagnostic Filière Riz Alaotra vers Analamanga 2021"
+    - location_code: "MDG31"
+      location_name: "Toamasina"
+      flow_role: "secondary_supply"
+      proof_status: "documented_trade_corridor"
+      source_evidence: "ODR Monographie Alaotra-Mangoro vers Grand Port Toamasina"
   notes: "Riziculture irriguée de plaine au Lac Alaotra, premier grenier à riz de Madagascar."
 
 - zone_code: ZONE_BOENY
@@ -207,6 +318,10 @@
   crop_cycle: "asara"
   season_name: "asara"
   crop_regime: "irrigated"
+  calendar_version: "v1.0"
+  calendar_type: "traditional_baseline"
+  campaign: "baseline_permanent"
+  variety: "Riz irrigué pluvial et alluvial"
   planting_months: [12, 1]
   planting_start_month: 12
   planting_end_month: 1
@@ -223,4 +338,85 @@
   source: "MinAE / DRDA Boeny / FOFIFA"
   source_reference: "MinAE / DRDA Boeny 2021"
   verified: true
+  eligible_for_alerts: true
+  is_active: true
+  market_links:
+    - location_code: "MDG41"
+      location_name: "Mahajanga"
+      flow_role: "primary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "MinAE / DRDA Boeny Plan d'approvisionnement Mahajanga"
+    - location_code: "MDG11"
+      location_name: "Antananarivo"
+      flow_role: "secondary_supply"
+      proof_status: "documented_trade_corridor"
+      source_evidence: "RN4 Flux vivriers Marovoay-Antananarivo (MinAE 2021)"
   notes: "Plaine irriguée de Marovoay (fleuve Betsiboka), grande saison pluviale et alluviale."
+
+# Recommandation saisonnière officielle pour une campagne donnée (ADR-086)
+- zone_code: ZONE_CENTRE
+  zone_name: "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)"
+  crop: RICE
+  product_code: RICE_PADDY
+  crop_cycle: "vakiambiaty_recommandation_2023_2024"
+  season_name: "vakiambiaty_2023_2024"
+  crop_regime: "irrigated"
+  calendar_version: "v1.1"
+  calendar_type: "seasonal_recommendation"
+  campaign: "2023/2024"
+  variety: "Variété semi-tardive résistante au froid"
+  planting_months: [11, 12]
+  planting_start_month: 11
+  planting_end_month: 12
+  growing_start_month: 12
+  growing_end_month: 5
+  harvest_months: [5, 6]
+  harvest_start_month: 5
+  harvest_end_month: 6
+  peak_harvest_month: 5
+  water_sensitivity_profile:
+    tillering: "high"
+    flowering: "critical"
+    grain_filling: "medium"
+  source: "Avis agroclimatique MinAE / DGM Madagascar Campagne 2023-2024"
+  source_reference: "MinAE / DGM Avis Décadaire Novembre 2023"
+  verified: true
+  eligible_for_alerts: true
+  is_active: true
+  market_links:
+    - location_code: "MDG11"
+      location_name: "Antananarivo"
+      flow_role: "primary_supply"
+      proof_status: "official_supply_basin"
+      source_evidence: "Avis MinAE 2023/2024"
+  notes: "Recommandation saisonnière officielle 2023/2024 préconisant un décalage du repiquage en novembre suite au retard des précipitations de démarrage."
+
+# Entrée non vérifiée sans source officielle (ADR-086, exclue formellement des alertes)
+- zone_code: ZONE_NORD
+  zone_name: "Région Diana (Projet exploratoire préliminaire)"
+  crop: RICE
+  product_code: RICE_PADDY
+  crop_cycle: "campagne_exploratoire"
+  season_name: "exploratoire"
+  crop_regime: "rainfed"
+  calendar_version: "v0.1-draft"
+  calendar_type: "traditional_baseline"
+  campaign: "baseline_permanent"
+  variety: null
+  planting_months: [12]
+  planting_start_month: 12
+  planting_end_month: 12
+  growing_start_month: 1
+  growing_end_month: 4
+  harvest_months: [4, 5]
+  harvest_start_month: 4
+  harvest_end_month: 5
+  peak_harvest_month: 4
+  water_sensitivity_profile: {}
+  source: null
+  source_reference: ""
+  verified: false
+  eligible_for_alerts: false
+  is_active: true
+  market_links: []
+  notes: "Entrée préliminaire non vérifiée sans source officielle : exclue formellement des alertes automatiques."

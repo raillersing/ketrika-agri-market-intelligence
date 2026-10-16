@@ -1,15 +1,36 @@
-"""Geospatial, agroclimate and crop calendar package for Ketrika (ADR-080, SPECS §26, R4.1)."""
+"""Geospatial, agroclimate and crop calendar package for Ketrika (ADR-080, ADR-085, ADR-086, SPECS §26, R4.1, R4.6, R4.7)."""
 
+from ketrika.geo.anomalies import (
+    MIN_BASELINE_YEARS,
+    ClimateAnomalyResult,
+    ClimateBaseline,
+    classify_rainfall_anomaly,
+    compute_climate_anomaly,
+    compute_climate_baseline,
+)
+from ketrika.geo.calendar import (
+    detect_phenological_stage,
+    get_active_crop_calendars,
+    get_alert_eligible_calendars,
+    get_calendar_for_basin,
+    get_calendar_history,
+    get_documented_trade_corridors_for_market,
+    is_month_in_window,
+    supersede_calendar_record,
+)
 from ketrika.geo.contracts import (
     BBOX_MADAGASCAR,
     CRS_WGS84,
     MAX_RASTER_FILE_SIZE_BYTES,
     AggregationMethod,
     AgroClimateRiskLevel,
+    CalendarType,
     ClimateAnomalyMethod,
     CropCalendarRecord,
     CropRegime,
     GeoBoundingBox,
+    MarketLink,
+    MarketLinkProofStatus,
     RasterMetadata,
     SpatialResolution,
     WeatherForecastRecord,
@@ -33,6 +54,9 @@ __all__ = [
     "WeatherVariable",
     "SpatialResolution",
     "CropRegime",
+    "CalendarType",
+    "MarketLinkProofStatus",
+    "MarketLink",
     "AgroClimateRiskLevel",
     "ClimateAnomalyMethod",
     "GeoBoundingBox",
@@ -50,13 +74,12 @@ __all__ = [
     "compute_climate_anomaly",
     "classify_rainfall_anomaly",
     "MIN_BASELINE_YEARS",
+    "is_month_in_window",
+    "detect_phenological_stage",
+    "get_active_crop_calendars",
+    "get_alert_eligible_calendars",
+    "get_calendar_for_basin",
+    "get_calendar_history",
+    "get_documented_trade_corridors_for_market",
+    "supersede_calendar_record",
 ]
-
-from ketrika.geo.anomalies import (
-    MIN_BASELINE_YEARS,
-    ClimateAnomalyResult,
-    ClimateBaseline,
-    classify_rainfall_anomaly,
-    compute_climate_anomaly,
-    compute_climate_baseline,
-)

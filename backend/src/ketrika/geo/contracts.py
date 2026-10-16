@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from ketrika.core.registry import find_repo_root
 
@@ -61,6 +61,31 @@ class CropRegime(StrEnum):
     RAINFED = "rainfed"
     IRRIGATED = "irrigated"
     LOWLAND = "lowland"
+
+
+class CalendarType(StrEnum):
+    """Typology of crop calendars (traditional baseline vs seasonal recommendation)."""
+
+    TRADITIONAL_BASELINE = "traditional_baseline"
+    SEASONAL_RECOMMENDATION = "seasonal_recommendation"
+
+
+class MarketLinkProofStatus(StrEnum):
+    """Verification proof status for trade corridors connecting production basin to markets."""
+
+    DOCUMENTED_TRADE_CORRIDOR = "documented_trade_corridor"
+    OFFICIAL_SUPPLY_BASIN = "official_supply_basin"
+    UNVERIFIED_ASSUMPTION = "unverified_assumption"
+
+
+class MarketLink(BaseModel):
+    """Documented trade flow connection between a production basin and a consumer market."""
+
+    location_code: str
+    location_name: str
+    flow_role: str = "primary_supply"  # primary_supply | secondary_supply
+    proof_status: MarketLinkProofStatus = MarketLinkProofStatus.DOCUMENTED_TRADE_CORRIDOR
+    source_evidence: str
 
 
 class AgroClimateRiskLevel(StrEnum):
@@ -153,25 +178,69 @@ class WeatherForecastRecord(BaseModel):
 
 
 class CropCalendarRecord(BaseModel):
-    """Crop calendar cycle specification for Madagascar commodities."""
+    """Crop calendar cycle specification for Madagascar commodities (ADR-086, SPECS §26)."""
+
+    model_config = ConfigDict(extra="forbid")
 
     zone_code: str
     zone_name: str
     crop: str
     product_code: str
+    crop_cycle: str | None = None
     season_name: str
     crop_regime: CropRegime
+    calendar_version: str = "v1.0"
+    calendar_type: CalendarType = CalendarType.TRADITIONAL_BASELINE
+    campaign: str = "baseline_permanent"
+    variety: str | None = None
+    planting_months: list[int] = Field(default_factory=list)
     planting_start_month: int = Field(..., ge=1, le=12)
     planting_end_month: int = Field(..., ge=1, le=12)
     growing_start_month: int = Field(..., ge=1, le=12)
     growing_end_month: int = Field(..., ge=1, le=12)
+    harvest_months: list[int] = Field(default_factory=list)
     harvest_start_month: int = Field(..., ge=1, le=12)
     harvest_end_month: int = Field(..., ge=1, le=12)
     peak_harvest_month: int | None = Field(None, ge=1, le=12)
     water_sensitivity_profile: dict[str, str] = Field(default_factory=dict)
+    source: str | None = None
     source_reference: str
     verified: bool = True
+    eligible_for_alerts: bool = True
+    is_active: bool = True
+    superseded_by: uuid.UUID | None = None
+    market_links: list[MarketLink] = Field(default_factory=list)
     notes: str | None = None
+
+    @model_validator(mode="after")
+    def validate_crop_calendar_integrity(self) -> "CropCalendarRecord":
+        # Disallow invented tonnage or price projections
+        for prohibited in ("tonnage", "yield_projection", "price_forecast", "market_price_peak"):
+            if hasattr(self, prohibited):
+                raise ValueError(f"Crop calendar cannot contain economic projection field '{prohibited}' (ADR-086)")
+
+        # Entries without authentic source or marked unverified cannot be eligible for alerts
+        if not self.verified or not self.source_reference.strip():
+            self.eligible_for_alerts = False
+
+        # Populate month lists if empty
+        if not self.planting_months:
+            if self.planting_start_month <= self.planting_end_month:
+                self.planting_months = list(range(self.planting_start_month, self.planting_end_month + 1))
+            else:
+                self.planting_months = list(range(self.planting_start_month, 13)) + list(
+                    range(1, self.planting_end_month + 1)
+                )
+
+        if not self.harvest_months:
+            if self.harvest_start_month <= self.harvest_end_month:
+                self.harvest_months = list(range(self.harvest_start_month, self.harvest_end_month + 1))
+            else:
+                self.harvest_months = list(range(self.harvest_start_month, 13)) + list(
+                    range(1, self.harvest_end_month + 1)
+                )
+
+        return self
 
 
 class RasterMetadata(BaseModel):

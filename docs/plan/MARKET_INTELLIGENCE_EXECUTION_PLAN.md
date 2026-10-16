@@ -59,7 +59,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R4.4 | MUST | DONE | ADR-083, SPECS §26, connecteurs fewsnet_mdg et ipc_mdg, séparation stricte courant vs projeté, 8 tests verts, couverture 91% |
 | R4.5 | MUST | DONE | ADR-084, SPECS §26, connecteur ecmwf_open, météo prévue archivable obs.weather_forecast, 7 tests verts, couverture 89% |
 | R4.6 | MUST | DONE | ADR-085, SPECS §26, module ketrika.geo.anomalies, seuil baseline N>=10 ans, abstention si insuffisant, anomalies pluie/température, agrégation zonale vérifiée, 15 tests verts, couverture 92% |
-| R4.7 | MUST | TODO | — |
+| R4.7 | MUST | DONE | ADR-086, SPECS §26, versioning calendriers culturaux, disjonction baseline vs recommandation, corridors commerciaux prouvés, migration 0015, 23 tests verts, couverture 92% |
 | R4.8 | SHOULD | TODO | — |
 | R4.9 | SHOULD | TODO | — |
 | R4.10 | SHOULD | TODO | — |
