@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T09:12:00Z] R2.4 — DONE, mesure de couverture de marché SQL, lacunes indépendantes et sélection du pilote
+
+- Dépendances relues : R2.3 (DONE), R1.12 (DONE), sources authentiques qualifiées (MIASA ODR, WB RTFP, MINCC).
+- Mini-plan exécuté : (1) vue SQL `013_market_coverage.sql` calculant au grain produit×zone×acteur×mois : n_obs, sources, source_families, n_families, admin_level, age_days, part imputée ; (2) module `backend/src/ketrika/gold/coverage.py` avec algorithme indépendant des lacunes/mois manquants (`calculate_missing_months`) et requêtes SQL `compute_series_gaps_independent_sql` ; (3) spécification de configuration du pilote `taxonomy/pilot.yaml` et `backend/src/ketrika/core/pilot.py` (produits : `RICE_WHITE_LOCAL` et `RICE_WHITE_IMPORTED`, zones : Analamanga MDG11, Alaotra-Mangoro MDG31, Atsinanana MDG33 et National MDG0) ; (4) justification économique de complémentarité validée (production excédentaire Alaotra <-> import maritime Atsinanana <-> consommation finale Analamanga) et documentation formelle des capacités impossibles (admin2/3 continu, acteurs informels, infra-mensuel continu) ; (5) garde d'authenticité strict (`check_pilot_authenticity`) interdisant formellement l'utilisation de seeds de substitution ou de données synthétiques pour qualifier la couverture réelle ; (6) routeur REST `/v1/market` avec endpoints `/coverage`, `/coverage/gaps` et `/pilot` ; (7) raccordement dans `refresh.py` (ORDERED_GOLD_VIEWS, GOLD_DEPENDENCIES) et `provenance_gate.py` ; (8) suite de qualification `backend/tests/unit/test_market_coverage_and_pilot.py` (16 tests dont Hypothesis property-based) ; (9) vérification complète dans Docker : 16/16 tests passés en 19.68s, couverture 94 %, 111 tests de non-régression passés en 38.13s, ruff, mypy et tsc 100 % conformes ; (10) rédaction du dossier de preuve `docs/evidence/R2.4/README.md`.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_market_coverage_and_pilot.py --cov=ketrika.gold.coverage --cov=ketrika.core.pilot --cov=ketrika.api.routers.coverage --cov-report=term-missing (exit 0, 16 passed in 19.68s, couverture 94 %) ; ruff check (exit 0) ; mypy (exit 0) ; tsc --noEmit (exit 0) ; non-régression 111 passed in 38.13s.
+- Résultats : matrice de couverture recomputable en SQL ; calcul des lacunes rigoureusement indépendant ; pilote restreint à 3 zones complémentaires + référence nationale ; capacités impossibles documentées ; garde d'authenticité actif refusant tout faux vert synthétique.
+- Qualification : Mesure de couverture et choix du pilote QUALIFIED (DONE).
+- État final : DONE (commit 399f566).
+- Preuve : docs/evidence/R2.4/README.md.
+- Reprise : Tâche MUST éligible suivante R2.5 (Intégrer INSTAT Tableau de bord économique).
+
 ### [2026-10-16T07:55:00Z] R2.3 — DONE, qualification DQ, agrégations, alignement calendaire et indépendance des familles
 
 - Dépendances relues : R2.1 (DONE), R2.2 (DONE), R0.5 (DONE), R0.6 (DONE).
@@ -499,7 +511,7 @@
 | R2.1 | MUST | DONE | 2026-10-15T20:45:00Z | 2026-10-15T21:20:00Z | e513803 | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts | BL-013 résolu pour macro/temps |
 | R2.2 | MUST | DONE | 2026-10-15T21:30:00Z | 2026-10-15T22:00:00Z | 54c24d1 | Audit taxonomie, unités, grains, densités et gardes de comparabilité Gold | 38 tests verts, couverture 90%, 0 régression |
 | R2.3 | MUST | DONE | 2026-10-16T07:35:00Z | 2026-10-16T07:55:00Z | b4aa80a | DQ, agrégations, alignement calendaire, indépendance de familles | 59 tests verts, 95% couverture, 114 non-régression |
-| R2.4 | MUST | TODO | — | — | — | — | — |
+| R2.4 | MUST | DONE | 2026-10-16T08:58:00Z | 2026-10-16T09:12:00Z | 399f566 | Matrice couverture SQL gold.market_coverage, lacunes indépendantes, pilote riz local/importé (MDG11/31/33/0), garde authenticité | 16 tests verts, 94% couverture, 111 non-régression |
 | R2.5 | MUST | TODO | — | — | — | — | — |
 | R2.6 | MUST | TODO | — | — | — | — | — |
 | R2.7 | MUST | TODO | — | — | — | — | — |

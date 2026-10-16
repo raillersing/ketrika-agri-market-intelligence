@@ -37,7 +37,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R2.1 | MUST | DONE | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts |
 | R2.2 | MUST | DONE | Taxonomie auditée, conversions avec preuves empiriques, gardes physiques massique/volumique, gardes d'agrégation Gold, file de revue des alias < 0.90, 38 tests verts, 90% couverture core |
 | R2.3 | MUST | DONE | DQ, agrégations, alignement calendaire, indépendance de familles, 59 tests verts, 95% couverture |
-| R2.4 | MUST | TODO | — |
+| R2.4 | MUST | DONE | Matrice de couverture SQL gold.market_coverage, lacunes indépendantes, pilote riz local/importé (Analamanga, Alaotra-Mangoro, Atsinanana + National), garde authenticité, 16 tests verts, couverture 94% |
 | R2.5 | MUST | TODO | — |
 | R2.6 | MUST | TODO | — |
 | R2.7 | MUST | TODO | — |
