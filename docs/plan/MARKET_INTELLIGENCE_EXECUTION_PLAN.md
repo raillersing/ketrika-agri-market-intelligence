@@ -47,7 +47,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R3.1 | MUST | DONE | ADR-073, SPECS §17, clé explicite 5 composantes, national/régional, grille sans trous compressés, 36 mois min, 12 récents, cohortes, 16 tests verts, couverture 98% |
 | R3.2 | MUST | DONE | ADR-074, SPECS §17.2, datasets historiques as-of C2/C4, traçabilité temporelle, empreinte SHA-256 canonique, partitionnement sans fuite, 8 tests verts, couverture 92% |
 | R3.3 | MUST | DONE | ADR-075, SPECS §17.3, références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, 9 tests verts, couverture ML 84% |
-| R3.4 | MUST | TODO | — |
+| R3.4 | MUST | DONE | ADR-076, SPECS §17.3, protocole d'évaluation trois phases, 6 fenêtres rolling-origin, étanchéité de sélection, holdout out-of-sample, décomposition par horizon, 6 tests verts, couverture 96% |
 | R3.5 | MUST | TODO | — |
 | R3.6 | SHOULD | TODO | — |
 | R3.7 | MUST | TODO | — |

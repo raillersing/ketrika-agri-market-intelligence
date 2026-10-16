@@ -1350,8 +1350,13 @@ L'UI **DOIT** toujours afficher les composantes à côté du score.
   - Imputation linéaire locale sur le jeu d'entraînement exclusivement (`train_y`), sans connaissance des valeurs futures.
   - Seuil d'abstention : si le taux de lacunes excède 30 % ou si un trou consécutif dépasse 4 mois, le modèle s'abstient (`status='abstained'`, `fallback_reason='excessive_missing_values'`).
 - **Conservation dimensionnelle :** Conservation stricte des unités (`unit`, ex: kg) et devises (`currency`, ex: MGA) dans les prédictions.
-- **Backtest :** rolling-origin, 6 fenêtres, horizon h = 3, pas = 1 mois. Métriques : WAPE (principale), MAE, sMAPE, couverture empirique de l'intervalle 80 %.
-- **Sélection :** par série, le modèle de plus faible WAPE. En cas d'égalité (moins de 1 point d'écart), le plus simple (`SeasonalNaive` ou `NaiveLast` prioritaire sur ETS/ARIMA).
+- **Protocole d'évaluation temporelle en trois phases étanches (ADR-076, R3.4) :**
+  - **Phase 1 — Sélection rolling-origin :** Backtest glissant sur l'historique d'apprentissage sur 6 fenêtres ($h=3$, pas mensuel). Chaque fold d'entraînement exige au moins 24 mois observés. Le modèle gagnant $M^*$ est sélectionné uniquement sur ces erreurs de validation croisée temporelle.
+  - **Phase 2 — Calibration conforme :** Étalonnage des résidus d'erreurs passés avant la cible finale, sans réutilisation de points futurs.
+  - **Phase 3 — Évaluation finale hors-échantillon (Holdout test) :** Test du modèle $M^*$ sur une période postérieure disjointe. Aucune observation de cette phase n'influence le choix du modèle ou des hyperparamètres.
+- **Règle d'intégrité des origines :** Si une série ne dispose pas d'assez de recul pour 6 fenêtres avec un train $\ge 24$ mois, le statut est marqué `experimental_insufficient_windows` et s'abstient de certification normative (pas de réduction discrète à 1-2 fenêtres).
+- **Décomposition des métriques :** WAPE, MAE, sMAPE et couverture sont calculés globalement et déclinés par horizon ($h=1, h=2, h=3$). En cas de dénominateur nul ou d'absence de cible observée, la métrique renvoie `None`/`NaN` (jamais faux 0.0).
+- **Sélection :** Par série, le modèle de plus faible WAPE sur les fenêtres de sélection. En cas d'écart $\le 0.01$ (1 point de pourcentage), critère de parcimonie : `NaiveLast` prioritaire sur `SeasonalNaive`, puis `AutoETS`, puis `AutoARIMA`.
 - **Intervalles :** conformes (`ConformalIntervals`), niveau 80 : `p10` = lo-80, `p90` = hi-80, `p50` = moyenne ou médiane.
 - **Contraintes :** aucune donnée postérieure à `data_cutoff`. `model_version` = `"{model}@{git_sha_court}"`. Résultats dans `ml.model_run` et `ml.forecast`.
 - **Anomalies :** `|z| > 3` sur le z-score robuste (§16) → candidat `PRICE_SPIKE`.

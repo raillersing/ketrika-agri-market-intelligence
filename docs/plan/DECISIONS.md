@@ -2,6 +2,27 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-076 : protocole d'évaluation temporelle en trois phases étanches, sélection rolling-origin à 6 fenêtres, calibration conforme et évaluation finale hors-échantillon (R3.4)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.4 ; Phase R3.
+- **Contexte :** La sélection d'un modèle de prévision de prix ne doit en aucun cas utiliser des observations futures ou des erreurs calculées sur le jeu de test final (directives R3.4, contrats C2 et C4). Le constat d'audit A08 a mis en évidence des protocoles à seuil réduit (4 à 6 points) sans séparation nette des phases d'apprentissage, d'étalonnage et de test. R3.4 prescrit :
+  1. **Séparation étanche en trois étapes chronologiques :**
+     - **Étape 1 (Sélection du modèle) :** Backtest rolling-origin mensuel sur l'historique d'apprentissage sur 6 fenêtres glissantes ($h=3$). Chaque fold d'entraînement doit respecter la longueur minimale ($\ge 24$ mois). Le modèle vainqueur $M^*$ est désigné exclusivement sur ces 6 origines.
+     - **Étape 2 (Calibration conforme) :** Les résidus d'étalonnage sont collectés strictement avant la cible finale, sans réutiliser d'observations ultérieures.
+     - **Étape 3 (Évaluation finale hors-échantillon) :** Le modèle $M^*$ retenu est évalué sur un jeu de test final temporellement disjoint. **Aucune information du test set ne peut influencer le choix de $M^*$ ou les hyperparamètres.**
+  2. **Intégrité des origines de sélection :** Si l'historique disponible est insuffisant pour instancier les 6 fenêtres complètes avec un historique d'entraînement éligible, l'algorithme ne doit pas réduire silencieusement le nombre de fenêtres : le protocole est qualifié d'`experimental` avec notification d'historique court, ou s'abstient pour une certification normative.
+  3. **Décomposition des métriques par horizon :** Calcul des métriques WAPE, MAE, sMAPE et couverture globale ainsi que par horizon spécifique ($h=1, h=2, h=3$).
+  4. **Gestion rigoureuse des cas limites et division par zéro :** Si la somme des valeurs réelles est nulle ou si aucune observation valide n'est disponible pour un horizon, la métrique renvoie explicitement `None` ou `float('nan')` au lieu d'un faux score flatteur `0.0`.
+- **Décision :**
+  1. Refactoriser `backend/src/ketrika/ml/backtest.py` pour introduire `RollingBacktestProtocol`, `WindowEvaluation`, `HorizonMetrics` et la fonction de découpage temporel étanche `partition_backtest_windows`.
+  2. Imposer que `select_best_model` n'opère que sur le split de sélection, et séparer la fonction d'évaluation finale `evaluate_final_holdout`.
+  3. Mettre à jour `SeriesMetrics` pour inclure `by_horizon: dict[int, HorizonMetrics]`, `sample_size: int`, `status: str`.
+  4. Implémenter les tests de non-fuite et de vérification d'étanchéité dans `backend/tests/unit/test_ml_backtest_protocol.py`.
+- **Alternatives rejetées :**
+  - Sélectionner le modèle sur l'ensemble de la série incluant la période de test (rejeté, fuite de données majeure et surapprentissage).
+  - Réduire discrètement à 1 ou 2 fenêtres sans marquer le statut expérimental (rejeté par directive R3.4).
+- **Conséquences :** Évaluation scientifique honnête, absence absolue de surapprentissage sur les cibles d'évaluation, compatibilité directe avec les intervalles conformes de R3.5.
+
 ## ADR-075 : modèles de prévision conformes, références normatives, transparence model_requested vs model_effective et traitement des lacunes calendaires (R3.3)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R3.3 ; Phase R3.

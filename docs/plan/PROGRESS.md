@@ -38,6 +38,28 @@
 - Preuve : docs/evidence/R2.11/README.md.
 - Tag jalon : `mi-r2-qualified` (posé).
 
+### [2026-10-16T16:40:00Z] R3.4 — DONE, protocole d'évaluation en trois phases, étanchéité de sélection et holdout test
+
+- Dépendances relues : R3.2 (datasets as-of), R3.3 (modèles conformes).
+- Mini-plan exécuté :
+  1. Formaliser ADR-076 (Protocole d'évaluation temporelle en trois phases étanches, sélection rolling-origin à 6 fenêtres, calibration conforme et évaluation finale hors-échantillon) dans `docs/plan/DECISIONS.md`.
+  2. Mettre à jour `docs/plan/SPECS.md` §17.3 avec le protocole séquentiel et la décomposition par horizon.
+  3. Enrichir `backend/src/ketrika/ml/backtest.py` avec `HorizonMetrics`, `WindowEvaluation`, `partition_backtest_windows`, `evaluate_final_holdout`.
+  4. Garantir l'étanchéité absolue de la phase 1 (sélection du vainqueur sans jamais consulter le test set holdout).
+  5. Imposer l'attribution du statut `experimental_insufficient_windows` en cas d'historique court (< 6 fenêtres éligibles avec train >= 24 mois), éliminant toute troncature discrète de fenêtres.
+  6. Décomposer les métriques WAPE, MAE, sMAPE et couverture empirique 80% par pas d'horizon $h \in \{1, 2, 3\}$.
+  7. Sécuriser les divisions par zéro sur cibles nulles.
+  8. Développer la suite de tests unitaires `test_ml_backtest_protocol.py` (6 tests) et valider ruff, mypy et pytest.
+  9. Exécuter l'ensemble de la suite ML (44 tests passés en 26.80s, couverture `ketrika.ml.backtest` à 96%, ML globale à 86%) et rédiger `docs/evidence/R3.4/README.md`.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes :
+  - `docker run ... uv run ruff check src/ketrika/ml/backtest.py tests/unit/test_ml_backtest_protocol.py` (exit 0, clean)
+  - `docker run ... uv run mypy src/ketrika/ml/backtest.py tests/unit/test_ml_backtest_protocol.py` (exit 0, clean)
+  - `docker run ... python -m pytest tests/unit/test_ml_backtest_protocol.py tests/unit/test_ml_as_of_dataset.py tests/unit/test_ml_series_eligibility.py tests/unit/test_ml_anomalies.py tests/unit/test_ml_forecast.py tests/unit/test_ml_models_conformance.py -m "not integration" -v --cov=ketrika.ml --cov-report=term-missing` (exit 0, 44 passed in 26.80s)
+- Résultats : 6/6 tests dédiés R3.4 passés ; 44/44 tests ML globaux passés ; couverture `ketrika.ml.backtest` à 96% ; couverture globale `ketrika.ml` à 86% (seuil >= 80%) ; zéro fuite vers le futur ; décomposition par horizon validée.
+- État : DONE.
+- Preuve : `docs/evidence/R3.4/README.md`.
+
 ### [2026-10-16T16:32:00Z] R3.3 — DONE, implémentation des références et modèles conformes
 
 - Dépendances relues : R3.1 (éligibilité séries), R3.2 (datasets as-of).
@@ -111,7 +133,7 @@
 - Qualification : Éligibilité et calendrier des séries QUALIFIED (DONE).
 - État final : DONE (commit b7aa7ba).
 - Preuve : docs/evidence/R3.1/README.md.
-- Reprise : Phase R3 — Prévisions de prix évaluées et honnêtes (prochaine tâche MUST : R3.4).
+- Reprise : Phase R3 — Prévisions de prix évaluées et honnêtes (prochaine tâche MUST : R3.5).
 
 ### [2026-10-16T12:08:00Z] R2.10 — DONE, livraison des vues marché et économie
 
@@ -735,7 +757,7 @@
 | R3.1 | MUST | DONE | 2026-10-16T15:45:00Z | 2026-10-16T16:05:00Z | b7aa7ba | ADR-073, SPECS §17, clé 5 composantes, grille sans compression, 36m min, 12m récents, cohortes | 16 tests verts, couverture 98%, 21 tests ML verts |
 | R3.2 | MUST | DONE | 2026-10-16T16:10:00Z | 2026-10-16T16:18:00Z | a5054c4 | Datasets historiques as-of (C2/C4, traçabilité temporelle, empreinte SHA-256 canonique, partitionnement sans fuite) | 8 tests verts, couverture 92%, 29 tests ML verts |
 | R3.3 | MUST | DONE | 2026-10-16T16:20:00Z | 2026-10-16T16:32:00Z | f107d9a | Références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, imputation sans fuite | 9 tests verts, couverture ML 84%, 38 tests ML verts |
-| R3.4 | MUST | TODO | — | — | — | — | — |
+| R3.4 | MUST | DONE | 2026-10-16T16:35:00Z | 2026-10-16T16:40:00Z | (commit à venir) | Protocole d'évaluation en trois phases, étanchéité de sélection, holdout test, décomposition par horizon, anti-fuite | 6 tests verts, couverture backtest 96%, 44 tests ML verts |
 | R3.5 | MUST | TODO | — | — | — | — | — |
 | R3.6 | SHOULD | TODO | — | — | — | — | — |
 | R3.7 | MUST | TODO | — | — | — | — | — |
