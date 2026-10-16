@@ -27,7 +27,7 @@
   - Suite de non-régression backend 143 passed in 49.46s (exit 0).
 - Résultats : Vues marché et économie opérationnelles ; route `/economy` déployée avec ses 5 dimensions étanches, 14 fiches métriques normatives et contexte pilote ; vue `/prices` enrichie avec complétude et lacunes calendaires ; parité mobile 390px validée.
 - Qualification : Vues marché et économie QUALIFIED (DONE).
-- État final : DONE.
+- État final : DONE (commit bb62799).
 - Preuve : docs/evidence/R2.10/README.md.
 - Reprise : Tâche MUST éligible suivante R2.11 (Gate observatoire décisionnel).
 
