@@ -2,6 +2,46 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-088 : architecture de relevé des quantités, cibles d'approvisionnement, contrat anti-PII et prévention du double comptage (R5.1)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.1 ; Phase R5.
+- **Contexte :** La phase R5 aborde les volumes physiques et les flux d'approvisionnement des marchés vivriers à Madagascar. Les quantités sont des variables d'état extensives et cumulatives, fondamentalement distinctes des prix (variables intensives). Une modélisation naïve expose le système à trois risques critiques :
+  1. Le double comptage destructeur (ex: sommer un stock instantané en magasin et les arrivages quotidiens du mois, ou additionner la production brute du bassin et les flux sur les marchés de collecte et de consommation).
+  2. La contamination par des données personnelles (PII) : noms de commerçants, transporteurs, chauffeurs, plaques d'immatriculation, numéros de téléphone des collecteurs ou enquêteurs, formellement prohibés par AGENTS.md §8.3.
+  3. L'ambiguïté des unités physiques locales (sacs de 50 kg vs sacs de 100 kg, gony de riz paddy vs riz usiné, kapoaka vs kg).
+- **Décision :**
+  1. **Définition de 3 cibles métrologiques strictement disjointes (`QuantityTarget`) :**
+     - `HARVEST_VOLUME` : volume agricole primaire produit/récolté par bassin et cycle cultural (ex: tonnes récoltées dans la plaine d'Ambatondrazaka).
+     - `INFLOW_ARRIVAL` : flux logistique entrant constaté sur un marché public donné au cours d'une période temporelle explicite (ex: arrivages journaliers en tonnes ou sacs).
+     - `STOCK_INVENTORY` : inventaire physique statique disponible à un instant précis $T$ sur le marché ou en entrepôt (stock de sécurité, stock commerçant).
+     - `OUTFLOW_SALES` : volume sortant ou écoulé sur le marché.
+  2. **Règle absolue d'interdiction de cumul croisé :**
+     - Le moteur de calcul refuse catégoriquement d'additionner des flux (`INFLOW_ARRIVAL`) avec des stocks (`STOCK_INVENTORY`) ou de la production primaire (`HARVEST_VOLUME`).
+     - L'agrégation temporelle n'est autorisée qu'au sein de flux de même nature (ex: somme des arrivages quotidiens sur une semaine) et strictement interdite pour les stocks (qui ne peuvent être agrégés que sous forme d'instantanés d'inventaire ou de moyennes temporelles).
+  3. **Mode de constatation (`QuantityMeasurementMode`) :**
+     - `MEASURED_SCALE` : pesée mécanique ou électronique sur balance/bascule étalonnée.
+     - `DECLARED_TRADER` : déclaration orale ou écrite du commerçant/transporteur sans pesée directe.
+     - `ESTIMATED_SURVEY` : estimation visuelle de l'enquêteur basée sur le dénombrement de contenants standards.
+  4. **Contrat anti-PII absolu à la validation Pydantic :**
+     - Les modèles `QuantityObservationRecord` et `SurveyForm` imposent `model_config = ConfigDict(extra="forbid")`.
+     - Rejet formel et automatique si un champ personnel (`trader_name`, `phone`, `email`, `driver_id`, `vehicle_plate`, `national_id`) est soumis.
+     - Seules les métadonnées de lieux publics (`market_code`, `location_pcode`, `market_name`, `market_type`) et de protocole institutionnel sont acceptées.
+  5. **Dictionnaire d'unités physiques et conversion standardisée (`QuantityUnit`) :**
+     - Pivot métrique universel : kilogramme (`KG`, facteur 1.0) et tonne métrique (`TONNE`, facteur 1000.0).
+     - Contenants standardisés : `BAG_50KG` (50 kg), `BAG_100KG` (100 kg).
+     - Unités traditionnelles locales : `GONY` (poids nominal vérifié par produit, défaut 50 kg pour riz paddy/blanc), `KAPOAKA` (contenance standardisée de 300 ml, densité spécifique par produit vivrier selon tables MinAE/ODR).
+  6. **Gouvernance des collectes terrain (H3, H7) :**
+     - Les formulaires d'enquête et protocoles sont rédigés dans `docs/protocols/` et les projets de conventions de collecte dans `docs/outreach/`.
+     - Aucun contact de tiers ni transmission externe (H3, H7).
+- **Alternatives rejetées :**
+  - Fusionner flux et stocks dans une colonne générique `quantity` sans indicateur de type (rejeté, source de double comptage).
+  - Tolérer des champs optionnels libres pouvant contenir des coordonnées personnelles (rejeté, violation d'AGENTS.md §8.3).
+  - Assumer une conversion fixe de 1 sac = 100 kg pour toutes les denrées (rejeté, un sac de maïs en épi ne pèse pas comme un sac de riz blanc).
+- **Conséquences :**
+  - Spécification formelle dans SPECS §27.
+  - Implémentation du module `backend/src/ketrika/supply/contracts.py`.
+  - Intégrité métrologique garantie pour les importations (R5.2), la DQ des quantités (R5.3) et l'analyse des corridors d'approvisionnement (R5.6).
+
 ## ADR-087 : architecture de la vue agroclimatique explicable, étanchéité multi-couches et transparence des sources facultatives (R4.11)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R4.11 ; Phase R4.

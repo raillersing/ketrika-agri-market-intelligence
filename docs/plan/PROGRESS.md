@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T02:00:00Z] R5.1 — DONE, définition des cibles et protocole de relevé des quantités et approvisionnements
+
+- Dépendances relues : R2.1 (DONE), R2.4 (DONE), R4.7 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-088 dans `docs/plan/DECISIONS.md` (3 cibles distinctes : production/récolte en amont, flux logistique d'arrivages sur marché, stock statique d'inventaire ; séparation stricte flux vs stock, prévention formelle du double comptage, rejet absolu de toute PII, modes mesuré/déclaré/estimé).
+  2. Mettre à jour `docs/plan/SPECS.md` (§27) avec les contrats de données de quantités et flux d'approvisionnement.
+  3. Créer le module `backend/src/ketrika/supply/contracts.py` avec les énumérations, modèles Pydantic `extra="forbid"`, validateur anti-PII et conversions d'unités standards.
+  4. Rédiger le protocole d'enquête anonymisé dans `docs/protocols/market_supply_survey_protocol.md` et le modèle d'accord institutionnel dans `docs/outreach/accord_partenariat_enquetes_approvisionnement.md`.
+  5. Implémenter la suite de tests unitaires `backend/tests/unit/test_supply_survey_contracts.py` (7/7 tests passés en 9.53s, couverture `ketrika.supply` 93%).
+  6. Valider Ruff clean et Mypy strict clean (0 warning, 0 error).
+  7. Rédiger le dossier de preuve normatif `docs/evidence/R5.1/README.md`.
+- Résultat : Tâche R5.1 entièrement qualifiée et validée (DONE).
+- Preuve : `docs/evidence/R5.1/README.md`.
+
 ### [2026-10-17T01:50:00Z] R4.12 — DONE, Gate Agroclimat/Météo & Clôture de la Phase R4
 
 - Dépendances relues : R4.1 à R4.7 (DONE), R4.11 (DONE).
@@ -1019,7 +1033,7 @@
 | R4.10 | SHOULD | TODO | — | — | — | — | — |
 | R4.11 | MUST | DONE | 2026-10-16T22:05:00Z | 2026-10-16T22:30:00Z | ddcf4fd | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie | 7 tests dédiés verts, 39 tests web verts, Next build 16 routes, couverture 92% |
 | R4.12 | MUST | DONE | 2026-10-17T01:35:00Z | 2026-10-17T01:50:00Z | 7c4fcfe | Gate agroclimat/météo validé, 8 critères normatifs prouvés, couverture ketrika.geo 92%, tag mi-r4-qualified | 8 tests dédiés verts, 66 tests agroclimat verts, 0 fausse probabilité, zéro faux zéro |
-| R5.1 | MUST | TODO | — | — | — | — | — |
+| R5.1 | MUST | DONE | 2026-10-17T02:00:00Z | 2026-10-17T02:15:00Z | pending | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole de relevé anti-PII, prévention double comptage | 7 tests dédiés verts, couverture ketrika.supply 93% |
 | R5.2 | MUST | TODO | — | — | — | — | — |
 | R5.3 | MUST | TODO | — | — | — | — | — |
 | R5.4 | MUST | TODO | — | — | — | — | — |

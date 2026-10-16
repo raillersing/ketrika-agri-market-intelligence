@@ -1662,3 +1662,37 @@ En vertu des principes 1, 3, 8 et 9 d'AGENTS.md, la météo observée et la mét
 - `/v1/climate/events` : événements et perspectives FEWS NET / IPC.
 - `/v1/climate/facultative-status` : transparence des capacités environnementales optionnelles.
 
+---
+
+## 27. Récoltes, quantités et approvisionnement des marchés (R5, ADR-088)
+
+### 27.1 Modèle de données et cibles de mesure
+Les quantités sont des grandeurs extensives soumises à une typologie stricte pour interdire les erreurs d'agrégation et le double comptage :
+- **Trois cibles distinctes (`QuantityTarget`) :**
+  1. `HARVEST_VOLUME` : volume agricole primaire récolté par bassin de production et campagne agricole.
+  2. `INFLOW_ARRIVAL` : flux logistique entrant sur un marché public donné au cours d'une fenêtre temporelle explicite (`period_start`, `period_end`).
+  3. `STOCK_INVENTORY` : stock physique disponible à un instant $T$ (`as_of_date`) dans les dépôts ou échoppes d'un marché.
+  4. `OUTFLOW_SALES` : volume sortant ou écoulé sur le marché.
+
+### 27.2 Modes de mesure (`QuantityMeasurementMode`)
+- `MEASURED_SCALE` : pesée directe sur bascule ou balance étalonnée.
+- `DECLARED_TRADER` : déclaration orale ou écrite du commerçant/grossiste/transporteur.
+- `ESTIMATED_SURVEY` : estimation de l'enquêteur par dénombrement visuel d'unités standards.
+
+### 27.3 Unités physiques et conversions (`QuantityUnit`)
+- Unité de base : `kg` (facteur 1.0) et `tonne` (facteur 1000.0).
+- Contenants étalonnés : `bag_50kg` (50 kg), `bag_100kg` (100 kg).
+- Mesures traditionnelles locales :
+  - `gony` : sac traditionnel malgache en fibres ou plastique, avec table de conversion produit (50 kg standard pour le riz, 45 kg pour le maïs grain sec).
+  - `kapoaka` : boîte standard de lait concentré (300 ml), conversion massique stricte selon densité apparente (260 g pour le riz blanc usiné, 280 g pour le riz paddy, 250 g pour le sucre).
+
+### 27.4 Règle absolue anti-PII (Données Personnelles)
+- Rejet catégorique de tout attribut personnel (`trader_name`, `phone`, `email`, `driver_id`, `vehicle_plate`, `national_id`).
+- Modèles Pydantic en `extra="forbid"`.
+- Seules les métadonnées de lieux publics (`market_code`, `location_pcode`, `market_name`, `market_type`) sont acceptées.
+
+### 27.5 Règle de prévention du double comptage
+- Interdiction formelle de sommer un stock (`STOCK_INVENTORY`) et un flux (`INFLOW_ARRIVAL`).
+- Les cumuls temporels de flux ne peuvent être effectués qu'entre observations disjointes dans le temps.
+
+
