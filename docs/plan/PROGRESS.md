@@ -3,6 +3,21 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T20:50:00Z] R4.1 — DONE, formalisation des contrats géospatiaux et agroclimatiques
+
+- Dépendances relues : R2.1 (DONE), R1.10 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-080 dans `docs/plan/DECISIONS.md` (CRS EPSG:4326, BBOX Madagascar [43.0, -25.8, 50.8, -11.8], séparation étanche météo observée vs prévue, double versioning préliminaire/finale C2/C4 sans écrasement, modèles calendaires et règles d'agrégation zonale).
+  2. Spécifier la section 26 dans `docs/plan/SPECS.md` (§26.1 à §26.4).
+  3. Créer la migration Alembic `0014_geospatial_weather_and_crop_calendar.py` et l'appliquer sur PostgreSQL (upgrade 0013 -> 0014).
+  4. Étendre les modèles SQLAlchemy dans `backend/src/ketrika/core/models/db.py` (`WeatherForecast`, `CropCalendar`, extension `WeatherObservation`).
+  5. Enrichir la taxonomie calendaire dans `taxonomy/crop_calendar.yaml` (cycles rizicoles Hauts Plateaux, Lac Alaotra, Marovoay/Boeny, Côte Est, Grand Sud).
+  6. Implémenter le module `backend/src/ketrika/geo/` (`contracts.py`, `raster.py`, `__init__.py`).
+  7. Écrire la suite de tests unitaires `backend/tests/unit/test_geo_agroclimate_contracts.py` (8/8 tests passés en 10.08s, couverture `ketrika.geo` à 94%).
+  8. Valider Ruff clean et Mypy strict clean (5 source files sans erreur).
+  9. Rédiger le dossier de preuve `docs/evidence/R4.1/README.md`.
+- Résultat : Tâche R4.1 entièrement qualifiée et validée (DONE).
+
 ### [2026-10-16T20:15:00Z] Phase R3 Done & Gate R3.9 Qualifié (Tag: mi-r3-qualified)
 
 - **Résumé de phase R3 (<= 15 lignes) :**
@@ -869,7 +884,7 @@
 | R3.7 | MUST | DONE | 2026-10-16T17:10:00Z | 2026-10-16T17:35:00Z | 11b15d0 | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation | 4 tests verts, 53 tests ML verts, couverture 92%, Next build 16 routes |
 | R3.8 | MUST | DONE | 2026-10-16T19:40:00Z | 2026-10-16T20:00:00Z | 08d24e6 | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines | 7 tests dédiés verts, 60 tests ML verts, couverture evaluation 92%, API /v1/forecasts/performance |
 | R3.9 | MUST | DONE | 2026-10-16T20:05:00Z | 2026-10-16T20:15:00Z | bcf2985 | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified | 6 tests dédiés verts, 66 tests ML verts, zéro fuite certifiée |
-| R4.1 | MUST | TODO | — | — | — | — | — |
+| R4.1 | MUST | DONE | 2026-10-16T20:30:00Z | 2026-10-16T20:50:00Z | e024b31 | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, modèle météo observée vs prévue, calendriers culturaux, migration 0014 | 8 tests dédiés verts, couverture ketrika.geo 94%, migration 0014 appliquée |
 | R4.2 | MUST | TODO | — | — | — | — | — |
 | R4.3 | MUST | TODO | — | — | — | — | — |
 | R4.4 | MUST | TODO | — | — | — | — | — |

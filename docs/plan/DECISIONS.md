@@ -2,6 +2,34 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-080 : formalisation des contrats géospatiaux, agroclimatiques et séparation stricte météo observée vs prévue (R4.1)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.1 ; Phase R4.
+- **Contexte :** L'intégration des données agroclimatiques et géospatiales exige des garanties métrologiques strictes (directives R4.1, constats d'audit A14, règles 1, 3, 8 et 9 d'AGENTS.md) :
+  1. **Séparation étanche météo observée vs météo prévue :** Une prévision météorologique (ex: pluie projetée à 7 ou 14 jours par ECMWF/GFS) ne doit jamais être stockée ni confondue avec une observation historique (`obs.weather_observation`). La confusion créerait un risque critique d'intoxication des modèles d'alerte et de prix.
+  2. **Double version fournisseur sans écrasement (C2/C4) :** Des sources majeures comme CHIRPS publient deux versions temporelles successives d'un même mois : préliminaire (`stage: preliminary`, dispo sous 5 à 10 jours) puis définitive (`stage: final`, dispo au mois $M+1$ après étalonnage avec les stations de surface). En vertu de la règle 3 (Append-only) et de l'auditabilité C4, la version définitive ne détruit pas la version préliminaire. Elle crée un nouvel enregistrement avec supersession explicite (`superseded_by`).
+  3. **Système de Coordonnées et Bounding Box Madagascar :**
+     - CRS standard : `EPSG:4326` (WGS84).
+     - Bounding box Madagascar : `[43.0, -25.8, 50.8, -11.8]` (min_lon, min_lat, max_lon, max_lat).
+     - Résolutions natives explicitées : $0{,}05^\circ$ (CHIRPS), $0{,}1^\circ$ à $0{,}5^\circ$ (NASA POWER, ERA5).
+  4. **Masque Agricole et Agrégation Zonale Explicable :**
+     - L'agrégation zonale d'un raster vers une zone administrative (`ref.location`) doit déclarer sa méthode : `point_centroid`, `zonal_mean` ou `cropland_weighted_mean`.
+     - Une moyenne pondérée par les terres cultivées exige la présence d'un masque agricole vérifié (`cropland_mask`). En son absence, l'agrégation est obligatoirement étiquetée `zonal_mean` sans usurpation de précision agronomique.
+  5. **Modèle de Calendrier Cultural :**
+     - Les calendriers culturaux sont formalisés dans `taxonomy/crop_calendar.yaml` et historisés dans la table `ref.crop_calendar`, reliant le produit, la zone géographique, le régime pluvial ou irrigué, les fenêtres de semis/croissance/récolte, et la référence officielle.
+  6. **Plafonds de Stockage Bronze & Budget Raster :**
+     - Interdiction de télécharger le globe entier si des sous-ensembles sont découpables.
+     - Découpage/clipping immédiat sur la bounding box Madagascar avant archivage Bronze (limite 50 Mo par fichier mensuel).
+- **Décision :**
+  1. Créer la migration Alembic 0014 étendant `obs.weather_observation` (colonnes `stage`, `spatial_resolution`, `coverage_ratio`, `raster_source_record_id`) et créant les tables `obs.weather_forecast` et `ref.crop_calendar`.
+  2. Créer le module `backend/src/ketrika/geo/contracts.py` et `backend/src/ketrika/geo/raster.py` formalisant les types géospatiaux, CRS, BBOX Madagascar, calculs de masques et validation d'agrégation.
+  3. Définir `taxonomy/crop_calendar.yaml` pour les bassins rizicoles et PPN prioritaires à Madagascar.
+  4. Mettre à jour `SPECS.md` (§8, §13, §17bis).
+- **Alternatives rejetées :**
+  - Stocker les prévisions météo dans la même table `obs.weather_observation` avec un flag (rejeté, risque critique de fuite et de confusion).
+  - Écraser la version préliminaire de CHIRPS par un simple `UPDATE` (rejeté, violation de la règle 3 Append-only et de la rejouabilité C4).
+- **Conséquences :** Transparence totale des séries climatiques, étanchéité de l'historique et des prévisions, auditabilité des sources rasters Bronze.
+
 ## ADR-079 : évaluation réelle et suivi des erreurs maturées, décomposition multidimensionnelle et benchmarking loyal face aux baselines (R3.8)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R3.8 ; Phase R3.

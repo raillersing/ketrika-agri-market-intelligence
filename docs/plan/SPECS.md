@@ -1558,3 +1558,87 @@ Accessibilité : contraste AA, navigation clavier sur les filtres. Responsive �
 - `deploy/bootstrap-vps.sh` : installation de Docker, utilisateur `deploy`, `ufw` (ports 22, 80 et 443), `fail2ban`, mises à jour automatiques de sécurité.
 - `deploy/backup.sh` : `pg_dump` quotidien chiffré, rétention de 7 sauvegardes quotidiennes et 4 hebdomadaires, via `restic` vers R2 ou B2. `deploy/restore.sh` est testé en T11.3 sur l'environnement local.
 - Runbook `docs/runbooks/deploy.md` : procédure pas à pas, variables à fournir, vérifications post-déploiement.
+
+---
+
+## 26. Géospatial, Agroclimat et Calendriers Culturaux (ADR-080, R4.1)
+
+### 26.1 Contrats spatiaux et référentiel géodésique
+- **Système de coordonnées de référence (CRS) :** `EPSG:4326` (WGS84). Tout produit raster ou vecteur dérivé doit être exprimé ou reprojeté en `EPSG:4326`.
+- **Bounding Box officielle Madagascar :** `[43.0, -25.8, 50.8, -11.8]` (min_lon, min_lat, max_lon, max_lat).
+- **Résolutions natives normalisées :**
+  - CHIRPS : $0{,}05^\circ$ (~5,5 km à l'équateur).
+  - ERA5-Land : $0{,}1^\circ$ (~11 km).
+  - NASA POWER : $0{,}5^\circ$ (~55 km).
+- **Budget de stockage et découpage (clipping) immédiat :**
+  - Interdiction de stocker en Bronze des rasters mondiaux non découpés s'ils dépassent 50 Mo par partition mensuelle.
+  - Les flux rasters sont découpés sur la BBOX Madagascar avant archivage Bronze ou dérivés.
+
+### 26.2 Séparation étanche météo observée vs météo prévue
+En vertu des principes 1, 3, 8 et 9 d'AGENTS.md, la météo observée et la météo prévue sont strictement isolées :
+1. **Météo observée (`obs.weather_observation`) :**
+   - Stocke uniquement des observations passées constatées.
+   - Extension R4.1 : colonnes `stage` (`preliminary` | `final`), `spatial_resolution`, `coverage_ratio`, `raster_source_record_id`.
+   - Double version fournisseur : une publication préliminaire (ex: CHIRPS préliminaire à J+5) n'est jamais écrasée. Lors de la publication définitive (à M+1), un nouvel enregistrement `stage='final'` est inséré avec `superseded_by` pointant sur la version préliminaire.
+2. **Météo prévue (`obs.weather_forecast`) :**
+   - Table dédiée pour toute projection météorologique (ex: ECMWF IFS, GFS, Météo Madagascar).
+   - Schéma :
+     ```sql
+     CREATE TABLE obs.weather_forecast (
+         forecast_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+         source_record_id UUID NOT NULL REFERENCES meta.source_record(source_record_id),
+         location_id UUID NOT NULL REFERENCES ref.location(location_id),
+         issued_at TIMESTAMPTZ NOT NULL,
+         valid_from TIMESTAMPTZ NOT NULL,
+         valid_to TIMESTAMPTZ NOT NULL,
+         horizon_hours INTEGER NOT NULL,
+         variable TEXT NOT NULL,
+         model_name TEXT NOT NULL,
+         predicted_value NUMERIC(10, 3),
+         predicted_p10 NUMERIC(10, 3),
+         predicted_p90 NUMERIC(10, 3),
+         method TEXT NOT NULL,
+         spatial_resolution TEXT,
+         unit TEXT NOT NULL,
+         ingested_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+         evidence JSONB,
+         raw_payload JSONB,
+         superseded_by UUID REFERENCES obs.weather_forecast(forecast_id) DEFERRABLE INITIALLY DEFERRED
+     );
+     ```
+   - Aucune observation de prix ou prévision de modèle de marché ne peut consommer de météo prévue sans déclaration explicite de scénario exogène.
+
+### 26.3 Calendriers culturaux (`ref.crop_calendar`)
+- Modélise les cycles agricoles des PPN prioritaires par bassin et régime cultural :
+  ```sql
+  CREATE TABLE ref.crop_calendar (
+      calendar_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      product_id UUID NOT NULL REFERENCES ref.product(product_id),
+      location_id UUID NOT NULL REFERENCES ref.location(location_id),
+      season_name TEXT NOT NULL,
+      crop_regime TEXT NOT NULL,
+      planting_start_month SMALLINT NOT NULL,
+      planting_end_month SMALLINT NOT NULL,
+      growing_start_month SMALLINT NOT NULL,
+      growing_end_month SMALLINT NOT NULL,
+      harvest_start_month SMALLINT NOT NULL,
+      harvest_end_month SMALLINT NOT NULL,
+      peak_harvest_month SMALLINT,
+      water_sensitivity_profile JSONB,
+      source_reference TEXT NOT NULL,
+      verified BOOLEAN NOT NULL DEFAULT TRUE,
+      notes TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      CONSTRAINT uq_crop_calendar UNIQUE (product_id, location_id, season_name, crop_regime)
+  );
+  ```
+- Taxonomie de base : `taxonomy/crop_calendar.yaml`.
+
+### 26.4 Agrégation zonale et masques agricoles
+- Méthodes autorisées :
+  - `point_centroid` : extraction de la cellule raster au centroïde de la zone.
+  - `zonal_mean` : moyenne spatiale non pondérée des cellules intersectant la zone polygonale.
+  - `cropland_weighted_mean` : moyenne pondérée par la densité de terres cultivées issue d'un masque agricole (`cropland_mask`).
+- Règle de véracité agronomique : L'usage de `cropland_weighted_mean` exige la présence vérifiée d'un raster de masque agricole. À défaut, l'agrégation est étiquetée `zonal_mean`.
+

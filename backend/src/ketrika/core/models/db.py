@@ -14,6 +14,7 @@ from sqlalchemy import (
     TEXT,
     ForeignKey,
     Index,
+    UniqueConstraint,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -235,6 +236,50 @@ class LocationAlias(Base):
     location: Mapped[Location] = relationship(back_populates="aliases")
 
 
+class CropCalendar(Base):
+    """Crop calendar defining planting, growing and harvest windows by product and location."""
+
+    __tablename__ = "crop_calendar"
+    __table_args__ = (
+        UniqueConstraint(
+            "product_id",
+            "location_id",
+            "season_name",
+            "crop_regime",
+            name="uq_crop_calendar",
+        ),
+        {"schema": "ref"},
+    )
+
+    calendar_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    product_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ref.product.product_id"), nullable=False
+    )
+    location_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ref.location.location_id"), nullable=False
+    )
+    season_name: Mapped[str] = mapped_column(TEXT, nullable=False)
+    crop_regime: Mapped[str] = mapped_column(TEXT, nullable=False)
+    planting_start_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    planting_end_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    growing_start_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    growing_end_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    harvest_start_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    harvest_end_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    peak_harvest_month: Mapped[int | None] = mapped_column(SMALLINT, nullable=True)
+    water_sensitivity_profile: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    source_reference: Mapped[str] = mapped_column(TEXT, nullable=False)
+    verified: Mapped[bool] = mapped_column(BOOLEAN, default=True)
+    notes: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
+
+    product: Mapped[Product] = relationship()
+    location: Mapped[Location] = relationship()
+
+
 # ===================== OBS SCHEMA (Silver) =====================
 
 
@@ -453,11 +498,62 @@ class WeatherObservation(Base):
     value_raw: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     evidence: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
     extraction_method: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    stage: Mapped[str] = mapped_column(TEXT, nullable=False, server_default="final")
+    spatial_resolution: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    coverage_ratio: Mapped[float | None] = mapped_column(NUMERIC(5, 4), nullable=True)
+    raster_source_record_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("meta.source_record.source_record_id"), nullable=True
+    )
     superseded_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("obs.weather_observation.observation_id", deferrable=True, initially="DEFERRED"),
         nullable=True,
     )
+
+    location: Mapped[Location] = relationship()
+    source_record: Mapped[SourceRecord] = relationship(foreign_keys=[source_record_id])
+
+
+class WeatherForecast(Base):
+    """Numerical agro-meteorological weather forecast."""
+
+    __tablename__ = "weather_forecast"
+    __table_args__ = {"schema": "obs"}
+
+    forecast_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    source_record_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("meta.source_record.source_record_id"),
+        nullable=False,
+    )
+    location_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ref.location.location_id"), nullable=False
+    )
+    issued_at: Mapped[datetime] = mapped_column(nullable=False)
+    valid_from: Mapped[datetime] = mapped_column(nullable=False)
+    valid_to: Mapped[datetime] = mapped_column(nullable=False)
+    horizon_hours: Mapped[int] = mapped_column(INTEGER, nullable=False)
+    variable: Mapped[str] = mapped_column(TEXT, nullable=False)
+    model_name: Mapped[str] = mapped_column(TEXT, nullable=False)
+    predicted_value: Mapped[float | None] = mapped_column(NUMERIC(10, 3), nullable=True)
+    predicted_p10: Mapped[float | None] = mapped_column(NUMERIC(10, 3), nullable=True)
+    predicted_p90: Mapped[float | None] = mapped_column(NUMERIC(10, 3), nullable=True)
+    method: Mapped[str] = mapped_column(TEXT, nullable=False)
+    spatial_resolution: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    unit: Mapped[str] = mapped_column(TEXT, nullable=False)
+    ingested_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
+    evidence: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    raw_payload: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    superseded_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("obs.weather_forecast.forecast_id", deferrable=True, initially="DEFERRED"),
+        nullable=True,
+    )
+
+    location: Mapped[Location] = relationship()
+    source_record: Mapped[SourceRecord] = relationship(foreign_keys=[source_record_id])
 
 
 class CpiObservation(Base):
