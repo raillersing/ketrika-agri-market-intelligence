@@ -63,7 +63,7 @@
   - Frontend Typage/Lint : `tsc --noEmit` code 0, `next lint` code 0 (0 error, 0 warning).
 - Résultats : 16 critères d'acceptation validés (refus 35 points, refus 36 sans récence, refus district admin_level=2, grille régulière avec trous explicites, clé à 5 composantes, séparation cohortes, audit et zéro fabrication).
 - Qualification : Éligibilité et calendrier des séries QUALIFIED (DONE).
-- État final : DONE.
+- État final : DONE (commit b7aa7ba).
 - Preuve : docs/evidence/R3.1/README.md.
 - Reprise : Phase R3 — Prévisions de prix évaluées et honnêtes (prochaine tâche MUST : R3.2).
 
@@ -686,7 +686,7 @@
 | R2.9 | MUST | DONE | 2026-10-16T11:45:00Z | 2026-10-16T12:05:00Z | 1837189 | Exposition API et limites, pagination bornée [1, 1000], export CSV /v1/macro /v1/market/coverage /v1/economic/indicators, synchro OpenAPI/TS | 25 tests verts, 94% couverture, 143 non-régression |
 | R2.10 | MUST | DONE | 2026-10-16T12:15:00Z | 2026-10-16T12:35:00Z | bb62799 | Vues marché et économie livrées, route /economy, 5 dimensions, 14 fiches métriques, complétude et lacunes calendaires /prices, 39 tests vitest verts, responsive 390px validé | 39 tests vitest verts, Next build 16 routes compilées |
 | R2.11 | MUST | DONE | 2026-10-16T12:40:00Z | 2026-10-16T13:00:00Z | 79338e1 | Gate observatoire décisionnel validé, 5 questions décisionnelles calculables du pilote rizicole prouvées, zéro score composite, tag mi-r2-qualified | 6 tests verts, 149 backend passés, 96% couverture |
-| R3.1 | MUST | DONE | 2026-10-16T15:45:00Z | 2026-10-16T16:05:00Z | HEAD | ADR-073, SPECS §17, clé 5 composantes, grille sans compression, 36m min, 12m récents, cohortes | 16 tests verts, couverture 98%, 21 tests ML verts |
+| R3.1 | MUST | DONE | 2026-10-16T15:45:00Z | 2026-10-16T16:05:00Z | b7aa7ba | ADR-073, SPECS §17, clé 5 composantes, grille sans compression, 36m min, 12m récents, cohortes | 16 tests verts, couverture 98%, 21 tests ML verts |
 | R3.2 | MUST | TODO | — | — | — | — | — |
 | R3.3 | MUST | TODO | — | — | — | — | — |
 | R3.4 | MUST | TODO | — | — | — | — | — |
