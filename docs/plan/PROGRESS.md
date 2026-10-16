@@ -3,6 +3,13 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T09:04:49Z] R0.8 — parcours natif durable raccordé ; réception figée démarrée
+
+- Commitf230a50 sur work/r08-native-qualification-20261016, après0aae91c ; execute_durable_silver admet exactement WB/2.0.0 comme son consommateur, sans découverte/fetch/parseur CSV. Version/source inconnues refusées. Runbook et SPECS mis à jour ; sources Antigravity observées en cours R2 non touchées.
+- SQL/S362177 FINAL0 :1 test/20,88 s,15 valeurs traitées,second appel lit le reçu et archive réouverte ; enveloppes synthétiques explicites autour des valeurs vérifiées, pas une acquisition authentique. Diagnostics8328 manque de partitions FK,64063 unicité source/SHA conservés ; aucune donnée effacée. CSV32320 FINAL0 :1/42,91 s,son unique SourceRecord rejoué/36 prix/refus Gold conservés. Sélection de scénario selon ADR-015, pas preuve du clone complet.
+- Unités72427 FINAL0 :19/5,89 s ; lint/format302 fichiers et mypy trois modules92874/28079 verts. Diagnostic66609 plugin pytest doublement chargé avant collecte, corrigé par désactivation autoload, sans modification applicative.
+- Check Windows3355 EN COURS sur f230a50 figé : reprendre ce même processus ; aucun changement applicatif/test/environnement ni QA mutante concurrente. Pas de résultat complet anticipé. R0.8 IN_PROGRESS ; clone natif complet/révisions authentiques/réception et critères restants, aucun tag/DONE.
+
 ### [2026-10-15T21:52:34Z] R0.8 — rejeu des référentiels implémenté sur branche native
 
 - Worktree r08-native-qualification-20261016, commit0aae91c : ADR-073/SPECS avant résolution des identités Silver réussies et réouverture de leur archive unique, vérifiée contre les références SQL verrouillées avant wipe. Aucun PUT Bronze au rejeu, copie bornée aux archives nécessaires ; aucun changement Antigravity.
