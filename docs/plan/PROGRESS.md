@@ -16,7 +16,7 @@
   7. Écrire la suite de tests unitaires `backend/tests/unit/test_crop_calendar_versioning.py` (8/8 tests passés en 13.90s, couverture globale sur `ketrika.geo` à 92%).
   8. Valider Ruff clean et Mypy strict clean (8 source files sans erreur).
   9. Rédiger le dossier de preuve `docs/evidence/R4.7/README.md`.
-- Résultat : Tâche R4.7 entièrement qualifiée et validée (DONE).
+- Résultat : Tâche R4.7 entièrement qualifiée et validée (DONE, commit 4aec8c4).
 - Preuve : `docs/evidence/R4.7/README.md`.
 
 ### [2026-10-16T21:45:00Z] R4.6 — DONE, calcul rigoureux des anomalies agroclimatiques et des agrégations zonales
