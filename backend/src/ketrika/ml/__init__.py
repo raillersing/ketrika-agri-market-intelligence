@@ -20,8 +20,11 @@ from ketrika.ml.models import (
     AutoETSModel,
     DeterministicBaselineModel,
     ForecastPrediction,
+    ModelForecastResult,
+    NaiveLastModel,
     SeasonalNaiveModel,
     get_default_candidate_models,
+    impute_training_gaps,
 )
 from ketrika.ml.series import (
     EligibleSeries,
@@ -46,6 +49,8 @@ __all__ = [
     "EligibleSeries",
     "ExcludedSeries",
     "ForecastPrediction",
+    "ModelForecastResult",
+    "NaiveLastModel",
     "PriceAnomaly",
     "PricePoint",
     "SeasonalNaiveModel",
@@ -59,6 +64,7 @@ __all__ = [
     "evaluate_series_eligibility_records",
     "extract_eligible_series",
     "get_default_candidate_models",
+    "impute_training_gaps",
     "parse_series_key",
     "record_anomaly_model_run",
     "resolve_point_in_time_records",

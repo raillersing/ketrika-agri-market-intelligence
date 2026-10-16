@@ -38,6 +38,29 @@
 - Preuve : docs/evidence/R2.11/README.md.
 - Tag jalon : `mi-r2-qualified` (posé).
 
+### [2026-10-16T16:32:00Z] R3.3 — DONE, implémentation des références et modèles conformes
+
+- Dépendances relues : R3.1 (éligibilité séries), R3.2 (datasets as-of).
+- Mini-plan exécuté :
+  1. Formaliser ADR-075 (Modèles de prévision conformes, références normatives, transparence model_requested vs model_effective, traitement des lacunes calendaires) dans `docs/plan/DECISIONS.md`.
+  2. Mettre à jour `docs/plan/SPECS.md` §17.3 avec les contrats normatifs des modèles et des métadonnées de repli.
+  3. Concevoir `ModelForecastResult` dans `backend/src/ketrika/ml/models.py` avec traçabilité `model_requested`, `model_effective`, `status`, `fallback_reason`, `unit`, `currency`.
+  4. Implémenter la référence de diagnostic `NaiveLastModel` ($y_{t+h} = y_t$) et hand-calculation exacte.
+  5. Implémenter `SeasonalNaiveModel` strictement annuel avec `season_length=12` (rejet absolu de sous-saisons de 2 à 4 mois, repli transparent si historique < 12).
+  6. Implémenter `AutoETSModel` et `AutoARIMAModel` avec `season_length=12` et seuil d'historique $\ge 24$ mois avec repli explicite (aucun ARIMA affiché si un modèle naïf a tourné).
+  7. Implémenter l'imputation locale étanche des lacunes du train `impute_training_gaps` (interpolation linéaire locale, rejet des gaps > 4 mois et des ratios de lacunes > 30%).
+  8. Mettre à jour `MODEL_SIMPLICITY` et `compute_metrics` dans `ketrika.ml.backtest` pour garantir la primauté de la parcimonie et la robustesse aux lacunes calendaires.
+  9. Développer la suite de tests unitaires `test_ml_models_conformance.py` (9 tests) et valider ruff, mypy et pytest.
+  10. Exécuter l'ensemble de la suite ML (38 tests passés en 26.57s) et rédiger `docs/evidence/R3.3/README.md`.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes :
+  - `docker run ... uv run ruff check src/ketrika/ml/ tests/unit/test_ml_models_conformance.py` (exit 0, clean)
+  - `docker run ... uv run mypy src/ketrika/ml/ tests/unit/test_ml_models_conformance.py` (exit 0, clean)
+  - `docker run ... python -m pytest tests/unit/test_ml_models_conformance.py tests/unit/test_ml_as_of_dataset.py tests/unit/test_ml_series_eligibility.py tests/unit/test_ml_forecast.py tests/unit/test_ml_anomalies.py -m "not integration" -v --cov=ketrika.ml --cov-report=term-missing` (exit 0, 38 passed in 26.57s)
+- Résultats : 9/9 tests dédiés R3.3 passés ; 38/38 tests ML globaux passés ; couverture globale `ketrika.ml` à 84% (seuil >= 80%) ; couverture `ketrika.ml.backtest` à 92% ; zéro masquage de modèle de repli sous un faux nom ARIMA ; imputation d'entraînement sans fuite.
+- État : DONE.
+- Preuve : `docs/evidence/R3.3/README.md`.
+
 ### [2026-10-16T16:18:00Z] R3.2 — DONE, construction des datasets historiques as-of
 
 - Dépendances relues : R3.1 (éligibilité séries), R2.1 (obs.macro_observation), R0.8 (rejeu Silver/Gold sans fuite).
@@ -88,7 +111,7 @@
 - Qualification : Éligibilité et calendrier des séries QUALIFIED (DONE).
 - État final : DONE (commit b7aa7ba).
 - Preuve : docs/evidence/R3.1/README.md.
-- Reprise : Phase R3 — Prévisions de prix évaluées et honnêtes (prochaine tâche MUST : R3.3).
+- Reprise : Phase R3 — Prévisions de prix évaluées et honnêtes (prochaine tâche MUST : R3.4).
 
 ### [2026-10-16T12:08:00Z] R2.10 — DONE, livraison des vues marché et économie
 
@@ -711,7 +734,7 @@
 | R2.11 | MUST | DONE | 2026-10-16T12:40:00Z | 2026-10-16T13:00:00Z | 79338e1 | Gate observatoire décisionnel validé, 5 questions décisionnelles calculables du pilote rizicole prouvées, zéro score composite, tag mi-r2-qualified | 6 tests verts, 149 backend passés, 96% couverture |
 | R3.1 | MUST | DONE | 2026-10-16T15:45:00Z | 2026-10-16T16:05:00Z | b7aa7ba | ADR-073, SPECS §17, clé 5 composantes, grille sans compression, 36m min, 12m récents, cohortes | 16 tests verts, couverture 98%, 21 tests ML verts |
 | R3.2 | MUST | DONE | 2026-10-16T16:10:00Z | 2026-10-16T16:18:00Z | a5054c4 | Datasets historiques as-of (C2/C4, traçabilité temporelle, empreinte SHA-256 canonique, partitionnement sans fuite) | 8 tests verts, couverture 92%, 29 tests ML verts |
-| R3.3 | MUST | TODO | — | — | — | — | — |
+| R3.3 | MUST | DONE | 2026-10-16T16:20:00Z | 2026-10-16T16:32:00Z | (commit à venir) | Références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, imputation sans fuite | 9 tests verts, couverture ML 84%, 38 tests ML verts |
 | R3.4 | MUST | TODO | — | — | — | — | — |
 | R3.5 | MUST | TODO | — | — | — | — | — |
 | R3.6 | SHOULD | TODO | — | — | — | — | — |

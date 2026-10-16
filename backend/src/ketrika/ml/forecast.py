@@ -23,6 +23,7 @@ from ketrika.ml.models import (
     AutoETSModel,
     DeterministicBaselineModel,
     ForecastPrediction,
+    NaiveLastModel,
     SeasonalNaiveModel,
 )
 from ketrika.ml.series import extract_eligible_series
@@ -57,7 +58,9 @@ def get_future_month_starts(base_date: date, count: int) -> list[date]:
 
 def _instantiate_model(name: str) -> Any:
     """Instantiate model by its name."""
-    if name == "AutoETS":
+    if name == "NaiveLast":
+        return NaiveLastModel()
+    elif name == "AutoETS":
         return AutoETSModel()
     elif name == "AutoARIMA":
         return AutoARIMAModel()

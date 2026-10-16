@@ -17,9 +17,10 @@ from ketrika.ml.models import (
 )
 
 MODEL_SIMPLICITY: dict[str, int] = {
-    "SeasonalNaive": 0,
-    "AutoETS": 1,
-    "AutoARIMA": 2,
+    "NaiveLast": 0,
+    "SeasonalNaive": 1,
+    "AutoETS": 2,
+    "AutoARIMA": 3,
     "DeterministicBaseline": -1,
 }
 
@@ -66,6 +67,12 @@ def compute_metrics(
     y_pred = np.array(predictions, dtype=float)
     lo = np.array(p10_bounds, dtype=float)
     hi = np.array(p90_bounds, dtype=float)
+
+    valid_mask = ~np.isnan(y_true) & ~np.isnan(y_pred)
+    y_true = y_true[valid_mask]
+    y_pred = y_pred[valid_mask]
+    lo = lo[valid_mask]
+    hi = hi[valid_mask]
 
     if len(y_true) == 0:
         return SeriesMetrics(wape=0.0, mae=0.0, smape=0.0, coverage_80=1.0, n_windows=0)

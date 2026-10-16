@@ -1333,11 +1333,25 @@ L'UI **DOIT** toujours afficher les composantes à côté du score.
   - Empreinte reproductible : Sérialisation JSON UTF-8 canonique triée sur les clés naturelles et identifiants, sans blancs superflus. Deux constructions au même `as_of` produisent une empreinte identique à 100 %.
 - **Partitionnement étanche sans fuite :** Découpage temporel net en sous-ensembles `train`, `calibration`, `test` selon des origines calendaires fixes et disjointes. Aucune donnée de la fenêtre de test n'est accessible lors de l'entraînement ou du calibrage.
 
-### 17.3 Modèles, backtest et intervalles (SPECS MVP)
+### 17.3 Modèles, backtest et références normatives (ADR-075, R3.3)
 
-- **Modèles candidats :** `SeasonalNaive(season_length=12)`, `AutoETS(season_length=12)`, `AutoARIMA(season_length=12)`. En option (SHOULD), `mlforecast` + LightGBM global avec lags {1, 2, 3, 12} et variables exogènes connues (mois).
+- **Références normatives :**
+  - `NaiveLast` : référence de diagnostic minimale ($y_{t+h} = y_t$).
+  - `SeasonalNaive(season_length=12)` : référence saisonnière strictement annuelle ($y_{t+h} = y_{t+h-12}$).
+- **Modèles candidats normatifs :**
+  - `AutoETS(season_length=12)` : lissage exponentiel saisonnier.
+  - `AutoARIMA(season_length=12)` : modèle autorégressif intégré à moyenne mobile avec composante saisonnière annuelle.
+  - Interdiction absolue d'abaisser arbitrairement `season_length` (à 2, 3 ou 4 mois) pour masquer une série courte.
+- **Transparence et étanchéité des métadonnées (Anti-tricherie A09) :**
+  - Chaque prévision trace `model_requested`, `model_effective`, `status` (`fitted`, `fallback`, `abstained`) et `fallback_reason`.
+  - Aucun modèle de repli ou baseline n'est masqué sous un faux nom : si `AutoARIMA` échoue, le résultat indique explicitement `model_effective='DeterministicBaseline'` ou `model_effective='NaiveLast'` avec la raison de l'échec.
+  - La référence naïve peut légitimement remporter la sélection si ses performances WAPE sont supérieures ou égales (à 0,01 près) aux modèles complexes.
+- **Traitement documenté des valeurs manquantes dans l'entraînement :**
+  - Imputation linéaire locale sur le jeu d'entraînement exclusivement (`train_y`), sans connaissance des valeurs futures.
+  - Seuil d'abstention : si le taux de lacunes excède 30 % ou si un trou consécutif dépasse 4 mois, le modèle s'abstient (`status='abstained'`, `fallback_reason='excessive_missing_values'`).
+- **Conservation dimensionnelle :** Conservation stricte des unités (`unit`, ex: kg) et devises (`currency`, ex: MGA) dans les prédictions.
 - **Backtest :** rolling-origin, 6 fenêtres, horizon h = 3, pas = 1 mois. Métriques : WAPE (principale), MAE, sMAPE, couverture empirique de l'intervalle 80 %.
-- **Sélection :** par série, le modèle de plus faible WAPE. En cas d'égalité (moins de 1 point d'écart), le plus simple.
+- **Sélection :** par série, le modèle de plus faible WAPE. En cas d'égalité (moins de 1 point d'écart), le plus simple (`SeasonalNaive` ou `NaiveLast` prioritaire sur ETS/ARIMA).
 - **Intervalles :** conformes (`ConformalIntervals`), niveau 80 : `p10` = lo-80, `p90` = hi-80, `p50` = moyenne ou médiane.
 - **Contraintes :** aucune donnée postérieure à `data_cutoff`. `model_version` = `"{model}@{git_sha_court}"`. Résultats dans `ml.model_run` et `ml.forecast`.
 - **Anomalies :** `|z| > 3` sur le z-score robuste (§16) → candidat `PRICE_SPIKE`.

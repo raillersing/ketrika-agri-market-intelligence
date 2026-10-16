@@ -2,6 +2,26 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-075 : modèles de prévision conformes, références normatives, transparence model_requested vs model_effective et traitement des lacunes calendaires (R3.3)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.3 ; Phase R3.
+- **Contexte :** La phase R3 impose des prévisions de prix évaluées et honnêtes. Le constat d'audit A09 a révélé que les versions initiales réduisaient silencieusement la saisonnalité (saisons de 2 à 4 mois) et masquaient les échecs des modèles en affichant un ARIMA alors qu'un repli naïf ou une moyenne traînante avait tourné. R3.3 exige :
+  1. **Références normatives authentiques :** Le dernier prix observé (`NaiveLast`, $y_{t+h} = y_t$) constitue la référence de diagnostic minimale. Le modèle saisonnier naïf (`SeasonalNaive`, $y_{t+h} = y_{t+h-12}$) exige strictement une saisonnalité annuelle (`season_length = 12`).
+  2. **Candidats statistiques normatifs :** `AutoETS` et `AutoARIMA` configurés avec `season_length = 12`. Interdiction formelle de substituer une saison artificielle de 2, 3 ou 4 mois pour contourner le manque d'historique. En cas d'historique insuffisant pour estimer la saisonnalité (< 24 mois), le modèle doit s'abstenir ou déclarer un repli explicite.
+  3. **Transparence absolue des métadonnées (Anti-tricherie A09) :** Chaque prédiction trace obligatoirement `model_requested`, `model_effective`, `status` (`fitted`, `fallback`, `abstained`), et `fallback_reason`. Aucun résultat ne peut porter l'étiquette `AutoARIMA` si un modèle naïf ou une moyenne a été exécuté.
+  4. **Traitement documenté et étanche des lacunes calendaires :** Les trous de la grille mensuelle (`np.nan`) sont traités par interpolation linéaire locale appliquée strictement sur le jeu d'entraînement (`train_y`), sans aucune fuite d'information future. Si le taux de valeurs manquantes dépasse 30% ou si une lacune consécutive excède 4 mois, le modèle s'abstient (`excessive_missing_values`).
+  5. **Conservation dimensionnelle :** Chaque prédiction conserve explicitement son unité (`unit`) et sa devise (`currency`).
+  6. **Légitimité des références naïves :** Si un modèle naïf surpasse ou égale (à 1 point de WAPE près) un modèle complexe, il est légitimement sélectionné et affiché comme vainqueur.
+- **Décision :**
+  1. Refondre `backend/src/ketrika/ml/models.py` avec la classe de base `ForecastModel` retournant un `ModelForecastResult` contenant `model_requested`, `model_effective`, `status`, `fallback_reason`, `predictions` (`mean`, `p10`, `p90`), `parameters`, `unit`, `currency`.
+  2. Implémenter les classes conformes : `NaiveLastModel`, `SeasonalNaiveModel` (strictement `season_length=12`), `AutoETSModel` (strictement `season_length=12`), `AutoARIMAModel` (strictement `season_length=12`), et `DeterministicBaselineModel`.
+  3. Implémenter la fonction d'imputation locale du train `impute_training_gaps(y: np.ndarray, max_gap: int = 4, max_missing_ratio: float = 0.3) -> tuple[np.ndarray, str | None]`.
+  4. Mettre à jour `ketrika.ml.backtest` pour comparer loyalement les candidats et conserver les métadonnées de repli.
+- **Alternatives rejetées :**
+  - Réduire `season_length` à 3 mois lorsque la série a moins de 12 points (rejeté par A09 et R3.1).
+  - Renvoyer silencieusement un modèle naïf en conservant le libellé "AutoARIMA" (rejeté formellement par A09).
+- **Conséquences :** Honnêteté méthodologique totale, traçabilité irréprochable des modèles réellement exécutés, élimination définitive de toute dissimulation d'échec de fit.
+
 ## ADR-074 : constructeur de datasets d'entraînement as-of, traçabilité temporelle C2/C4 et partitionnement sans fuite (R3.2)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R3.2 ; Phase R3.
