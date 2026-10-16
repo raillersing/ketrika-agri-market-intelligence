@@ -899,7 +899,7 @@
 | R3.8 | MUST | DONE | 2026-10-16T19:40:00Z | 2026-10-16T20:00:00Z | 08d24e6 | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines | 7 tests dédiés verts, 60 tests ML verts, couverture evaluation 92%, API /v1/forecasts/performance |
 | R3.9 | MUST | DONE | 2026-10-16T20:05:00Z | 2026-10-16T20:15:00Z | bcf2985 | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified | 6 tests dédiés verts, 66 tests ML verts, zéro fuite certifiée |
 | R4.1 | MUST | DONE | 2026-10-16T20:30:00Z | 2026-10-16T20:50:00Z | f11de9b | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, modèle météo observée vs prévue, calendriers culturaux, migration 0014 | 8 tests dédiés verts, couverture ketrika.geo 94%, migration 0014 appliquée |
-| R4.2 | MUST | DONE | 2026-10-16T20:55:00Z | 2026-10-16T21:05:00Z | a85c3b1 | ADR-081, SPECS §26, connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage raster Madagascar | 7 tests dédiés verts, couverture chirps 85%, supersession C2/C4 validée |
+| R4.2 | MUST | DONE | 2026-10-16T20:55:00Z | 2026-10-16T21:05:00Z | fbf16c6 | ADR-081, SPECS §26, connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage raster Madagascar | 7 tests dédiés verts, couverture chirps 85%, supersession C2/C4 validée |
 | R4.3 | MUST | TODO | — | — | — | — | — |
 | R4.4 | MUST | TODO | — | — | — | — | — |
 | R4.5 | MUST | TODO | — | — | — | — | — |
