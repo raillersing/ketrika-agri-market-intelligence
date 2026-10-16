@@ -1,0 +1,31 @@
+{
+  "source_commit": "6f11f5d",
+  "application_commit": "bb62799",
+  "worktree": "/home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep",
+  "scope": "read-only Python logic and SQLAlchemy construction; mocked sessions, no SQL/S3/network, not runtime qualification",
+  "gold_provenance_gate": {
+    "requested_views": ["economic_dashboard"],
+    "returned_state": "metadata_only",
+    "sql_calls": 0,
+    "numeric_sql_view_observed_in_source": true
+  },
+  "coverage_date_filters": {
+    "from_month": "2026-01-01",
+    "to_month": "2026-02-01",
+    "sqlalchemy_declared_bind_parameters": [],
+    "supplied_parameters": ["from_month", "to_month"]
+  },
+  "pilot_authenticity": {
+    "mock_source_id": "wb_rtfp_mdg",
+    "mock_natural_key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "mock_observations": 1,
+    "acquisition_evidence_provided": false,
+    "returned_is_authentic": true,
+    "returned_status": "QUALIFIED_AUTHENTIC"
+  },
+  "limitations": [
+    "Initial combined probe produced the Gold result then failed because Mock was not iterable; rerun used MagicMock.fetchall=[] for the actual coverage helper.",
+    "No database migrated, no source fetched, no external message sent, no Antigravity file edited.",
+    "Findings do not constitute an exhaustive security or correctness audit."
+  ]
+}

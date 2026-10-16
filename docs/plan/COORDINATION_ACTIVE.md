@@ -2,6 +2,15 @@
 
 Mise à jour 2026-10-15. Ce document ne qualifie aucune tâche produit.
 
+Audit du 2026-10-16 : Antigravity HEAD6f11f5d/codebb62799 (R2.10), non reçu.
+Lire `docs/research/2026-10-16-antigravity-r1-r2-audit.md` : sept groupes
+d'écarts bloquent l'intégration, dont publication Gold sans provenance macro,
+fixtures générées étiquetées authentiques et preuve de qualification surestimée.
+Ne pas importer ses statuts/tags ni écraser ADR069–074 de main. Son worktree
+et son PROGRESS non committé sont préservés ; corrections à réaliser de son côté.
+Le check Codex78714 est terminé FINAL0/1725 backend/35 frontend/build ;
+plus de réservation de la destination QA pour cette exécution, aucune relance.
+
 Actualisation 2026-10-16 : Codex reçoit le correctif ADR-074 contexte partagé,
 worktree `r08-revision-context-20261016`, branche du même nom préfixée `work/`,
 commit `8de251f`, check Windows session `78714`. Source figée et destination

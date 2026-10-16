@@ -31,21 +31,60 @@ PARSER_VERSION = "2.0.0"
 
 def parse_persisted(session: Session, primary: RawArtifact, reader: ArtifactReader) -> ParseResult:
     """Resolve context from the verified immutable ledger, never caller metadata."""
-    from ketrika.connectors.batch_ledger import read_bronze_batch
     from ketrika.core.models.ingestion_batch import IngestionBatchMember
 
+    document = _document(reader, primary)
+    is_context = (
+        isinstance(document, dict) and "study_desc" in document and "additional" in document
+    )
     run_ids = list(
         session.scalars(
             select(IngestionBatchMember.run_id)
             .where(IngestionBatchMember.source_record_id == UUID(primary.source_record_id))
-            .limit(2)
+            .limit(1 if is_context else 1001)
         )
     )
-    if len(run_ids) != 1:
+    if not run_ids or len(run_ids) > 1000:
         raise ProofError("rtfp_batch_ambiguous_or_missing")
-    batch = read_bronze_batch(session, run_ids[0])
+    contexts: list[RawArtifact] = []
+    for run_id in run_ids:
+        context = _persisted_context(session, run_id, primary, reader, is_context=is_context)
+        if is_context:
+            return ParseResult(records=[], parser_version=PARSER_VERSION)
+        if contexts and _artifact_descriptor(context) != _artifact_descriptor(contexts[0]):
+            raise ProofError("rtfp_context_ambiguous_or_missing")
+        contexts.append(context)
+    return parse_close_estimates(primary, contexts[0], reader)
+
+
+def _artifact_descriptor(artifact: RawArtifact) -> tuple[object, ...]:
+    return tuple(
+        getattr(artifact, field)
+        for field in (
+            "source_record_id",
+            "object_key",
+            "content_sha256",
+            "mime_type",
+            "url",
+            "published_at",
+        )
+    )
+
+
+def _persisted_context(
+    session: Session,
+    run_id: UUID,
+    primary: RawArtifact,
+    reader: ArtifactReader,
+    *,
+    is_context: bool,
+) -> RawArtifact:
+    from ketrika.connectors.batch_ledger import read_bronze_batch
+
+    batch = read_bronze_batch(session, run_id)
     if (
-        batch.source_id != "wb_rtfp_mdg"
+        batch.ingestion_run_id != run_id
+        or batch.source_id != "wb_rtfp_mdg"
         or batch.parser_version != PARSER_VERSION
         or not 2 <= len(batch.artifacts) <= 16
     ):
@@ -58,6 +97,8 @@ def parse_persisted(session: Session, primary: RawArtifact, reader: ArtifactRead
         for field in ("object_key", "content_sha256", "mime_type", "url", "published_at")
     ):
         raise ProofError("rtfp_batch_reference_mismatch")
+    if is_context:
+        return matches[0]
     contexts = []
     for artifact in batch.artifacts:
         document = _document(reader, artifact)
@@ -65,9 +106,7 @@ def parse_persisted(session: Session, primary: RawArtifact, reader: ArtifactRead
             contexts.append(artifact)
     if len(contexts) != 1:
         raise ProofError("rtfp_context_ambiguous_or_missing")
-    if contexts[0].source_record_id == primary.source_record_id:
-        return ParseResult(records=[], parser_version=PARSER_VERSION)
-    return parse_close_estimates(primary, contexts[0], reader)
+    return contexts[0]
 
 
 def _document(reader: ArtifactReader, artifact: RawArtifact):

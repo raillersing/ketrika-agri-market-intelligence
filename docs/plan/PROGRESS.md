@@ -3,6 +3,15 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T12:25:31Z] Audit Antigravity et réception du correctif R0.8
+
+- Demande : vérifier Antigravity puis poursuivre. Audit readonly du worktree r1-sources-prep,HEAD6f11f5d/codebb62799,R2.10 ; modification de son PROGRESS préservée, aucun fichier de cette branche édité. Rapport research/2026-10-16-antigravity-r1-r2-audit.md et probes JSON conservés.
+- Écarts : garde Gold macro metadata_only sans audit des chiffres ; classeurs INSTAT/TBE générés présentés authentiques ; pilote déclaré authentique sur nom de source/clé hachée sans acquisition ; jointures de variations sans séparation source/fréquence/unité ; provenance/type absents de DTO économique ; binds SQL de dates absents ; revendications de réception globale/E2E non étayées. Pas de merge ni de DONE R1/R2 canonique. ADR069–072 concurrents à réconcilier avant intégration.
+- Probes Docker22277/20428 : état metadata_only et0 SQL ; paramètres déclarés[] vs from_month/to_month fournis ; faux is_authentic=True/QUALIFIED_AUTHENTIC avec une ligne simulée sans preuve d'acquisition. Première probe combinée échoue après résultat Gold par Mock non itérable ; seconde emploie MagicMock.fetchall=[], sans changement de code. Preuves de logique readonly, pas exécution SQL réelle.
+- Poursuite : réception78714 FINAL0 de8de251ff9dda924a110aab931dd3dd4f5093021d,1725 backend/1989,27 s/0 erreur-échec-skip,155 intégrations,35 web/build15,lint302/mypy301 ; originaux archivés et R0.8_REVISION_CONTEXT_RECEPTION.md. Delta gitleaks13638 FINAL0/12508 octets/sans fuite. Aucune suite complète répétée.
+- Intégration du correctif uniquement : code sans conflit, historiques des journaux et suivi conservés ;74169 FINAL0,empreinte main b0220db3d2f6a491dbcd43cfd7c96ceaf721627f1eb45457037a49789aca6442 identique à8de251f. Échec temporaire git add dû au verrou d'un de nos git diff, attendu sans supprimer index.lock ; staging repris après fin des lectures. Modifications utilisateur préexistantes et Antigravity intacts. R0.8 IN_PROGRESS, aucun gate/tag R1/R2 déduit.
+- Clôture des contrôles de réception :17897 FINAL0,74 statuts cohérents (7 DONE/1 IN_PROGRESS/66 TODO) ;97195 FINAL0,delta19566 octets/sans fuite. Seuls rapports/journaux ajoutés après empreinte, pas de nouvelle suite applicative. Le correctif est reçu comme logiciel, sans clôturer R0.8 ni qualifier le corpus institutionnel d'Antigravity.
+
 ### [2026-10-16T10:47:09Z] R0.8 — correction des éditions à contexte partagé préparée
 
 - Demande utilisateur : réaliser les révisions nécessaires. Défaut reproduit par lecture et test : une étude inchangée a légitimement plusieurs membres batch, mais le parseur exigeait un seul lot. Worktree isolé r08-revision-context-20261016, branche work/r08-revision-context-20261016,commit8de251f ; aucune modification applicative main ni Antigravity.
@@ -100,6 +109,11 @@
 - ADR-068/SPECS avant code sur branche : manifestes complets sept obs/douze Gold, comparaison valeurs/révisions/liens à comptes égaux ; client Bronze local GET/HEAD readonly avec SHA frais ; même store injecté parse et deux gardes Gold. Docker41582 FINAL0 : 55 tests/7,41 s, lint/format cinq fichiers et mypy trois modules verts. Gitleaks78311 FINAL0/45323 octets/sans fuite ; gouvernance6114 FINAL0/74 cohérents, statuts inchangés.
 - Docker42666 FINAL0 : capture réelle PostgreSQL QA en REPEATABLE READ READ ONLY, 19 relations, SHA003b3a46b5caa1c88402ff4587dd64977b0f9fdc40d2117082bed647e11cf0db ; 237 prix Silver/235 Gold courant/39 prévisions. Aucun wipe/restore/rebuild ni accès actif. Snapshot mixed, pas preuve offline/authentique.
 - Reprise au runbook de branche docs/runbooks/OFFLINE_REBUILD_QUALIFICATION.md : confinement Docker network=none + socket PostgreSQL sur nouvelle destination, corpus de prix C1/révisions, inventaires Bronze/ref/SR inchangés, prévisions séparées puis réception unique. Lecture catalogue RTFP officielle possible, HTML/JSON de versions différentes ; aucun prix acquis/promu ni URL CSV ancienne déclarée vérifiée. Aucune cause humaine exclusive ni arrêt final revendiqués. R0.8 reste IN_PROGRESS, aucun tag.
+### [2026-10-16T10:44:54Z] R0.8 — prise en charge des contextes partagés entre éditions
+
+- Mini-plan : reproduire deux lots utilisant la même étude ; ADR-074/SPECS avant correction ; accepter uniquement un contexte identique pour une donnée multilot ; vérifier anciennes/nouvelles valeurs et refus ambigus ; figer le lot et recevoir une fois. Les éditions de test restent synthetic, pas de fausse archive officielle. R0.8 IN_PROGRESS.
+- 85728 :32 tests/10,00 s et types du parseur verts ;98366 FINAL0 :1 SQL/S3/48,99 s,une supersession/quatorze prix inchangés,ancienne valeur conservée,contexte SourceRecord partagé et troisième lot de nouvelle tentative/15 skips/0 insertion-supersession. Aucun wipe ni modification active. Typage élargi9400 et réception complète du lot stabilisé à suivre.
+
 ### [2026-10-16T10:28:40Z] R0.8 — réception logicielle verte et rejeu natif authentique avec snapshot
 
 - Mini-plan : archiver les originaux3355 sans relance ; préparer une base neuve distincte avec octets C1 inchangés et identité de normalisation native ; exporter trois objets ; reconstruire réseau none et comparer ; conserver les critères non prouvés ouverts.
