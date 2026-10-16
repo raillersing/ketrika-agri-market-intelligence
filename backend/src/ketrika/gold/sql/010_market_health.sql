@@ -15,12 +15,19 @@ WITH price_comp AS (
         pc.location_name,
         pc.month,
         pc.vol_12,
-        pc.chg_12m,
-        round((100.0 * (1.0 - LEAST(COALESCE(pc.vol_12, 0.0) / 0.30, 1.0)))::numeric, 2) AS score_stability,
-        round(
-            (100.0 * (1.0 - LEAST(GREATEST(COALESCE(pc.chg_12m, 0.0), 0.0) / 0.40, 1.0)))::numeric,
-            2
-        ) AS score_affordability
+        CASE
+            WHEN pc.vol_12 IS NOT NULL
+            THEN round((100.0 * (1.0 - LEAST(pc.vol_12 / 0.30, 1.0)))::numeric, 2)
+            ELSE NULL
+        END AS score_stability,
+        CASE
+            WHEN pc.chg_12m IS NOT NULL
+            THEN round(
+                (100.0 * (1.0 - LEAST(GREATEST(pc.chg_12m, 0.0) / 0.40, 1.0)))::numeric,
+                2
+            )
+            ELSE NULL
+        END AS score_affordability
     FROM gold.price_changes pc
     WHERE pc.admin_level <= 2
 ),
@@ -42,10 +49,14 @@ weather_comp AS (
         wm.location_id,
         wm.month,
         wm.rain_anom_3m,
-        round(
-            (100.0 * (1.0 - LEAST(GREATEST(-COALESCE(wm.rain_anom_3m, 0.0), 0.0) / 0.50, 1.0)))::numeric,
-            2
-        ) AS score_climate
+        CASE
+            WHEN wm.rain_anom_3m IS NOT NULL
+            THEN round(
+                (100.0 * (1.0 - LEAST(GREATEST(-wm.rain_anom_3m, 0.0) / 0.50, 1.0)))::numeric,
+                2
+            )
+            ELSE NULL
+        END AS score_climate
     FROM gold.weather_monthly wm
 ),
 combined AS (

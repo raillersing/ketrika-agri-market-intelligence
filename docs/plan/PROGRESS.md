@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-16T07:55:00Z] R2.3 — DONE, qualification DQ, agrégations, alignement calendaire et indépendance des familles
+
+- Dépendances relues : R2.1 (DONE), R2.2 (DONE), R0.5 (DONE), R0.6 (DONE).
+- Mini-plan exécuté : (1) mise en conformité de 001_price_obs_current.sql avec source_family ; (2) intégration de source_family, price_spread et stddev_price dans 002_price_monthly.sql ; (3) implémentation de group_stats dans 003_price_monthly_best.sql (n_sources, n_families indépendantes, détection de conflit has_conflict, group_spread et priorité stricte observé > imputé) ; (4) alignement calendaire exact (month - INTERVAL '1/3/12 months')::date dans 004_price_changes.sql éliminant les LAG naïfs ; (5) alignement calendaire exact des variations d'indices dans 009_cpi_food.sql ; (6) calcul normatif du score Market Health dans 010_market_health.sql (composantes manquantes strictement NULL, seuil coverage < 0.50 produisant score composite NULL) ; (7) fonction calculate_calendar_aligned_variation et helper audit_source_family_independence dans backend/src/ketrika/gold/kpi.py ; (8) implémentation de check_llm_unverified_in_gold, PublicationDenominators avec validation d'invariant strict, et check_blocking_dq_gate empêchant la publication Gold en cas de DQ dégradé dans backend/src/ketrika/gold/dq.py et refresh.py ; (9) suite de qualification backend/tests/unit/test_gold_dq_aggregation_audit.py (29 tests unitaires, scénarios de qualification et tests property-based Hypothesis) ; (10) validation complète 59/59 tests d'audit, 95% de couverture sur les modules Gold et Core, 114 tests de non-régression, ruff, mypy et tsc 100% verts ; (11) rédaction du dossier de preuve docs/evidence/R2.3/README.md.
+- Environnement : Docker ketrika-backend:dev, worktree /home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep, branche work/r1-sources-prep.
+- Commandes : uv run pytest -v tests/unit/test_gold_dq_aggregation_audit.py tests/unit/test_gold_kpi.py tests/unit/test_taxonomy_units_audit.py --cov=ketrika.gold.kpi --cov=ketrika.gold.dq --cov=ketrika.core.aggregation --cov-report=term-missing (exit 0, 59 passed in 51.15s, couverture 95 %) ; ruff check (exit 0) ; mypy (exit 0) ; tsc --noEmit (exit 0) ; non-régression 114 passed in 38.14s.
+- Résultats : variations calendaires rigoureuses (NULL sur trou de mois) ; WFP et RTFP non comptabilisés deux fois (famille racine un_wfp) ; détection de conflit active ; observé systématiquement prioritaire sur imputé ; Market Health score NULL si coverage < 0.50 ; DQ bloquant opérationnel ; dénominateurs validés selon l'invariant candidate = accepted + rejected + review.
+- Qualification : DQ, agrégations, alignement calendaire et indépendance QUALIFIED (DONE).
+- État final : DONE.
+- Preuve : docs/evidence/R2.3/README.md.
+- Reprise : Tâche MUST éligible suivante R2.4 (Mesurer couverture et choisir le pilote).
+
 ### [2026-10-15T22:00:00Z] R2.2 — DONE, audit taxonomie, unités, grains et gardes de comparabilité Gold
 
 - Dépendances relues : R2.1 (DONE), R0.4 (DONE).
@@ -486,7 +498,7 @@
 | R1.13 | MUST | TODO | — | — | — | — | — |
 | R2.1 | MUST | DONE | 2026-10-15T20:45:00Z | 2026-10-15T21:20:00Z | e513803 | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts | BL-013 résolu pour macro/temps |
 | R2.2 | MUST | DONE | 2026-10-15T21:30:00Z | 2026-10-15T22:00:00Z | 54c24d1 | Audit taxonomie, unités, grains, densités et gardes de comparabilité Gold | 38 tests verts, couverture 90%, 0 régression |
-| R2.3 | MUST | TODO | — | — | — | — | — |
+| R2.3 | MUST | IN_PROGRESS | 2026-10-16T07:35:00Z | — | — | DQ, agrégations, alignement calendaire, indépendance de familles | En cours |
 | R2.4 | MUST | TODO | — | — | — | — | — |
 | R2.5 | MUST | TODO | — | — | — | — | — |
 | R2.6 | MUST | TODO | — | — | — | — | — |

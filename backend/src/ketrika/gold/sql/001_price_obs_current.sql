@@ -9,6 +9,7 @@ SELECT
     po.observation_id,
     sr.source_id,
     COALESCE(s.spec->>'priority', 'P1') AS priority,
+    COALESCE(s.spec->>'source_family', sr.source_id) AS source_family,
     po.source_record_id,
     po.natural_key,
     po.product_id,

@@ -16,10 +16,13 @@ SELECT
     actor_level,
     month,
     source_id,
+    source_family,
     priority,
     percentile_cont(0.5) WITHIN GROUP (ORDER BY price_mga_per_base)::numeric(18,2) AS median_price,
     min(price_mga_per_base)::numeric(18,2) AS min_price,
     max(price_mga_per_base)::numeric(18,2) AS max_price,
+    (max(price_mga_per_base) - min(price_mga_per_base))::numeric(18,2) AS price_spread,
+    stddev_samp(price_mga_per_base)::numeric(18,2) AS stddev_price,
     count(*)::integer AS n_obs,
     round(avg(CASE WHEN observed_or_imputed = 'imputed' THEN 1.0 ELSE 0.0 END)::numeric, 4) AS imputed_share,
     bool_or(observed_or_imputed = 'observed') AS has_observed
@@ -37,6 +40,7 @@ GROUP BY
     actor_level,
     month,
     source_id,
+    source_family,
     priority
 WITH NO DATA;
 

@@ -195,16 +195,16 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
 
     # 3. Sources
     sources_spec = [
-        ("miasa_odr", "ODR", "P0", 28),
-        ("wfp_hdx_mdg", "WFP", "P1", 45),
-        ("wb_rtfp_mdg", "WB RTFP", "P1", 30),
-        ("mincc_ppn", "MinCC", "P1", 28),
-        ("douanes_stats", "Douanes", "P1", 62),
-        ("faostat", "FAOSTAT", "P2", 365),
-        ("nasa_power", "NASA POWER", "P1", 60),
-        ("instat_nipc", "INSTAT NIPC", "P1", 62),
+        ("miasa_odr", "ODR", "P0", 28, "madagascar_gov"),
+        ("wfp_hdx_mdg", "WFP", "P1", 45, "un_wfp"),
+        ("wb_rtfp_mdg", "WB RTFP", "P1", 30, "world_bank"),
+        ("mincc_ppn", "MinCC", "P1", 28, "madagascar_gov"),
+        ("douanes_stats", "Douanes", "P1", 62, "madagascar_gov"),
+        ("faostat", "FAOSTAT", "P2", 365, "un_fao"),
+        ("nasa_power", "NASA POWER", "P1", 60, "nasa"),
+        ("instat_nipc", "INSTAT NIPC", "P1", 62, "madagascar_gov"),
     ]
-    for s_id, s_name, prio, sla in sources_spec:
+    for s_id, s_name, prio, sla, fam in sources_spec:
         s = session.get(Source, s_id)
         if not s:
             s = Source(
@@ -212,6 +212,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
                 spec={
                     "name": s_name,
                     "priority": prio,
+                    "source_family": fam,
                     "freshness_sla_days": sla,
                     "authenticity": "synthetic",
                     "verified": False,
@@ -223,6 +224,7 @@ def seed_synthetic_gold_data(session: Session) -> dict[str, int]:
             s.spec = {
                 "name": s_name,
                 "priority": prio,
+                "source_family": fam,
                 "freshness_sla_days": sla,
                 "authenticity": "synthetic",
                 "verified": False,
