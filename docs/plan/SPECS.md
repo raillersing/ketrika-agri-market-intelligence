@@ -1311,7 +1311,21 @@ L'UI **DOIT** toujours afficher les composantes à côté du score.
 
 ## 17. Prévisions et anomalies
 
-- **Séries éligibles :** `gold.price_monthly_best` aux niveaux région et national, avec ≥ 36 points mensuels non nuls dont ≥ 12 au cours des 24 derniers mois.
+### 17.1 Éligibilité et calendrier des séries (ADR-004, ADR-073, R3.1)
+
+- **Clé de série explicite à 5 composantes :** `series_key = "{product_code}|{quality_grade}|{actor_level}|{location_pcode}|{unit}"` (ex: `rice_milled|standard|retail|MG11|kg`). Les clés historiques à 3 composantes restent parsables en rétro-compatibilité avec valeurs par défaut (`quality_grade='standard'`, `unit='kg'`).
+- **Granularité géographique (ADR-004) :** Niveaux régional (`admin_level = 1`) et national (`admin_level = 0`) uniquement. Tout niveau district (`admin_level = 2`) ou commune (`admin_level = 3`) est formellement refusé pour la modélisation et la publication de prévisions de prix.
+- **Grille mensuelle régulière sans compression :** Reconstruction d'une grille temporelle mensuelle continue sans trous compressés. Les mois sans observation portent `price = None` (`np.nan` dans les représentations vectorielles), préservant l'espacement temporel exact et les dépendances saisonnières lag-12.
+- **Critères stricts d'éligibilité historique :**
+  - Minimum absolu de 36 mois observés non nuls (`total_valid_points >= 36`). Toute série avec 35 points ou moins est refusée.
+  - Récence minimale de 12 mois observés non nuls sur la fenêtre mobile des 24 derniers mois calendaires précédant `data_cutoff` (`recent_points_24m >= 12`). Toute série avec moins de 12 points récents est refusée.
+  - Refus absolu de tout seuil arbitraire de 6 points ou de saisonnalité factice de 2 à 4 mois.
+- **Étanchéité des prix de marché :** Exclusion stricte des prix réglementés (`official_ppn`, prix administrés OMH) et des séries d'indices (CPI/NIPC) de la modélisation des prix de marché vivriers.
+- **Séparation des cohortes :** Vérité terrain d'évaluation réservée aux observations observées (`observed_or_imputed == 'observed'`). Cohorte purement observée (`cohort = 'observed'`) vs cohorte composite/imputée (`cohort = 'mixed'`).
+- **Audit et rapport d'exclusions :** Toute extraction produit un `SeriesEligibilityReport` recensant les séries éligibles et les séries exclues avec leurs motifs précis (`insufficient_total_points`, `insufficient_recency`, `ineligible_geo_granularity`, `forbidden_price_type`). Aucune série n'est fabriquée artificiellement pour atteindre un quota.
+
+### 17.2 Modèles, backtest et intervalles (SPECS MVP)
+
 - **Modèles candidats :** `SeasonalNaive(season_length=12)`, `AutoETS(season_length=12)`, `AutoARIMA(season_length=12)`. En option (SHOULD), `mlforecast` + LightGBM global avec lags {1, 2, 3, 12} et variables exogènes connues (mois).
 - **Backtest :** rolling-origin, 6 fenêtres, horizon h = 3, pas = 1 mois. Métriques : WAPE (principale), MAE, sMAPE, couverture empirique de l'intervalle 80 %.
 - **Sélection :** par série, le modèle de plus faible WAPE. En cas d'égalité (moins de 1 point d'écart), le plus simple.

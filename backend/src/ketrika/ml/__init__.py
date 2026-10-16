@@ -15,7 +15,17 @@ from ketrika.ml.models import (
     SeasonalNaiveModel,
     get_default_candidate_models,
 )
-from ketrika.ml.series import EligibleSeries, extract_eligible_series
+from ketrika.ml.series import (
+    EligibleSeries,
+    ExcludedSeries,
+    PricePoint,
+    SeriesEligibilityReport,
+    audit_series_eligibility,
+    build_series_key,
+    evaluate_series_eligibility_records,
+    extract_eligible_series,
+    parse_series_key,
+)
 
 __all__ = [
     "AutoARIMAModel",
@@ -23,13 +33,20 @@ __all__ = [
     "BacktestResult",
     "DeterministicBaselineModel",
     "EligibleSeries",
+    "ExcludedSeries",
     "ForecastPrediction",
     "PriceAnomaly",
+    "PricePoint",
     "SeasonalNaiveModel",
+    "SeriesEligibilityReport",
     "SeriesMetrics",
+    "audit_series_eligibility",
+    "build_series_key",
     "detect_price_anomalies",
+    "evaluate_series_eligibility_records",
     "extract_eligible_series",
     "get_default_candidate_models",
+    "parse_series_key",
     "record_anomaly_model_run",
     "run_price_forecasting_pipeline",
     "select_best_model",

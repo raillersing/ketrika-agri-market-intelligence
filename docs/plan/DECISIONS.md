@@ -2,6 +2,29 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-073 : éligibilité, calendrier régulier et audit d'exclusion des séries de prévision de prix (R3.1)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.1 ; Phase R3.
+- **Contexte :** La phase R3 porte sur les prévisions de prix évaluées et honnêtes (directives R3.1 à R3.9). Les séries de prix candidates à l'apprentissage et à l'évaluation doivent être sélectionnées selon des critères statistiques et méthodologiques rigoureux, interdisant tout contournement ou simplification artificielle :
+  1. **Seuil d'éligibilité historique et récence :** minimum absolu de 36 mois observés non nuls (`total_points >= 36`), dont au moins 12 mois observés non nuls sur la fenêtre des 24 derniers mois précédant le cutoff (`recent_points_24m >= 12`). Tout seuil artificiel de 6 points ou saisonnalité factice de 2 à 4 mois est formellement interdit et rejeté.
+  2. **Granularité géographique (ADR-004) :** niveaux régional (`admin_level = 1`) et national (`admin_level = 0`) uniquement. Rejet formel des districts (`admin_level = 2`) et communes (`admin_level = 3`) pour la modélisation et la publication de prévisions de prix.
+  3. **Grille calendaire mensuelle régulière sans compression :** les mois sans observation doivent être explicitement représentés dans la grille régulière par une valeur nulle/absente (`price = None`, `np.nan`), interdisant la compression artificielle des lacunes calendaires en une suite de points consécutifs contigus.
+  4. **Étanchéité des types de prix :** exclusion absolue des prix réglementés (`official_ppn`, prix administrés OMH) et des indices (CPI/NIPC) de la cohorte des prix de marché vivriers observés.
+  5. **Distinction des cohortes et vérité terrain :** vérité terrain d'évaluation réservée aux observations observées (`observed_or_imputed == 'observed'`). Cohorte purement observée (`cohort = 'observed'`) vs cohorte composite/imputée (`cohort = 'mixed'`).
+  6. **Clé de série explicite à 5 composantes :** format canonique `product_code|quality_grade|actor_level|location_pcode|unit`.
+  7. **Audit complet et exhaustif :** reporting systématique de chaque série évaluée avec liste d'exclusions documentée et motivée (`SeriesEligibilityReport`). Aucune création de série artificielle pour satisfaire un quota ou un KPI.
+- **Décision :**
+  1. Refactorisation et enrichissement de `backend/src/ketrika/ml/series.py` pour implémenter `PricePoint` (avec gestion explicite des trous calendaires), `EligibleSeries`, `ExcludedSeries` et `SeriesEligibilityReport`.
+  2. Implémentation du constructeur de calendrier régulier `generate_monthly_calendar` et de l'arithmétique mensuelle exacte `shift_months`.
+  3. Application des gardes d'éligibilité : 35 points = rejeté, 36 points sans récence = rejeté, district = rejeté, prix réglementé = rejeté.
+  4. Séparation des cohortes `observed` et `mixed`, avec flag `can_backtest_6_windows` et `can_calibrate_conformal`.
+  5. Maintien de la compatibilité avec l'orchestrateur `forecast.py`.
+- **Alternatives rejetées :**
+  - Conserver le seuil historique de 6 points (rejeté par directive R3.1 et SPECS §17).
+  - Comprimer les mois manquants pour créer une série continue sans trous (rejeté, fausse saisonnalité et distorsion des retards temporels).
+  - Inclure les districts pour gonfler le nombre de séries éligibles (rejeté par ADR-004 et R3.1).
+- **Conséquences :** Séries temporelles statistiquement intègres, transparentes, exemptes de fuite ou d'artefact de calendrier, conformes aux exigences de validation scientifique.
+
 ## ADR-072 : vues marché et observatoire économique, route dédiée `/economy`, fiches métriques et transparence de couverture (R2.10)
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code R2.10 ; Phase R2.

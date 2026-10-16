@@ -71,7 +71,7 @@ def run_price_forecasting_pipeline(
     session: Session,
     data_cutoff: date,
     horizon: int = 3,
-    min_points: int = 6,
+    min_points: int | None = None,
     refresh_gold: bool = True,
 ) -> dict[str, Any]:
     """Execute complete price forecasting workflow per SPECS §17.
