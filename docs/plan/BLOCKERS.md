@@ -1,7 +1,33 @@
 # BLOCKERS : registre des blocages et incidents
 
+Clôture logicielle du2026-10-17 : B-R074–083 sont corrigés sur la branche
+fix/agy-publication-audit-20261016, source9b63847, non fusionnée dans main.
+Preuves finales : check78513 FINAL0/1762 backend/43 frontend/build ;
+E2E45858 FINAL0/12 contrôles et inspection synthétique83591 FINAL0.
+Les attentes de nouvelle réception figurant dans les tentatives ci-dessous
+sont historiques et remplacées par cette preuve consolidée. Aucun gate de
+données ni B-R073 n'est clôturé par ces tests logiciels.
+
 > Format : `ID | tâche | date | symptôme | cause supposée | tentatives (1, 2, 3) | repli appliqué | statut`
 > Statut : `INVESTIGATING` | `RESOLVED_FALLBACK` | `RESOLVED_FIXED` | `BLOCKED`
+
+| B-R082 | Corrections / assertion de tête Alembic | 2026-10-17 |78027 interrompu rouge après attente littérale0012 obsolète | Test couplé à une ancienne migration |1 : tête Alembic attendue lue dynamiquement, sans suppression du contrôle ; réception78513 FINAL0 inclut le scénario | Nouvelle migration0013 conservée et vérifiée | RESOLVED_FIXED |
+
+| B-R083 | Corrections / qualification mobile | 2026-10-17 |21636 passed=true mais capture390px relue : sidebar256px et contenu comprimé | scrollWidth seul masque troncature/contenu étroit |1 : ADR local088, tiroir mobile/pleine largeur, affirmations de santé/provenance non mesurées retirées ;50900 huit tests/lint/types verts,85958 douze contrôles verts et capture lisible | Qualification visuelle des anciens reçus retirée ; nouvelle réception complète UI requise | RESOLVED_FIXED |
+
+| B-R080 | Corrections / installation neuve et droits | 2026-10-17 |19008 migration0005 refuse SQL postérieurs ; lecture0002/0011 révèle dépendances futures et droit Silver indu | Migrations historiques dépendantes du répertoire courant |1 : ADR local087, douze vues historiques/snapshot forecast,0013 non peuplée/révocation ;55409 FINAL0 depuis PostGIS neuf,14 vues/0 peuplée, Silver=false/Gold=true | Aucune base active modifiée ; réception complète du correctif requise | RESOLVED_FIXED |
+| B-R081 | Corrections / attentes inventaire et prévision | 2026-10-17 |19008 FINAL1/1755 succès/cinq échecs ; inventaire6/7,helper11/12,total prévisions41/39 | Attentes historiques sans nouvelles sources/vues/périodes |1 : ensembles exacts, macro refusée, compte par run/deux lignes seed conservées ;77808 FINAL0/23 unités,73304 FINAL0/anti-fuite105,53 s | Aucun seuil réduit/fixture effacée ; réception complète requise | RESOLVED_FIXED |
+
+| B-R078 | Corrections / retraitement de Bronze existant | 2026-10-17 |76892 FINAL1, trois silver_reference_mismatch sur Douanes/MiASA/MinCC | SourceRecord immuable conserve ancien parseur, lot utilise nouvelle version |1 : ADR local086/SPECS, versions acquisition/traitement distinctes ;38178 FINAL0/74 unités,20038 vingt intégrations vertes dont relecture SQL sans mutation du parent |198261c figé, check19008 en cours ; aucun parent/objet historique réécrit | RESOLVED_FIXED |
+| B-R079 | Corrections / contrats de fixtures historiques | 2026-10-17 |76892 : deux refus SSRF de fixtures, trois attentes12/13, lecture macro non peuplée, tuple API16/17 ;20038 édition Douanes implicite | Fixtures non alignées sur gardes et schéma corrigés |1 : opt-in localhost aux deux gardes test-only, withheld macro testé, tuple complété ;20038 vingt succès ; Douanes2024 explicitée puis19663 FINAL0/un cycle/18,79 s | Aucun seuil/scénario métier supprimé ;19008 sur198261c requis avant réception | RESOLVED_FIXED |
+
+| B-R077 | Corrections / fixtures HTTP locales | 2026-10-17 |42382 FINAL1 :28 succès/un échec/297,54 s ; CountingHttp n'autorise pas explicitement le serveur local ; cible79443 révèle aussi la fabrique Dagster | Anciennes fixtures incompatibles avec le refus SSRF par défaut |1 : deux chemins test-only corrigés dans76dcdf3 ;27706 FINAL0/trois tests/29,61 s ; diagnostic global borné à dix erreurs après ADR085 | Aucun accès loopback autorisé par défaut en production, nouvelle réception76892 en cours | RESOLVED_FIXED |
+
+| B-R076 | Corrections R2.3 / cohorte du garde parsing | 2026-10-16 |30551 FINAL1 :1749 collectés, six succès/un échec SQL/135,53 s ; historique83,71% bloque un lot sans rapport | Garde de publication global au lieu d'un contrôle des lots concernés |1 : ADR local084, lots complets (échecs inclus), minimum99% par lot, compte attendu vérifié, vide sans100% inventé ;96099 FINAL0/20 tests/SQL ;46373 types verts ; garde réel franchi sur42382 | Diagnostics historiques conservés, nouvelle réception complète en cours sur31f1ab6 | RESOLVED_FIXED |
+
+| B-R075 | Réception corrections / copie QA interbranche | 2026-10-16 | 78054 FINAL1 après migrations/seed : six erreurs mypy dans quatre fichiers absents du commit31c9747 ; aucun pytest/frontend lancé | Archive extraite par-dessus ancien snapshot main ; probe97470 prouve rtfp_json présent en copie/absent de source | 1 : ADR local083, garde QA avant archive puis remplacement de trois copies code seulement ;56873 FINAL0/1 test/3,22 s ;54d6960 figé | Nouveau check30551 en cours ; aucun test écarté, aucun volume ni donnée DB/Bronze supprimé | RESOLVED_FIXED |
+
+| B-R074 | Corrections Antigravity R2.9 / migration macro | 2026-10-16 | Réception96846 échoue pendant prepare : PostgreSQL StringDataRightTruncation sur alembic_version.version_num VARCHAR(32), avant les tests | Identifiants0011/0012 ajoutés par Antigravity trop longs pour le suivi Alembic standard | 1 : échec reproduit sur QA isolée, transaction annulée ; correction additive de la taille du suivi prévue en conservant les IDs | Aucun changement de base active ni effacement Bronze ; nouvelle réception requise après correctif | RESOLVED_FIXED |
 
 | B-R073 | R0.8 / corpus de révisions authentiques | 2026-10-16 UTC | Rejeu natif avec snapshot réussi mais aucune ancienne/nouvelle édition officielle comparable dans le corpus reçu | Paquet WB contient une seule édition ; rice et c_rice ne prouvent pas une révision de même variable | Corpus et descriptions publiques vérifiés ; aucun ancien prix fabriqué, aucun contournement d'origine disabled ; rechercher des éditions accessibles avec droits et identifiants identiques | Réception logicielle et rejeu réel conservés ; R0.8 non terminé, pas de gate/tag déduit | INVESTIGATING |
 

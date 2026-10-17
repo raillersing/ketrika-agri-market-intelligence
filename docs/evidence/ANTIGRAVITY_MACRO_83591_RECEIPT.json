@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "scope": "synthetic QA Silver inspection only; not macro Gold",
+  "observation_id": "c54538c4-8e06-4d59-8f6f-7c5c272360b0",
+  "source_record_id": "8f6b65f4-6837-485b-a257-49daf9753314",
+  "object_key": "synthetic_browser_macro_aa307cb1d5a249d19cec706a6caa96e6/2026/10/0cfec958c83fa67db143c54e31e446848f15f74708384d79f6d8d2b03b2b40cb.json",
+  "sha256": "0cfec958c83fa67db143c54e31e446848f15f74708384d79f6d8d2b03b2b40cb",
+  "qualification_state": "not_qualified",
+  "value_kind": "imputed",
+  "checks": [
+    "Bronze reread",
+    "SQL reread",
+    "authenticated HTTP API",
+    "native value and lineage in UI",
+    "reload",
+    "390px no overflow"
+  ]
+}

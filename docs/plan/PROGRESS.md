@@ -1,7 +1,97 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-17T13:58:01Z] Corrections Antigravity : réception logicielle finale verte sur branche
+
+- Source applicative figée :9b638478638b290d0cd509b496818006267e758e, branche fix/agy-publication-audit-20261016 ; non fusionnée dans main. Clôture documentaire uniquement après cette source.
+- Windows dev.ps1 check78513 FINAL0 :1762 backend, zéro échec/erreur/skip,1895,65 s ;156 intégrations par union et groupes nouveaux vérifiés dans le JUnit. Ruff320/mypy319 verts ; couvertures core94,4863%, extraction87,0423%, normalize87,9859%.
+- Frontend :43 tests/sept suites, lint/types/build verts,16 pages statiques générées ; reçu92d0eeaf-0537-4c21-bf09-5a8265cf1ed8. Sources QA exactes :446 backend/56 frontend, aucune divergence applicative.
+- dev.ps1 e2e45858 FINAL0 :12 contrôles/117,354 s, aucune erreur navigateur ; authentification/reload/logout,503 macro explicite, largeur réelle et navigation mobile. Capture390px inspectée lisible.
+- Diagnostic83591 FINAL0 : objet Bronze synthétique relu/SHA, SQL/API authentifiée/page Silver/reload/type imputé/IDs/valeur brute conservés ; capture mobile inspectée. Diagnostic69451 FINAL0 : requête PostgreSQL de dates liée,39 lignes en transaction readonly.
+- Originaux JUnit/couverture/Vitest/reçu frontend/reçus navigateur et captures dans docs/evidence/ANTIGRAVITY_*78513*,*45858*,*83591*. Rapport consolidé ANTIGRAVITY_CORRECTIONS_RECEPTION_20261017.md ; traces de session non committées.
+- B-R074–083 corrigés sur branche ; anciennes mentions de réception en cours sont historiques. Aucune source authentique, fraîcheur, performance de modèle, Gold macro ou qualification humaine déduite ; aucun statut R DONE/tag ajouté.
+- Aucun Bronze existant/base active modifié. Préserver les travaux Antigravity et le R0.8 plus récent de main ; réconcilier ADR/SPECS avant intégration. Destination QA libérée, services/données conservés.
+
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
+
+### [2026-10-17T13:11:00Z] Source mobile figée9b63847 — réception complète78513 en cours
+
+-85673 FINAL0/inspection Silver synthétique complète : Bronze/SHA/SQL/API/UI/reload et largeur réelle>=360px à390, capture effectivement relue lisible. Aucune observation réelle ni Gold macro qualifié.47237 lint E2E vert ;50900 huit tests frontend/lint/types et85958 douze contrôles navigateur déjà verts, pas relancés séparément.
+-76668 FINAL0/gitleaks583486 octets/sans fuite sur staging complet. Commit9b63847 sauvegarde UI mobile, ADR088, assertions renforcées et preuves originales44536/21636/85958/85673. Verrou index temporaire de notre propre git status observé à la première tentative de commit ; attendu jusqu'à fin du processus, aucun verrou supprimé, commit repris normalement.
+- Check Windows78513 lancé sur9b63847 figé. Reprendre ce processus connu ; ne modifier ni source ni environnement QA pendant réception. Après code final vert : E2E sur même source puis inspection macro, archivage/clôture documentaire. Main applicatif et Antigravity intacts,74 statuts inchangés, aucun tag/DONE produit ajouté.
+
+### [2026-10-17T13:07:13Z] Réception44536 verte — correction visuelle mobile avant clôture
+
+-44536 FINAL0 sur e3ad39e46c6ce201cb5476f243d7dc0995890ad3 :1762 backend/1338,04 s/0 échec-erreur-skip,156 intégrations (groupes nouveaux vérifiés dans le JUnit),42 web/six suites/build152667 ms/16 pages statiques générées. Couvertures core94,4863%,extraction87,0423%,normalize87,9859%. Ruff320/mypy319/cohérence74 verts ; originaux exportés dans worktree de correction.446 sources backend exactes SHA6779c5c6382285f88a2c740c96addceb96fc958c16f430ed950023d7f19f4ebd ; frontend55 sources identiques et une seule métadonnée de résultat ancienne supplémentaire, aucun code divergent.
+-21636 FINAL0/11 contrôles navigateur/93,22 s/0 erreur JS et98269 chaîne synthétique Bronze/SQL/API/page/reload verte, mais capture390px relue montre sidebar256px comprimant le contenu. Le passed=true brut ne qualifie donc pas la lisibilité mobile ; limite explicitement retirée, originaux conservés. Pas de source/modèle réel qualifié.
+- ADR local088/SPECS avant correction mobile : tiroir sous768px/fermeture par lien-Escape-bouton, contenu pleine largeur, filtres bornés ; mentions statiques100% provenance/3 alertes/Stack6-6/Live retirées. Assertions largeur réelle>=360px/message dans viewport/menu ajoutées.50900 FINAL0/lint/tsc/huit tests ciblés ;85958 FINAL0/12 contrôles/62,723 s et capture effectivement lisible.85673 inspection macro renforcée en cours ; ensuite figer nouveau commit/check complet/E2E même source.
+- Aucun nouveau DONE/tag, main applicatif et Antigravity intacts, statuts74 conservés.44536 est terminé vert et non à relancer pour l'ancien contenu ; la prochaine réception sera justifiée par le changement applicatif UI/E2E, sans répéter les ciblés déjà verts. Destination QA toujours réservée à cette clôture.
+
+### [2026-10-17T09:01:00Z] Reprise sur e3ad39e — check complet44536 en cours
+
+-78027/3e1e5b8 rouge : migration0013 appliquée, statique320/mypy319/cohérence74 verts, copie446 fichiers exacte SHA82d21a47e91277e2f21f6c6d1ee5dc300368c4f028c169c88750a0071d060d15. Test Gold exige encore la chaîne0012. Arrêt explicite par SIGINT au seul pytest de ce conteneur pour corriger cet échec connu, pas pour préparer un helper :79 succès/un échec/538,88 s,pytest2/PowerShell FINAL1. JUnit partiel original conservé ; aucun succès global/frontend/couverture déduit.
+- Correction test seule : tête DB comparée à la tête du graphe Alembic de cette source, pas constante obsolète ; DB en retard reste refusée.63236 FINAL0/un SQL/36,28 s incluant preuve positive, octets corrompus refusés, rollback partiel et dépendances ;78764 lint/format verts ;98993 gitleaks31511 octets/sans fuite. Commit e3ad39e, aucun changement applicatif après3e1e5b8.
+- Check Windows44536 lancé sur e3ad39e figé, worktree agy-publication-audit-20261016 ; poursuivre ce processus, ne pas modifier source ni destination QA. Après check vert : E2E via son dev.ps1 sur même source, puis script diagnostique main docs/evidence/verify_agy_macro_browser.py monté readonly dans browser pour inspection Silver synthétique Bronze/SQL/API/reload/390px ; aucun envoi externe ni qualification macro Gold.
+- Main applicatif/Antigravity préservés,74 statuts inchangés. Ne pas importer de DONE/tag R1–R3 ni remplacer ADR main par ceux de la branche. La source Antigravity corrigée reste séparée jusqu'à réception et réconciliation.
+
+### [2026-10-17T08:48:00Z] Réception complète du correctif final3e1e5b8 en cours
+
+-22532 FINAL0/mypy156 fichiers avec sources locales explicitement incluses ;45032 FINAL0/gitleaks567872 octets/sans fuite sur staging complet. Aucun ignore ajouté après le diagnostic incomplet63505. Commit3e1e5b8 sauvegarde corrections, migration0013, snapshot SQL historique, preuves rouges et installation neuve.
+- Check Windows78027 lancé sur ce contenu figé. Ne pas changer le worktree de correction ni relancer de suite mutante QA concurrente ; poursuivre ce processus connu, puis E2E et inspection Silver synthétique séparée sur même contenu. Aucun résultat de19008 n'est promu en succès.
+- Main applicatif et worktree Antigravity préservés.74 statuts inchangés, R0.8 IN_PROGRESS ; ni source live, ni modèle, ni usage humain qualifié par ce lot. Pas de tag ni merge global anticipé.
+
+### [2026-10-17T08:45:00Z] Réception19008 rouge — derniers défauts groupés corrigés
+
+-19008 FINAL1 :1760 exécutés/1755 succès/cinq échecs/1693,70 s, frontend non exécuté ; JUnit et couverture originaux conservés dans le worktree de correction. Toutes intégrations précédentes franchies, cinq défauts restants identifiés sans perte de preuve.
+- ADR local087/SPECS avant code : migrations0002/0005 bornées à leurs douze définitions et snapshot forecast pré0012 ;0013 installe deux nouvelles vues non peuplées après leurs schémas et révoque le droit Silver macro indûment accordé à copilot_ro.55409 FINAL0, PostgreSQL/PostGIS neuf networknone/socket dédié/PGDATA tmpfs :0001→0013,quatorze vues/zéro peuplée, droit Silver=false/Gold=true,zéro observation. Aucune base active ni Bronze impliqué.
+- Anciennes attentes inventaire6/7 et helper11/12 corrigées avec ensembles exacts et exclusion INSTAT ; test de prévision vérifie39 lignes du run, conserve les deux lignes seed d'autres périodes et tous seuils/métriques/anti-fuite.77808 FINAL0/23 unités/49,97 s ;73304 FINAL0/un scénario SQL anti-fuite/105,53 s ;19053 FINAL0/lint frontend/tsc.63505 mypy tests-seuls rouge par résolution de package installé ;22532 reprend avec source explicitement incluse, aucun ignore ajouté.
+- Corrections encore non reçues globalement : figer le nouveau commit après types puis check complet et E2E, sans relancer les ciblés verts. Destination QA toujours réservée ; source précédente198261c n'est plus en réception. Antigravity/main applicatif et74 statuts canoniques inchangés.
+
+### [2026-10-17T08:08:55Z] Dix écarts de réception corrigés — nouvelle source figée198261c
+
+-76892 FINAL1 confirmé :290 succès/dix échecs/1224,11 s ; frontend non exécuté. JUnit rouge original conservé. ADR local086/SPECS avant correction acquisition/traitement : versions distinctes sans réécrire SourceRecord, contrôles source/SHA/clé/MIME/URL/date/octets et versions batch/connecteur/ParseResult conservés.
+-38178 FINAL0/74 unités/32,81 s ;80139 FINAL0/mypy onze fichiers.20038 FINAL1/20 succès/un échec/516,24 s : tous les anciens défauts franchis sauf Douanes découvrant deux éditions au lieu de celle attendue. Cible2024 rendue explicite dans ce seul scénario ;19663 FINAL0/un cycle complet/18,79 s. Les vingt autres scénarios ne sont pas rejoués séparément.
+-198261c sauvegarde corrections, ADR et preuves rouges/vertes, sans données Bronze modifiées.88653 FINAL0/gitleaks configuré/20500 octets/sans fuite. Nouvelle réception complète sur ce commit figé, puis E2E sur le même contenu ; réservation QA maintenue, Antigravity intact. Aucun DONE/tag produit ou source qualifiée ajouté.
+
+### [2026-10-17T07:56:00Z] Réception76892 rouge — causes regroupées, correction à poursuivre
+
+- Backend terminé :290 succès/dix échecs/1224,11 s,1758 collectés ; JUnit original exporté dans ANTIGRAVITY_FULL_CHECK_76892_RED_JUNIT.xml du worktree de correction. Aucun frontend exécuté, code final PowerShell encore attendu ; aucune réception ni nouveau DONE.
+- Trois intégrations (Douanes/MiASA/MinCC) : même contenu déjà enregistré avec parser_version1.0.0 ou1.2.0, nouveau parseur1.1.0 ; égalité acquisition/traitement bloque consume_connector_silver. SourceRecord/objets historiques à conserver, contrat des versions à préciser par ADR avant correction.
+- FAOSTAT/WB : garde URL du connecteur refuse correctement localhost malgré opt-in du client de test ; fixtures à configurer explicitement au niveau des deux gardes, sans élargissement des origines de production.
+- Gold/anomalies/rebuild : anciennes attentes12 au lieu de13 vues publiables ; helper WFP lit la vue macro volontairement non peuplée ; fixture macro API a16 colonnes au lieu des17 du contrat corrigé. Assertions à aligner avec refus macro explicite, sans retirer les vérifications des chiffres métier.
+- Statique320/mypy319/cohérence74 verts. Source backend444/444 exacte, SHA3646bed52f59a1688297e804dc433c65e777fb48d7a531926974ddb2675e9b94 ; copie du runner identique. Ces preuves ne rendent pas la réception rouge valide. Poursuivre correction groupée puis nouvelle réception complète et E2E, pas une relance par helper.
+
+### [2026-10-17T07:30:50Z] Reprise des corrections — réception complète de76dcdf3
+
+-42382 terminé FINAL1 :28 succès/un échec sur1757 collectés,297,54 s ; fixture HTTP locale de connector_stages sans opt-in loopback. Original ANTIGRAVITY_FULL_CHECK_42382_RED_JUNIT.xml conservé dans le worktree de correction ; aucun frontend reçu.
+- Correction groupée des deux chemins concernés : constructeur CountingHttp et fabrique Dagster injectée uniquement dans le test. Le défaut de production continue à refuser localhost avant réseau. Première cible79443 rouge conservée,27706 FINAL0/trois tests/29,61 s après correction complète.
+- ADR local085/SPECS avant adaptation du diagnostic : --maxfail=10 au lieu de1, sans changer sélection, seuils, scénarios scientifiques ni code de sortie ; toute erreur reste éliminatoire. Commit76dcdf3, worktree propre, check Windows76892 lancé sur ce contenu figé.
+- Réception précédente42382 n'est plus en cours. La destination ketrika-qualification reste réservée au nouveau check puis au navigateur ; aucun changement applicatif dans le worktree figé, aucune suite SQL/S3 concurrente. Antigravity poursuit indépendamment ses tests unitaires de récolte dans son propre worktree.
+- Main applicatif et statuts canoniques inchangés : sept DONE/R0.8 IN_PROGRESS/66 TODO. Ni source réelle, ni modèle, ni usage humain qualifié par ces corrections. Après check vert : E2E sur le même contenu et preuves consolidées, sans nouvelle baseline redondante.
+
+### [2026-10-16T20:31:38Z] Réception complète corrections —31f1ab6, résultat final ci-dessus
+
+-30551 FINAL1 sur54d6960 : copie exacte, Ruff318/mypy317/cohérence74 verts ;1749 collectés, six succès/un échec SQL/135,53 s. Original rouge archivé dans le worktree de correction, aucun frontend exécuté. B-R076 : parse83,71% agrégé sur archives étrangères bloquait Gold ; ADR local084 et SPECS avant correction.
+-31f1ab6 : publication contrôlée sur chaque lot complet lié aux candidats, y compris membres failed/pending, minimum99% par lot (pas moyenne masquant un lot mauvais), nombre de membres vérifié, legacy singleton, absence/incohérence refusée, vide non mesuré. Diagnostics globaux conservés et étiquetés ; seuils/gardes source-cell/structure/LLM inchangés.96099 FINAL0/20 tests/11,22 s dont SQL ;46373 FINAL0/types deux modules.
+-76040 : sept intégrations Gold/provenance/structure vertes et un refus correct du NIPC local faute de namespace fixture déclaré. Identité fixture NIPC fermée comme NASA/WFP et loopback explicitement autorisé dans seuls tests locaux ; source publique reste disabled.63954 FINAL0/17 tests/32,95 s, dont SQL NIPC, sept règles HTTP et neuf gardes audit/SSRF défaut. Premiers échecs fixture IngestionRun.mode et reporter workspace readonly conservés comme erreurs de développement, pas comme succès.
+- Gitleaks11855 FINAL0/77769 octets/sans fuite ; nouveau check Windows42382 sur source figée31f1ab6 : Ruff320/mypy319/cohérence74 verts,1757 collectés. Probe Docker readonly :444 fichiers backend (src/tests/alembic et quatre fichiers de configuration) identiques au workspace, SHA2567f09edb015d36240157c3de5c7d22140420531ffe575549528345c629e34a1b7, aucun extra/manquant/changé. Réception dépasse l'ancien échec (alertes SQL, API/perf et lots passent) ; backend global/frontend/E2E non encore reçus.
+- Aucune modification du code pendant42382 ni autre suite mutante QA ; worktree Antigravity intact, main applicatif inchangé. La destination ketrika-qualification reste réservée jusqu'au check puis E2E. Statuts canoniques sept DONE/R0.8 IN_PROGRESS/66 TODO, pas de nouvelle qualification de source, modèle ou usage humain.
+
+### [2026-10-16T20:01:00Z] Corrections Antigravity — réception reprise sur copie exacte
+
+-96846 FINAL1 avant tests : B-R074/migration trop longue ; commit31c9747 élargit le seul suivi Alembic à128 sans renommer les IDs. Lecture QA après rollback0010/macro absente/zéro autre requête active. Test41768 FINAL0/1 test/6,01 s ; migration0011 puis0012 et seed réellement réussis au check suivant78054.
+-78054 FINAL1 avant pytest : B-R075/copie de code conservant des fichiers d'une autre branche. Probe97470 readonly prouve rtfp_json.py présent dans snapshot/absent du commit. Pas de JUnit ancien utilisé ni de tests ignorés pour contourner l'échec.
+- Gouvernance50948 révèle aussi un miroir à73 lignes et des DONE préparatoires divergents. Seules tables réconciliées depuis main22814b4, historiques conservés et déclarations non reçues explicites ;38053 FINAL0/74 statuts/sept DONE/une IN_PROGRESS/66 TODO. Aucun nouveau DONE produit ni tag R1–R3.
+- Correction54d6960 après ADR local083/SPECS : garde QA depuis source montée, création d'archive puis remplacement des seules copies source/tests/alembic dans volume de code QA, jamais workspace/venv/DB/Bronze.56873 FINAL0/1 test/3,22 s ; gitleaks45753 FINAL0/8847 octets/sans fuite. Nouvelle source figée, check Windows30551 en cours ; destination QA toujours réservée puis E2E sur même contenu. Worktree Antigravity intact, main applicatif inchangé.
+
+### [2026-10-16T19:46:24Z] Corrections Antigravity — source figée, réception en cours
+
+- Demande utilisateur : poursuivre jusqu'à correction de tous les écarts. Worktree Codex isolé inchangé, Antigravity toujours observé sur `3c8958f`, aucun de ses fichiers modifié.
+- Commit préparatoire `925c105` après `f2b7d41` : lignage SQL→DTO avec validation des valeurs numériques, périodes natives et contributeurs ; inspection macro dédiée explicitement non qualifiée ; liste macro JSON/CSV avec source_record/type/qualification et pagination déterministe ; adaptateur frontend aligné sur OpenAPI réel, liens macro et erreur distincte du vide. Corpus exhaustif : 27 ajouts inventoriés (huit synthetic/19 unverified), aucune nouvelle authenticité revendiquée.
+- Développement :42342 FINAL0/54 tests/19,24 s/mypy quatre modules ;34458 FINAL0/100 tests/11,91 s ;82090 FINAL0/18 tests/12,60 s et mypy deux générateurs ;46502 FINAL0/tsc/sept tests web. Sortie25757 initialement rouge malgré sept tests verts : cache readonly, corrigé par --no-cache. SQL36558 FINAL0 : séparation des grains/sources/unités/bases, fin de mois et ambiguïté sans sélection arbitraire.
+- Contrôles globaux statiques en développement ont révélé 44 fichiers non formatés, import inutilisé et 37 erreurs de types dans deux générateurs ; corrections mécaniques/types, aucune donnée de classeur ni scénario scientifique changé. Assertions Gold mises en cohérence avec 14 vues initialisées/13 publiables, macro explicitement retenue et gardes négatives inchangées. INSTAT NIPC/TBE disabled conformément à l'arrêt connu, sans nouvelle requête ; ADR locaux079–081 non substitués au registre main.
+- Gitleaks65477 sans configuration émet trois signalements ; nouvelle analyse54076 avec configuration versionnée existante FINAL0/221299 octets/sans fuite, aucune exception ajoutée. Check Windows `96846` démarré sur source figée `925c105`, destination `ketrika-qualification` réservée ; ne pas modifier cette source ni lancer de suite mutante concurrente. E2E requis ensuite sur le même contenu ; code du scénario distingue désormais HTTP503/non qualifié et état vide, reload/mobile390px.
+- Aucun merge applicatif ni DONE/gate/tag R1/R2 canonique : réception de préparation seulement. Dernier check main reste celui de8de251f/d898b6d ; R0.8 IN_PROGRESS et miroir 74 statuts conservés. Ne pas confondre tests logiciels, sources live et modèle de marché.
 
 ### [2026-10-16T19:01:16Z] Corrections Antigravity autorisées — IN_PROGRESS, sans réception produit
 

@@ -3,7 +3,26 @@
 > **Statut :** Document normatif de passation du MVP Ketrika Agri Market Intelligence (AGENTS.md §3.2 & §5.3).
 > Ce document récapitule l'état de livraison du MVP, les pré-requis humains pour la phase d'exploitation, ainsi que les gates d'autorité (H1 à H7) nécessitant une intervention humaine.
 
-## État courant du programme autorisé R0–R6 — 2026-10-15
+## État courant — 2026-10-17 : corrections Antigravity validées sur branche
+
+La branche `fix/agy-publication-audit-20261016`, worktree
+`/home/raillersing/projects/ketrika-qa-worktrees/agy-publication-audit-20261016`,
+porte les corrections auditées, source applicative testée `9b638478638b290d0cd509b496818006267e758e`.
+Check78513 FINAL0 : 1762 tests backend, 43 frontend, lint/types/build verts ;
+E2E45858 FINAL0 : 12 contrôles ; inspection83591 : lignage Silver synthétique,
+relecture SQL/API et page mobile après rechargement. Captures effectivement inspectées.
+Voir [réception consolidée](evidence/ANTIGRAVITY_CORRECTIONS_RECEPTION_20261017.md).
+
+Cette branche n'est PAS fusionnée dans main. Une intégration doit préserver le
+R0.8 plus récent de main et réconcilier les ADR/SPECS : les numéros ADR locaux
+Antigravity chevauchent ceux de main. Ne pas importer ses statuts/tags préparatoires.
+Main conserve 74 tâches : 7 DONE, R0.8 IN_PROGRESS, 66 TODO ; aucun nouveau gate acquis.
+La publication macro Gold reste refusée (503 explicite) faute de qualification ;
+la preuve synthétique ne qualifie ni source authentique, ni modèle de marché.
+Le corpus authentique de révisions reste manquant ; H1–H7 restent applicables.
+Aucune migration de base active, aucun Bronze existant modifié ou supprimé.
+
+## Historique du programme autorisé R0–R6 — 2026-10-15
 
 R0.8 mécanisme logiciel reçu main ef626d2, source cff8010 : Windows1612
 backend/35 web/build, inclusion71, CLI Windows sans réseau et deux révisions

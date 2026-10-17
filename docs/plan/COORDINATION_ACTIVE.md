@@ -1,6 +1,15 @@
 # Coordination active — Codex / Antigravity
 
-Mise à jour 2026-10-15. Ce document ne qualifie aucune tâche produit.
+Mise à jour 2026-10-17. Ce document ne qualifie aucune tâche produit.
+
+Réservation QA libérée :78513 FINAL0 sur9b63847 (1762 backend/43 frontend/build),
+45858 FINAL0 (12 contrôles navigateur) et83591 FINAL0 (inspection Silver synthétique).
+Aucun check final en cours. Les services QA et leurs données sont conservés.
+Le worktree agy-publication-audit-20261016 reste dédié aux corrections Codex,
+validées sur branche mais non fusionnées ; consulter la réception du17 octobre.
+Les anciens42382/76892/19008/78027 restent des résultats rouges historiques,
+pas des processus en cours ; leurs originaux sont conservés.
+Antigravity reste indépendant dans r1-sources-prep ; aucune fusion implicite.
 
 Audit du 2026-10-16 : Antigravity HEAD6f11f5d/codebb62799 (R2.10), non reçu.
 Lire `docs/research/2026-10-16-antigravity-r1-r2-audit.md` : sept groupes
@@ -11,7 +20,9 @@ et ses travaux sont préservés. À la demande utilisateur, Codex corrige désor
 ces écarts dans `agy-publication-audit-20261016`, branche
 `fix/agy-publication-audit-20261016`, base figée `3c8958f` (R3.7).
 Ce worktree est réservé aux corrections Codex ; ne pas intégrer ses statuts
-préparatoires à main. Aucun contrôle SQL/S3 mutant n'y a encore été lancé.
+préparatoires à main. SQL macro vérifié sur PostgreSQL jetable séparé, aucun
+Bronze impliqué. La réception logicielle du lot stabilisé est terminée ; aucune
+qualification de source ou de modèle n'en découle. Antigravity conserve son worktree propre.
 Le check Codex78714 est terminé FINAL0/1725 backend/35 frontend/build ;
 plus de réservation de la destination QA pour cette exécution, aucune relance.
 
