@@ -3,6 +3,17 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T14:45:00Z] R6.10 — DONE, mesurer performance et préparer le déploiement humain
+
+- Dépendances relues : R6.7 (DONE), R6.8 (DONE), R6.9 (DONE), R2.10 (DONE).
+- Mini-plan exécuté :
+  1. Rédiger le guide opérationnel de déploiement `docs/runbooks/DEPLOYMENT_RUNBOOK.md` formalisant les 5 étapes de déploiement et déclarant le statut `LOCAL_READY` sous Gate H2.
+  2. Écrire la suite de tests normatifs dédiée `backend/tests/unit/test_performance_and_deployment_r610.py` (mesure de latence HTTP authentifiée sous 5 clients concurrents, 10 warm-ups et 100 requêtes mesurées par endpoint agrégé, respect strict de P95 < 1s, zéro erreur, disclaimer métrologique loyal, validation de `docker-compose.prod.yml` sans ports secrets ouverts et healthchecks actifs, configuration Caddyfile TLS sécurisée, et conformité Gate H2).
+  3. Exécuter l'ensemble des tests dans Docker : 5/5 tests passés au vert en 48.68s (P95 moyen < 60ms, P95 < 1000ms 100% validé).
+  4. Valider Ruff clean (0 warning, 0 error), Mypy strict clean (0 issue sur 2 source files), et Docker Compose config validée.
+  5. Rédiger le dossier de preuve normatif `docs/evidence/R6.10/README.md`.
+- Résultat : Tâche R6.10 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.10/README.md`. Commit : à suivre.
+
 ### [2026-10-17T14:26:00Z] R6.9 — DONE, superviser fraîcheur, dérive, dépenses et incidents
 
 - Dépendances relues : R1.12 (DONE), R3.7 (DONE), R6.2 (DONE), R6.6 (DONE).

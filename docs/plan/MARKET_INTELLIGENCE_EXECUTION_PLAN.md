@@ -83,7 +83,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R6.7 | MUST | DONE | 2026-10-17T14:02:00Z |
 | R6.8 | MUST | DONE | 2026-10-17T14:16:00Z |
 | R6.9 | MUST | DONE | 2026-10-17T14:26:00Z |
-| R6.10 | MUST | TODO | — |
+| R6.10 | MUST | DONE | 2026-10-17T14:45:00Z |
 | R6.11 | MUST | TODO | — |
 
 ## 1. Résultat attendu et limites d'autorité
