@@ -1160,7 +1160,7 @@
 | R5.7 | MUST | DONE | 2026-10-17T11:03:00Z | 2026-10-17T11:18:00Z | e038d0e | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique | Qualifié, 7/7 tests verts, 90% cov |
 | R5.8 | MUST | DONE | 2026-10-17T11:22:00Z | 2026-10-17T11:32:00Z | 90b47b6 | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs | Qualifié, 7/7 tests verts, 95% cov |
 | R5.9 | MUST | DONE | 2026-10-17T11:40:00Z | 2026-10-17T11:50:00Z | bc2f25d | Gate récoltes et approvisionnement validé, 10 critères normatifs prouvés, couverture 85%, tag mi-r5-qualified | 10 tests dédiés verts, 48 tests R5 verts, 85% cov |
-| R6.1 | MUST | DONE | 2026-10-17T11:55:00Z | 2026-10-17T12:05:00Z | HEAD | Sécuriser les outils de lecture, catalogue typé, SQL guard CTE écriture/fonctions réseau, validation sans fuite | Qualifié, 32/32 tests verts, cov 91% |
+| R6.1 | MUST | DONE | 2026-10-17T11:55:00Z | 2026-10-17T12:05:00Z | 76e732b | Sécuriser les outils de lecture, catalogue typé, SQL guard CTE écriture/fonctions réseau, validation sans fuite | Qualifié, 32/32 tests verts, cov 91% |
 | R6.2 | MUST | TODO | — | — | — | — | — |
 | R6.3 | MUST | TODO | — | — | — | — | — |
 | R6.4 | MUST | TODO | — | — | — | — | — |
