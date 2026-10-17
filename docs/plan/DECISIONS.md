@@ -2,6 +2,36 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-102 : architecture de sauvegarde avec manifeste certifié, contrôle d'intégrité déterministe et garde de refus de restauration sur environnement actif (R6.8)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.8 ; Phase R6.
+- **Contexte :** La tâche R6.8 impose de qualifier la procédure de sauvegarde et de restauration isolée pour Ketrika Agri Market Intelligence. Les directives normatives de R6.8 et d'AGENTS.md (§4 Règle 2 et Règle 4) imposent :
+  1. Sauvegarde complète et traçabilité :
+     - Un backup ne peut pas se limiter à un dump opaque. Il doit générer un fichier de manifeste de sauvegarde certifié (`.meta.json`) consignant l'horodatage UTC, le commit git, la taille, le hash cryptographique SHA-256 du dump, et les volumétries de contrôle des tables clés (provenances `meta.source_record`, observations `obs.price_observation`, faits `gold.weekly_bulletin_facts`, utilisateurs `auth.user_account`).
+  2. Contrôle de lisibilité et intégrité préalable :
+     - Tout dump produit doit être vérifié structurellement (`pg_restore --list`) et son intégrité d'empreinte SHA-256 validée avant d'être promu comme sauvegarde saine.
+  3. Garde de refus catégorique de restauration sur base active :
+     - La restauration est strictement confinée à un clone de qualification explicitement nommé (ex: `ketrika_clone`, `ketrika_test_restore`).
+     - Toute tentative de restauration pointant vers une cible active (`ketrika`, `ketrika_prod`, `ketrika_active`) doit échouer immédiatement (code de sortie 2 / exception `ActiveDatabaseOverwriteBlockedError`), sauf forçage explicite hautement destructif (`ALLOW_ACTIVE_DB_OVERWRITE=1`).
+  4. Retrait de tout succès forcé (`|| true`) :
+     - Toutes les étapes de dump, de vérification de somme de contrôle, de restauration de schéma et de rafraîchissement doivent propager leurs erreurs réelles et échouer en cas d'incident.
+  5. Préservation absolue des données Bronze immuables :
+     - Aucune procédure de nettoyage ne doit impacter les objets du compartiment Bronze `s3://bronze/`. Seuls les fichiers de dump locaux périmés dans `backups/` sont purgés selon la politique de rétention (7 jours).
+  6. Mesure loyale des métriques :
+     - Les durées de sauvegarde/restauration et les volumes transférés doivent être mesurés directement sur l'environnement d'exécution, sans invention ni extrapolation.
+- **Décision :**
+  1. Créer le module d'orchestration et de vérification `backend/src/ketrika/ops/backup_restore.py` avec `BackupManifest`, `verify_backup_integrity`, `enforce_active_target_guard`, et `validate_restored_clone_consistency`.
+  2. Mettre à jour `deploy/backup.sh` pour intégrer la vérification structurelle immédiate (`pg_restore --list`) et la génération du manifeste JSON.
+  3. Mettre à jour `deploy/restore.sh` pour implémenter la garde de refus active, retirer les masquages d'erreur `|| true` et vérifier la concordance des enregistrements restaurés.
+  4. Concevoir la suite de tests normatifs `backend/tests/unit/test_backup_restore_qualification_r68.py` couvrant les scénarios nominaux et d'échec (cible active bloquée, dump corrompu rejeté, manifeste manquant rejeté, cohérence post-restauration).
+- **Alternatives rejetées :**
+  - Permettre à `restore.sh` de cibler la base active par défaut (rejeté, risque critique de perte de données opérationnelles).
+  - Ignorer silencieusement les erreurs de restauration avec `|| true` (rejeté, faux sentiment de succès en cas de schéma corrompu).
+- **Conséquences :**
+  - Sécurité absolue des données de production, traçabilité cryptographique complète des sauvegardes, restauration prouvée et auditée sur clone isolé.
+
+
+
 ## ADR-101 : durcissement des contrôles d'accès RBAC, invalidation de session au logout, liens signés cryptographiques à péremption et posture de sécurité applicative non-root (R6.7)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R6.7 ; Phase R6.

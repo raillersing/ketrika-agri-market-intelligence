@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T14:16:00Z] R6.8 — DONE, qualifier sauvegarde et restauration isolée
+
+- Dépendances relues : R0.2 (DONE), R0.8 (DONE), R2.1 (DONE), R6.7 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-102 dans `docs/plan/DECISIONS.md` (architecture de sauvegarde avec manifeste certifié, contrôle d'intégrité déterministe et garde de refus de restauration sur environnement actif).
+  2. Implémenter le module d'orchestration et de validation `backend/src/ketrika/ops/backup_restore.py` (`BackupManifest`, `verify_backup_integrity`, `enforce_active_target_guard`, `validate_restored_clone_consistency`).
+  3. Mettre à jour `deploy/backup.sh` pour intégrer la vérification structurelle automatique (`pg_restore --list`), la génération du manifeste de contrôle `.meta.json` et la protection immuable de Bronze.
+  4. Mettre à jour `deploy/restore.sh` avec la garde de refus sur base active (`ACTIVE_DATABASE_OVERWRITE_BLOCKED`, exit code 2), la suppression des masquages d'erreur `|| true` et le contrôle des comptages.
+  5. Écrire la suite de tests normatifs dédiée `backend/tests/unit/test_backup_restore_qualification_r68.py` (12 tests : génération du manifeste certifié, refus catégorique sur bases actives, validation des clones nommés, détection d'altération SHA-256, rejet de dumps manquants, audit de cohérence de restauration, contrats des scripts bash).
+  6. Exécuter l'ensemble des suites dans Docker : 12/12 tests passés au vert en 12.83s, couverture du module `ketrika.ops.backup_restore` à 87% (seuil >= 80% validé).
+  7. Valider Ruff clean (0 warning, 0 error), Mypy strict clean (0 issue sur 3 source files) et syntaxe bash clean (`bash -n`).
+  8. Rédiger le dossier de preuve normatif `docs/evidence/R6.8/README.md`.
+- Résultat : Tâche R6.8 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.8/README.md`. Commit : à suivre.
+
 ### [2026-10-17T14:02:00Z] R6.7 — DONE, durcissement des accès, audit et sécurité applicative
 
 - Dépendances relues : R6.1 (DONE), R6.2 (DONE), R2.9 (DONE).
