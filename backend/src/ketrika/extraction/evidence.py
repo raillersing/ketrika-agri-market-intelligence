@@ -24,8 +24,8 @@ def normalize_text_for_evidence(text: str) -> str:
     normalized = unicodedata.normalize("NFKC", text)
     # 2. Lowercase
     normalized = normalized.lower()
-    # 3. Non-breaking spaces to standard space
-    normalized = re.sub(r"[\u00a0\u202f\u2007\u200b\t\r\n]+", " ", normalized)
+    # 3. Non-breaking spaces and table pipe separators to standard space
+    normalized = re.sub(r"[\u00a0\u202f\u2007\u200b\t\r\n|]+", " ", normalized)
     # 4. Collapse multiple whitespace
     normalized = re.sub(r"\s+", " ", normalized)
     return normalized.strip()
@@ -99,14 +99,18 @@ def verify_evidence(
     evidence: dict[str, Any] | None,
     page_text: str | None,
     min_text_similarity: float = 95.0,
+    expected_location: str | None = None,
+    expected_product: str | None = None,
 ) -> bool:
-    """Verify that extracted value and its evidence snippet are grounded in page_text (SPECS §11.2).
+    """Verify that extracted value and its evidence snippet are grounded in page_text (SPECS §11.2, R1.4).
 
     Rules:
     1. page_text and evidence.text must be non-empty (scan without OCR -> unverifiable).
     2. Normalize page_text and evidence.text (NFKC, lowercase, collapse whitespace).
     3. evidence.text must be substring of page_text or partial_ratio >= 95%.
     4. Numeric representation of value must appear in evidence.text.
+    5. If expected_location is given, evidence.text must explicitly contain the location tokens
+       to prevent neighboring table cells from being accepted as proof.
     """
     if not evidence or not isinstance(evidence, dict):
         return False
@@ -133,7 +137,20 @@ def verify_evidence(
         if similarity < min_text_similarity:
             return False
 
-    # 2. Numeric value check: at least one representation variant must be in norm_evidence
+    # 2. Location grounding: reject neighboring table/row cells when page lists locations
+    if expected_location:
+        norm_loc = normalize_text_for_evidence(expected_location)
+        # Extract location keywords (e.g. "Analamanga (Antananarivo)" -> ["analamanga", "antananarivo"])
+        loc_tokens = [
+            t.strip("()[],.-")
+            for t in re.split(r"[\s\(\)\[\],]+", norm_loc)
+            if len(t.strip("()[],.-")) >= 3
+        ]
+        page_has_location = bool(loc_tokens and any(tok in norm_page for tok in loc_tokens))
+        if page_has_location and not any(tok in norm_evidence for tok in loc_tokens):
+            return False
+
+    # 3. Numeric value check: at least one representation variant must be in norm_evidence
     variants = generate_number_variants(value)
     if not variants:
         return False

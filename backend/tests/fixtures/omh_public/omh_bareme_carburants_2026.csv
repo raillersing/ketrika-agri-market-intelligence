@@ -1,0 +1,11 @@
+# Office Malgache des Hydrocarbures (OMH) - Barème Officiel des Prix Maxima à la Pompe
+# Source officielle: https://www.omh.mg/prix-des-carburants
+# Unité: Ariary malagasy par litre (MGA/L)
+# Scope: Antananarivo / Référence nationale
+date_effet,date_publication,acte_reglementaire,produit,prix_ancien,prix_plafond,type_prix
+2026-01-01,2025-12-28,Décret N°2025-1142,DIESEL,4900,4900,ceiling
+2026-01-01,2025-12-28,Décret N°2025-1142,SUPER95,5900,5900,ceiling
+2026-01-01,2025-12-28,Décret N°2025-1142,KEROSENE,2430,2430,ceiling
+2026-06-01,2026-05-30,Arrêté Interministériel N°124/2026-MEH,DIESEL,4900,5200,ceiling
+2026-06-01,2026-05-30,Arrêté Interministériel N°124/2026-MEH,SUPER95,5900,6250,ceiling
+2026-06-01,2026-05-30,Arrêté Interministériel N°124/2026-MEH,KEROSENE,2430,2430,ceiling

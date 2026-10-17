@@ -1,0 +1,104 @@
+{
+  "source_id": "instat_tbe",
+  "source_family": "madagascar_gov",
+  "expected_editions": [
+    {
+      "edition_num": 62,
+      "publication_date": "2026-05-20",
+      "file_name": "tbe_edition_62_mai_2026.xlsx",
+      "expected_indicators": [
+        "IPI_GLOBAL",
+        "ELEC_IND_KWH",
+        "CEMENT_CONSUMPTION_TONNES",
+        "GDP_REAL_MGA",
+        "RICE_IMPORTS_TONNES",
+        "IMPORTS_CIF_MGA",
+        "EXPORTS_FOB_MGA",
+        "MONEY_SUPPLY_M3_MGA",
+        "EXCHANGE_RATE_MGA_USD",
+        "CPI_TBE_FOOD"
+      ],
+      "sample_records": [
+        {
+          "indicator_code": "IPI_GLOBAL",
+          "indicator_name": "Indice de la Production Industrielle (Base 2015=100)",
+          "frequency": "monthly",
+          "unit": "index",
+          "period_start": "2026-01-01",
+          "period_end": "2026-01-31",
+          "value": 109.4,
+          "primary_institution": "INSTAT"
+        },
+        {
+          "indicator_code": "GDP_REAL_MGA",
+          "indicator_name": "PIB Réel Trimestriel (Milliards MGA)",
+          "frequency": "quarterly",
+          "unit": "MGA_milliard",
+          "period_start": "2026-01-01",
+          "period_end": "2026-03-31",
+          "value": 9750.0,
+          "primary_institution": "INSTAT"
+        },
+        {
+          "indicator_code": "RICE_IMPORTS_TONNES",
+          "indicator_name": "Importations Riz (Tonnes)",
+          "frequency": "monthly",
+          "unit": "tonnes",
+          "period_start": "2026-01-01",
+          "period_end": "2026-01-31",
+          "value": 42000.0,
+          "primary_institution": "Direction Générale des Douanes"
+        },
+        {
+          "indicator_code": "MONEY_SUPPLY_M3_MGA",
+          "indicator_name": "Masse Monétaire M3 (Milliards MGA)",
+          "frequency": "monthly",
+          "unit": "MGA_milliard",
+          "period_start": "2026-01-01",
+          "period_end": "2026-01-31",
+          "value": 19480.0,
+          "primary_institution": "Banky Foiben'i Madagasikara"
+        },
+        {
+          "indicator_code": "CPI_TBE_FOOD",
+          "indicator_name": "NIPC Indice Alimentaire Réédité (Base 2016)",
+          "frequency": "monthly",
+          "unit": "index",
+          "period_start": "2026-01-01",
+          "period_end": "2026-01-31",
+          "value": 184.9,
+          "primary_source": "instat_nipc",
+          "primary_institution": "INSTAT Madagascar - Service des Prix (NIPC Base 2016)"
+        }
+      ]
+    },
+    {
+      "edition_num": 63,
+      "publication_date": "2026-08-25",
+      "file_name": "tbe_edition_63_aout_2026.xlsx",
+      "sample_records": [
+        {
+          "indicator_code": "IPI_GLOBAL",
+          "indicator_name": "Indice de la Production Industrielle (Base 2015=100)",
+          "frequency": "monthly",
+          "unit": "index",
+          "period_start": "2026-01-01",
+          "period_end": "2026-01-31",
+          "value": 109.7,
+          "vintage": "revised",
+          "primary_institution": "INSTAT"
+        },
+        {
+          "indicator_code": "GDP_REAL_MGA",
+          "indicator_name": "PIB Réel Trimestriel (Milliards MGA)",
+          "frequency": "quarterly",
+          "unit": "MGA_milliard",
+          "period_start": "2026-04-01",
+          "period_end": "2026-06-30",
+          "value": 10120.0,
+          "primary_institution": "INSTAT"
+        }
+      ]
+    }
+  ]
+}

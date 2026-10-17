@@ -1,4 +1,13 @@
-"""SQL Guard: Strict AST validation and sanitization for Copilot queries (SPECS §21, T10.1)."""
+"""SQL Guard: Strict AST validation and sanitization for Copilot queries (SPECS §21, R6.1, ADR-095).
+
+Normative security requirements:
+- Single SQL statement.
+- Pure SELECT in the 'gold' analytical schema only.
+- Strict prevention of data-modifying CTEs (WITH ... DELETE/UPDATE/INSERT).
+- Strict prevention of system and network/exfiltration functions (pg_*, http_*, dblink*, etc.).
+- Enforced LIMIT <= 500.
+- Safe explanation on rejection without leakage of internal database or credentials metadata.
+"""
 
 from __future__ import annotations
 
@@ -20,6 +29,8 @@ KNOWN_GOLD_VIEWS: set[str] = {
     "market_health",
     "source_health",
     "forecast_latest",
+    "market_coverage",
+    "economic_dashboard",
 }
 
 FORBIDDEN_FUNCTION_PREFIXES: tuple[str, ...] = (
@@ -31,6 +42,26 @@ FORBIDDEN_FUNCTION_PREFIXES: tuple[str, ...] = (
     "set_config",
     "inet_",
     "version",
+    "http_",
+    "net_",
+    "query_to_",
+    "table_to_",
+    "schema_to_",
+    "crosstab",
+    "system",
+    "sh",
+    "exec",
+    "cmd",
+)
+
+FORBIDDEN_SCHEMA_PATTERNS: tuple[str, ...] = (
+    "auth",
+    "obs",
+    "bronze",
+    "silver",
+    "information_schema",
+    "pg_catalog",
+    "public",
 )
 
 MAX_ROW_LIMIT: int = 500
@@ -50,9 +81,11 @@ def validate_and_sanitize_sql(sql_query: str) -> str:
     Rules enforced via sqlglot AST:
     1. Exactly one SQL statement.
     2. Must be a pure SELECT query (no INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, etc.).
-    3. Every table referenced MUST belong exclusively to schema 'gold' and be a recognized Gold view.
-    4. No dangerous functions (pg_*, dblink, lo_*, copy, etc.).
-    5. Injects or clamps LIMIT <= 500.
+    3. Common Table Expressions (CTEs) must be pure SELECT queries (no data-modifying CTEs).
+    4. Every table referenced MUST belong exclusively to schema 'gold' and be a recognized Gold view.
+    5. No dangerous or exfiltration functions (pg_*, http_*, dblink, lo_*, copy, etc.).
+    6. No SELECT ... INTO statement.
+    7. Injects or clamps LIMIT <= 500.
 
     Returns the sanitized, formatted SQL query string.
     Raises SqlGuardError on any violation.
@@ -63,7 +96,14 @@ def validate_and_sanitize_sql(sql_query: str) -> str:
 
     # Reject obvious injection attempt keywords in comments or raw text
     lower_raw = cleaned_input.lower()
-    if re.search(r"\b(auth\.user_account|auth\.api_key|pg_read_file|pg_shadow)\b", lower_raw):
+    for forbidden_sch in FORBIDDEN_SCHEMA_PATTERNS:
+        if re.search(rf"\b{forbidden_sch}\.", lower_raw):
+            raise SqlGuardError(
+                f"Accès refusé au schéma '{forbidden_sch}'. Seul le schéma 'gold' est autorisé.",
+                "FORBIDDEN_SCHEMA",
+            )
+
+    if re.search(r"\b(pg_read_file|pg_shadow|pg_authid|pg_ls_dir)\b", lower_raw):
         raise SqlGuardError(
             "Accès aux schémas système ou sensibles strictement interdit.", "ACCESS_DENIED"
         )
@@ -89,6 +129,37 @@ def validate_and_sanitize_sql(sql_query: str) -> str:
             "STATEMENT_NOT_SELECT",
         )
 
+    # Forbid SELECT INTO
+    if stmt.args.get("into") is not None:
+        raise SqlGuardError("La clause SELECT INTO est strictement interdite.", "INTO_NOT_ALLOWED")
+
+    # Forbid any data-modifying AST nodes anywhere in the query (including within subqueries or CTEs)
+    modifying_nodes = list(
+        stmt.find_all(
+            exp.Insert,
+            exp.Update,
+            exp.Delete,
+            exp.Drop,
+            exp.Create,
+            exp.Alter,
+            exp.Command,
+        )
+    )
+    if modifying_nodes:
+        raise SqlGuardError(
+            "Instructions d'écriture ou de modification de données interdites dans la requête.",
+            "MODIFICATION_NOT_ALLOWED",
+        )
+
+    # Verify CTEs: all CTE bodies must be pure Select
+    for cte in stmt.find_all(exp.CTE):
+        cte_query = cte.this
+        if not isinstance(cte_query, exp.Select):
+            raise SqlGuardError(
+                "Toutes les expressions CTE (WITH) doivent obligatoirement être des SELECT en lecture seule.",
+                "CTE_NOT_SELECT",
+            )
+
     # Check for forbidden functions
     for func in stmt.find_all(exp.Func, exp.Anonymous):
         func_name = (func.name or func.sql()).lower().strip()
@@ -106,12 +177,13 @@ def validate_and_sanitize_sql(sql_query: str) -> str:
             "La requête doit interroger au moins une vue du schéma gold.", "NO_TABLES"
         )
 
+    ctes = {cte.alias_or_name.lower() for cte in stmt.find_all(exp.CTE) if cte.alias_or_name}
+
     for tbl in tables:
         schema = (tbl.db or "").lower().strip()
         table_name = (tbl.name or "").lower().strip()
 
-        # Handle CTE (Common Table Expressions) references: CTEs don't have a db schema
-        ctes = {cte.alias_or_name.lower() for cte in stmt.find_all(exp.CTE) if cte.alias_or_name}
+        # Handle CTE references
         if table_name in ctes and not schema:
             continue
 

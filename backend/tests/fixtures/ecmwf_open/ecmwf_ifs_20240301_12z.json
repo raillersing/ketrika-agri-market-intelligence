@@ -1,0 +1,20 @@
+{
+  "model_name": "ecmwf_ifs_open",
+  "issued_at": "2024-03-01T12:00:00Z",
+  "cycle": "12z",
+  "spatial_resolution": "0.4_deg",
+  "status": "published",
+  "forecasts": [
+    {
+      "location_raw": "Analamanga",
+      "horizon_hours": 24,
+      "valid_from": "2024-03-02T12:00:00Z",
+      "valid_to": "2024-03-03T12:00:00Z",
+      "variable": "precip_mm",
+      "predicted_value": 18.0,
+      "predicted_p10": 6.5,
+      "predicted_p90": 31.0,
+      "unit": "mm"
+    }
+  ]
+}

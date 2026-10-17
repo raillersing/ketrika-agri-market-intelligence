@@ -30,6 +30,7 @@ class CopilotAskResponse(BaseModel):
     rows_preview: list[dict[str, Any]]
     citations: list[dict[str, Any]]
     value_kinds: list[str]
+    provenance_summary: str | None = None
 
 
 _copilot_agent: CopilotAgent | None = None
@@ -59,4 +60,5 @@ def ask_copilot(
         rows_preview=result["rows_preview"],
         citations=result["citations"],
         value_kinds=result["value_kinds"],
+        provenance_summary=result.get("provenance_summary"),
     )

@@ -1,5 +1,4 @@
-"""Geographic boundary loader, location resolver and crop calendar manager."""
-
+import hashlib
 import json
 from pathlib import Path
 from typing import Any, cast
@@ -26,6 +25,28 @@ def get_default_taxonomy_dir() -> Path:
     """Return default path to taxonomy directory."""
     root = find_repo_root()
     return root / "taxonomy"
+
+
+def load_geo_manifest(geo_dir: Path | str | None = None) -> dict[str, Any]:
+    """Load and parse geographic dataset manifest tracing boundary versions, counts and divergences."""
+    if geo_dir is not None:
+        p = Path(geo_dir)
+        base_geo = p if p.name == "geo" or (p / "manifest.json").exists() else p.parent
+        manifest_path = base_geo / "manifest.json"
+    else:
+        root = find_repo_root()
+        manifest_path = root / "geo" / "manifest.json"
+
+    if not manifest_path.exists():
+        raise FileNotFoundError(f"Geographic manifest not found: {manifest_path}")
+
+    with open(manifest_path, encoding="utf-8") as f:
+        data: Any = json.load(f)
+
+    if not isinstance(data, dict) or "dataset_id" not in data:
+        raise ValueError(f"Invalid geographic manifest in {manifest_path}")
+
+    return data
 
 
 def load_admin_geojson(level: str = "admin1", geo_dir: Path | str | None = None) -> dict[str, Any]:
@@ -185,10 +206,41 @@ def validate_geo(
     geo_dir: Path | str | None = None,
     taxonomy_dir: Path | str | None = None,
 ) -> list[str]:
-    """Validate spatial datasets, region counts and location aliases."""
+    """Validate spatial datasets, region counts, manifest concordance and location aliases."""
     errors: list[str] = []
+    g_dir = Path(geo_dir) if geo_dir else get_default_geo_dir()
 
-    # 1. Validate GeoJSON boundaries
+    # 1. Validate Geographic Manifest concordance (R1.10)
+    try:
+        manifest = load_geo_manifest(g_dir)
+        levels_declared = manifest.get("levels", {})
+        for lvl_name, decl in levels_declared.items():
+            expected_file = decl.get("file")
+            expected_sha = decl.get("sha256")
+            expected_count = decl.get("feature_count")
+
+            target_path = (g_dir.parent / expected_file) if expected_file else (g_dir / f"{lvl_name}.geojson")
+            if not target_path.exists():
+                errors.append(f"Manifest level '{lvl_name}' file not found: {target_path}")
+                continue
+
+            content = target_path.read_bytes()
+            actual_sha = hashlib.sha256(content).hexdigest()
+            if expected_sha and actual_sha != expected_sha:
+                errors.append(
+                    f"Manifest sha256 mismatch for '{lvl_name}': expected {expected_sha}, got {actual_sha}"
+                )
+
+            geo_data = json.loads(content)
+            actual_count = len(geo_data.get("features", []))
+            if expected_count is not None and actual_count != expected_count:
+                errors.append(
+                    f"Manifest count mismatch for '{lvl_name}': expected {expected_count}, got {actual_count}"
+                )
+    except Exception as e:
+        errors.append(f"Failed to validate geographic manifest: {e}")
+
+    # 2. Validate GeoJSON boundaries and spatial coordinates
     try:
         admin0 = load_admin_geojson("admin0", geo_dir)
         if len(admin0.get("features", [])) < 1:
@@ -223,17 +275,22 @@ def validate_geo(
     except Exception as e:
         errors.append(f"Failed to load admin3.geojson: {e}")
 
-    # 2. Validate geographic entities loading
+    # 3. Validate geographic entities loading and bounding box
     try:
         entities = load_geographic_entities("admin1", geo_dir)
         if len(entities) != 23:
             errors.append(
                 f"load_geographic_entities('admin1') returned {len(entities)}, expected 23"
             )
+        for ent in entities:
+            if ent.latitude is not None and not (-26.0 <= ent.latitude <= -11.0):
+                errors.append(f"Entity '{ent.pcode}' latitude {ent.latitude} outside Madagascar bounds")
+            if ent.longitude is not None and not (43.0 <= ent.longitude <= 51.5):
+                errors.append(f"Entity '{ent.pcode}' longitude {ent.longitude} outside Madagascar bounds")
     except Exception as e:
         errors.append(f"Failed to load geographic entities: {e}")
 
-    # 3. Validate location aliases
+    # 4. Validate location aliases
     try:
         aliases = load_location_aliases(taxonomy_dir)
         seen: set[str] = set()
@@ -278,7 +335,17 @@ def validate_geo(
     except Exception as e:
         errors.append(f"Failed to load location aliases: {e}")
 
-    # 4. Validate crop calendar
+    # 5. Non-arbitrary default check (R1.10): unknown location never falls back to MDG1101
+    try:
+        resolved_unknown = resolve_location("non_existent_location_query_xyz")
+        if resolved_unknown is not None:
+            errors.append(
+                f"Unknown location resolved to {resolved_unknown} instead of None (arbitrary fallback violation)"
+            )
+    except Exception as e:
+        errors.append(f"Failed to test unresolved location safety: {e}")
+
+    # 6. Validate crop calendar
     try:
         cal = load_crop_calendar(taxonomy_dir)
         for c in cal:

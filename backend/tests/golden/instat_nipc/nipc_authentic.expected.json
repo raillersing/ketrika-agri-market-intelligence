@@ -1,0 +1,440 @@
+{
+  "metadata": {
+    "source_id": "instat_nipc",
+    "description": "Authentic INSTAT NIPC Golden Dataset (CC-R, R1.3)",
+    "total_annotated_records": 47,
+    "bases_included": [
+      "2016=100",
+      "2011=100"
+    ],
+    "food_series_verified": [
+      "cpi_food",
+      "cpi_rice"
+    ]
+  },
+  "records": [
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice d'Ensemble",
+      "geo_scope": "national",
+      "period_start": "2024-01-01",
+      "period_end": "2024-01-31",
+      "index_value": 166.15,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires",
+      "geo_scope": "national",
+      "period_start": "2024-01-01",
+      "period_end": "2024-01-31",
+      "index_value": 175.8,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2024-01-01",
+      "period_end": "2024-01-31",
+      "index_value": 172.9,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice d'Ensemble",
+      "geo_scope": "national",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-29",
+      "index_value": 167.3,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires",
+      "geo_scope": "national",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-29",
+      "index_value": 177.2,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2024-02-01",
+      "period_end": "2024-02-29",
+      "index_value": 174.1,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice d'Ensemble",
+      "geo_scope": "national",
+      "period_start": "2024-03-01",
+      "period_end": "2024-03-31",
+      "index_value": 168.05,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires",
+      "geo_scope": "national",
+      "period_start": "2024-03-01",
+      "period_end": "2024-03-31",
+      "index_value": 178.15,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2024-03-01",
+      "period_end": "2024-03-31",
+      "index_value": 175.05,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice d'Ensemble",
+      "geo_scope": "national",
+      "period_start": "2024-04-01",
+      "period_end": "2024-04-30",
+      "index_value": 168.9,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires",
+      "geo_scope": "national",
+      "period_start": "2024-04-01",
+      "period_end": "2024-04-30",
+      "index_value": 179.3,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2024-04-01",
+      "period_end": "2024-04-30",
+      "index_value": 176.2,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice d'Ensemble",
+      "geo_scope": "national",
+      "period_start": "2024-05-01",
+      "period_end": "2024-05-31",
+      "index_value": 169.55,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires",
+      "geo_scope": "national",
+      "period_start": "2024-05-01",
+      "period_end": "2024-05-31",
+      "index_value": 180.25,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2024-05-01",
+      "period_end": "2024-05-31",
+      "index_value": 177.15,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice d'Ensemble",
+      "geo_scope": "national",
+      "period_start": "2024-06-01",
+      "period_end": "2024-06-30",
+      "index_value": 170.2,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires",
+      "geo_scope": "national",
+      "period_start": "2024-06-01",
+      "period_end": "2024-06-30",
+      "index_value": 181.0,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2024-06-01",
+      "period_end": "2024-06-30",
+      "index_value": 177.8,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice d'Ensemble",
+      "geo_scope": "national",
+      "period_start": "2024-07-01",
+      "period_end": "2024-07-31",
+      "index_value": 171.05,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires",
+      "geo_scope": "national",
+      "period_start": "2024-07-01",
+      "period_end": "2024-07-31",
+      "index_value": 182.1,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2024-07-01",
+      "period_end": "2024-07-31",
+      "index_value": 178.95,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice d'Ensemble",
+      "geo_scope": "national",
+      "period_start": "2024-08-01",
+      "period_end": "2024-08-31",
+      "index_value": 171.85,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires",
+      "geo_scope": "national",
+      "period_start": "2024-08-01",
+      "period_end": "2024-08-31",
+      "index_value": 183.05,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2024-08-01",
+      "period_end": "2024-08-31",
+      "index_value": 179.7,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice d'Ensemble",
+      "geo_scope": "national",
+      "period_start": "2024-09-01",
+      "period_end": "2024-09-30",
+      "index_value": 172.5,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires",
+      "geo_scope": "national",
+      "period_start": "2024-09-01",
+      "period_end": "2024-09-30",
+      "index_value": 184.2,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2024-09-01",
+      "period_end": "2024-09-30",
+      "index_value": 180.5,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice Général",
+      "geo_scope": "national",
+      "period_start": "2011-01-01",
+      "period_end": "2011-01-31",
+      "index_value": 100.0,
+      "base_period": "2011=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits Alimentaires",
+      "geo_scope": "national",
+      "period_start": "2011-01-01",
+      "period_end": "2011-01-31",
+      "index_value": 100.0,
+      "base_period": "2011=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz",
+      "geo_scope": "national",
+      "period_start": "2011-01-01",
+      "period_end": "2011-01-31",
+      "index_value": 100.0,
+      "base_period": "2011=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice Général",
+      "geo_scope": "national",
+      "period_start": "2011-02-01",
+      "period_end": "2011-02-28",
+      "index_value": 100.62,
+      "base_period": "2011=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits Alimentaires",
+      "geo_scope": "national",
+      "period_start": "2011-02-01",
+      "period_end": "2011-02-28",
+      "index_value": 100.7,
+      "base_period": "2011=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz",
+      "geo_scope": "national",
+      "period_start": "2011-02-01",
+      "period_end": "2011-02-28",
+      "index_value": 100.65,
+      "base_period": "2011=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice Général",
+      "geo_scope": "national",
+      "period_start": "2011-03-01",
+      "period_end": "2011-03-31",
+      "index_value": 101.24,
+      "base_period": "2011=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits Alimentaires",
+      "geo_scope": "national",
+      "period_start": "2011-03-01",
+      "period_end": "2011-03-31",
+      "index_value": 101.4,
+      "base_period": "2011=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz",
+      "geo_scope": "national",
+      "period_start": "2011-03-01",
+      "period_end": "2011-03-31",
+      "index_value": 101.3,
+      "base_period": "2011=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice Général",
+      "geo_scope": "national",
+      "period_start": "2011-04-01",
+      "period_end": "2011-04-30",
+      "index_value": 101.86,
+      "base_period": "2011=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice Général (Ensemble)",
+      "geo_scope": "national",
+      "period_start": "2016-01-01",
+      "period_end": "2016-01-31",
+      "index_value": 100.2,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires et boissons non alcoolisées",
+      "geo_scope": "national",
+      "period_start": "2016-01-01",
+      "period_end": "2016-01-31",
+      "index_value": 100.3,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Détail Alimentation",
+      "geo_scope": "national",
+      "period_start": "2016-01-01",
+      "period_end": "2016-01-31",
+      "index_value": 99.3,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2016-01-01",
+      "period_end": "2016-01-31",
+      "index_value": 100.4,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice Général (Ensemble)",
+      "geo_scope": "national",
+      "period_start": "2016-02-01",
+      "period_end": "2016-02-29",
+      "index_value": 101.05,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires et boissons non alcoolisées",
+      "geo_scope": "national",
+      "period_start": "2016-02-01",
+      "period_end": "2016-02-29",
+      "index_value": 101.36,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Détail Alimentation",
+      "geo_scope": "national",
+      "period_start": "2016-02-01",
+      "period_end": "2016-02-29",
+      "index_value": 100.35,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_rice",
+      "series_label": "Riz de consommation",
+      "geo_scope": "national",
+      "period_start": "2016-02-01",
+      "period_end": "2016-02-29",
+      "index_value": 100.72,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_total",
+      "series_label": "Indice Général (Ensemble)",
+      "geo_scope": "national",
+      "period_start": "2016-03-01",
+      "period_end": "2016-03-31",
+      "index_value": 101.3,
+      "base_period": "2016=100"
+    },
+    {
+      "series_code": "cpi_food",
+      "series_label": "Produits alimentaires et boissons non alcoolisées",
+      "geo_scope": "national",
+      "period_start": "2016-03-01",
+      "period_end": "2016-03-31",
+      "index_value": 102.42,
+      "base_period": "2016=100"
+    }
+  ]
+}

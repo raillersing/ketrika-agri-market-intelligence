@@ -72,6 +72,25 @@ def main() -> int:
             expect(page.get_by_text("Explorateur des prix vivriers", exact=True)).to_be_visible()
             page.screenshot(path=str(directory / "prices.png"), full_page=True)
             completed.append("price explorer renders")
+
+            # R2.10: Economy observatory navigation, dimensions and responsive checks
+            eco_res = context.request.get("/api/v1/economic/dashboard")
+            assert eco_res.ok, f"Authenticated same-origin economic dashboard: {eco_res.status}"
+            page.goto("/economy")
+            expect(page.get_by_text("Observatoire Économique & Conjoncture", exact=True)).to_be_visible()
+            expect(page.get_by_text("ADR-070", exact=True)).to_be_visible()
+            page.screenshot(path=str(directory / "economy.png"), full_page=True)
+            completed.append("economy observatory renders")
+
+            # R2.10: Mobile responsive check at 390px width (SPECS §22)
+            page.set_viewport_size({"width": 390, "height": 844})
+            expect(page.get_by_text("Observatoire Économique & Conjoncture", exact=True)).to_be_visible()
+            page.screenshot(path=str(directory / "economy_mobile_390px.png"), full_page=True)
+            completed.append("economy mobile 390px responsive view")
+
+            # Restore desktop viewport
+            page.set_viewport_size({"width": 1280, "height": 800})
+
             page.get_by_title("Se déconnecter", exact=True).click()
             expect(page).to_have_url("http://web:3000/login")
             assert not any(cookie["name"] == "session_token" for cookie in context.cookies())

@@ -2,6 +2,7 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+### ADRs R0.6–R0.8 (Codex)
 ## ADR-074 : contexte WB réutilisé entre éditions et tentatives
 
 - **Date/statut :** 2026-10-16 UTC, adopté avant code.
@@ -92,6 +93,880 @@
 - **Décision :** ajouter à la purge finale `x-api-key`, `api-key`, `apikey`, `x-auth-token`, `token`, insensible à la casse via HTTPX. Suppression sur robots et redirection inter-origines après fusion des en-têtes client/appel ; conservation sur document et redirect de même origine. Aucun token dans les preuves, uniquement valeurs synthétiques de tests.
 - **Alternatives :** fusion globale Agy, suppression de tous les en-têtes ou purge avant fusion rejetées. Aucun quota/policy/schema modifié.
 - **Réception :** tests transport inerte defaults/caller/mixed-case/robots/cross-origin/same-origin ; source R0.7 figée inchangée, aucun QA SQL concurrent. Réception complète requise avant intégration du correctif.
+### ADRs R1–R6 (Ketrika Agri Market Intelligence)
+## ADR-103 : supervision DataOps de fraîcheur, gestion des incidents (panne HTTP, dérive de schéma, budget dépassé, forecast inadéquate, runs interrompus) et interdiction de remplacement automatique de modèle sous dérive (R6.9)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.9 ; Phase R6.
+- **Contexte :** La tâche R6.9 impose de superviser la fraîcheur, la dérive, les dépenses et les incidents opérationnels de Ketrika Agri Market Intelligence. Les directives normatives de R6.9 et d'AGENTS.md imposent :
+  1. Gestion des cinq incidents critiques en environnement isolé :
+     - **Panne réseau / HTTP** : si un endpoint source devient indisponible (timeouts / 5xx), le connecteur bascule en mode dégradé, consigne l'incident dans `ops.incident` sans falsifier de succès, et génère un brouillon d'alerte pour Mailpit sous Gate H3.
+     - **Dérive de schéma (`schema_drift`)** : tout changement non négocié de colonnes ou de types gèle immédiatement la publication de la source (`quarantine_status="frozen"`), consigne un `ReviewItem` en base sans altérer l'historique sain (Règle 3 Ajout seul).
+     - **Dépassement de budget** : si le budget journalier HTTP ou le budget mensuel LLM (`llm_monthly_budget_usd`) est atteint, les appels suivants sont catégoriquement refusés (`BudgetExceededError`, `PolicyStop`), sans dépassement autorisé (Gate H6).
+     - **Dérive statistique de forecast** : une anomalie de calibration ou une dégradation du WAPE au-delà des seuils conventionnels émet une alerte de dérive, mais **interdit formellement tout remplacement automatique sauvage du modèle** par un candidat non audité. Le modèle de référence qualifié reste en service jusqu'à validation humaine.
+     - **Run interrompu / orphelin** : un run Dagster ou d'ingestion interrompu anormalement est marqué `failed`/`interrupted` et peut être repris de manière idempotente sans double écriture dans Bronze ni Silver.
+  2. Traçabilité des rôles humains sans contact direct (Gate H7) :
+     - Les rôles d'astreinte (`Lead DataOps`, `Analyste Marché`, `Administrateur Système`) et leurs procédures de rollback/reprise sont formalisés dans `docs/runbooks/INCIDENT_RUNBOOK.md` sans jamais contacter de personnes réelles.
+  3. Visibilité de la fraîcheur et du stale data :
+     - Les retards de fraîcheur vis-à-vis des SLA définis dans `meta.source` restent publiquement exposés via `/v1/sources/{source_id}/health` et le dashboard DataOps (`gold.source_health`).
+- **Décision :**
+  1. Implémenter le module de supervision et de gestion des incidents `backend/src/ketrika/ops/supervision.py` avec `IncidentType`, `IncidentSeverity`, `IncidentReport`, `IncidentManager`, `evaluate_source_availability_and_drift`, et `evaluate_forecast_drift_policy`.
+  2. Créer le runbook d'exploitation et de réponse aux incidents `docs/runbooks/INCIDENT_RUNBOOK.md`.
+  3. Développer la suite de tests normatifs `backend/tests/unit/test_supervision_and_incident_r69.py` couvrant la simulation des 5 scénarios d'incident, l'absence de faux succès, le gel de publication, l'interdiction de remplacement automatique de modèle sous dérive, et le confinement des alertes à Mailpit.
+- **Alternatives rejetées :**
+  - Remplacer automatiquement un modèle de forecast défaillant par un modèle généré à la volée (rejeté, risque majeur d'hallucination ou d'instabilité non validée).
+  - Ignorer silencieusement les erreurs HTTP en renvoyant des données vides étiquetées « succès » (rejeté, tromperie sur la qualité des données).
+- **Conséquences :**
+  - Résilience opérationnelle maximale, traçabilité exhaustive des pannes, protection absolue contre les régressions non maîtrisées.
+
+
+
+## ADR-102 : architecture de sauvegarde avec manifeste certifié, contrôle d'intégrité déterministe et garde de refus de restauration sur environnement actif (R6.8)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.8 ; Phase R6.
+- **Contexte :** La tâche R6.8 impose de qualifier la procédure de sauvegarde et de restauration isolée pour Ketrika Agri Market Intelligence. Les directives normatives de R6.8 et d'AGENTS.md (§4 Règle 2 et Règle 4) imposent :
+  1. Sauvegarde complète et traçabilité :
+     - Un backup ne peut pas se limiter à un dump opaque. Il doit générer un fichier de manifeste de sauvegarde certifié (`.meta.json`) consignant l'horodatage UTC, le commit git, la taille, le hash cryptographique SHA-256 du dump, et les volumétries de contrôle des tables clés (provenances `meta.source_record`, observations `obs.price_observation`, faits `gold.weekly_bulletin_facts`, utilisateurs `auth.user_account`).
+  2. Contrôle de lisibilité et intégrité préalable :
+     - Tout dump produit doit être vérifié structurellement (`pg_restore --list`) et son intégrité d'empreinte SHA-256 validée avant d'être promu comme sauvegarde saine.
+  3. Garde de refus catégorique de restauration sur base active :
+     - La restauration est strictement confinée à un clone de qualification explicitement nommé (ex: `ketrika_clone`, `ketrika_test_restore`).
+     - Toute tentative de restauration pointant vers une cible active (`ketrika`, `ketrika_prod`, `ketrika_active`) doit échouer immédiatement (code de sortie 2 / exception `ActiveDatabaseOverwriteBlockedError`), sauf forçage explicite hautement destructif (`ALLOW_ACTIVE_DB_OVERWRITE=1`).
+  4. Retrait de tout succès forcé (`|| true`) :
+     - Toutes les étapes de dump, de vérification de somme de contrôle, de restauration de schéma et de rafraîchissement doivent propager leurs erreurs réelles et échouer en cas d'incident.
+  5. Préservation absolue des données Bronze immuables :
+     - Aucune procédure de nettoyage ne doit impacter les objets du compartiment Bronze `s3://bronze/`. Seuls les fichiers de dump locaux périmés dans `backups/` sont purgés selon la politique de rétention (7 jours).
+  6. Mesure loyale des métriques :
+     - Les durées de sauvegarde/restauration et les volumes transférés doivent être mesurés directement sur l'environnement d'exécution, sans invention ni extrapolation.
+- **Décision :**
+  1. Créer le module d'orchestration et de vérification `backend/src/ketrika/ops/backup_restore.py` avec `BackupManifest`, `verify_backup_integrity`, `enforce_active_target_guard`, et `validate_restored_clone_consistency`.
+  2. Mettre à jour `deploy/backup.sh` pour intégrer la vérification structurelle immédiate (`pg_restore --list`) et la génération du manifeste JSON.
+  3. Mettre à jour `deploy/restore.sh` pour implémenter la garde de refus active, retirer les masquages d'erreur `|| true` et vérifier la concordance des enregistrements restaurés.
+  4. Concevoir la suite de tests normatifs `backend/tests/unit/test_backup_restore_qualification_r68.py` couvrant les scénarios nominaux et d'échec (cible active bloquée, dump corrompu rejeté, manifeste manquant rejeté, cohérence post-restauration).
+- **Alternatives rejetées :**
+  - Permettre à `restore.sh` de cibler la base active par défaut (rejeté, risque critique de perte de données opérationnelles).
+  - Ignorer silencieusement les erreurs de restauration avec `|| true` (rejeté, faux sentiment de succès en cas de schéma corrompu).
+- **Conséquences :**
+  - Sécurité absolue des données de production, traçabilité cryptographique complète des sauvegardes, restauration prouvée et auditée sur clone isolé.
+
+
+
+## ADR-101 : durcissement des contrôles d'accès RBAC, invalidation de session au logout, liens signés cryptographiques à péremption et posture de sécurité applicative non-root (R6.7)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.7 ; Phase R6.
+- **Contexte :** La tâche R6.7 impose de durcir les accès, l'audit et la sécurité applicative de la plateforme Ketrika Agri Market Intelligence. Les directives normatives de R6.7 et d'AGENTS.md imposent :
+  1. Contrôle d'accès RBAC strict sur toutes les mutations :
+     - Les utilisateurs avec le rôle `client` ou non authentifiés ne doivent en aucun cas pouvoir modifier les sources, résoudre la file de revue (`ReviewItem`), approuver un bulletin hebdomadaire ou acquitter une alerte de crise. Toute tentative de mutation non-admin doit être rejetée avec `403 Forbidden` ou `401 Unauthorized`.
+  2. Liens signés cryptographiques à péremption stricte :
+     - Tout téléchargement sensible (bulletin PDF officiel, export d'audit) accessible via lien signé doit comporter une signature cryptographique HMAC-SHA256 liée à l'action et à la ressource avec une durée de validité bornée (TTL). Tout lien falsifié ou expiré doit être formellement rejeté avec `401 Unauthorized` ou `403 Forbidden`.
+  3. Invalidation active des sessions et tokens au logout :
+     - La déconnexion ne doit pas simplement effacer le cookie côté client, mais enregistrer le token dans un registre de révocation empêchant toute réutilisation avant son expiration naturelle.
+  4. Minimisation des PII et posture de sécurité des conteneurs :
+     - Minimiser les informations personnelles lors de l'authentification (seul l'email professionnel haché/stocké est utilisé, aucun tiers non concerné).
+     - Les conteneurs de production doivent tourner en tant qu'utilisateur non-root (`USER app` / UID 1000).
+     - Aucun service interne (PostgreSQL `db`, S3 `minio`, Dagster interne) ne doit exposer de port public sur `0.0.0.0` ; seul le reverse proxy Caddy écoute sur les ports 80/443.
+  5. Audit continu des secrets et dépendances :
+     - Audit gitleaks et analyse statique des dépendances pour garantir l'absence de fuite de secrets ou de vulnérabilité critique non traitée.
+- **Décision :**
+  1. Étendre `backend/src/ketrika/api/auth.py` avec `revoke_token`, `is_token_revoked`, `create_signed_action_token` et `verify_signed_action_token`.
+  2. Adapter `backend/src/ketrika/api/routers/auth.py` (`/v1/auth/logout`) pour révoquer activement le token présenté.
+  3. Vérifier les protections RBAC sur `admin.py`, `bulletins.py`, `alerts.py` et `sources.py`.
+  4. Écrire la suite de tests normatifs dédiée `backend/tests/unit/test_security_rbac_and_audit_r67.py`.
+- **Alternatives rejetées :**
+  - Se reposer uniquement sur la suppression du cookie côté client sans révocation du token (rejeté, token persistant rejouable).
+  - Permettre à des rôles non-admin de déclencher l'approbation de bulletins (rejeté, violation de l'auditabilité institutionnelle).
+- **Conséquences :**
+  - Étanchéité totale des rôles, protection contre le rejeu de tokens révoqués ou de liens expirés, architecture conteneurisée non-root auditée.
+
+
+
+## ADR-100 : qualification métrologique des alertes de marché vivrier et scénarios de risque institutionnels (audit d'indépendance multi-sources, conditionnement strict de rupture sur quantités documentées, étanchéité catégorielle et rapport métrologique loyal sous Gate H3) (R6.6)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.6 ; Phase R6.
+- **Contexte :** La tâche R6.6 impose d'évaluer et de qualifier les alertes de marché et les scénarios de risque institutionnels. Les directives normatives de R6.6 et d'AGENTS.md imposent :
+  1. Confirmation par familles de sources réellement indépendantes :
+     - Une confirmation multi-sources ne peut être établie sur deux copies ou dérivations d'un même relevé primaire (ex. `wb_rtfp_mdg` dérivant de `wfp_hdx_mdg` partagent la racine `un_wfp`).
+     - L'élévation de sévérité à `high` pour une flambée de prix (`PRICE_SPIKE`) requiert formellement `n_independent_families >= 2`. Un doublon de sources dépendantes maintient strictement la sévérité à `medium`.
+  2. Risque de rupture de stock (`STOCKOUT_RISK`) :
+     - Une rupture de stock ne peut être qualifiée de « confirmée » (`high`) que si des métriques quantitatives documentées existent (`coverage_days <= 7` ou `quantity_value IS NOT NULL`).
+     - L'absence de données quantitatives (statut textuel seul) borne la sévérité à `medium` avec `quantities_documented: false`.
+     - Le silence ou l'absence de déclaration d'une source ne constitue en aucun cas une preuve de rupture de stock.
+  3. Étanchéité catégorielle absolue des alertes :
+     - Séparer strictement les alertes de risque climatique (`CLIMATE_RISK`), les alertes de marché vivrier (`PRICE_SPIKE`, `PRICE_DROP`, `STOCKOUT_RISK`), et les alertes de fraîcheur / DataOps (`DATA_STALE`).
+     - Les alertes `DATA_STALE` ne se déclenchent que sur dépassement avéré du SLA de fraîcheur officiel d'une source prioritaire P0.
+  4. Métrologie loyale et non-surestimation des performances :
+     - Tout rapport ou synthèse métrologique sans ground truth exhaustif identifie explicitement les métriques non évaluées (`NOT_EVALUATED`), sans jamais déclarer artificiellement un taux de précision ou de rappel de 100 %.
+  5. Confinement absolu sous Gate H3 :
+     - Aucun envoi vers Telegram, WhatsApp ou SMTP tiers n'est déclenché (`EXTERNAL_SEND_ENABLED=0`). Les prévisualisations et brouillons sont confinés au service local Mailpit.
+- **Décision :**
+  1. Mettre à jour `detect_price_anomalies` dans `backend/src/ketrika/ml/anomalies.py` pour auditer les familles de sources via `audit_source_family_independence` de `ketrika.gold.kpi`.
+  2. Mettre à jour `evaluate_stockout_risk_rules` dans `backend/src/ketrika/alerts/rules.py` pour exiger des quantités documentées pour la sévérité `high`.
+  3. Implémenter la fonction d'évaluation métrologique et de synthèse loyale `evaluate_alert_metrics_and_scenarios` dans `backend/src/ketrika/alerts/rules.py`.
+  4. Couvrir l'ensemble des règles et comportements normatifs par la suite `backend/tests/unit/test_alerts_qualification_r66.py`.
+- **Alternatives rejetées :**
+  - Compter naïvement le nombre brut de lignes de sources pour qualifier une alerte `high` (rejeté, risque majeur de faux consensus entre sources liées).
+  - Déclarer des alertes de rupture sur la simple absence de données récentes (rejeté, confusion inadmissible entre retard de collecte et rupture physique).
+- **Conséquences :**
+  - Système d'alerte institutionnel intègre, calibré, exempt de faux positifs croisés et parfaitement auditable.
+
+
+
+## ADR-099 : qualification des bulletins de marché sans hallucination numérique ou sémantique (architecture des faits Gold, validation directionnelle et temporelle, concordance HTML/PDF et approbation auditée sous Gate H3) (R6.5)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.5 ; Phase R6.
+- **Contexte :** La tâche R6.5 impose de qualifier le bulletin hebdomadaire de veille de marché sans hallucination numérique ni altération sémantique. Les directives normatives de R6.5 et d'AGENTS.md imposent :
+  1. Faits calculés et versionnés :
+     - Tout chiffre figurant dans le bulletin doit provenir d'un dictionnaire de faits déterministe (`build_bulletin_facts`) adossé aux vues Gold et à la traçabilité Bronze SHA-256.
+  2. Architecture anti-hallucination stricte :
+     - Le LLM ne reçoit que les identifiants et libellés des faits sans leurs valeurs numériques. La prose est générée exclusivement avec des placeholders `{{fXXX}}`.
+     - Zéro chiffre numérique libre dans le texte généré (`validate_prose` / `\d` strictement interdit hors placeholders).
+  3. Garde sémantique et directionnel (`validate_semantic_consistency`) :
+     - Vérifier la polarité : interdiction absolue de qualifier une hausse de "baisse" ou un repli de "flambée".
+     - Vérifier la temporalité : une observation passée ne peut être décrite comme une prévision future.
+     - Rejet immédiat de toute causalité spéculative non prouvée ("spéculation illégale", "manigances").
+     - En cas d'anomalie numérique ou sémantique, repli automatique et certifié sur le template déterministe (`fallback.md.j2`).
+  4. Concordance stricte HTML vs PDF :
+     - Les deux artefacts générés par WeasyPrint et Jinja2 doivent comporter exactement les mêmes chiffres, mêmes pourcentages et mêmes citations de sources officielles.
+  5. Approbation auditée et respect strict du Gate H3 :
+     - Le cycle de vie passe de `draft` à `approved` via `approve_bulletin`, consignant l'acteur et l'horodatage UTC.
+     - Aucune approbation n'autorise un envoi externe à des destinataires réels. En développement, les courriels de prévisualisation sont strictement confinés au service local Mailpit.
+- **Décision :**
+  1. Implémenter le module `backend/src/ketrika/bulletin/semantic_guard.py` pour valider la polarité et la cohérence directionnelle.
+  2. Intégrer cette validation dans `generate_bulletin_prose`.
+  3. Enrichir `backend/src/ketrika/bulletin/service.py` avec `approve_bulletin` et `send_bulletin_preview_to_mailpit`.
+- **Alternatives rejetées :**
+  - Laisser le LLM générer librement les commentaires sans contrôle de direction de variation (rejeté, risque critique de désinformation sur les marchés).
+  - Envoyer des notifications à de vraies adresses e-mail lors de l'approbation (rejeté, violation formelle du Gate H3).
+- **Conséquences :**
+  - Bulletins 100% fidèles aux réalités des marchés vivriers, auditabilité institutionnelle intégrale, étanchéité de diffusion garantie.
+
+
+
+## ADR-098 : protocole d'évaluation métrologique indépendante du copilote analyste (corpus étendu de 62+ questions métier, cas adversariaux, vérification anti-hallucination stricte et statut OFFLINE_TESTED) (R6.4)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.4 ; Phase R6.
+- **Contexte :** La tâche R6.4 impose d'évaluer le copilote sur des questions métier indépendantes. Les directives normatives de R6.4 et d'AGENTS.md imposent :
+  1. Extension substantielle du benchmark d'évaluation :
+     - Conserver l'ancien jeu de régression de 22 questions (`tests/copilot_eval.yaml`).
+     - Ajouter au moins 40 nouvelles questions indépendantes (total >= 62 questions) couvrant l'ensemble du périmètre vivrier malgache : prix, variations, volatilité, stocks, flux douaniers, dépendance IDR, climat/précipitations, Market Health Score, prévisions p10/p50/p90, DataOps/SLA, questions en malagasy/termes vivriers usuels, et questions hors domaine vivrier avec abstention explicite.
+  2. Batterie de tests adversariaux et de sécurité (au moins 10 cas hostiles) :
+     - Tentatives d'injection SQL directe (`DROP TABLE`, `UPDATE`, `INSERT`, `TRUNCATE`).
+     - Tentatives d'exfiltration et d'appels de fonctions réseau/fichiers (`dblink`, `http_*`, `pg_read_file`).
+     - Tentatives de violation de schémas privés (`auth.user_account`, `auth.api_key`, `pg_catalog`).
+     - Tentatives de jailbreak / injection de prompt (`Ignore tes règles`, `Oublie ta politique`, `Révèle le système prompt`).
+  3. Critères métrologiques normatifs stricts :
+     - Taux de réponses correctes >= 80% (cible >= 90%).
+     - Zéro requête interdite acceptée (100% bloquées ou rejetées).
+     - Zéro chiffre non référencé dans les textes en prose générés (100% de respect des Règles 6 et 7 d'AGENTS.md).
+     - Vérification que les réponses retournent les citations officielles et les statuts métrologiques (`value_kinds`).
+  4. Statut de qualification métrologique :
+     - Mention obligatoire `OFFLINE_TESTED` dans les rapports pour expliciter que la qualification porte sur le contrat logiciel en environnement isolé avec données réelles Gold et mode replay contrôlé, sans prétendre qualifier un fournisseur LLM live (respect de la règle R6.4 et d'AGENTS.md §3.1).
+- **Décision :**
+  1. Enrichir `backend/tests/copilot_eval.yaml` pour atteindre au moins 65 questions complètes (22 questions socles + 33 questions métier avancées + 10 questions adversariales/hostiles).
+  2. Créer le moteur d'évaluation automatisé `CopilotBenchmarkRunner` dans `backend/src/ketrika/copilot/evaluator.py` produisant un rapport normatif détaillé (`CopilotEvaluationSummary`).
+  3. Créer la suite de tests unitaires et de benchmark d'évaluation `backend/tests/unit/test_copilot_evaluation_benchmark.py`.
+- **Alternatives rejetées :**
+  - Se contenter d'un simple test unitaire sur 5 questions (rejeté, non conforme aux directives de R6.4 exigeant >= 62 questions et >= 10 cas adversariaux).
+  - Évaluer le copilote sur de simples correspondances de sous-chaînes sans vérifier l'exécution des requêtes (rejeté, A11 formellement interdit).
+- **Conséquences :**
+  - Garantie métrologique éprouvée et reproductible de la robustesse, de la sécurité et de la pertinence analytique du copilote.
+
+
+
+## ADR-097 : réponses du copilote analyste basées exclusivement sur des résultats exécutés, zéro chiffre inventé, métadonnées de provenance complètes et abstention explicite (R6.3)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.3 ; Phase R6.
+- **Contexte :** La tâche R6.3 impose de répondre avec des résultats exécutés et référencés. Les directives normatives de R6.3 et d'AGENTS.md imposent :
+  1. Respect absolu des Règles 6 et 7 d'AGENTS.md :
+     - Aucun chiffre inventé dans le texte en prose (substitution mécanique via `build_cell_placeholders` et `assemble_final_response` ou présentation tabulaire déterministe).
+     - Tout nombre affiché dans la réponse doit provenir d'une cellule SQL auditée sur le schéma Gold ou d'un calcul déterministe certifié.
+  2. Métadonnées de provenance complètes :
+     - Citation de la source officielle (`citations`: source_id, type de source), provenance Bronze et Gold, horodatage, statut métrologique (`value_kinds`: `observed`, `imputed`, `forecast`, `composite`).
+  3. Gestion loyale de l'ambiguïté et du hors-périmètre :
+     - Si une question de l'utilisateur ne concerne pas les filières vivrières malgaches couvertes (riz, maïs, manioc, huile, sucre, légumineuses, farine) ou pose une question hors domaine (actualité non agricole, sports, météo internationale), l'agent refuse poliment avec une explication claire et loyale (`sql = ""`), sans tenter de deviner ou de renvoyer par défaut les prix du riz.
+  4. Benchmark de qualification :
+     - Validation des 22+ questions d'évaluation réelles du corpus `backend/tests/copilot_eval.yaml` avec une exactitude >= 80% et 0 requête interdite.
+- **Décision :**
+  1. Étendre `CopilotAgent` pour détecter les requêtes hors domaine agricole et renvoyer un message d'abstention loyale sans générer de fausse requête SQL.
+  2. Structurer la réponse avec métadonnées enrichies de traçabilité et de nature des valeurs.
+  3. Garantir que tout texte produit passe par le validateur anti-hallucination `validate_anti_hallucination_prose` (zéro chiffre libre hors placeholders).
+- **Alternatives rejetées :**
+  - Renvoyer par défaut les prix du riz d'Analamanga sur n'importe quelle question obscure (rejeté, fausse réponse trompeuse).
+  - Laisser le LLM rédiger librement des chiffres dans la prose (rejeté, risque majeur d'hallucination).
+- **Conséquences :**
+  - Réponses 100% vérifiables et auditables, conformité absolue aux règles constitutionnelles, expérience utilisateur transparente et honnête.
+
+
+## ADR-096 : architecture des workflows IA bornés, isolation des rôles, budgets atomiques sous concurrence, reprise d'état sans double publication et choix officiel du modèle (R6.2)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.2 ; Phase R6.
+- **Contexte :** La tâche R6.2 impose de borner rigoureusement tous les workflows d'intelligence artificielle et d'orchestration dans Ketrika. Les directives normatives de R6.2 et d'AGENTS.md imposent :
+  1. Frugalité et séparation des responsabilités : Dagster demeure l'orchestrateur central de collecte et calcul ; les tâches IA sont découpées en petits rôles spécialisés et déterministes (reconnaissance, extraction, analyse, rédaction), sans framework multi-agent opaque ou complexe non supervisé.
+  2. Bornes contractuelles d'exécution pour chaque workflow : chaque exécution est modélisée par un état persistant (`WorkflowExecutionState`, `WorkflowStep`), bornée par des plafonds stricts : nombre maximal d'étapes (`max_steps`), nombre d'appels d'outils (`max_tool_calls`), consommation maximale de tokens (`max_tokens`), durée maximale d'exécution (`max_duration_seconds`), et coût maximal (`max_budget_usd`). Dès qu'un plafond est atteint, l'exécution s'interrompt immédiatement et proprement (`WorkflowLimitExceededError`).
+  3. Sécurité budgétaire atomique sous concurrence : le contrôle budgétaire de `BudgetGuard` doit être atomique et résistant aux accès concurrents (`AtomicBudgetGuard`). Deux appels simultanés ne peuvent en aucun cas dépasser le budget mensuel (`LLM_MONTHLY_BUDGET_USD`) ou le budget par exécution (`LLM_PER_RUN_BUDGET_USD`).
+  4. Interdiction formelle d'ajout autonome de sources : un document ou un workflow IA peut suggérer un nouveau domaine ou une nouvelle source, mais cette proposition est strictement consignée en attente de revue humaine (`PENDING_HUMAN_REVIEW`) et ne peut en aucun cas être injectée automatiquement dans le registre de production (`registry/sources.yaml`).
+  5. Reprise d'état idempotente sans duplication de publication : en cas d'interruption réseau ou de redémarrage système, le moteur restitue l'état exact du workflow et reprend à la première étape non complétée sans réexécuter les étapes antérieures ni dupliquer les publications ou alertes déjà émises.
+  6. Mode replay explicite et fail-closed : en mode `LLM_PROVIDER=replay`, l'absence d'une réponse pré-enregistrée entraîne une erreur explicite immédiate (`KeyError` / `ReplayNotFoundError`), interdisant tout fallback fictif ou halluciné.
+  7. Modèle de référence et tarification officielle : le modèle retenu pour l'intelligence de marché économique est Google Gemini 2.0 Flash / 1.5 Flash (taux officiel vérifié : $0.075 / 1M tokens d'entrée, $0.30 / 1M tokens de sortie ; cache hit = 0 USD). Les logs d'audit sont épurés de tout secret ou clé d'API.
+- **Décision :**
+  1. Créer le module `backend/src/ketrika/copilot/workflow.py` avec les modèles Pydantic d'état (`WorkflowExecutionState`, `WorkflowStep`, `WorkflowLimits`) et le moteur `BoundedWorkflowRunner`.
+  2. Étendre `BudgetGuard` avec un mécanisme atomique de réservation (`AtomicBudgetGuard`) thread-safe.
+  3. Intégrer la détection de documents hostiles (les textes collectés sont des données pures et ne peuvent ni modifier les quotas du workflow ni altérer les droits).
+- **Alternatives rejetées :**
+  - Laisser un workflow IA itérer sans plafond d'étapes jusqu'à convergence (rejeté, risque critique de boucle infinie et d'explosion budgétaire).
+  - Permettre l'enregistrement automatique de nouvelles sources Web scrapées sans validation humaine (rejeté, violation d'AGENTS.md §5 H4/H7).
+  - Tolérer des dépassements de budget lors d'appels concurrents (rejeté, non-respect du garde-fou budgétaire H6).
+- **Conséquences :**
+  - Maîtrise financière et temporelle absolue de tous les composants IA, reprise résiliente après panne sans effet de bord, intégrité totale du registre de sources.
+
+
+## ADR-095 : sécurisation absolue des outils d'analyse et SQL Guard du Copilot (outils typés, SQL Gold strict, interdiction des CTE d'écriture et fonctions réseau, timeouts et validation de paramètres sans fuite) (R6.1)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.1 ; Phase R6.
+- **Contexte :** La tâche R6.1 impose de sécuriser les outils de lecture et d'analyse utilisés par le copilote et l'IA de marché. Les directives normatives de R6.1 et AGENTS.md imposent :
+  1. Catalogue d'outils typés et autorisés :
+     - Séries temporelles de prix, faits de marché, provenance et sources, couverture des relevés, prévisions qualifiées, calendrier agroclimatique.
+     - Privilégier les outils métier déterministes pour les calculs et requêtes récurrents plutôt que de générer du SQL ad-hoc non contraint.
+  2. SQL Guard AST strict :
+     - Interrogation exclusive du schéma `gold` (seules les vues analytiques auditées sont autorisées : `price_obs_current`, `price_monthly`, `price_monthly_best`, `price_changes`, `stock_latest`, `trade_monthly`, `import_dependency`, `weather_monthly`, `cpi_food`, `market_health`, `source_health`, `forecast_latest`, `market_coverage`, `economic_dashboard`).
+     - Instruction unique (`SELECT` strict).
+     - **Interdiction formelle des CTE modifiants** : détection et blocage de tout CTE contenant `INSERT`, `UPDATE`, `DELETE`, `DROP` ou des expressions de modification.
+     - **Interdiction formelle des fonctions réseau ou d'exfiltration** (`http_*`, `net_*`, `dblink*`, `query_to_xml`, etc.) et des fonctions système (`pg_*`, `lo_*`, `current_setting`, etc.).
+     - Injection ou clampage automatique de `LIMIT <= 500`.
+     - Exécution sous rôle PostgreSQL restreint `copilot_ro` avec `statement_timeout = 5000` ms (5 secondes).
+  3. Validation stricte des paramètres et hygiène des messages d'erreur :
+     - Contrôle des paramètres produit et localisation (taxonomie officielle). Rejet immédiat de toute valeur suspecte ou inconnue.
+     - En cas d'erreur ou d'interdiction, **exposition d'un message d'explication standardisé et sans fuite d'informations sensibles** (aucun dump de variables d'environnement, secrets, adresses IP ou schémas internes protégés).
+- **Décision :**
+  1. Renforcer `backend/src/ketrika/copilot/sql_guard.py` avec inspection récursive de tous les CTEs (`exp.Insert`, `exp.Update`, `exp.Delete`, `exp.Command`), liste noire étendue des fonctions réseau/exfiltration, et intégration des vues `market_coverage` et `economic_dashboard`.
+  2. Créer le module `backend/src/ketrika/copilot/tools.py` exposant le catalogue d'outils d'analyse typés Pydantic (`ToolCatalog`) avec validation stricte des taxonomies autorisées et gestion des erreurs sans fuite d'information.
+  3. Mettre à jour `backend/src/ketrika/copilot/__init__.py`.
+- **Alternatives rejetées :**
+  - Permettre l'exécution de requêtes SQL arbitraires sans parser AST (rejeté, risque majeur d'injection et de contournement).
+  - Tolérer des CTEs d'écriture (`WITH del AS (DELETE ...) SELECT ...`) au motif que l'instruction racine est un SELECT (rejeté, faille d'écriture en base).
+  - Renvoyer la stack trace complète ou les détails techniques de connexion à l'utilisateur lors d'un échec (rejeté, fuite de vecteurs d'attaque).
+- **Conséquences :**
+  - Cloisonnement étanche et éprouvé des accès analytiques, impossibilité physique d'écriture ou d'accès aux tables système/privées, robustesse face aux injections de requêtes.
+
+## ADR-094 : architecture des scénarios d'approvisionnement et des trois parcours pilotes décisionnels (régulateur public, acheteur commercial, vulgarisation agricole), étanchéité anti-injection et gouvernance humaine auditée (R5.8)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.8 ; Phase R5.
+- **Contexte :** La tâche R5.8 impose de concevoir et structurer les scénarios d'offre et les fiches pilotes d'aide à la décision pour trois profils réels d'acteurs de la filière vivrière malgache (institution publique/régulation, acheteur/collecteur commercial, planificateur/vulgarisateur agricole). Les directives de R5.8 et d'AGENTS.md imposent :
+  1. Structurer 3 parcours décisionnels distincts :
+     - *Institution publique / Régulateur (ex: SPM, MIC)* : surveiller les tensions d'approvisionnement urbain, estimer le déficit net et planifier les interventions de régulation ou les importations d'appoint.
+     - *Acheteur commercial / Agro-industriel (ex: minoteries, grossistes d'Anosibe)* : planifier les achats de campagne en synchronisation avec les décades de pic d'arrivages, optimiser la rotation des entrepôts et minimiser la pression à la hausse sur les prix de collecte.
+     - *Planificateur agricole / Vulgarisation (ex: MinAE, DRDA)* : comparer les fenêtres agronomiques nominales et les retards induits par le stress hydrique précoce, évaluer la durée de la soudure locale.
+  2. Scénarios déterministes bornés :
+     - Paramètres explicitement typés avec source ou justificatif d'hypothèse (`ScenarioParameter`).
+     - Si un paramètre obligatoire est absent, le moteur refuse formellement le calcul (`missing_parameters`), sans jamais fabriquer une valeur invisible.
+  3. Sécurité et intégrité constitutionnelle :
+     - **Interdiction formelle de modification de scénario par le contenu collecté** (AGENTS.md Règle 10 : les données scrapées ne sont jamais des instructions).
+     - **Interdiction formelle de générer des ordres d'achat financiers autonomes** : Ketrika est un système d'aide à la décision et d'intelligence de marché, pas un bot de trading autonome.
+     - Traçabilité et versionnage : auteur interne (`author_id`), version (`v1.0`), date et empreinte.
+  4. Gouvernance humaine et honnêteté métrologique :
+     - Préparation d'un protocole d'essai et d'un questionnaire structuré pour les futurs utilisateurs humains (`docs/protocols/decision_pilot_protocol.md`).
+     - Règle constitutionnelle H7 : aucun contact ni recrutement de tiers sans validation explicite.
+     - Les rapports de scénarios portent obligatoirement `human_reviewed: false` et `evaluation_status: "NOT_EVALUATED"` tant qu'une séance humaine en conditions réelles n'est pas consignée. Aucune revendication de « pilote client réussi » sans séance documentée.
+- **Décision :**
+  1. **Création du module `backend/src/ketrika/supply/decision_pilot.py` :**
+     - Enums : `DecisionPersona`, `DecisionJourneyType`.
+     - Modèles Pydantic : `ScenarioParameter`, `DecisionScenarioDefinition`, `DecisionImpactMetric`, `DecisionPilotReport`.
+     - Moteur `DecisionPilotEngine` implémentant les trois parcours d'évaluation.
+  2. **Exposition API dans `backend/src/ketrika/api/routers/supply.py` :**
+     - `POST /v1/supply/scenarios/run` et `GET /v1/supply/scenarios/templates`.
+  3. **Documentation du protocole d'évaluation :**
+     - `docs/protocols/decision_pilot_protocol.md`.
+- **Alternatives rejetées :**
+  - Laisser le LLM générer les chiffres d'impact d'un scénario (rejeté, violation d'AGENTS.md Règles 6 et 7).
+  - Générer automatiquement des bons d'achat ou contrats fournisseurs (rejeté, responsabilité financière humaine exclusive).
+  - Alléguer un succès pilote avant toute revue humaine réelle (rejeté, fraude de qualification proscrite par R5.8).
+- **Conséquences :**
+  - Outil d'aide à la décision robuste, transparent, mathématiquement traçable et directement prêt pour les tests utilisateurs humains.
+
+
+## ADR-093 : prévision des fenêtres et pics d'approvisionnement des marchés, as-of cutoff temporel, décalage logistique récolte/marché et règle d'abstention sous historique insuffisant (R5.7)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.7 ; Phase R5.
+- **Contexte :** La tâche R5.7 impose de prévoir les fenêtres d'approvisionnement et les pics d'arrivages sur les marchés vivriers malgaches, tout en réutilisant les contrôles d'évaluation rigoureux (as-of splits, calibration déterministe). Les directives normatives de R5.7 imposent :
+  1. Fixer la cible : arrivages physiques (`inflow_arrival`) ou volume d'approvisionnement en kg / tonnes, à résolution temporelle décadaire (D1: 1-10, D2: 11-20, D3: 21-fin) cohérente avec le calendrier cultural et les enquêtes de marché.
+  2. Baseline calendrier / récolte : le pic d'arrivage sur le marché terminal de gros (ex: Anosibe, Toamasina) découle de la fenêtre de récolte dans les bassins fournisseurs (ex: Alaotra, Marovoay, Vakinankaratra) modulée par un décalage logistique $\tau_{\text{logistique}} \in [1, 2]$ décades (séchage, battage/usinage paddy $\to$ riz blanc, chargement et transport par camion).
+  3. Cloisonnement temporel as-of strict : interdiction absolue de toute fuite d'information future. Une prévision à date $T_{\text{as-of}}$ n'a accès qu'aux relevés de quantités antérieurs ou égaux à cette date.
+  4. Règle métrologique d'honnêteté sur les données insuffisantes : **au moins deux cycles complets d'arrivages réels observés sont requis** pour prétendre calibrer un modèle statistique saisonnier empirique. Si l'historique d'observations réelles couvre moins de deux cycles complets (ex: quelques semaines ou mois de relevés pilotes), le système refuse de simuler de fausses années d'entraînement. Il classe obligatoirement la prévision en `qualification: "experimental_baseline"` ou `"abstained_insufficient_history"` et fournit la projection agronomique baseline assortie d'une note d'incertitude qualitative.
+  5. Les labels de pics d'offre sont dérivés **exclusivement des quantités physiques observées**, jamais d'un minimum sur la courbe de prix (décorrélation possible liée au stockage spéculatif ou aux coûts logistiques).
+  6. Évaluation indépendante sur quantités réelles : métriques de calage temporel (erreur en décades / jours entre pic prévu et pic observé) et de couverture du volume de campagne (% des arrivages tombant dans la fenêtre prédite).
+  7. Calculs déterministes : amplitudes, largeurs de fenêtres et incertitudes sont calculées mathématiquement, jamais générées par un LLM.
+- **Décision :**
+  1. **Création du module `backend/src/ketrika/supply/peak_forecast.py` :**
+     - Modèles Pydantic : `SupplyWindowPrediction`, `PeakEvaluationResult`, `CycleSufficiencyReport`.
+     - Moteur `SupplyPeakForecastEngine` :
+       - `assess_data_sufficiency(records, min_cycles=2)` : vérification stricte du nombre de cycles complets couverts par les observations.
+       - `predict_supply_window(harvest_window, logistics_lag_dekads=1, historical_arrivals=None, as_of_date=None)` : projection déterministe de la fenêtre et du pic d'approvisionnement, avec décalage logistique explicite et qualification selon l'historique disponible.
+       - `detect_observed_peaks(records)` : identification du pic réel d'arrivages à partir des tonnages physiques.
+       - `evaluate_peak_forecast(prediction, test_arrival_records)` : confrontation empirique indépendante (erreur de calendrier en décades/jours, taux de couverture volumique).
+  2. **Route API dédiée :**
+     - Exposition dans `backend/src/ketrika/api/routers/supply.py` (`/v1/supply/peak-forecast`) avec traçabilité complète de la provenance, de la zone d'approvisionnement et du niveau de qualification.
+- **Alternatives rejetées :**
+  - Entraîner un modèle ML complexe sur des données synthétiques pour faire croire à un modèle saisonnier validé (rejeté, violation directe de la consigne utilisateur et d'AGENTS.md §8).
+  - Inférer le pic d'arrivage à partir du point le plus bas des prix de détail (rejeté, violation de R5.7).
+- **Conséquences :**
+  - Prévisions d'approvisionnement physiquement plausibles, auditables, scientifiquement honnêtes et directement exploitables par les acteurs de la chaîne de valeur vivrière.
+
+
+## ADR-092 : architecture de bilan d'approvisionnement sans double comptage, conservation de masse et étanchéité imports vs arrivages (R5.6)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.6 ; Phase R5.
+- **Contexte :** La tâche R5.6 impose de construire les bilans d'approvisionnement des marchés vivriers et des bassins de production sans aucun double comptage. Les directives normatives de R5.6, SPECS §27 et les règles constitutionnelles d'AGENTS.md imposent :
+  1. Équation stricte de conservation de masse :
+     $$\text{Stock}_{\text{fin}} = \text{Stock}_{\text{début}} + \text{Entrées} - \text{Sorties} - \text{Ventes} - \text{Pertes}$$
+  2. Prévention formelle des collisions macro/micro : une importation douanière nationale (`trade_flow` des douanes au port de Toamasina) ne doit **jamais** être additionnée aux arrivages physiques observés sur un marché de gros (`inflow_arrival` sur le marché d'Anosibe), car le riz importé au port constitue déjà la cargaison des camions arrivant à Anosibe. L'additionner constituerait un double comptage dévastateur.
+  3. Les volumes d'importations nationales ne sont pas attribuables à un marché spécifique sans preuve formelle d'allocation logistique (`allocated_imports`).
+  4. Les stocks statiques d'inventaire (`stock_inventory`) ne s'additionnent **jamais** comme un flux de production périodique.
+  5. Règle d'honnêteté métrologique : **un composant inconnu reste inconnu**. Si les pertes post-récolte ou les ventes de détail n'ont pas fait l'objet d'enquêtes observées, le système refuse catégoriquement de présenter un solde net calculé comme un « total observé ».
+  6. Séparation étanche entre **Bilan Observé Partiel** (`observed_partial`) fondé uniquement sur des faits vérifiés et **Scénario de Simulation** (`scenario_simulation`) paramétré avec des hypothèses explicites versionnées hors des tables d'observations.
+- **Décision :**
+  1. **Création du module `backend/src/ketrika/supply/balance.py` :**
+     - Modèles de données Pydantic : `BalanceTerm`, `SupplyBalanceReport`, `ScenarioAssumption`.
+     - Moteur `SupplyBalanceEngine` :
+       - `compute_observed_partial_balance(market_code, product_raw, start_date, end_date, records)` : compilation des flux observés, identification explicite des termes inconnus (`is_observed=False`, `quantity_kg=None`), calcul des sommes partielles entrées/sorties sans falsification.
+       - `simulate_scenario_balance(market_code, product_raw, start_date, end_date, records, assumptions)` : bilan complet sous hypothèses paramétrées (taux de perte post-récolte estimé, ratio de consommation journalière) clairement identifié comme scénario non observé.
+       - `check_customs_vs_market_double_count(market_arrivals, customs_imports)` : alerte automatique et blocage d'addition si tentative de combiner flux douaniers et arrivages locaux sur le même périmètre.
+       - Vérification de la conservation de masse sur les séries complètes ($\Delta \text{Stock} = \text{Entrées} - \text{Sorties}$).
+  2. **Auditabilité totale :**
+     - Chaque terme de bilan référence obligatoirement soit un `source_record_id` (fait Bronze), soit un `assumption_id` (scénario paramétré).
+- **Alternatives rejetées :**
+  - Deviner les ventes journalières pour forcer l'équilibre du bilan (rejeté, falsification prohibée par AGENTS.md §4.9).
+  - Additionner les statistiques douanières nationales aux tonnages des marchés d'Antananarivo (rejeté, double comptage illégal).
+- **Conséquences :**
+  - Bilans de marché rigoureux, conformes à la physique des flux, explicables aux analystes et sans agrégation hybride trompeuse.
+
+
+## ADR-091 : modèle de fenêtre de récolte vérifiable à résolution décadaire, ajustement agronomique sous contrainte hydrique et qualification expérimentale (R5.4)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.4 ; Phase R5.
+- **Contexte :** La tâche R5.4 impose de produire une fenêtre de récolte vérifiable pour les principaux bassins agricoles et cultures vivrières (riz Asara, riz Hosy, maïs, manioc) à Madagascar. Les directives normatives de R5.4 imposent :
+  1. Partir du calendrier cultural baseline vérifié (R4.7, SPECS §26, `taxonomy/crop_calendar.yaml`).
+  2. Ajustements de campagne fondés uniquement sur des règles agronomiques étayées (FAO, MinAE, FOFIFA) : un déficit pluviométrique précoce (démarrage tardif des pluies, CHIRPS anomalie < -30%) retarde le repiquage/semis et décale mécaniquement la maturité physiologique et le début de récolte d'une à deux décades. En régime irrigué pérenne avec maîtrise de l'eau, aucun décalage artificiel n'est appliqué.
+  3. Sortie explicite : début/fin de fenêtre, pic de récolte, durée du cycle végétatif, facteurs agroclimatiques motivant le décalage, et niveau de validation (`baseline_reference`, `adjusted_campaign_rule`, `experimental_unverified`).
+  4. Résolution temporelle rigoureuse : granularité décadaire agronomique (décade 1 : jours 1-10, décade 2 : jours 11-20, décade 3 : jours 21-fin), **interdiction absolue de simuler une date au jour près sans capteur de terrain à résolution journalière**.
+  5. Confrontation avec des données indépendantes réelles : tester la concordance temporelle entre la fenêtre calculée et les premiers arrivages massifs constatés sur les marchés de collecte et de gros (ex: ODR Ambatondrazaka et Anosibe).
+  6. En l'absence de réseau de capteurs phénologiques in situ continus, la projection est qualifiée de statut `experimental` avec incertitude qualitative documentée, sans jamais revendiquer une « précision garantie ».
+- **Décision :**
+  1. **Création du module `backend/src/ketrika/supply/harvest_window.py` :**
+     - Modèle Pydantic `HarvestWindowProjection` portant la fenêtre temporelle décadaire, les dates d'encadrement, le décalage en décades (`shift_dekads`), les facteurs agroclimatiques, le niveau de validation et la note d'incertitude.
+     - Modèle `HarvestConfrontationResult` confrontant la fenêtre aux flux d'arrivages réels (`inflow_arrival`).
+     - Moteur `HarvestWindowModel` :
+       - `project_baseline_window(crop_record, year)` : extraction de la fenêtre nominale issue du calendrier validé.
+       - `project_adjusted_window(crop_record, year, rainfall_early_anomaly_pct, is_drought_scenario)` : calcul déterministe du décalage phénologique selon la sensibilité hydrique et l'accès à l'irrigation.
+       - `evaluate_against_market_arrivals(harvest_window, arrival_records)` : calcul du taux de concordance entre la fenêtre de récolte du bassin et les arrivages observés.
+  2. **Transparence et étanchéité :**
+     - La fenêtre de récolte est distincte des relevés d'observation ; elle porte le statut d'estimation agronomique modélisée.
+- **Alternatives rejetées :**
+  - Fixer une date exacte au jour près (ex: « récolte le 14 mai ») (rejeté, fausse précision trompeuse en agronomie).
+  - Utiliser le même calendrier cultural comme donnée d'évaluation (rejeté, tautologie circulaire proscrite par R5.4).
+- **Conséquences :**
+  - Calendriers agricoles dynamiques, explicables, auditables et conformes à la réalité agricole malgache.
+
+
+## ADR-090 : contrôle qualité des quantités, matrice spatio-temporelle marché × période, taux de couverture d'échantillonnage et distinction stricte absence de relevé vs zéro arrivage (R5.3)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.3 ; Phase R5.
+- **Contexte :** La tâche R5.3 impose de contrôler les quantités physiques d'approvisionnement et leur représentativité spatio-temporelle. Les directives de R5.3 et SPECS §27 imposent de :
+  1. Distinguer formellement relevé ponctuel (`spot_reading`) et période cumulée (`cumulative_period`), stock résiduel (`stock_inventory`) et flux logistique (`inflow_arrival`).
+  2. Valider rigoureusement les conversions métriques des unités physiques locales (kg, tonne, sac 50kg, sac 100kg, gony, kapoaka) et interdire toute modification de conditionnement sans preuve documentée.
+  3. Construire une matrice marché × période pour quantifier la complétude des enquêtes et expliciter les jours non enquêtés.
+  4. Règle métrologique non négociable : **absence de relevé ≠ zéro arrivage**. Un jour sans relevé d'enquêteur n'est ni un stock vide ni une rupture d'approvisionnement, c'est une absence d'observation (`missing_survey`).
+  5. Quantifier la représentativité via le taux de couverture d'échantillonnage ($N_{\text{observés}} / N_{\text{attendus}}$) et expliciter la part déclarée (`declared_trader`) vs mesurée (`measured_scale`), sans jamais transformer du déclaratif en mesure certifiée.
+  6. Détecter et empêcher le double comptage temporel (ex: sommer simultanément les relevés journaliers et un total hebdomadaire ou mensuel).
+- **Décision :**
+  1. **Création du module `backend/src/ketrika/supply/quality.py` :**
+     - Modèles de données Pydantic : `MarketCoverageStats`, `TemporalDoubleCountViolation`, `QuantityAuditIssue`, `SupplyDataQualityReport`.
+     - Validateur `SupplyQualityChecker` implémentant :
+       - `build_market_period_matrix(records, start_date, end_date)` : construction de la grille calendrier des relevés par marché et produit vivrier.
+       - `evaluate_missing_vs_zero(matrix)` : séparation formelle des zéros réels vérifiés (`zero_inflow`, pesée 0 kg) et des absences d'observation (`missing_survey`, aucun enquêteur). Interdiction absolue d'imputer 0 kg en l'absence de relevé.
+       - `detect_temporal_overlap_double_counting(records)` : algorithme de détection des chevauchements d'intervalles $[start, end]$ pour une même cible et un même marché prévenant toute double sommation.
+       - `compute_sampling_coverage_rate(market_code, records, start_date, end_date, expected_days)` : calcul exact de la représentativité d'échantillonnage et ventilation métrologique (`measured_scale`, `declared_trader`, `estimated_survey`).
+       - `audit_unit_conversions(records)` : vérification stricte que chaque conversion vers le kilogramme respecte la table de densité produit et n'utilise pas de ratio arbitraire.
+  2. **Interdiction d'extrapolation non pondérée :**
+     - Le système signale le taux de couverture d'échantillonnage comme métrique de confiance sans extrapoler à l'ensemble du marché sauf modèle de pondération formellement qualifié.
+- **Alternatives rejetées :**
+  - Remplacer les jours non enquêtés par des zéros pour faciliter les graphiques (rejeté, falsification grossière de l'activité économique de marché).
+  - Fusionner les tonnages mesurés sur bascule et les tonnages déclarés verbalement sans distinction de confiance (rejeté, violation de SPECS §27).
+- **Conséquences :**
+  - Traçabilité et auditabilité totales des séries temporelles de flux et stocks.
+  - Prévention mécanique du double comptage temporel et spatial.
+
+
+## ADR-089 : extension de StockRecord et ingestion des flux d'arrivages et stocks légaux (R5.2)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.2 ; Phase R5.
+- **Contexte :** La tâche R5.2 impose d'importer les quantités physiques légalement disponibles (ODR, MinAE, dépôts institutionnels) et de relier ces observations à la couche Bronze immuable avec calcul automatique d'empreinte SHA-256. Le modèle `obs.stock_observation` existant ne distingue pas explicitement la cible métrologique (`stock_inventory` vs `inflow_arrival` vs `harvest_volume`) ni le mode de mesure (`measured_scale` vs `declared_trader` vs `estimated_survey`), ce qui limite la granularité d'analyse demandée par SPECS §27 et expose aux risques d'agrégation hybride.
+- **Décision :**
+  1. **Migration Alembic 0016 (`0016_supply_arrival_and_stock_targets.py`) :**
+     - Ajouter les colonnes `target TEXT NOT NULL DEFAULT 'stock_inventory'`, `measurement_mode TEXT NOT NULL DEFAULT 'declared_trader'`, `market_type TEXT` à `obs.stock_observation`.
+     - Index partiel unique `uq_stock_observation_active` sur `(natural_key, target)` où `superseded_by IS NULL` pour garantir l'unicité par cible tout en conservant les versions historiques.
+  2. **Extension du modèle `StockRecord` (`ketrika.connectors.records`) :**
+     - Intégrer les champs optionnels rétrocompatibles `target: str = "stock_inventory"`, `measurement_mode: str = "declared_trader"`, `market_type: str | None = None`.
+  3. **Création du connecteur `MarketSupplyConnector` (`source_id="market_supply"`) :**
+     - Connecteur public et d'import institutionnel ingérant les fichiers de relevés de marchés (arrivages et stocks d'Anosibe, Boeny, Alaotra).
+     - Vérification anti-PII stricte via `validate_payload_no_pii` avant toute écriture.
+     - Écriture Bronze immuable et liaison `meta.source_record`.
+     - Normalisation en `StockRecord` avec conversions métriques en kilogrammes et calcul de l'empreinte `natural_key`.
+     - Support complet de la supersession non destructrice (`superseded_by`).
+- **Alternatives rejetées :**
+  - Créer une table `obs.arrival_observation` séparée dupliquant 90% des colonnes de `obs.stock_observation` (rejeté, complexification inutile du schéma et des requêtes analytiques Gold).
+  - Utiliser des données de quantités synthétiques pour qualification (rejeté, formellement prohibé par AGENTS.md §3.1 et R5.2).
+- **Conséquences :**
+  - `obs.stock_observation` devient le conteneur unifié des stocks et des flux d'arrivages de marché.
+  - La provenance Bronze SHA-256 est garantie à 100%.
+
+## ADR-088 : architecture de relevé des quantités, cibles d'approvisionnement, contrat anti-PII et prévention du double comptage (R5.1)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.1 ; Phase R5.
+- **Contexte :** La phase R5 aborde les volumes physiques et les flux d'approvisionnement des marchés vivriers à Madagascar. Les quantités sont des variables d'état extensives et cumulatives, fondamentalement distinctes des prix (variables intensives). Une modélisation naïve expose le système à trois risques critiques :
+  1. Le double comptage destructeur (ex: sommer un stock instantané en magasin et les arrivages quotidiens du mois, ou additionner la production brute du bassin et les flux sur les marchés de collecte et de consommation).
+  2. La contamination par des données personnelles (PII) : noms de commerçants, transporteurs, chauffeurs, plaques d'immatriculation, numéros de téléphone des collecteurs ou enquêteurs, formellement prohibés par AGENTS.md §8.3.
+  3. L'ambiguïté des unités physiques locales (sacs de 50 kg vs sacs de 100 kg, gony de riz paddy vs riz usiné, kapoaka vs kg).
+- **Décision :**
+  1. **Définition de 3 cibles métrologiques strictement disjointes (`QuantityTarget`) :**
+     - `HARVEST_VOLUME` : volume agricole primaire produit/récolté par bassin et cycle cultural (ex: tonnes récoltées dans la plaine d'Ambatondrazaka).
+     - `INFLOW_ARRIVAL` : flux logistique entrant constaté sur un marché public donné au cours d'une période temporelle explicite (ex: arrivages journaliers en tonnes ou sacs).
+     - `STOCK_INVENTORY` : inventaire physique statique disponible à un instant précis $T$ sur le marché ou en entrepôt (stock de sécurité, stock commerçant).
+     - `OUTFLOW_SALES` : volume sortant ou écoulé sur le marché.
+  2. **Règle absolue d'interdiction de cumul croisé :**
+     - Le moteur de calcul refuse catégoriquement d'additionner des flux (`INFLOW_ARRIVAL`) avec des stocks (`STOCK_INVENTORY`) ou de la production primaire (`HARVEST_VOLUME`).
+     - L'agrégation temporelle n'est autorisée qu'au sein de flux de même nature (ex: somme des arrivages quotidiens sur une semaine) et strictement interdite pour les stocks (qui ne peuvent être agrégés que sous forme d'instantanés d'inventaire ou de moyennes temporelles).
+  3. **Mode de constatation (`QuantityMeasurementMode`) :**
+     - `MEASURED_SCALE` : pesée mécanique ou électronique sur balance/bascule étalonnée.
+     - `DECLARED_TRADER` : déclaration orale ou écrite du commerçant/transporteur sans pesée directe.
+     - `ESTIMATED_SURVEY` : estimation visuelle de l'enquêteur basée sur le dénombrement de contenants standards.
+  4. **Contrat anti-PII absolu à la validation Pydantic :**
+     - Les modèles `QuantityObservationRecord` et `SurveyForm` imposent `model_config = ConfigDict(extra="forbid")`.
+     - Rejet formel et automatique si un champ personnel (`trader_name`, `phone`, `email`, `driver_id`, `vehicle_plate`, `national_id`) est soumis.
+     - Seules les métadonnées de lieux publics (`market_code`, `location_pcode`, `market_name`, `market_type`) et de protocole institutionnel sont acceptées.
+  5. **Dictionnaire d'unités physiques et conversion standardisée (`QuantityUnit`) :**
+     - Pivot métrique universel : kilogramme (`KG`, facteur 1.0) et tonne métrique (`TONNE`, facteur 1000.0).
+     - Contenants standardisés : `BAG_50KG` (50 kg), `BAG_100KG` (100 kg).
+     - Unités traditionnelles locales : `GONY` (poids nominal vérifié par produit, défaut 50 kg pour riz paddy/blanc), `KAPOAKA` (contenance standardisée de 300 ml, densité spécifique par produit vivrier selon tables MinAE/ODR).
+  6. **Gouvernance des collectes terrain (H3, H7) :**
+     - Les formulaires d'enquête et protocoles sont rédigés dans `docs/protocols/` et les projets de conventions de collecte dans `docs/outreach/`.
+     - Aucun contact de tiers ni transmission externe (H3, H7).
+- **Alternatives rejetées :**
+  - Fusionner flux et stocks dans une colonne générique `quantity` sans indicateur de type (rejeté, source de double comptage).
+  - Tolérer des champs optionnels libres pouvant contenir des coordonnées personnelles (rejeté, violation d'AGENTS.md §8.3).
+  - Assumer une conversion fixe de 1 sac = 100 kg pour toutes les denrées (rejeté, un sac de maïs en épi ne pèse pas comme un sac de riz blanc).
+- **Conséquences :**
+  - Spécification formelle dans SPECS §27.
+  - Implémentation du module `backend/src/ketrika/supply/contracts.py`.
+  - Intégrité métrologique garantie pour les importations (R5.2), la DQ des quantités (R5.3) et l'analyse des corridors d'approvisionnement (R5.6).
+
+## ADR-087 : architecture de la vue agroclimatique explicable, étanchéité multi-couches et transparence des sources facultatives (R4.11)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.11 ; Phase R4.
+- **Contexte :** La vue agroclimatique consolidée `/climate` et ses endpoints REST associés `/v1/climate/*` constituent le point de contact opérationnel entre données satellitaires, stations météo, modèles numériques NWP, calendriers culturaux et documents d'alerte précoce. Les directives normatives de R4.11, SPECS §19, §26 et les principes d'AGENTS.md imposent :
+  1. **Disjonction stricte en 4 couches de données indépendantes :**
+     - **Couche 1 (Météo observée et estimée) :** Précipitations et températures mesurées ou estimées par satellite (CHIRPS, DGM). Méthode d'agrégation explicite (`zonal_mean` avec avertissement sur l'absence de masque agricole si non vérifié).
+     - **Couche 2 (Anomalies climatiques rigoureuses) :** Écart en mm/°C, % de la normale, z-score, risque catégoriel, référence climatologique documentée ($N \ge 10$ ans) ou statut explicite `insufficient_history`.
+     - **Couche 3 (Météo prévue numérique archivable) :** Prévisions NWP (ECMWF IFS Open Data), étanches des observations, avec `issued_at`, `valid_from`, `valid_to`, horizon en heures, quantiles p10/médiane/p90, et flag `value_kind: projected`.
+     - **Couche 4 (Calendrier cultural et corridors commerciaux) :** Stades phénologiques calculés dynamiquement pour le mois actif (`peak_harvest`, `harvest`, `planting`, `growing`), typologie baseline vs recommandation, corridors d'approvisionnement documentés.
+     - **Couche 5 (Événements et perspectives FEWS NET/IPC) :** Phases IPC, alertes documentées, statut de projection explicite.
+  2. **Transparence absolue sur les sources facultatives non intégrées :**
+     - Les sources optionnelles (FIRMS pour les feux, GloFAS pour les inondations, Copernicus NDVI pour la biomasse) sont affichées avec leur statut exact (`unavailable` / non configuré) et leur justification, et JAMAIS avec des valeurs numériques nulles (0 feux ou 0 mm) qui donneraient une fausse impression de risque zéro.
+     - Interdiction formelle de fabriquer un « indice global de santé environnementale » synthétique non étayé.
+- **Décision :**
+  1. Créer le routeur FastAPI `backend/src/ketrika/api/routers/climate.py` exposant :
+     - `GET /v1/climate/summary` (vue consolidée explicable par zone/district),
+     - `GET /v1/climate/anomalies` (séries temporelles d'anomalies observées avec baseline),
+     - `GET /v1/climate/forecasts` (prévisions numériques archivées),
+     - `GET /v1/climate/calendars` (calendriers culturaux et corridors d'approvisionnement),
+     - `GET /v1/climate/events` (événements et perspectives FEWS NET/IPC),
+     - `GET /v1/climate/facultative-status` (statut transparent des sources facultatives).
+  2. Maintenir la compatibilité ascendante sur `/v1/weather/anomalies`.
+  3. Mettre à jour `web/src/app/climate/page.tsx` pour consommer ces contrats certifiés, afficher les badges `observed` / `projected`, expliciter la méthode d'agrégation et rendre consultables les corridors commerciaux sans inventer de métriques.
+- **Alternatives rejetées :**
+  - Fusionner prévisions et observations dans une seule courbe temporelle (rejeté, violation de la règle 9 d'AGENTS.md).
+  - Afficher 0 feux pour FIRMS lorsque l'API n'est pas connectée (rejeté, falsification de sécurité).
+  - Maintenir un calendrier statique hardcodé dans le frontend (rejeté, découplage de la taxonomie vérifiée).
+- **Conséquences :** Vue agroclimatique 100% explicable, traçable, auditée et conforme aux exigences agronomiques malgaches.
+
+## ADR-086 : versioning des calendriers culturaux, typologie traditionnelle vs recommandations saisonnières et liaisons de corridors commerciaux prouvés (R4.7)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.7 ; Phase R4.
+- **Contexte :** Les calendriers culturaux fournissent les fenêtres phénologiques critiques (semis, croissance/tallage, floraison, récolte, pic de récolte) et la sensibilité hydrique par bassin de production et régime (irrigué, pluvial, bas-fond) à Madagascar. Les directives normatives de R4.7, SPECS §26 et les principes d'AGENTS.md imposent :
+  1. **Disjonction stricte entre calendrier traditionnel (baseline) et recommandation saisonnière :**
+     - Le calendrier traditionnel reflète les pratiques agronomiques pérennes (`calendar_type: traditional_baseline`, `campaign: baseline_permanent`).
+     - Les avis ou recommandations spécifiques pour une campagne donnée (`calendar_type: seasonal_recommendation`, ex: campagne 2023/2024 émise par le MinAE face à un retard de pluies) sont versionnés avec leur campagne et ne modifient pas la baseline traditionnelle.
+  2. **Immutabilité, révision et visibilité des versions passées (Principe 3 d'AGENTS.md) :**
+     - Aucun remplacement destructif. Une révision crée une nouvelle entrée avec `superseded_by` pointant vers la nouvelle version, tandis que l'ancienne reste consultable avec `is_active = False`.
+  3. **Attribution spatiale sans extrapolation géographique :**
+     - Tout calendrier est formellement rattaché à un bassin/zone spécifique (`zone_code`, ex: `ZONE_ALAOTRA`, `ZONE_CENTRE`, `ZONE_BOENY`, `ZONE_EST`, `ZONE_SUD`).
+     - Interdiction absolue d'appliquer un calendrier unique ou générique à l'ensemble du territoire national.
+  4. **Liaison explicite bassin de production -> marchés de consommation avec statut de preuve :**
+     - Les corridors d'approvisionnement entre bassins producteurs et marchés récepteurs (`market_links`) exigent une référence documentée (`proof_status: documented_trade_corridor`, `official_supply_basin`, `unverified_assumption`).
+     - Rejet catégorique de l'attribution de corridors par simple proximité géographique sans preuve.
+  5. **Éligibilité aux alertes automatiques et gestion du verified/review :**
+     - Une entrée sans source officielle ou comportant une interprétation non mécanique a `verified: false` et est formellement exclue des alertes automatiques de marché (`eligible_for_alerts: false`).
+  6. **Interdiction stricte de dérivation de tonnages ou de prix :**
+     - Un calendrier cultural fournit exclusivement des fenêtres phénologiques temporelles. Il ne contient ni ne produit aucune estimation de tonnage de récolte, ni de prévision de prix, ni de pic de volume de marché inventé.
+- **Décision :**
+  1. Étendre `CropCalendarRecord` et le schéma SQL `ref.crop_calendar` (migration 0015) avec `calendar_version`, `calendar_type`, `campaign`, `variety`, `eligible_for_alerts`, `is_active`, `superseded_by`, et `market_links`.
+  2. Implémenter le module `ketrika.geo.calendar` gérant la détection des stades phénologiques, les chevauchements inter-annuels, la consultation des versions passées et la traçabilité des corridors commerciaux.
+  3. Enrichir `taxonomy/crop_calendar.yaml` avec les métadonnées de versioning et les corridors documentés des principaux bassins de Madagascar (Alaotra, Boeny/Marovoay, Hauts Plateaux, Est, Sud).
+- **Alternatives rejetées :**
+  - Écraser les calendriers lors d'une nouvelle campagne (rejeté, violation de l'immutabilité et de l'auditabilité historique).
+  - Déduire les flux commerciaux par calcul de distance euclidienne (rejeté, méconnaissance des infrastructures réelles et des flux fluviaux/routiers malgaches).
+- **Conséquences :** Calendriers culturaux auditables, versions antérieures préservées, alertes précoces fiables et modélisation réaliste des flux de denrées sans conjectures.
+
+## ADR-085 : calcul rigoureux des anomalies agroclimatiques, seuils minimaux de référence historique et agrégations zonales fiables (R4.6)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.6 ; Phase R4.
+- **Contexte :** Le calcul des anomalies agroclimatiques (pluviométrie, températures) et l'agrégation spatiale sur les régions et districts agricoles de Madagascar exigent une métrologie sans faille (directives R4.6, règles 1, 8, 9 et 10 d'AGENTS.md) :
+  1. **Seuil minimal de climatologie de référence ($N \ge 10$ années) :**
+     - Une anomalie (écart absolu, pourcentage de la normale, z-score standardisé) n'a de validité scientifique que si elle s'appuie sur une climatologie de référence homogène (même source, même version).
+     - Si l'historique disponible compte moins de 10 années de référence pour le mois ou la décade concernée, le calcul d'anomalie s'abstient formellement (`status: insufficient_history`, valeurs d'anomalies à `None`). Il est formellement interdit d'inventer une climatologie synthétique.
+  2. **Somme pluviométrique vs Moyenne thermique :**
+     - Précipitations : cumul ou somme décadaire/mensuelle. L'anomalie s'exprime en écart absolu ($P - \bar{P}$ en mm), en pourcentage de la normale ($P / \bar{P} \times 100\%$), et en indice standardisé $Z = (P - \mu) / \sigma$.
+     - Températures : moyenne arithmétique. L'anomalie s'exprime en écart absolu ($T - \bar{T}$ en °C) et en z-score standardisé.
+  3. **Agrégation zonale rigoureuse et ratio de couverture spatiale :**
+     - Une moyenne zonale n'est déclarée représentative que si le ratio de couverture des pixels valides satisfait `coverage_ratio >= 0.5`. En deçà, l'agrégation est signalée comme couverture incomplète (`incomplete_coverage`).
+     - Refus catégorique de déguiser une grille lâche en pluie de station locale.
+  4. **Strict respect des sources et versions :**
+     - Interdiction de mélanger les versions de fournisseurs pour calculer une anomalie (ex: comparer CHIRPS v2.0 à une baseline NASA POWER).
+- **Décision :**
+  1. Implémenter le module `ketrika.geo.anomalies` fournissant `ClimateBaseline`, `ClimateAnomalyResult`, `compute_climate_baseline`, `compute_climate_anomaly`, `classify_rainfall_anomaly`.
+  2. Imposer le seuil strict $N_{\text{min}} = 10$ années pour toute climatologie de référence.
+  3. Fournir une suite de tests unitaires validant :
+     - le calcul exact des anomalies sur un jeu de données connu à la main,
+     - l'abstention formelle lorsque $N < 10$,
+     - la classification agronomique des déficits et excédents hydriques,
+     - l'agrégation zonale à surface corrigée et le comportement en présence de nodata et frontières côtières.
+- **Alternatives rejetées :**
+  - Calculer des anomalies avec seulement 2 ou 3 ans d'historique (rejeté, bruit statistique non représentatif du climat).
+  - Imputer les années manquantes par la moyenne globale (rejeté, falsification de données météo).
+- **Conséquences :** Alertes de sécheresse et d'excès pluviométrique certifiées, transparentes et scientifiquement fondées.
+
+## ADR-084 : qualification de la météo prévue archivable, intégration ECMWF Open Data et étanchéité prévisionnelle (R4.5)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.5 ; Phase R4.
+- **Contexte :** L'anticipation agroclimatique requiert des prévisions météorologiques à court et moyen terme (1 à 14 jours) issues de centres mondiaux de référence (ECMWF, NOAA/NCEP). Leur intégration impose des règles strictes (directives R4.5, règles 1, 3, 8, 9 et 10 d'AGENTS.md) :
+  1. **Séparation étanche météo observée vs météo prévue (Règle 9) :**
+     - Les prévisions sont exclusivement enregistrées dans la table dédiée `obs.weather_forecast` (créée en R4.1 via la migration 0014).
+     - Il est strictement interdit d'insérer une prévision dans `obs.weather_observation` ou de la présenter comme un fait météorologique mesuré.
+  2. **Archivage Bronze immuable avant expiration glissante (Règle 2 & 4) :**
+     - Les API de prévision écrasent typiquement leurs runs toutes les 6 à 12 heures. Ketrika archive chaque payload brut sous Bronze (`bronze/weather_forecast/...`) avec son horodatage d'émission officiel (`issued_at`), son empreinte SHA-256 et sa validité (`valid_from`, `valid_to`), rendant le rejeu hors ligne 100 % reproductible sans réseau.
+  3. **Quantiles d'incertitude et horizons temporels :**
+     - Conservation de l'horizon de prévision en heures (`horizon_hours` : 24, 48, 72, 168, etc.), de la valeur médiane/attendue (`predicted_value`), et des quantiles probabilistes d'ensemble (`predicted_p10`, `predicted_p90`).
+  4. **Interdiction de fabriquer des pseudo-hindcasts :**
+     - Il est strictement interdit de reconstituer artificiellement un run de prévision du passé en utilisant les observations réalisées réelles (anti-triche A09, Règle 10).
+  5. **Contrôles de cohérence physique :**
+     - Rejet ou alerte sur valeurs physiquement impossibles (précipitations négatives, températures supérieures à 55 °C ou inférieures à -10 °C à Madagascar).
+- **Décision :**
+  1. Déclarer la source officielle `ecmwf_open` dans `registry/sources.yaml` avec priorité P2, licence CC-BY-4.0 / WMO Essential.
+  2. Créer le type `WeatherForecastRecord` dans `backend/src/ketrika/connectors/records.py`.
+  3. Implémenter le connecteur `ketrika.connectors.ecmwf_open.EcmwfOpenConnector` gérant l'ingestion Bronze et l'extraction des horizons multi-variables (précipitations, températures min/max, humidité).
+  4. Implémenter `load_weather_forecast_record_with_supersession` dans `backend/src/ketrika/connectors/runner.py` pour alimenter `obs.weather_forecast`.
+  5. Développer la suite de tests unitaires et de contrats validant la distinction météo observée vs prévue, l'archivage de runs successifs, et la détection d'anomalies d'unités ou de valeurs.
+- **Alternatives rejetées :**
+  - Utiliser un service météo payant imposant des clés secrètes non fournies (rejeté, respect de H1/H2).
+  - Fusionner les prévisions dans `obs.weather_observation` avec un flag (rejeté, risque d'altération silencieuse des séries historiques).
+- **Conséquences :** Anticipation des chocs climatiques avec conservation historique complète des prévisions émises et zéro ambiguïté prévision vs observation.
+
+## ADR-083 : intégration des événements, perspectives et classifications de sécurité alimentaire FEWS NET et IPC Madagascar (R4.4)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.4 ; Phase R4.
+- **Contexte :** L'intégration des rapports d'alerte précoce et des classifications de la sécurité alimentaire issus de FEWS NET (Famine Early Warning Systems Network, USAID) et du Cadre Intégré de Classification de la Sécurité Alimentaire (IPC Madagascar / Gouvernement / Partenaires) exige des garanties strictes de fidélité et d'intégrité métrologique (directives R4.4, règles 1, 6, 7, 8, 9 et 10 d'AGENTS.md) :
+  1. **Disjonction formelle entre situation courante et perspectives projetées :**
+     - Une classification de phase IPC actuelle (ex: Phase 2 « Stress » ou Phase 3 « Crise » pour la période courante) ne doit jamais être fusionnée ni confondue avec une projection future (ex: projection à 3 ou 6 mois pour la période de soudure).
+     - Tout enregistrement d'événement ou d'alerte projeté doit obligatoirement porter le drapeau booléen explicite `is_projected: true` dans son contrat et son evidence, avec dates de validité projetée distinctes de la période courante.
+  2. **Interdiction de fabriquer des chiffres ou des phases synthétiques :**
+     - Les phases IPC (1: Minimale, 2: Stress, 3: Crise, 4: Urgence, 5: Famine) et les estimations de populations en insécurité alimentaire doivent provenir textuellement ou tabulairement de publications officielles authentiques.
+     - Aucune interpolation mathématique continue ni extrapolation n'est autorisée sur les phases discrètes d'insécurité alimentaire.
+  3. **Traçabilité totale, citations textuelles et facteurs de bascule :**
+     - Chaque événement renseigne le titre du rapport, la date de publication officielle, la zone géographique concernée (région ou district de Madagascar, ex: Androy, Atsimo-Andrefana, Grand Sud), le numéro de page, et une citation verbatim des hypothèses clés et facteurs de bascule (ex: retard des pluies, attaques acridiennes, flambée des prix sur les marchés locaux).
+  4. **Sécurité et intégrité documentaire (Règle 10) :**
+     - Le texte des rapports FEWS NET / IPC est une donnée passive d'observation socio-économique et agro-météorologique. Aucune instruction ou directive contenue dans ces documents ne peut altérer la politique de l'agent.
+     - Aucune donnée nominative ou personnelle n'est collectée (H4).
+- **Décision :**
+  1. Déclarer les sources officielles `fewsnet_mdg` et `ipc_mdg` dans `registry/sources.yaml` avec priorité P2, licences ouvertes et URLs officielles documentées.
+  2. Implémenter le connecteur `ketrika.connectors.fewsnet_ipc.FewsnetIpcConnector` (exposé sous `fewsnet_mdg` et `ipc_mdg`), produisant des `EventRecord` normalisés enrichis avec :
+     - `event_type='food_security_ipc'`,
+     - `period_start` et `period_end` alignés sur la fenêtre d'analyse ou de projection,
+     - champs `evidence` traçant `is_projected`, `ipc_phase`, `assumptions`, `key_drivers`, `page`, `verbatim_citation`.
+  3. Étendre `load_record_with_supersession` dans `runner.py` pour supporter `EventRecord` et persister fidèlement dans la table `obs.event`.
+  4. Écrire la suite de tests validant la séparation stricte situation courante vs perspective projetée, la résolution spatiale, et le rejet d'inventions numériques.
+- **Alternatives rejetées :**
+  - Fusionner les phases courantes et projetées dans un seul champ sans distinction temporelle (rejeté, risque critique de confusion décisionnelle).
+  - Générer des scores continus ou prédire une phase IPC future par ML (rejeté, compétence exclusive du comité national d'analyse IPC).
+- **Conséquences :** Contextualisation institutionnelle des crises alimentaires et chocs de marché à Madagascar, provenance totale et auditabilité garantie.
+
+## ADR-082 : qualification de la source officielle Météo Madagascar, extraction déterministe et intégrité métrologique des bulletins agroclimatiques (R4.3)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.3 ; Phase R4.
+- **Contexte :** L'intégration des bulletins agro-météorologiques et des perspectives climatiques publiés par la Direction Générale de la Météorologie de Madagascar (DGM / Météo Madagascar, `https://www.meteomadagascar.mg/`) impose des garanties strictes de fidélité documentaire et métrologique (directives R4.3, règles 1, 7, 8, 9 et 10 d'AGENTS.md) :
+  1. **Disjonction formelle entre date d'émission et période de validité :** Un bulletin publié le 10 janvier 2024 portant sur la décade du 1er au 10 janvier (`valid_from: 2024-01-01`, `valid_to: 2024-01-10`) ne doit pas voir sa date d'observation confondue avec sa date de publication (`issued_at: 2024-01-10`).
+  2. **Interdiction de fabriquer des probabilités à partir de catégories qualitatives :** Les cartes et textes décrivant des catégories (ex: « pluies normales à supérieures », « déficit hydrique modéré ») doivent être consignés textuellement avec citation exacte et extrait de page. Il est strictement interdit de convertir une catégorie qualitative ou une couleur de carte en fausse probabilité numérique (ex: « 75 % ») absente du document source officiel.
+  3. **Principe de fidélité au réel et absence de document :** Si aucun bulletin officiel n'est publié ou accessible pour une période donnée, l'état pour cette période est obligatoirement étiqueté `unavailable` avec raison documentée. Il est strictement interdit d'inventer un bulletin de remplacement ou un calendrier fictif.
+  4. **Provenance vérifiable à 100 % (Règle 1) :** Chaque observation ou avis extrait référence obligatoirement le `source_record_id` de l'artefact Bronze original (PDF ou bulletin HTML officiel), son empreinte SHA-256, le numéro de page, et l'extrait textuel verbatim.
+- **Décision :**
+  1. Déclarer la source `meteo_mg` dans `registry/sources.yaml` avec priorité P2, entrée `https://www.meteomadagascar.mg/`, cadence mensuelle/décadaire, licence publique officielle.
+  2. Implémenter le connecteur `ketrika.connectors.meteo_mg.MeteoMgConnector` (`Connector = MeteoMgConnector`).
+  3. Extraire de façon déterministe les cumuls pluviométriques observés chiffrés en `WeatherRecord` (`provider='meteo_mg'`), et consigner les perspectives et alertes zonales dans des enregistrements d'événements/perspectives structurés avec preuves citations exactes.
+  4. Rédiger la suite de tests validant la séparation émission/validité, la conservation des citations, le rejet de probabilités inventées, et le comportement `unavailable` en l'absence de document.
+- **Alternatives rejetées :**
+  - Fabriquer une prévision probabiliste continue à partir des cartes qualitatives (rejeté, violation de la règle 10 d'AGENTS.md).
+  - Utiliser un modèle météo non institutionnel en prétendant qu'il s'agit du service officiel malgache (rejeté, hérésie de provenance).
+- **Conséquences :** Intégration certifiée de la parole officielle de Météo Madagascar, distinction absolue entre faits observés et perspectives qualitatives.
+
+## ADR-081 : qualification du connecteur CHIRPS v2.0, double versioning préliminaire/finale et distinction stricte pluie nulle vs nodata (R4.2)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.2 ; Phase R4.
+- **Contexte :** L'intégration du produit satellitaire et stationnaire CHIRPS v2.0 (Climate Hazards Center, UC Santa Barbara) exige des garanties métrologiques strictes (directives R4.2, règles 1, 3, 8 et 9 d'AGENTS.md) :
+  1. **Gestion du double cycle temporel préliminaire vs final (C2/C4) :** CHIRPS produit d'abord une version préliminaire rapide (`chirps-v2.0.prelim`) disponible 2 à 5 jours après la fin du mois, puis une version définitive (`chirps-v2.0.final`) vers le 15 du mois suivant après assimilation des stations pluviométriques au sol. En application de la règle 3 (Append-only) et de l'auditabilité C4, la publication définitive ne détruit pas la version préliminaire : elle l'archive avec `superseded_by` pointant vers la définitive, garantissant la traçabilité des séries as-of.
+  2. **Distinction physique stricte entre pluie nulle ($0{,}0\text{ mm}$) et nodata ($-9999{,}0$) :** En climatologie tropicale et dans le Grand Sud malgache, $0{,}0\text{ mm}$ représente une observation avérée d'absence de pluie (sécheresse météorologique), tandis que $-9999{,}0$ est la valeur sentinelle nodata désignant un pixel hors masque maritime ou sans acquisition. Les confondre corromprait gravement le calcul des anomalies pluviométriques et le suivi des sécheresses.
+  3. **Découpage spatial systématique (budget Bronze raster) :** Les rasters d'origine (continentaux ou globaux) sont bornés à la BBOX officielle Madagascar `[43.0, -25.8, 50.8, -11.8]` avant stockage et agrégation, garantissant un volume inférieur au plafond de 50 Mo.
+  4. **Agrégation zonale traçable vers les entités administratives :** L'agrégation zonale calcule la moyenne spatiale des pixels valides sur chaque région (`admin1`) et district (`admin2`) avec rapport de couverture spatiale (`coverage_ratio`).
+- **Décision :**
+  1. Implémenter le connecteur `ketrika.connectors.chirps.ChirpsConnector` avec support complet des partitions préliminaires et finales.
+  2. Produire des `WeatherRecord` typés avec `provider='chirps'`, `variable='precip_mm'`, `method='zonal_mean'`, `spatial_resolution='0.05_deg'`, `stage='preliminary'|'final'`, et preuve structurée incluant l'empreinte SHA-256 du raster.
+  3. Valider la supersession dans `load_weather_record_with_supersession` afin qu'une mise à jour finale conserve l'historique préliminaire sans écrasement destructif.
+- **Alternatives rejetées :**
+  - Attendre uniquement la version définitive (rejeté, priverait le système de réactivité opérationnelle précoce à J+5).
+  - Écraser la version préliminaire en base sans historisation (rejeté, viole l'Append-only et l'auditabilité C2/C4).
+  - Imputer les valeurs nodata à 0 mm (rejeté, hérésie métrologique).
+- **Conséquences :** Disponibilité précoce et définitive des précipitations, auditabilité totale des sources CHIRPS Bronze et Silver.
+
+## ADR-080 : formalisation des contrats géospatiaux, agroclimatiques et séparation stricte météo observée vs prévue (R4.1)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R4.1 ; Phase R4.
+- **Contexte :** L'intégration des données agroclimatiques et géospatiales exige des garanties métrologiques strictes (directives R4.1, constats d'audit A14, règles 1, 3, 8 et 9 d'AGENTS.md) :
+  1. **Séparation étanche météo observée vs météo prévue :** Une prévision météorologique (ex: pluie projetée à 7 ou 14 jours par ECMWF/GFS) ne doit jamais être stockée ni confondue avec une observation historique (`obs.weather_observation`). La confusion créerait un risque critique d'intoxication des modèles d'alerte et de prix.
+  2. **Double version fournisseur sans écrasement (C2/C4) :** Des sources majeures comme CHIRPS publient deux versions temporelles successives d'un même mois : préliminaire (`stage: preliminary`, dispo sous 5 à 10 jours) puis définitive (`stage: final`, dispo au mois $M+1$ après étalonnage avec les stations de surface). En vertu de la règle 3 (Append-only) et de l'auditabilité C4, la version définitive ne détruit pas la version préliminaire. Elle crée un nouvel enregistrement avec supersession explicite (`superseded_by`).
+  3. **Système de Coordonnées et Bounding Box Madagascar :**
+     - CRS standard : `EPSG:4326` (WGS84).
+     - Bounding box Madagascar : `[43.0, -25.8, 50.8, -11.8]` (min_lon, min_lat, max_lon, max_lat).
+     - Résolutions natives explicitées : $0{,}05^\circ$ (CHIRPS), $0{,}1^\circ$ à $0{,}5^\circ$ (NASA POWER, ERA5).
+  4. **Masque Agricole et Agrégation Zonale Explicable :**
+     - L'agrégation zonale d'un raster vers une zone administrative (`ref.location`) doit déclarer sa méthode : `point_centroid`, `zonal_mean` ou `cropland_weighted_mean`.
+     - Une moyenne pondérée par les terres cultivées exige la présence d'un masque agricole vérifié (`cropland_mask`). En son absence, l'agrégation est obligatoirement étiquetée `zonal_mean` sans usurpation de précision agronomique.
+  5. **Modèle de Calendrier Cultural :**
+     - Les calendriers culturaux sont formalisés dans `taxonomy/crop_calendar.yaml` et historisés dans la table `ref.crop_calendar`, reliant le produit, la zone géographique, le régime pluvial ou irrigué, les fenêtres de semis/croissance/récolte, et la référence officielle.
+  6. **Plafonds de Stockage Bronze & Budget Raster :**
+     - Interdiction de télécharger le globe entier si des sous-ensembles sont découpables.
+     - Découpage/clipping immédiat sur la bounding box Madagascar avant archivage Bronze (limite 50 Mo par fichier mensuel).
+- **Décision :**
+  1. Créer la migration Alembic 0014 étendant `obs.weather_observation` (colonnes `stage`, `spatial_resolution`, `coverage_ratio`, `raster_source_record_id`) et créant les tables `obs.weather_forecast` et `ref.crop_calendar`.
+  2. Créer le module `backend/src/ketrika/geo/contracts.py` et `backend/src/ketrika/geo/raster.py` formalisant les types géospatiaux, CRS, BBOX Madagascar, calculs de masques et validation d'agrégation.
+  3. Définir `taxonomy/crop_calendar.yaml` pour les bassins rizicoles et PPN prioritaires à Madagascar.
+  4. Mettre à jour `SPECS.md` (§8, §13, §17bis).
+- **Alternatives rejetées :**
+  - Stocker les prévisions météo dans la même table `obs.weather_observation` avec un flag (rejeté, risque critique de fuite et de confusion).
+  - Écraser la version préliminaire de CHIRPS par un simple `UPDATE` (rejeté, violation de la règle 3 Append-only et de la rejouabilité C4).
+- **Conséquences :** Transparence totale des séries climatiques, étanchéité de l'historique et des prévisions, auditabilité des sources rasters Bronze.
+
+## ADR-079 : évaluation réelle et suivi des erreurs maturées, décomposition multidimensionnelle et benchmarking loyal face aux baselines (R3.8)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.8 ; Phase R3.
+- **Contexte :** L'évaluation de la performance d'un modèle prédictif ne peut se résumer à des métriques in-sample ou à un unique score agrégé flatteur (directives R3.8, constats d'audit A08 et A09). Pour garantir une évaluation scientifique intègre des prévisions de prix :
+  1. **Suivi des erreurs maturées sans rétroaction temporelle (C2/C4) :** Lorsqu'une date cible $T_{\text{target}}$ est franchie dans le temps réel ($T_{\text{target}} \le T_{\text{evaluation}}$), la prévision passée est confrontée à l'observation authentique devenue disponible (`actual_price`). Ces observations futures ne doivent en aucun cas être réinjectées rétroactivement dans le passé connu de l'entraînement du run initial.
+  2. **Classification chronologique tripartite :**
+     - `as_of_holdout` : évaluation sur la partition de test as-of certifiée (Phase 3 out-of-sample).
+     - `matured_actual` : prévision de production confrontée à l'observation réelle après échéance.
+     - `prospective_pending` : prévision en cours d'attente d'échéance ($T_{\text{target}} > T_{\text{evaluation}}$).
+  3. **Décomposition multidimensionnelle obligatoire :** Tout rapport ou tableau d'évaluation doit obligatoirement ventiler les métriques (WAPE, MAE, sMAPE, couverture 80%, largeur) :
+     - par produit (`product_code`),
+     - par région géographique (`location_pcode`),
+     - par horizon temporel ($h=1, 2, 3$),
+     - par régime saisonnier (soudure vs récolte).
+     Aucun score moyen global ne peut être présenté de manière isolée sans sa table de décomposition.
+  4. **Benchmarking loyal et primauté de la parcimonie :** Tout candidat statistique (`AutoETS`, `AutoARIMA`) doit être comparé frontalement aux baselines de référence (`NaiveLast`, `SeasonalNaive`). Si un modèle complexe ne dégage aucun gain statistiquement significatif ($\Delta\text{WAPE} \le 0.01$), le modèle naïf est déclaré vainqueur par parcimonie. Aucun gain imaginaire ou surestimé ne peut être attribué.
+  5. **Traçabilité de provenance totale (Règle 1 AGENTS.md) :** Chaque ligne d'évaluation référence explicitement le `forecast_id`, le `model_run_id`, et l'`observation_id` de la valeur réelle constatée.
+- **Décision :**
+  1. Créer la table `ml.forecast_evaluation` (migration Alembic 0013) stockant chaque évaluation individuelle d'horizon ($e_{\text{abs}}$, $e_{\text{pct}}$, `is_covered_80`, `actual_observation_id`).
+  2. Implémenter le module `backend/src/ketrika/ml/evaluation.py` avec `MaturedForecastEvaluator`, `PerformanceTable`, `compute_evaluation_metrics`.
+  3. Étendre l'API avec la route `GET /v1/forecasts/performance` (filtrage par produit, zone, horizon, régime, format CSV/JSON).
+  4. Publier le rapport de référence `docs/reports/market_forecast_evaluation.md`.
+- **Alternatives rejetées :**
+  - Réévaluer le modèle en ré-entraînant sur toute la série incluant la période de test (rejeté, fuite de données flagrante).
+  - Présenter uniquement un WAPE moyen agrégé masquant des divergences régionales ou des horizons $h=3$ dégradés (rejeté, violation de transparence).
+- **Conséquences :** Auditabilité totale des erreurs constatées, fidélité exemplaire envers les baselines, détection rapide de toute dérive de prévision.
+
+## ADR-078 : publication des prévisions, traçabilité des limites, gestion des abstentions et intégrité visuelle sans extrapolation (R3.7)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.7 ; Phase R3.
+- **Contexte :** La mise à disposition des prévisions de prix de marché ne doit jamais donner l'illusion d'une certitude ou d'une continuité artificielle (directives R3.7, R2.9, R2.10, constats d'audit A08 et A09). Pour satisfaire les principes de transparence et de provenance totale :
+  1. **Conservation immuable de l'historique des runs (C4) :** Chaque exécution de prévision crée un nouveau `model_run_id` horodaté rattaché à l'empreinte canonique du dataset as-of (`dataset_fingerprint`). Les prévisions antérieures ne sont jamais écrasées destructivement, permettant la reproductibilité et l'audit rétrospectif.
+  2. **Exposition exhaustive des limites et modèles :** Chaque prévision publiée expose obligatoirement son horizon ($h \in \{1, 2, 3\}$), sa cible temporelle (`target_period`), son origine (`data_cutoff`), son modèle effectif (`model_effective`), son statut de baseline (`is_baseline`), son statut de calibration conforme (`is_calibrated`), l'effectif d'étalonnage (`calibration_sample_size`), l'intervalle `[p10, p90]`, la largeur d'intervalle, la cohorte d'entraînement (`pure_observed` vs `mixed_cohort`), la devise (`currency`), l'unité physique (`unit`), et toute cause de repli (`fallback_reason`).
+  3. **Traçabilité des abstentions loyales :** Lorsqu'une série ne répond pas aux critères d'éligibilité normatifs (moins de 36 mois, absence de 12 mois récents, ou granularité non régionale/nationale) ou qu'elle présente trop de lacunes (> 30%), le système publie explicitement son abstention (`status: abstained` ou `experimental_insufficient_windows`) avec la raison méthodologique (`abstention_reason`), sans jamais tenter d'inventer une valeur.
+  4. **Intégrité visuelle absolue (Zéro courbe de remplacement LLM/UI) :** L'interface utilisateur (`PriceChart`, `/prices`) affiche distinctement les points observés et les prévisions avec leurs bandes conformes. En l'absence de prévision certifiée, l'UI affiche un panneau d'abstention loyale et s'interdit formellement de générer une courbe d'extrapolation ou d'interpolation artificielle par le front ou un LLM.
+- **Décision :**
+  1. Étendre `ml.forecast` (migration 0012) et `gold.forecast_latest` avec les colonnes de métadonnées conformes : `model_requested`, `model_effective`, `is_baseline`, `is_calibrated`, `calibration_sample_size`, `status`, `fallback_reason`, `currency`, `unit`, `interval_width`, `coverage_rate_80`.
+  2. Étendre l'API `/v1/forecasts` avec :
+     - `GET /v1/forecasts` (support filtres `product`, `location`, `actor_level`, `model_run_id`, pagination `limit`, `offset`, formats `json` et `csv`).
+     - `GET /v1/forecasts/runs` (historique des model runs, récupération de vieux runs avec empreinte `dataset_fingerprint`).
+     - `GET /v1/forecasts/runs/{model_run_id}` (détail et métriques d'un run archivé).
+     - `GET /v1/forecasts/abstentions` (catalogue des séries écartées ou abstentions avec motifs normatifs).
+  3. Enrichir `web/src/components/charts/PriceChart.tsx` pour afficher fidèlement le modèle effectif, le statut calibré/heuristique et le disclaimer en cas de repli.
+  4. Mettre à jour `web/src/app/prices/page.tsx` pour intégrer les prévisions réelles de l'API et l'affichage d'abstention loyale sans falsification de courbe.
+- **Alternatives rejetées :**
+  - Écraser les runs précédents par un simple `UPDATE` (rejeté, viole l'immutabilité et l'audit C4).
+  - Tracer une courbe continue entre le dernier point observé et les prévisions manquantes avec une heuristique front (rejeté, création de fausse information).
+- **Conséquences :** Clarté absolue pour l'analyste, auditabilité rétrospective de chaque run de modèle, conformité contractuelle totale avec SPECS §17 et §19.
+
+## ADR-077 : calibration conforme des intervalles de prévision, élimination des replis arbitraires +-10% et surveillance de couverture (R3.5)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.5 ; Phase R3.
+- **Contexte :** L'estimation de l'incertitude des prévisions de prix ne peut reposer sur des heuristiques arbitraires non vérifiées (constat d'audit A09, directives R3.5). L'ancien code utilisait un repli artificiel $\pm 10\%$ (`p10 = mean * 0.9`, `p90 = mean * 1.1`) lorsque StatsForecast n'était pas disponible ou en cas d'échec. R3.5 prescrit :
+  1. **Calibration conforme rigoureuse :** Les intervalles à 80% doivent être étalonnés sur les résidus d'erreurs empiriques réels observés sur les fenêtres de backtest antérieures ($e_t = y_t - \hat{y}_t$), selon les principes de la prédiction conforme (Conformal Prediction pour séries temporelles).
+  2. **Interdiction formelle des replis arbitraires :** Aucun intervalle $\pm 10\%$ ne peut recevoir le label `calibrated`. Tout intervalle non étalonné sur des résidus authentiques porte obligatoirement `is_calibrated = False` et un statut explicite `uncalibrated_heuristic`.
+  3. **Garanties structurelles des quantiles :** Respect strict de $0 \le p10 \le p50 \le p90$, valeurs finies non nulles.
+  4. **Seuil d'échantillon minimal et étanchéité :** Au moins $N_{\text{calib}} \ge 8$ résidus antérieurs requis pour prétendre à un étalonnage conforme valide. Les résidus sont collectés strictement avant la cible évaluée.
+  5. **Surveillance et incertitude binomiale :** Mesure systématique de la couverture empirique et de la largeur d'intervalle par horizon ($h=1, 2, 3$). Publication de l'intervalle de confiance binomial à 95% de Wilson sur la couverture réelle mesurée, afin de refléter l'incertitude statistique sur la couverture elle-même.
+- **Décision :**
+  1. Créer le module `backend/src/ketrika/ml/conformal.py` contenant `ConformalCalibrator`, `ConformalIntervalResult`, `compute_wilson_score_interval` et la fonction de calcul de quantiles conformes `calibrate_conformal_bounds`.
+  2. Enrichir `ForecastPrediction` et `ModelForecastResult` avec `is_calibrated`, `calibration_sample_size`, `interval_width`, `binomial_ci_95`.
+  3. Raccorder `ConformalCalibrator` dans l'orchestrateur de prévision `forecast.py` et les modèles statistiques.
+  4. Couvrir l'ensemble des règles de calibration dans `backend/tests/unit/test_ml_conformal_intervals.py`.
+- **Alternatives rejetées :**
+  - Conserver le repli $\pm 10\%$ sans métadonnées d'alerte (rejeté formellement par A09).
+  - Présenter des quantiles gaussiens théoriques comme conformes sans vérification des résidus réels (rejeté par directive R3.5).
+- **Conséquences :** Honnêteté statistique exemplaire sur l'incertitude, traçabilité indiscutable de la calibration, refus de toute promesse abusive de couverture.
+
+## ADR-076 : protocole d'évaluation temporelle en trois phases étanches, sélection rolling-origin à 6 fenêtres, calibration conforme et évaluation finale hors-échantillon (R3.4)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.4 ; Phase R3.
+- **Contexte :** La sélection d'un modèle de prévision de prix ne doit en aucun cas utiliser des observations futures ou des erreurs calculées sur le jeu de test final (directives R3.4, contrats C2 et C4). Le constat d'audit A08 a mis en évidence des protocoles à seuil réduit (4 à 6 points) sans séparation nette des phases d'apprentissage, d'étalonnage et de test. R3.4 prescrit :
+  1. **Séparation étanche en trois étapes chronologiques :**
+     - **Étape 1 (Sélection du modèle) :** Backtest rolling-origin mensuel sur l'historique d'apprentissage sur 6 fenêtres glissantes ($h=3$). Chaque fold d'entraînement doit respecter la longueur minimale ($\ge 24$ mois). Le modèle vainqueur $M^*$ est désigné exclusivement sur ces 6 origines.
+     - **Étape 2 (Calibration conforme) :** Les résidus d'étalonnage sont collectés strictement avant la cible finale, sans réutiliser d'observations ultérieures.
+     - **Étape 3 (Évaluation finale hors-échantillon) :** Le modèle $M^*$ retenu est évalué sur un jeu de test final temporellement disjoint. **Aucune information du test set ne peut influencer le choix de $M^*$ ou les hyperparamètres.**
+  2. **Intégrité des origines de sélection :** Si l'historique disponible est insuffisant pour instancier les 6 fenêtres complètes avec un historique d'entraînement éligible, l'algorithme ne doit pas réduire silencieusement le nombre de fenêtres : le protocole est qualifié d'`experimental` avec notification d'historique court, ou s'abstient pour une certification normative.
+  3. **Décomposition des métriques par horizon :** Calcul des métriques WAPE, MAE, sMAPE et couverture globale ainsi que par horizon spécifique ($h=1, h=2, h=3$).
+  4. **Gestion rigoureuse des cas limites et division par zéro :** Si la somme des valeurs réelles est nulle ou si aucune observation valide n'est disponible pour un horizon, la métrique renvoie explicitement `None` ou `float('nan')` au lieu d'un faux score flatteur `0.0`.
+- **Décision :**
+  1. Refactoriser `backend/src/ketrika/ml/backtest.py` pour introduire `RollingBacktestProtocol`, `WindowEvaluation`, `HorizonMetrics` et la fonction de découpage temporel étanche `partition_backtest_windows`.
+  2. Imposer que `select_best_model` n'opère que sur le split de sélection, et séparer la fonction d'évaluation finale `evaluate_final_holdout`.
+  3. Mettre à jour `SeriesMetrics` pour inclure `by_horizon: dict[int, HorizonMetrics]`, `sample_size: int`, `status: str`.
+  4. Implémenter les tests de non-fuite et de vérification d'étanchéité dans `backend/tests/unit/test_ml_backtest_protocol.py`.
+- **Alternatives rejetées :**
+  - Sélectionner le modèle sur l'ensemble de la série incluant la période de test (rejeté, fuite de données majeure et surapprentissage).
+  - Réduire discrètement à 1 ou 2 fenêtres sans marquer le statut expérimental (rejeté par directive R3.4).
+- **Conséquences :** Évaluation scientifique honnête, absence absolue de surapprentissage sur les cibles d'évaluation, compatibilité directe avec les intervalles conformes de R3.5.
+
+## ADR-075 : modèles de prévision conformes, références normatives, transparence model_requested vs model_effective et traitement des lacunes calendaires (R3.3)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.3 ; Phase R3.
+- **Contexte :** La phase R3 impose des prévisions de prix évaluées et honnêtes. Le constat d'audit A09 a révélé que les versions initiales réduisaient silencieusement la saisonnalité (saisons de 2 à 4 mois) et masquaient les échecs des modèles en affichant un ARIMA alors qu'un repli naïf ou une moyenne traînante avait tourné. R3.3 exige :
+  1. **Références normatives authentiques :** Le dernier prix observé (`NaiveLast`, $y_{t+h} = y_t$) constitue la référence de diagnostic minimale. Le modèle saisonnier naïf (`SeasonalNaive`, $y_{t+h} = y_{t+h-12}$) exige strictement une saisonnalité annuelle (`season_length = 12`).
+  2. **Candidats statistiques normatifs :** `AutoETS` et `AutoARIMA` configurés avec `season_length = 12`. Interdiction formelle de substituer une saison artificielle de 2, 3 ou 4 mois pour contourner le manque d'historique. En cas d'historique insuffisant pour estimer la saisonnalité (< 24 mois), le modèle doit s'abstenir ou déclarer un repli explicite.
+  3. **Transparence absolue des métadonnées (Anti-tricherie A09) :** Chaque prédiction trace obligatoirement `model_requested`, `model_effective`, `status` (`fitted`, `fallback`, `abstained`), et `fallback_reason`. Aucun résultat ne peut porter l'étiquette `AutoARIMA` si un modèle naïf ou une moyenne a été exécuté.
+  4. **Traitement documenté et étanche des lacunes calendaires :** Les trous de la grille mensuelle (`np.nan`) sont traités par interpolation linéaire locale appliquée strictement sur le jeu d'entraînement (`train_y`), sans aucune fuite d'information future. Si le taux de valeurs manquantes dépasse 30% ou si une lacune consécutive excède 4 mois, le modèle s'abstient (`excessive_missing_values`).
+  5. **Conservation dimensionnelle :** Chaque prédiction conserve explicitement son unité (`unit`) et sa devise (`currency`).
+  6. **Légitimité des références naïves :** Si un modèle naïf surpasse ou égale (à 1 point de WAPE près) un modèle complexe, il est légitimement sélectionné et affiché comme vainqueur.
+- **Décision :**
+  1. Refondre `backend/src/ketrika/ml/models.py` avec la classe de base `ForecastModel` retournant un `ModelForecastResult` contenant `model_requested`, `model_effective`, `status`, `fallback_reason`, `predictions` (`mean`, `p10`, `p90`), `parameters`, `unit`, `currency`.
+  2. Implémenter les classes conformes : `NaiveLastModel`, `SeasonalNaiveModel` (strictement `season_length=12`), `AutoETSModel` (strictement `season_length=12`), `AutoARIMAModel` (strictement `season_length=12`), et `DeterministicBaselineModel`.
+  3. Implémenter la fonction d'imputation locale du train `impute_training_gaps(y: np.ndarray, max_gap: int = 4, max_missing_ratio: float = 0.3) -> tuple[np.ndarray, str | None]`.
+  4. Mettre à jour `ketrika.ml.backtest` pour comparer loyalement les candidats et conserver les métadonnées de repli.
+- **Alternatives rejetées :**
+  - Réduire `season_length` à 3 mois lorsque la série a moins de 12 points (rejeté par A09 et R3.1).
+  - Renvoyer silencieusement un modèle naïf en conservant le libellé "AutoARIMA" (rejeté formellement par A09).
+- **Conséquences :** Honnêteté méthodologique totale, traçabilité irréprochable des modèles réellement exécutés, élimination définitive de toute dissimulation d'échec de fit.
+
+## ADR-074 : constructeur de datasets d'entraînement as-of, traçabilité temporelle C2/C4 et partitionnement sans fuite (R3.2)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.2 ; Phase R3.
+- **Contexte :** L'apprentissage machine et l'évaluation des modèles de prévision de prix requièrent des jeux de données d'entraînement rigoureusement gelés au point dans le temps (`as_of`) sans fuite d'informations futures (directives R3.2, contrats C2 et C4). Trois impératifs techniques s'imposent :
+  1. **Étanchéité temporelle C2 :** Seules les observations effectivement publiées ou disponibles à la date `as_of` (`first_available_at <= as_of` ou `published_at <= as_of` et `ingested_at <= as_of`) peuvent faire partie du dataset. Tout prix observé pour un mois antérieur mais publié ultérieurement (ex: prix de janvier publié en mars) doit être strictement exclu d'un dataset as-of de février.
+  2. **Résolution historique des révisions :** Le stockage Bronze/Silver étant en ajout seul (append-only avec `superseded_by`), une révision ultérieure (ex: révision intervenue en avril sur une observation de mars) ne doit pas rétroactivement altérer le dataset as-of de mars. Au temps `as_of`, c'est la version qui était active à ce moment-là qui doit être sélectionnée (`ingested_at <= as_of` et (`superseded_by IS NULL` ou remplacement postérieur à `as_of`)).
+  3. **Traçabilité et empreinte canonique C4 :** Chaque dataset d'entraînement porte un identifiant unique, une version, un mode d'origine (`as_of_point_in_time` ou `retrospective`), la liste exhaustive des `observation_ids` et des clés d'artefacts Bronze sources, les règles de sélection, et une empreinte canonique SHA-256 (`canonical_fingerprint`) calculée sur les enregistrements triés de façon déterministe. Deux constructions au même `as_of` doivent produire exactement la même empreinte.
+  4. **Partitionnement temporel étanche :** Découpage formel en sous-ensembles `train`, `calibration` et `test` respectant strictement la chronologie sans chevauchement ni utilisation de données futures pour l'étalonnage.
+- **Décision :**
+  1. Création du module `backend/src/ketrika/ml/dataset.py` avec `DatasetRecord`, `DatasetSplit`, `AsOfDataset` et la fonction constructeur `build_as_of_dataset`.
+  2. Requête SQL et filtrage en mémoire point-in-time joignant `obs.price_observation`, `meta.source_record` et `obs.macro_observation`.
+  3. Reconstitution déterministe de la clé canonique et de l'empreinte SHA-256 (tri par natural_key/observation_id, sérialisation JSON canonique UTF-8 sans blancs inutiles).
+  4. Partitionnement temporel strict par fenêtres calendaires disjointes.
+- **Alternatives rejetées :**
+  - Utiliser la vue `gold.price_obs_current` sans filtre temporel de révision (rejeté, fuite de données de révisions futures).
+  - Déduire la disponibilité temporelle uniquement du champ `month` (rejeté par C2, interdiction d'antidatage).
+- **Conséquences :** Reproductibilité absolue des datasets d'apprentissage, élimination radicale des fuites d'information, alignement parfait avec les exigences d'évaluation scientifique de R3.4 et R3.5.
+
+## ADR-073 : éligibilité, calendrier régulier et audit d'exclusion des séries de prévision de prix (R3.1)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R3.1 ; Phase R3.
+- **Contexte :** La phase R3 porte sur les prévisions de prix évaluées et honnêtes (directives R3.1 à R3.9). Les séries de prix candidates à l'apprentissage et à l'évaluation doivent être sélectionnées selon des critères statistiques et méthodologiques rigoureux, interdisant tout contournement ou simplification artificielle :
+  1. **Seuil d'éligibilité historique et récence :** minimum absolu de 36 mois observés non nuls (`total_points >= 36`), dont au moins 12 mois observés non nuls sur la fenêtre des 24 derniers mois précédant le cutoff (`recent_points_24m >= 12`). Tout seuil artificiel de 6 points ou saisonnalité factice de 2 à 4 mois est formellement interdit et rejeté.
+  2. **Granularité géographique (ADR-004) :** niveaux régional (`admin_level = 1`) et national (`admin_level = 0`) uniquement. Rejet formel des districts (`admin_level = 2`) et communes (`admin_level = 3`) pour la modélisation et la publication de prévisions de prix.
+  3. **Grille calendaire mensuelle régulière sans compression :** les mois sans observation doivent être explicitement représentés dans la grille régulière par une valeur nulle/absente (`price = None`, `np.nan`), interdisant la compression artificielle des lacunes calendaires en une suite de points consécutifs contigus.
+  4. **Étanchéité des types de prix :** exclusion absolue des prix réglementés (`official_ppn`, prix administrés OMH) et des indices (CPI/NIPC) de la cohorte des prix de marché vivriers observés.
+  5. **Distinction des cohortes et vérité terrain :** vérité terrain d'évaluation réservée aux observations observées (`observed_or_imputed == 'observed'`). Cohorte purement observée (`cohort = 'observed'`) vs cohorte composite/imputée (`cohort = 'mixed'`).
+  6. **Clé de série explicite à 5 composantes :** format canonique `product_code|quality_grade|actor_level|location_pcode|unit`.
+  7. **Audit complet et exhaustif :** reporting systématique de chaque série évaluée avec liste d'exclusions documentée et motivée (`SeriesEligibilityReport`). Aucune création de série artificielle pour satisfaire un quota ou un KPI.
+- **Décision :**
+  1. Refactorisation et enrichissement de `backend/src/ketrika/ml/series.py` pour implémenter `PricePoint` (avec gestion explicite des trous calendaires), `EligibleSeries`, `ExcludedSeries` et `SeriesEligibilityReport`.
+  2. Implémentation du constructeur de calendrier régulier `generate_monthly_calendar` et de l'arithmétique mensuelle exacte `shift_months`.
+  3. Application des gardes d'éligibilité : 35 points = rejeté, 36 points sans récence = rejeté, district = rejeté, prix réglementé = rejeté.
+  4. Séparation des cohortes `observed` et `mixed`, avec flag `can_backtest_6_windows` et `can_calibrate_conformal`.
+  5. Maintien de la compatibilité avec l'orchestrateur `forecast.py`.
+- **Alternatives rejetées :**
+  - Conserver le seuil historique de 6 points (rejeté par directive R3.1 et SPECS §17).
+  - Comprimer les mois manquants pour créer une série continue sans trous (rejeté, fausse saisonnalité et distorsion des retards temporels).
+  - Inclure les districts pour gonfler le nombre de séries éligibles (rejeté par ADR-004 et R3.1).
+- **Conséquences :** Séries temporelles statistiquement intègres, transparentes, exemptes de fuite ou d'artefact de calendrier, conformes aux exigences de validation scientifique.
+
+## ADR-072 : vues marché et observatoire économique, route dédiée `/economy`, fiches métriques et transparence de couverture (R2.10)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R2.10 ; Phase R2.
+- **Contexte :** La phase R2 requiert l'exposition frontend des observatoires de marché et d'économie (directive R2.10). Les visualisations doivent refléter fidèlement les principes d'honnêteté et de traçabilité : filtres cohérents, séparation stricte des dimensions macroéconomiques sans score synthétique inventé, intégration de la matrice de couverture et des lacunes calendaires, présence systématique de la provenance et des badges de typage (`ValueKindBadge`), et conformité mobile/accessibilité WCAG AA.
+- **Décision :**
+  1. **Nouvelle route `/economy` (`web/src/app/economy/page.tsx`) :** Observatoire économique interprétable articulé autour des 5 dimensions étanches d'ADR-070 (`inflation`, `exchange_rate`, `fuel_energy`, `external_trade`, `real_activity`). Chaque dimension expose son statut de complétude (`complete`, `partial`, `no_data`), ses indicateurs avec unités et sources réelles, ses fiches métriques normatives (formule, lag de publication, limitations) et le contexte d'articulation de transmission sur le pilote rizicole (ex: comparaison du coût CAF à l'importation avec le prix de marché local).
+  2. **Navigation globale (`web/src/components/layout/Sidebar.tsx`) :** Raccordement de `/economy` sous le libellé « Économie & Conjoncture » avec icône adaptée.
+  3. **Enrichissement de la vue Marché (`web/src/app/prices/page.tsx`) :** Intégration d'un composant de couverture de marché restituant la complétude des séries (sources indépendantes, familles, part imputée, ancienneté et lacunes calendaires).
+  4. **Transparence et provenance totale :** Utilisation systématique de `ValueKindBadge` et de `ProvenanceLink` vers `/observations/[id]` sur chaque chiffre et graphique. Interdiction formelle de valeurs de remplissage ou de graphiques fictifs.
+  5. **Mise à jour des spécifications :** Formalisation de `/economy` dans `docs/plan/SPECS.md` §22.
+- **Alternatives rejetées :** Synthétiser un indice unique de performance économique (rejeté par R2.8/R2.10), superposer des courbes d'inflation et de prix au kilo sur un même axe sans avertissement (rejeté pour cause d'incompatibilité dimensionnelle).
+- **Conséquences :** Expérience utilisateur fluide et pédagogique, clarté absolue sur la provenance et les limites méthodologiques des données macroéconomiques et de marché.
+
+## ADR-071 : extension des contrats d'API, pagination normative, export CSV et exposition systématique des métadonnées de qualification (R2.9)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R2.9 ; Phase R2.
+- **Contexte :** La phase R2 requiert l'exposition uniforme des séries macroéconomiques, de couverture de marché, de disponibilité temporelle et de qualification à travers l'API REST sans rupture pour les clients existants (directive R2.9). De plus, les règles de rigueur et d'intégrité doivent être strictement partagées entre les formats JSON et CSV, la pagination doit être stable et prédictible, et les endpoints administratifs doivent rester protégés.
+- **Décision :**
+  1. **Extension non-cassante des routes existantes :** Ajout des paramètres de pagination standardisés `limit` (défaut 100, minimum 1, maximum 1000) et `offset` (défaut 0, minimum 0) sur `/v1/macro`, `/v1/market/coverage`, et `/v1/economic/indicators`.
+  2. **Parité stricte CSV / JSON :** Ajout du paramètre `format=json|csv` sur les routes de séries (`/v1/macro`, `/v1/market/coverage`, `/v1/economic/indicators`). L'export CSV applique les mêmes filtres, pagination, préservations des valeurs nulles et sérialisations de listes que le JSON, avec en-têtes HTTP `Content-Type: text/csv` et `Content-Disposition`.
+  3. **Exposition exhaustive des métadonnées de qualification :** Chaque observation exposée maintient son typage d'observation (`observed_or_imputed`, `value_kind`), son unité physique et devise, sa résolution géographique réelle (sans assignation aveugle), sa temporalité native (`period_start`, `period_end`, `frequency`, `base_period`) et ses jalons de disponibilité (`published_at`, `first_available_at`).
+  4. **Contrôle d'accès et non-exposition publique d'administration :** Les routes `/v1/admin/*` exigent strictement le rôle `admin` et ne sont jamais exposées publiquement sans authentification.
+  5. **Synchronisation du schéma OpenAPI :** Régénération systématique de `web/src/lib/api/openapi.json` et des types TypeScript correspondants dans `web/src/lib/api/schema.d.ts`.
+- **Alternatives rejetées :** Création d'une nouvelle version majeure d'API /v2 (rejeté, complexité injustifiée, clients existants préservés), exclusion du format CSV pour les séries macro (rejeté, parité exigée par SPECS §19).
+- **Conséquences :** API totalement homogène, contrats de pagination et d'export robustes, intégration front-end garantie par TypeScript strict.
+
+## ADR-070 : tableau économique interprétable, fiches métriques et gestion stricte des dimensions non combinables (R2.8)
+
+- **Date/statut :** 2026-10-16 UTC, adopté avant code R2.8 ; Phase R2.
+- **Contexte :** La phase R2 exige la constitution d'un tableau économique interprétable articulant l'inflation (NIPC), le change (BFM), l'énergie/carburants (OMH) et le commerce extérieur/activité (TBE) avec le marché vivrier de référence (pilote rizicole R2.4).
+  Afin de préserver l'intégrité analytique et d'éviter les dérives d'interprétation, les directives du plan R2.8 imposent des règles strictes :
+  1. Interdiction formelle d'inventer un « score global de santé macroéconomique » synthétique : les dimensions économiques sont structurellement hétérogènes et doivent rester affichées séparément.
+  2. Distinction absolue entre inflation (taux de variation d'un indice de prix à la consommation NIPC) et variation de prix de marché vivrier au kg : ne jamais les confondre ou les moyenner.
+  3. Distinction des flux commerciaux en volume (tonnes métriques) et en valeur (monnaie/devises) ; interdiction des ratios d'importation sur des unités incompatibles.
+  4. Interdiction de raccorder implicitement des indices de bases différentes (ex: base 2016 vs base 2024).
+  5. Règle de nullité stricte : tout dénominateur nul, période non alignée ou série manquante doit produire `NULL` accompagné d'un code de raison standardisé (`zero_denominator`, `missing_denominator`, `base_shift`, `incompatible_units`, `unaligned_period`, `missing_series`). L'absence de séries BFM/OMH ne produit ni zéro ni estimation LLM.
+- **Décision :**
+  1. **Fiches métriques normatives (`EconomicMetricCard`) :** Définition formelle de 12 fiches métriques canoniques réparties en 5 dimensions autonomes (`inflation`, `exchange_rate`, `fuel_energy`, `external_trade`, `real_activity`), chacune documentant : définition, formule, unité, fréquence, périmètre géographique, publication/source primaire et limites d'interprétation.
+  2. **Vue SQL matérialisée `gold.economic_dashboard` (`014_economic_dashboard.sql`) :** Agrégation ensembliste déterministe recomputable depuis `obs.macro_observation`, `obs.cpi_observation`, `obs.trade_flow` et `gold.price_monthly_best`, intégrant le statut de complétude (`complete`, `partial`, `no_data`).
+  3. **Module métier `backend/src/ketrika/gold/economic.py` :** Moteur d'évaluation robuste des métriques, de détection des changements de base, de calcul des variations calendaires sécurisées et d'articulation de transmission économique pour le pilote rizicole (ex: comparaison du coût unitaire CAF d'importation avec le prix de détail local).
+  4. **Contrats API REST (`/v1/economic/indicators`, `/v1/economic/dashboard`, `/v1/economic/pilot-context`) :** Endpoints typés exposant les fiches métriques et les observations avec traçabilité et codes de nullité explicites.
+- **Alternatives rejetées :** Calculer un indice composite unique pondéré (rejeté par directive R2.8), interpolation des séries manquantes par la dernière valeur connue (rejeté, fausse stabilité), raccordement aveugle des bases d'indices (rejeté, fausse continuité).
+- **Conséquences :** Tableau économique rigoureusement traçable, respect absolu de la nature multidimensionnelle de l'économie, transparence totale sur les lacunes et les limites méthodologiques.
+
+## ADR-069 : formalisation des contrats temps, origine et métriques macroéconomiques (C1–C4)
+
+- **Date/statut :** 2026-10-15 UTC, adopté avant migration et code R2.1 ; Phase R2.
+- **Contexte :** l'extension de Ketrika vers l'observatoire macroéconomique et l'aide à la décision (Phase R2) requiert l'ingestion d'indicateurs macroéconomiques généraux (PIB, taux de change, taux directeur BCM, agrégats). Détourner `price_observation` ou `cpi_observation` violerait les contrats de données et corromprait les séries de prix vivriers. De plus, la gestion temporelle pour le ML interdit tout antidatage de la disponibilité sur la simple date affichée dans un document (anti-leakage).
+- **Décision :**
+  1. **Table additive `obs.macro_observation` :** création de la table dédiée avec indicateur (`indicator_code`, `indicator_name`, `frequency`, `unit`, `base_period`), périmètre (`geo_scope`), vintage (`preliminary | provisional | revised | final`), valeurs brutes et numériques exactes (`NUMERIC(20,4)`), et provenance complète (`source_record_id`, `evidence`, `extraction_method`).
+  2. **Contrat de disponibilité temporelle (C2 / C4) :** distinction obligatoire entre période observée (`period_start`, `period_end`), date de publication officielle (`published_at`) et première disponibilité prouvée (`first_available_at`). En l'absence d'archive datée indépendante (Wayback, log immuable), `first_available_at` prend conservativement la date de première collecte UTC (`fetched_at`), sans jamais être antidatée.
+  3. **Immuabilité & Révisions :** révisions par insertion de nouvelle ligne et liaison `superseded_by` (trigger immuable interdisant les UPDATE destructifs). Les révisions météo NRT vers consolidé suivent ce même mécanisme sans écrasement.
+  4. **Famille de sources (C3) :** déclaration de `source_family` pour interdire la fausse confirmation d'indépendance entre sources dérivées (ex: RTFP et WFP).
+  5. **Droits :** permissions accordées à `ketrika_app` (SELECT, INSERT, UPDATE sur superseded_by) et `copilot_ro` (SELECT seul).
+- **Alternatives :** réutiliser `price_observation` avec des prix factices (rejeté), réécriture destructive des historiques (interdit par AGENTS §4.3).
+### ADRs R0.1–R0.6 & MVP T
 
 ## ADR-063 : garde HTTP durable, quotas atomiques et arrêt persistant
 

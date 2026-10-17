@@ -19,24 +19,30 @@ from ketrika.connectors.base import (
 )
 from ketrika.connectors.records import (
     CpiRecord,
+    EventRecord,
+    MacroRecord,
     PriceRecord,
     ProductionRecord,
     RecordBase,
     StockRecord,
     TradeFlowRecord,
+    WeatherForecastRecord,
     WeatherRecord,
 )
 from ketrika.core.logging import bind_context, clear_context
 from ketrika.core.models.db import (
     CpiObservation,
+    Event,
     IngestionRun,
     Location,
+    MacroObservation,
     PriceObservation,
     ProductionObservation,
     Source,
     SourceRecord,
     StockObservation,
     TradeFlow,
+    WeatherForecast,
     WeatherObservation,
 )
 from ketrika.normalize.price_bridge import identity_evidence, resolve_price_identity
@@ -251,6 +257,9 @@ def load_stock_record_with_supersession(
         except ValueError:
             q_val = None
 
+    target_val = record.target or "stock_inventory"
+    measurement_mode_val = record.measurement_mode or "declared_trader"
+
     if current_obs is None:
         new_obs = StockObservation(
             observation_id=uuid.uuid4(),
@@ -266,6 +275,10 @@ def load_stock_record_with_supersession(
             unit_raw=record.unit_raw,
             stock_status=record.stock_status,
             coverage_days=record.coverage_days,
+            target=target_val,
+            measurement_mode=measurement_mode_val,
+            market_type=record.market_type,
+            market_code=record.market_code,
             extraction_method=record.extraction_method,
             evidence=record.evidence,
             confidence=record.confidence,
@@ -284,6 +297,9 @@ def load_stock_record_with_supersession(
         and current_val == q_val
         and current_obs.unit_raw == record.unit_raw
         and current_obs.stock_status == record.stock_status
+        and getattr(current_obs, "target", None) == target_val
+        and getattr(current_obs, "measurement_mode", None) == measurement_mode_val
+        and getattr(current_obs, "market_code", None) == record.market_code
     ):
         return "idempotent_skipped", current_obs.observation_id
 
@@ -309,6 +325,10 @@ def load_stock_record_with_supersession(
         unit_raw=record.unit_raw,
         stock_status=record.stock_status,
         coverage_days=record.coverage_days,
+        target=target_val,
+        measurement_mode=measurement_mode_val,
+        market_type=record.market_type,
+        market_code=record.market_code,
         extraction_method=record.extraction_method,
         evidence=record.evidence,
         confidence=record.confidence,
@@ -612,6 +632,10 @@ def load_weather_record_with_supersession(
         and current_obs.source_record_id == source_record_id
         and current_obs.location_raw == record.location_raw
         and current_obs.value_raw == record.value_raw
+        and current_obs.stage == getattr(record, "stage", "final")
+        and current_obs.spatial_resolution == getattr(record, "spatial_resolution", None)
+        and current_obs.coverage_ratio == getattr(record, "coverage_ratio", None)
+        and current_obs.raster_source_record_id == getattr(record, "raster_source_record_id", None)
         and current_obs.extraction_method == record.extraction_method
         and current_obs.evidence == record.evidence
     ):
@@ -635,12 +659,259 @@ def load_weather_record_with_supersession(
         value_raw=record.value_raw,
         method=record.method,
         provider=record.provider,
+        stage=getattr(record, "stage", "final"),
+        spatial_resolution=getattr(record, "spatial_resolution", None),
+        coverage_ratio=getattr(record, "coverage_ratio", None),
+        raster_source_record_id=getattr(record, "raster_source_record_id", None),
         evidence=deepcopy(record.evidence),
         extraction_method=record.extraction_method,
     )
     session.add(new_obs)
     session.flush()
     return "superseded" if current_obs is not None else "inserted", new_id
+
+
+def load_macro_record_with_supersession(
+    session: Session,
+    record: MacroRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    """Load MacroRecord into obs.macro_observation with supersession (ADR-069)."""
+    nk = record.compute_natural_key(source_id)
+    stmt = select(MacroObservation).where(
+        MacroObservation.natural_key == nk,
+        MacroObservation.superseded_by.is_(None),
+    )
+    current_obs = session.execute(stmt).scalar_one_or_none()
+
+    # C2 : first_available_at cannot be None, fallback conservative to fetched_at or now
+    first_avail = record.first_available_at
+    if first_avail is None:
+        sr = session.get(SourceRecord, source_record_id)
+        first_avail = sr.fetched_at if sr is not None else datetime.now(UTC)
+
+    v_val = record.value
+    if v_val is None and record.value_raw:
+        try:
+            v_val = float(record.value_raw.replace(" ", "").replace(",", "."))
+        except ValueError:
+            v_val = None
+
+    if current_obs is None:
+        new_obs = MacroObservation(
+            observation_id=uuid.uuid4(),
+            source_record_id=source_record_id,
+            natural_key=nk,
+            indicator_code=record.indicator_code,
+            indicator_name=record.indicator_name,
+            frequency=record.frequency,
+            unit=record.unit,
+            base_period=record.base_period,
+            geo_scope=record.geo_scope,
+            period_start=record.period_start,
+            period_end=record.period_end,
+            published_at=record.published_at,
+            first_available_at=first_avail,
+            vintage=record.vintage,
+            value=v_val,
+            value_raw=record.value_raw,
+            observed_or_imputed=record.observed_or_imputed,
+            extraction_method=record.extraction_method,
+            evidence=record.evidence,
+            confidence=record.confidence,
+            review_status="accepted",
+            superseded_by=None,
+        )
+        session.add(new_obs)
+        session.flush()
+        return "inserted", new_obs.observation_id
+
+    curr_val = float(current_obs.value) if current_obs.value is not None else None
+    if curr_val == v_val and current_obs.vintage == record.vintage:
+        return "idempotent_skipped", current_obs.observation_id
+
+    new_id = uuid.uuid4()
+    session.execute(
+        update(MacroObservation)
+        .where(MacroObservation.observation_id == current_obs.observation_id)
+        .values(superseded_by=new_id)
+    )
+    session.flush()
+
+    new_obs = MacroObservation(
+        observation_id=new_id,
+        source_record_id=source_record_id,
+        natural_key=nk,
+        indicator_code=record.indicator_code,
+        indicator_name=record.indicator_name,
+        frequency=record.frequency,
+        unit=record.unit,
+        base_period=record.base_period,
+        geo_scope=record.geo_scope,
+        period_start=record.period_start,
+        period_end=record.period_end,
+        published_at=record.published_at,
+        first_available_at=first_avail,
+        vintage=record.vintage,
+        value=v_val,
+        value_raw=record.value_raw,
+        observed_or_imputed=record.observed_or_imputed,
+        extraction_method=record.extraction_method,
+        evidence=record.evidence,
+        confidence=record.confidence,
+        review_status="accepted",
+        superseded_by=None,
+    )
+    session.add(new_obs)
+    session.flush()
+    return "superseded", new_id
+
+
+def load_event_record_with_supersession(
+    session: Session,
+    record: EventRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    """Load EventRecord into obs.event."""
+    product_ids: list[uuid.UUID] = []
+    location_ids: list[uuid.UUID] = []
+
+    if record.location_raw:
+        from ketrika.core.models.db import LocationAlias
+
+        loc_alias = session.execute(
+            select(LocationAlias.location_id).where(
+                LocationAlias.alias_norm == record.location_raw.strip().lower()
+            )
+        ).scalar_one_or_none()
+        if loc_alias is not None:
+            location_ids.append(loc_alias)
+
+    if record.product_raw:
+        from ketrika.core.models.db import ProductAlias
+
+        prod_alias = session.execute(
+            select(ProductAlias.product_id).where(
+                ProductAlias.alias_norm == record.product_raw.strip().lower()
+            )
+        ).scalar_one_or_none()
+        if prod_alias is not None:
+            product_ids.append(prod_alias)
+
+    stmt = select(Event).where(
+        Event.source_record_id == source_record_id,
+        Event.title == record.title,
+        Event.event_type == record.event_type,
+    )
+    existing_event = session.execute(stmt).scalar_one_or_none()
+    if existing_event is not None:
+        return "idempotent_skipped", existing_event.event_id
+
+    ev_data = deepcopy(record.evidence) if record.evidence else {}
+    ev_data["is_projected"] = record.is_projected
+    if record.location_raw:
+        ev_data["location_raw"] = record.location_raw
+    if record.product_raw:
+        ev_data["product_raw"] = record.product_raw
+    if record.period_start:
+        ev_data["period_start"] = record.period_start.isoformat()
+    if record.period_end:
+        ev_data["period_end"] = record.period_end.isoformat()
+
+    new_id = uuid.uuid4()
+    new_event = Event(
+        event_id=new_id,
+        source_record_id=source_record_id,
+        event_type=record.event_type,
+        title=record.title,
+        summary=record.summary,
+        product_ids=product_ids,
+        location_ids=location_ids,
+        event_date=record.event_date,
+        severity=record.severity,
+        extraction_method=record.extraction_method,
+        evidence=ev_data,
+        confidence=record.confidence,
+    )
+    session.add(new_event)
+    session.flush()
+    return "inserted", new_id
+
+
+def load_weather_forecast_record_with_supersession(
+    session: Session,
+    record: WeatherForecastRecord,
+    source_id: str,
+    source_record_id: uuid.UUID,
+) -> tuple[str, uuid.UUID]:
+    loc_stmt = select(Location).where(
+        or_(
+            Location.pcode == record.location_raw,
+            Location.name == record.location_raw,
+        )
+    )
+    location = session.execute(loc_stmt).scalars().first()
+    if location is None:
+        try:
+            loc_uuid = uuid.UUID(record.location_raw)
+            location = session.get(Location, loc_uuid)
+        except ValueError:
+            pass
+
+    loc_id: uuid.UUID = location.location_id if location is not None else uuid.uuid4()
+
+    stmt = select(WeatherForecast).where(
+        WeatherForecast.location_id == loc_id,
+        WeatherForecast.issued_at == record.issued_at,
+        WeatherForecast.horizon_hours == record.horizon_hours,
+        WeatherForecast.variable == record.variable,
+        WeatherForecast.model_name == record.model_name,
+        WeatherForecast.superseded_by.is_(None),
+    )
+    current_fc = session.execute(stmt).scalar_one_or_none()
+
+    if (
+        current_fc is not None
+        and current_fc.predicted_value == record.predicted_value
+        and current_fc.predicted_p10 == record.predicted_p10
+        and current_fc.predicted_p90 == record.predicted_p90
+        and current_fc.source_record_id == source_record_id
+    ):
+        return "idempotent_skipped", current_fc.forecast_id
+
+    new_id = uuid.uuid4()
+    if current_fc is not None:
+        session.execute(
+            update(WeatherForecast)
+            .where(WeatherForecast.forecast_id == current_fc.forecast_id)
+            .values(superseded_by=new_id)
+        )
+        session.flush()
+
+    new_fc = WeatherForecast(
+        forecast_id=new_id,
+        source_record_id=source_record_id,
+        location_id=loc_id,
+        issued_at=record.issued_at,
+        valid_from=record.valid_from,
+        valid_to=record.valid_to,
+        horizon_hours=record.horizon_hours,
+        variable=record.variable,
+        model_name=record.model_name,
+        predicted_value=record.predicted_value,
+        predicted_p10=record.predicted_p10,
+        predicted_p90=record.predicted_p90,
+        method=record.method,
+        spatial_resolution=record.spatial_resolution,
+        unit=record.unit,
+        evidence=deepcopy(record.evidence) if record.evidence else None,
+        superseded_by=None,
+    )
+    session.add(new_fc)
+    session.flush()
+    return "superseded" if current_fc is not None else "inserted", new_id
 
 
 def load_record_with_supersession(
@@ -664,6 +935,14 @@ def load_record_with_supersession(
         return load_cpi_record_with_supersession(session, record, source_id, source_record_id)
     elif isinstance(record, WeatherRecord):
         return load_weather_record_with_supersession(session, record, source_id, source_record_id)
+    elif isinstance(record, MacroRecord):
+        return load_macro_record_with_supersession(session, record, source_id, source_record_id)
+    elif isinstance(record, EventRecord):
+        return load_event_record_with_supersession(session, record, source_id, source_record_id)
+    elif isinstance(record, WeatherForecastRecord):
+        return load_weather_forecast_record_with_supersession(
+            session, record, source_id, source_record_id
+        )
     else:
         raise ValueError(f"Unsupported record type: {type(record)}")
 

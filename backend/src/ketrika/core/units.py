@@ -107,6 +107,21 @@ def convert_to_base(
         target_unit = spec.target_unit
         confidence = spec.confidence
     elif target_unit_def.factor is not None and target_unit_def.target_unit is not None:
+        # R2.2: Refuse cross mass/volume conversion without product-specific density evidence
+        if product_code:
+            try:
+                from ketrika.core.taxonomy import get_product
+
+                prod = get_product(product_code)
+                if prod.base_unit != target_unit_def.target_unit:
+                    return (
+                        None,
+                        target_unit_def.target_unit,
+                        target_unit_def.confidence,
+                        "uncertain",
+                    )
+            except (KeyError, FileNotFoundError):
+                pass
         factor = target_unit_def.factor
         target_unit = target_unit_def.target_unit
         confidence = target_unit_def.confidence
@@ -152,6 +167,16 @@ def convert_from_base(
         factor = spec.factor
         confidence = spec.confidence
     elif target_unit_def.factor is not None:
+        # R2.2: Refuse cross mass/volume inverse conversion without product density
+        if product_code:
+            try:
+                from ketrika.core.taxonomy import get_product
+
+                prod = get_product(product_code)
+                if prod.base_unit != target_unit_def.target_unit:
+                    return None, target_unit_def.confidence, "uncertain"
+            except (KeyError, FileNotFoundError):
+                pass
         factor = target_unit_def.factor
         confidence = target_unit_def.confidence
     else:
@@ -186,17 +211,34 @@ def validate_units(units_path: Path | str | None = None) -> list[str]:
             errors.append(f"Duplicate unit_code in units.yaml: '{u.unit_code}'")
         unit_codes.add(u.unit_code)
 
+        if u.kind == "mass" and u.target_unit is not None and u.target_unit != "kg":
+            errors.append(
+                f"Mass unit '{u.unit_code}' must have target_unit 'kg', got '{u.target_unit}'"
+            )
+        if u.kind == "volume" and u.target_unit is not None and u.target_unit != "l":
+            errors.append(
+                f"Volume unit '{u.unit_code}' must have target_unit 'l', got '{u.target_unit}'"
+            )
+
         # Rule: No conversion of confidence >= 0.8 without evidence
         if u.factor is not None and u.confidence >= 0.8:
-            if not u.evidence.strip():
+            if not u.evidence or len(u.evidence.strip()) < 5:
                 errors.append(
                     f"Unit '{u.unit_code}' has confidence {u.confidence} >= 0.8 but missing evidence"
                 )
 
         for prod, spec in u.product_specific.items():
-            if spec.confidence >= 0.8 and not spec.evidence.strip():
+            if spec.confidence >= 0.8 and (not spec.evidence or len(spec.evidence.strip()) < 5):
                 errors.append(
                     f"Unit '{u.unit_code}' override for '{prod}' has confidence >= 0.8 but missing evidence"
+                )
+            if spec.target_unit not in {"kg", "l"}:
+                errors.append(
+                    f"Unit '{u.unit_code}' override for '{prod}' has invalid target_unit '{spec.target_unit}'"
+                )
+            if spec.factor <= 0:
+                errors.append(
+                    f"Unit '{u.unit_code}' override for '{prod}' has non-positive factor '{spec.factor}'"
                 )
 
     return errors

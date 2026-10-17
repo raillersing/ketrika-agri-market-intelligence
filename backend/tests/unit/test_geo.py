@@ -5,6 +5,7 @@ import pytest
 from ketrika.core.geo import (
     load_admin_geojson,
     load_crop_calendar,
+    load_geo_manifest,
     load_geographic_entities,
     load_location_aliases,
     resolve_location,
@@ -240,3 +241,132 @@ def test_load_crop_calendar_structure_and_sources() -> None:
         assert len(entry.source) > 5
         assert all(1 <= m <= 12 for m in entry.planting_months)
         assert all(1 <= m <= 12 for m in entry.harvest_months)
+
+
+def test_geo_manifest_concordance() -> None:
+    """R1.10: Geographic manifest accurately reflects files, feature counts and sha256 checksums."""
+    manifest = load_geo_manifest()
+    assert manifest.get("dataset_id") == "ocha_codab_mdg"
+    assert manifest.get("boundary_version") == "2024.1"
+    assert manifest.get("admin_law_version") == "Loi n° 2021-010 (23 regions)"
+
+    levels = manifest.get("levels", {})
+    assert "admin0" in levels
+    assert "admin1" in levels
+    assert "admin2" in levels
+    assert "admin3" in levels
+
+    # Verify admin1 feature count declared is exactly 23
+    assert levels["admin1"]["feature_count"] == 23
+
+
+def test_unresolved_location_never_falls_back_to_mdg1101_or_default_region() -> None:
+    """R1.10: Ambiguous or unlisted locations strictly return None, never defaulting to MDG1101 or capital."""
+    aliases = load_location_aliases()
+    ambiguous_inputs = [
+        "tsena_inconnu_99",
+        "marche_fictif",
+        "random_village_name",
+        "quartier_non_repertorie",
+        "somewhere_in_madagascar",
+    ]
+    for inp in ambiguous_inputs:
+        res = resolve_location(inp, aliases=aliases)
+        assert res is None, f"Input '{inp}' should have returned None, but got {res}"
+
+
+def test_geographic_divergences_traceability() -> None:
+    """R1.10: Document and verify 22 vs 23 vs 24 administrative regions transitions."""
+    manifest = load_geo_manifest()
+    divergences = manifest.get("historical_divergences", {})
+    assert "22_regions" in divergences
+    assert "23_regions" in divergences
+    assert "24_regions" in divergences
+
+    # Verify Vatovavy (MDG23) and Fitovinany (MDG24) are distinct in aliases
+    aliases = load_location_aliases()
+    pcode_map = {a.pcode for a in aliases if a.admin_level == "admin1"}
+    assert "MDG23" in pcode_map
+    assert "MDG24" in pcode_map
+
+    # Verify former composite region 'Vatovavy-Fitovinany' resolves with lower confidence (0.85)
+    res_composite = resolve_location("Vatovavy-Fitovinany", aliases=aliases)
+    assert res_composite is not None
+    assert res_composite[0] == "MDG23"
+    assert res_composite[2] == 0.85
+
+    # Verify 24th region 'Ambatosoa' links to parent Analanjirofo (MDG32)
+    res_ambatosoa = resolve_location("Ambatosoa", aliases=aliases)
+    assert res_ambatosoa is not None
+    assert res_ambatosoa[0] == "MDG32"
+
+
+def test_all_features_within_madagascar_bounding_box() -> None:
+    """R1.10: Coordinates of all administrative levels strictly lie within Madagascar boundaries."""
+    # Bbox: latitude [-26.0, -11.0], longitude [43.0, 51.5]
+    for level in ("admin0", "admin1", "admin2", "admin3"):
+        fc = load_admin_geojson(level)
+        for feat in fc.get("features", []):
+            geom = feat.get("geometry", {})
+            coords = geom.get("coordinates", [])
+            assert coords, f"Empty geometry in {level}"
+            if geom.get("type") == "Polygon":
+                for pt in coords[0]:
+                    lon, lat = pt[0], pt[1]
+                    assert 43.0 <= lon <= 51.5, f"{level} longitude {lon} out of bounds"
+                    assert -26.0 <= lat <= -11.0, f"{level} latitude {lat} out of bounds"
+            elif geom.get("type") == "MultiPolygon":
+                for poly in coords:
+                    for pt in poly[0]:
+                        lon, lat = pt[0], pt[1]
+                        assert 43.0 <= lon <= 51.5, f"{level} longitude {lon} out of bounds"
+                        assert -26.0 <= lat <= -11.0, f"{level} latitude {lat} out of bounds"
+
+
+def test_geo_error_handling_and_corrupt_files(tmp_path: pytest.TempPathFactory) -> None:
+    """R1.10: Error handling for missing or invalid geo and taxonomy files."""
+    import json
+    from pathlib import Path
+
+    t_dir = Path(str(tmp_path))
+
+    # 1. Missing manifest
+    with pytest.raises(FileNotFoundError):
+        load_geo_manifest(geo_dir=t_dir / "processed")
+
+    # 2. Invalid manifest format
+    bad_manifest = t_dir / "manifest.json"
+    bad_manifest.write_text(json.dumps({"invalid_key": 123}))
+    with pytest.raises(ValueError):
+        load_geo_manifest(geo_dir=t_dir / "processed")
+
+    # 3. Invalid GeoJSON type
+    proc_dir = t_dir / "processed"
+    proc_dir.mkdir(parents=True)
+    bad_geojson = proc_dir / "admin0.geojson"
+    bad_geojson.write_text(json.dumps({"type": "Point", "coordinates": [0, 0]}))
+    with pytest.raises(ValueError):
+        load_admin_geojson("admin0", geo_dir=proc_dir)
+
+    # 4. Missing aliases and calendar
+    with pytest.raises(FileNotFoundError):
+        load_location_aliases(taxonomy_dir=t_dir)
+    with pytest.raises(FileNotFoundError):
+        load_crop_calendar(taxonomy_dir=t_dir)
+
+    # 5. Non-list aliases and calendar
+    bad_yaml = t_dir / "location_aliases.yaml"
+    bad_yaml.write_text("not_a_list: true\n")
+    with pytest.raises(ValueError):
+        load_location_aliases(taxonomy_dir=t_dir)
+
+    bad_cal = t_dir / "crop_calendar.yaml"
+    bad_cal.write_text("not_a_list: true\n")
+    with pytest.raises(ValueError):
+        load_crop_calendar(taxonomy_dir=t_dir)
+
+    # 6. validate_geo on broken directory produces errors list instead of crash
+    errs = validate_geo(geo_dir=proc_dir, taxonomy_dir=t_dir)
+    assert len(errs) > 0
+
+

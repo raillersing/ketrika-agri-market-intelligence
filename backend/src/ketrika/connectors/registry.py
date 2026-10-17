@@ -6,13 +6,21 @@ import logging
 import os
 from typing import TYPE_CHECKING
 
+from ketrika.connectors.bfm_public import Connector as BfmPublicConnector
+from ketrika.connectors.chirps import ChirpsConnector
 from ketrika.connectors.douanes_stats import DouanesStatsConnector
 from ketrika.connectors.dummy_csv import DummyCsvConnector
+from ketrika.connectors.ecmwf_open import EcmwfOpenConnector
 from ketrika.connectors.faostat import FaostatConnector
+from ketrika.connectors.fewsnet_ipc import FewsnetConnector, IpcConnector
 from ketrika.connectors.instat_nipc import InstatNipcConnector
+from ketrika.connectors.instat_tbe import Connector as InstatTbeConnector
+from ketrika.connectors.market_supply import MarketSupplyConnector
+from ketrika.connectors.meteo_mg import MeteoMgConnector
 from ketrika.connectors.miasa_odr import MiasaOdrConnector
 from ketrika.connectors.mincc_ppn import MinccPpnConnector
 from ketrika.connectors.nasa_power import NasaPowerConnector
+from ketrika.connectors.omh_public import Connector as OmhPublicConnector
 from ketrika.connectors.wb_rtfp_mdg import WbRtfpMdgConnector
 from ketrika.connectors.wfp_hdx_mdg import WfpHdxMdgConnector
 
@@ -27,10 +35,19 @@ _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "wb_rtfp_mdg": WbRtfpMdgConnector,
     "faostat": FaostatConnector,
     "nasa_power": NasaPowerConnector,
+    "chirps": ChirpsConnector,
+    "meteo_mg": MeteoMgConnector,
+    "fewsnet_mdg": FewsnetConnector,
+    "ipc_mdg": IpcConnector,
+    "ecmwf_open": EcmwfOpenConnector,
     "instat_nipc": InstatNipcConnector,
+    "instat_tbe": InstatTbeConnector,
+    "bfm_public": BfmPublicConnector,
+    "omh_public": OmhPublicConnector,
     "miasa_odr": MiasaOdrConnector,
     "mincc_ppn": MinccPpnConnector,
     "douanes_stats": DouanesStatsConnector,
+    "market_supply": MarketSupplyConnector,
 }
 
 

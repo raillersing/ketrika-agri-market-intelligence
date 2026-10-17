@@ -14,6 +14,11 @@ from ketrika.core.bronze import BronzeStore
 from ketrika.core.provenance import ArtifactReader
 from ketrika.core.provenance_bronze import BronzeProofReader
 from ketrika.core.schema_contracts import SchemaContractRegistry
+from ketrika.gold.dq import (
+    GoldDqRejected,
+    check_blocking_dq_gate,
+    get_publication_denominators,
+)
 from ketrika.gold.provenance_gate import require_gold_provenance, tables_for_views
 from ketrika.gold.schema_gate import require_gold_structure
 
@@ -33,6 +38,8 @@ ORDERED_GOLD_VIEWS: list[str] = [
     "market_health",
     "source_health",
     "forecast_latest",
+    "market_coverage",
+    "economic_dashboard",
 ]
 
 GOLD_DEPENDENCIES: dict[str, tuple[str, ...]] = {
@@ -40,6 +47,7 @@ GOLD_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "price_monthly_best": ("price_monthly",),
     "price_changes": ("price_monthly_best",),
     "market_health": ("price_changes", "stock_latest", "weather_monthly"),
+    "market_coverage": ("price_monthly",),
 }
 
 
@@ -125,6 +133,9 @@ def refresh_gold_views(
         proof_reader = reader if reader is not None else BronzeProofReader(BronzeStore())
         check = require_gold_provenance(session, proof_reader, target_views)
         structure = require_gold_structure(session, proof_reader, check, schema_registry)
+        if check.state != "empty":
+            check_blocking_dq_gate(session)
+        denominators = get_publication_denominators(session)
         with session.begin_nested():
             for view_name in target_views:
                 if concurrently:
@@ -138,6 +149,8 @@ def refresh_gold_views(
                 else:
                     session.execute(text(f"REFRESH MATERIALIZED VIEW gold.{view_name};"))
                 refreshed.append(view_name)
+    except (GoldDqRejected, ValueError):
+        raise
     except SQLAlchemyError:
         raise ValueError("gold_publication_failed") from None
 
@@ -158,4 +171,15 @@ def refresh_gold_views(
         "structure_artifacts_total": structure.total,
         "structure_artifacts_valid": structure.valid,
         "structure_scope": "publication_candidate_artifacts_not_authenticity_or_model",
+        "denominators": {
+            "candidate_files": denominators.candidate_files,
+            "parsed_files": denominators.parsed_files,
+            "failed_files": denominators.failed_files,
+            "review_files": denominators.review_files,
+            "pending_files": denominators.pending_files,
+            "candidate_rows": denominators.candidate_rows,
+            "accepted_rows": denominators.accepted_rows,
+            "rejected_rows": denominators.rejected_rows,
+            "review_rows": denominators.review_rows,
+        },
     }

@@ -156,6 +156,8 @@ export default function SourcesPage() {
                             ? "bg-rose-500/15 text-rose-300 border-rose-500/25"
                             : s.status.toLowerCase() === "running"
                             ? "bg-amber-500/15 text-amber-300 border-amber-500/25"
+                            : s.status.toLowerCase() === "disabled" || s.status.toLowerCase() === "planned"
+                            ? "bg-slate-500/15 text-slate-400 border-slate-500/25"
                             : "bg-emerald-500/15 text-emerald-300 border-emerald-500/25"
                         }`}
                       >
@@ -165,6 +167,8 @@ export default function SourcesPage() {
                               ? "bg-rose-400"
                               : s.status.toLowerCase() === "running"
                               ? "bg-amber-400 animate-spin"
+                              : s.status.toLowerCase() === "disabled" || s.status.toLowerCase() === "planned"
+                              ? "bg-slate-400"
                               : "bg-emerald-400"
                           }`}
                         />
@@ -172,7 +176,12 @@ export default function SourcesPage() {
                       </span>
                     </td>
                     <td className="px-5 py-3.5">
-                      {s.isStale ? (
+                      {s.status.toLowerCase() === "disabled" ? (
+                        <span className="inline-flex items-center gap-1.5 text-slate-400 font-mono text-[11px]">
+                          <AlertCircle className="w-3.5 h-3.5 text-slate-500" />
+                          Désactivée (PolicyStop)
+                        </span>
+                      ) : s.isStale ? (
                         <span className="inline-flex items-center gap-1.5 text-rose-400 font-mono text-[11px]">
                           <AlertCircle className="w-3.5 h-3.5" />
                           Retard (DATA_STALE)

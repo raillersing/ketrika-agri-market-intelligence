@@ -1,0 +1,29 @@
+{
+  "title": "Madagascar: IPC Acute Food Insecurity Analysis 2024",
+  "published_at": "2024-01-20",
+  "source_type": "ipc",
+  "status": "published",
+  "current_situation": [
+    {
+      "location_raw": "Atsimo-Andrefana",
+      "ipc_phase": 3,
+      "valid_from": "2024-01-01",
+      "valid_to": "2024-04-30",
+      "page": 2,
+      "verbatim_citation": "Entre janvier et avril 2024, les populations des districts vulnérables d'Atsimo-Andrefana sont classées en Phase 3 de l'IPC (Crise alimentaire), avec une dépendance accrue aux achats de riz et de maïs.",
+      "key_drivers": ["prix élevés des céréales", "pouvoir d'achat réduit"]
+    }
+  ],
+  "projected_outlook": [
+    {
+      "location_raw": "Atsimo-Andrefana",
+      "ipc_phase": 3,
+      "valid_from": "2024-05-01",
+      "valid_to": "2024-09-30",
+      "page": 5,
+      "verbatim_citation": "Pour la période projetée de mai à septembre 2024, la situation projetée demeure en Phase 3 de l'IPC malgré les apports de la récolte principale en raison d'une production attendue très déficitaire.",
+      "assumptions": ["faiblesse des réserves d'eau d'irrigation", "pouvoir d'achat faible des ménages agro-pastoraux"],
+      "key_drivers": ["déficit hydrique persistant", "faiblesse des récoltes de maïs"]
+    }
+  ]
+}

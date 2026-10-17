@@ -155,6 +155,12 @@
     </tbody>
   </table>
 
+  {% if facts.get('sources_attribution') %}
+  <div style="margin-top: 10px; font-size: 8.5pt; color: #475569;">
+    <strong>Sources officielles auditées :</strong> {{ facts['sources_attribution'].display }}
+  </div>
+  {% endif %}
+
   <div class="footer-note">
     <strong>Garantie de Traçabilité Totale :</strong> Aucun chiffre présenté dans cette publication n'a été produit librement par une intelligence artificielle. 100 % des valeurs proviennent des séries Gold officielles (ODR, MinCC, INSTAT, WFP, Douanes).
   </div>

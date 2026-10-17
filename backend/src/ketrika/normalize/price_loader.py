@@ -79,8 +79,12 @@ def load_normalized_price(
     location = resolve_location(session, record.location_raw, source_id, admin_level=admin_level)
     if product is None:
         issues.append(("unknown_product", "unresolved_or_ambiguous_product"))
+    elif product.confidence < Decimal("0.90"):
+        issues.append(("unqualified_alias", "alias_confidence_below_0.90"))
     if location is None:
         issues.append(("unknown_location", "unresolved_or_ambiguous_location"))
+    elif location.confidence < Decimal("0.90"):
+        issues.append(("unqualified_location_alias", "location_alias_confidence_below_0.90"))
     factor = unit_factor(session, record.unit_raw, product.entity.product_id) if product else None
     converted = convert_price(
         parsed.value,

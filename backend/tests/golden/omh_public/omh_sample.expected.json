@@ -1,0 +1,61 @@
+{
+  "source_id": "omh_public",
+  "source_family": "omh",
+  "expected_indicators": [
+    "FUEL_DIESEL_CEILING_MGA",
+    "FUEL_SUPER95_CEILING_MGA",
+    "FUEL_KEROSENE_CEILING_MGA"
+  ],
+  "sample_records": [
+    {
+      "indicator_code": "FUEL_DIESEL_CEILING_MGA",
+      "indicator_name": "Prix Plafond Réglementé Gazole (MGA/L)",
+      "frequency": "event",
+      "unit": "MGA/L",
+      "period_start": "2026-01-01",
+      "value": 4900.0,
+      "primary_institution": "Office Malgache des Hydrocarbures",
+      "is_administered": true
+    },
+    {
+      "indicator_code": "FUEL_SUPER95_CEILING_MGA",
+      "indicator_name": "Prix Plafond Réglementé Super 95 (MGA/L)",
+      "frequency": "event",
+      "unit": "MGA/L",
+      "period_start": "2026-01-01",
+      "value": 5900.0,
+      "primary_institution": "Office Malgache des Hydrocarbures",
+      "is_administered": true
+    },
+    {
+      "indicator_code": "FUEL_KEROSENE_CEILING_MGA",
+      "indicator_name": "Prix Plafond Réglementé Pétrole Lampant (MGA/L)",
+      "frequency": "event",
+      "unit": "MGA/L",
+      "period_start": "2026-01-01",
+      "value": 2430.0,
+      "primary_institution": "Office Malgache des Hydrocarbures",
+      "is_administered": true
+    },
+    {
+      "indicator_code": "FUEL_DIESEL_CEILING_MGA",
+      "indicator_name": "Prix Plafond Réglementé Gazole (MGA/L)",
+      "frequency": "event",
+      "unit": "MGA/L",
+      "period_start": "2026-06-01",
+      "value": 5200.0,
+      "primary_institution": "Office Malgache des Hydrocarbures",
+      "is_administered": true
+    },
+    {
+      "indicator_code": "FUEL_SUPER95_CEILING_MGA",
+      "indicator_name": "Prix Plafond Réglementé Super 95 (MGA/L)",
+      "frequency": "event",
+      "unit": "MGA/L",
+      "period_start": "2026-06-01",
+      "value": 6250.0,
+      "primary_institution": "Office Malgache des Hydrocarbures",
+      "is_administered": true
+    }
+  ]
+}

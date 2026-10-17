@@ -1,0 +1,42 @@
+{
+  "title": "Bulletin Agro-météorologique Décadaire N° 01 / Janvier 2024",
+  "issued_at": "2024-01-11T08:00:00Z",
+  "valid_from": "2024-01-01",
+  "valid_to": "2024-01-10",
+  "source_entity": "Direction Générale de la Météorologie (Madagascar)",
+  "status": "published",
+  "observations": [
+    {
+      "location_raw": "Analamanga",
+      "precip_mm": 68.5,
+      "page": 2,
+      "excerpt": "Analamanga : Cumul décadaire observé de 68.5 mm, correspondant à un régime pluvieux modéré."
+    },
+    {
+      "location_raw": "Alaotra-Mangoro",
+      "precip_mm": 112.0,
+      "page": 2,
+      "excerpt": "Alaotra-Mangoro : Précipitations abondantes avec un cumul de 112.0 mm favorisant le tallage du riz de saison."
+    },
+    {
+      "location_raw": "Atsimo-Andrefana",
+      "precip_mm": 4.2,
+      "page": 3,
+      "excerpt": "Atsimo-Andrefana : Faibles précipitations localisées, cumul décadaire limité à 4.2 mm."
+    }
+  ],
+  "advisories": [
+    {
+      "location_scope": "Alaotra-Mangoro",
+      "category": "favorable",
+      "page": 4,
+      "verbatim_citation": "La pluviométrie régulière observée au cours de la première décade de janvier maintient un niveau hydrique très favorable au développement végétatif du paddy dans les périmètres irrigués."
+    },
+    {
+      "location_scope": "Atsimo-Andrefana",
+      "category": "déficitaire",
+      "page": 4,
+      "verbatim_citation": "Le déficit hydrique persistant dans la partie sud risque de retarder les semis de maïs et de manioc ; une surveillance attentive de l'humidité des sols est fortement recommandée."
+    }
+  ]
+}

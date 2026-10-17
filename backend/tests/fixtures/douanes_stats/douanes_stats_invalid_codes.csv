@@ -1,0 +1,5 @@
+annee,mois,flux,code_sh,designation_produit,pays_partenaire,code_iso3_pays,poids_net_kg,valeur_caf_fob_mga,valeur_usd
+2024,01,import,1006,Riz code SH trop court,Inde,IND,1000000.0,3000000000.0,666666.0
+2024,01,import,99999999,Produit SH inconnu hors PPN,Chine,CHN,500000.0,1500000000.0,333333.0
+,01,import,10063000,Riz sans annee,Pakistan,PAK,2000000.0,6000000000.0,1333333.0
+2024,15,import,10063000,Riz mois invalide,Pakistan,PAK,2000000.0,6000000000.0,1333333.0

@@ -17,6 +17,15 @@ export interface PriceDataPoint {
   valueKind?: ValueKind | string;
   sourceId?: string;
   observationId?: string;
+  modelRequested?: string;
+  modelEffective?: string;
+  isBaseline?: boolean;
+  isCalibrated?: boolean;
+  calibrationSampleSize?: number;
+  status?: string;
+  fallbackReason?: string;
+  horizon?: number;
+  datasetFingerprint?: string;
 }
 
 interface PriceChartProps {
@@ -92,23 +101,38 @@ export function PriceChart({
         const idx = params[0]?.dataIndex;
         if (idx === undefined || !sortedData[idx]) return "";
         const item = sortedData[idx];
+        const isForecast = item.valueKind === "forecast";
         const kindInfo = getValueKindInfo(item.valueKind);
         const sourceLabel = item.sourceId ? `Source : ${item.sourceId}` : "";
 
         return `
           <div style="font-family: inherit; font-size: 11px;">
-            <div style="font-weight: 700; margin-bottom: 6px; color: #34d399; font-size: 12px;">${formatMonthYear(item.month)}</div>
+            <div style="font-weight: 700; margin-bottom: 6px; color: ${isForecast ? '#a855f7' : '#34d399'}; font-size: 12px;">
+              ${formatMonthYear(item.month)} ${isForecast && item.horizon ? `(Horizon h=${item.horizon})` : ''}
+            </div>
             <div style="margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
-              <span style="color: #94a3b8;">Prix médian :</span>
+              <span style="color: #94a3b8;">${isForecast ? 'Prévision (p50) :' : 'Prix médian :'}</span>
               <strong style="color: #ffffff; font-family: monospace;">${formatPrice(item.medianPrice, unit)}</strong>
             </div>
-            ${item.minPrice && item.maxPrice ? `
+            ${item.p10Price !== undefined && item.p90Price !== undefined && item.p10Price !== null && item.p90Price !== null ? `
+            <div style="color: #cbd5e1; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
+              <span style="color: #94a3b8;">Intervalle [p10, p90] :</span>
+              <span style="font-family: monospace;">${formatPrice(item.p10Price, unit)} – ${formatPrice(item.p90Price, unit)}</span>
+            </div>` : item.minPrice && item.maxPrice ? `
             <div style="color: #64748b; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
               <span>Fourchette (Min - Max) :</span>
               <span style="font-family: monospace;">${formatPrice(item.minPrice, unit)} – ${formatPrice(item.maxPrice, unit)}</span>
             </div>` : ""}
-            <div style="margin-top: 8px; pt-2; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-              <span style="color: #38bdf8; font-size: 10px;">● ${kindInfo.label}</span>
+            ${isForecast && item.modelEffective ? `
+            <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 10px; color: #cbd5e1;">
+              <div>Modèle : <strong style="color: #f8fafc;">${item.modelEffective}${item.isBaseline ? ' (Baseline)' : ''}</strong></div>
+              ${item.fallbackReason ? `<div style="color: #f59e0b;">Repli : ${item.fallbackReason}</div>` : ''}
+              <div style="color: ${item.isCalibrated ? '#34d399' : '#f59e0b'};">
+                ${item.isCalibrated ? `● Conforme calibré (N=${item.calibrationSampleSize})` : '▲ Non calibré (échantillon résidus insuffisant)'}
+              </div>
+            </div>` : ''}
+            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+              <span style="color: ${isForecast ? '#c084fc' : '#38bdf8'}; font-size: 10px;">● ${kindInfo.label}</span>
               ${sourceLabel ? `<span style="color: #94a3b8; font-size: 10px; font-family: monospace;">${sourceLabel}</span>` : ""}
             </div>
           </div>

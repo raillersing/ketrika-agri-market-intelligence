@@ -8,7 +8,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-ValueKind = Literal["observed", "imputed", "forecast", "composite"]
+ValueKind = Literal["observed", "imputed", "forecast", "projected", "composite"]
 
 
 # ===================== AUTH =====================
@@ -188,6 +188,125 @@ class WeatherAnomalyItem(BaseModel):
     sources: list[str] = Field(default_factory=list)
 
 
+class ClimateForecastItem(BaseModel):
+    """Archived numerical weather forecast item (obs.weather_forecast, ADR-084, ADR-087)."""
+
+    forecast_id: str
+    location_pcode: str
+    location_name: str
+    issued_at: str
+    valid_from: str
+    valid_to: str
+    horizon_hours: int
+    variable: str
+    model_name: str
+    predicted_value: float | None = None
+    predicted_p10: float | None = None
+    predicted_p90: float | None = None
+    unit: str
+    method: str
+    spatial_resolution: str | None = None
+    value_kind: ValueKind = "projected"
+    source: str = "ecmwf_open"
+
+
+class CropCalendarItem(BaseModel):
+    """Crop calendar phenological cycle and trade corridors (ADR-086, ADR-087)."""
+
+    zone_code: str
+    zone_name: str
+    crop: str
+    product_code: str
+    crop_cycle: str | None = None
+    season_name: str
+    crop_regime: str
+    calendar_version: str = "v1.0"
+    calendar_type: str = "traditional_baseline"
+    campaign: str = "baseline_permanent"
+    variety: str | None = None
+    current_phenological_stage: str | None = None
+    planting_months: list[int] = Field(default_factory=list)
+    harvest_months: list[int] = Field(default_factory=list)
+    peak_harvest_month: int | None = None
+    water_sensitivity_profile: dict[str, str] = Field(default_factory=dict)
+    market_links: list[dict[str, Any]] = Field(default_factory=list)
+    source_reference: str
+    verified: bool = True
+    eligible_for_alerts: bool = True
+
+
+class ClimateEventItem(BaseModel):
+    """Food security outlook and environmental event item (obs.event, ADR-083, ADR-087)."""
+
+    event_id: str
+    source_id: str
+    location_pcode: str
+    location_name: str
+    event_type: str
+    severity: str
+    title: str
+    description: str
+    published_at: str
+    is_projected: bool = False
+    ipc_phase: int | None = None
+    source_reference: str
+
+
+class FacultativeSourceStatus(BaseModel):
+    """Status descriptor for facultative environmental sources (ADR-087)."""
+
+    source_id: str
+    source_name: str
+    status: str = "unavailable"
+    reason: str
+    data_available: bool = False
+
+
+class ClimateAnomalyDetailItem(BaseModel):
+    """Detailed climate anomaly measurement (ADR-085, ADR-087)."""
+
+    location_pcode: str
+    location_name: str
+    month: str
+    variable: str
+    observed_value: float
+    baseline_mean: float | None = None
+    baseline_years: int | None = None
+    anomaly_delta: float | None = None
+    anomaly_pct: float | None = None
+    standardized_zscore: float | None = None
+    risk_level: str = "low"
+    status: str = "computed"
+    aggregation_method: str = "zonal_mean"
+    cropland_mask_applied: bool = False
+    sources: list[str] = Field(default_factory=list)
+    value_kind: ValueKind = "observed"
+
+
+class ClimateSummaryResponse(BaseModel):
+    """Consolidated agroclimate summary for decision-support (ADR-087, R4.11)."""
+
+    location_pcode: str
+    location_name: str
+    current_month: str
+    observed_precipitation_mm: float | None = None
+    precipitation_anomaly_pct: float | None = None
+    precipitation_risk_level: str | None = None
+    aggregation_method: str = "zonal_mean"
+    cropland_mask_applied: bool = False
+    observed_source: str = "chirps"
+    temperature_mean_c: float | None = None
+    forecast_next_72h_precip_mm: float | None = None
+    forecast_p10_mm: float | None = None
+    forecast_p90_mm: float | None = None
+    forecast_model: str | None = None
+    forecast_issued_at: str | None = None
+    forecast_value_kind: ValueKind = "projected"
+    active_crop_cycles: list[CropCalendarItem] = Field(default_factory=list)
+    events_and_outlooks: list[ClimateEventItem] = Field(default_factory=list)
+    facultative_sources: list[FacultativeSourceStatus] = Field(default_factory=list)
+
+
 class MarketHealthItem(BaseModel):
     """Composite Market Health Score item."""
 
@@ -206,17 +325,120 @@ class MarketHealthItem(BaseModel):
 
 
 class ForecastItem(BaseModel):
-    """Price forecast horizons and quantiles."""
+    """Price forecast horizons, quantiles, and conformal metadata (SPECS §17, §19, ADR-078)."""
 
+    forecast_id: uuid.UUID | None = None
+    model_run_id: uuid.UUID | None = None
+    series_key: str | None = None
     product_code: str
+    product_name: str | None = None
     location_pcode: str
+    location_name: str | None = None
+    actor_level: str = "retail"
     horizon: int
     target_period: str
-    p10: float
+    p10: float | None = None
     p50: float
-    p90: float
-    model_name: str
+    p90: float | None = None
+    model_requested: str | None = None
+    model_effective: str = "NaiveLast"
+    model_name: str = "NaiveLast"
+    is_baseline: bool = False
+    is_calibrated: bool = False
+    calibration_sample_size: int = 0
+    status: str = "nominal"
+    fallback_reason: str | None = None
+    currency: str = "MGA"
+    unit: str = "kg"
+    interval_width: float | None = None
+    coverage_rate_80: float | None = None
+    data_cutoff: str | None = None
+    dataset_fingerprint: str | None = None
+    cohort: str | None = None
     value_kind: ValueKind = "forecast"
+
+
+class ModelRunSummaryItem(BaseModel):
+    """Forecasting model run summary (C4 audit trail)."""
+
+    model_run_id: uuid.UUID
+    task: str
+    model_name: str
+    model_version: str
+    data_cutoff: str
+    trained_at: datetime
+    dataset_fingerprint: str | None = None
+    cohort: str | None = None
+    params: dict[str, Any] = Field(default_factory=dict)
+    metrics: dict[str, Any] = Field(default_factory=dict)
+
+
+class ModelRunDetailResponse(BaseModel):
+    """Detailed model run information including forecasts and metrics decomposition."""
+
+    run: ModelRunSummaryItem
+    forecasts: list[ForecastItem] = Field(default_factory=list)
+
+
+class ForecastAbstentionItem(BaseModel):
+    """Documented series abstention or exclusion with normative reasons."""
+
+    series_key: str
+    product_code: str
+    location_pcode: str
+    actor_level: str
+    reason: str
+    points_count: int = 0
+
+
+class PerformanceMetricsSummary(BaseModel):
+    """Statistical summary metrics for evaluated forecasts (SPECS §17.4, ADR-079)."""
+
+    wape: float | None = None
+    mae: float | None = None
+    smape: float | None = None
+    coverage_80: float | None = None
+    coverage_ci_95: list[float] | None = None
+    mean_interval_width: float | None = None
+    sample_size: int = 0
+
+
+class ForecastEvaluationItem(BaseModel):
+    """Individual forecast evaluation record against actual ground truth."""
+
+    evaluation_id: uuid.UUID | None = None
+    forecast_id: uuid.UUID
+    model_run_id: uuid.UUID
+    series_key: str
+    product_code: str
+    location_pcode: str | None = None
+    actor_level: str
+    target_period: str
+    horizon: int
+    evaluation_kind: str  # as_of_holdout | matured_actual | prospective_pending
+    model_name: str
+    is_baseline: bool = False
+    predicted_p50: float | None = None
+    predicted_p10: float | None = None
+    predicted_p90: float | None = None
+    actual_price: float | None = None
+    actual_observation_id: uuid.UUID | None = None
+    absolute_error: float | None = None
+    percentage_error: float | None = None
+    is_covered_80: bool | None = None
+    evaluated_at: str | None = None
+
+
+class ForecastPerformanceResponse(BaseModel):
+    """Multidimensional forecast performance report (ADR-079, R3.8)."""
+
+    summary: PerformanceMetricsSummary
+    by_product: dict[str, PerformanceMetricsSummary] = Field(default_factory=dict)
+    by_location: dict[str, PerformanceMetricsSummary] = Field(default_factory=dict)
+    by_horizon: dict[str, PerformanceMetricsSummary] = Field(default_factory=dict)
+    by_seasonality: dict[str, PerformanceMetricsSummary] = Field(default_factory=dict)
+    evaluations: list[ForecastEvaluationItem] = Field(default_factory=list)
+    total_evaluations: int = 0
 
 
 # ===================== OPS & ALERTS =====================
@@ -306,3 +528,189 @@ class ReviewResolveRequest(BaseModel):
     status: Literal["approved", "rejected", "created_alias"]
     resolution_note: str | None = None
     alias_created: str | None = None
+
+
+# ===================== MACROECONOMIC (ADR-069) =====================
+
+
+class MacroItem(BaseModel):
+    """Macroeconomic observation item (SPECS §19, ADR-069)."""
+
+    observation_id: uuid.UUID
+    indicator_code: str
+    indicator_name: str
+    geo_scope: str
+    frequency: str
+    unit: str
+    base_period: str | None = None
+    period_start: str
+    period_end: str
+    vintage: str
+    value: float | None = None
+    value_raw: str | None = None
+    observed_or_imputed: str
+    first_available_at: datetime
+    published_at: datetime | None = None
+    sources: list[str] = Field(default_factory=list)
+
+
+# ===================== MARKET COVERAGE & PILOT (R2.4) =====================
+
+
+class MarketCoverageItem(BaseModel):
+    """Market coverage matrix cell (SPECS §19, R2.4)."""
+
+    product_code: str
+    product_name: str
+    location_pcode: str | None = None
+    location_name: str | None = None
+    admin_level: int | None = None
+    actor_level: str
+    month: str
+    n_sources: int
+    n_families: int
+    sources: str
+    source_families: str
+    n_obs: int
+    imputed_share: float
+    has_observed: bool
+    observed_or_imputed: str
+    min_price: float | None = None
+    max_price: float | None = None
+    median_price: float | None = None
+    age_days: int
+
+
+class SeriesCoverageSummaryItem(BaseModel):
+    """Independent series coverage and gap evaluation."""
+
+    product_code: str
+    location_pcode: str
+    location_name: str | None = None
+    actor_level: str
+    admin_level: int | None = None
+    start_month: str | None = None
+    end_month: str | None = None
+    expected_months: int
+    observed_months: int
+    missing_months: int
+    coverage_ratio: float
+    missing_months_list: list[str] = Field(default_factory=list)
+    source_families: list[str] = Field(default_factory=list)
+    is_pilot_candidate: bool
+
+
+class PilotProductItem(BaseModel):
+    """Pilot product definition."""
+
+    product_code: str
+    canonical_name_fr: str
+    role: str
+    category: str
+    base_unit: str
+    justification: str
+
+
+class PilotLocationItem(BaseModel):
+    """Pilot location definition."""
+
+    pcode: str
+    name: str
+    admin_level: int
+    economic_role: str
+    justification: str
+
+
+class ImpossibleCapabilityItem(BaseModel):
+    """Explicitly documented impossible capability."""
+
+    capability: str
+    status: str
+    scope: list[str]
+    reason: str
+
+
+class PilotConfigResponse(BaseModel):
+    """Pilot configuration with products, locations, complementarity and impossible capabilities."""
+
+    pilot_id: str
+    version: str
+    title: str
+    description: str
+    products: list[PilotProductItem]
+    locations: list[PilotLocationItem]
+    complementarity_rationale: str
+    impossible_capabilities: list[ImpossibleCapabilityItem]
+    authenticity_status: str
+    authentic_sources_found: list[str]
+    authentic_observations_count: int
+    synthetic_observations_count: int
+
+
+class EconomicMetricCardItem(BaseModel):
+    """Specification of an economic metric card (ADR-070)."""
+
+    metric_id: str
+    dimension: str
+    title: str
+    definition: str
+    formula: str
+    unit: str
+    frequency: str
+    geo_scope: str
+    primary_source: str
+    source_family: str
+    publication_lag_days: int
+    limitations: str
+
+
+class IndicatorObservationOut(BaseModel):
+    """Observation item for an economic indicator."""
+
+    indicator_code: str
+    dimension: str
+    title: str
+    unit: str
+    frequency: str
+    geo_scope: str
+    period_month: str
+    current_value: float | None = None
+    base_period: str | None = None
+    chg_1m: float | None = None
+    chg_12m: float | None = None
+    null_reason: str | None = None
+    source_id: str | None = None
+    source_family: str | None = None
+    is_administered: bool = False
+
+
+class DimensionSummaryOut(BaseModel):
+    """Summary of an economic dimension."""
+
+    dimension: str
+    completeness: str  # complete, partial, no_data
+    indicators: list[IndicatorObservationOut] = Field(default_factory=list)
+
+
+class EconomicDashboardOut(BaseModel):
+    """Consolidated response for the interpretable economic dashboard."""
+
+    overall_status: str  # complete, partial, no_data
+    period_month: str
+    dimensions: dict[str, DimensionSummaryOut]
+    metric_catalog: dict[str, EconomicMetricCardItem]
+
+
+class PilotEconomicContextOut(BaseModel):
+    """Articulation between macro indicators and the rice pilot (R2.8)."""
+
+    pilot_id: str
+    target_month: str
+    fx_usd_mga: float | None = None
+    fuel_diesel_ceiling_mga: float | None = None
+    rice_import_unit_cost_mga_per_kg: float | None = None
+    cpi_food_chg_12m_pct: float | None = None
+    local_rice_market_price_mga_per_kg: float | None = None
+    local_rice_price_chg_12m_pct: float | None = None
+    distinctness_audit: dict[str, Any] = Field(default_factory=dict)
+    status: str

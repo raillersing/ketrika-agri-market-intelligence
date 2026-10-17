@@ -235,6 +235,63 @@ class LocationAlias(Base):
     location: Mapped[Location] = relationship(back_populates="aliases")
 
 
+class CropCalendar(Base):
+    """Crop calendar defining planting, growing and harvest windows by product and location."""
+
+    __tablename__ = "crop_calendar"
+    __table_args__ = (
+        Index(
+            "uq_crop_calendar_active",
+            "product_id",
+            "location_id",
+            "season_name",
+            "crop_regime",
+            unique=True,
+            postgresql_where=text("is_active = TRUE"),
+        ),
+        {"schema": "ref"},
+    )
+
+    calendar_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    product_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ref.product.product_id"), nullable=False
+    )
+    location_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ref.location.location_id"), nullable=False
+    )
+    season_name: Mapped[str] = mapped_column(TEXT, nullable=False)
+    crop_regime: Mapped[str] = mapped_column(TEXT, nullable=False)
+    calendar_version: Mapped[str] = mapped_column(TEXT, nullable=False, default="v1.0")
+    calendar_type: Mapped[str] = mapped_column(TEXT, nullable=False, default="traditional_baseline")
+    campaign: Mapped[str] = mapped_column(TEXT, nullable=False, default="baseline_permanent")
+    variety: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    planting_start_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    planting_end_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    growing_start_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    growing_end_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    harvest_start_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    harvest_end_month: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    peak_harvest_month: Mapped[int | None] = mapped_column(SMALLINT, nullable=True)
+    water_sensitivity_profile: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    source_reference: Mapped[str] = mapped_column(TEXT, nullable=False)
+    verified: Mapped[bool] = mapped_column(BOOLEAN, default=True)
+    eligible_for_alerts: Mapped[bool] = mapped_column(BOOLEAN, default=True)
+    is_active: Mapped[bool] = mapped_column(BOOLEAN, default=True)
+    superseded_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ref.crop_calendar.calendar_id"), nullable=True
+    )
+    basin_code: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    market_links: Mapped[list[dict[str, Any]] | None] = mapped_column(JSONB, nullable=True)
+    notes: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
+
+    product: Mapped[Product] = relationship()
+    location: Mapped[Location] = relationship()
+
+
 # ===================== OBS SCHEMA (Silver) =====================
 
 
@@ -332,6 +389,10 @@ class StockObservation(Base):
     base_unit: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     stock_status: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     coverage_days: Mapped[float | None] = mapped_column(NUMERIC(8, 2), nullable=True)
+    target: Mapped[str] = mapped_column(TEXT, nullable=False, server_default="stock_inventory")
+    measurement_mode: Mapped[str] = mapped_column(TEXT, nullable=False, server_default="declared_trader")
+    market_type: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    market_code: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     extraction_method: Mapped[str] = mapped_column(TEXT, nullable=False)
     evidence: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
     confidence: Mapped[float] = mapped_column(NUMERIC(3, 2), nullable=False)
@@ -453,11 +514,62 @@ class WeatherObservation(Base):
     value_raw: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     evidence: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
     extraction_method: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    stage: Mapped[str] = mapped_column(TEXT, nullable=False, server_default="final")
+    spatial_resolution: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    coverage_ratio: Mapped[float | None] = mapped_column(NUMERIC(5, 4), nullable=True)
+    raster_source_record_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("meta.source_record.source_record_id"), nullable=True
+    )
     superseded_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("obs.weather_observation.observation_id", deferrable=True, initially="DEFERRED"),
         nullable=True,
     )
+
+    location: Mapped[Location] = relationship()
+    source_record: Mapped[SourceRecord] = relationship(foreign_keys=[source_record_id])
+
+
+class WeatherForecast(Base):
+    """Numerical agro-meteorological weather forecast."""
+
+    __tablename__ = "weather_forecast"
+    __table_args__ = {"schema": "obs"}
+
+    forecast_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    source_record_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("meta.source_record.source_record_id"),
+        nullable=False,
+    )
+    location_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ref.location.location_id"), nullable=False
+    )
+    issued_at: Mapped[datetime] = mapped_column(nullable=False)
+    valid_from: Mapped[datetime] = mapped_column(nullable=False)
+    valid_to: Mapped[datetime] = mapped_column(nullable=False)
+    horizon_hours: Mapped[int] = mapped_column(INTEGER, nullable=False)
+    variable: Mapped[str] = mapped_column(TEXT, nullable=False)
+    model_name: Mapped[str] = mapped_column(TEXT, nullable=False)
+    predicted_value: Mapped[float | None] = mapped_column(NUMERIC(10, 3), nullable=True)
+    predicted_p10: Mapped[float | None] = mapped_column(NUMERIC(10, 3), nullable=True)
+    predicted_p90: Mapped[float | None] = mapped_column(NUMERIC(10, 3), nullable=True)
+    method: Mapped[str] = mapped_column(TEXT, nullable=False)
+    spatial_resolution: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    unit: Mapped[str] = mapped_column(TEXT, nullable=False)
+    ingested_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
+    evidence: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    raw_payload: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    superseded_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("obs.weather_forecast.forecast_id", deferrable=True, initially="DEFERRED"),
+        nullable=True,
+    )
+
+    location: Mapped[Location] = relationship()
+    source_record: Mapped[SourceRecord] = relationship(foreign_keys=[source_record_id])
 
 
 class CpiObservation(Base):
@@ -521,6 +633,50 @@ class Event(Base):
     ingested_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
 
 
+class MacroObservation(Base):
+    """Harmonized macroeconomic indicator observation (Silver layer, ADR-069)."""
+
+    __tablename__ = "macro_observation"
+    __table_args__ = (
+        Index("idx_macro_obs_ind_geo_period", "indicator_code", "geo_scope", "period_start"),
+        {"schema": "obs"},
+    )
+
+    observation_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    source_record_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("meta.source_record.source_record_id"),
+        nullable=False,
+    )
+    natural_key: Mapped[str] = mapped_column(TEXT, nullable=False)
+    indicator_code: Mapped[str] = mapped_column(TEXT, nullable=False)
+    indicator_name: Mapped[str] = mapped_column(TEXT, nullable=False)
+    frequency: Mapped[str] = mapped_column(TEXT, nullable=False)
+    unit: Mapped[str] = mapped_column(TEXT, nullable=False)
+    base_period: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    geo_scope: Mapped[str] = mapped_column(TEXT, nullable=False, default="national")
+    period_start: Mapped[date] = mapped_column(DATE, nullable=False)
+    period_end: Mapped[date] = mapped_column(DATE, nullable=False)
+    published_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    first_available_at: Mapped[datetime] = mapped_column(nullable=False)
+    ingested_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
+    vintage: Mapped[str] = mapped_column(TEXT, nullable=False, default="final")
+    value: Mapped[float | None] = mapped_column(NUMERIC(20, 4), nullable=True)
+    value_raw: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    observed_or_imputed: Mapped[str] = mapped_column(TEXT, nullable=False, default="observed")
+    extraction_method: Mapped[str] = mapped_column(TEXT, nullable=False)
+    evidence: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    confidence: Mapped[float] = mapped_column(NUMERIC(3, 2), nullable=False)
+    review_status: Mapped[str] = mapped_column(TEXT, nullable=False, default="accepted")
+    superseded_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("obs.macro_observation.observation_id"),
+        nullable=True,
+    )
+
+
 # ===================== ML SCHEMA =====================
 
 
@@ -569,9 +725,63 @@ class Forecast(Base):
     p10: Mapped[float | None] = mapped_column(NUMERIC(18, 4), nullable=True)
     p50: Mapped[float | None] = mapped_column(NUMERIC(18, 4), nullable=True)
     p90: Mapped[float | None] = mapped_column(NUMERIC(18, 4), nullable=True)
+    model_requested: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    model_effective: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    is_baseline: Mapped[bool] = mapped_column(nullable=False, default=False)
+    is_calibrated: Mapped[bool] = mapped_column(nullable=False, default=False)
+    calibration_sample_size: Mapped[int] = mapped_column(nullable=False, default=0)
+    status: Mapped[str] = mapped_column(TEXT, nullable=False, default="nominal")
+    fallback_reason: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    currency: Mapped[str] = mapped_column(TEXT, nullable=False, default="MGA")
+    unit: Mapped[str] = mapped_column(TEXT, nullable=False, default="kg")
+    interval_width: Mapped[float | None] = mapped_column(NUMERIC(18, 4), nullable=True)
+    coverage_rate_80: Mapped[float | None] = mapped_column(NUMERIC(6, 4), nullable=True)
     generated_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
 
     model_run: Mapped[ModelRun] = relationship(back_populates="forecasts")
+    evaluations: Mapped[list["ForecastEvaluation"]] = relationship(back_populates="forecast")
+
+
+class ForecastEvaluation(Base):
+    """Matured and as-of forecast evaluation record (ADR-079, SPECS §17.4, R3.8)."""
+
+    __tablename__ = "forecast_evaluation"
+    __table_args__ = {"schema": "ml"}
+
+    evaluation_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    forecast_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ml.forecast.forecast_id"), nullable=False
+    )
+    model_run_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("ml.model_run.model_run_id"), nullable=False
+    )
+    series_key: Mapped[str] = mapped_column(TEXT, nullable=False)
+    product_code: Mapped[str] = mapped_column(TEXT, nullable=False)
+    location_pcode: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+    actor_level: Mapped[str] = mapped_column(TEXT, nullable=False)
+    target_period: Mapped[date] = mapped_column(DATE, nullable=False)
+    horizon: Mapped[int] = mapped_column(SMALLINT, nullable=False)
+    evaluation_kind: Mapped[str] = mapped_column(
+        TEXT, nullable=False
+    )  # as_of_holdout | matured_actual | prospective_pending
+    model_name: Mapped[str] = mapped_column(TEXT, nullable=False)
+    is_baseline: Mapped[bool] = mapped_column(nullable=False, default=False)
+    predicted_p50: Mapped[float | None] = mapped_column(NUMERIC(18, 4), nullable=True)
+    predicted_p10: Mapped[float | None] = mapped_column(NUMERIC(18, 4), nullable=True)
+    predicted_p90: Mapped[float | None] = mapped_column(NUMERIC(18, 4), nullable=True)
+    actual_price: Mapped[float | None] = mapped_column(NUMERIC(18, 4), nullable=True)
+    actual_observation_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("obs.price_observation.observation_id"), nullable=True
+    )
+    absolute_error: Mapped[float | None] = mapped_column(NUMERIC(18, 4), nullable=True)
+    percentage_error: Mapped[float | None] = mapped_column(NUMERIC(8, 4), nullable=True)
+    is_covered_80: Mapped[bool | None] = mapped_column(nullable=True)
+    evaluated_at: Mapped[datetime] = mapped_column(nullable=False, server_default=text("now()"))
+
+    forecast: Mapped[Forecast] = relationship(back_populates="evaluations")
+    model_run: Mapped[ModelRun] = relationship()
 
 
 # ===================== OPS SCHEMA =====================

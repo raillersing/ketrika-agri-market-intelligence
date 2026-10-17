@@ -1,0 +1,41 @@
+{
+  "title": "Madagascar Food Security Outlook - February to September 2024",
+  "published_at": "2024-02-15",
+  "source_type": "fewsnet",
+  "status": "published",
+  "current_situation": [
+    {
+      "location_raw": "Androy",
+      "ipc_phase": 2,
+      "valid_from": "2024-02-01",
+      "valid_to": "2024-05-31",
+      "page": 3,
+      "verbatim_citation": "Dans la région Androy, la situation alimentaire actuelle demeure sous tension modérée (Phase 2 de l'IPC - Stress) en raison des stocks résiduels de la campagne précédente et des approvisionnements réguliers en riz sur les marchés.",
+      "key_drivers": ["stocks de maïs limités", "stabilité relative du prix du riz"]
+    },
+    {
+      "location_raw": "Atsimo-Atsinanana",
+      "ipc_phase": 2,
+      "valid_from": "2024-02-01",
+      "valid_to": "2024-05-31",
+      "page": 4,
+      "verbatim_citation": "Sur la côte sud-est, les ménages agricoles bénéficient de la récolte de riz précoce (asara), maintenant l'insécurité alimentaire au niveau Stress (Phase 2 de l'IPC).",
+      "key_drivers": ["récolte riz asara précoce", "accessibilité des tubercules"]
+    }
+  ],
+  "projected_outlook": [
+    {
+      "location_raw": "Androy",
+      "ipc_phase": 3,
+      "valid_from": "2024-06-01",
+      "valid_to": "2024-09-30",
+      "page": 6,
+      "verbatim_citation": "Avec l'épuisement précoce des récoltes de maïs et de manioc induit par les poches de sécheresse, les ménages pauvres d'Androy devraient basculer en situation de Crise (Phase 3 de l'IPC) durant la période de projection allant de juin à septembre 2024.",
+      "assumptions": [
+        "Pluviométrie cumulée inférieure à la moyenne de 20% sur la phase végétative",
+        "Hausse des prix du maïs local sur le marché de Tsihombe de 25% par rapport à la moyenne quinquennale"
+      ],
+      "key_drivers": ["baisse des rendements céréaliers", "soudure pastorale et vivrière précoce"]
+    }
+  ]
+}

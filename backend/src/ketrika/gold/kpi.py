@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import math
 import statistics
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Literal
+from datetime import date
+from typing import Any, Literal
 
 
 def calculate_variation(current_price: float, previous_price: float | None) -> float | None:
@@ -13,6 +15,111 @@ def calculate_variation(current_price: float, previous_price: float | None) -> f
     if previous_price is None or previous_price <= 0:
         return None
     return round((current_price / previous_price) - 1.0, 4)
+
+
+def _shift_month(d: date, lag_months: int) -> date:
+    """Shift date backwards by exact lag_months, anchored to day 1."""
+    total_months = d.year * 12 + (d.month - 1) - lag_months
+    target_year = total_months // 12
+    target_month = (total_months % 12) + 1
+    return date(target_year, target_month, 1)
+
+
+def calculate_calendar_aligned_variation(
+    prices_by_month: Mapping[Any, float],
+    current_month: date | str,
+    lag_months: int,
+) -> float | None:
+    """Calculate variation strictly against the exact calendar month (current_month - lag_months).
+
+    If there is a gap (month missing in prices_by_month), returns None.
+    Never computes variation against an arbitrary previous available row.
+    """
+    if lag_months <= 0:
+        raise ValueError("lag_months must be positive")
+
+    curr_d = (
+        current_month
+        if isinstance(current_month, date)
+        else date.fromisoformat(str(current_month)[:10])
+    )
+    curr_d = date(curr_d.year, curr_d.month, 1)
+
+    target_d = _shift_month(curr_d, lag_months)
+
+    norm_prices: dict[date, float] = {}
+    for k, v in prices_by_month.items():
+        kd = k if isinstance(k, date) else date.fromisoformat(str(k)[:10])
+        norm_prices[date(kd.year, kd.month, 1)] = v
+
+    if curr_d not in norm_prices or target_d not in norm_prices:
+        return None
+
+    return calculate_variation(norm_prices[curr_d], norm_prices[target_d])
+
+
+KNOWN_DERIVATIONS: dict[str, str] = {
+    "wfp_hdx_mdg": "un_wfp",
+    "wb_rtfp_mdg": "un_wfp",  # WB RTFP relies on WFP primary data
+}
+
+ROOT_SOURCE_FAMILIES: dict[str, str] = {
+    "wfp_hdx_mdg": "un_wfp",
+    "wb_rtfp_mdg": "un_wfp",  # WB RTFP relies on WFP primary data
+    "miasa_odr": "madagascar_gov",
+    "mincc_ppn": "madagascar_gov",
+    "douanes_stats": "madagascar_gov",
+    "instat_nipc": "madagascar_gov",
+    "instat_tbe": "madagascar_gov",
+    "faostat": "un_fao",
+    "ecmwf_open": "ecmwf",
+    "chc_chirps": "chc_ucsb",
+    "dgm_bulletins": "dgm_madagascar",
+    "fewsnet_ipc": "fewsnet",
+    "nasa_power": "nasa",
+}
+
+
+def audit_source_family_independence(
+    source_items: Sequence[dict[str, Any] | str],
+) -> dict[str, Any]:
+    """Audit source independence and prevent false multi-source corroboration (C3, SPECS §14, ADR-100).
+
+    Identifies root source families and prevents counting derivative sources
+    (such as WB RTFP deriving from WFP HDX) as independent confirmations.
+    """
+    sources: list[str] = []
+    declared_families: list[str] = []
+    root_families: set[str] = set()
+    has_dependent_derivation = False
+
+    for item in source_items:
+        if isinstance(item, str):
+            s_id = item
+            fam = ROOT_SOURCE_FAMILIES.get(s_id, s_id)
+            dep = None
+        else:
+            s_id = item.get("source_id", "")
+            fam = item.get("source_family") or ROOT_SOURCE_FAMILIES.get(s_id, s_id)
+            dep = item.get("source_dependency")
+
+        if dep == "wfp_fao" or s_id == "wb_rtfp_mdg":
+            fam = "un_wfp"
+            has_dependent_derivation = True
+
+        sources.append(s_id)
+        declared_families.append(fam)
+        root_fam = ROOT_SOURCE_FAMILIES.get(s_id, fam)
+        root_families.add(root_fam)
+
+    return {
+        "n_sources": len(sources),
+        "sources": sources,
+        "n_independent_families": len(root_families),
+        "independent_families": sorted(root_families),
+        "has_dependent_derivation": has_dependent_derivation,
+        "is_truly_independent": len(root_families) == len(sources) and not has_dependent_derivation,
+    }
 
 
 def calculate_robust_volatility(prices: list[float], use_log: bool = False) -> float | None:

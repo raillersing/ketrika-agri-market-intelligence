@@ -133,7 +133,7 @@ export interface paths {
         };
         /**
          * Get Prices
-         * @description Retrieve historical aggregated price series (SPECS Â§19).
+         * @description Retrieve historical aggregated price series (SPECS §19).
          */
         get: operations["get_prices_v1_prices_get"];
         put?: never;
@@ -153,7 +153,7 @@ export interface paths {
         };
         /**
          * Get Prices Latest
-         * @description Retrieve the latest monthly price for each geographic entity at given admin level (SPECS Â§19).
+         * @description Retrieve the latest monthly price for each geographic entity at given admin level (SPECS §19).
          */
         get: operations["get_prices_latest_v1_prices_latest_get"];
         put?: never;
@@ -175,9 +175,69 @@ export interface paths {
          * Get Observation Detail
          * @description Retrieve complete observation provenance: raw values, evidence, extraction method,
          *
-         *     and a temporary presigned 15-minute Bronze object download URL (SPECS Â§19).
+         *     and a temporary presigned 15-minute Bronze object download URL (SPECS §19).
          */
         get: operations["get_observation_detail_v1_observations__observation_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/market/coverage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Market Coverage
+         * @description Retrieve market coverage matrix cells with pagination and CSV export (SPECS §19, R2.4, ADR-071).
+         */
+        get: operations["get_market_coverage_v1_market_coverage_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/market/coverage/gaps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Series Gaps
+         * @description Compute independent calendar gaps and coverage ratio for a single series in SQL.
+         */
+        get: operations["get_series_gaps_v1_market_coverage_gaps_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/market/pilot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pilot Configuration
+         * @description Retrieve pilot configuration, economic justifications, impossible capabilities, and authenticity status.
+         */
+        get: operations["get_pilot_configuration_v1_market_pilot_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -195,7 +255,7 @@ export interface paths {
         };
         /**
          * Get Stocks
-         * @description Retrieve the latest observed stock status by product and location (SPECS Â§19).
+         * @description Retrieve the latest observed stock status by product and location (SPECS §19).
          */
         get: operations["get_stocks_v1_stocks_get"];
         put?: never;
@@ -215,9 +275,89 @@ export interface paths {
         };
         /**
          * Get Trade
-         * @description Retrieve monthly trade flows (import / export) for PPN commodities (SPECS Â§19).
+         * @description Retrieve monthly trade flows (import / export) for PPN commodities (SPECS §19).
          */
         get: operations["get_trade_v1_trade_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/macro": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Macro
+         * @description Retrieve macroeconomic observations with pagination and CSV export (SPECS §19, ADR-069, ADR-071).
+         */
+        get: operations["get_macro_v1_macro_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/economic/indicators": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Economic Indicators
+         * @description Return the normative catalog of economic metric cards with pagination and CSV export (ADR-071).
+         */
+        get: operations["get_economic_indicators_v1_economic_indicators_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/economic/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Economic Dashboard
+         * @description Return the interpretable economic dashboard grouped by autonomous dimensions.
+         */
+        get: operations["get_economic_dashboard_v1_economic_dashboard_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/economic/pilot-context": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pilot Economic Context
+         * @description Return economic transmission context for the rice pilot (R2.8).
+         */
+        get: operations["get_pilot_economic_context_v1_economic_pilot_context_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -235,9 +375,129 @@ export interface paths {
         };
         /**
          * Get Weather Anomalies
-         * @description Retrieve monthly weather observations, precip anomalies and temperatures (SPECS Â§19).
+         * @description Retrieve monthly weather observations, precip anomalies and temperatures (SPECS §19).
          */
         get: operations["get_weather_anomalies_v1_weather_anomalies_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Climate Summary
+         * @description Consolidated agroclimate summary by zone explaining observed, forecasted and phenological states.
+         */
+        get: operations["get_climate_summary_v1_climate_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/anomalies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Climate Anomalies
+         * @description Retrieve detailed climate anomalies with baseline reference and categorical risk.
+         */
+        get: operations["get_climate_anomalies_v1_climate_anomalies_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/forecasts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Climate Forecasts
+         * @description Retrieve archived numerical weather forecasts (obs.weather_forecast, ADR-084).
+         */
+        get: operations["get_climate_forecasts_v1_climate_forecasts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/calendars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Crop Calendars
+         * @description Retrieve verified crop calendars, active phenological phases and trade corridors (ADR-086).
+         */
+        get: operations["get_crop_calendars_v1_climate_calendars_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Climate Events
+         * @description Retrieve food security outlooks and agroclimatic events (FEWS NET / IPC, obs.event).
+         */
+        get: operations["get_climate_events_v1_climate_events_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/climate/facultative-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Facultative Sources Status
+         * @description Report transparent status for optional environmental sources (FIRMS, GloFAS, NDVI).
+         */
+        get: operations["get_facultative_sources_status_v1_climate_facultative_status_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -255,7 +515,7 @@ export interface paths {
         };
         /**
          * Get Market Health
-         * @description Retrieve Market Health Score (0-100) and its 4 underlying components (SPECS Â§16, Â§19).
+         * @description Retrieve Market Health Score (0-100) and its 4 underlying components (SPECS §16, §19).
          */
         get: operations["get_market_health_v1_kpis_market_health_get"];
         put?: never;
@@ -275,9 +535,89 @@ export interface paths {
         };
         /**
          * Get Forecasts
-         * @description Retrieve the latest price forecasts, prediction intervals and models (SPECS Â§17, Â§19).
+         * @description Retrieve the latest or historical price forecasts with conformal intervals (SPECS §17, §19, ADR-078).
          */
         get: operations["get_forecasts_v1_forecasts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/forecasts/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Forecast Runs
+         * @description Retrieve historical forecasting model runs and lineage fingerprints (SPECS §17, ADR-078).
+         */
+        get: operations["get_forecast_runs_v1_forecasts_runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/forecasts/runs/{model_run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Forecast Run Detail
+         * @description Retrieve detailed execution information and predictions for a specific run.
+         */
+        get: operations["get_forecast_run_detail_v1_forecasts_runs__model_run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/forecasts/abstentions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Forecast Abstentions
+         * @description Retrieve series exclusions and abstentions documented during the latest forecasting run.
+         */
+        get: operations["get_forecast_abstentions_v1_forecasts_abstentions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/forecasts/performance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Forecast Performance
+         * @description Retrieve multidimensional forecast performance evaluation metrics and records (SPECS §17.4, ADR-079, R3.8).
+         */
+        get: operations["get_forecast_performance_v1_forecasts_performance_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -295,7 +635,7 @@ export interface paths {
         };
         /**
          * List Alerts
-         * @description List market intelligence alerts (SPECS Â§18, Â§19).
+         * @description List market intelligence alerts (SPECS §18, §19).
          */
         get: operations["list_alerts_v1_alerts_get"];
         put?: never;
@@ -335,7 +675,7 @@ export interface paths {
         };
         /**
          * List Bulletins
-         * @description List weekly market bulletins (SPECS Â§19, Â§20).
+         * @description List weekly market bulletins (SPECS §19, §20).
          */
         get: operations["list_bulletins_v1_bulletins_get"];
         put?: never;
@@ -395,7 +735,7 @@ export interface paths {
         };
         /**
          * List Sources
-         * @description List all registered data sources and their priority / freshness SLAs.
+         * @description List all registered data sources and their priority / freshness SLAs and health.
          */
         get: operations["list_sources_v1_sources_get"];
         put?: never;
@@ -415,7 +755,7 @@ export interface paths {
         };
         /**
          * Get Source Health
-         * @description Retrieve DataOps health metrics for a specific source from gold.source_health (SPECS Â§19).
+         * @description Retrieve DataOps health metrics for a specific source from gold.source_health (SPECS §19).
          */
         get: operations["get_source_health_v1_sources__source_id__health_get"];
         put?: never;
@@ -497,7 +837,7 @@ export interface paths {
         put?: never;
         /**
          * Ask Copilot
-         * @description Ask natural language question to Ketrika market analyst copilot (SPECS Â§19, Â§21).
+         * @description Ask natural language question to Ketrika market analyst copilot (SPECS §19, §21).
          */
         post: operations["ask_copilot_v1_copilot_ask_post"];
         delete?: never;
@@ -626,6 +966,197 @@ export interface components {
             approved_by?: string | null;
         };
         /**
+         * ClimateAnomalyDetailItem
+         * @description Detailed climate anomaly measurement (ADR-085, ADR-087).
+         */
+        ClimateAnomalyDetailItem: {
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name: string;
+            /** Month */
+            month: string;
+            /** Variable */
+            variable: string;
+            /** Observed Value */
+            observed_value: number;
+            /** Baseline Mean */
+            baseline_mean?: number | null;
+            /** Baseline Years */
+            baseline_years?: number | null;
+            /** Anomaly Delta */
+            anomaly_delta?: number | null;
+            /** Anomaly Pct */
+            anomaly_pct?: number | null;
+            /** Standardized Zscore */
+            standardized_zscore?: number | null;
+            /**
+             * Risk Level
+             * @default low
+             */
+            risk_level: string;
+            /**
+             * Status
+             * @default computed
+             */
+            status: string;
+            /**
+             * Aggregation Method
+             * @default zonal_mean
+             */
+            aggregation_method: string;
+            /**
+             * Cropland Mask Applied
+             * @default false
+             */
+            cropland_mask_applied: boolean;
+            /** Sources */
+            sources?: string[];
+            /**
+             * Value Kind
+             * @default observed
+             * @enum {string}
+             */
+            value_kind: "observed" | "imputed" | "forecast" | "composite";
+        };
+        /**
+         * ClimateEventItem
+         * @description Food security outlook and environmental event item (obs.event, ADR-083, ADR-087).
+         */
+        ClimateEventItem: {
+            /** Event Id */
+            event_id: string;
+            /** Source Id */
+            source_id: string;
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name: string;
+            /** Event Type */
+            event_type: string;
+            /** Severity */
+            severity: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description: string;
+            /** Published At */
+            published_at: string;
+            /**
+             * Is Projected
+             * @default false
+             */
+            is_projected: boolean;
+            /** Ipc Phase */
+            ipc_phase?: number | null;
+            /** Source Reference */
+            source_reference: string;
+        };
+        /**
+         * ClimateForecastItem
+         * @description Archived numerical weather forecast item (obs.weather_forecast, ADR-084, ADR-087).
+         */
+        ClimateForecastItem: {
+            /** Forecast Id */
+            forecast_id: string;
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name: string;
+            /** Issued At */
+            issued_at: string;
+            /** Valid From */
+            valid_from: string;
+            /** Valid To */
+            valid_to: string;
+            /** Horizon Hours */
+            horizon_hours: number;
+            /** Variable */
+            variable: string;
+            /** Model Name */
+            model_name: string;
+            /** Predicted Value */
+            predicted_value?: number | null;
+            /** Predicted P10 */
+            predicted_p10?: number | null;
+            /** Predicted P90 */
+            predicted_p90?: number | null;
+            /** Unit */
+            unit: string;
+            /** Method */
+            method: string;
+            /** Spatial Resolution */
+            spatial_resolution?: string | null;
+            /**
+             * Value Kind
+             * @default projected
+             * @enum {string}
+             */
+            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            /**
+             * Source
+             * @default ecmwf_open
+             */
+            source: string;
+        };
+        /**
+         * ClimateSummaryResponse
+         * @description Consolidated agroclimate summary for decision-support (ADR-087, R4.11).
+         */
+        ClimateSummaryResponse: {
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name: string;
+            /** Current Month */
+            current_month: string;
+            /** Observed Precipitation Mm */
+            observed_precipitation_mm?: number | null;
+            /** Precipitation Anomaly Pct */
+            precipitation_anomaly_pct?: number | null;
+            /** Precipitation Risk Level */
+            precipitation_risk_level?: string | null;
+            /**
+             * Aggregation Method
+             * @default zonal_mean
+             */
+            aggregation_method: string;
+            /**
+             * Cropland Mask Applied
+             * @default false
+             */
+            cropland_mask_applied: boolean;
+            /**
+             * Observed Source
+             * @default chirps
+             */
+            observed_source: string;
+            /** Temperature Mean C */
+            temperature_mean_c?: number | null;
+            /** Forecast Next 72H Precip Mm */
+            forecast_next_72h_precip_mm?: number | null;
+            /** Forecast P10 Mm */
+            forecast_p10_mm?: number | null;
+            /** Forecast P90 Mm */
+            forecast_p90_mm?: number | null;
+            /** Forecast Model */
+            forecast_model?: string | null;
+            /** Forecast Issued At */
+            forecast_issued_at?: string | null;
+            /**
+             * Forecast Value Kind
+             * @default projected
+             * @enum {string}
+             */
+            forecast_value_kind: "observed" | "imputed" | "forecast" | "composite";
+            /** Active Crop Cycles */
+            active_crop_cycles?: components["schemas"]["CropCalendarItem"][];
+            /** Events And Outlooks */
+            events_and_outlooks?: components["schemas"]["ClimateEventItem"][];
+            /** Facultative Sources */
+            facultative_sources?: components["schemas"]["FacultativeSourceStatus"][];
+        };
+        /**
          * CopilotAskRequest
          * @description Copilot query request.
          */
@@ -654,26 +1185,318 @@ export interface components {
             value_kinds: string[];
         };
         /**
-         * ForecastItem
-         * @description Price forecast horizons and quantiles.
+         * CropCalendarItem
+         * @description Crop calendar phenological cycle and trade corridors (ADR-086, ADR-087).
          */
-        ForecastItem: {
+        CropCalendarItem: {
+            /** Zone Code */
+            zone_code: string;
+            /** Zone Name */
+            zone_name: string;
+            /** Crop */
+            crop: string;
+            /** Product Code */
+            product_code: string;
+            /** Crop Cycle */
+            crop_cycle?: string | null;
+            /** Season Name */
+            season_name: string;
+            /** Crop Regime */
+            crop_regime: string;
+            /**
+             * Calendar Version
+             * @default v1.0
+             */
+            calendar_version: string;
+            /**
+             * Calendar Type
+             * @default traditional_baseline
+             */
+            calendar_type: string;
+            /**
+             * Campaign
+             * @default baseline_permanent
+             */
+            campaign: string;
+            /** Variety */
+            variety?: string | null;
+            /** Current Phenological Stage */
+            current_phenological_stage?: string | null;
+            /** Planting Months */
+            planting_months?: number[];
+            /** Harvest Months */
+            harvest_months?: number[];
+            /** Peak Harvest Month */
+            peak_harvest_month?: number | null;
+            /** Water Sensitivity Profile */
+            water_sensitivity_profile?: {
+                [key: string]: string;
+            };
+            /** Market Links */
+            market_links?: {
+                [key: string]: unknown;
+            }[];
+            /** Source Reference */
+            source_reference: string;
+            /**
+             * Verified
+             * @default true
+             */
+            verified: boolean;
+            /**
+             * Eligible For Alerts
+             * @default true
+             */
+            eligible_for_alerts: boolean;
+        };
+        /**
+         * DimensionSummaryOut
+         * @description Summary of an economic dimension.
+         */
+        DimensionSummaryOut: {
+            /** Dimension */
+            dimension: string;
+            /** Completeness */
+            completeness: string;
+            /** Indicators */
+            indicators?: components["schemas"]["IndicatorObservationOut"][];
+        };
+        /**
+         * EconomicDashboardOut
+         * @description Consolidated response for the interpretable economic dashboard.
+         */
+        EconomicDashboardOut: {
+            /** Overall Status */
+            overall_status: string;
+            /** Period Month */
+            period_month: string;
+            /** Dimensions */
+            dimensions: {
+                [key: string]: components["schemas"]["DimensionSummaryOut"];
+            };
+            /** Metric Catalog */
+            metric_catalog: {
+                [key: string]: components["schemas"]["EconomicMetricCardItem"];
+            };
+        };
+        /**
+         * EconomicMetricCardItem
+         * @description Specification of an economic metric card (ADR-070).
+         */
+        EconomicMetricCardItem: {
+            /** Metric Id */
+            metric_id: string;
+            /** Dimension */
+            dimension: string;
+            /** Title */
+            title: string;
+            /** Definition */
+            definition: string;
+            /** Formula */
+            formula: string;
+            /** Unit */
+            unit: string;
+            /** Frequency */
+            frequency: string;
+            /** Geo Scope */
+            geo_scope: string;
+            /** Primary Source */
+            primary_source: string;
+            /** Source Family */
+            source_family: string;
+            /** Publication Lag Days */
+            publication_lag_days: number;
+            /** Limitations */
+            limitations: string;
+        };
+        /**
+         * FacultativeSourceStatus
+         * @description Status descriptor for facultative environmental sources (ADR-087).
+         */
+        FacultativeSourceStatus: {
+            /** Source Id */
+            source_id: string;
+            /** Source Name */
+            source_name: string;
+            /**
+             * Status
+             * @default unavailable
+             */
+            status: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Data Available
+             * @default false
+             */
+            data_available: boolean;
+        };
+        /**
+         * ForecastAbstentionItem
+         * @description Documented series abstention or exclusion with normative reasons.
+         */
+        ForecastAbstentionItem: {
+            /** Series Key */
+            series_key: string;
             /** Product Code */
             product_code: string;
             /** Location Pcode */
             location_pcode: string;
+            /** Actor Level */
+            actor_level: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Points Count
+             * @default 0
+             */
+            points_count: number;
+        };
+        /**
+         * ForecastEvaluationItem
+         * @description Individual forecast evaluation record against actual ground truth.
+         */
+        ForecastEvaluationItem: {
+            /** Evaluation Id */
+            evaluation_id?: string | null;
+            /**
+             * Forecast Id
+             * Format: uuid
+             */
+            forecast_id: string;
+            /**
+             * Model Run Id
+             * Format: uuid
+             */
+            model_run_id: string;
+            /** Series Key */
+            series_key: string;
+            /** Product Code */
+            product_code: string;
+            /** Location Pcode */
+            location_pcode?: string | null;
+            /** Actor Level */
+            actor_level: string;
+            /** Target Period */
+            target_period: string;
+            /** Horizon */
+            horizon: number;
+            /** Evaluation Kind */
+            evaluation_kind: string;
+            /** Model Name */
+            model_name: string;
+            /**
+             * Is Baseline
+             * @default false
+             */
+            is_baseline: boolean;
+            /** Predicted P50 */
+            predicted_p50?: number | null;
+            /** Predicted P10 */
+            predicted_p10?: number | null;
+            /** Predicted P90 */
+            predicted_p90?: number | null;
+            /** Actual Price */
+            actual_price?: number | null;
+            /** Actual Observation Id */
+            actual_observation_id?: string | null;
+            /** Absolute Error */
+            absolute_error?: number | null;
+            /** Percentage Error */
+            percentage_error?: number | null;
+            /** Is Covered 80 */
+            is_covered_80?: boolean | null;
+            /** Evaluated At */
+            evaluated_at?: string | null;
+        };
+        /**
+         * ForecastItem
+         * @description Price forecast horizons, quantiles, and conformal metadata (SPECS §17, §19, ADR-078).
+         */
+        ForecastItem: {
+            /** Forecast Id */
+            forecast_id?: string | null;
+            /** Model Run Id */
+            model_run_id?: string | null;
+            /** Series Key */
+            series_key?: string | null;
+            /** Product Code */
+            product_code: string;
+            /** Product Name */
+            product_name?: string | null;
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name?: string | null;
+            /**
+             * Actor Level
+             * @default retail
+             */
+            actor_level: string;
             /** Horizon */
             horizon: number;
             /** Target Period */
             target_period: string;
             /** P10 */
-            p10: number;
+            p10?: number | null;
             /** P50 */
             p50: number;
             /** P90 */
-            p90: number;
-            /** Model Name */
+            p90?: number | null;
+            /** Model Requested */
+            model_requested?: string | null;
+            /**
+             * Model Effective
+             * @default NaiveLast
+             */
+            model_effective: string;
+            /**
+             * Model Name
+             * @default NaiveLast
+             */
             model_name: string;
+            /**
+             * Is Baseline
+             * @default false
+             */
+            is_baseline: boolean;
+            /**
+             * Is Calibrated
+             * @default false
+             */
+            is_calibrated: boolean;
+            /**
+             * Calibration Sample Size
+             * @default 0
+             */
+            calibration_sample_size: number;
+            /**
+             * Status
+             * @default nominal
+             */
+            status: string;
+            /** Fallback Reason */
+            fallback_reason?: string | null;
+            /**
+             * Currency
+             * @default MGA
+             */
+            currency: string;
+            /**
+             * Unit
+             * @default kg
+             */
+            unit: string;
+            /** Interval Width */
+            interval_width?: number | null;
+            /** Coverage Rate 80 */
+            coverage_rate_80?: number | null;
+            /** Data Cutoff */
+            data_cutoff?: string | null;
+            /** Dataset Fingerprint */
+            dataset_fingerprint?: string | null;
+            /** Cohort */
+            cohort?: string | null;
             /**
              * Value Kind
              * @default forecast
@@ -681,10 +1504,93 @@ export interface components {
              */
             value_kind: "observed" | "imputed" | "forecast" | "composite";
         };
+        /**
+         * ForecastPerformanceResponse
+         * @description Multidimensional forecast performance report (ADR-079, R3.8).
+         */
+        ForecastPerformanceResponse: {
+            summary: components["schemas"]["PerformanceMetricsSummary"];
+            /** By Product */
+            by_product?: {
+                [key: string]: components["schemas"]["PerformanceMetricsSummary"];
+            };
+            /** By Location */
+            by_location?: {
+                [key: string]: components["schemas"]["PerformanceMetricsSummary"];
+            };
+            /** By Horizon */
+            by_horizon?: {
+                [key: string]: components["schemas"]["PerformanceMetricsSummary"];
+            };
+            /** By Seasonality */
+            by_seasonality?: {
+                [key: string]: components["schemas"]["PerformanceMetricsSummary"];
+            };
+            /** Evaluations */
+            evaluations?: components["schemas"]["ForecastEvaluationItem"][];
+            /**
+             * Total Evaluations
+             * @default 0
+             */
+            total_evaluations: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * ImpossibleCapabilityItem
+         * @description Explicitly documented impossible capability.
+         */
+        ImpossibleCapabilityItem: {
+            /** Capability */
+            capability: string;
+            /** Status */
+            status: string;
+            /** Scope */
+            scope: string[];
+            /** Reason */
+            reason: string;
+        };
+        /**
+         * IndicatorObservationOut
+         * @description Observation item for an economic indicator.
+         */
+        IndicatorObservationOut: {
+            /** Indicator Code */
+            indicator_code: string;
+            /** Dimension */
+            dimension: string;
+            /** Title */
+            title: string;
+            /** Unit */
+            unit: string;
+            /** Frequency */
+            frequency: string;
+            /** Geo Scope */
+            geo_scope: string;
+            /** Period Month */
+            period_month: string;
+            /** Current Value */
+            current_value?: number | null;
+            /** Base Period */
+            base_period?: string | null;
+            /** Chg 1M */
+            chg_1m?: number | null;
+            /** Chg 12M */
+            chg_12m?: number | null;
+            /** Null Reason */
+            null_reason?: string | null;
+            /** Source Id */
+            source_id?: string | null;
+            /** Source Family */
+            source_family?: string | null;
+            /**
+             * Is Administered
+             * @default false
+             */
+            is_administered: boolean;
         };
         /**
          * LoginRequest
@@ -709,6 +1615,94 @@ export interface components {
              */
             token_type: string;
             user: components["schemas"]["UserSummary"];
+        };
+        /**
+         * MacroItem
+         * @description Macroeconomic observation item (SPECS §19, ADR-069).
+         */
+        MacroItem: {
+            /**
+             * Observation Id
+             * Format: uuid
+             */
+            observation_id: string;
+            /** Indicator Code */
+            indicator_code: string;
+            /** Indicator Name */
+            indicator_name: string;
+            /** Geo Scope */
+            geo_scope: string;
+            /** Frequency */
+            frequency: string;
+            /** Unit */
+            unit: string;
+            /** Base Period */
+            base_period?: string | null;
+            /** Period Start */
+            period_start: string;
+            /** Period End */
+            period_end: string;
+            /** Vintage */
+            vintage: string;
+            /** Value */
+            value?: number | null;
+            /** Value Raw */
+            value_raw?: string | null;
+            /** Observed Or Imputed */
+            observed_or_imputed: string;
+            /**
+             * First Available At
+             * Format: date-time
+             */
+            first_available_at: string;
+            /** Published At */
+            published_at?: string | null;
+            /** Sources */
+            sources?: string[];
+        };
+        /**
+         * MarketCoverageItem
+         * @description Market coverage matrix cell (SPECS §19, R2.4).
+         */
+        MarketCoverageItem: {
+            /** Product Code */
+            product_code: string;
+            /** Product Name */
+            product_name: string;
+            /** Location Pcode */
+            location_pcode?: string | null;
+            /** Location Name */
+            location_name?: string | null;
+            /** Admin Level */
+            admin_level?: number | null;
+            /** Actor Level */
+            actor_level: string;
+            /** Month */
+            month: string;
+            /** N Sources */
+            n_sources: number;
+            /** N Families */
+            n_families: number;
+            /** Sources */
+            sources: string;
+            /** Source Families */
+            source_families: string;
+            /** N Obs */
+            n_obs: number;
+            /** Imputed Share */
+            imputed_share: number;
+            /** Has Observed */
+            has_observed: boolean;
+            /** Observed Or Imputed */
+            observed_or_imputed: string;
+            /** Min Price */
+            min_price?: number | null;
+            /** Max Price */
+            max_price?: number | null;
+            /** Median Price */
+            median_price?: number | null;
+            /** Age Days */
+            age_days: number;
         };
         /**
          * MarketHealthItem
@@ -745,8 +1739,53 @@ export interface components {
             components_present?: string[];
         };
         /**
+         * ModelRunDetailResponse
+         * @description Detailed model run information including forecasts and metrics decomposition.
+         */
+        ModelRunDetailResponse: {
+            run: components["schemas"]["ModelRunSummaryItem"];
+            /** Forecasts */
+            forecasts?: components["schemas"]["ForecastItem"][];
+        };
+        /**
+         * ModelRunSummaryItem
+         * @description Forecasting model run summary (C4 audit trail).
+         */
+        ModelRunSummaryItem: {
+            /**
+             * Model Run Id
+             * Format: uuid
+             */
+            model_run_id: string;
+            /** Task */
+            task: string;
+            /** Model Name */
+            model_name: string;
+            /** Model Version */
+            model_version: string;
+            /** Data Cutoff */
+            data_cutoff: string;
+            /**
+             * Trained At
+             * Format: date-time
+             */
+            trained_at: string;
+            /** Dataset Fingerprint */
+            dataset_fingerprint?: string | null;
+            /** Cohort */
+            cohort?: string | null;
+            /** Params */
+            params?: {
+                [key: string]: unknown;
+            };
+            /** Metrics */
+            metrics?: {
+                [key: string]: unknown;
+            };
+        };
+        /**
          * ObservationDetailResponse
-         * @description Complete observation provenance and raw audit trail (SPECS Â§19).
+         * @description Complete observation provenance and raw audit trail (SPECS §19).
          */
         ObservationDetailResponse: {
             /**
@@ -796,6 +1835,121 @@ export interface components {
             };
             /** Bronze Presigned Url */
             bronze_presigned_url: string;
+        };
+        /**
+         * PerformanceMetricsSummary
+         * @description Statistical summary metrics for evaluated forecasts (SPECS §17.4, ADR-079).
+         */
+        PerformanceMetricsSummary: {
+            /** Wape */
+            wape?: number | null;
+            /** Mae */
+            mae?: number | null;
+            /** Smape */
+            smape?: number | null;
+            /** Coverage 80 */
+            coverage_80?: number | null;
+            /** Coverage Ci 95 */
+            coverage_ci_95?: number[] | null;
+            /** Mean Interval Width */
+            mean_interval_width?: number | null;
+            /**
+             * Sample Size
+             * @default 0
+             */
+            sample_size: number;
+        };
+        /**
+         * PilotConfigResponse
+         * @description Pilot configuration with products, locations, complementarity and impossible capabilities.
+         */
+        PilotConfigResponse: {
+            /** Pilot Id */
+            pilot_id: string;
+            /** Version */
+            version: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description: string;
+            /** Products */
+            products: components["schemas"]["PilotProductItem"][];
+            /** Locations */
+            locations: components["schemas"]["PilotLocationItem"][];
+            /** Complementarity Rationale */
+            complementarity_rationale: string;
+            /** Impossible Capabilities */
+            impossible_capabilities: components["schemas"]["ImpossibleCapabilityItem"][];
+            /** Authenticity Status */
+            authenticity_status: string;
+            /** Authentic Sources Found */
+            authentic_sources_found: string[];
+            /** Authentic Observations Count */
+            authentic_observations_count: number;
+            /** Synthetic Observations Count */
+            synthetic_observations_count: number;
+        };
+        /**
+         * PilotEconomicContextOut
+         * @description Articulation between macro indicators and the rice pilot (R2.8).
+         */
+        PilotEconomicContextOut: {
+            /** Pilot Id */
+            pilot_id: string;
+            /** Target Month */
+            target_month: string;
+            /** Fx Usd Mga */
+            fx_usd_mga?: number | null;
+            /** Fuel Diesel Ceiling Mga */
+            fuel_diesel_ceiling_mga?: number | null;
+            /** Rice Import Unit Cost Mga Per Kg */
+            rice_import_unit_cost_mga_per_kg?: number | null;
+            /** Cpi Food Chg 12M Pct */
+            cpi_food_chg_12m_pct?: number | null;
+            /** Local Rice Market Price Mga Per Kg */
+            local_rice_market_price_mga_per_kg?: number | null;
+            /** Local Rice Price Chg 12M Pct */
+            local_rice_price_chg_12m_pct?: number | null;
+            /** Distinctness Audit */
+            distinctness_audit?: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+        };
+        /**
+         * PilotLocationItem
+         * @description Pilot location definition.
+         */
+        PilotLocationItem: {
+            /** Pcode */
+            pcode: string;
+            /** Name */
+            name: string;
+            /** Admin Level */
+            admin_level: number;
+            /** Economic Role */
+            economic_role: string;
+            /** Justification */
+            justification: string;
+        };
+        /**
+         * PilotProductItem
+         * @description Pilot product definition.
+         */
+        PilotProductItem: {
+            /** Product Code */
+            product_code: string;
+            /** Canonical Name Fr */
+            canonical_name_fr: string;
+            /** Role */
+            role: string;
+            /** Category */
+            category: string;
+            /** Base Unit */
+            base_unit: string;
+            /** Justification */
+            justification: string;
         };
         /**
          * PriceLatestItem
@@ -902,6 +2056,40 @@ export interface components {
             alias_created?: string | null;
         };
         /**
+         * SeriesCoverageSummaryItem
+         * @description Independent series coverage and gap evaluation.
+         */
+        SeriesCoverageSummaryItem: {
+            /** Product Code */
+            product_code: string;
+            /** Location Pcode */
+            location_pcode: string;
+            /** Location Name */
+            location_name?: string | null;
+            /** Actor Level */
+            actor_level: string;
+            /** Admin Level */
+            admin_level?: number | null;
+            /** Start Month */
+            start_month?: string | null;
+            /** End Month */
+            end_month?: string | null;
+            /** Expected Months */
+            expected_months: number;
+            /** Observed Months */
+            observed_months: number;
+            /** Missing Months */
+            missing_months: number;
+            /** Coverage Ratio */
+            coverage_ratio: number;
+            /** Missing Months List */
+            missing_months_list?: string[];
+            /** Source Families */
+            source_families?: string[];
+            /** Is Pilot Candidate */
+            is_pilot_candidate: boolean;
+        };
+        /**
          * SourceHealthItem
          * @description DataOps source health item.
          */
@@ -940,7 +2128,7 @@ export interface components {
         };
         /**
          * SourceItem
-         * @description Data source registry item.
+         * @description Data source registry item with DataOps health indicators.
          */
         SourceItem: {
             /** Source Id */
@@ -953,6 +2141,14 @@ export interface components {
             status: string;
             /** Freshness Sla Days */
             freshness_sla_days?: number | null;
+            /** Freshness Days */
+            freshness_days?: number | null;
+            /** Is Stale */
+            is_stale?: boolean | null;
+            /** Latest Run Status */
+            latest_run_status?: string | null;
+            /** Last Run Started At */
+            last_run_started_at?: string | null;
         };
         /**
          * StockItem
@@ -1347,6 +2543,108 @@ export interface operations {
             };
         };
     };
+    get_market_coverage_v1_market_coverage_get: {
+        parameters: {
+            query?: {
+                /** @description Product code (e.g. RICE_WHITE_LOCAL) */
+                product?: string | null;
+                /** @description Location P-code (e.g. MDG11) */
+                location?: string | null;
+                /** @description Actor level (e.g. retail, wholesale) */
+                actor_level?: string | null;
+                /** @description Start month (YYYY-MM-01) */
+                from?: string | null;
+                /** @description End month (YYYY-MM-01) */
+                to?: string | null;
+                /** @description Page limit (default 100, max 1000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketCoverageItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_series_gaps_v1_market_coverage_gaps_get: {
+        parameters: {
+            query: {
+                /** @description Product code (e.g. RICE_WHITE_LOCAL) */
+                product: string;
+                /** @description Location P-code (e.g. MDG11) */
+                location: string;
+                /** @description Actor level (default: retail) */
+                actor_level?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeriesCoverageSummaryItem"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_pilot_configuration_v1_market_pilot_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotConfigResponse"];
+                };
+            };
+        };
+    };
     get_stocks_v1_stocks_get: {
         parameters: {
             query?: {
@@ -1419,6 +2717,152 @@ export interface operations {
             };
         };
     };
+    get_macro_v1_macro_get: {
+        parameters: {
+            query?: {
+                /** @description Indicator code (e.g. GDP_NOMINAL_MGA, FX_USD_MGA) */
+                indicator?: string | null;
+                /** @description Geographic scope (e.g. national, pcode) */
+                geo_scope?: string | null;
+                /** @description Vintage / release status (e.g. preliminary, final) */
+                vintage?: string | null;
+                /** @description Start date (YYYY-MM-DD) */
+                from?: string | null;
+                /** @description End date (YYYY-MM-DD) */
+                to?: string | null;
+                /** @description Page limit (default 100, max 1000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MacroItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_economic_indicators_v1_economic_indicators_get: {
+        parameters: {
+            query?: {
+                /** @description Page limit (default 100, max 1000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EconomicMetricCardItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_economic_dashboard_v1_economic_dashboard_get: {
+        parameters: {
+            query?: {
+                /** @description Target calendar month (YYYY-MM-DD) */
+                month?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EconomicDashboardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_pilot_economic_context_v1_economic_pilot_context_get: {
+        parameters: {
+            query?: {
+                /** @description Month of analysis */
+                target_month?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotEconomicContextOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_weather_anomalies_v1_weather_anomalies_get: {
         parameters: {
             query?: {
@@ -1451,6 +2895,205 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_climate_summary_v1_climate_summary_get: {
+        parameters: {
+            query?: {
+                /** @description District or Region P-code (e.g. MDG11) */
+                location?: string;
+                /** @description Reference month (YYYY-MM-01), defaults to latest available */
+                month?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClimateSummaryResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_climate_anomalies_v1_climate_anomalies_get: {
+        parameters: {
+            query?: {
+                /** @description District or Region P-code */
+                location?: string | null;
+                /** @description Start month (YYYY-MM-01) */
+                from?: string | null;
+                /** @description End month (YYYY-MM-01) */
+                to?: string | null;
+                /** @description Climate variable (precip_mm | t2m_c) */
+                variable?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClimateAnomalyDetailItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_climate_forecasts_v1_climate_forecasts_get: {
+        parameters: {
+            query?: {
+                /** @description District or Region P-code */
+                location?: string | null;
+                /** @description Numerical weather prediction model e.g. ecmwf_ifs */
+                model?: string | null;
+                /** @description Weather variable e.g. precip_mm */
+                variable?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClimateForecastItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_crop_calendars_v1_climate_calendars_get: {
+        parameters: {
+            query?: {
+                /** @description Basin code e.g. ZONE_ALAOTRA */
+                zone_code?: string | null;
+                /** @description Product code e.g. RICE_PADDY */
+                product?: string | null;
+                /** @description Month for active stage detection (1-12) */
+                month?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CropCalendarItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_climate_events_v1_climate_events_get: {
+        parameters: {
+            query?: {
+                /** @description District or Region P-code */
+                location?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClimateEventItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_facultative_sources_status_v1_climate_facultative_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FacultativeSourceStatus"][];
                 };
             };
         };
@@ -1500,6 +3143,14 @@ export interface operations {
                 location?: string | null;
                 /** @description Actor level (e.g. retail, wholesale) */
                 actor_level?: string | null;
+                /** @description Specific historical model_run_id (UUID) */
+                model_run_id?: string | null;
+                /** @description Page limit (default 100, max 1000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
             };
             header?: never;
             path?: never;
@@ -1514,6 +3165,157 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ForecastItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_forecast_runs_v1_forecasts_runs_get: {
+        parameters: {
+            query?: {
+                /** @description Page limit (default 50, max 1000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelRunSummaryItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_forecast_run_detail_v1_forecasts_runs__model_run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                model_run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelRunDetailResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_forecast_abstentions_v1_forecasts_abstentions_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by product code */
+                product?: string | null;
+                /** @description Filter by location P-code */
+                location?: string | null;
+                /** @description Page limit (default 100, max 1000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastAbstentionItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_forecast_performance_v1_forecasts_performance_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by product code */
+                product?: string | null;
+                /** @description Filter by location P-code */
+                location?: string | null;
+                /** @description Filter by forecast horizon */
+                horizon?: number | null;
+                /** @description Filter by evaluation kind: as_of_holdout | matured_actual | prospective_pending */
+                evaluation_kind?: string | null;
+                /** @description Page limit (default 500, max 2000) */
+                limit?: number;
+                /** @description Page offset (default 0) */
+                offset?: number;
+                /** @description Output format (json or csv) */
+                format?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastPerformanceResponse"];
                 };
             };
             /** @description Validation Error */

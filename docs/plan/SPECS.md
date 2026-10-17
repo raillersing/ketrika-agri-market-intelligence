@@ -707,6 +707,35 @@ CREATE TABLE obs.cpi_observation (
 );
 CREATE UNIQUE INDEX cpi_current_uk ON obs.cpi_observation (natural_key) WHERE superseded_by IS NULL;
 
+-- ADR-069 : Métriques macroéconomiques génériques et contrats temps (C1-C4)
+CREATE TABLE obs.macro_observation (
+  observation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  source_record_id UUID NOT NULL REFERENCES meta.source_record,
+  natural_key TEXT NOT NULL,
+  indicator_code TEXT NOT NULL,  -- ex: GDP_NOMINAL_MGA, FX_USD_MGA, POLICY_RATE_PCT
+  indicator_name TEXT NOT NULL,  -- libellé clair
+  frequency TEXT NOT NULL,       -- daily | monthly | quarterly | annual | adhoc
+  unit TEXT NOT NULL,            -- MGA | USD | pct | index | ratio
+  base_period TEXT,              -- ex: '2016' ou '2020=100'
+  geo_scope TEXT NOT NULL,       -- national | <pcode>
+  period_start DATE NOT NULL,
+  period_end DATE NOT NULL,
+  published_at TIMESTAMPTZ,
+  first_available_at TIMESTAMPTZ NOT NULL, -- C2: première disponibilité prouvée (jamais antidatée)
+  ingested_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  vintage TEXT NOT NULL DEFAULT 'final',   -- preliminary | provisional | revised | final
+  value NUMERIC(20,4),
+  value_raw TEXT,
+  observed_or_imputed TEXT NOT NULL,      -- observed | imputed | estimated
+  extraction_method TEXT NOT NULL,
+  evidence JSONB,
+  confidence NUMERIC(3,2) NOT NULL,
+  review_status TEXT NOT NULL DEFAULT 'accepted',
+  superseded_by UUID REFERENCES obs.macro_observation
+);
+CREATE UNIQUE INDEX macro_obs_current_uk ON obs.macro_observation (natural_key) WHERE superseded_by IS NULL;
+CREATE INDEX ON obs.macro_observation (indicator_code, geo_scope, period_start);
+
 CREATE TABLE obs.event (
   event_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   source_record_id UUID NOT NULL REFERENCES meta.source_record,
@@ -730,14 +759,51 @@ CREATE TABLE ml.model_run (
 CREATE TABLE ml.forecast (
   forecast_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   model_run_id UUID NOT NULL REFERENCES ml.model_run,
-  series_key TEXT NOT NULL,      -- product_code|location_pcode|actor_level
+  series_key TEXT NOT NULL,      -- product_code|quality_grade|actor_level|location_pcode|unit
   product_id UUID NOT NULL REFERENCES ref.product,
   location_id UUID REFERENCES ref.location,
   actor_level TEXT NOT NULL,
   target_period DATE NOT NULL, horizon SMALLINT NOT NULL,
   p10 NUMERIC(18,4), p50 NUMERIC(18,4), p90 NUMERIC(18,4),
+  model_requested TEXT,
+  model_effective TEXT,
+  is_baseline BOOLEAN NOT NULL DEFAULT FALSE,
+  is_calibrated BOOLEAN NOT NULL DEFAULT FALSE,
+  calibration_sample_size INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'nominal', -- nominal | baseline_fallback | experimental_insufficient_windows | abstained
+  fallback_reason TEXT,
+  currency TEXT NOT NULL DEFAULT 'MGA',
+  unit TEXT NOT NULL DEFAULT 'kg',
+  interval_width NUMERIC(18,4),
+  coverage_rate_80 NUMERIC(6,4),
   generated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE TABLE ml.forecast_evaluation (
+  evaluation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  forecast_id UUID NOT NULL REFERENCES ml.forecast,
+  model_run_id UUID NOT NULL REFERENCES ml.model_run,
+  series_key TEXT NOT NULL,
+  product_code TEXT NOT NULL,
+  location_pcode TEXT,
+  actor_level TEXT NOT NULL,
+  target_period DATE NOT NULL,
+  horizon SMALLINT NOT NULL,
+  evaluation_kind TEXT NOT NULL,   -- as_of_holdout | matured_actual | prospective_pending
+  model_name TEXT NOT NULL,
+  is_baseline BOOLEAN NOT NULL DEFAULT FALSE,
+  predicted_p50 NUMERIC(18,4),
+  predicted_p10 NUMERIC(18,4),
+  predicted_p90 NUMERIC(18,4),
+  actual_price NUMERIC(18,4),
+  actual_observation_id UUID REFERENCES obs.price_observation(observation_id),
+  absolute_error NUMERIC(18,4),
+  percentage_error NUMERIC(8,4),
+  is_covered_80 BOOLEAN,
+  evaluated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX idx_forecast_eval_matured ON ml.forecast_evaluation (series_key, target_period, horizon);
+CREATE INDEX idx_forecast_eval_kind ON ml.forecast_evaluation (evaluation_kind, model_name);
 
 -- ===================== OPS =====================
 CREATE TABLE ops.review_item (
@@ -1396,6 +1462,8 @@ Ce sont des **vues matérialisées**, rafraîchies par l'asset Dagster `gold__re
 | `gold.market_health` | product × région × mois | composantes + score (§16) |
 | `gold.source_health` | source | dernier run, statut, fraîcheur vs SLA, n_records sur 30 j, taux de parse, éléments de revue ouverts |
 | `gold.forecast_latest` | série × horizon | dernier `model_run` pour chaque série |
+| `gold.market_coverage` | product × location × actor_level × mois | matrice de couverture, n_obs, n_sources, n_families, lacunes calendaires (R2.4) |
+| `gold.economic_dashboard` | indicator × dimension × mois | tableau économique interprétable par dimension étanche, sans score synthétique, avec fiches métriques et gestion stricte des valeurs nulles (R2.8, ADR-070) |
 
 ---
 
@@ -1420,12 +1488,73 @@ L'UI **DOIT** toujours afficher les composantes à côté du score.
 
 ## 17. Prévisions et anomalies
 
-- **Séries éligibles :** `gold.price_monthly_best` aux niveaux région et national, avec ≥ 36 points mensuels non nuls dont ≥ 12 au cours des 24 derniers mois.
-- **Modèles candidats :** `SeasonalNaive(season_length=12)`, `AutoETS(season_length=12)`, `AutoARIMA(season_length=12)`. En option (SHOULD), `mlforecast` + LightGBM global avec lags {1, 2, 3, 12} et variables exogènes connues (mois).
-- **Backtest :** rolling-origin, 6 fenêtres, horizon h = 3, pas = 1 mois. Métriques : WAPE (principale), MAE, sMAPE, couverture empirique de l'intervalle 80 %.
-- **Sélection :** par série, le modèle de plus faible WAPE. En cas d'égalité (moins de 1 point d'écart), le plus simple.
-- **Intervalles :** conformes (`ConformalIntervals`), niveau 80 : `p10` = lo-80, `p90` = hi-80, `p50` = moyenne ou médiane.
-- **Contraintes :** aucune donnée postérieure à `data_cutoff`. `model_version` = `"{model}@{git_sha_court}"`. Résultats dans `ml.model_run` et `ml.forecast`.
+### 17.1 Éligibilité et calendrier des séries (ADR-004, ADR-073, R3.1)
+
+- **Clé de série explicite à 5 composantes :** `series_key = "{product_code}|{quality_grade}|{actor_level}|{location_pcode}|{unit}"` (ex: `rice_milled|standard|retail|MG11|kg`). Les clés historiques à 3 composantes restent parsables en rétro-compatibilité avec valeurs par défaut (`quality_grade='standard'`, `unit='kg'`).
+- **Granularité géographique (ADR-004) :** Niveaux régional (`admin_level = 1`) et national (`admin_level = 0`) uniquement. Tout niveau district (`admin_level = 2`) ou commune (`admin_level = 3`) est formellement refusé pour la modélisation et la publication de prévisions de prix.
+- **Grille mensuelle régulière sans compression :** Reconstruction d'une grille temporelle mensuelle continue sans trous compressés. Les mois sans observation portent `price = None` (`np.nan` dans les représentations vectorielles), préservant l'espacement temporel exact et les dépendances saisonnières lag-12.
+- **Critères stricts d'éligibilité historique :**
+  - Minimum absolu de 36 mois observés non nuls (`total_valid_points >= 36`). Toute série avec 35 points ou moins est refusée.
+  - Récence minimale de 12 mois observés non nuls sur la fenêtre mobile des 24 derniers mois calendaires précédant `data_cutoff` (`recent_points_24m >= 12`). Toute série avec moins de 12 points récents est refusée.
+  - Refus absolu de tout seuil arbitraire de 6 points ou de saisonnalité factice de 2 à 4 mois.
+- **Étanchéité des prix de marché :** Exclusion stricte des prix réglementés (`official_ppn`, prix administrés OMH) et des séries d'indices (CPI/NIPC) de la modélisation des prix de marché vivriers.
+- **Séparation des cohortes :** Vérité terrain d'évaluation réservée aux observations observées (`observed_or_imputed == 'observed'`). Cohorte purement observée (`cohort = 'observed'`) vs cohorte composite/imputée (`cohort = 'mixed'`).
+- **Audit et rapport d'exclusions :** Toute extraction produit un `SeriesEligibilityReport` recensant les séries éligibles et les séries exclues avec leurs motifs précis (`insufficient_total_points`, `insufficient_recency`, `ineligible_geo_granularity`, `forbidden_price_type`). Aucune série n'est fabriquée artificiellement pour atteindre un quota.
+
+### 17.2 Datasets historiques as-of et contrats C2/C4 (ADR-074, R3.2)
+
+- **Principe as-of strict (C2) :** Un dataset d'entraînement à la date `as_of` ne contient que les observations dont la disponibilité prouvée est antérieure ou égale à `as_of` (`published_at <= as_of` ou `first_available_at <= as_of`, et `ingested_at <= as_of`). Un prix de janvier publié en mars est formellement absent d'un dataset as-of de février.
+- **Résolution des révisions :** Les révisions intervenues après `as_of` sont ignorées. La version active au moment `as_of` est celle dont `ingested_at <= as_of` et dont le remplacement éventuel (`superseded_at` ou création du superseded_by) est postérieur à `as_of`.
+- **Structure canonique du dataset (C4) :**
+  - Métadonnées complètes : `dataset_id`, `name`, `version`, `as_of`, `origin_mode` (`as_of_point_in_time | retrospective`), `canonical_fingerprint` (SHA-256 déterministe), `observations_count`, `observation_ids`, `artefacts` (clés/SHA Bronze), `source_ids`, `selection_rules`.
+  - Empreinte reproductible : Sérialisation JSON UTF-8 canonique triée sur les clés naturelles et identifiants, sans blancs superflus. Deux constructions au même `as_of` produisent une empreinte identique à 100 %.
+- **Partitionnement étanche sans fuite :** Découpage temporel net en sous-ensembles `train`, `calibration`, `test` selon des origines calendaires fixes et disjointes. Aucune donnée de la fenêtre de test n'est accessible lors de l'entraînement ou du calibrage.
+
+### 17.3 Modèles, backtest et références normatives (ADR-075, R3.3)
+
+- **Références normatives :**
+  - `NaiveLast` : référence de diagnostic minimale ($y_{t+h} = y_t$).
+  - `SeasonalNaive(season_length=12)` : référence saisonnière strictement annuelle ($y_{t+h} = y_{t+h-12}$).
+- **Modèles candidats normatifs :**
+  - `AutoETS(season_length=12)` : lissage exponentiel saisonnier.
+  - `AutoARIMA(season_length=12)` : modèle autorégressif intégré à moyenne mobile avec composante saisonnière annuelle.
+  - Interdiction absolue d'abaisser arbitrairement `season_length` (à 2, 3 ou 4 mois) pour masquer une série courte.
+- **Transparence et étanchéité des métadonnées (Anti-tricherie A09) :**
+  - Chaque prévision trace `model_requested`, `model_effective`, `status` (`fitted`, `fallback`, `abstained`) et `fallback_reason`.
+  - Aucun modèle de repli ou baseline n'est masqué sous un faux nom : si `AutoARIMA` échoue, le résultat indique explicitement `model_effective='DeterministicBaseline'` ou `model_effective='NaiveLast'` avec la raison de l'échec.
+  - La référence naïve peut légitimement remporter la sélection si ses performances WAPE sont supérieures ou égales (à 0,01 près) aux modèles complexes.
+- **Traitement documenté des valeurs manquantes dans l'entraînement :**
+  - Imputation linéaire locale sur le jeu d'entraînement exclusivement (`train_y`), sans connaissance des valeurs futures.
+  - Seuil d'abstention : si le taux de lacunes excède 30 % ou si un trou consécutif dépasse 4 mois, le modèle s'abstient (`status='abstained'`, `fallback_reason='excessive_missing_values'`).
+- **Conservation dimensionnelle :** Conservation stricte des unités (`unit`, ex: kg) et devises (`currency`, ex: MGA) dans les prédictions.
+- **Protocole d'évaluation temporelle en trois phases étanches (ADR-076, R3.4) :**
+  - **Phase 1 — Sélection rolling-origin :** Backtest glissant sur l'historique d'apprentissage sur 6 fenêtres ($h=3$, pas mensuel). Chaque fold d'entraînement exige au moins 24 mois observés. Le modèle gagnant $M^*$ est sélectionné uniquement sur ces erreurs de validation croisée temporelle.
+  - **Phase 2 — Calibration conforme :** Étalonnage des résidus d'erreurs passés avant la cible finale, sans réutilisation de points futurs.
+  - **Phase 3 — Évaluation finale hors-échantillon (Holdout test) :** Test du modèle $M^*$ sur une période postérieure disjointe. Aucune observation de cette phase n'influence le choix du modèle ou des hyperparamètres.
+- **Règle d'intégrité des origines :** Si une série ne dispose pas d'assez de recul pour 6 fenêtres avec un train $\ge 24$ mois, le statut est marqué `experimental_insufficient_windows` et s'abstient de certification normative (pas de réduction discrète à 1-2 fenêtres).
+- **Décomposition des métriques :** WAPE, MAE, sMAPE et couverture sont calculés globalement et déclinés par horizon ($h=1, h=2, h=3$). En cas de dénominateur nul ou d'absence de cible observée, la métrique renvoie `None`/`NaN` (jamais faux 0.0).
+- **Sélection :** Par série, le modèle de plus faible WAPE sur les fenêtres de sélection. En cas d'écart $\le 0.01$ (1 point de pourcentage), critère de parcimonie : `NaiveLast` prioritaire sur `SeasonalNaive`, puis `AutoETS`, puis `AutoARIMA`.
+- **Calibration conforme des intervalles et surveillance de couverture (ADR-077, R3.5) :**
+  - **Niveau nominal 80 % :** $p10$ = borne inférieure, $p50$ = prévision centrale (moyenne ou médiane), $p90$ = borne supérieure. Respect strict de $0 \le p10 \le p50 \le p90$, valeurs réelles finies.
+  - **Étalonnage non-paramétrique sur résidus :** Quantile conforme empirique $\hat{q}$ calculé sur la série des résidus d'erreurs passés $e_t = y_t - \hat{y}_t$ des fenêtres de validation antérieures.
+  - **Interdiction des replis arbitraires $\pm 10\%$ :** Aucun raccourci arbitraire $\pm 10\%$ n'est autorisé comme intervalle conforme. En cas de résidus insuffisants ($N_{\text{calib}} < 8$), le résultat porte obligatoirement `is_calibrated = False` et statut `uncalibrated_heuristic`.
+  - **Mesure de couverture et largeur :** Suivi systématique de la couverture empirique ($y \in [p10, p90]$), de la largeur brute ($p90 - p10$) et de la largeur relative ($(p90 - p10)/p50$) globalement et par horizon $h \in \{1, 2, 3\}$.
+  - **Incertitude binomiale :** Publication de l'intervalle de confiance à 95% de Wilson sur la couverture réelle estimée.
+- **Évaluation réelle et suivi des erreurs maturées (ADR-079, R3.8) :**
+  - **Suivi sans rétroaction temporelle (C2/C4) :** À chaque échéance $T_{\text{target}} \le T_{\text{evaluation}}$, confrontation stricte de la prévision passée avec l'observation réelle authentique (`actual_price`), sans réinjection de cette réalisation dans le jeu d'entraînement passé du run initial.
+  - **Statuts chronologiques tripartites :**
+    - `as_of_holdout` : évaluation sur la partition de test as-of certifiée (Phase 3 out-of-sample).
+    - `matured_actual` : prévision de production confrontée à l'observation réelle après échéance.
+    - `prospective_pending` : prévision en cours d'attente d'échéance ($T_{\text{target}} > T_{\text{evaluation}}$).
+  - **Décomposition multidimensionnelle obligatoire :** Tout rapport ou export de performance ventile obligatoirement WAPE, MAE, sMAPE, couverture 80%, largeur d'intervalle et effectifs selon :
+    - le produit (`product_code`),
+    - la région géographique (`location_pcode`),
+    - l'horizon temporel ($h=1, 2, 3$),
+    - le régime saisonnier (soudure nov-mars vs récolte avr-oct).
+    Interdiction absolue d'un unique score synthétique global non ventilé.
+  - **Benchmarking loyal et règle de parcimonie :** Confrontation systématique des candidats statistiques (`AutoETS`, `AutoARIMA`) aux baselines de référence (`NaiveLast`, `SeasonalNaive`). Si l'écart de performance $\Delta\text{WAPE} \le 0.01$ (1 point de pourcentage), la baseline est déclarée gagnante.
+  - **Provenance totale (Règle 1 AGENTS.md) :** Chaque ligne de `ml.forecast_evaluation` référence explicitement le `forecast_id`, le `model_run_id`, et l'`actual_observation_id`.
+- **Contraintes :** aucune donnée postérieure à `data_cutoff`. `model_version` = `"{model}@{git_sha_court}"`. Résultats dans `ml.model_run`, `ml.forecast` et `ml.forecast_evaluation`.
 - **Anomalies :** `|z| > 3` sur le z-score robuste (§16) → candidat `PRICE_SPIKE`.
 
 ---
@@ -1476,9 +1605,21 @@ Chaque valeur exposée inclut `value_kind` (`observed | imputed | forecast | com
 | GET | `/v1/observations/{id}` | **Provenance complète** : brut, preuve, méthode, `source_record`, URL d'origine, lien signé vers l'objet Bronze (15 min) |
 | GET | `/v1/stocks?product=&location=` | Stocks |
 | GET | `/v1/trade?product=&flow=&from=&to=` | Flux commerciaux |
-| GET | `/v1/weather/anomalies?location=&from=&to=` | Anomalies météo |
+| GET | `/v1/macro?indicator=&geo_scope=&vintage=&from=&to=&limit=&offset=&format=json\|csv` | Séries macroéconomiques (`obs.macro_observation`), avec pagination et export CSV (ADR-071, R2.9) |
+| GET | `/v1/market/coverage?product=&location=&actor_level=&from=&to=&limit=&offset=&format=json\|csv` | Matrice de couverture, complétude et lacunes (R2.4, ADR-071) |
+| GET | `/v1/economic/indicators?format=json\|csv` · `/v1/economic/dashboard` · `/v1/economic/pilot-context` | Tableau économique interprétable par dimension étanche (ADR-070, ADR-071, R2.8) |
+| GET | `/v1/weather/anomalies?location=&from=&to=` | Anomalies météo (compatibilité ascendante) |
+| GET | `/v1/climate/summary?location=&month=` | Vue agroclimatique consolidée par zone : météo observée, anomalies, prévisions ECMWF, stades phénologiques actifs, alertes et transparence des sources facultatives (R4.11, ADR-087) |
+| GET | `/v1/climate/anomalies?location=&from=&to=&variable=` | Séries temporelles d'anomalies agroclimatiques rigoureuses (cumuls pluie, deltas T°, Z-scores, niveaux de risque, méthode d'agrégation) (ADR-085, ADR-087) |
+| GET | `/v1/climate/forecasts?location=&model=&variable=&limit=&offset=` | Prévisions météorologiques numériques archivées (`obs.weather_forecast`, ECMWF IFS Open Data), quantiles p10/p90, horizon (ADR-084, ADR-087) |
+| GET | `/v1/climate/calendars?zone_code=&product=&month=` | Calendriers culturaux versionnés, stades phénologiques actifs pour le mois, et corridors commerciaux prouvés (ADR-086, ADR-087) |
+| GET | `/v1/climate/events?location=&limit=` | Événements et perspectives d'insécurité alimentaire FEWS NET / IPC (`obs.event`) (ADR-083, ADR-087) |
+| GET | `/v1/climate/facultative-status` | Statut transparent des sources facultatives non intégrées (FIRMS, GloFAS, Copernicus NDVI) avec motif explicite (ADR-087) |
 | GET | `/v1/kpis/market-health?product=&location=&month=` | Score + composantes |
-| GET | `/v1/forecasts?product=&location=&actor_level=` | p10/p50/p90 + métriques de backtest |
+| GET | `/v1/forecasts?product=&location=&actor_level=&model_run_id=&limit=&offset=&format=json\|csv` | Dernières prévisions conformes (`gold.forecast_latest`), intervalles p10/p50/p90, modèle effectif, calibration (ADR-078) |
+| GET | `/v1/forecasts/runs?limit=&offset=&format=json\|csv` · `/v1/forecasts/runs/{id}` | Historique des runs (`ml.model_run`), dataset C4 fingerprint, métriques par horizon, récupération de vieux runs (ADR-078) |
+| GET | `/v1/forecasts/abstentions?limit=&offset=&format=json\|csv` | Séries exclues ou abstentions avec motifs normatifs (ADR-078) |
+| GET | `/v1/forecasts/performance?product=&location=&horizon=&evaluation_kind=&limit=&offset=&format=json\|csv` | Évaluation réelle et suivi des erreurs maturées décomposées (WAPE, MAE, sMAPE, couverture 80%, largeur, Wilson 95%) par produit/zone/horizon/saison (ADR-079, R3.8) |
 | GET | `/v1/alerts?severity=&state=` · PATCH `/v1/alerts/{id}` (admin) | Alertes |
 | GET | `/v1/bulletins` · `/v1/bulletins/{id}` · POST `/v1/bulletins/{id}/approve` (admin) | Bulletins |
 | POST | `/v1/copilot/ask` | Copilote (§21) |
@@ -1519,7 +1660,8 @@ Formats : nombres en `fr-FR` avec espace fine (`2 850 Ar/kg`), dates `MMM yyyy`.
 |---|---|---|
 | `/login` | Formulaire email + mot de passe | public |
 | `/` (Vue d'ensemble) | Filtres (produit, région, niveau d'acteur). Cartes KPI : Market Health (avec composantes), prix médian, variation m/m et a/a, alertes actives, fraîcheur des données. Carte choroplèthe régionale. Courbe de prix avec bande de prévision p10–p90. Dernières alertes | client |
-| `/prices` | Explorateur multi-séries (par niveau d'acteur et par source), tableau, export CSV | client |
+| `/prices` | Explorateur multi-séries (par niveau d'acteur et par source), matrice de couverture et lacunes calendaires, tableau, export CSV (R2.4, R2.10) | client |
+| `/economy` | Observatoire économique par dimension étanche (inflation, change, carburants, commerce, activité), fiches métriques normatives, articulation de transmission pilote rizicole (ADR-070, ADR-072, R2.10) | client |
 | `/map` | Carte plein écran, sélecteur produit/mois, infobulle avec lien vers les observations | client |
 | `/trade` | Imports/exports mensuels par produit, dépendance aux importations | client |
 | `/climate` | Anomalies de pluie par district, calendrier cultural | client |
@@ -1562,3 +1704,135 @@ Accessibilité : contraste AA, navigation clavier sur les filtres. Responsive �
 - `deploy/bootstrap-vps.sh` : installation de Docker, utilisateur `deploy`, `ufw` (ports 22, 80 et 443), `fail2ban`, mises à jour automatiques de sécurité.
 - `deploy/backup.sh` : `pg_dump` quotidien chiffré, rétention de 7 sauvegardes quotidiennes et 4 hebdomadaires, via `restic` vers R2 ou B2. `deploy/restore.sh` est testé en T11.3 sur l'environnement local.
 - Runbook `docs/runbooks/deploy.md` : procédure pas à pas, variables à fournir, vérifications post-déploiement.
+
+---
+
+## 26. Géospatial, Agroclimat et Calendriers Culturaux (ADR-080, R4.1)
+
+### 26.1 Contrats spatiaux et référentiel géodésique
+- **Système de coordonnées de référence (CRS) :** `EPSG:4326` (WGS84). Tout produit raster ou vecteur dérivé doit être exprimé ou reprojeté en `EPSG:4326`.
+- **Bounding Box officielle Madagascar :** `[43.0, -25.8, 50.8, -11.8]` (min_lon, min_lat, max_lon, max_lat).
+- **Résolutions natives normalisées :**
+  - CHIRPS : $0{,}05^\circ$ (~5,5 km à l'équateur).
+  - ERA5-Land : $0{,}1^\circ$ (~11 km).
+  - NASA POWER : $0{,}5^\circ$ (~55 km).
+- **Budget de stockage et découpage (clipping) immédiat :**
+  - Interdiction de stocker en Bronze des rasters mondiaux non découpés s'ils dépassent 50 Mo par partition mensuelle.
+  - Les flux rasters sont découpés sur la BBOX Madagascar avant archivage Bronze ou dérivés.
+
+### 26.2 Séparation étanche météo observée vs météo prévue
+En vertu des principes 1, 3, 8 et 9 d'AGENTS.md, la météo observée et la météo prévue sont strictement isolées :
+1. **Météo observée (`obs.weather_observation`) :**
+   - Stocke uniquement des observations passées constatées.
+   - Extension R4.1 : colonnes `stage` (`preliminary` | `final`), `spatial_resolution`, `coverage_ratio`, `raster_source_record_id`.
+   - Double version fournisseur : une publication préliminaire (ex: CHIRPS préliminaire à J+5) n'est jamais écrasée. Lors de la publication définitive (à M+1), un nouvel enregistrement `stage='final'` est inséré avec `superseded_by` pointant sur la version préliminaire.
+2. **Météo prévue (`obs.weather_forecast`) :**
+   - Table dédiée pour toute projection météorologique (ex: ECMWF IFS, GFS, Météo Madagascar).
+   - Schéma :
+     ```sql
+     CREATE TABLE obs.weather_forecast (
+         forecast_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+         source_record_id UUID NOT NULL REFERENCES meta.source_record(source_record_id),
+         location_id UUID NOT NULL REFERENCES ref.location(location_id),
+         issued_at TIMESTAMPTZ NOT NULL,
+         valid_from TIMESTAMPTZ NOT NULL,
+         valid_to TIMESTAMPTZ NOT NULL,
+         horizon_hours INTEGER NOT NULL,
+         variable TEXT NOT NULL,
+         model_name TEXT NOT NULL,
+         predicted_value NUMERIC(10, 3),
+         predicted_p10 NUMERIC(10, 3),
+         predicted_p90 NUMERIC(10, 3),
+         method TEXT NOT NULL,
+         spatial_resolution TEXT,
+         unit TEXT NOT NULL,
+         ingested_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+         evidence JSONB,
+         raw_payload JSONB,
+         superseded_by UUID REFERENCES obs.weather_forecast(forecast_id) DEFERRABLE INITIALLY DEFERRED
+     );
+     ```
+   - Aucune observation de prix ou prévision de modèle de marché ne peut consommer de météo prévue sans déclaration explicite de scénario exogène.
+
+### 26.3 Calendriers culturaux (`ref.crop_calendar`)
+- Modélise les cycles agricoles des PPN prioritaires par bassin et régime cultural :
+  ```sql
+  CREATE TABLE ref.crop_calendar (
+      calendar_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      product_id UUID NOT NULL REFERENCES ref.product(product_id),
+      location_id UUID NOT NULL REFERENCES ref.location(location_id),
+      season_name TEXT NOT NULL,
+      crop_regime TEXT NOT NULL,
+      planting_start_month SMALLINT NOT NULL,
+      planting_end_month SMALLINT NOT NULL,
+      growing_start_month SMALLINT NOT NULL,
+      growing_end_month SMALLINT NOT NULL,
+      harvest_start_month SMALLINT NOT NULL,
+      harvest_end_month SMALLINT NOT NULL,
+      peak_harvest_month SMALLINT,
+      water_sensitivity_profile JSONB,
+      source_reference TEXT NOT NULL,
+      verified BOOLEAN NOT NULL DEFAULT TRUE,
+      notes TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      CONSTRAINT uq_crop_calendar UNIQUE (product_id, location_id, season_name, crop_regime)
+  );
+  ```
+- Taxonomie de base : `taxonomy/crop_calendar.yaml`.
+
+### 26.4 Agrégation zonale et masques agricoles
+- Méthodes autorisées :
+  - `point_centroid` : extraction de la cellule raster au centroïde de la zone.
+  - `zonal_mean` : moyenne spatiale non pondérée des cellules intersectant la zone polygonale.
+  - `cropland_weighted_mean` : moyenne pondérée par la densité de terres cultivées issue d'un masque agricole (`cropland_mask`).
+- Règle de véracité agronomique : L'usage de `cropland_weighted_mean` exige la présence vérifiée d'un raster de masque agricole. À défaut, l'agrégation est étiquetée `zonal_mean`.
+
+### 26.5 Endpoints API Agroclimat (`/v1/climate`, ADR-087, R4.11)
+- `/v1/climate/summary` : vue synthétique et explicable par district/région articulant :
+  1. observation et estimation (CHIRPS, DGM), méthode d'agrégation et signalement d'absence de masque agricole ;
+  2. anomalie rigoureuse vs baseline 1991-2020 ($N \ge 10$ ans) ou statut explicite `insufficient_history` ;
+  3. prévision NWP archivable (ECMWF IFS), dates `issued_at`, `valid_from`, `valid_to`, horizon et quantiles p10/p90 (`value_kind: projected`) ;
+  4. cycles culturaux actifs avec calcul dynamique du stade phénologique du mois (`peak_harvest`, `harvest`, `planting`, `growing`) et corridors commerciaux documentés ;
+  5. alertes FEWS NET / IPC avec statut projeté certifié ;
+  6. statut transparent des sources environnementales facultatives non intégrées (FIRMS, GloFAS, Copernicus NDVI) affichées comme indisponibles sans fabrication de zéros fictifs ni indice composite non étayé.
+- `/v1/climate/anomalies` : séries temporelles d'anomalies pluviométriques et thermiques.
+- `/v1/climate/forecasts` : prévisions numériques archivées (`obs.weather_forecast`).
+- `/v1/climate/calendars` : calendriers culturaux et corridors d'approvisionnement.
+- `/v1/climate/events` : événements et perspectives FEWS NET / IPC.
+- `/v1/climate/facultative-status` : transparence des capacités environnementales optionnelles.
+
+---
+
+## 27. Récoltes, quantités et approvisionnement des marchés (R5, ADR-088)
+
+### 27.1 Modèle de données et cibles de mesure
+Les quantités sont des grandeurs extensives soumises à une typologie stricte pour interdire les erreurs d'agrégation et le double comptage :
+- **Trois cibles distinctes (`QuantityTarget`) :**
+  1. `HARVEST_VOLUME` : volume agricole primaire récolté par bassin de production et campagne agricole.
+  2. `INFLOW_ARRIVAL` : flux logistique entrant sur un marché public donné au cours d'une fenêtre temporelle explicite (`period_start`, `period_end`).
+  3. `STOCK_INVENTORY` : stock physique disponible à un instant $T$ (`as_of_date`) dans les dépôts ou échoppes d'un marché.
+  4. `OUTFLOW_SALES` : volume sortant ou écoulé sur le marché.
+
+### 27.2 Modes de mesure (`QuantityMeasurementMode`)
+- `MEASURED_SCALE` : pesée directe sur bascule ou balance étalonnée.
+- `DECLARED_TRADER` : déclaration orale ou écrite du commerçant/grossiste/transporteur.
+- `ESTIMATED_SURVEY` : estimation de l'enquêteur par dénombrement visuel d'unités standards.
+
+### 27.3 Unités physiques et conversions (`QuantityUnit`)
+- Unité de base : `kg` (facteur 1.0) et `tonne` (facteur 1000.0).
+- Contenants étalonnés : `bag_50kg` (50 kg), `bag_100kg` (100 kg).
+- Mesures traditionnelles locales :
+  - `gony` : sac traditionnel malgache en fibres ou plastique, avec table de conversion produit (50 kg standard pour le riz, 45 kg pour le maïs grain sec).
+  - `kapoaka` : boîte standard de lait concentré (300 ml), conversion massique stricte selon densité apparente (260 g pour le riz blanc usiné, 280 g pour le riz paddy, 250 g pour le sucre).
+
+### 27.4 Règle absolue anti-PII (Données Personnelles)
+- Rejet catégorique de tout attribut personnel (`trader_name`, `phone`, `email`, `driver_id`, `vehicle_plate`, `national_id`).
+- Modèles Pydantic en `extra="forbid"`.
+- Seules les métadonnées de lieux publics (`market_code`, `location_pcode`, `market_name`, `market_type`) sont acceptées.
+
+### 27.5 Règle de prévention du double comptage
+- Interdiction formelle de sommer un stock (`STOCK_INVENTORY`) et un flux (`INFLOW_ARRIVAL`).
+- Les cumuls temporels de flux ne peuvent être effectués qu'entre observations disjointes dans le temps.
+
+

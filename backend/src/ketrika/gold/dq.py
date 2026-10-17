@@ -16,6 +16,46 @@ from ketrika.core.models.db import Alert, DqResult, SourceRecord
 logger = logging.getLogger("ketrika.dq")
 
 
+class GoldDqRejected(ValueError):
+    """Raised when a blocking Data Quality check fails, stopping Gold publication (SPECS §14, R2.3)."""
+
+
+@dataclass(frozen=True)
+class PublicationDenominators:
+    """Exact accounting denominators for Gold publication (SPECS §14, R2.3).
+
+    Strict invariant: candidate_rows == accepted_rows + rejected_rows + review_rows.
+    """
+
+    candidate_files: int
+    parsed_files: int
+    failed_files: int
+    review_files: int
+    pending_files: int
+
+    candidate_rows: int
+    accepted_rows: int
+    rejected_rows: int
+    review_rows: int
+
+    def validate_invariants(self) -> None:
+        """Validate exact mathematical consistency of publication accounting."""
+        expected_rows = self.accepted_rows + self.rejected_rows + self.review_rows
+        if self.candidate_rows != expected_rows:
+            raise ValueError(
+                f"publication_denominators_inconsistent: candidate_rows ({self.candidate_rows}) "
+                f"!= accepted ({self.accepted_rows}) + rejected ({self.rejected_rows}) + review ({self.review_rows})"
+            )
+        expected_files = (
+            self.parsed_files + self.failed_files + self.review_files + self.pending_files
+        )
+        if self.candidate_files != expected_files:
+            raise ValueError(
+                f"file_denominators_inconsistent: candidate_files ({self.candidate_files}) != "
+                f"parsed ({self.parsed_files}) + failed ({self.failed_files}) + review ({self.review_files}) + pending ({self.pending_files})"
+            )
+
+
 @dataclass(frozen=True)
 class DqCheckResult:
     """Result of a single DQ asset check."""
@@ -56,10 +96,14 @@ def check_provenance_complete(session: Session, source_id: str | None = None) ->
         )
         row = session.execute(sql).fetchone()
 
-    total = row[0] if row else 0
-    valid = row[1] if row else 0
+    try:
+        total_num = int(row[0]) if row and row[0] is not None else 0
+        valid_num = int(row[1]) if row and row[1] is not None else 0
+    except (TypeError, ValueError):
+        total_num = 0
+        valid_num = 0
 
-    rate = (valid / total * 100.0) if total > 0 else 100.0
+    rate = (valid_num / total_num * 100.0) if total_num > 0 else 100.0
     passed = rate >= 100.0
 
     return DqCheckResult(
@@ -69,7 +113,7 @@ def check_provenance_complete(session: Session, source_id: str | None = None) ->
         passed=passed,
         metric=round(rate, 2),
         threshold=100.0,
-        details={"total_records": total, "valid_provenance": valid},
+        details={"total_records": total_num, "valid_provenance": valid_num},
     )
 
 
@@ -233,6 +277,208 @@ def check_freshness_and_manage_alerts(
     return results
 
 
+def check_llm_unverified_in_gold(session: Session, source_id: str | None = None) -> DqCheckResult:
+    """Check that 0 unverified LLM extractions enter Gold (SPECS §11, §14).
+
+    Any LLM-extracted value in Gold must carry mechanical provenance evidence
+    (page + excerpt) and have review_status = 'accepted'.
+    """
+    if source_id is not None:
+        sql = text(
+            """
+            SELECT count(*)::integer
+            FROM obs.price_observation po
+            JOIN meta.source_record sr ON po.source_record_id = sr.source_record_id
+            WHERE sr.source_id = :sid
+              AND po.superseded_by IS NULL
+              AND po.review_status = 'accepted'
+              AND po.price_mga_per_base IS NOT NULL
+              AND (
+                  po.extraction_method IN ('llm', 'llm_unverified')
+                  OR (
+                      po.extraction_method IN ('llm_verified', 'dual_agree')
+                      AND (
+                          po.evidence IS NULL
+                          OR po.evidence->'provenance'->'llm_evidence' IS NULL
+                          OR po.evidence->'provenance'->'llm_evidence'->>'page' IS NULL
+                          OR po.evidence->'provenance'->'llm_evidence'->>'text' IS NULL
+                      )
+                  )
+              );
+            """
+        )
+        violations = session.execute(sql, {"sid": source_id}).scalar() or 0
+    else:
+        sql = text(
+            """
+            SELECT count(*)::integer
+            FROM obs.price_observation po
+            WHERE po.superseded_by IS NULL
+              AND po.review_status = 'accepted'
+              AND po.price_mga_per_base IS NOT NULL
+              AND (
+                  po.extraction_method IN ('llm', 'llm_unverified')
+                  OR (
+                      po.extraction_method IN ('llm_verified', 'dual_agree')
+                      AND (
+                          po.evidence IS NULL
+                          OR po.evidence->'provenance'->'llm_evidence' IS NULL
+                          OR po.evidence->'provenance'->'llm_evidence'->>'page' IS NULL
+                          OR po.evidence->'provenance'->'llm_evidence'->>'text' IS NULL
+                      )
+                  )
+              );
+            """
+        )
+        violations = session.execute(sql).scalar() or 0
+
+    passed = violations == 0
+
+    return DqCheckResult(
+        check_name="llm_unverified_in_gold",
+        source_id=source_id,
+        asset_key="obs.price_observation",
+        passed=passed,
+        metric=float(violations),
+        threshold=0.0,
+        details={"unverified_llm_records": violations},
+    )
+
+
+def get_publication_denominators(
+    session: Session, source_id: str | None = None
+) -> PublicationDenominators:
+    """Compute and validate exact accounting denominators for publication (SPECS §14, R2.3)."""
+    if source_id is not None:
+        file_sql = text(
+            """
+            SELECT
+                count(*)::integer AS total_files,
+                count(CASE WHEN extraction_status = 'parsed' THEN 1 END)::integer AS parsed,
+                count(CASE WHEN extraction_status = 'failed' THEN 1 END)::integer AS failed,
+                count(CASE WHEN extraction_status = 'review' THEN 1 END)::integer AS review,
+                count(CASE WHEN extraction_status = 'pending' THEN 1 END)::integer AS pending
+            FROM meta.source_record
+            WHERE source_id = :sid;
+            """
+        )
+        f_row = session.execute(file_sql, {"sid": source_id}).fetchone()
+        row_sql = text(
+            """
+            SELECT
+                count(*)::integer AS candidate_rows,
+                count(CASE WHEN po.review_status = 'accepted' THEN 1 END)::integer AS accepted,
+                count(CASE WHEN po.review_status = 'rejected' THEN 1 END)::integer AS rejected,
+                count(CASE WHEN po.review_status = 'pending' THEN 1 END)::integer AS review
+            FROM obs.price_observation po
+            JOIN meta.source_record sr ON po.source_record_id = sr.source_record_id
+            WHERE sr.source_id = :sid
+              AND po.superseded_by IS NULL;
+            """
+        )
+        r_row = session.execute(row_sql, {"sid": source_id}).fetchone()
+    else:
+        file_sql = text(
+            """
+            SELECT
+                count(*)::integer AS total_files,
+                count(CASE WHEN extraction_status = 'parsed' THEN 1 END)::integer AS parsed,
+                count(CASE WHEN extraction_status = 'failed' THEN 1 END)::integer AS failed,
+                count(CASE WHEN extraction_status = 'review' THEN 1 END)::integer AS review,
+                count(CASE WHEN extraction_status = 'pending' THEN 1 END)::integer AS pending
+            FROM meta.source_record;
+            """
+        )
+        f_row = session.execute(file_sql).fetchone()
+        row_sql = text(
+            """
+            SELECT
+                count(*)::integer AS candidate_rows,
+                count(CASE WHEN review_status = 'accepted' THEN 1 END)::integer AS accepted,
+                count(CASE WHEN review_status = 'rejected' THEN 1 END)::integer AS rejected,
+                count(CASE WHEN review_status = 'pending' THEN 1 END)::integer AS review
+            FROM obs.price_observation
+            WHERE superseded_by IS NULL;
+            """
+        )
+        r_row = session.execute(row_sql).fetchone()
+
+    def _to_int(val: Any) -> int:
+        if type(val) is int:
+            return val
+        if isinstance(val, (float, str)):
+            try:
+                return int(val)
+            except (TypeError, ValueError):
+                return 0
+        return 0
+
+    total_files = _to_int(f_row[0]) if f_row else 0
+    parsed_files = _to_int(f_row[1]) if f_row else 0
+    failed_files = _to_int(f_row[2]) if f_row else 0
+    review_files = _to_int(f_row[3]) if f_row else 0
+    pending_files = _to_int(f_row[4]) if f_row else 0
+
+    candidate_rows = _to_int(r_row[0]) if r_row else 0
+    accepted_rows = _to_int(r_row[1]) if r_row else 0
+    rejected_rows = _to_int(r_row[2]) if r_row else 0
+    review_rows = _to_int(r_row[3]) if r_row else 0
+
+    denominators = PublicationDenominators(
+        candidate_files=total_files,
+        parsed_files=parsed_files,
+        failed_files=failed_files,
+        review_files=review_files,
+        pending_files=pending_files,
+        candidate_rows=candidate_rows,
+        accepted_rows=accepted_rows,
+        rejected_rows=rejected_rows,
+        review_rows=review_rows,
+    )
+    denominators.validate_invariants()
+    return denominators
+
+
+
+def check_blocking_dq_gate(
+    session: Session, source_id: str | None = None
+) -> list[DqCheckResult]:
+    """Execute blocking DQ gate checks and refuse publication if any fails (SPECS §14, R2.3).
+
+    Blocking checks (SPECS §14):
+    1. provenance_complete: 100% of observations must have valid source_record_id.
+    2. parse_success_rate: >= 99% parse success rate per source run.
+    3. llm_unverified_in_gold: 0 unverified LLM extractions allowed in Gold.
+    """
+    checks: list[DqCheckResult] = []
+
+    # 1. Provenance complete (threshold 100.0%)
+    prov_check = check_provenance_complete(session, source_id)
+    checks.append(prov_check)
+    if not prov_check.passed:
+        raise GoldDqRejected(
+            f"blocking_dq_provenance_incomplete: rate={prov_check.metric}% < threshold={prov_check.threshold}%"
+        )
+
+    # 2. Parse success rate (threshold 99.0%)
+    parse_check = check_parse_success_rate(session, source_id)
+    checks.append(parse_check)
+    if not parse_check.passed:
+        raise GoldDqRejected(
+            f"blocking_dq_parse_rate_low: rate={parse_check.metric}% < threshold={parse_check.threshold}%"
+        )
+
+    # 3. LLM unverified in Gold (threshold 0)
+    llm_check = check_llm_unverified_in_gold(session, source_id)
+    checks.append(llm_check)
+    if not llm_check.passed:
+        raise GoldDqRejected(
+            f"blocking_dq_llm_unverified_in_gold: violations={llm_check.metric} > threshold={llm_check.threshold}"
+        )
+
+    return checks
+
+
 def run_all_dq_checks(session: Session, persist: bool = True) -> list[DqCheckResult]:
     """Execute full battery of Data Quality checks and persist results to ops.dq_result (SPECS §14)."""
     checks: list[DqCheckResult] = []
@@ -241,6 +487,7 @@ def run_all_dq_checks(session: Session, persist: bool = True) -> list[DqCheckRes
     checks.append(check_provenance_complete(session))
     checks.append(check_parse_success_rate(session))
     checks.append(check_price_range_sanity(session))
+    checks.append(check_llm_unverified_in_gold(session))
 
     # 2. Freshness and staleness checks per source
     freshness_checks = check_freshness_and_manage_alerts(session)

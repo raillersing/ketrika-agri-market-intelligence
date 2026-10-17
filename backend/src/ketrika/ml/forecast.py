@@ -1,11 +1,13 @@
-"""Orchestrator for price forecasting pipeline and persistence (SPECS §17).
+"""Orchestrator for price forecasting pipeline, metadata, and persistence (SPECS §17, §19, ADR-078).
 
 Extracts eligible series up to data_cutoff, conducts rolling-origin backtests,
-fits selected models, generates p10/p50/p90 quantiles, and persists runs & forecasts.
+fits selected models, calibrates conformal intervals, preserves abstentions and lineage,
+and persists runs & forecasts without destructive overwrites.
 """
 
 from __future__ import annotations
 
+import hashlib
 import subprocess
 import uuid
 from datetime import UTC, date, datetime
@@ -18,14 +20,17 @@ from ketrika.core.logging import get_logger
 from ketrika.core.models.db import Forecast, ModelRun
 from ketrika.gold.refresh import refresh_gold_views
 from ketrika.ml.backtest import BacktestResult, select_best_model
+from ketrika.ml.conformal import calibrate_conformal_bounds
 from ketrika.ml.models import (
     AutoARIMAModel,
     AutoETSModel,
     DeterministicBaselineModel,
-    ForecastPrediction,
+    ForecastModel,
+    ModelForecastResult,
+    NaiveLastModel,
     SeasonalNaiveModel,
 )
-from ketrika.ml.series import extract_eligible_series
+from ketrika.ml.series import audit_series_eligibility
 
 logger = get_logger(__name__)
 
@@ -55,9 +60,11 @@ def get_future_month_starts(base_date: date, count: int) -> list[date]:
     return dates
 
 
-def _instantiate_model(name: str) -> Any:
-    """Instantiate model by its name."""
-    if name == "AutoETS":
+def _instantiate_model(name: str) -> ForecastModel | DeterministicBaselineModel:
+    """Instantiate candidate model by its canonical name."""
+    if name == "NaiveLast":
+        return NaiveLastModel()
+    elif name == "AutoETS":
         return AutoETSModel()
     elif name == "AutoARIMA":
         return AutoARIMAModel()
@@ -67,49 +74,90 @@ def _instantiate_model(name: str) -> Any:
         return DeterministicBaselineModel(name=name)
 
 
+def compute_series_fingerprint(data_cutoff: date, series_list: list[Any]) -> str:
+    """Compute deterministic SHA-256 fingerprint for forecasting input snapshot."""
+    hasher = hashlib.sha256()
+    hasher.update(data_cutoff.isoformat().encode("utf-8"))
+    for s in sorted(series_list, key=lambda x: str(x.series_key)):
+        hasher.update(str(s.series_key).encode("utf-8"))
+        for pt in s.points:
+            pt_repr = f"{pt.month.isoformat()}:{pt.price}:{pt.observed_or_imputed}"
+            hasher.update(pt_repr.encode("utf-8"))
+    return hasher.hexdigest()
+
+
 def run_price_forecasting_pipeline(
     session: Session,
     data_cutoff: date,
     horizon: int = 3,
-    min_points: int = 6,
+    min_points: int | None = None,
+    cohort: str = "pure_observed",
+    dataset_fingerprint: str | None = None,
     refresh_gold: bool = True,
 ) -> dict[str, Any]:
-    """Execute complete price forecasting workflow per SPECS §17.
+    """Execute complete price forecasting workflow per SPECS §17 and ADR-078.
 
-    1. Extract eligible price series up to data_cutoff (strictly anti-leakage).
-    2. Rolling-origin backtest on each series across candidate models.
-    3. Select best model based on WAPE.
-    4. Fit and predict h=1..horizon steps ahead.
-    5. Persist run and forecast rows in ml schema.
-    6. Refresh gold.forecast_latest materialized view.
+    1. Audit and extract eligible price series up to data_cutoff (strictly anti-leakage).
+    2. Collect documented abstentions and series exclusions with normative reasons.
+    3. Rolling-origin backtest on each series across candidate models (6 windows, h=3).
+    4. Select winning model based on WAPE and simplicity ranking.
+    5. Fit winner and predict h=1..horizon steps ahead.
+    6. Calibrate conformal intervals (p10, p90) on past residuals with N_calib >= 8 check.
+    7. Persist run and forecast rows in ml schema with immutable lineage (C4).
+    8. Refresh gold.forecast_latest materialized view.
     """
     logger.info(
         "starting_price_forecasting",
         data_cutoff=data_cutoff.isoformat(),
         horizon=horizon,
         min_points=min_points,
+        cohort=cohort,
     )
 
-    series_list = extract_eligible_series(
+    # 1. Audit series eligibility and identify exclusions
+    require_observed_only = cohort == "pure_observed"
+    audit_report = audit_series_eligibility(
         session=session,
         data_cutoff=data_cutoff,
-        min_points=min_points,
+        min_total_points=min_points or 36,
+        require_observed_only=require_observed_only,
     )
 
-    if not series_list:
+    eligible_series = audit_report.eligible_series
+    abstentions_list: list[dict[str, Any]] = [
+        {
+            "series_key": ex.series_key,
+            "product_code": ex.product_code,
+            "location_pcode": ex.location_pcode,
+            "actor_level": ex.actor_level,
+            "reason": ", ".join(ex.reasons) if ex.reasons else "excluded",
+            "points_count": ex.total_valid_points,
+        }
+        for ex in audit_report.excluded_series
+    ]
+
+    # Compute lineage fingerprint
+    computed_fingerprint = dataset_fingerprint or compute_series_fingerprint(data_cutoff, eligible_series)
+
+    if not eligible_series:
         logger.warning(
             "no_eligible_series_for_forecasting",
             data_cutoff=data_cutoff.isoformat(),
+            n_excluded=len(abstentions_list),
         )
         return {
-            "status": "skipped",
+            "status": "abstained",
             "reason": "no_eligible_series",
             "n_series": 0,
             "forecasts_generated": 0,
+            "n_abstentions": len(abstentions_list),
+            "abstentions": abstentions_list,
+            "dataset_fingerprint": computed_fingerprint,
         }
 
     target_dates = get_future_month_starts(data_cutoff, horizon)
     model_version = f"1.0.0@{get_git_sha()}"
+    model_run_id = uuid.uuid4()
 
     by_series_metrics: dict[str, Any] = {}
     forecast_objects: list[Forecast] = []
@@ -118,12 +166,10 @@ def run_price_forecasting_pipeline(
     smapes: list[float] = []
     coverages: list[float] = []
 
-    model_run_id = uuid.uuid4()
+    for s in eligible_series:
+        y = s.to_numpy_array(fill_strategy="none")
 
-    for s in series_list:
-        y = np.array([pt.price for pt in s.points], dtype=float)
-
-        # 1. Backtest selection
+        # 2. Backtest selection (rolling-origin 6 windows)
         bt_res: BacktestResult = select_best_model(
             series_key=s.series_key,
             y=y,
@@ -145,11 +191,39 @@ def run_price_forecasting_pipeline(
             "evaluations": {name: m.to_dict() for name, m in bt_res.evaluations.items()},
         }
 
-        # 2. Fit winner on all history and generate final predictions
-        winner_model = _instantiate_model(bt_res.best_model_name)
-        pred: ForecastPrediction = winner_model.fit_predict(y, h=horizon)
+        # 3. Fit winner on historical series and generate predictions
+        winner_instance = _instantiate_model(bt_res.best_model_name)
+        fit_res: ModelForecastResult = winner_instance.fit_predict(
+            y,
+            h=horizon,
+            unit=s.unit,
+            currency="MGA",
+        )
 
-        # 3. Create Forecast entities for horizons 1..horizon
+        # 4. Conformal calibration on historical residuals
+        valid_y = y[~np.isnan(y)]
+        past_residuals: list[float] = []
+        if len(valid_y) > 1:
+            past_residuals = [float(abs(valid_y[i] - valid_y[i - 1])) for i in range(1, len(valid_y))]
+
+        # Calibrate bounds via non-parametric conformal quantile
+        conformal_res = calibrate_conformal_bounds(
+            point_forecasts=fit_res.prediction.mean,
+            calibration_residuals=past_residuals,
+            target_coverage=0.80,
+            min_residuals=8,
+        )
+
+        is_calibrated = conformal_res.is_calibrated
+        calib_size = conformal_res.calibration_sample_size
+        final_p10 = conformal_res.p10
+        final_p90 = conformal_res.p90
+        interval_widths = conformal_res.width
+
+        is_baseline = bt_res.best_model_name in ("NaiveLast", "SeasonalNaive") or fit_res.model_effective in ("NaiveLast", "SeasonalNaive")
+        series_status = "baseline_fallback" if (fit_res.status == "fallback" or is_baseline) else fit_res.status
+
+        # 5. Create Forecast entities for horizons 1..horizon
         for h_step in range(1, horizon + 1):
             idx = h_step - 1
             tgt_date = target_dates[idx]
@@ -162,9 +236,20 @@ def run_price_forecasting_pipeline(
                 actor_level=s.actor_level,
                 target_period=tgt_date,
                 horizon=h_step,
-                p10=float(pred.p10[idx]),
-                p50=float(pred.mean[idx]),
-                p90=float(pred.p90[idx]),
+                p10=float(final_p10[idx]),
+                p50=float(fit_res.prediction.mean[idx]),
+                p90=float(final_p90[idx]),
+                model_requested=fit_res.model_requested,
+                model_effective=fit_res.model_effective,
+                is_baseline=is_baseline,
+                is_calibrated=is_calibrated,
+                calibration_sample_size=calib_size,
+                status=series_status,
+                fallback_reason=fit_res.fallback_reason,
+                currency="MGA",
+                unit=s.unit,
+                interval_width=float(interval_widths[idx]),
+                coverage_rate_80=float(bt_res.best_metrics.coverage_80),
                 generated_at=datetime.now(UTC),
             )
             forecast_objects.append(fc)
@@ -175,10 +260,12 @@ def run_price_forecasting_pipeline(
         "mae": round(float(np.mean(maes)), 2) if maes else 0.0,
         "smape": round(float(np.mean(smapes)), 4) if smapes else 0.0,
         "coverage_80": round(float(np.mean(coverages)), 4) if coverages else 0.0,
-        "n_series": len(series_list),
+        "n_series": len(eligible_series),
         "by_series": by_series_metrics,
+        "abstentions": abstentions_list,
     }
 
+    # 6. Persist ModelRun entity
     model_run = ModelRun(
         model_run_id=model_run_id,
         task="price_forecast",
@@ -186,7 +273,12 @@ def run_price_forecasting_pipeline(
         model_version=model_version,
         data_cutoff=data_cutoff,
         trained_at=datetime.now(UTC),
-        params={"horizon": horizon, "candidates": ["SeasonalNaive", "AutoETS", "AutoARIMA"]},
+        params={
+            "horizon": horizon,
+            "candidates": ["SeasonalNaive", "AutoETS", "AutoARIMA"],
+            "cohort": cohort,
+            "dataset_fingerprint": computed_fingerprint,
+        },
         metrics=overall_metrics,
     )
 
@@ -201,14 +293,18 @@ def run_price_forecasting_pipeline(
     logger.info(
         "price_forecasting_complete",
         model_run_id=str(model_run_id),
-        n_series=len(series_list),
+        n_series=len(eligible_series),
         n_forecasts=len(forecast_objects),
+        n_abstentions=len(abstentions_list),
         avg_wape=overall_metrics["wape"],
     )
 
     return {
         "model_run_id": str(model_run_id),
-        "n_series": len(series_list),
+        "n_series": len(eligible_series),
         "forecasts_generated": len(forecast_objects),
+        "n_abstentions": len(abstentions_list),
+        "abstentions": abstentions_list,
         "metrics": overall_metrics,
+        "dataset_fingerprint": computed_fingerprint,
     }

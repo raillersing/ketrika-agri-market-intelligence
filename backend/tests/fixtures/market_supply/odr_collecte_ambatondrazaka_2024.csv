@@ -1,0 +1,4 @@
+target,measurement_mode,market_type,market_code,location_raw,product_raw,period_start,period_end,quantity_raw,unit_raw,stock_status,published_at
+harvest_volume,estimated_survey,primary_collection,BASIN_ALAOTRA,Bassin Lac Alaotra Ambatondrazaka,rice_paddy,2024-05-01,2024-05-31,8500.0,tonne,sufficient,2024-06-05T00:00:00Z
+inflow_arrival,measured_scale,primary_collection,MKT_AMBATONDRAZAKA,Marché Collecte Ambatondrazaka,rice_paddy,2024-05-01,2024-05-07,1200.0,tonne,sufficient,2024-05-08T00:00:00Z
+stock_inventory,declared_trader,primary_collection,MKT_AMBATONDRAZAKA,Magasins Stockage Ambatondrazaka,rice_paddy,2024-05-07,2024-05-07,3400.0,tonne,sufficient,2024-05-08T00:00:00Z

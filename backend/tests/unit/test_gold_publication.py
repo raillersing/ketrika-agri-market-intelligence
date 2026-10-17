@@ -147,10 +147,10 @@ def test_concurrent_failure_has_local_savepoint_before_nonconcurrent_retry() -> 
 def test_initialization_creates_all_views_unpopulated_without_certification() -> None:
     session = MagicMock(spec=Session)
     result = init_gold_views(session)
-    assert result == {"views_initialized": 12, "views_populated": 0}
+    assert result == {"views_initialized": len(ORDERED_GOLD_VIEWS), "views_populated": 0}
     statements = [str(call.args[0]) for call in session.execute.call_args_list]
-    assert len(statements) == 13
-    for view, statement in zip(ORDERED_GOLD_VIEWS, statements[:12], strict=True):
+    assert len(statements) == len(ORDERED_GOLD_VIEWS) + 1
+    for view, statement in zip(ORDERED_GOLD_VIEWS, statements[: len(ORDERED_GOLD_VIEWS)], strict=True):
         assert f"CREATE MATERIALIZED VIEW gold.{view} AS" in statement
         assert "WITH NO DATA;" in statement
     session.commit.assert_not_called()

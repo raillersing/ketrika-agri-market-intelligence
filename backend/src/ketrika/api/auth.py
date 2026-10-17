@@ -51,16 +51,84 @@ def create_access_token(user: UserAccount, expires_delta: timedelta | None = Non
     return token
 
 
+# In-memory revocation registry for active logout and invalidation (ADR-101 / R6.7)
+REVOKED_TOKENS: set[str] = set()
+
+
+def revoke_token(token: str) -> None:
+    """Revoke an active JWT access token upon explicit logout (ADR-101)."""
+    clean = token.strip()
+    if clean:
+        REVOKED_TOKENS.add(clean)
+
+
+def is_token_revoked(token: str) -> bool:
+    """Check if token has been revoked."""
+    return token.strip() in REVOKED_TOKENS
+
+
 def decode_access_token(token: str) -> dict[str, Any]:
     """Decode and validate JWT access token."""
+    clean_token = token.strip()
+    if is_token_revoked(clean_token):
+        raise UnauthorizedException("Session has been terminated (logged out)")
+
     settings = get_settings()
     try:
-        payload = jwt.decode(token, settings.jwt_secret, algorithms=["HS256"])
+        payload = jwt.decode(clean_token, settings.jwt_secret, algorithms=["HS256"])
         return payload
     except jwt.ExpiredSignatureError as e:
         raise UnauthorizedException("Session has expired") from e
     except jwt.InvalidTokenError as e:
         raise UnauthorizedException("Invalid authentication token") from e
+
+
+def create_signed_action_token(
+    action: str,
+    resource_id: str,
+    expires_seconds: int = 300,
+) -> str:
+    """Generate a tamper-proof cryptographically signed token for specific actions (ADR-101).
+
+    Used for time-limited signed download links, export links, and verifiable one-time actions.
+    """
+    settings = get_settings()
+    now = datetime.now(UTC)
+    expire = now + timedelta(seconds=expires_seconds)
+    payload = {
+        "action": action,
+        "resource_id": str(resource_id),
+        "iat": int(now.timestamp()),
+        "exp": int(expire.timestamp()),
+    }
+    return jwt.encode(payload, settings.jwt_secret, algorithm="HS256")
+
+
+def verify_signed_action_token(
+    token: str,
+    expected_action: str,
+    expected_resource_id: str,
+) -> dict[str, Any]:
+    """Verify cryptographically signed action token and enforce expiry and scope (ADR-101).
+
+    Rejects expired links, modified tokens, or action/resource mismatches.
+    """
+    settings = get_settings()
+    try:
+        payload = jwt.decode(token.strip(), settings.jwt_secret, algorithms=["HS256"])
+    except jwt.ExpiredSignatureError as e:
+        raise UnauthorizedException("Signed link has expired") from e
+    except jwt.InvalidTokenError as e:
+        raise UnauthorizedException("Invalid signed action link") from e
+
+    if payload.get("action") != expected_action:
+        raise ForbiddenException(f"Action mismatch: expected {expected_action}")
+
+    if str(payload.get("resource_id")) != str(expected_resource_id):
+        raise ForbiddenException(f"Resource mismatch: expected {expected_resource_id}")
+
+    return payload
+
 
 
 def generate_api_key_pair() -> tuple[str, str, str]:

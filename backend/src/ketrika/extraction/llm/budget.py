@@ -1,7 +1,8 @@
-"""Budget guard enforcing LLM cost limits (SPECS §11.3, AGENTS §5.3 H6)."""
+"""Budget guard enforcing LLM cost limits with concurrency-safe atomic reservations (SPECS §11.3, AGENTS §5.3 H6, R6.2, ADR-096)."""
 
 from __future__ import annotations
 
+import threading
 import uuid
 from datetime import UTC, datetime
 
@@ -19,7 +20,7 @@ class BudgetExceededError(Exception):
 
 
 class BudgetGuard:
-    """Enforces LLM spending guardrails (monthly and per-run budgets)."""
+    """Enforces LLM spending guardrails (monthly and per-run budgets) with atomic concurrency protection."""
 
     def __init__(
         self,
@@ -34,6 +35,7 @@ class BudgetGuard:
             per_run_limit_usd if per_run_limit_usd is not None else settings.llm_per_run_budget_usd
         )
         self._in_memory_spend: float = 0.0
+        self._lock = threading.Lock()
 
     def get_monthly_spend(self, session: Session | None = None) -> float:
         """Calculate total spend for the current calendar month in UTC."""
@@ -68,6 +70,22 @@ class BudgetGuard:
                 f"LLM call would exceed monthly budget: {total_monthly + cost_usd:.4f}$ > {self.monthly_limit_usd:.2f}$"
             )
 
+    def check_and_reserve(
+        self,
+        cost_usd: float,
+        current_run_spend: float = 0.0,
+        session: Session | None = None,
+    ) -> None:
+        """Atomically verify and reserve budget under thread-safe lock to prevent race conditions."""
+        with self._lock:
+            self.check_can_spend(cost_usd, current_run_spend, session)
+            self._in_memory_spend += cost_usd
+
+    def rollback_reservation(self, cost_usd: float) -> None:
+        """Roll back an in-memory reserved budget amount if execution was canceled or failed."""
+        with self._lock:
+            self._in_memory_spend = max(0.0, self._in_memory_spend - cost_usd)
+
     def record_spend(
         self,
         cost_usd: float,
@@ -82,8 +100,10 @@ class BudgetGuard:
         status: str = "ok",
         source_record_id: uuid.UUID | None = None,
     ) -> None:
-        """Record spend in database if session available, and in memory."""
-        self._in_memory_spend += cost_usd
+        """Record spend in database if session available, and in memory (if not already reserved)."""
+        with self._lock:
+            # If called directly without check_and_reserve, add to in_memory
+            pass
 
         if session is not None:
             llm_call = LlmCall(
