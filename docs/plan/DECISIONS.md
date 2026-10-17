@@ -2,6 +2,35 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-101 : durcissement des contrôles d'accès RBAC, invalidation de session au logout, liens signés cryptographiques à péremption et posture de sécurité applicative non-root (R6.7)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.7 ; Phase R6.
+- **Contexte :** La tâche R6.7 impose de durcir les accès, l'audit et la sécurité applicative de la plateforme Ketrika Agri Market Intelligence. Les directives normatives de R6.7 et d'AGENTS.md imposent :
+  1. Contrôle d'accès RBAC strict sur toutes les mutations :
+     - Les utilisateurs avec le rôle `client` ou non authentifiés ne doivent en aucun cas pouvoir modifier les sources, résoudre la file de revue (`ReviewItem`), approuver un bulletin hebdomadaire ou acquitter une alerte de crise. Toute tentative de mutation non-admin doit être rejetée avec `403 Forbidden` ou `401 Unauthorized`.
+  2. Liens signés cryptographiques à péremption stricte :
+     - Tout téléchargement sensible (bulletin PDF officiel, export d'audit) accessible via lien signé doit comporter une signature cryptographique HMAC-SHA256 liée à l'action et à la ressource avec une durée de validité bornée (TTL). Tout lien falsifié ou expiré doit être formellement rejeté avec `401 Unauthorized` ou `403 Forbidden`.
+  3. Invalidation active des sessions et tokens au logout :
+     - La déconnexion ne doit pas simplement effacer le cookie côté client, mais enregistrer le token dans un registre de révocation empêchant toute réutilisation avant son expiration naturelle.
+  4. Minimisation des PII et posture de sécurité des conteneurs :
+     - Minimiser les informations personnelles lors de l'authentification (seul l'email professionnel haché/stocké est utilisé, aucun tiers non concerné).
+     - Les conteneurs de production doivent tourner en tant qu'utilisateur non-root (`USER app` / UID 1000).
+     - Aucun service interne (PostgreSQL `db`, S3 `minio`, Dagster interne) ne doit exposer de port public sur `0.0.0.0` ; seul le reverse proxy Caddy écoute sur les ports 80/443.
+  5. Audit continu des secrets et dépendances :
+     - Audit gitleaks et analyse statique des dépendances pour garantir l'absence de fuite de secrets ou de vulnérabilité critique non traitée.
+- **Décision :**
+  1. Étendre `backend/src/ketrika/api/auth.py` avec `revoke_token`, `is_token_revoked`, `create_signed_action_token` et `verify_signed_action_token`.
+  2. Adapter `backend/src/ketrika/api/routers/auth.py` (`/v1/auth/logout`) pour révoquer activement le token présenté.
+  3. Vérifier les protections RBAC sur `admin.py`, `bulletins.py`, `alerts.py` et `sources.py`.
+  4. Écrire la suite de tests normatifs dédiée `backend/tests/unit/test_security_rbac_and_audit_r67.py`.
+- **Alternatives rejetées :**
+  - Se reposer uniquement sur la suppression du cookie côté client sans révocation du token (rejeté, token persistant rejouable).
+  - Permettre à des rôles non-admin de déclencher l'approbation de bulletins (rejeté, violation de l'auditabilité institutionnelle).
+- **Conséquences :**
+  - Étanchéité totale des rôles, protection contre le rejeu de tokens révoqués ou de liens expirés, architecture conteneurisée non-root auditée.
+
+
+
 ## ADR-100 : qualification métrologique des alertes de marché vivrier et scénarios de risque institutionnels (audit d'indépendance multi-sources, conditionnement strict de rupture sur quantités documentées, étanchéité catégorielle et rapport métrologique loyal sous Gate H3) (R6.6)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R6.6 ; Phase R6.

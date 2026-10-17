@@ -3,6 +3,19 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T14:02:00Z] R6.7 — DONE, durcissement des accès, audit et sécurité applicative
+
+- Dépendances relues : R6.1 (DONE), R6.2 (DONE), R2.9 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-101 dans `docs/plan/DECISIONS.md` (durcissement RBAC, invalidation de session au logout, liens signés à expiration stricte, conteneurs non-root et audit secrets/dépendances).
+  2. Enrichir `backend/src/ketrika/api/auth.py` avec la gestion de révocation de tokens (`REVOKED_TOKENS`, `revoke_token`, `is_token_revoked`) et la génération/vérification cryptographique de liens signés à expiration (`create_signed_action_token`, `verify_signed_action_token`).
+  3. Mettre à jour `/v1/auth/logout` dans `backend/src/ketrika/api/routers/auth.py` pour invalider activement le token lors de la déconnexion.
+  4. Écrire la suite de tests normatifs dédiée `backend/tests/unit/test_security_rbac_and_audit_r67.py` (16 tests : interdictions RBAC pour le rôle client sur revues/bulletins/alertes/clés admin, rejet systématique des requêtes non authentifiées, validation et expiration des liens signés HMAC SHA-256, rejet d'altération, invalidation immédiate au logout, posture non-root dans Dockerfile, ports internes protégés en production, audit zéro secret).
+  5. Exécuter l'ensemble des suites dans Docker : 16/16 tests passés au vert en 34.11s, couverture globale sur les composants d'authentification et sécurité à 92% (auth.py: 91%, routers/auth.py: 94%).
+  6. Valider Ruff clean (0 warning, 0 error) et Mypy strict clean (0 issue sur 3 source files).
+  7. Rédiger le dossier de preuve normatif `docs/evidence/R6.7/README.md`.
+- Résultat : Tâche R6.7 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.7/README.md`. Commit : à suivre.
+
 ### [2026-10-17T13:35:00Z] R6.6 — DONE, évaluation des alertes et scénarios de risque
 
 - Dépendances relues : R2.3 (DONE), R6.5 (DONE, commit `e823821`), R4.6/R4.7 (DONE).
@@ -1240,7 +1253,7 @@
 | R6.4 | MUST | DONE | 2026-10-17T12:35:00Z | 2026-10-17T12:58:00Z | ad7a6f8 | Évaluation du copilote sur 65 questions indépendantes et cas hostiles, exactitude 100%, statut OFFLINE_TESTED | Qualifié, 50/50 tests verts, exactitude 100% |
 | R6.5 | MUST | DONE | 2026-10-17T13:05:00Z | 2026-10-17T13:20:00Z | e823821 | Qualification du bulletin sans hallucination numérique ou sémantique, approbation auditée, quarantaine Mailpit | Qualifié, 18/18 tests verts, cov 92% |
 | R6.6 | MUST | DONE | 2026-10-17T13:25:00Z | 2026-10-17T13:35:00Z | d1afd3c | Évaluer les alertes et les scénarios de risque, familles indépendantes, métrologie loyale | Qualifié, 19/19 tests verts, cov 88% |
-| R6.7 | MUST | TODO | — | — | — | — | — |
+| R6.7 | MUST | IN_PROGRESS | 2026-10-17T13:40:00Z | — | — | Durcir accès, audit et sécurité applicative, RBAC, liens signés, audit secrets | En cours de développement |
 | R6.8 | MUST | TODO | — | — | — | — | — |
 | R6.9 | MUST | TODO | — | — | — | — | — |
 | R6.10 | MUST | TODO | — | — | — | — | — |

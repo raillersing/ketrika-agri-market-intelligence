@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Response
+from typing import Any
+
+from fastapi import APIRouter, Cookie, Depends, Header, Request, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ketrika.api.auth import (
     create_access_token,
     get_current_user,
+    revoke_token,
     verify_password,
 )
 from ketrika.api.errors import UnauthorizedException
@@ -57,10 +60,25 @@ def login(
 
 
 @router.post("/logout")
-def logout(response: Response) -> dict[str, str]:
-    """Clear session cookie."""
+def logout(
+    request: Request,
+    response: Response,
+    session_token: str | None = Cookie(None, alias="session_token"),
+    auth_header: str | None = Header(None, alias="Authorization"),
+) -> dict[str, Any]:
+    """Clear session cookie and actively revoke presented token (ADR-101 / R6.7)."""
+    token_to_revoke = None
+    if auth_header and auth_header.startswith("Bearer "):
+        token_to_revoke = auth_header[7:].strip()
+    elif session_token:
+        token_to_revoke = session_token.strip()
+
+    if token_to_revoke:
+        revoke_token(token_to_revoke)
+
     response.delete_cookie(key="session_token")
-    return {"status": "logged_out"}
+    return {"status": "logged_out", "revoked": bool(token_to_revoke)}
+
 
 
 @router.get("/me", response_model=UserSummary)
