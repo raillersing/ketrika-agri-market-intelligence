@@ -2,6 +2,33 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-091 : modèle de fenêtre de récolte vérifiable à résolution décadaire, ajustement agronomique sous contrainte hydrique et qualification expérimentale (R5.4)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.4 ; Phase R5.
+- **Contexte :** La tâche R5.4 impose de produire une fenêtre de récolte vérifiable pour les principaux bassins agricoles et cultures vivrières (riz Asara, riz Hosy, maïs, manioc) à Madagascar. Les directives normatives de R5.4 imposent :
+  1. Partir du calendrier cultural baseline vérifié (R4.7, SPECS §26, `taxonomy/crop_calendar.yaml`).
+  2. Ajustements de campagne fondés uniquement sur des règles agronomiques étayées (FAO, MinAE, FOFIFA) : un déficit pluviométrique précoce (démarrage tardif des pluies, CHIRPS anomalie < -30%) retarde le repiquage/semis et décale mécaniquement la maturité physiologique et le début de récolte d'une à deux décades. En régime irrigué pérenne avec maîtrise de l'eau, aucun décalage artificiel n'est appliqué.
+  3. Sortie explicite : début/fin de fenêtre, pic de récolte, durée du cycle végétatif, facteurs agroclimatiques motivant le décalage, et niveau de validation (`baseline_reference`, `adjusted_campaign_rule`, `experimental_unverified`).
+  4. Résolution temporelle rigoureuse : granularité décadaire agronomique (décade 1 : jours 1-10, décade 2 : jours 11-20, décade 3 : jours 21-fin), **interdiction absolue de simuler une date au jour près sans capteur de terrain à résolution journalière**.
+  5. Confrontation avec des données indépendantes réelles : tester la concordance temporelle entre la fenêtre calculée et les premiers arrivages massifs constatés sur les marchés de collecte et de gros (ex: ODR Ambatondrazaka et Anosibe).
+  6. En l'absence de réseau de capteurs phénologiques in situ continus, la projection est qualifiée de statut `experimental` avec incertitude qualitative documentée, sans jamais revendiquer une « précision garantie ».
+- **Décision :**
+  1. **Création du module `backend/src/ketrika/supply/harvest_window.py` :**
+     - Modèle Pydantic `HarvestWindowProjection` portant la fenêtre temporelle décadaire, les dates d'encadrement, le décalage en décades (`shift_dekads`), les facteurs agroclimatiques, le niveau de validation et la note d'incertitude.
+     - Modèle `HarvestConfrontationResult` confrontant la fenêtre aux flux d'arrivages réels (`inflow_arrival`).
+     - Moteur `HarvestWindowModel` :
+       - `project_baseline_window(crop_record, year)` : extraction de la fenêtre nominale issue du calendrier validé.
+       - `project_adjusted_window(crop_record, year, rainfall_early_anomaly_pct, is_drought_scenario)` : calcul déterministe du décalage phénologique selon la sensibilité hydrique et l'accès à l'irrigation.
+       - `evaluate_against_market_arrivals(harvest_window, arrival_records)` : calcul du taux de concordance entre la fenêtre de récolte du bassin et les arrivages observés.
+  2. **Transparence et étanchéité :**
+     - La fenêtre de récolte est distincte des relevés d'observation ; elle porte le statut d'estimation agronomique modélisée.
+- **Alternatives rejetées :**
+  - Fixer une date exacte au jour près (ex: « récolte le 14 mai ») (rejeté, fausse précision trompeuse en agronomie).
+  - Utiliser le même calendrier cultural comme donnée d'évaluation (rejeté, tautologie circulaire proscrite par R5.4).
+- **Conséquences :**
+  - Calendriers agricoles dynamiques, explicables, auditables et conformes à la réalité agricole malgache.
+
+
 ## ADR-090 : contrôle qualité des quantités, matrice spatio-temporelle marché × période, taux de couverture d'échantillonnage et distinction stricte absence de relevé vs zéro arrivage (R5.3)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R5.3 ; Phase R5.

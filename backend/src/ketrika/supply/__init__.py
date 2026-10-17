@@ -14,6 +14,12 @@ from ketrika.supply.contracts import (
     validate_no_double_counting,
     validate_payload_no_pii,
 )
+from ketrika.supply.harvest_window import (
+    HarvestConfrontationResult,
+    HarvestWindowModel,
+    HarvestWindowProjection,
+    ValidationLevel,
+)
 from ketrika.supply.quality import (
     MarketCoverageStats,
     MarketPeriodCell,
@@ -26,6 +32,9 @@ from ketrika.supply.quality import (
 
 __all__ = [
     "FORBIDDEN_PII_FIELDS",
+    "HarvestConfrontationResult",
+    "HarvestWindowModel",
+    "HarvestWindowProjection",
     "MarketCoverageStats",
     "MarketPeriodCell",
     "MarketType",
@@ -39,6 +48,7 @@ __all__ = [
     "SurveyMetadata",
     "TemporalDoubleCountViolation",
     "UnitConversionAudit",
+    "ValidationLevel",
     "convert_quantity_to_kg",
     "validate_no_double_counting",
     "validate_payload_no_pii",

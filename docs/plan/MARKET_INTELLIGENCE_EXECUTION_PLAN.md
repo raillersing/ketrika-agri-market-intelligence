@@ -68,7 +68,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R5.1 | MUST | DONE | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole de relevé anti-PII, prévention double comptage, 7 tests verts, couverture 93% |
 | R5.2 | MUST | DONE | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 |
 | R5.3 | MUST | DONE | Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels |
-| R5.4 | MUST | TODO | — |
+| R5.4 | MUST | DONE | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique |
 | R5.5 | SHOULD | TODO | — |
 | R5.6 | MUST | TODO | — |
 | R5.7 | MUST | TODO | — |

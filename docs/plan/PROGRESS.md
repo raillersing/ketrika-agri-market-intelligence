@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T10:38:00Z] R5.4 — DONE, modèle de fenêtre de récolte vérifiable et ajustement agronomique
+
+- Dépendances relues : R4.6 (DONE), R4.7 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-091 dans `docs/plan/DECISIONS.md` (résolution décadaire agronomique, reproduction baseline du calendrier officiel, décalage agronomique sous stress hydrique précoce, évaluation indépendante sur arrivages réels, qualification expérimentale).
+  2. Implémenter le module `backend/src/ketrika/supply/harvest_window.py` avec les modèles Pydantic (`HarvestWindowProjection`, `HarvestConfrontationResult`) et le moteur `HarvestWindowModel`.
+  3. Implémenter les règles agronomiques de translation décadaire selon le régime cultural (irrigué vs pluvial) et les anomalies hydriques.
+  4. Implémenter la confrontation avec les dates d'arrivages réels sur les marchés de collecte / terminaux.
+  5. Écrire la suite de tests unitaires `backend/tests/unit/test_harvest_window_model.py`.
+  6. Valider Ruff clean et Mypy strict clean (0 warning, 0 error).
+  7. Rédiger le dossier de preuve normatif `docs/evidence/R5.4/README.md`.
+- Résultat : Tâche R5.4 entièrement qualifiée et validée (DONE). 6/6 tests dédiés verts, 25/25 tests R5 passés, couverture `ketrika.supply.harvest_window` 90%, couverture globale 91%.
+- Preuve : `docs/evidence/R5.4/README.md`.
+
 ### [2026-10-17T02:17:00Z] R5.3 — DONE, contrôle qualité des quantités, matrice marché × période et taux de couverture
 
 - Dépendances relues : R5.2 (DONE), R2.2 (DONE), R2.3 (DONE).
@@ -1066,7 +1080,7 @@
 | R5.1 | MUST | DONE | 2026-10-17T02:00:00Z | 2026-10-17T02:15:00Z | 4a6a28c | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole de relevé anti-PII, prévention double comptage | 7 tests dédiés verts, couverture ketrika.supply 93% |
 | R5.2 | MUST | DONE | 2026-10-17T02:11:00Z | 2026-10-17T02:12:00Z | d52bef0 | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 | Qualifié, 13/13 tests verts, 84% cov |
 | R5.3 | MUST | DONE | 2026-10-17T02:17:00Z | 2026-10-17T02:18:00Z | ef23d17 | Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels | Qualifié, 6/6 tests verts, 96% cov |
-| R5.4 | MUST | TODO | — | — | — | — | — |
+| R5.4 | MUST | DONE | 2026-10-17T10:38:00Z | [evidence](file:///home/raillersing/projects/ketrika-qa-worktrees/r1-sources-prep/docs/evidence/R5.4/README.md) | commit_pending | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique | Qualifié, 6/6 tests verts, 90% cov |
 | R5.5 | SHOULD | TODO | — | — | — | — | — |
 | R5.6 | MUST | TODO | — | — | — | — | — |
 | R5.7 | MUST | TODO | — | — | — | — | — |
