@@ -1094,7 +1094,7 @@
 | R5.3 | MUST | DONE | 2026-10-17T02:17:00Z | 2026-10-17T02:18:00Z | ef23d17 | Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels | Qualifié, 6/6 tests verts, 96% cov |
 | R5.4 | MUST | DONE | 2026-10-17T10:38:00Z | 2026-10-17T10:41:00Z | 64c1499 | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique | Qualifié, 6/6 tests verts, 90% cov |
 | R5.5 | SHOULD | TODO | — | — | — | — | — |
-| R5.6 | MUST | DONE | 2026-10-17T10:45:00Z | 2026-10-17T10:55:00Z | commit_pending | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks | Qualifié, 5/5 tests verts, 95% cov |
+| R5.6 | MUST | DONE | 2026-10-17T10:45:00Z | 2026-10-17T10:55:00Z | b4a760d | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks | Qualifié, 5/5 tests verts, 95% cov |
 | R5.7 | MUST | TODO | — | — | — | — | — |
 | R5.8 | MUST | TODO | — | — | — | — | — |
 | R5.9 | MUST | TODO | — | — | — | — | — |
