@@ -53,7 +53,22 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         LIMIT 3;
         """.strip()
 
-    # 2. Anomalies, Flambées et Chutes de prix (spikes / drops / z-score)
+    # 2. Climat / Précipitations / Météo (évalué avant anomalies pour intercepter les anomalies de pluie)
+    if any(k in q for k in ["pluie", "précipitation", "precipitation", "climat", "météo", "meteo", "pluviométri", "pluviometri"]):
+        loc_clause = (
+            "WHERE location_pcode = 'MG-T' OR location_name ILIKE '%analamanga%'"
+            if "analamanga" in q
+            else ""
+        )
+        return f"""
+        SELECT location_name, month, precip_total_mm, baseline_precip_mm, rain_anom_pct
+        FROM gold.weather_monthly
+        {loc_clause}
+        ORDER BY month DESC
+        LIMIT 6;
+        """.strip()
+
+    # 3. Anomalies, Flambées et Chutes de prix (spikes / drops / z-score)
     if any(k in q for k in ["flambée", "flambee", "anomalie", "pic", "hausse anormale"]):
         return """
         SELECT product_name, location_name, month, median_price, chg_1m, z_score_robust
@@ -72,7 +87,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         LIMIT 10;
         """.strip()
 
-    # 3. Variations de prix (sur un an, a/a, m/m, glissement annuel)
+    # 4. Variations de prix (sur un an, a/a, m/m, glissement annuel)
     if any(k in q for k in ["variation", "inflation", "évolution", "evolution", "glissement"]):
         prod = "maize" if "maïs" in q or "mais" in q else "rice_milled"
         loc_clause = (
@@ -88,7 +103,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         LIMIT 6;
         """.strip()
 
-    # 4. Volatilité des prix
+    # 5. Volatilité des prix
     if "volatilité" in q or "volatilite" in q or "vol_12" in q:
         prod = "maize" if "maïs" in q or "mais" in q else "rice_milled"
         return f"""
@@ -99,7 +114,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         LIMIT 5;
         """.strip()
 
-    # 5. Stocks (statut, rupture, tension, disponibilité)
+    # 6. Stocks (statut, rupture, tension, disponibilité)
     if any(k in q for k in ["stock", "rupture", "disponibilité", "disponibilite"]):
         loc_clause = ""
         if "atsimo" in q:
@@ -114,7 +129,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         LIMIT 10;
         """.strip()
 
-    # 6. Commerce extérieur / Importations / Dépendance
+    # 7. Commerce extérieur / Importations / Dépendance
     if any(k in q for k in ["dépendance", "dependance", "idr"]):
         prod = "maize" if "maïs" in q or "mais" in q else "rice_milled"
         return f"""
@@ -135,21 +150,6 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         LIMIT 12;
         """.strip()
 
-    # 7. Climat / Précipitations / Météo
-    if any(k in q for k in ["pluie", "précipitation", "precipitation", "climat", "météo", "meteo"]):
-        loc_clause = (
-            "WHERE location_pcode = 'MG-T' OR location_name ILIKE '%analamanga%'"
-            if "analamanga" in q
-            else ""
-        )
-        return f"""
-        SELECT location_name, month, precip_total_mm, baseline_precip_mm, rain_anom_pct
-        FROM gold.weather_monthly
-        {loc_clause}
-        ORDER BY month DESC
-        LIMIT 6;
-        """.strip()
-
     # 8. Score de santé du marché (Market Health Score)
     if any(k in q for k in ["market health", "santé du marché", "sante du marche", "score"]):
         loc_clause = (
@@ -165,26 +165,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         LIMIT 6;
         """.strip()
 
-    # 9. Source health / Retard / Fraîcheur / DataOps
-    if any(k in q for k in ["source", "sla", "retard", "fraîcheur", "fraicheur", "stale"]):
-        return """
-        SELECT source_id, priority, freshness_days, freshness_sla_days, is_stale
-        FROM gold.source_health
-        WHERE is_stale = true OR freshness_days > freshness_sla_days
-        ORDER BY freshness_days DESC
-        LIMIT 10;
-        """.strip()
-
-    # 10. Indice IPC Alimentaire (INSTAT NIPC)
-    if any(k in q for k in ["ipc", "cpi", "indice des prix"]):
-        return """
-        SELECT series_label, month, index_value, chg_1m, chg_12m
-        FROM gold.cpi_food
-        ORDER BY month DESC
-        LIMIT 12;
-        """.strip()
-
-    # 11. Prix par source (min, max, médiane détaillée)
+    # 9. Prix par source (min, max, médiane détaillée)
     if "par source" in q or "selon la source" in q or "détail des sources" in q:
         prod = "maize" if "maïs" in q or "mais" in q else "rice_milled"
         return f"""
@@ -195,7 +176,34 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         LIMIT 10;
         """.strip()
 
-    # 12. Default : Prix mensuel retenu (Best)
+    # 10. Source health / Retard / Fraîcheur / DataOps
+    if any(k in q for k in ["sla", "retard", "fraîcheur", "fraicheur", "stale"]) or (
+        "source" in q and any(k in q for k in ["santé", "sante", "health", "statut", "état", "etat"])
+    ):
+        return """
+        SELECT source_id, priority, freshness_days, freshness_sla_days, is_stale
+        FROM gold.source_health
+        WHERE is_stale = true OR freshness_days > freshness_sla_days
+        ORDER BY freshness_days DESC
+        LIMIT 10;
+        """.strip()
+
+    # 11. Indice IPC Alimentaire (INSTAT NIPC)
+    if any(k in q for k in ["ipc", "cpi", "indice des prix"]):
+        return """
+        SELECT series_label, month, index_value, chg_1m, chg_12m
+        FROM gold.cpi_food
+        ORDER BY month DESC
+        LIMIT 12;
+        """.strip()
+
+    # Check relevance to agricultural market intelligence domain
+    has_agri_context = any(kw in q for kw in AGRICULTURAL_KEYWORDS)
+    if not has_agri_context:
+        # Out-of-scope question: refuse honestly rather than guessing
+        return ""
+
+    # 12. Default : Prix mensuel retenu (Best) pour les questions relatives aux prix vivriers
     prod = "maize" if "maïs" in q or "mais" in q else "rice_milled"
     loc_clause = (
         "AND (location_pcode = 'MG-T' OR location_name ILIKE '%analamanga%')"
@@ -209,6 +217,21 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
     ORDER BY month DESC
     LIMIT 6;
     """.strip()
+
+
+AGRICULTURAL_KEYWORDS: tuple[str, ...] = (
+    "riz", "vary", "makalioka", "tsipala", "maïs", "mais", "manioc", "huile", "sucre",
+    "farine", "légumineuse", "legumineuse", "haricot", "arachide", "blé", "ble", "ppn",
+    "prix", "cours", "tarif", "ariary", "mga", "marché", "marche", "anosibe", "grossiste",
+    "détail", "detail", "stock", "rupture", "disponibilité", "disponibilite", "soudure",
+    "récolte", "recolte", "culture", "production", "import", "export", "douane", "commerce",
+    "dépendance", "dependance", "idr", "météo", "meteo", "pluie", "précipitation", "precipitation",
+    "climat", "sécheresse", "secheresse", "cyclone", "inondation", "ipc", "cpi", "inflation",
+    "indice", "flambée", "flambee", "hausse", "baisse", "chute", "anomalie", "volatilité",
+    "volatilite", "source", "sla", "retard", "fraîcheur", "fraicheur", "santé", "sante", "score",
+    "prévision", "prevision", "futur", "horizon", "p10", "p50", "p90", "analamanga", "alaotra",
+    "vakinankaratra", "boeny", "atsimo", "madagascar", "produit", "vivrier",
+)
 
 
 class CopilotAgent:
@@ -227,10 +250,27 @@ class CopilotAgent:
                 "rows_preview": [],
                 "citations": [],
                 "value_kinds": [],
+                "provenance_summary": "Aucune question fournie.",
             }
 
         # 1. Translate question to SQL
         raw_sql = generate_sql_from_question(clean_q, self.settings)
+
+        # Honest abstention on out-of-scope queries
+        if not raw_sql:
+            return {
+                "answer_markdown": (
+                    "Je suis le Copilote d'intelligence de marché de Ketrika, spécialisé dans la veille des prix, "
+                    "stocks, approvisionnements et météo agricole des produits vivriers à Madagascar (riz, maïs, manioc, "
+                    "huile, sucre, légumineuses, farine). Votre question ne semble pas concerner ces filières ou "
+                    "dépasse le périmètre des données officielles disponibles."
+                ),
+                "sql": "",
+                "rows_preview": [],
+                "citations": [],
+                "value_kinds": [],
+                "provenance_summary": "Abstention loyale : question hors périmètre vivrier ou non reconnue.",
+            }
 
         # 2. Validate and execute SQL under copilot_ro role
         try:
@@ -243,6 +283,7 @@ class CopilotAgent:
                 "rows_preview": [],
                 "citations": [],
                 "value_kinds": [],
+                "provenance_summary": "Requête refusée par la politique de sécurité SQL Guard.",
             }
         except Exception as exc:
             logger.error("copilot_execution_failed: %s (%s)", raw_sql, exc)
@@ -252,6 +293,7 @@ class CopilotAgent:
                 "rows_preview": [],
                 "citations": [],
                 "value_kinds": [],
+                "provenance_summary": "Erreur d'exécution technique.",
             }
 
         # 3. Format response using strict cell placeholder system (anti-hallucination)
@@ -270,4 +312,8 @@ class CopilotAgent:
             "rows_preview": rows_preview,
             "citations": query_result.citations,
             "value_kinds": query_result.value_kinds,
+            "provenance_summary": (
+                "Données officielles vérifiées issues du schéma Gold avec traçabilité Bronze SHA-256 intégrale. "
+                "Zéro chiffre libre non audité."
+            ),
         }

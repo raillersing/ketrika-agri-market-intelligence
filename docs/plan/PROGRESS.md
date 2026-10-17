@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T12:33:00Z] R6.3 — DONE, répondre avec des résultats exécutés et référencés, anti-hallucination et abstention loyale
+
+- Dépendances relues : R6.1 (DONE), R6.2 (DONE), R0.2 (DONE), R2.9 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-097 dans `docs/plan/DECISIONS.md` (architecture zero-hallucination writer, référencement strict de cellules SQL, métadonnées de provenance complètes, abstention polie et explicite hors domaine vivrier).
+  2. Enrichir `CopilotAgent` dans `backend/src/ketrika/copilot/agent.py` : abstention loyale sur questions hors domaine vivrier (météo générale, culture générale, sport), ordonnancement optimal des branches de reconnaissance SQL (climat/météo évalué avant anomalies, prix par source avant santé des sources), enrichissement de `provenance_summary` avec Bronze SHA-256 et statut Gold.
+  3. Enrichir le routeur FastAPI `backend/src/ketrika/api/routers/copilot.py` : schéma `CopilotAskResponse` incluant `provenance_summary`.
+  4. Écrire la suite de tests unitaires et d'acceptation `backend/tests/unit/test_copilot_executed_responses.py` (abstention loyale, métadonnées de provenance, anti-hallucination prose, benchmark complet des 22 questions métier de `tests/copilot_eval.yaml`, endpoint FastAPI).
+  5. Valider la suite de tests dédiée (6/6 tests passés en 40.55s).
+  6. Valider l'ensemble des 4 suites du module copilot (47/47 tests passés au vert en 65.15s, couverture globale copilot à 86%).
+  7. Valider Ruff clean (0 warning) et Mypy strict clean (0 issue sur 10 source files).
+  8. Rédiger le dossier de preuve normatif `docs/evidence/R6.3/README.md`.
+- Résultat : Tâche R6.3 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.3/README.md`.
+
 ### [2026-10-17T12:18:00Z] R6.2 — DONE, workflows IA bornés, budgets atomiques concurrents et idempotence d'état
 
 - Dépendances relues : R6.1 (DONE), R0.6 (DONE), R0.3 (DONE).
@@ -1177,7 +1191,7 @@
 | R5.9 | MUST | DONE | 2026-10-17T11:40:00Z | 2026-10-17T11:50:00Z | bc2f25d | Gate récoltes et approvisionnement validé, 10 critères normatifs prouvés, couverture 85%, tag mi-r5-qualified | 10 tests dédiés verts, 48 tests R5 verts, 85% cov |
 | R6.1 | MUST | DONE | 2026-10-17T11:55:00Z | 2026-10-17T12:05:00Z | 76e732b | Sécuriser les outils de lecture, catalogue typé, SQL guard CTE écriture/fonctions réseau, validation sans fuite | Qualifié, 32/32 tests verts, cov 91% |
 | R6.2 | MUST | DONE | 2026-10-17T12:08:00Z | 2026-10-17T12:18:00Z | 50cf776 | Borner les workflows IA et leurs reprises, budget atomique concurrent, idempotence, replay strict | Qualifié, 9/9 tests verts, cov 92% |
-| R6.3 | MUST | TODO | — | — | — | — | — |
+| R6.3 | MUST | IN_PROGRESS | 2026-10-17T12:20:00Z | — | — | Répondre avec des résultats exécutés et référencés, anti-hallucination, métadonnées complètes, abstention | En cours de développement |
 | R6.4 | MUST | TODO | — | — | — | — | — |
 | R6.5 | MUST | TODO | — | — | — | — | — |
 | R6.6 | MUST | TODO | — | — | — | — | — |

@@ -2,6 +2,30 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-097 : réponses du copilote analyste basées exclusivement sur des résultats exécutés, zéro chiffre inventé, métadonnées de provenance complètes et abstention explicite (R6.3)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.3 ; Phase R6.
+- **Contexte :** La tâche R6.3 impose de répondre avec des résultats exécutés et référencés. Les directives normatives de R6.3 et d'AGENTS.md imposent :
+  1. Respect absolu des Règles 6 et 7 d'AGENTS.md :
+     - Aucun chiffre inventé dans le texte en prose (substitution mécanique via `build_cell_placeholders` et `assemble_final_response` ou présentation tabulaire déterministe).
+     - Tout nombre affiché dans la réponse doit provenir d'une cellule SQL auditée sur le schéma Gold ou d'un calcul déterministe certifié.
+  2. Métadonnées de provenance complètes :
+     - Citation de la source officielle (`citations`: source_id, type de source), provenance Bronze et Gold, horodatage, statut métrologique (`value_kinds`: `observed`, `imputed`, `forecast`, `composite`).
+  3. Gestion loyale de l'ambiguïté et du hors-périmètre :
+     - Si une question de l'utilisateur ne concerne pas les filières vivrières malgaches couvertes (riz, maïs, manioc, huile, sucre, légumineuses, farine) ou pose une question hors domaine (actualité non agricole, sports, météo internationale), l'agent refuse poliment avec une explication claire et loyale (`sql = ""`), sans tenter de deviner ou de renvoyer par défaut les prix du riz.
+  4. Benchmark de qualification :
+     - Validation des 22+ questions d'évaluation réelles du corpus `backend/tests/copilot_eval.yaml` avec une exactitude >= 80% et 0 requête interdite.
+- **Décision :**
+  1. Étendre `CopilotAgent` pour détecter les requêtes hors domaine agricole et renvoyer un message d'abstention loyale sans générer de fausse requête SQL.
+  2. Structurer la réponse avec métadonnées enrichies de traçabilité et de nature des valeurs.
+  3. Garantir que tout texte produit passe par le validateur anti-hallucination `validate_anti_hallucination_prose` (zéro chiffre libre hors placeholders).
+- **Alternatives rejetées :**
+  - Renvoyer par défaut les prix du riz d'Analamanga sur n'importe quelle question obscure (rejeté, fausse réponse trompeuse).
+  - Laisser le LLM rédiger librement des chiffres dans la prose (rejeté, risque majeur d'hallucination).
+- **Conséquences :**
+  - Réponses 100% vérifiables et auditables, conformité absolue aux règles constitutionnelles, expérience utilisateur transparente et honnête.
+
+
 ## ADR-096 : architecture des workflows IA bornés, isolation des rôles, budgets atomiques sous concurrence, reprise d'état sans double publication et choix officiel du modèle (R6.2)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R6.2 ; Phase R6.
