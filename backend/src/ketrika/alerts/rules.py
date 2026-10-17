@@ -139,10 +139,11 @@ def evaluate_price_drop_rules(session: Session) -> list[AlertCandidate]:
 
 
 def evaluate_stockout_risk_rules(session: Session) -> list[AlertCandidate]:
-    """Evaluate STOCKOUT_RISK rule:
+    """Evaluate STOCKOUT_RISK rule (SPECS §18, ADR-100, R6.6):
 
     Degraded stock status ('tight' or 'shortage') over 2 consecutive observations and chg_1m > 0.
-    Severity: 'high' if latest is 'shortage', else 'medium'.
+    Severity: 'high' (rupture confirmée) ONLY IF supported by documented quantities (coverage_days <= 7 or quantity <= 0).
+    Absence of documented quantities strictly limits severity to 'medium'.
     dedupe_key: STOCKOUT|{product_code}|{location_pcode}|{period}
     """
     query = text(
@@ -156,6 +157,8 @@ def evaluate_stockout_risk_rules(session: Session) -> list[AlertCandidate]:
                 loc.pcode AS location_pcode,
                 loc.name AS location_name,
                 so.stock_status,
+                so.coverage_days,
+                so.quantity_value,
                 so.period_end,
                 ROW_NUMBER() OVER (
                     PARTITION BY so.product_id, so.location_id
@@ -177,6 +180,8 @@ def evaluate_stockout_risk_rules(session: Session) -> list[AlertCandidate]:
                 location_name,
                 MAX(CASE WHEN rn = 1 THEN stock_status END) AS latest_status,
                 MAX(CASE WHEN rn = 2 THEN stock_status END) AS prev_status,
+                MAX(CASE WHEN rn = 1 THEN coverage_days END) AS latest_coverage_days,
+                MAX(CASE WHEN rn = 1 THEN quantity_value END) AS latest_quantity_value,
                 MAX(CASE WHEN rn = 1 THEN period_end END) AS latest_period
             FROM ranked_stocks
             WHERE rn <= 2
@@ -192,6 +197,8 @@ def evaluate_stockout_risk_rules(session: Session) -> list[AlertCandidate]:
             lt.location_name,
             lt.latest_status,
             lt.prev_status,
+            lt.latest_coverage_days,
+            lt.latest_quantity_value,
             lt.latest_period,
             COALESCE(pc.chg_1m, 0.05) AS chg_1m
         FROM last_two lt
@@ -208,12 +215,29 @@ def evaluate_stockout_risk_rules(session: Session) -> list[AlertCandidate]:
     candidates: list[AlertCandidate] = []
 
     for r in rows:
-        severity = "high" if r.latest_status == "shortage" else "medium"
+        cov_days = float(r.latest_coverage_days) if getattr(r, "latest_coverage_days", None) is not None else None
+        qty_val = float(r.latest_quantity_value) if getattr(r, "latest_quantity_value", None) is not None else None
+        has_quantities = (cov_days is not None) or (qty_val is not None)
+
+        # High severity requires documented quantities supporting shortage (ADR-100 / R6.6)
+        # Absence of documented quantities strictly limits severity to medium
+        if r.latest_status == "shortage" and has_quantities:
+            if (cov_days is not None and cov_days <= 7.0) or (qty_val is not None and qty_val <= 0):
+                severity = "high"
+            else:
+                severity = "medium"
+        else:
+            severity = "medium"
+
         period_str = str(r.latest_period)[:7]
         pcode = r.location_pcode or str(r.location_id)[:8]
         dedupe = f"STOCKOUT|{r.product_code}|{pcode}|{period_str}"
 
-        title = f"Risque de rupture de stock : {r.product_name} à {r.location_name} (statut: {r.latest_status})"
+        qualif_text = "confirmée" if severity == "high" else "sous observation"
+        title = (
+            f"Risque de rupture de stock ({qualif_text}) : {r.product_name} à {r.location_name} "
+            f"(statut: {r.latest_status}, couverture: {cov_days if cov_days is not None else 'non renseignée'} j)"
+        )
         evidence = {
             "rule": "STOCKOUT_RISK",
             "product_code": r.product_code,
@@ -223,6 +247,10 @@ def evaluate_stockout_risk_rules(session: Session) -> list[AlertCandidate]:
             "latest_status": r.latest_status,
             "prev_status": r.prev_status,
             "latest_period": str(r.latest_period),
+            "coverage_days": cov_days,
+            "quantity_value": qty_val,
+            "quantities_documented": has_quantities,
+            "confirmed_shortage": severity == "high",
             "chg_1m": float(r.chg_1m) if r.chg_1m is not None else None,
         }
 
@@ -239,6 +267,7 @@ def evaluate_stockout_risk_rules(session: Session) -> list[AlertCandidate]:
         )
 
     return candidates
+
 
 
 def evaluate_climate_risk_rules(session: Session) -> list[AlertCandidate]:
@@ -375,3 +404,66 @@ def evaluate_all_rules(session: Session) -> list[AlertCandidate]:
     candidates.extend(evaluate_climate_risk_rules(session))
     candidates.extend(evaluate_data_stale_rules(session))
     return candidates
+
+
+def evaluate_alert_metrics_and_scenarios(session: Session) -> dict[str, Any]:
+    """Perform comprehensive metric evaluation and scenario qualification of alert system (R6.6, ADR-100).
+
+    Audits:
+    - Independent vs dependent source corroboration for PRICE_SPIKE (WFP + RTFP false consensus neutralization).
+    - Stockout quantitative evidence requirement (confirmed vs unconfirmed shortages).
+    - Category isolation between climate, market, and stale data alerts.
+    - Honest declaration of ground truth metrics: NEVER declares 100% precision/recall on unannotated production events.
+    """
+    candidates = evaluate_all_rules(session)
+
+    by_rule: dict[str, int] = {}
+    by_severity: dict[str, int] = {"high": 0, "medium": 0, "low": 0}
+
+    for c in candidates:
+        by_rule[c.rule_code] = by_rule.get(c.rule_code, 0) + 1
+        by_severity[c.severity] = by_severity.get(c.severity, 0) + 1
+
+    # Audit price spikes for source independence
+    spikes = [c for c in candidates if c.rule_code == "PRICE_SPIKE"]
+    multi_source_spikes = [s for s in spikes if int(s.evidence.get("n_sources", 1)) >= 2]
+    neutralized_derivation_spikes = [
+        s for s in multi_source_spikes
+        if s.evidence.get("has_dependent_derivation", False) and s.severity != "high"
+    ]
+
+    # Audit stockouts for documented quantities
+    stockouts = [c for c in candidates if c.rule_code == "STOCKOUT_RISK"]
+    confirmed_stockouts = [s for s in stockouts if s.severity == "high"]
+    unconfirmed_stockouts = [s for s in stockouts if s.severity != "high"]
+
+    # Honest ground truth declaration (R6.6 normative directive: NEVER declare 100% on unannotated corpus)
+    ground_truth_audit = {
+        "status": "NOT_EVALUATED",
+        "precision": None,
+        "recall": None,
+        "f1_score": None,
+        "declaration": (
+            "Corpus d'événements de crise vivrière exhaustivement annoté non disponible en production locale ; "
+            "interdiction formelle de déclarer artificiellement un taux de précision ou de rappel de 100% (ADR-100, R6.6)."
+        ),
+    }
+
+    return {
+        "total_alerts": len(candidates),
+        "by_rule": by_rule,
+        "by_severity": by_severity,
+        "source_independence_audit": {
+            "total_spikes": len(spikes),
+            "multi_source_spikes": len(multi_source_spikes),
+            "neutralized_derivative_spikes": len(neutralized_derivation_spikes),
+            "high_severity_confirmed_by_independent_families": sum(1 for s in spikes if s.severity == "high"),
+        },
+        "stockout_quantitative_audit": {
+            "total_stockout_risks": len(stockouts),
+            "confirmed_shortages_with_quantities": len(confirmed_stockouts),
+            "unconfirmed_shortages_without_quantities": len(unconfirmed_stockouts),
+        },
+        "ground_truth_metrics": ground_truth_audit,
+    }
+

@@ -2,6 +2,37 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-100 : qualification métrologique des alertes de marché vivrier et scénarios de risque institutionnels (audit d'indépendance multi-sources, conditionnement strict de rupture sur quantités documentées, étanchéité catégorielle et rapport métrologique loyal sous Gate H3) (R6.6)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.6 ; Phase R6.
+- **Contexte :** La tâche R6.6 impose d'évaluer et de qualifier les alertes de marché et les scénarios de risque institutionnels. Les directives normatives de R6.6 et d'AGENTS.md imposent :
+  1. Confirmation par familles de sources réellement indépendantes :
+     - Une confirmation multi-sources ne peut être établie sur deux copies ou dérivations d'un même relevé primaire (ex. `wb_rtfp_mdg` dérivant de `wfp_hdx_mdg` partagent la racine `un_wfp`).
+     - L'élévation de sévérité à `high` pour une flambée de prix (`PRICE_SPIKE`) requiert formellement `n_independent_families >= 2`. Un doublon de sources dépendantes maintient strictement la sévérité à `medium`.
+  2. Risque de rupture de stock (`STOCKOUT_RISK`) :
+     - Une rupture de stock ne peut être qualifiée de « confirmée » (`high`) que si des métriques quantitatives documentées existent (`coverage_days <= 7` ou `quantity_value IS NOT NULL`).
+     - L'absence de données quantitatives (statut textuel seul) borne la sévérité à `medium` avec `quantities_documented: false`.
+     - Le silence ou l'absence de déclaration d'une source ne constitue en aucun cas une preuve de rupture de stock.
+  3. Étanchéité catégorielle absolue des alertes :
+     - Séparer strictement les alertes de risque climatique (`CLIMATE_RISK`), les alertes de marché vivrier (`PRICE_SPIKE`, `PRICE_DROP`, `STOCKOUT_RISK`), et les alertes de fraîcheur / DataOps (`DATA_STALE`).
+     - Les alertes `DATA_STALE` ne se déclenchent que sur dépassement avéré du SLA de fraîcheur officiel d'une source prioritaire P0.
+  4. Métrologie loyale et non-surestimation des performances :
+     - Tout rapport ou synthèse métrologique sans ground truth exhaustif identifie explicitement les métriques non évaluées (`NOT_EVALUATED`), sans jamais déclarer artificiellement un taux de précision ou de rappel de 100 %.
+  5. Confinement absolu sous Gate H3 :
+     - Aucun envoi vers Telegram, WhatsApp ou SMTP tiers n'est déclenché (`EXTERNAL_SEND_ENABLED=0`). Les prévisualisations et brouillons sont confinés au service local Mailpit.
+- **Décision :**
+  1. Mettre à jour `detect_price_anomalies` dans `backend/src/ketrika/ml/anomalies.py` pour auditer les familles de sources via `audit_source_family_independence` de `ketrika.gold.kpi`.
+  2. Mettre à jour `evaluate_stockout_risk_rules` dans `backend/src/ketrika/alerts/rules.py` pour exiger des quantités documentées pour la sévérité `high`.
+  3. Implémenter la fonction d'évaluation métrologique et de synthèse loyale `evaluate_alert_metrics_and_scenarios` dans `backend/src/ketrika/alerts/rules.py`.
+  4. Couvrir l'ensemble des règles et comportements normatifs par la suite `backend/tests/unit/test_alerts_qualification_r66.py`.
+- **Alternatives rejetées :**
+  - Compter naïvement le nombre brut de lignes de sources pour qualifier une alerte `high` (rejeté, risque majeur de faux consensus entre sources liées).
+  - Déclarer des alertes de rupture sur la simple absence de données récentes (rejeté, confusion inadmissible entre retard de collecte et rupture physique).
+- **Conséquences :**
+  - Système d'alerte institutionnel intègre, calibré, exempt de faux positifs croisés et parfaitement auditable.
+
+
+
 ## ADR-099 : qualification des bulletins de marché sans hallucination numérique ou sémantique (architecture des faits Gold, validation directionnelle et temporelle, concordance HTML/PDF et approbation auditée sous Gate H3) (R6.5)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R6.5 ; Phase R6.

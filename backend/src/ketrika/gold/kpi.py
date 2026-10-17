@@ -59,14 +59,31 @@ def calculate_calendar_aligned_variation(
 
 
 KNOWN_DERIVATIONS: dict[str, str] = {
+    "wfp_hdx_mdg": "un_wfp",
     "wb_rtfp_mdg": "un_wfp",  # WB RTFP relies on WFP primary data
+}
+
+ROOT_SOURCE_FAMILIES: dict[str, str] = {
+    "wfp_hdx_mdg": "un_wfp",
+    "wb_rtfp_mdg": "un_wfp",  # WB RTFP relies on WFP primary data
+    "miasa_odr": "madagascar_gov",
+    "mincc_ppn": "madagascar_gov",
+    "douanes_stats": "madagascar_gov",
+    "instat_nipc": "madagascar_gov",
+    "instat_tbe": "madagascar_gov",
+    "faostat": "un_fao",
+    "ecmwf_open": "ecmwf",
+    "chc_chirps": "chc_ucsb",
+    "dgm_bulletins": "dgm_madagascar",
+    "fewsnet_ipc": "fewsnet",
+    "nasa_power": "nasa",
 }
 
 
 def audit_source_family_independence(
     source_items: Sequence[dict[str, Any] | str],
 ) -> dict[str, Any]:
-    """Audit source independence and prevent false multi-source corroboration (C3, SPECS §14).
+    """Audit source independence and prevent false multi-source corroboration (C3, SPECS §14, ADR-100).
 
     Identifies root source families and prevents counting derivative sources
     (such as WB RTFP deriving from WFP HDX) as independent confirmations.
@@ -79,20 +96,20 @@ def audit_source_family_independence(
     for item in source_items:
         if isinstance(item, str):
             s_id = item
-            fam = KNOWN_DERIVATIONS.get(s_id, s_id)
+            fam = ROOT_SOURCE_FAMILIES.get(s_id, s_id)
             dep = None
         else:
             s_id = item.get("source_id", "")
-            fam = item.get("source_family") or s_id
+            fam = item.get("source_family") or ROOT_SOURCE_FAMILIES.get(s_id, s_id)
             dep = item.get("source_dependency")
 
-        if dep == "wfp_fao" or s_id in KNOWN_DERIVATIONS:
+        if dep == "wfp_fao" or s_id == "wb_rtfp_mdg":
             fam = "un_wfp"
             has_dependent_derivation = True
 
         sources.append(s_id)
         declared_families.append(fam)
-        root_fam = KNOWN_DERIVATIONS.get(s_id, fam)
+        root_fam = ROOT_SOURCE_FAMILIES.get(s_id, fam)
         root_families.add(root_fam)
 
     return {

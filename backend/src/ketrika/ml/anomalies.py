@@ -35,6 +35,7 @@ class PriceAnomaly:
     chosen_source_id: str | None
     sources: list[str] = field(default_factory=list)
     n_sources: int = 1
+    n_independent_families: int = 1
     evidence: dict[str, Any] = field(default_factory=dict)
 
 
@@ -46,8 +47,8 @@ def detect_price_anomalies(
 ) -> list[PriceAnomaly]:
     """Detect statistical price anomalies from Gold analytical layer.
 
-    Anomalies evaluated per SPECS §17 & §18:
-    - PRICE_SPIKE: z > 3.0 and chg_1m > 0.15 (severity 'high' if >= 2 sources, else 'medium')
+    Anomalies evaluated per SPECS §17 & §18, ADR-100 (R6.6):
+    - PRICE_SPIKE: z > 3.0 and chg_1m > 0.15 (severity 'high' ONLY if >= 2 truly independent source families, else 'medium')
     - PRICE_DROP: z < -3.0 and chg_1m < -0.15 (severity 'medium')
     - OUTLIER: |z| > 3.0 but relative variation does not meet spike/drop thresholds (severity 'low')
     """
@@ -111,6 +112,9 @@ def detect_price_anomalies(
     rows = session.execute(query, params).fetchall()
     anomalies: list[PriceAnomaly] = []
 
+    # Import source independence auditor (ADR-100 / R6.6)
+    from ketrika.gold.kpi import audit_source_family_independence
+
     for r in rows:
         z = round(float(r.z_score_robust), 2)
         chg = float(r.chg_1m) if r.chg_1m is not None else None
@@ -123,9 +127,13 @@ def detect_price_anomalies(
             else ([str(chosen_src)] if chosen_src else [])
         )
 
+        independence_audit = audit_source_family_independence(srcs)
+        n_indep = int(independence_audit.get("n_independent_families", 1))
+
         if z > z_threshold and chg is not None and chg > chg_threshold:
             anomaly_type: Literal["PRICE_SPIKE", "PRICE_DROP", "OUTLIER"] = "PRICE_SPIKE"
-            severity: Literal["low", "medium", "high"] = "high" if n_src >= 2 else "medium"
+            # High severity requires >= 2 TRULY INDEPENDENT source families (ADR-100)
+            severity: Literal["low", "medium", "high"] = "high" if n_indep >= 2 else "medium"
         elif z < -z_threshold and chg is not None and chg < -chg_threshold:
             anomaly_type = "PRICE_DROP"
             severity = "medium"
@@ -147,6 +155,9 @@ def detect_price_anomalies(
             "z_score_robust": z,
             "n_sources": n_src,
             "sources": srcs,
+            "n_independent_families": n_indep,
+            "independent_families": independence_audit.get("independent_families", []),
+            "has_dependent_derivation": independence_audit.get("has_dependent_derivation", False),
             "chosen_source_id": r.chosen_source_id,
         }
 
@@ -167,6 +178,7 @@ def detect_price_anomalies(
                 chosen_source_id=r.chosen_source_id,
                 sources=srcs,
                 n_sources=n_src,
+                n_independent_families=n_indep,
                 evidence=evidence,
             )
         )

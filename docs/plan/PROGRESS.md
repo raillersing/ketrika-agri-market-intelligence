@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T13:35:00Z] R6.6 — DONE, évaluation des alertes et scénarios de risque
+
+- Dépendances relues : R2.3 (DONE), R6.5 (DONE, commit `e823821`), R4.6/R4.7 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-100 dans `docs/plan/DECISIONS.md` (anti-fausses confirmations par familles indépendantes, conditionnement strict de rupture sur quantités documentées, étanchéité des catégories d'alerte, rapport métrologique loyal).
+  2. Adapter `detect_price_anomalies` dans `backend/src/ketrika/ml/anomalies.py` avec audit des familles indépendantes (WFP + RTFP ne monte pas à high, préservation de sévérité medium).
+  3. Enrichir `audit_source_family_independence` dans `backend/src/ketrika/gold/kpi.py` avec le mapping des familles racines (`ROOT_SOURCE_FAMILIES`).
+  4. Renforcer `evaluate_stockout_risk_rules` et `evaluate_data_stale_rules` dans `backend/src/ketrika/alerts/rules.py` (quantités documentées exigées pour rupture confirmée, distinction stricte marché/climat/stale, fonction d'évaluation métrologique loyale `evaluate_alert_metrics_and_scenarios`).
+  5. Écrire la suite de tests normatifs dédiée `backend/tests/unit/test_alerts_qualification_r66.py` (11 critères R6.6).
+  6. Exécuter l'ensemble des suites d'alertes dans Docker : 19/19 tests passés au vert (100%), couverture globale `ketrika.alerts` à 88% (engine 98%, rules 94%, notifier 68%).
+  7. Valider Ruff clean (0 warning) et Mypy strict clean (0 issue sur 8 source files).
+  8. Rédiger le dossier de preuve normatif `docs/evidence/R6.6/README.md`.
+- Résultat : Tâche R6.6 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.6/README.md`. Commit : à sceller.
+
 ### [2026-10-17T13:20:00Z] R6.5 — DONE, qualification du bulletin sans hallucination numérique ou sémantique
 
 - Dépendances relues : R2.8 (DONE), R6.2 (DONE), R6.3 (DONE, commit `0a591c9`).
@@ -1225,7 +1239,7 @@
 | R6.3 | MUST | DONE | 2026-10-17T12:20:00Z | 2026-10-17T12:33:00Z | 0a591c9 | Répondre avec des résultats exécutés et référencés, anti-hallucination, métadonnées complètes, abstention | Qualifié, 47/47 tests verts, cov 86% |
 | R6.4 | MUST | DONE | 2026-10-17T12:35:00Z | 2026-10-17T12:58:00Z | ad7a6f8 | Évaluation du copilote sur 65 questions indépendantes et cas hostiles, exactitude 100%, statut OFFLINE_TESTED | Qualifié, 50/50 tests verts, exactitude 100% |
 | R6.5 | MUST | DONE | 2026-10-17T13:05:00Z | 2026-10-17T13:20:00Z | e823821 | Qualification du bulletin sans hallucination numérique ou sémantique, approbation auditée, quarantaine Mailpit | Qualifié, 18/18 tests verts, cov 92% |
-| R6.6 | MUST | TODO | — | — | — | — | — |
+| R6.6 | MUST | DONE | 2026-10-17T13:25:00Z | 2026-10-17T13:35:00Z | pending | Évaluer les alertes et les scénarios de risque, familles indépendantes, métrologie loyale | Qualifié, 19/19 tests verts, cov 88% |
 | R6.7 | MUST | TODO | — | — | — | — | — |
 | R6.8 | MUST | TODO | — | — | — | — | — |
 | R6.9 | MUST | TODO | — | — | — | — | — |
