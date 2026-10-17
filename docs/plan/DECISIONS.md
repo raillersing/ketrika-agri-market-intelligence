@@ -2,6 +2,34 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-092 : architecture de bilan d'approvisionnement sans double comptage, conservation de masse et étanchéité imports vs arrivages (R5.6)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.6 ; Phase R5.
+- **Contexte :** La tâche R5.6 impose de construire les bilans d'approvisionnement des marchés vivriers et des bassins de production sans aucun double comptage. Les directives normatives de R5.6, SPECS §27 et les règles constitutionnelles d'AGENTS.md imposent :
+  1. Équation stricte de conservation de masse :
+     $$\text{Stock}_{\text{fin}} = \text{Stock}_{\text{début}} + \text{Entrées} - \text{Sorties} - \text{Ventes} - \text{Pertes}$$
+  2. Prévention formelle des collisions macro/micro : une importation douanière nationale (`trade_flow` des douanes au port de Toamasina) ne doit **jamais** être additionnée aux arrivages physiques observés sur un marché de gros (`inflow_arrival` sur le marché d'Anosibe), car le riz importé au port constitue déjà la cargaison des camions arrivant à Anosibe. L'additionner constituerait un double comptage dévastateur.
+  3. Les volumes d'importations nationales ne sont pas attribuables à un marché spécifique sans preuve formelle d'allocation logistique (`allocated_imports`).
+  4. Les stocks statiques d'inventaire (`stock_inventory`) ne s'additionnent **jamais** comme un flux de production périodique.
+  5. Règle d'honnêteté métrologique : **un composant inconnu reste inconnu**. Si les pertes post-récolte ou les ventes de détail n'ont pas fait l'objet d'enquêtes observées, le système refuse catégoriquement de présenter un solde net calculé comme un « total observé ».
+  6. Séparation étanche entre **Bilan Observé Partiel** (`observed_partial`) fondé uniquement sur des faits vérifiés et **Scénario de Simulation** (`scenario_simulation`) paramétré avec des hypothèses explicites versionnées hors des tables d'observations.
+- **Décision :**
+  1. **Création du module `backend/src/ketrika/supply/balance.py` :**
+     - Modèles de données Pydantic : `BalanceTerm`, `SupplyBalanceReport`, `ScenarioAssumption`.
+     - Moteur `SupplyBalanceEngine` :
+       - `compute_observed_partial_balance(market_code, product_raw, start_date, end_date, records)` : compilation des flux observés, identification explicite des termes inconnus (`is_observed=False`, `quantity_kg=None`), calcul des sommes partielles entrées/sorties sans falsification.
+       - `simulate_scenario_balance(market_code, product_raw, start_date, end_date, records, assumptions)` : bilan complet sous hypothèses paramétrées (taux de perte post-récolte estimé, ratio de consommation journalière) clairement identifié comme scénario non observé.
+       - `check_customs_vs_market_double_count(market_arrivals, customs_imports)` : alerte automatique et blocage d'addition si tentative de combiner flux douaniers et arrivages locaux sur le même périmètre.
+       - Vérification de la conservation de masse sur les séries complètes ($\Delta \text{Stock} = \text{Entrées} - \text{Sorties}$).
+  2. **Auditabilité totale :**
+     - Chaque terme de bilan référence obligatoirement soit un `source_record_id` (fait Bronze), soit un `assumption_id` (scénario paramétré).
+- **Alternatives rejetées :**
+  - Deviner les ventes journalières pour forcer l'équilibre du bilan (rejeté, falsification prohibée par AGENTS.md §4.9).
+  - Additionner les statistiques douanières nationales aux tonnages des marchés d'Antananarivo (rejeté, double comptage illégal).
+- **Conséquences :**
+  - Bilans de marché rigoureux, conformes à la physique des flux, explicables aux analystes et sans agrégation hybride trompeuse.
+
+
 ## ADR-091 : modèle de fenêtre de récolte vérifiable à résolution décadaire, ajustement agronomique sous contrainte hydrique et qualification expérimentale (R5.4)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R5.4 ; Phase R5.

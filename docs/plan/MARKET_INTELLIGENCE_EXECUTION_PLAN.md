@@ -70,7 +70,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R5.3 | MUST | DONE | Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels |
 | R5.4 | MUST | DONE | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique |
 | R5.5 | SHOULD | TODO | — |
-| R5.6 | MUST | TODO | — |
+| R5.6 | MUST | DONE | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks, 5 tests verts, cov 95% |
 | R5.7 | MUST | TODO | — |
 | R5.8 | MUST | TODO | — |
 | R5.9 | MUST | TODO | — |

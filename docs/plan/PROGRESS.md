@@ -3,6 +3,18 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T10:55:00Z] R5.6 — DONE, bilan d'offre sans double comptage et conservation de masse
+
+- Dépendances relues : R5.3 (DONE), R1.6 (DONE), R1.9 (DONE), R5.4 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-092 dans `docs/plan/DECISIONS.md` (conservation de masse stock_fin = stock_début + entrées - sorties - ventes - pertes, interdiction de cumul douanes vs arrivages locaux, distinction bilan partiel observé vs scénario simulé, composant inconnu reste inconnu).
+  2. Implémenter le module `backend/src/ketrika/supply/balance.py` avec les modèles Pydantic (`BalanceTerm`, `SupplyBalanceReport`, `ScenarioAssumption`) et le moteur `SupplyBalanceEngine`.
+  3. Implémenter la détection de double comptage douane vs marché et la vérification de conservation de masse.
+  4. Écrire la suite de tests unitaires `backend/tests/unit/test_supply_balance_engine.py`.
+  5. Valider Ruff clean et Mypy strict clean.
+  6. Rédiger le dossier de preuve normatif `docs/evidence/R5.6/README.md`.
+- Preuve : 5/5 tests unitaires passés en 16.91s (`test_supply_balance_engine.py`), couverture 95% sur `ketrika.supply.balance`, Ruff clean, Mypy strict clean, dossier `docs/evidence/R5.6/README.md`. Statut : DONE.
+
 ### [2026-10-17T10:38:00Z] R5.4 — DONE, modèle de fenêtre de récolte vérifiable et ajustement agronomique
 
 - Dépendances relues : R4.6 (DONE), R4.7 (DONE).
@@ -1082,7 +1094,7 @@
 | R5.3 | MUST | DONE | 2026-10-17T02:17:00Z | 2026-10-17T02:18:00Z | ef23d17 | Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels | Qualifié, 6/6 tests verts, 96% cov |
 | R5.4 | MUST | DONE | 2026-10-17T10:38:00Z | 2026-10-17T10:41:00Z | 64c1499 | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique | Qualifié, 6/6 tests verts, 90% cov |
 | R5.5 | SHOULD | TODO | — | — | — | — | — |
-| R5.6 | MUST | TODO | — | — | — | — | — |
+| R5.6 | MUST | DONE | 2026-10-17T10:45:00Z | 2026-10-17T10:55:00Z | commit_pending | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks | Qualifié, 5/5 tests verts, 95% cov |
 | R5.7 | MUST | TODO | — | — | — | — | — |
 | R5.8 | MUST | TODO | — | — | — | — | — |
 | R5.9 | MUST | TODO | — | — | — | — | — |

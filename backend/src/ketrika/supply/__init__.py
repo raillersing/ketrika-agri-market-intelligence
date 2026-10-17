@@ -14,6 +14,13 @@ from ketrika.supply.contracts import (
     validate_no_double_counting,
     validate_payload_no_pii,
 )
+from ketrika.supply.balance import (
+    BalanceTerm,
+    BalanceType,
+    ScenarioAssumption,
+    SupplyBalanceEngine,
+    SupplyBalanceReport,
+)
 from ketrika.supply.harvest_window import (
     HarvestConfrontationResult,
     HarvestWindowModel,
@@ -31,6 +38,8 @@ from ketrika.supply.quality import (
 )
 
 __all__ = [
+    "BalanceTerm",
+    "BalanceType",
     "FORBIDDEN_PII_FIELDS",
     "HarvestConfrontationResult",
     "HarvestWindowModel",
@@ -43,6 +52,9 @@ __all__ = [
     "QuantityObservationRecord",
     "QuantityTarget",
     "QuantityUnit",
+    "ScenarioAssumption",
+    "SupplyBalanceEngine",
+    "SupplyBalanceReport",
     "SupplyDataQualityReport",
     "SupplyQualityChecker",
     "SurveyMetadata",
