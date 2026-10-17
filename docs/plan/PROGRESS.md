@@ -3,6 +3,27 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T11:52:00Z] Phase R5 Done & Gate R5.9 Qualifié (Tag: mi-r5-qualified)
+
+- **Résumé de phase R5 (<= 15 lignes) :**
+  - **Livré :** Séparation métrologique stricte des 3 cibles (`harvest_volume`, `inflow_arrival`, `stock_inventory`), flux vs stocks étanches et traçabilité Bronze SHA-256 intégrale (migration Alembic 0016) ; Rejet automatique et absolu de toute PII (`FORBIDDEN_PII_FIELDS`) ; Matrice d'audit marché × période séparant explicitement `missing_survey` (aucun relevé) et `zero_inflow` (0 kg interdit si non enquêté) ; Modèle de fenêtre de récolte décadaire déterministe (`HarvestWindowModel`, D1/D2/D3 réelles) avec décalage hydrique et confrontation empirique ; Bilan d'offre physique avec conservation de masse ($\Delta\text{Stock} = \text{Entrées} - \text{Sorties} - \text{Pertes}$) et blocage formel du double comptage douanes vs marchés de gros (`DOUBLE_COUNT_HAZARD`) ; Prévision des fenêtres et pics d'arrivage (`SupplyPeakForecastEngine`) par décalage logistique $\tau_{\text{logistique}} \in [1, 2]$ décades, as-of cutoff strict et détection dérivée exclusivement des tonnages physiques (jamais du prix minimal) ; Règle d'abstention sous historique insuffisant (< 2 cycles) ; Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs réels (Régulateur SPM/MIC, Acheteur grossiste, Vulgarisation DRDA), arrêt sur paramètre manquant, interdiction formelle d'ordres d'achat autonomes, immunité anti-injection et statut `human_reviewed=false` (Gate H7) ; Endpoints API FastAPI `/v1/supply/*` validés.
+  - **Chiffres clés :** 7/7 tâches MUST R5 DONE (100%) ; 48 tests unitaires/qualification supply 100% verts en 53.83s ; couverture package `ketrika.supply` à 85% (seuil >= 80% validé) ; Ruff clean, Mypy strict clean (7 source files sans erreur) ; migration Alembic 0016 appliquée.
+  - **Tag :** `mi-r5-qualified`.
+
+### [2026-10-17T11:50:00Z] R5.9 — DONE, Gate de récoltes, volumes et approvisionnement des marchés
+
+- Dépendances relues : R5.1–R5.4, R5.6–R5.8 (toutes DONE).
+- Mini-plan exécuté :
+  1. Rédiger la suite d'acceptation normative `backend/tests/unit/test_gate_r5_supply.py` couvrant les 10 critères du Gate R5.
+  2. Valider l'étanchéité des contrats de stock et flux douaniers (`TradeFlowRecord`).
+  3. Exécuter la suite complète dans Docker (10/10 tests passés en 54.53s, exit code 0).
+  4. Valider l'ensemble des 7 suites de tests du package `ketrika.supply` (48/48 tests verts en 53.83s, couverture globale 85%).
+  5. Valider Ruff clean et Mypy strict clean (0 warning, 0 error sur 7 source files).
+  6. Rédiger le dossier de preuve normatif `docs/evidence/R5.9/README.md`.
+  7. Mettre à jour `MARKET_INTELLIGENCE_EXECUTION_PLAN.md` et `PROGRESS.md`.
+  8. Sceller le tag git `mi-r5-qualified`.
+- Résultat : Tâche R5.9 entièrement validée (DONE). Preuve : `docs/evidence/R5.9/README.md`.
+
 ### [2026-10-17T11:32:00Z] R5.8 — DONE, scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs
 
 - Dépendances relues : R2.11 (DONE), R5.4 (DONE), R5.6 (DONE), R5.7 (DONE).
@@ -1124,7 +1145,7 @@
 | R5.6 | MUST | DONE | 2026-10-17T10:45:00Z | 2026-10-17T10:55:00Z | b4a760d | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks | Qualifié, 5/5 tests verts, 95% cov |
 | R5.7 | MUST | DONE | 2026-10-17T11:03:00Z | 2026-10-17T11:18:00Z | e038d0e | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique | Qualifié, 7/7 tests verts, 90% cov |
 | R5.8 | MUST | DONE | 2026-10-17T11:22:00Z | 2026-10-17T11:32:00Z | 90b47b6 | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs | Qualifié, 7/7 tests verts, 95% cov |
-| R5.9 | MUST | TODO | — | — | — | — | — |
+| R5.9 | MUST | DONE | 2026-10-17T11:40:00Z | 2026-10-17T11:50:00Z | HEAD | Gate récoltes et approvisionnement validé, 10 critères normatifs prouvés, couverture 85%, tag mi-r5-qualified | 10 tests dédiés verts, 48 tests R5 verts, 85% cov |
 | R6.1 | MUST | TODO | — | — | — | — | — |
 | R6.2 | MUST | TODO | — | — | — | — | — |
 | R6.3 | MUST | TODO | — | — | — | — | — |
