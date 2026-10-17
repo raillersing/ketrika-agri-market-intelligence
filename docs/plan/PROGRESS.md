@@ -17,7 +17,7 @@
   8. Valider l'ensemble des 5 suites du package `ketrika.copilot` (50/50 tests passés au vert en 51.36s, couverture globale à 86%).
   9. Valider Ruff clean (0 warning) et Mypy strict clean (0 issue sur 12 source files).
   10. Rédiger le dossier de preuve normatif `docs/evidence/R6.4/README.md`.
-- Résultat : Tâche R6.4 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.4/README.md`.
+- Résultat : Tâche R6.4 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.4/README.md`. Commit : `ad7a6f8`.
 
 ### [2026-10-17T12:33:00Z] R6.3 — DONE, répondre avec des résultats exécutés et référencés, anti-hallucination et abstention loyale
 
