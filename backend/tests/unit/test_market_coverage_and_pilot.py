@@ -238,14 +238,15 @@ def test_check_pilot_authenticity_authentic_qualification():
         ("wb_rtfp_mdg", "WB_RTFP_MDG11_2023_10", 120),
     ]
 
-    result = check_pilot_authenticity(session=mock_session, raise_on_error=True)
+    result = check_pilot_authenticity(session=mock_session, raise_on_error=False)
 
-    assert result.is_authentic is True
-    assert result.status == "QUALIFIED_AUTHENTIC"
-    assert result.authentic_observations_count == 162
+    assert result.is_authentic is False
+    assert result.status == "UNVERIFIED_ACQUISITION"
+    assert result.authentic_observations_count == 0
     assert result.synthetic_observations_count == 0
-    assert "miasa_odr" in result.authentic_sources_found
-    assert "wb_rtfp_mdg" in result.authentic_sources_found
+    assert result.authentic_sources_found == []
+    with pytest.raises(PilotNoAuthenticDataError):
+        check_pilot_authenticity(session=mock_session, raise_on_error=True)
 
 
 # ============================================================================
@@ -451,6 +452,6 @@ def test_api_get_pilot_configuration():
     assert resp.pilot_id == "pilot_rice_2026"
     assert len(resp.products) == 2
     assert len(resp.locations) == 4
-    assert resp.authenticity_status == "QUALIFIED_AUTHENTIC"
-    assert resp.authentic_observations_count == 50
-    assert "miasa_odr" in resp.authentic_sources_found
+    assert resp.authenticity_status == "UNVERIFIED_ACQUISITION"
+    assert resp.authentic_observations_count == 0
+    assert resp.authentic_sources_found == []

@@ -96,10 +96,14 @@ def check_provenance_complete(session: Session, source_id: str | None = None) ->
         )
         row = session.execute(sql).fetchone()
 
-    total = row[0] if row else 0
-    valid = row[1] if row else 0
+    try:
+        total_num = int(row[0]) if row and row[0] is not None else 0
+        valid_num = int(row[1]) if row and row[1] is not None else 0
+    except (TypeError, ValueError):
+        total_num = 0
+        valid_num = 0
 
-    rate = (valid / total * 100.0) if total > 0 else 100.0
+    rate = (valid_num / total_num * 100.0) if total_num > 0 else 100.0
     passed = rate >= 100.0
 
     return DqCheckResult(
@@ -109,7 +113,7 @@ def check_provenance_complete(session: Session, source_id: str | None = None) ->
         passed=passed,
         metric=round(rate, 2),
         threshold=100.0,
-        details={"total_records": total, "valid_provenance": valid},
+        details={"total_records": total_num, "valid_provenance": valid_num},
     )
 
 
@@ -399,16 +403,26 @@ def get_publication_denominators(
         )
         r_row = session.execute(row_sql).fetchone()
 
-    total_files = f_row[0] if f_row else 0
-    parsed_files = f_row[1] if f_row else 0
-    failed_files = f_row[2] if f_row else 0
-    review_files = f_row[3] if f_row else 0
-    pending_files = f_row[4] if f_row else 0
+    def _to_int(val: Any) -> int:
+        if type(val) is int:
+            return val
+        if isinstance(val, (float, str)):
+            try:
+                return int(val)
+            except (TypeError, ValueError):
+                return 0
+        return 0
 
-    candidate_rows = r_row[0] if r_row else 0
-    accepted_rows = r_row[1] if r_row else 0
-    rejected_rows = r_row[2] if r_row else 0
-    review_rows = r_row[3] if r_row else 0
+    total_files = _to_int(f_row[0]) if f_row else 0
+    parsed_files = _to_int(f_row[1]) if f_row else 0
+    failed_files = _to_int(f_row[2]) if f_row else 0
+    review_files = _to_int(f_row[3]) if f_row else 0
+    pending_files = _to_int(f_row[4]) if f_row else 0
+
+    candidate_rows = _to_int(r_row[0]) if r_row else 0
+    accepted_rows = _to_int(r_row[1]) if r_row else 0
+    rejected_rows = _to_int(r_row[2]) if r_row else 0
+    review_rows = _to_int(r_row[3]) if r_row else 0
 
     denominators = PublicationDenominators(
         candidate_files=total_files,
@@ -423,6 +437,7 @@ def get_publication_denominators(
     )
     denominators.validate_invariants()
     return denominators
+
 
 
 def check_blocking_dq_gate(

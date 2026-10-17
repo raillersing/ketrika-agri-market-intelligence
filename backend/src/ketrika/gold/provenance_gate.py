@@ -60,6 +60,8 @@ class PublicationCheck:
 def tables_for_views(views: Sequence[str]) -> tuple[str, ...]:
     if not views or any(not isinstance(view, str) or view not in VIEW_TABLES for view in views):
         raise ValueError("unsupported_gold_view")
+    if "economic_dashboard" in views:
+        raise ValueError("macro_publication_not_qualified")
     return tuple(sorted(set().union(*(VIEW_TABLES[view] for view in views))))
 
 

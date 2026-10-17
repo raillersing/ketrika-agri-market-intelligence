@@ -168,21 +168,17 @@ def check_pilot_authenticity(
     authentic_sources: set[str] = set()
 
     for r in rows:
-        source_id = str(r[0])
         natural_key = str(r[1])
         cnt = int(r[2])
 
-        is_synthetic = (
-            natural_key.startswith("synthetic")
-            or natural_key.startswith("test_")
-            or source_id not in allowed_sources
-        )
+        is_synthetic = natural_key.startswith("synthetic") or natural_key.startswith("test_")
 
         if is_synthetic:
             synthetic_count += cnt
         else:
-            authentic_count += cnt
-            authentic_sources.add(source_id)
+            # A known source and a hashed natural key are not acquisition evidence.
+            # These candidates remain unverified until a verified acquisition receipt is wired.
+            continue
 
     is_authentic = (
         authentic_count > 0
@@ -190,7 +186,11 @@ def check_pilot_authenticity(
     )
 
     if not is_authentic:
-        status = "BLOCKED_NO_AUTHENTIC_DATA"
+        status = (
+            "UNVERIFIED_ACQUISITION"
+            if rows and synthetic_count == 0
+            else "BLOCKED_NO_AUTHENTIC_DATA"
+        )
         msg = (
             f"Pilot blocked: found {authentic_count} authentic price observations across "
             f"{len(authentic_sources)} sources (required: >0 from {allowed_sources}). "

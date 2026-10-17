@@ -1,19 +1,25 @@
-"""Generate authentic Excel fixtures for INSTAT NIPC qualification (R1.3, CC-R)."""
+"""Generate SYNTHETIC Excel parser fixtures, never official INSTAT evidence.
+
+The historical filename is retained for compatibility. Generated values and
+revisions cannot qualify source authenticity or market accuracy.
+"""
 
 from pathlib import Path
 
 import openpyxl
 from openpyxl.styles import Alignment, Font
+from openpyxl.worksheet.worksheet import Worksheet
 
 FIXTURES_DIR = Path(__file__).resolve().parent
 
 
 def build_historic_workbook(dest_path: Path) -> None:
-    """Build multi-sheet authentic historical NIPC workbook (Base 2016 and Base 2011)."""
+    """Build a synthetic multi-sheet NIPC workbook (Base 2016 and Base 2011)."""
     wb = openpyxl.Workbook()
 
     # Sheet 1: Note Méthodologique (metadata without tabular cpi data)
     ws_notes = wb.active
+    assert isinstance(ws_notes, Worksheet)
     ws_notes.title = "Avertissement et Methodes"
     ws_notes.views.sheetView[0].showGridLines = True
     ws_notes["A1"] = "INSTITUT NATIONAL DE LA STATISTIQUE (INSTAT) MADAGASCAR"
@@ -21,8 +27,12 @@ def build_historic_workbook(dest_path: Path) -> None:
     ws_notes["A2"] = "Direction de la Statistique des Ménages - Service des Prix à la Consommation"
     ws_notes["A3"] = "Nouveau Système de l'Indice des Prix à la Consommation (NIPC)"
     ws_notes["A4"] = "Base de référence : Année 2016 = 100 (depuis janvier 2016)"
-    ws_notes["A5"] = "Mentions légales : Données publiques officielles gouvernementales - Réutilisation libre avec attribution."
-    ws_notes["A6"] = "Note sur les changements de base : L'ancienne base 2011=100 ne doit pas être raccordée sans coefficient officiel."
+    ws_notes["A5"] = (
+        "FIXTURE SYNTHETIQUE : aucune licence institutionnelle ni acquisition officielle attestée."
+    )
+    ws_notes["A6"] = (
+        "Note sur les changements de base : L'ancienne base 2011=100 ne doit pas être raccordée sans coefficient officiel."
+    )
 
     # Sheet 2: Indices Nationaux Base 2016 (2016-2023)
     ws_2016 = wb.create_sheet(title="Indices Nationaux (Base 2016)")

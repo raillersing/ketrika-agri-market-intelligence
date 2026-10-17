@@ -382,6 +382,10 @@ def query_economic_dashboard_from_db(
     target_month: date | None = None,
 ) -> list[IndicatorObservationItem]:
     """Query consolidated indicators from gold.economic_dashboard."""
+    from ketrika.gold.provenance_gate import tables_for_views
+
+    # Reject uncertified macro caches as well as newly requested publication.
+    tables_for_views(["economic_dashboard"])
     sql = """
         SELECT
             ed.indicator_code,

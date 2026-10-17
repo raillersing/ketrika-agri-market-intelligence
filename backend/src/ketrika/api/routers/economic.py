@@ -6,7 +6,7 @@ import datetime as dt
 import logging
 from typing import Any
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -26,6 +26,7 @@ from ketrika.gold.economic import (
     calculate_import_unit_cost,
     query_economic_dashboard_from_db,
 )
+from ketrika.gold.provenance_gate import tables_for_views
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +74,10 @@ def get_economic_dashboard(
     session: Session = Depends(get_db),
 ) -> EconomicDashboardOut:
     """Return the interpretable economic dashboard grouped by autonomous dimensions."""
-    db_items = query_economic_dashboard_from_db(session, target_month=month)
+    try:
+        db_items = query_economic_dashboard_from_db(session, target_month=month)
+    except (ValueError, RuntimeError):
+        raise HTTPException(status_code=503, detail="economic_data_not_qualified") from None
 
     # If DB view is empty (e.g. in test environment without full Gold refresh),
     # construct structured response from catalog with missingness reasons.
@@ -196,6 +200,10 @@ def get_pilot_economic_context(
     session: Session = Depends(get_db),
 ) -> PilotEconomicContextOut:
     """Return economic transmission context for the rice pilot (R2.8)."""
+    try:
+        tables_for_views(["economic_dashboard"])
+    except ValueError:
+        raise HTTPException(status_code=503, detail="economic_data_not_qualified") from None
     month_val = target_month or dt.date(2026, 5, 1)
     month_str = month_val.isoformat()
 

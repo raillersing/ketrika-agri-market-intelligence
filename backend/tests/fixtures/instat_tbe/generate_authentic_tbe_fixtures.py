@@ -1,4 +1,8 @@
-"""Generate authentic multi-edition Excel fixtures for INSTAT TBE qualification (R2.5)."""
+"""Generate SYNTHETIC multi-edition Excel fixtures, not official INSTAT data.
+
+The historical filename is retained; generated values and revisions only test
+software and cannot prove source authenticity or real-world performance.
+"""
 
 from __future__ import annotations
 
@@ -6,6 +10,7 @@ from pathlib import Path
 
 import openpyxl
 from openpyxl.styles import Alignment, Font
+from openpyxl.worksheet.worksheet import Worksheet
 
 FIXTURES_DIR = Path(__file__).resolve().parent
 
@@ -17,11 +22,12 @@ def build_tbe_workbook(
     end_month: int,  # 3 for edition 62 (up to 2026-03), 6 for edition 63 (up to 2026-06)
     revised: bool = False,
 ) -> None:
-    """Build an authentic multi-sheet TBE workbook complying with INSTAT publication standards."""
+    """Build a synthetic multi-sheet workbook for parser regression tests."""
     wb = openpyxl.Workbook()
 
     # Sheet 1: Sommaire & Sources
     ws_notes = wb.active
+    assert isinstance(ws_notes, Worksheet)
     ws_notes.title = "Sommaire & Sources"
     ws_notes.views.sheetView[0].showGridLines = True
     ws_notes["A1"] = "INSTITUT NATIONAL DE LA STATISTIQUE (INSTAT) MADAGASCAR"
@@ -30,7 +36,9 @@ def build_tbe_workbook(
     ws_notes["A2"].font = Font(bold=True, size=12)
     ws_notes["A3"] = f"Date de publication : {publication_date_str}"
     ws_notes["A4"] = "Direction de la Statistique Economique - Service de la Conjoncture"
-    ws_notes["A5"] = "Mentions légales : Données statistiques publiques officielles gouvernementales."
+    ws_notes["A5"] = (
+        "FIXTURE SYNTHETIQUE : aucune acquisition officielle ni données de terrain attestées."
+    )
     ws_notes["A6"] = "Sources primaires partenaires : Direction Générale des Douanes (DGD), Banky Foiben'i Madagasikara (BFM), JIRAMA."
 
     # Sheet 2: Secteur Réel

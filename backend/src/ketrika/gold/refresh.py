@@ -133,7 +133,8 @@ def refresh_gold_views(
         proof_reader = reader if reader is not None else BronzeProofReader(BronzeStore())
         check = require_gold_provenance(session, proof_reader, target_views)
         structure = require_gold_structure(session, proof_reader, check, schema_registry)
-        check_blocking_dq_gate(session)
+        if check.state != "empty":
+            check_blocking_dq_gate(session)
         denominators = get_publication_denominators(session)
         with session.begin_nested():
             for view_name in target_views:

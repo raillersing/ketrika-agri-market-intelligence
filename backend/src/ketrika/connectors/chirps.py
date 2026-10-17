@@ -180,7 +180,15 @@ class ChirpsConnector:
             stage = "preliminary"
 
         # 3. Decode raster payload (supporting decompressed gzip or structured JSON raster)
-        grid_data = self._decode_raster_data(raw_bytes, artifact.url)
+        try:
+            grid_data = self._decode_raster_data(raw_bytes, artifact.url)
+        except Exception as exc:
+            logger.warning("Failed to decode CHIRPS raster for %s: %s", artifact.url, exc)
+            return ParseResult(
+                records=[],
+                issues=[{"kind": "raster_decode_error", "detail": str(exc), "url": artifact.url}],
+                parser_version=self.parser_version,
+            )
 
         # 4. Load Madagascar administrative zones (districts admin_level 2 and regions admin_level 1)
         entities = load_geographic_entities("admin2")
@@ -315,30 +323,15 @@ class ChirpsConnector:
                     grid_data=grid,
                     resolution=0.05,
                 )
-        except Exception:
-            # Fallback deterministic synthetic grid covering Madagascar centroids
-            pass
+        except Exception as exc:
+            logger.debug("Rasterio decoding failed for %s: %s", url, exc)
 
-        # 3. Fallback: Generate calibrated grid from bytes hash for deterministic testing
-        grid = {}
-        # Sample points covering central regions, Alaotra and Grand Sud
-        sample_locs = [
-            (47.53, -18.91, 45.0),  # Analamanga (45 mm)
-            (48.42, -17.83, 110.0),  # Alaotra (110 mm)
-            (43.67, -23.35, 0.0),  # Toliara / Sud (0.0 mm - strictly zero rain!)
-            (45.50, -24.50, 0.0),  # Androy (0.0 mm - dry spell)
-            (49.40, -18.15, 185.5),  # Toamasina / Est (185.5 mm)
-            (40.0, -20.0, CHIRPS_NODATA_VALUE),  # Sea off-coast (-9999.0 nodata)
-        ]
-        for lon, lat, val in sample_locs:
-            grid[(lon, lat)] = val
-
-        return ChirpsGridPayload(
-            year=2024,
-            month=1,
-            stage="final",
-            grid_data=grid,
-            resolution=0.05,
+        # 3. Corrupted or unsupported payload: strictly reject
+        # In strict compliance with AGENTS.md §4 (Principle 1 & 10), synthetic fallbacks
+        # and hardcoded sample locations are strictly prohibited.
+        raise ValueError(
+            f"Corrupted or unsupported CHIRPS raster payload for url '{url}': "
+            "decoding failed. Synthetic fallbacks are strictly prohibited by AGENTS.md §4."
         )
 
 

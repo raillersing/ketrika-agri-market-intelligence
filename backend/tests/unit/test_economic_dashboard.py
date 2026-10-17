@@ -271,8 +271,11 @@ def test_api_get_economic_indicators_catalog():
     assert "gdp_growth_real" in ids
 
 
-def test_api_get_economic_dashboard_structure():
-    """Verify GET /v1/economic/dashboard returns dimensions without invented scores."""
+def test_api_get_economic_dashboard_structure(monkeypatch):
+    """Test response formatting only; stubbed input is not publication qualification."""
+    monkeypatch.setattr(
+        "ketrika.api.routers.economic.query_economic_dashboard_from_db", lambda *args, **kwargs: []
+    )
     client = TestClient(app)
     response = client.get("/v1/economic/dashboard")
     assert response.status_code == 200
@@ -304,11 +307,8 @@ def test_api_get_pilot_economic_context():
     """Verify GET /v1/economic/pilot-context provides transmission context."""
     client = TestClient(app)
     response = client.get("/v1/economic/pilot-context?target_month=2026-05-01")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["pilot_id"] == "pilot_rice_ppn_2026"
-    assert "distinctness_audit" in data
-    assert data["distinctness_audit"]["concepts_strictly_separated"] is True
+    assert response.status_code == 503
+    assert response.json()["detail"] == "economic_data_not_qualified"
 
 
 def test_api_get_pilot_economic_context_with_populated_db():
@@ -339,15 +339,9 @@ def test_api_get_pilot_economic_context_with_populated_db():
     try:
         client = TestClient(app)
         response = client.get("/v1/economic/pilot-context?target_month=2026-05-01")
-        assert response.status_code == 200
-        data = response.json()
-        assert data["fx_usd_mga"] == 4500.0
-        assert data["fuel_diesel_ceiling_mga"] == 4900.0
-        assert data["rice_import_unit_cost_mga_per_kg"] == 2500.0
-        assert data["cpi_food_chg_12m_pct"] == 8.0
-        assert data["local_rice_market_price_mga_per_kg"] == 3200.0
-        assert data["local_rice_price_chg_12m_pct"] == 10.0
-        assert data["status"] == "qualified"
+        assert response.status_code == 503
+        assert response.json()["detail"] == "economic_data_not_qualified"
+        mock_session.execute.assert_not_called()
     finally:
         app.dependency_overrides.pop(get_db, None)
 
@@ -397,16 +391,9 @@ def test_api_get_economic_dashboard_with_db_rows():
     try:
         client = TestClient(app)
         response = client.get("/v1/economic/dashboard?month=2026-05-01")
-        assert response.status_code == 200
-        data = response.json()
-        assert data["overall_status"] == "partial"
-        assert len(data["dimensions"]["exchange_rate"]["indicators"]) == 1
-        ind = data["dimensions"]["exchange_rate"]["indicators"][0]
-        assert ind["indicator_code"] == "EXCHANGE_RATE_USD_MGA"
-        assert ind["current_value"] == 4550.0
-        assert ind["chg_1m"] == 0.012
-        assert ind["chg_12m"] == 0.085
-        assert ind["source_family"] == "bfm"
+        assert response.status_code == 503
+        assert response.json()["detail"] == "economic_data_not_qualified"
+        mock_session.execute.assert_not_called()
     finally:
         app.dependency_overrides.pop(get_db, None)
 

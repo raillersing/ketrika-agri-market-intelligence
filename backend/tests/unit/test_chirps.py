@@ -260,7 +260,7 @@ def test_chirps_gzip_compressed_payload_and_binary_fallback(fixtures_dir: Path):
     res = connector.parse(artifact, ctx)
     assert len(res.records) > 0
 
-    # Also test binary fallback with non-json, non-rasterio dummy bytes
+    # Also test that non-json, corrupted/dummy bytes are strictly rejected with NO synthetic records
     binary_artifact = RawArtifact(
         source_record_id="",
         object_key="bronze/chirps/dummy.tif",
@@ -274,7 +274,9 @@ def test_chirps_gzip_compressed_payload_and_binary_fallback(fixtures_dir: Path):
         metadata={"payload_bytes": b"\x00\x01\x02\x03\x04\x05\x06\x07"},
     )
     bin_res = connector.parse(binary_artifact, binary_ctx)
-    assert len(bin_res.records) > 0
+    assert len(bin_res.records) == 0
+    assert len(bin_res.issues) > 0
+    assert bin_res.issues[0]["kind"] == "raster_decode_error"
 
 
 def test_chirps_discover_overrides_and_list_stages():
