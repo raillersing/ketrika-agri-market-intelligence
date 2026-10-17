@@ -14,7 +14,7 @@
   5. Exécuter l'ensemble des suites dans Docker : 16/16 tests passés au vert en 34.11s, couverture globale sur les composants d'authentification et sécurité à 92% (auth.py: 91%, routers/auth.py: 94%).
   6. Valider Ruff clean (0 warning, 0 error) et Mypy strict clean (0 issue sur 3 source files).
   7. Rédiger le dossier de preuve normatif `docs/evidence/R6.7/README.md`.
-- Résultat : Tâche R6.7 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.7/README.md`. Commit : à suivre.
+- Résultat : Tâche R6.7 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.7/README.md`. Commit : `43935eb`.
 
 ### [2026-10-17T13:35:00Z] R6.6 — DONE, évaluation des alertes et scénarios de risque
 
