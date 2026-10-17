@@ -3,6 +3,19 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T11:18:00Z] R5.7 — DONE, prévision des fenêtres et pics d'approvisionnement des marchés vivriers
+
+- Dépendances relues : R5.3 (DONE), R5.6 (DONE), R3.2–R3.5 (protocoles d'évaluation as-of).
+- Mini-plan exécuté :
+  1. Consigner ADR-093 dans `docs/plan/DECISIONS.md` (as-of cutoff temporel, décalage logistique récolte/marché 1-2 décades, critère d'au moins 2 cycles complets pour modèle saisonnier empirique, règle d'abstention sous historique insuffisant, labels de pics issus uniquement des quantités physiques et jamais des prix).
+  2. Implémenter le module `backend/src/ketrika/supply/peak_forecast.py` avec `SupplyWindowPrediction`, `PeakEvaluationResult`, `CycleSufficiencyReport` et `SupplyPeakForecastEngine`.
+  3. Créer le router FastAPI `backend/src/ketrika/api/routers/supply.py` exposant la route `/v1/supply/peak-forecast` et l'enregistrer dans `backend/src/ketrika/api/main.py`.
+  4. Exposer les modèles et le moteur dans `backend/src/ketrika/supply/__init__.py`.
+  5. Rédiger la suite de tests unitaires `backend/tests/unit/test_supply_peak_forecast.py`.
+  6. Valider Ruff clean et Mypy strict clean.
+  7. Rédiger le dossier de preuve normatif `docs/evidence/R5.7/README.md`.
+- Preuve : 7/7 tests unitaires passés en 32.71s (`test_supply_peak_forecast.py`), couverture 90% sur `ketrika.supply.peak_forecast`, Ruff clean, Mypy strict clean, dossier `docs/evidence/R5.7/README.md`. Statut : DONE.
+
 ### [2026-10-17T10:55:00Z] R5.6 — DONE, bilan d'offre sans double comptage et conservation de masse
 
 - Dépendances relues : R5.3 (DONE), R1.6 (DONE), R1.9 (DONE), R5.4 (DONE).
@@ -1095,7 +1108,7 @@
 | R5.4 | MUST | DONE | 2026-10-17T10:38:00Z | 2026-10-17T10:41:00Z | 64c1499 | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique | Qualifié, 6/6 tests verts, 90% cov |
 | R5.5 | SHOULD | TODO | — | — | — | — | — |
 | R5.6 | MUST | DONE | 2026-10-17T10:45:00Z | 2026-10-17T10:55:00Z | b4a760d | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks | Qualifié, 5/5 tests verts, 95% cov |
-| R5.7 | MUST | TODO | — | — | — | — | — |
+| R5.7 | MUST | DONE | 2026-10-17T11:03:00Z | 2026-10-17T11:18:00Z | commit_pending | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique | Qualifié, 7/7 tests verts, 90% cov |
 | R5.8 | MUST | TODO | — | — | — | — | — |
 | R5.9 | MUST | TODO | — | — | — | — | — |
 | R6.1 | MUST | TODO | — | — | — | — | — |

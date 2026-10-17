@@ -2,6 +2,34 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-093 : prévision des fenêtres et pics d'approvisionnement des marchés, as-of cutoff temporel, décalage logistique récolte/marché et règle d'abstention sous historique insuffisant (R5.7)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.7 ; Phase R5.
+- **Contexte :** La tâche R5.7 impose de prévoir les fenêtres d'approvisionnement et les pics d'arrivages sur les marchés vivriers malgaches, tout en réutilisant les contrôles d'évaluation rigoureux (as-of splits, calibration déterministe). Les directives normatives de R5.7 imposent :
+  1. Fixer la cible : arrivages physiques (`inflow_arrival`) ou volume d'approvisionnement en kg / tonnes, à résolution temporelle décadaire (D1: 1-10, D2: 11-20, D3: 21-fin) cohérente avec le calendrier cultural et les enquêtes de marché.
+  2. Baseline calendrier / récolte : le pic d'arrivage sur le marché terminal de gros (ex: Anosibe, Toamasina) découle de la fenêtre de récolte dans les bassins fournisseurs (ex: Alaotra, Marovoay, Vakinankaratra) modulée par un décalage logistique $\tau_{\text{logistique}} \in [1, 2]$ décades (séchage, battage/usinage paddy $\to$ riz blanc, chargement et transport par camion).
+  3. Cloisonnement temporel as-of strict : interdiction absolue de toute fuite d'information future. Une prévision à date $T_{\text{as-of}}$ n'a accès qu'aux relevés de quantités antérieurs ou égaux à cette date.
+  4. Règle métrologique d'honnêteté sur les données insuffisantes : **au moins deux cycles complets d'arrivages réels observés sont requis** pour prétendre calibrer un modèle statistique saisonnier empirique. Si l'historique d'observations réelles couvre moins de deux cycles complets (ex: quelques semaines ou mois de relevés pilotes), le système refuse de simuler de fausses années d'entraînement. Il classe obligatoirement la prévision en `qualification: "experimental_baseline"` ou `"abstained_insufficient_history"` et fournit la projection agronomique baseline assortie d'une note d'incertitude qualitative.
+  5. Les labels de pics d'offre sont dérivés **exclusivement des quantités physiques observées**, jamais d'un minimum sur la courbe de prix (décorrélation possible liée au stockage spéculatif ou aux coûts logistiques).
+  6. Évaluation indépendante sur quantités réelles : métriques de calage temporel (erreur en décades / jours entre pic prévu et pic observé) et de couverture du volume de campagne (% des arrivages tombant dans la fenêtre prédite).
+  7. Calculs déterministes : amplitudes, largeurs de fenêtres et incertitudes sont calculées mathématiquement, jamais générées par un LLM.
+- **Décision :**
+  1. **Création du module `backend/src/ketrika/supply/peak_forecast.py` :**
+     - Modèles Pydantic : `SupplyWindowPrediction`, `PeakEvaluationResult`, `CycleSufficiencyReport`.
+     - Moteur `SupplyPeakForecastEngine` :
+       - `assess_data_sufficiency(records, min_cycles=2)` : vérification stricte du nombre de cycles complets couverts par les observations.
+       - `predict_supply_window(harvest_window, logistics_lag_dekads=1, historical_arrivals=None, as_of_date=None)` : projection déterministe de la fenêtre et du pic d'approvisionnement, avec décalage logistique explicite et qualification selon l'historique disponible.
+       - `detect_observed_peaks(records)` : identification du pic réel d'arrivages à partir des tonnages physiques.
+       - `evaluate_peak_forecast(prediction, test_arrival_records)` : confrontation empirique indépendante (erreur de calendrier en décades/jours, taux de couverture volumique).
+  2. **Route API dédiée :**
+     - Exposition dans `backend/src/ketrika/api/routers/supply.py` (`/v1/supply/peak-forecast`) avec traçabilité complète de la provenance, de la zone d'approvisionnement et du niveau de qualification.
+- **Alternatives rejetées :**
+  - Entraîner un modèle ML complexe sur des données synthétiques pour faire croire à un modèle saisonnier validé (rejeté, violation directe de la consigne utilisateur et d'AGENTS.md §8).
+  - Inférer le pic d'arrivage à partir du point le plus bas des prix de détail (rejeté, violation de R5.7).
+- **Conséquences :**
+  - Prévisions d'approvisionnement physiquement plausibles, auditables, scientifiquement honnêtes et directement exploitables par les acteurs de la chaîne de valeur vivrière.
+
+
 ## ADR-092 : architecture de bilan d'approvisionnement sans double comptage, conservation de masse et étanchéité imports vs arrivages (R5.6)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R5.6 ; Phase R5.

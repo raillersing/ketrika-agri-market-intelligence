@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Awaitable, Callable
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -35,6 +35,7 @@ from ketrika.api.routers import (
     products,
     sources,
     stocks,
+    supply,
     trade,
     weather,
 )
@@ -79,7 +80,10 @@ app.add_middleware(RateLimitMiddleware)
 
 
 @app.middleware("http")
-async def add_security_headers(request, call_next):
+async def add_security_headers(
+    request: Request,
+    call_next: Callable[[Request], Awaitable[Response]],
+) -> Response:
     """Inject standard security headers into all responses (SPECS §23)."""
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -125,6 +129,7 @@ app.include_router(locations.router)
 app.include_router(prices.router)
 app.include_router(coverage.router)
 app.include_router(stocks.router)
+app.include_router(supply.router)
 app.include_router(trade.router)
 app.include_router(macro.router)
 app.include_router(economic.router)
