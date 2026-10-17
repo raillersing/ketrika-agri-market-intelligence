@@ -3,6 +3,24 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T14:52:00Z] Clôture Finale du Programme Market Intelligence (Tag: mi-v0.2.0-local-qualified)
+
+- **Résumé de phase R6 & Clôture Finale (<= 15 lignes) :**
+  - **Livré :** 100 % des tâches MUST (R0 à R6) intégralement achevées et qualifiées par des preuves formelles ; Copilote analyste zero-hallucination (65/65 questions réussies, 10/10 attaques bloquées) avec SQL Guard étanche ; Bulletin hebdomadaire scellé avec validation sémantique et concordance PDF ; Alertes précoces anti-faux consensus (WFP/RTFP) et rupture de stock strictement conditionnée à des métriques documentées ; Durcissement RBAC, révocation active de session au logout et liens signés HMAC-SHA256 ; Sauvegarde automatisée avec manifeste certifié (.meta.json) et garde de refus absolue sur bases actives (ADR-102) ; Supervision des 5 incidents (panne HTTP, dérive de schéma, budget, dérive modèle interdisant le remplacement automatique, runs interrompus) et runbook opérationnel (ADR-103) ; Performance HTTP P95 < 60ms sous 5 clients concurrents (P95 < 1s SPECS §24 validé) ; Configuration Compose production sans ports secrets ouverts ; Rapports `MARKET_INTELLIGENCE_REPORT.md` et `HANDOFF.md` consolidés sous Gates H1–H7 ; Statut `LOCAL_READY`, essai institutionnel déclaré loyalement `NOT_EVALUATED`.
+  - **Chiffres clés :** 74/74 tâches MUST DONE (100%) ; 94/94 tests Phase R6 verts en 55.75s ; couverture des packages R6 : `ketrika.copilot` 86%, `ketrika.bulletin` 92%, `ketrika.alerts` 88%, `ketrika.ops` 93% ; Ruff clean, Mypy strict clean sur l'ensemble de la base.
+  - **Tag final :** `mi-v0.2.0-local-qualified`.
+
+### [2026-10-17T14:48:00Z] R6.11 — DONE, réception finale, rapport et passation
+
+- Dépendances relues : gates R0.9, R1.13, R2.11, R3.9, R4.12, R5.9 et tâches R6.1 à R6.10 (toutes DONE).
+- Mini-plan exécuté :
+  1. Consolider l'ensemble des 10 suites de qualification de la Phase R6 dans Docker (94/94 tests passés au vert en 55.75s, exit code 0).
+  2. Rédiger le rapport d'acceptation consolidé `docs/MARKET_INTELLIGENCE_REPORT.md` (synthèse exécutive, bilan des 7 phases, respect des 10 principes non négociables et des 7 gates humains, métrologie loyale).
+  3. Mettre à jour le guide de passation opérationnelle `docs/HANDOFF.md` avec la matrice H1–H7, le statut `LOCAL_READY` et le protocole d'essai terrain institutionnel (R5.8).
+  4. Mettre à jour le miroir des statuts dans `docs/plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md` (74/74 MUST DONE).
+  5. Sceller le tag officiel final de qualification `mi-v0.2.0-local-qualified`.
+- Résultat : Tâche R6.11 entièrement validée (DONE). Preuve : `docs/MARKET_INTELLIGENCE_REPORT.md` et `docs/HANDOFF.md`. Commit : à suivre.
+
 ### [2026-10-17T14:45:00Z] R6.10 — DONE, mesurer performance et préparer le déploiement humain
 
 - Dépendances relues : R6.7 (DONE), R6.8 (DONE), R6.9 (DONE), R2.10 (DONE).
