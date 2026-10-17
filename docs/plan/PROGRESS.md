@@ -3,6 +3,22 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T12:58:00Z] R6.4 — DONE, évaluation du copilote sur des questions métier indépendantes
+
+- Dépendances relues : R6.3 (DONE, commit `0a591c9`), R2.4 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-098 dans `docs/plan/DECISIONS.md` (protocole d'évaluation métrologique indépendante sur 65 questions, cas hostiles, anti-hallucination stricte et statut `OFFLINE_TESTED`).
+  2. Étendre le corpus `backend/tests/copilot_eval.yaml` de 22 à 65 questions complètes (22 questions de régression MVP, 33 nouvelles questions métier indépendantes couvrant les 7 filières vivrières et termes malgaches, 10 cas d'attaques adversariales et 5 questions d'abstention loyale).
+  3. Implémenter le module d'évaluation et de benchmark `backend/src/ketrika/copilot/evaluator.py` (`CopilotBenchmarkRunner`, `CopilotEvaluationSummary`, mode hors-ligne sans dépendance réseau live, qualification `OFFLINE_TESTED`).
+  4. Améliorer la résolution des produits PPN et des régions dans `backend/src/ketrika/copilot/agent.py` (`resolve_product_code`, `resolve_location_clause`, exclusion stricte de l'adjectif "important" dans les filtres douaniers).
+  5. Écrire la suite de tests unitaires et d'acceptation `backend/tests/unit/test_copilot_evaluation_benchmark.py` (3/3 tests passés en 7.63s).
+  6. Exécuter l'évaluation complète sur les 65 questions : exactitude de 100.0% (65/65 passés), 0 requête interdite exécutée (10/10 attaques bloquées), 0 chiffre non référencé, 20/20 catégories à 100%.
+  7. Exporter le rapport d'évaluation normatif `docs/evidence/R6.4/evaluation_report.json`.
+  8. Valider l'ensemble des 5 suites du package `ketrika.copilot` (50/50 tests passés au vert en 51.36s, couverture globale à 86%).
+  9. Valider Ruff clean (0 warning) et Mypy strict clean (0 issue sur 12 source files).
+  10. Rédiger le dossier de preuve normatif `docs/evidence/R6.4/README.md`.
+- Résultat : Tâche R6.4 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.4/README.md`.
+
 ### [2026-10-17T12:33:00Z] R6.3 — DONE, répondre avec des résultats exécutés et référencés, anti-hallucination et abstention loyale
 
 - Dépendances relues : R6.1 (DONE), R6.2 (DONE), R0.2 (DONE), R2.9 (DONE).

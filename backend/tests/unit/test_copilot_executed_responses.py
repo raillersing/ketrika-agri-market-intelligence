@@ -119,6 +119,8 @@ def test_benchmark_22_questions_coverage_and_safety() -> None:
     assert len(questions) >= 20
 
     for item in questions:
+        if item.get("expected_abstain") or item.get("is_adversarial") or item.get("expected_target_view") in ("abstain", "forbidden"):
+            continue
         q_text = item["question"]
         expected_view = item["expected_target_view"]
 

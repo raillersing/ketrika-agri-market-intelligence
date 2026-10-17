@@ -1,6 +1,10 @@
 """Ketrika Copilot Analyst module (SPECS §21, R6.1, R6.2, ADR-095, ADR-096)."""
 
 from ketrika.copilot.agent import CopilotAgent, generate_sql_from_question
+from ketrika.copilot.evaluator import (
+    CopilotBenchmarkRunner,
+    CopilotEvaluationSummary,
+)
 from ketrika.copilot.executor import QueryResult, execute_copilot_query
 from ketrika.copilot.schema import GOLD_VIEWS_CATALOG, generate_schema_catalog_markdown
 from ketrika.copilot.sql_guard import (
@@ -44,6 +48,8 @@ __all__ = [
     "AnalyticalToolCatalog",
     "BoundedWorkflowRunner",
     "CopilotAgent",
+    "CopilotBenchmarkRunner",
+    "CopilotEvaluationSummary",
     "CropCalendarOutput",
     "HostileDocumentDetectedError",
     "MarketCoverageOutput",
