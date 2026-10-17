@@ -12,7 +12,7 @@
   3. Exécuter l'ensemble des tests dans Docker : 5/5 tests passés au vert en 48.68s (P95 moyen < 60ms, P95 < 1000ms 100% validé).
   4. Valider Ruff clean (0 warning, 0 error), Mypy strict clean (0 issue sur 2 source files), et Docker Compose config validée.
   5. Rédiger le dossier de preuve normatif `docs/evidence/R6.10/README.md`.
-- Résultat : Tâche R6.10 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.10/README.md`. Commit : à suivre.
+- Résultat : Tâche R6.10 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.10/README.md`. Commit : `036079c`.
 
 ### [2026-10-17T14:26:00Z] R6.9 — DONE, superviser fraîcheur, dérive, dépenses et incidents
 
