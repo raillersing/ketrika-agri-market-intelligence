@@ -16,7 +16,7 @@
   7. Exécuter l'ensemble des suites bulletin : 18/18 tests passés au vert (100%), couverture globale `ketrika.bulletin` à 92% (facts 100%, render 87%, semantic_guard 98%, service 95%, writer 83%).
   8. Valider Ruff clean (0 warning) et Mypy strict clean (0 issue).
   9. Rédiger le dossier de preuve normatif `docs/evidence/R6.5/README.md`.
-- Résultat : Tâche R6.5 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.5/README.md`. Commit : à sceller.
+- Résultat : Tâche R6.5 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.5/README.md`. Commit : `e823821`.
 
 ### [2026-10-17T12:58:00Z] R6.4 — DONE, évaluation du copilote sur des questions métier indépendantes
 
@@ -1224,7 +1224,7 @@
 | R6.2 | MUST | DONE | 2026-10-17T12:08:00Z | 2026-10-17T12:18:00Z | 50cf776 | Borner les workflows IA et leurs reprises, budget atomique concurrent, idempotence, replay strict | Qualifié, 9/9 tests verts, cov 92% |
 | R6.3 | MUST | DONE | 2026-10-17T12:20:00Z | 2026-10-17T12:33:00Z | 0a591c9 | Répondre avec des résultats exécutés et référencés, anti-hallucination, métadonnées complètes, abstention | Qualifié, 47/47 tests verts, cov 86% |
 | R6.4 | MUST | DONE | 2026-10-17T12:35:00Z | 2026-10-17T12:58:00Z | ad7a6f8 | Évaluation du copilote sur 65 questions indépendantes et cas hostiles, exactitude 100%, statut OFFLINE_TESTED | Qualifié, 50/50 tests verts, exactitude 100% |
-| R6.5 | MUST | DONE | 2026-10-17T13:05:00Z | 2026-10-17T13:20:00Z | pending | Qualification du bulletin sans hallucination numérique ou sémantique, approbation auditée, quarantaine Mailpit | Qualifié, 18/18 tests verts, cov 92% |
+| R6.5 | MUST | DONE | 2026-10-17T13:05:00Z | 2026-10-17T13:20:00Z | e823821 | Qualification du bulletin sans hallucination numérique ou sémantique, approbation auditée, quarantaine Mailpit | Qualifié, 18/18 tests verts, cov 92% |
 | R6.6 | MUST | TODO | — | — | — | — | — |
 | R6.7 | MUST | TODO | — | — | — | — | — |
 | R6.8 | MUST | TODO | — | — | — | — | — |
