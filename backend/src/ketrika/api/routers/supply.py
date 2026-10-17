@@ -11,6 +11,12 @@ from sqlalchemy.orm import Session
 from ketrika.core.db import get_db
 from ketrika.core.models.db import StockObservation
 from ketrika.geo.contracts import load_crop_calendar
+from ketrika.supply.decision_pilot import (
+    DecisionPersona,
+    DecisionPilotEngine,
+    DecisionPilotReport,
+    DecisionScenarioDefinition,
+)
 from ketrika.supply.harvest_window import HarvestWindowModel
 from ketrika.supply.peak_forecast import (
     CycleSufficiencyReport,
@@ -160,3 +166,48 @@ def get_data_sufficiency(
 
     engine = SupplyPeakForecastEngine()
     return engine.assess_data_sufficiency(historical_arrivals, min_cycles=2)
+
+
+@router.get("/scenarios/templates", response_model=dict[str, DecisionScenarioDefinition])
+def get_scenario_templates() -> dict[str, DecisionScenarioDefinition]:
+    """Retrieve the three official persona templates for decision support simulations."""
+    engine = DecisionPilotEngine()
+    templates = engine.get_default_scenario_templates()
+    return {k.value: v for k, v in templates.items()}
+
+
+@router.post("/scenarios/run", response_model=DecisionPilotReport)
+def run_decision_scenario(
+    scenario: DecisionScenarioDefinition,
+    session: Session = Depends(get_db),
+) -> DecisionPilotReport:
+    """Execute a validated decision support scenario for a given persona."""
+    engine = DecisionPilotEngine()
+
+    if scenario.persona == DecisionPersona.PUBLIC_REGULATOR:
+        # Default observed monthly arrivals
+        return engine.run_public_regulator_journey(
+            scenario=scenario,
+            observed_monthly_arrivals_tonnes=24_500.0,
+        )
+    elif scenario.persona == DecisionPersona.COMMERCIAL_BUYER:
+        # Predict peak window for reference
+        cal = load_crop_calendar()
+        matching = [r for r in cal if r.zone_code == "ZONE_ALAOTRA" and r.crop == "RICE"]
+        rec = matching[0] if matching else cal[0]
+        hw = HarvestWindowModel().project_baseline_window(rec, year=2024)
+        pred = SupplyPeakForecastEngine().predict_supply_window(hw, market_code=scenario.market_code)
+        return engine.run_commercial_buyer_journey(
+            scenario=scenario,
+            supply_prediction=pred,
+        )
+    else:  # AGRICULTURAL_PLANNER
+        cal = load_crop_calendar()
+        matching = [r for r in cal if r.zone_code == "ZONE_ALAOTRA" and r.crop == "RICE"]
+        rec = matching[0] if matching else cal[0]
+        hw = HarvestWindowModel().project_baseline_window(rec, year=2024)
+        return engine.run_agricultural_planner_journey(
+            scenario=scenario,
+            baseline_harvest_window=hw,
+        )
+

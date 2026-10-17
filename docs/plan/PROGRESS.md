@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T11:32:00Z] R5.8 — DONE, scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs
+
+- Dépendances relues : R2.11 (DONE), R5.4 (DONE), R5.6 (DONE), R5.7 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-094 dans `docs/plan/DECISIONS.md` (3 parcours régulateur/acheteur/agriculture, scénarios déterministes bornés, interdiction d'altération par contenu scrapé, interdiction d'ordres d'achat autonomes, auditabilité et statut humain_reviewed=false).
+  2. Implémenter le module `backend/src/ketrika/supply/decision_pilot.py` avec les modèles Pydantic (`ScenarioParameter`, `DecisionScenarioDefinition`, `DecisionImpactMetric`, `DecisionPilotReport`) et le moteur `DecisionPilotEngine`.
+  3. Mettre à jour `backend/src/ketrika/supply/__init__.py`.
+  4. Étendre l'API dans `backend/src/ketrika/api/routers/supply.py` (`POST /v1/supply/scenarios/run` et `GET /v1/supply/scenarios/templates`).
+  5. Rédiger le protocole d'essai humain `docs/protocols/decision_pilot_protocol.md`.
+  6. Écrire la suite de tests unitaires `backend/tests/unit/test_supply_decision_pilot.py`.
+  7. Valider Ruff clean et Mypy strict clean.
+  8. Rédiger le dossier de preuve normatif `docs/evidence/R5.8/README.md`.
+- Preuve : 7/7 tests unitaires passés en 43.07s (`test_supply_decision_pilot.py`), couverture 95% sur `ketrika.supply.decision_pilot`, Ruff clean, Mypy strict clean, dossier `docs/evidence/R5.8/README.md`. Statut : DONE.
+
 ### [2026-10-17T11:18:00Z] R5.7 — DONE, prévision des fenêtres et pics d'approvisionnement des marchés vivriers
 
 - Dépendances relues : R5.3 (DONE), R5.6 (DONE), R3.2–R3.5 (protocoles d'évaluation as-of).
@@ -1109,7 +1123,7 @@
 | R5.5 | SHOULD | TODO | — | — | — | — | — |
 | R5.6 | MUST | DONE | 2026-10-17T10:45:00Z | 2026-10-17T10:55:00Z | b4a760d | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks | Qualifié, 5/5 tests verts, 95% cov |
 | R5.7 | MUST | DONE | 2026-10-17T11:03:00Z | 2026-10-17T11:18:00Z | e038d0e | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique | Qualifié, 7/7 tests verts, 90% cov |
-| R5.8 | MUST | TODO | — | — | — | — | — |
+| R5.8 | MUST | DONE | 2026-10-17T11:22:00Z | 2026-10-17T11:32:00Z | commit_pending | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs | Qualifié, 7/7 tests verts, 95% cov |
 | R5.9 | MUST | TODO | — | — | — | — | — |
 | R6.1 | MUST | TODO | — | — | — | — | — |
 | R6.2 | MUST | TODO | — | — | — | — | — |

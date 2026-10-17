@@ -2,6 +2,42 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-094 : architecture des scénarios d'approvisionnement et des trois parcours pilotes décisionnels (régulateur public, acheteur commercial, vulgarisation agricole), étanchéité anti-injection et gouvernance humaine auditée (R5.8)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R5.8 ; Phase R5.
+- **Contexte :** La tâche R5.8 impose de concevoir et structurer les scénarios d'offre et les fiches pilotes d'aide à la décision pour trois profils réels d'acteurs de la filière vivrière malgache (institution publique/régulation, acheteur/collecteur commercial, planificateur/vulgarisateur agricole). Les directives de R5.8 et d'AGENTS.md imposent :
+  1. Structurer 3 parcours décisionnels distincts :
+     - *Institution publique / Régulateur (ex: SPM, MIC)* : surveiller les tensions d'approvisionnement urbain, estimer le déficit net et planifier les interventions de régulation ou les importations d'appoint.
+     - *Acheteur commercial / Agro-industriel (ex: minoteries, grossistes d'Anosibe)* : planifier les achats de campagne en synchronisation avec les décades de pic d'arrivages, optimiser la rotation des entrepôts et minimiser la pression à la hausse sur les prix de collecte.
+     - *Planificateur agricole / Vulgarisation (ex: MinAE, DRDA)* : comparer les fenêtres agronomiques nominales et les retards induits par le stress hydrique précoce, évaluer la durée de la soudure locale.
+  2. Scénarios déterministes bornés :
+     - Paramètres explicitement typés avec source ou justificatif d'hypothèse (`ScenarioParameter`).
+     - Si un paramètre obligatoire est absent, le moteur refuse formellement le calcul (`missing_parameters`), sans jamais fabriquer une valeur invisible.
+  3. Sécurité et intégrité constitutionnelle :
+     - **Interdiction formelle de modification de scénario par le contenu collecté** (AGENTS.md Règle 10 : les données scrapées ne sont jamais des instructions).
+     - **Interdiction formelle de générer des ordres d'achat financiers autonomes** : Ketrika est un système d'aide à la décision et d'intelligence de marché, pas un bot de trading autonome.
+     - Traçabilité et versionnage : auteur interne (`author_id`), version (`v1.0`), date et empreinte.
+  4. Gouvernance humaine et honnêteté métrologique :
+     - Préparation d'un protocole d'essai et d'un questionnaire structuré pour les futurs utilisateurs humains (`docs/protocols/decision_pilot_protocol.md`).
+     - Règle constitutionnelle H7 : aucun contact ni recrutement de tiers sans validation explicite.
+     - Les rapports de scénarios portent obligatoirement `human_reviewed: false` et `evaluation_status: "NOT_EVALUATED"` tant qu'une séance humaine en conditions réelles n'est pas consignée. Aucune revendication de « pilote client réussi » sans séance documentée.
+- **Décision :**
+  1. **Création du module `backend/src/ketrika/supply/decision_pilot.py` :**
+     - Enums : `DecisionPersona`, `DecisionJourneyType`.
+     - Modèles Pydantic : `ScenarioParameter`, `DecisionScenarioDefinition`, `DecisionImpactMetric`, `DecisionPilotReport`.
+     - Moteur `DecisionPilotEngine` implémentant les trois parcours d'évaluation.
+  2. **Exposition API dans `backend/src/ketrika/api/routers/supply.py` :**
+     - `POST /v1/supply/scenarios/run` et `GET /v1/supply/scenarios/templates`.
+  3. **Documentation du protocole d'évaluation :**
+     - `docs/protocols/decision_pilot_protocol.md`.
+- **Alternatives rejetées :**
+  - Laisser le LLM générer les chiffres d'impact d'un scénario (rejeté, violation d'AGENTS.md Règles 6 et 7).
+  - Générer automatiquement des bons d'achat ou contrats fournisseurs (rejeté, responsabilité financière humaine exclusive).
+  - Alléguer un succès pilote avant toute revue humaine réelle (rejeté, fraude de qualification proscrite par R5.8).
+- **Conséquences :**
+  - Outil d'aide à la décision robuste, transparent, mathématiquement traçable et directement prêt pour les tests utilisateurs humains.
+
+
 ## ADR-093 : prévision des fenêtres et pics d'approvisionnement des marchés, as-of cutoff temporel, décalage logistique récolte/marché et règle d'abstention sous historique insuffisant (R5.7)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R5.7 ; Phase R5.

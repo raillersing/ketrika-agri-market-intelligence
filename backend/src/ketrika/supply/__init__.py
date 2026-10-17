@@ -21,6 +21,14 @@ from ketrika.supply.balance import (
     SupplyBalanceEngine,
     SupplyBalanceReport,
 )
+from ketrika.supply.decision_pilot import (
+    DecisionImpactMetric,
+    DecisionPersona,
+    DecisionPilotEngine,
+    DecisionPilotReport,
+    DecisionScenarioDefinition,
+    ScenarioParameter,
+)
 from ketrika.supply.harvest_window import (
     HarvestConfrontationResult,
     HarvestWindowModel,
@@ -49,6 +57,11 @@ __all__ = [
     "BalanceTerm",
     "BalanceType",
     "CycleSufficiencyReport",
+    "DecisionImpactMetric",
+    "DecisionPersona",
+    "DecisionPilotEngine",
+    "DecisionPilotReport",
+    "DecisionScenarioDefinition",
     "FORBIDDEN_PII_FIELDS",
     "HarvestConfrontationResult",
     "HarvestWindowModel",
@@ -64,6 +77,7 @@ __all__ = [
     "QuantityTarget",
     "QuantityUnit",
     "ScenarioAssumption",
+    "ScenarioParameter",
     "SupplyBalanceEngine",
     "SupplyBalanceReport",
     "SupplyDataQualityReport",

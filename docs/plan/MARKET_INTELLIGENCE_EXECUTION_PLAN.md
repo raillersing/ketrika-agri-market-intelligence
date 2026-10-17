@@ -72,7 +72,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R5.5 | SHOULD | TODO | — |
 | R5.6 | MUST | DONE | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks, 5 tests verts, cov 95% |
 | R5.7 | MUST | DONE | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique, 7 tests verts, cov 90% |
-| R5.8 | MUST | TODO | — |
+| R5.8 | MUST | DONE | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs, 7 tests verts, cov 95% |
 | R5.9 | MUST | TODO | — |
 | R6.1 | MUST | TODO | — |
 | R6.2 | MUST | TODO | — |
