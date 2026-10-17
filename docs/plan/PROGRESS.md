@@ -19,7 +19,7 @@
   3. Mettre à jour le guide de passation opérationnelle `docs/HANDOFF.md` avec la matrice H1–H7, le statut `LOCAL_READY` et le protocole d'essai terrain institutionnel (R5.8).
   4. Mettre à jour le miroir des statuts dans `docs/plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md` (74/74 MUST DONE).
   5. Sceller le tag officiel final de qualification `mi-v0.2.0-local-qualified`.
-- Résultat : Tâche R6.11 entièrement validée (DONE). Preuve : `docs/MARKET_INTELLIGENCE_REPORT.md` et `docs/HANDOFF.md`. Commit : à suivre.
+- Résultat : Tâche R6.11 entièrement validée (DONE). Preuve : `docs/MARKET_INTELLIGENCE_REPORT.md` et `docs/HANDOFF.md`. Commit : `b55cc00`.
 
 ### [2026-10-17T14:45:00Z] R6.10 — DONE, mesurer performance et préparer le déploiement humain
 
