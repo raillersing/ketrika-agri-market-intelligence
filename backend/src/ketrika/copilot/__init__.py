@@ -1,4 +1,4 @@
-"""Ketrika Copilot Analyst module (SPECS §21, R6.1, ADR-095)."""
+"""Ketrika Copilot Analyst module (SPECS §21, R6.1, R6.2, ADR-095, ADR-096)."""
 
 from ketrika.copilot.agent import CopilotAgent, generate_sql_from_question
 from ketrika.copilot.executor import QueryResult, execute_copilot_query
@@ -19,6 +19,18 @@ from ketrika.copilot.tools import (
     QualifiedForecastOutput,
     SourceProvenanceOutput,
 )
+from ketrika.copilot.workflow import (
+    BoundedWorkflowRunner,
+    HostileDocumentDetectedError,
+    ReplayNotFoundError,
+    SourceProposal,
+    WorkflowExecutionState,
+    WorkflowLimitExceededError,
+    WorkflowLimits,
+    WorkflowStep,
+    WorkflowStepStatus,
+    WorkflowStepType,
+)
 from ketrika.copilot.writer import (
     assemble_final_response,
     build_cell_placeholders,
@@ -30,16 +42,26 @@ __all__ = [
     "KNOWN_GOLD_VIEWS",
     "MAX_ROW_LIMIT",
     "AnalyticalToolCatalog",
+    "BoundedWorkflowRunner",
     "CopilotAgent",
     "CropCalendarOutput",
+    "HostileDocumentDetectedError",
     "MarketCoverageOutput",
     "MarketFactsOutput",
     "ParameterValidationError",
     "PriceSeriesOutput",
     "QualifiedForecastOutput",
     "QueryResult",
+    "ReplayNotFoundError",
+    "SourceProposal",
     "SourceProvenanceOutput",
     "SqlGuardError",
+    "WorkflowExecutionState",
+    "WorkflowLimitExceededError",
+    "WorkflowLimits",
+    "WorkflowStep",
+    "WorkflowStepStatus",
+    "WorkflowStepType",
     "assemble_final_response",
     "build_cell_placeholders",
     "execute_copilot_query",

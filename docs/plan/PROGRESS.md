@@ -3,6 +3,21 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T12:18:00Z] R6.2 — DONE, workflows IA bornés, budgets atomiques concurrents et idempotence d'état
+
+- Dépendances relues : R6.1 (DONE), R0.6 (DONE), R0.3 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-096 dans `docs/plan/DECISIONS.md` (isolation des rôles, budgets atomiques sous concurrence, plafonds d'étapes/outils/tokens/durée/coût, isolation des sources proposées, reprise d'état idempotente sans double publication, replay fail-closed).
+  2. Étendre `BudgetGuard` dans `backend/src/ketrika/extraction/llm/budget.py` avec `threading.Lock`, méthode atomique `check_and_reserve()` et annulation `rollback_reservation()`.
+  3. Implémenter le module `backend/src/ketrika/copilot/workflow.py` avec `BoundedWorkflowRunner`, `WorkflowExecutionState`, `WorkflowStep`, `WorkflowLimits`, `SourceProposal`, et les exceptions `WorkflowLimitExceededError`, `HostileDocumentDetectedError`, `ReplayNotFoundError`.
+  4. Implémenter le filtrage des secrets `sanitize_audit_log` (redaction des clés Gemini, tokens OpenAI et identifiants de base de données).
+  5. Exposer les composants dans `backend/src/ketrika/copilot/__init__.py`.
+  6. Écrire la suite de tests unitaires et de sécurité `backend/tests/unit/test_copilot_workflow_and_limits.py` (9/9 tests passés en 7.04s).
+  7. Valider l'ensemble des 41 tests de la suite copilot (41/41 tests passés au vert en 13.27s).
+  8. Valider Ruff clean et Mypy strict clean (13 source files sans erreur).
+  9. Rédiger le dossier de preuve normatif `docs/evidence/R6.2/README.md`.
+- Résultat : Tâche R6.2 entièrement validée (DONE). Preuve : `docs/evidence/R6.2/README.md`. Couverture `workflow.py` 92%, globale 88%.
+
 ### [2026-10-17T12:05:00Z] R6.1 — DONE, sécurisation des outils de lecture, catalogue typé et SQL Guard étanche
 
 - Dépendances relues : R0.2 (DONE), R2.9 (DONE).
@@ -1161,7 +1176,7 @@
 | R5.8 | MUST | DONE | 2026-10-17T11:22:00Z | 2026-10-17T11:32:00Z | 90b47b6 | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs | Qualifié, 7/7 tests verts, 95% cov |
 | R5.9 | MUST | DONE | 2026-10-17T11:40:00Z | 2026-10-17T11:50:00Z | bc2f25d | Gate récoltes et approvisionnement validé, 10 critères normatifs prouvés, couverture 85%, tag mi-r5-qualified | 10 tests dédiés verts, 48 tests R5 verts, 85% cov |
 | R6.1 | MUST | DONE | 2026-10-17T11:55:00Z | 2026-10-17T12:05:00Z | 76e732b | Sécuriser les outils de lecture, catalogue typé, SQL guard CTE écriture/fonctions réseau, validation sans fuite | Qualifié, 32/32 tests verts, cov 91% |
-| R6.2 | MUST | TODO | — | — | — | — | — |
+| R6.2 | MUST | DONE | 2026-10-17T12:08:00Z | 2026-10-17T12:18:00Z | HEAD | Borner les workflows IA et leurs reprises, budget atomique concurrent, idempotence, replay strict | Qualifié, 9/9 tests verts, cov 92% |
 | R6.3 | MUST | TODO | — | — | — | — | — |
 | R6.4 | MUST | TODO | — | — | — | — | — |
 | R6.5 | MUST | TODO | — | — | — | — | — |

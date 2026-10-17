@@ -2,6 +2,29 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-096 : architecture des workflows IA bornés, isolation des rôles, budgets atomiques sous concurrence, reprise d'état sans double publication et choix officiel du modèle (R6.2)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.2 ; Phase R6.
+- **Contexte :** La tâche R6.2 impose de borner rigoureusement tous les workflows d'intelligence artificielle et d'orchestration dans Ketrika. Les directives normatives de R6.2 et d'AGENTS.md imposent :
+  1. Frugalité et séparation des responsabilités : Dagster demeure l'orchestrateur central de collecte et calcul ; les tâches IA sont découpées en petits rôles spécialisés et déterministes (reconnaissance, extraction, analyse, rédaction), sans framework multi-agent opaque ou complexe non supervisé.
+  2. Bornes contractuelles d'exécution pour chaque workflow : chaque exécution est modélisée par un état persistant (`WorkflowExecutionState`, `WorkflowStep`), bornée par des plafonds stricts : nombre maximal d'étapes (`max_steps`), nombre d'appels d'outils (`max_tool_calls`), consommation maximale de tokens (`max_tokens`), durée maximale d'exécution (`max_duration_seconds`), et coût maximal (`max_budget_usd`). Dès qu'un plafond est atteint, l'exécution s'interrompt immédiatement et proprement (`WorkflowLimitExceededError`).
+  3. Sécurité budgétaire atomique sous concurrence : le contrôle budgétaire de `BudgetGuard` doit être atomique et résistant aux accès concurrents (`AtomicBudgetGuard`). Deux appels simultanés ne peuvent en aucun cas dépasser le budget mensuel (`LLM_MONTHLY_BUDGET_USD`) ou le budget par exécution (`LLM_PER_RUN_BUDGET_USD`).
+  4. Interdiction formelle d'ajout autonome de sources : un document ou un workflow IA peut suggérer un nouveau domaine ou une nouvelle source, mais cette proposition est strictement consignée en attente de revue humaine (`PENDING_HUMAN_REVIEW`) et ne peut en aucun cas être injectée automatiquement dans le registre de production (`registry/sources.yaml`).
+  5. Reprise d'état idempotente sans duplication de publication : en cas d'interruption réseau ou de redémarrage système, le moteur restitue l'état exact du workflow et reprend à la première étape non complétée sans réexécuter les étapes antérieures ni dupliquer les publications ou alertes déjà émises.
+  6. Mode replay explicite et fail-closed : en mode `LLM_PROVIDER=replay`, l'absence d'une réponse pré-enregistrée entraîne une erreur explicite immédiate (`KeyError` / `ReplayNotFoundError`), interdisant tout fallback fictif ou halluciné.
+  7. Modèle de référence et tarification officielle : le modèle retenu pour l'intelligence de marché économique est Google Gemini 2.0 Flash / 1.5 Flash (taux officiel vérifié : $0.075 / 1M tokens d'entrée, $0.30 / 1M tokens de sortie ; cache hit = 0 USD). Les logs d'audit sont épurés de tout secret ou clé d'API.
+- **Décision :**
+  1. Créer le module `backend/src/ketrika/copilot/workflow.py` avec les modèles Pydantic d'état (`WorkflowExecutionState`, `WorkflowStep`, `WorkflowLimits`) et le moteur `BoundedWorkflowRunner`.
+  2. Étendre `BudgetGuard` avec un mécanisme atomique de réservation (`AtomicBudgetGuard`) thread-safe.
+  3. Intégrer la détection de documents hostiles (les textes collectés sont des données pures et ne peuvent ni modifier les quotas du workflow ni altérer les droits).
+- **Alternatives rejetées :**
+  - Laisser un workflow IA itérer sans plafond d'étapes jusqu'à convergence (rejeté, risque critique de boucle infinie et d'explosion budgétaire).
+  - Permettre l'enregistrement automatique de nouvelles sources Web scrapées sans validation humaine (rejeté, violation d'AGENTS.md §5 H4/H7).
+  - Tolérer des dépassements de budget lors d'appels concurrents (rejeté, non-respect du garde-fou budgétaire H6).
+- **Conséquences :**
+  - Maîtrise financière et temporelle absolue de tous les composants IA, reprise résiliente après panne sans effet de bord, intégrité totale du registre de sources.
+
+
 ## ADR-095 : sécurisation absolue des outils d'analyse et SQL Guard du Copilot (outils typés, SQL Gold strict, interdiction des CTE d'écriture et fonctions réseau, timeouts et validation de paramètres sans fuite) (R6.1)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R6.1 ; Phase R6.
