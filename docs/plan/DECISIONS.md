@@ -2,6 +2,34 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-095 : sécurisation absolue des outils d'analyse et SQL Guard du Copilot (outils typés, SQL Gold strict, interdiction des CTE d'écriture et fonctions réseau, timeouts et validation de paramètres sans fuite) (R6.1)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.1 ; Phase R6.
+- **Contexte :** La tâche R6.1 impose de sécuriser les outils de lecture et d'analyse utilisés par le copilote et l'IA de marché. Les directives normatives de R6.1 et AGENTS.md imposent :
+  1. Catalogue d'outils typés et autorisés :
+     - Séries temporelles de prix, faits de marché, provenance et sources, couverture des relevés, prévisions qualifiées, calendrier agroclimatique.
+     - Privilégier les outils métier déterministes pour les calculs et requêtes récurrents plutôt que de générer du SQL ad-hoc non contraint.
+  2. SQL Guard AST strict :
+     - Interrogation exclusive du schéma `gold` (seules les vues analytiques auditées sont autorisées : `price_obs_current`, `price_monthly`, `price_monthly_best`, `price_changes`, `stock_latest`, `trade_monthly`, `import_dependency`, `weather_monthly`, `cpi_food`, `market_health`, `source_health`, `forecast_latest`, `market_coverage`, `economic_dashboard`).
+     - Instruction unique (`SELECT` strict).
+     - **Interdiction formelle des CTE modifiants** : détection et blocage de tout CTE contenant `INSERT`, `UPDATE`, `DELETE`, `DROP` ou des expressions de modification.
+     - **Interdiction formelle des fonctions réseau ou d'exfiltration** (`http_*`, `net_*`, `dblink*`, `query_to_xml`, etc.) et des fonctions système (`pg_*`, `lo_*`, `current_setting`, etc.).
+     - Injection ou clampage automatique de `LIMIT <= 500`.
+     - Exécution sous rôle PostgreSQL restreint `copilot_ro` avec `statement_timeout = 5000` ms (5 secondes).
+  3. Validation stricte des paramètres et hygiène des messages d'erreur :
+     - Contrôle des paramètres produit et localisation (taxonomie officielle). Rejet immédiat de toute valeur suspecte ou inconnue.
+     - En cas d'erreur ou d'interdiction, **exposition d'un message d'explication standardisé et sans fuite d'informations sensibles** (aucun dump de variables d'environnement, secrets, adresses IP ou schémas internes protégés).
+- **Décision :**
+  1. Renforcer `backend/src/ketrika/copilot/sql_guard.py` avec inspection récursive de tous les CTEs (`exp.Insert`, `exp.Update`, `exp.Delete`, `exp.Command`), liste noire étendue des fonctions réseau/exfiltration, et intégration des vues `market_coverage` et `economic_dashboard`.
+  2. Créer le module `backend/src/ketrika/copilot/tools.py` exposant le catalogue d'outils d'analyse typés Pydantic (`ToolCatalog`) avec validation stricte des taxonomies autorisées et gestion des erreurs sans fuite d'information.
+  3. Mettre à jour `backend/src/ketrika/copilot/__init__.py`.
+- **Alternatives rejetées :**
+  - Permettre l'exécution de requêtes SQL arbitraires sans parser AST (rejeté, risque majeur d'injection et de contournement).
+  - Tolérer des CTEs d'écriture (`WITH del AS (DELETE ...) SELECT ...`) au motif que l'instruction racine est un SELECT (rejeté, faille d'écriture en base).
+  - Renvoyer la stack trace complète ou les détails techniques de connexion à l'utilisateur lors d'un échec (rejeté, fuite de vecteurs d'attaque).
+- **Conséquences :**
+  - Cloisonnement étanche et éprouvé des accès analytiques, impossibilité physique d'écriture ou d'accès aux tables système/privées, robustesse face aux injections de requêtes.
+
 ## ADR-094 : architecture des scénarios d'approvisionnement et des trois parcours pilotes décisionnels (régulateur public, acheteur commercial, vulgarisation agricole), étanchéité anti-injection et gouvernance humaine auditée (R5.8)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R5.8 ; Phase R5.
