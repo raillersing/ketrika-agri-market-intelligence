@@ -3,6 +3,20 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T14:26:00Z] R6.9 — DONE, superviser fraîcheur, dérive, dépenses et incidents
+
+- Dépendances relues : R1.12 (DONE), R3.7 (DONE), R6.2 (DONE), R6.6 (DONE).
+- Mini-plan exécuté :
+  1. Consigner ADR-103 dans `docs/plan/DECISIONS.md` (supervision DataOps de fraîcheur, gestion des 5 incidents critiques et interdiction de remplacement automatique de modèle sous dérive).
+  2. Implémenter le module de supervision `backend/src/ketrika/ops/supervision.py` (`IncidentType`, `IncidentSeverity`, `IncidentReport`, `IncidentManager`, `evaluate_source_availability_and_drift`, `evaluate_forecast_drift_policy`).
+  3. Mettre à jour `backend/src/ketrika/ops/__init__.py`.
+  4. Rédiger le guide opérationnel de réponse aux incidents `docs/runbooks/INCIDENT_RUNBOOK.md` (rôles institutionnels, arbre de décision, procédures de rollback/gel sous Gate H7).
+  5. Écrire la suite de tests normatifs dédiée `backend/tests/unit/test_supervision_and_incident_r69.py` (7 tests : panne HTTP avec gel fail-safe sur source P0, dérive de schéma en quarantaine immédiate, disjoncteur budgétaire HTTP/LLM, interdiction stricte de remplacement automatique de modèle sous dérive statistique, promotion parsimonieuse > 1%, et runs interrompus avec reprise idempotente).
+  6. Exécuter l'ensemble des suites dans Docker : 7/7 tests passés au vert en 9.66s, 19/19 tests ops au vert en 12.99s, couverture de `ketrika.ops.supervision` à 100% (globale ops 93%).
+  7. Valider Ruff clean (0 warning, 0 error) et Mypy strict clean (0 issue sur 2 source files).
+  8. Rédiger le dossier de preuve normatif `docs/evidence/R6.9/README.md`.
+- Résultat : Tâche R6.9 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.9/README.md`. Commit : à suivre.
+
 ### [2026-10-17T14:16:00Z] R6.8 — DONE, qualifier sauvegarde et restauration isolée
 
 - Dépendances relues : R0.2 (DONE), R0.8 (DONE), R2.1 (DONE), R6.7 (DONE).

@@ -2,6 +2,32 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-103 : supervision DataOps de fraîcheur, gestion des incidents (panne HTTP, dérive de schéma, budget dépassé, forecast inadéquate, runs interrompus) et interdiction de remplacement automatique de modèle sous dérive (R6.9)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.9 ; Phase R6.
+- **Contexte :** La tâche R6.9 impose de superviser la fraîcheur, la dérive, les dépenses et les incidents opérationnels de Ketrika Agri Market Intelligence. Les directives normatives de R6.9 et d'AGENTS.md imposent :
+  1. Gestion des cinq incidents critiques en environnement isolé :
+     - **Panne réseau / HTTP** : si un endpoint source devient indisponible (timeouts / 5xx), le connecteur bascule en mode dégradé, consigne l'incident dans `ops.incident` sans falsifier de succès, et génère un brouillon d'alerte pour Mailpit sous Gate H3.
+     - **Dérive de schéma (`schema_drift`)** : tout changement non négocié de colonnes ou de types gèle immédiatement la publication de la source (`quarantine_status="frozen"`), consigne un `ReviewItem` en base sans altérer l'historique sain (Règle 3 Ajout seul).
+     - **Dépassement de budget** : si le budget journalier HTTP ou le budget mensuel LLM (`llm_monthly_budget_usd`) est atteint, les appels suivants sont catégoriquement refusés (`BudgetExceededError`, `PolicyStop`), sans dépassement autorisé (Gate H6).
+     - **Dérive statistique de forecast** : une anomalie de calibration ou une dégradation du WAPE au-delà des seuils conventionnels émet une alerte de dérive, mais **interdit formellement tout remplacement automatique sauvage du modèle** par un candidat non audité. Le modèle de référence qualifié reste en service jusqu'à validation humaine.
+     - **Run interrompu / orphelin** : un run Dagster ou d'ingestion interrompu anormalement est marqué `failed`/`interrupted` et peut être repris de manière idempotente sans double écriture dans Bronze ni Silver.
+  2. Traçabilité des rôles humains sans contact direct (Gate H7) :
+     - Les rôles d'astreinte (`Lead DataOps`, `Analyste Marché`, `Administrateur Système`) et leurs procédures de rollback/reprise sont formalisés dans `docs/runbooks/INCIDENT_RUNBOOK.md` sans jamais contacter de personnes réelles.
+  3. Visibilité de la fraîcheur et du stale data :
+     - Les retards de fraîcheur vis-à-vis des SLA définis dans `meta.source` restent publiquement exposés via `/v1/sources/{source_id}/health` et le dashboard DataOps (`gold.source_health`).
+- **Décision :**
+  1. Implémenter le module de supervision et de gestion des incidents `backend/src/ketrika/ops/supervision.py` avec `IncidentType`, `IncidentSeverity`, `IncidentReport`, `IncidentManager`, `evaluate_source_availability_and_drift`, et `evaluate_forecast_drift_policy`.
+  2. Créer le runbook d'exploitation et de réponse aux incidents `docs/runbooks/INCIDENT_RUNBOOK.md`.
+  3. Développer la suite de tests normatifs `backend/tests/unit/test_supervision_and_incident_r69.py` couvrant la simulation des 5 scénarios d'incident, l'absence de faux succès, le gel de publication, l'interdiction de remplacement automatique de modèle sous dérive, et le confinement des alertes à Mailpit.
+- **Alternatives rejetées :**
+  - Remplacer automatiquement un modèle de forecast défaillant par un modèle généré à la volée (rejeté, risque majeur d'hallucination ou d'instabilité non validée).
+  - Ignorer silencieusement les erreurs HTTP en renvoyant des données vides étiquetées « succès » (rejeté, tromperie sur la qualité des données).
+- **Conséquences :**
+  - Résilience opérationnelle maximale, traçabilité exhaustive des pannes, protection absolue contre les régressions non maîtrisées.
+
+
+
 ## ADR-102 : architecture de sauvegarde avec manifeste certifié, contrôle d'intégrité déterministe et garde de refus de restauration sur environnement actif (R6.8)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R6.8 ; Phase R6.
