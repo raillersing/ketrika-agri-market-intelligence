@@ -1108,7 +1108,7 @@
 | R5.4 | MUST | DONE | 2026-10-17T10:38:00Z | 2026-10-17T10:41:00Z | 64c1499 | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique | Qualifié, 6/6 tests verts, 90% cov |
 | R5.5 | SHOULD | TODO | — | — | — | — | — |
 | R5.6 | MUST | DONE | 2026-10-17T10:45:00Z | 2026-10-17T10:55:00Z | b4a760d | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks | Qualifié, 5/5 tests verts, 95% cov |
-| R5.7 | MUST | DONE | 2026-10-17T11:03:00Z | 2026-10-17T11:18:00Z | commit_pending | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique | Qualifié, 7/7 tests verts, 90% cov |
+| R5.7 | MUST | DONE | 2026-10-17T11:03:00Z | 2026-10-17T11:18:00Z | e038d0e | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique | Qualifié, 7/7 tests verts, 90% cov |
 | R5.8 | MUST | TODO | — | — | — | — | — |
 | R5.9 | MUST | TODO | — | — | — | — | — |
 | R6.1 | MUST | TODO | — | — | — | — | — |
