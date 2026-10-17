@@ -15,7 +15,7 @@
   6. Exécuter l'ensemble des suites dans Docker : 12/12 tests passés au vert en 12.83s, couverture du module `ketrika.ops.backup_restore` à 87% (seuil >= 80% validé).
   7. Valider Ruff clean (0 warning, 0 error), Mypy strict clean (0 issue sur 3 source files) et syntaxe bash clean (`bash -n`).
   8. Rédiger le dossier de preuve normatif `docs/evidence/R6.8/README.md`.
-- Résultat : Tâche R6.8 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.8/README.md`. Commit : à suivre.
+- Résultat : Tâche R6.8 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.8/README.md`. Commit : `6abd213`.
 
 ### [2026-10-17T14:02:00Z] R6.7 — DONE, durcissement des accès, audit et sécurité applicative
 
