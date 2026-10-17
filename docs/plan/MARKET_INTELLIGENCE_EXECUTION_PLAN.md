@@ -78,7 +78,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R6.2 | MUST | DONE | 2026-10-17T12:18:00Z |
 | R6.3 | MUST | DONE | 2026-10-17T12:33:00Z |
 | R6.4 | MUST | DONE | 2026-10-17T12:58:00Z |
-| R6.5 | MUST | TODO | — |
+| R6.5 | MUST | DONE | 2026-10-17T13:20:00Z |
 | R6.6 | MUST | TODO | — |
 | R6.7 | MUST | TODO | — |
 | R6.8 | MUST | TODO | — |

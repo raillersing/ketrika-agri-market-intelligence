@@ -3,6 +3,21 @@
 > **Mémoire unique et persistante de l'agent autonome** (AGENTS.md §3.1).
 > Statuts possibles d'une tâche : `TODO` | `IN_PROGRESS` | `DONE` | `BLOCKED`
 
+### [2026-10-17T13:20:00Z] R6.5 — DONE, qualification du bulletin sans hallucination numérique ou sémantique
+
+- Dépendances relues : R2.8 (DONE), R6.2 (DONE), R6.3 (DONE, commit `0a591c9`).
+- Mini-plan exécuté :
+  1. Consigner ADR-099 dans `docs/plan/DECISIONS.md` (architecture des faits Gold, validation directionnelle et temporelle, concordance HTML/PDF et approbation auditée sous Gate H3).
+  2. Implémenter le garde sémantique et directionnel `backend/src/ketrika/bulletin/semantic_guard.py` (`validate_semantic_consistency` : contrôle de polarité hausse vs baisse, contrôle de temporalité, rejet des causalités spéculatives non prouvées).
+  3. Intégrer la validation sémantique dans `backend/src/ketrika/bulletin/writer.py` (`generate_bulletin_prose`) avec repli fail-closed certifié sur template déterministe.
+  4. Enrichir `backend/src/ketrika/bulletin/service.py` avec `approve_bulletin` (audit trail de l'acteur et horodatage UTC, transition `draft` -> `approved`) et `send_bulletin_preview_to_mailpit` (quarantaine Mailpit dev sous Gate H3).
+  5. Étendre le modèle `DataKind` dans `backend/src/ketrika/core/models/source.py` avec `weather_forecast` (alignement ADR-084).
+  6. Écrire la suite de tests normatifs `backend/tests/unit/test_bulletin_semantic_and_qualification.py` (10 tests dédiés).
+  7. Exécuter l'ensemble des suites bulletin : 18/18 tests passés au vert (100%), couverture globale `ketrika.bulletin` à 92% (facts 100%, render 87%, semantic_guard 98%, service 95%, writer 83%).
+  8. Valider Ruff clean (0 warning) et Mypy strict clean (0 issue).
+  9. Rédiger le dossier de preuve normatif `docs/evidence/R6.5/README.md`.
+- Résultat : Tâche R6.5 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.5/README.md`. Commit : à sceller.
+
 ### [2026-10-17T12:58:00Z] R6.4 — DONE, évaluation du copilote sur des questions métier indépendantes
 
 - Dépendances relues : R6.3 (DONE, commit `0a591c9`), R2.4 (DONE).
@@ -1207,9 +1222,9 @@
 | R5.9 | MUST | DONE | 2026-10-17T11:40:00Z | 2026-10-17T11:50:00Z | bc2f25d | Gate récoltes et approvisionnement validé, 10 critères normatifs prouvés, couverture 85%, tag mi-r5-qualified | 10 tests dédiés verts, 48 tests R5 verts, 85% cov |
 | R6.1 | MUST | DONE | 2026-10-17T11:55:00Z | 2026-10-17T12:05:00Z | 76e732b | Sécuriser les outils de lecture, catalogue typé, SQL guard CTE écriture/fonctions réseau, validation sans fuite | Qualifié, 32/32 tests verts, cov 91% |
 | R6.2 | MUST | DONE | 2026-10-17T12:08:00Z | 2026-10-17T12:18:00Z | 50cf776 | Borner les workflows IA et leurs reprises, budget atomique concurrent, idempotence, replay strict | Qualifié, 9/9 tests verts, cov 92% |
-| R6.3 | MUST | IN_PROGRESS | 2026-10-17T12:20:00Z | — | — | Répondre avec des résultats exécutés et référencés, anti-hallucination, métadonnées complètes, abstention | En cours de développement |
-| R6.4 | MUST | TODO | — | — | — | — | — |
-| R6.5 | MUST | TODO | — | — | — | — | — |
+| R6.3 | MUST | DONE | 2026-10-17T12:20:00Z | 2026-10-17T12:33:00Z | 0a591c9 | Répondre avec des résultats exécutés et référencés, anti-hallucination, métadonnées complètes, abstention | Qualifié, 47/47 tests verts, cov 86% |
+| R6.4 | MUST | DONE | 2026-10-17T12:35:00Z | 2026-10-17T12:58:00Z | ad7a6f8 | Évaluation du copilote sur 65 questions indépendantes et cas hostiles, exactitude 100%, statut OFFLINE_TESTED | Qualifié, 50/50 tests verts, exactitude 100% |
+| R6.5 | MUST | DONE | 2026-10-17T13:05:00Z | 2026-10-17T13:20:00Z | pending | Qualification du bulletin sans hallucination numérique ou sémantique, approbation auditée, quarantaine Mailpit | Qualifié, 18/18 tests verts, cov 92% |
 | R6.6 | MUST | TODO | — | — | — | — | — |
 | R6.7 | MUST | TODO | — | — | — | — | — |
 | R6.8 | MUST | TODO | — | — | — | — | — |

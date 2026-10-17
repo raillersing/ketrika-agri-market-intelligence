@@ -87,3 +87,77 @@ def generate_weekly_bulletin(
         is_fallback=is_fallback,
     )
     return bulletin
+
+
+def get_bulletin(session: Session, bulletin_id: uuid.UUID) -> Bulletin | None:
+    """Retrieve a bulletin by its unique ID."""
+    return session.get(Bulletin, bulletin_id)
+
+
+def approve_bulletin(
+    session: Session,
+    bulletin_id: uuid.UUID,
+    approved_by: str,
+) -> Bulletin:
+    """Approve a draft bulletin with an auditable actor trail (R6.5).
+
+    Note: Approval changes status to 'approved' and records an audit timestamp.
+    Under Gate H3, approval DOES NOT trigger external dispatch to real recipients.
+    External dispatch is strictly quarantined to Mailpit preview in dev environments.
+    """
+    bulletin = session.get(Bulletin, bulletin_id)
+    if bulletin is None:
+        raise ValueError(f"Bulletin {bulletin_id} introuvable.")
+
+    if bulletin.status != "draft":
+        raise ValueError(
+            f"Impossible d'approuver un bulletin avec le statut '{bulletin.status}' (statut 'draft' requis)."
+        )
+
+    now_utc = datetime.now(UTC)
+    bulletin.status = "approved"
+    bulletin.approved_by = approved_by
+    bulletin.approved_at = now_utc
+
+    session.flush()
+
+    logger.info(
+        "bulletin_approved_audited",
+        bulletin_id=str(bulletin_id),
+        approved_by=approved_by,
+        approved_at=now_utc.isoformat(),
+        gate_h3_enforced=True,
+    )
+    return bulletin
+
+
+def send_bulletin_preview_to_mailpit(
+    bulletin: Bulletin,
+    html_content: str,
+    smtp_host: str = "mailpit",
+    smtp_port: int = 1025,
+) -> bool:
+    """Send a draft bulletin preview strictly to local Mailpit (Gate H3, dev only).
+
+    NEVER connects to real external SMTP servers or third-party recipients.
+    """
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = f"[KETRIKA PREVIEW] Bulletin Vivrier PPN - Semaine du {bulletin.period_start} au {bulletin.period_end}"
+    msg["From"] = "bulletin-preview@ketrika.local"
+    msg["To"] = "preview@mailpit.local"
+
+    part = MIMEText(html_content, "html", "utf-8")
+    msg.attach(part)
+
+    try:
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=5) as server:
+            server.sendmail("bulletin-preview@ketrika.local", ["preview@mailpit.local"], msg.as_string())
+        logger.info("bulletin_preview_sent_to_mailpit", bulletin_id=str(bulletin.bulletin_id))
+        return True
+    except Exception as e:
+        logger.warning("bulletin_mailpit_preview_skipped", error=str(e))
+        return False

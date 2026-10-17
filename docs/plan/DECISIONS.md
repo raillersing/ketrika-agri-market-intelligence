@@ -2,6 +2,37 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-099 : qualification des bulletins de marché sans hallucination numérique ou sémantique (architecture des faits Gold, validation directionnelle et temporelle, concordance HTML/PDF et approbation auditée sous Gate H3) (R6.5)
+
+- **Date/statut :** 2026-10-17 UTC, adopté avant code R6.5 ; Phase R6.
+- **Contexte :** La tâche R6.5 impose de qualifier le bulletin hebdomadaire de veille de marché sans hallucination numérique ni altération sémantique. Les directives normatives de R6.5 et d'AGENTS.md imposent :
+  1. Faits calculés et versionnés :
+     - Tout chiffre figurant dans le bulletin doit provenir d'un dictionnaire de faits déterministe (`build_bulletin_facts`) adossé aux vues Gold et à la traçabilité Bronze SHA-256.
+  2. Architecture anti-hallucination stricte :
+     - Le LLM ne reçoit que les identifiants et libellés des faits sans leurs valeurs numériques. La prose est générée exclusivement avec des placeholders `{{fXXX}}`.
+     - Zéro chiffre numérique libre dans le texte généré (`validate_prose` / `\d` strictement interdit hors placeholders).
+  3. Garde sémantique et directionnel (`validate_semantic_consistency`) :
+     - Vérifier la polarité : interdiction absolue de qualifier une hausse de "baisse" ou un repli de "flambée".
+     - Vérifier la temporalité : une observation passée ne peut être décrite comme une prévision future.
+     - Rejet immédiat de toute causalité spéculative non prouvée ("spéculation illégale", "manigances").
+     - En cas d'anomalie numérique ou sémantique, repli automatique et certifié sur le template déterministe (`fallback.md.j2`).
+  4. Concordance stricte HTML vs PDF :
+     - Les deux artefacts générés par WeasyPrint et Jinja2 doivent comporter exactement les mêmes chiffres, mêmes pourcentages et mêmes citations de sources officielles.
+  5. Approbation auditée et respect strict du Gate H3 :
+     - Le cycle de vie passe de `draft` à `approved` via `approve_bulletin`, consignant l'acteur et l'horodatage UTC.
+     - Aucune approbation n'autorise un envoi externe à des destinataires réels. En développement, les courriels de prévisualisation sont strictement confinés au service local Mailpit.
+- **Décision :**
+  1. Implémenter le module `backend/src/ketrika/bulletin/semantic_guard.py` pour valider la polarité et la cohérence directionnelle.
+  2. Intégrer cette validation dans `generate_bulletin_prose`.
+  3. Enrichir `backend/src/ketrika/bulletin/service.py` avec `approve_bulletin` et `send_bulletin_preview_to_mailpit`.
+- **Alternatives rejetées :**
+  - Laisser le LLM générer librement les commentaires sans contrôle de direction de variation (rejeté, risque critique de désinformation sur les marchés).
+  - Envoyer des notifications à de vraies adresses e-mail lors de l'approbation (rejeté, violation formelle du Gate H3).
+- **Conséquences :**
+  - Bulletins 100% fidèles aux réalités des marchés vivriers, auditabilité institutionnelle intégrale, étanchéité de diffusion garantie.
+
+
+
 ## ADR-098 : protocole d'évaluation métrologique indépendante du copilote analyste (corpus étendu de 62+ questions métier, cas adversariaux, vérification anti-hallucination stricte et statut OFFLINE_TESTED) (R6.4)
 
 - **Date/statut :** 2026-10-17 UTC, adopté avant code R6.4 ; Phase R6.

@@ -9,6 +9,7 @@ from typing import Any
 
 import jinja2
 
+from ketrika.bulletin.semantic_guard import validate_semantic_consistency
 from ketrika.core.logging import get_logger
 
 logger = get_logger(__name__)
@@ -109,21 +110,38 @@ def generate_bulletin_prose(
         for attempt in range(2):
             try:
                 raw_response = llm_client.generate(prompt=prompt, system_prompt=system_prompt)
+
+                # 1. Numerical & placeholder validation
                 valid, reason = validate_prose(raw_response, allowed_placeholders)
-                if valid:
-                    logger.info("bulletin_prose_validated_by_llm", attempt=attempt)
-                    return raw_response, False
-                logger.warning(
-                    "bulletin_prose_validation_failed",
-                    attempt=attempt,
-                    reason=reason,
-                )
-                prompt += f"\n\nERREUR DE VALIDATION PRÉCÉDENTE : {reason}. CORRIGEZ IMMÉDIATEMENT EN SUPPRIMANT TOUT CHIFFRE."
+                if not valid:
+                    logger.warning(
+                        "bulletin_prose_numerical_validation_failed",
+                        attempt=attempt,
+                        reason=reason,
+                    )
+                    prompt += f"\n\nERREUR DE VALIDATION NUMÉRIQUE : {reason}. CORRIGEZ IMMÉDIATEMENT EN SUPPRIMANT TOUT CHIFFRE."
+                    continue
+
+                # 2. Semantic and directional consistency validation (R6.5)
+                sem_valid, sem_issues = validate_semantic_consistency(raw_response, facts)
+                if not sem_valid:
+                    sem_reason = "; ".join(sem_issues)
+                    logger.warning(
+                        "bulletin_prose_semantic_validation_failed",
+                        attempt=attempt,
+                        issues=sem_issues,
+                    )
+                    prompt += f"\n\nERREUR DE VALIDATION SÉMANTIQUE : {sem_reason}. RESPECTEZ LE SENS RÉEL DES VARIATIONS."
+                    continue
+
+                logger.info("bulletin_prose_validated_by_llm", attempt=attempt)
+                return raw_response, False
+
             except Exception as exc:
                 logger.error("llm_call_failed", error=str(exc))
                 break
 
-    # Repli déterministe obligatoire
+    # Repli déterministe certifié obligatoire
     logger.info("using_deterministic_fallback_template")
     prose = render_fallback_template(facts, period_start, period_end)
     return prose, True
