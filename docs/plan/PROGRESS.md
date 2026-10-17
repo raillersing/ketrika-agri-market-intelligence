@@ -15,7 +15,7 @@
   6. Valider l'ensemble des 4 suites du module copilot (47/47 tests passés au vert en 65.15s, couverture globale copilot à 86%).
   7. Valider Ruff clean (0 warning) et Mypy strict clean (0 issue sur 10 source files).
   8. Rédiger le dossier de preuve normatif `docs/evidence/R6.3/README.md`.
-- Résultat : Tâche R6.3 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.3/README.md`.
+- Résultat : Tâche R6.3 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.3/README.md`. Commit : `0a591c9`.
 
 ### [2026-10-17T12:18:00Z] R6.2 — DONE, workflows IA bornés, budgets atomiques concurrents et idempotence d'état
 
