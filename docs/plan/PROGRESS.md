@@ -15,7 +15,7 @@
   6. Exécuter l'ensemble des suites dans Docker : 7/7 tests passés au vert en 9.66s, 19/19 tests ops au vert en 12.99s, couverture de `ketrika.ops.supervision` à 100% (globale ops 93%).
   7. Valider Ruff clean (0 warning, 0 error) et Mypy strict clean (0 issue sur 2 source files).
   8. Rédiger le dossier de preuve normatif `docs/evidence/R6.9/README.md`.
-- Résultat : Tâche R6.9 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.9/README.md`. Commit : à suivre.
+- Résultat : Tâche R6.9 entièrement qualifiée et validée (DONE). Preuve : `docs/evidence/R6.9/README.md`. Commit : `9b5a19b`.
 
 ### [2026-10-17T14:16:00Z] R6.8 — DONE, qualifier sauvegarde et restauration isolée
 
