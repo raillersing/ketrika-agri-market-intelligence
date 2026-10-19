@@ -2,13 +2,23 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from ketrika.api.auth import get_current_user, require_admin
 from ketrika.api.errors import NotFoundException, ProblemDetailException
-from ketrika.api.schemas import SourceHealthItem, SourceItem
+from ketrika.api.schemas import (
+    SourceHealthItem,
+    SourceItem,
+    SourceRefreshResponse,
+    SourceRunItem,
+)
 from ketrika.core.db import get_db
+from ketrika.gold.refresh import refresh_gold_views
 
 router = APIRouter(prefix="/v1/sources", tags=["sources"])
 
@@ -71,7 +81,7 @@ def list_sources(session: Session = Depends(get_db)) -> list[SourceItem]:
                 status=r[3],
                 freshness_sla_days=r[4],
                 freshness_days=r[5],
-                is_stale=r[6],
+                is_stale=r[6] if r[5] is not None else None,
                 latest_run_status=r[7],
                 last_run_started_at=r[8],
             )
@@ -133,3 +143,117 @@ def get_source_health(
         parse_success_rate=float(row[9]),
         open_review_items=int(row[10]),
     )
+
+
+@router.get("/runs", response_model=list[SourceRunItem], dependencies=[Depends(get_current_user)])
+def list_recent_runs(
+    limit: int = 20,
+    session: Session = Depends(get_db),
+) -> list[SourceRunItem]:
+    """Retrieve recent data sync and ingestion runs for user-friendly monitoring."""
+    bounded_limit = max(1, min(limit, 50))
+    sql = text(
+        """
+        SELECT
+            ir.run_id::text,
+            ir.source_id,
+            COALESCE(s.spec->>'name', ir.source_id) AS source_name,
+            ir.status,
+            ir.started_at,
+            ir.finished_at,
+            ROUND(EXTRACT(EPOCH FROM (ir.finished_at - ir.started_at))::numeric, 2) AS duration_seconds,
+            ir.n_records,
+            ir.n_fetched,
+            ir.error
+        FROM meta.ingestion_run ir
+        LEFT JOIN meta.source s ON ir.source_id = s.source_id
+        ORDER BY ir.started_at DESC, ir.run_id DESC
+        LIMIT :lim;
+        """
+    )
+    rows = session.execute(sql, {"lim": bounded_limit}).fetchall()
+    return [
+        SourceRunItem(
+            run_id=r[0],
+            source_id=r[1],
+            source_name=r[2],
+            status=r[3],
+            started_at=r[4],
+            finished_at=r[5],
+            duration_seconds=float(r[6]) if r[6] is not None else None,
+            n_records=int(r[7]) if r[7] is not None else None,
+            n_fetched=int(r[8]) if r[8] is not None else None,
+            error="Traitement interrompu ou refusé." if r[9] else None,
+        )
+        for r in rows
+    ]
+
+
+RECOMPUTE_VIEWS = [
+    "price_obs_current",
+    "price_monthly",
+    "price_monthly_best",
+    "price_changes",
+    "stock_latest",
+    "trade_monthly",
+    "import_dependency",
+    "weather_monthly",
+    "cpi_food",
+    "market_health",
+    "source_health",
+    "forecast_latest",
+]
+
+
+def _recompute(session: Session) -> SourceRefreshResponse:
+    """One transaction, guarded publication, no synthetic ingestion history."""
+    try:
+        acquired = session.scalar(
+            text("SELECT pg_try_advisory_xact_lock(hashtextextended('sources-gold-recompute', 0))")
+        )
+        if acquired is not True:
+            raise ProblemDetailException(409, "Recalcul en cours", "Un recalcul est déjà en cours.")
+        result = refresh_gold_views(session, views=RECOMPUTE_VIEWS)
+        views = result["views_refreshed"]
+        session.commit()
+    except ProblemDetailException:
+        session.rollback()
+        raise
+    except (ValueError, SQLAlchemyError):
+        session.rollback()
+        raise ProblemDetailException(
+            503,
+            "Recalcul non publié",
+            "Le recalcul a été refusé ou interrompu. Aucune collecte ni fraîcheur nouvelle n'est confirmée.",
+        ) from None
+    return SourceRefreshResponse(
+        success=True,
+        message="Indicateurs partagés recalculés à partir des données existantes. Aucune nouvelle collecte.",
+        views_refreshed=views,
+        refreshed_at=datetime.now(UTC),
+    )
+
+
+@router.post(
+    "/refresh", response_model=SourceRefreshResponse, dependencies=[Depends(require_admin)]
+)
+def refresh_all_market_data(session: Session = Depends(get_db)) -> SourceRefreshResponse:
+    return _recompute(session)
+
+
+@router.post(
+    "/{source_id}/refresh",
+    response_model=SourceRefreshResponse,
+    dependencies=[Depends(require_admin)],
+)
+def refresh_single_source(
+    source_id: str, session: Session = Depends(get_db)
+) -> SourceRefreshResponse:
+    row = session.execute(
+        text("SELECT status FROM meta.source WHERE source_id = :sid"), {"sid": source_id}
+    ).fetchone()
+    if row is None:
+        raise NotFoundException("Source introuvable dans le catalogue.")
+    if row[0] != "active":
+        raise ProblemDetailException(409, "Source indisponible", "Cette source n'est pas active.")
+    return _recompute(session)

@@ -2,6 +2,15 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
+## ADR-100 : rétablir la vérité du recalcul Sources et la publication gardée
+
+- **Date/statut :** 2026-10-19, adopté avant correction, audit/corrections demandés par utilisateur.
+- **Constat :** l'interface Sources préparée sur main annonce collecte et certification alors que les endpoints exécutent seulement du REFRESH SQL et fabriquent des ingestion_run réussis. Les étapes temporisées et la santé inconnue interprétée comme fraîche sont trompeuses.
+- **Décision :** conserver la navigation/présentation, mais nommer l'action « Recalculer les indicateurs ». Administrateur obligatoire pour POST ; authentification pour historique. Publication exclusivement via refresh_gold_views et ses gardes, refus expurgés/rollback, verrou transactionnel pour éviter les recalculs simultanés. Aucun faux run, n_fetched ou compte de nouvelles cotations. Source inconnue404, non active409 ; portée réelle partagée affichée.
+- **Contrats :** SourceRefreshResponse expose action=recompute, collection_performed=false, new_records_count=0, vues réellement recalculées et heure du recalcul uniquement. La collecte manuelle réelle, son journal durable et son suivi sont explicitement non livrés par cette opération ; ne pas prétendre les avoir implémentés via un bouton ou un BackgroundTask non durable.
+- **Interface :** attente indéterminée, pas de pourcentage/étape inventé ; erreurs réseau/401/403/503 explicites, inconnus non verts, source disabled non déclenchable, exclure les inconnus du dénominateur de fraîcheur. Aucun SLA, région, certification ou planificateur actif sans preuve.
+- **Portée :** correction isolée sur branche Codex, sources main non committées préservées pour rapprochement ; aucune collecte ou mutation de l'actif pour tester le bouton. Aucun nouveau DONE R ni levée de gate.
+
 ### ADRs R0.6–R0.8 (Codex)
 ## ADR-074 : contexte WB réutilisé entre éditions et tentatives
 

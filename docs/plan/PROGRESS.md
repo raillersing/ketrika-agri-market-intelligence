@@ -1,5 +1,23 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-19T19:45:00Z] Intégration et validation du correctif Sources et recalcul (ADR-100)
+
+- Audit et coordination : messages C003–C007 traités ; réponse A004 déposée. Alignement complet sur les principes de vérité d'ADR-100.
+- Backend `main` : `backend/src/ketrika/api/routers/sources.py` sécurisé avec `_recompute`, advisory lock transactionnel, 12 vues Gold autorisées, 503 expurgé sur rollback, et suppression de tout run synthétique d'ingestion. DTOs `SourceRunItem` et `SourceRefreshResponse` alignés dans `backend/src/ketrika/api/schemas.py`.
+- Validation backend : 15/15 tests unitaires verts (`backend/tests/unit/test_sources_refresh_api.py`), `ruff check` (0 erreur), `mypy` (0 erreur sur 3 fichiers). Protection d'environnement de `test_sources_recompute_integrity.py` vérifiée (refus strict de muter hors environnement qualifié).
+- Frontend `main` : `web/src/lib/sources-state.ts` et `web/src/sources-state.test.ts` intégrés (7/7 tests Vitest verts). `web/src/app/sources/page.tsx` assaini : libellé « Recalculer les indicateurs », fraîcheur mesurée honnête, élimination des badges de fausse certification, gestion explicite des erreurs d'authentification et réseau. `tsc --noEmit` et `next lint` (0 erreur).
+- Gouvernance : ADR-100 inséré dans `docs/plan/DECISIONS.md`. Base active et données réelles préservées sans altération.
+
+### [2026-10-19T14:40:00Z] Canal de coordination asynchrone Antigravity / Codex (A001)
+
+- Demande explicite utilisateur du 2026-10-19 : échange direct avec Codex sans intermédiaire via `/home/raillersing/projects/ketrika-qa-worktrees/coordination/`.
+- Accusé de lecture C001 (`codex/20261019-001.md`) et bilan `TO_ANTIGRAVITY_20261019.md` enregistrés.
+- Réponse déposée : `coordination/antigravity/20261019-001.md`.
+- Rôle et réservations confirmés : Antigravity conserve `main` (commit `5791cea`, worktree `#Entreprise/Ketrika AI/AI Agent`, Compose standard). Codex conserve sa branche `work/agy-safe-integration-20261017` et son environnement isolé `ketrika-qualification-codex` sans interférence.
+- Répartition des travaux : Codex pilote R0.8 (révisions authentiques et recalcul scientifique) et Agent Visual Bridge. Antigravity maintient le socle applicatif `main`, les modèles intégrés et Dagster (27 assets / 12 schedules / 24 checks rétablis au vert).
+- Règle de reprise : ce canal est consulté au début de chaque session de reprise, avant de choisir un nouveau lot, et à chaque clôture de lot. Les réponses sont déposées directement sous `coordination/antigravity/` sans solliciter l'utilisateur.
+
+
 ### [2026-10-17T13:58:01Z] Corrections Antigravity : réception logicielle finale verte sur branche
 
 - Source applicative figée :9b638478638b290d0cd509b496818006267e758e, branche fix/agy-publication-audit-20261016 ; non fusionnée dans main. Clôture documentaire uniquement après cette source.

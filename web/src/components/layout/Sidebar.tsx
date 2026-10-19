@@ -48,7 +48,7 @@ const NAV_SECTIONS: NavSection[] = [
     title: "Intelligence & Risques",
     items: [
       { label: "Climat & Cultures", href: "/climate", icon: CloudSun },
-      { label: "Centre d'alertes", href: "/alerts", icon: AlertTriangle, badge: "3", badgeColor: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
+      { label: "Centre d'alertes", href: "/alerts", icon: AlertTriangle },
       { label: "Bulletins officiels", href: "/bulletins", icon: FileText },
       { label: "Copilote analyste", href: "/copilot", icon: Sparkles, badge: "IA", badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
     ],
@@ -102,7 +102,7 @@ export function Sidebar() {
         </div>
 
         {/* Navigation Sections */}
-        <nav className="p-3 space-y-5 flex-1">
+        <nav aria-label="Navigation principale" className="p-3 space-y-5 flex-1">
           {NAV_SECTIONS.map((section) => (
             <div key={section.title} className="space-y-1">
               <div className="px-3 text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold mb-1.5">
@@ -165,11 +165,10 @@ export function Sidebar() {
         {/* Micro System Ticker */}
         <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-slate-900/90 border border-white/[0.06] text-[10px] text-slate-400 font-mono">
           <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            <span className="text-slate-300">Stack 6/6 OK</span>
+            <span className="text-slate-300">État de la plateforme</span>
           </div>
           <Link href="/system" className="hover:text-emerald-400 text-slate-400 transition-colors">
-            :8090 / :5434
+            Consulter
           </Link>
         </div>
 

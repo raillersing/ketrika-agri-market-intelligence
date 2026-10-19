@@ -509,6 +509,33 @@ class SourceHealthItem(BaseModel):
     open_review_items: int = 0
 
 
+class SourceRunItem(BaseModel):
+    """Actual ingestion history, not a cache-recalculation receipt."""
+
+    run_id: str
+    source_id: str
+    source_name: str | None = None
+    status: str
+    started_at: datetime
+    finished_at: datetime | None = None
+    duration_seconds: float | None = None
+    n_records: int | None = None
+    n_fetched: int | None = None
+    error: str | None = None
+
+
+class SourceRefreshResponse(BaseModel):
+    """A guarded cache recalculation never claims new collection or freshness."""
+
+    success: bool
+    action: Literal["recompute"] = "recompute"
+    collection_performed: Literal[False] = False
+    new_records_count: Literal[0] = 0
+    message: str
+    views_refreshed: list[str] = Field(default_factory=list)
+    refreshed_at: datetime
+
+
 class ReviewItemOut(BaseModel):
     """Review queue item."""
 
