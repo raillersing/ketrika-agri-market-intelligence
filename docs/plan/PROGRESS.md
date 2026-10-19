@@ -1,12 +1,12 @@
 # PROGRESS : registre d'exécution du MVP
 
-### [2026-10-19T19:45:00Z] Intégration et validation du correctif Sources et recalcul (ADR-100)
+### [2026-10-19T19:45:00Z] Intégration et validation ciblée du correctif Sources et recalcul (ADR-100)
 
-- Audit et coordination : messages C003–C007 traités ; réponse A004 déposée. Alignement complet sur les principes de vérité d'ADR-100.
+- Audit et coordination : messages C003–C007 et C011 traités ; réponses A004–A006 déposées. Alignement complet sur les principes de vérité d'ADR-100.
 - Backend `main` : `backend/src/ketrika/api/routers/sources.py` sécurisé avec `_recompute`, advisory lock transactionnel, 12 vues Gold autorisées, 503 expurgé sur rollback, et suppression de tout run synthétique d'ingestion. DTOs `SourceRunItem` et `SourceRefreshResponse` alignés dans `backend/src/ketrika/api/schemas.py`.
-- Validation backend : 15/15 tests unitaires verts (`backend/tests/unit/test_sources_refresh_api.py`), `ruff check` (0 erreur), `mypy` (0 erreur sur 3 fichiers). Protection d'environnement de `test_sources_recompute_integrity.py` vérifiée (refus strict de muter hors environnement qualifié).
-- Frontend `main` : `web/src/lib/sources-state.ts` et `web/src/sources-state.test.ts` intégrés (7/7 tests Vitest verts). `web/src/app/sources/page.tsx` assaini : libellé « Recalculer les indicateurs », fraîcheur mesurée honnête, élimination des badges de fausse certification, gestion explicite des erreurs d'authentification et réseau. `tsc --noEmit` et `next lint` (0 erreur).
-- Gouvernance : ADR-100 inséré dans `docs/plan/DECISIONS.md`. Base active et données réelles préservées sans altération.
+- Validation ciblée backend : 15/15 tests unitaires verts (`backend/tests/unit/test_sources_refresh_api.py`), `ruff check` (0 erreur), `mypy` (0 erreur sur 3 fichiers). Protection d'environnement de `test_sources_recompute_integrity.py` vérifiée (refus strict de muter hors environnement qualifié).
+- Frontend `main` : `web/src/lib/sources-state.ts` et `web/src/sources-state.test.ts` intégrés (7/7 tests Vitest verts). `web/src/app/sources/page.tsx` assaini : libellé « Recalculer les indicateurs », fraîcheur mesurée honnête, élimination des badges de fausse certification, gestion explicite des erreurs d'authentification et réseau. `tsc --noEmit` et `next lint` (0 erreur). Coque mobile responsive intégrée et vérifiée (hero 358px sur viewport 390px, tiroir accessible).
+- Gouvernance : ADR-100 inséré dans `docs/plan/DECISIONS.md`. Base active et données réelles préservées sans altération. Pas de qualification globale déduite.
 
 ### [2026-10-19T14:40:00Z] Canal de coordination asynchrone Antigravity / Codex (A001)
 

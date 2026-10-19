@@ -631,3 +631,40 @@
   data_kinds: [weather_forecast]
   notes: "Prévisions météorologiques numériques globales ouvertes (précipitations, températures, humidité, horizons 24h à 168h)."
 
+
+- source_id: market_supply
+  name: "Enquêtes d'Approvisionnement et Stocks des Marchés Vivriers"
+  owner: "Observatoire du Riz / Direction Régionale du Commerce"
+  source_family: madagascar_gov
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.market_supply:MarketSupplyConnector
+  cadence: weekly
+  collection_cadence: weekly
+  observation_cadence: weekly
+  publication_cadence: weekly
+  freshness_sla_days: 14
+  partitioning: per_document
+  entrypoints:
+    - url: "file:///data/supply"
+      kind: file
+      verified_at: "2026-10-16T00:00:00Z"
+      verified: true
+  languages: [fr]
+  licence: "Protocole d'enquête partenariale et relevés officiels (R5.1, ADR-088)"
+  tos_url: "https://ketrika.mg/legal/supply-protocol"
+  tos_sha256: null
+  tos_checked_at: "2026-10-16T00:00:00Z"
+  robots_checked_at: "2026-10-16T00:00:00Z"
+  crawl_permission: partner_agreement
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 1.0
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [stock]
+  notes: "Enquêtes institutionnelles des arrivages sur les marchés de gros (Anosibe, Ambatondrazaka) et stocks disponibles selon le protocole anti-PII strict."
