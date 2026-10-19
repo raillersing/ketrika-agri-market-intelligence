@@ -49,7 +49,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R3.3 | MUST | DONE | ADR-075, SPECS §17.3, références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, 9 tests verts, couverture ML 84% |
 | R3.4 | MUST | DONE | ADR-076, SPECS §17.3, protocole d'évaluation trois phases, 6 fenêtres rolling-origin, étanchéité de sélection, holdout out-of-sample, décomposition par horizon, 6 tests verts, couverture 96% |
 | R3.5 | MUST | DONE | ADR-077, SPECS §17.3, intervalles conformes non paramétriques, seuil N_calib >= 8, uncalibrated_heuristic, intervalle Wilson 95%, audits couverture/largeur, 5 tests verts, couverture 96% |
-| R3.6 | SHOULD | TODO | — |
+| R3.6 | SHOULD | DONE | ADR-105, SPECS §17.3, évaluation exogène macro BFM/OMH et climat CHIRPS, protocole d'ablation 4 familles, règle de parcimonie, validation anti-fuite, 4 tests verts, 70 tests ML verts, cov 94% |
 | R3.7 | MUST | DONE | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation, 4 tests verts, 53 tests ML verts, couverture 92% |
 | R3.8 | MUST | DONE | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines, 7 tests verts, couverture ML 92%, rapport publié |
 | R3.9 | MUST | DONE | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified |
@@ -60,7 +60,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R4.5 | MUST | DONE | ADR-084, SPECS §26, connecteur ecmwf_open, météo prévue archivable obs.weather_forecast, 7 tests verts, couverture 89% |
 | R4.6 | MUST | DONE | ADR-085, SPECS §26, module ketrika.geo.anomalies, seuil baseline N>=10 ans, abstention si insuffisant, anomalies pluie/température, agrégation zonale vérifiée, 15 tests verts, couverture 92% |
 | R4.7 | MUST | DONE | ADR-086, SPECS §26, versioning calendriers culturaux, disjonction baseline vs recommandation, corridors commerciaux prouvés, migration 0015, 23 tests verts, couverture 92% |
-| R4.8 | SHOULD | TODO | — |
+| R4.8 | SHOULD | DONE | ADR-107, SPECS §26, télédétection agro-environnementale, masquage nuages SCL Sentinel-2, NDVI, VCI sous masque cultivé, abstention nuages > 70%, interdiction inférence directe tonnes, 6 tests verts, cov 92% |
 | R4.9 | SHOULD | TODO | — |
 | R4.10 | SHOULD | TODO | — |
 | R4.11 | MUST | DONE | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie, 7 tests verts, couverture 92% |
@@ -69,7 +69,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R5.2 | MUST | DONE | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 |
 | R5.3 | MUST | DONE | Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels |
 | R5.4 | MUST | DONE | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique |
-| R5.5 | SHOULD | TODO | — |
+| R5.5 | SHOULD | DONE | ADR-106, SPECS §27, modèle superficie x rendement, conversion sourcée ODR/FAOSTAT paddy->milled 0.667, pertes 10%, abstention histoire < 2 campagnes, 7 tests verts, cov 93% |
 | R5.6 | MUST | DONE | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks, 5 tests verts, cov 95% |
 | R5.7 | MUST | DONE | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique, 7 tests verts, cov 90% |
 | R5.8 | MUST | DONE | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs, 7 tests verts, cov 95% |

@@ -2,7 +2,7 @@
 
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
-## ADR-100 : rétablir la vérité du recalcul Sources et la publication gardée
+## ADR-104 : rétablir la vérité du recalcul Sources et la publication gardée
 
 - **Date/statut :** 2026-10-19, adopté avant correction, audit/corrections demandés par utilisateur.
 - **Constat :** l'interface Sources préparée sur main annonce collecte et certification alors que les endpoints exécutent seulement du REFRESH SQL et fabriquent des ingestion_run réussis. Les étapes temporisées et la santé inconnue interprétée comme fraîche sont trompeuses.
@@ -10,6 +10,44 @@
 - **Contrats :** SourceRefreshResponse expose action=recompute, collection_performed=false, new_records_count=0, vues réellement recalculées et heure du recalcul uniquement. La collecte manuelle réelle, son journal durable et son suivi sont explicitement non livrés par cette opération ; ne pas prétendre les avoir implémentés via un bouton ou un BackgroundTask non durable.
 - **Interface :** attente indéterminée, pas de pourcentage/étape inventé ; erreurs réseau/401/403/503 explicites, inconnus non verts, source disabled non déclenchable, exclure les inconnus du dénominateur de fraîcheur. Aucun SLA, région, certification ou planificateur actif sans preuve.
 - **Portée :** correction isolée sur branche Codex, sources main non committées préservées pour rapprochement ; aucune collecte ou mutation de l'actif pour tester le bouton. Aucun nouveau DONE R ni levée de gate.
+
+## ADR-105 : Évaluation de l'apport des variables exogènes aux prévisions de prix et ablation stricte (R3.6)
+
+- **Date/statut :** 2026-10-19, adopté avant code R3.6.
+- **Contexte :** La tâche R3.6 impose d'évaluer si l'adjonction de variables exogènes (cours de change USD/MGA de la BFM, cours du gazole de l'OMH, anomalies pluviométriques CHIRPS) améliore statistiquement les prévisions de prix vivriers par rapport au modèle univariable autorégressif de référence.
+- **Décision :**
+  1. Modèle global `ExogenousGradientBoostedModel` basé sur LightGBM / MLForecast avec lags autorégressifs {1, 2, 3, 12} et variables exogènes strictement as-of (lag >= 1 à l'origine de prévision).
+  2. Protocole d'ablation systématique sur les mêmes fenêtres rolling-origin comparant :
+     - (a) Prix seul (`price_only`)
+     - (b) Prix + Macroéconomie (`price_plus_macro`)
+     - (c) Prix + Agroclimat (`price_plus_climate`)
+     - (d) Modèle complet (`price_full`)
+  3. Règle de parcimonie : si aucune amélioration statistiquement significative de la WAPE n'est mesurée (gain <= 0 %), le modèle exogène est refusé (`retained=False`) et le modèle univariable de base est conservé.
+  4. Test anti-fuite obligatoire vérifiant qu'aucune information postérieure à l'origine temporelle n'est ingérée.
+- **Conséquences :** Aucun gain artificiel ni promesse infondée sur les variables exogènes ; stricte traçabilité méthodologique.
+
+## ADR-106 : Modèle de production vivrière superficie × rendement et conversion agro-industrielle sourcée (R5.5)
+
+- **Date/statut :** 2026-10-19, adopté avant code R5.5.
+- **Contexte :** La tâche R5.5 impose d'évaluer la production vivrière prévisionnelle à partir de la superficie récoltée et du rendement, sans inventer de rendements parcellaires ni confondre un chiffre national FAOSTAT avec un rendement de district.
+- **Décision :**
+  1. Décomposition stricte : $\text{Production} = \text{Superficie} \times \text{Rendement}$ avec vérification d'identité mathématique.
+  2. Facteurs de conversion agro-industriels strictement sourcés : coefficient de conversion paddy vers riz blanc usiné fixé à 0.667 (norme officielle ODR / FAOSTAT Madagascar) et déduction documentée des semences/pertes post-récolte à la ferme (10%).
+  3. Modélisation agrométéorologique du rendement basée sur le stress hydrique décadaire de floraison issu de CHIRPS.
+  4. Règle d'abstention : en l'absence de données de campagne réelles pour une zone donnée, le modèle s'abstient explicitement (`abstained_insufficient_history`) plutôt que de fabriquer un tonnage fictif.
+- **Conséquences :** Offre vivrière physiquement et mathématiquement cohérente, exclusion totale de tonnages inventés.
+
+## ADR-107 : Évaluation de la condition des cultures par indice de végétation VCI/NDVI sous masque cultivé (R4.8)
+
+- **Date/statut :** 2026-10-19, adopté avant code R4.8.
+- **Contexte :** La tâche R4.8 vise à suivre la santé de la végétation agricole par télédétection sans extrapolations hasardeuses vers des rendements ou des tonnages.
+- **Décision :**
+  1. Calcul de l'indice NDVI : $(NIR - RED) / (NIR + RED)$ borné dans $[-1.0, 1.0]$.
+  2. Masquage obligatoire des pixels nuageux (qualité SCL Copernicus) : les pixels nuageux sont exclus (`NaN`), jamais assimilés à une végétation morte ou un stress hydrique.
+  3. Application stricte du masque agricole (cropland) pour restreindre l'indicateur aux surfaces cultivées.
+  4. Indice de Condition de la Végétation (VCI) calculé par rapport aux bornes historiques de la période. Si le taux de pixels valides est inférieur à 30 %, l'état est déclaré `cloud_obscured_unavailable` (abstention explicite).
+  5. Interdiction absolue de déduire un tonnage de production vivrière directement du NDVI.
+- **Conséquences :** Suivi satellitaire intègre, transparent sur la couverture nuageuse, exempt de surinterprétation.
 
 ### ADRs R0.6–R0.8 (Codex)
 ## ADR-074 : contexte WB réutilisé entre éditions et tentatives

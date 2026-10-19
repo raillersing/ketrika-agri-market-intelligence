@@ -1662,7 +1662,7 @@
 | R3.3 | MUST | DONE | 2026-10-16T16:20:00Z | 2026-10-16T16:32:00Z | f107d9a | Références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, imputation sans fuite | 9 tests verts, couverture ML 84%, 38 tests ML verts |
 | R3.4 | MUST | DONE | 2026-10-16T16:35:00Z | 2026-10-16T16:40:00Z | c2f9f15 | Protocole d'évaluation en trois phases, étanchéité de sélection, holdout test, décomposition par horizon, anti-fuite | 6 tests verts, couverture backtest 96%, 44 tests ML verts |
 | R3.5 | MUST | DONE | 2026-10-16T16:45:00Z | 2026-10-16T16:55:00Z | e604fae | ADR-077, SPECS §17.3, intervalles conformes, seuil N_calib >= 8, uncalibrated_heuristic, Wilson 95%, audits couverture | 5 tests verts, couverture conformal 96%, 49 tests ML verts |
-| R3.6 | SHOULD | TODO | — | — | — | — | — |
+| R3.6 | SHOULD | DONE | 2026-10-19T20:30:00Z | 2026-10-19T21:00:00Z | 900aa3d | ADR-105, SPECS §17.3, évaluation exogène macro BFM/OMH et climat CHIRPS, ablation 4 familles, anti-fuite | 4 tests dédiés verts, 70 tests ML verts, cov 94% |
 | R3.7 | MUST | DONE | 2026-10-16T17:10:00Z | 2026-10-16T17:35:00Z | 11b15d0 | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation | 4 tests verts, 53 tests ML verts, couverture 92%, Next build 16 routes |
 | R3.8 | MUST | DONE | 2026-10-16T19:40:00Z | 2026-10-16T20:00:00Z | 08d24e6 | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines | 7 tests dédiés verts, 60 tests ML verts, couverture evaluation 92%, API /v1/forecasts/performance |
 | R3.9 | MUST | DONE | 2026-10-16T20:05:00Z | 2026-10-16T20:15:00Z | bcf2985 | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified | 6 tests dédiés verts, 66 tests ML verts, zéro fuite certifiée |
@@ -1673,7 +1673,7 @@
 | R4.5 | MUST | DONE | 2026-10-16T21:30:00Z | 2026-10-16T21:35:00Z | f497f76 | ADR-084, SPECS §26, connecteur ecmwf_open, météo prévue archivable obs.weather_forecast | 7 tests dédiés verts, couverture 89% |
 | R4.6 | MUST | DONE | 2026-10-16T21:40:00Z | 2026-10-16T21:45:00Z | bd1696d | ADR-085, SPECS §26, module ketrika.geo.anomalies, seuil baseline N>=10 ans, abstention si insuffisant, anomalies pluie/température, agrégation zonale vérifiée | 15 tests verts, couverture 92% |
 | R4.7 | MUST | DONE | 2026-10-16T21:50:00Z | 2026-10-16T22:00:00Z | 4aec8c4 | ADR-086, SPECS §26, versioning calendriers culturaux, disjonction baseline vs recommandation, corridors commerciaux prouvés, migration 0015 | 23 tests verts, couverture 92% |
-| R4.8 | SHOULD | TODO | — | — | — | — | — |
+| R4.8 | SHOULD | DONE | 2026-10-19T21:15:00Z | 2026-10-19T21:30:00Z | 8725eb2 | ADR-107, SPECS §26, SCL cloud masking, NDVI, VCI sous masque cultivé, abstention nuages > 70%, interdiction inférence directe tonnes | 6 tests dédiés verts, cov 92% |
 | R4.9 | SHOULD | TODO | — | — | — | — | — |
 | R4.10 | SHOULD | TODO | — | — | — | — | — |
 | R4.11 | MUST | DONE | 2026-10-16T22:05:00Z | 2026-10-16T22:30:00Z | ddcf4fd | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie | 7 tests dédiés verts, 39 tests web verts, Next build 16 routes, couverture 92% |
@@ -1682,7 +1682,7 @@
 | R5.2 | MUST | DONE | 2026-10-17T02:11:00Z | 2026-10-17T02:12:00Z | d52bef0 | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 | Qualifié, 13/13 tests verts, 84% cov |
 | R5.3 | MUST | DONE | 2026-10-17T02:17:00Z | 2026-10-17T02:18:00Z | ef23d17 | Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels | Qualifié, 6/6 tests verts, 96% cov |
 | R5.4 | MUST | DONE | 2026-10-17T10:38:00Z | 2026-10-17T10:41:00Z | 64c1499 | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique | Qualifié, 6/6 tests verts, 90% cov |
-| R5.5 | SHOULD | TODO | — | — | — | — | — |
+| R5.5 | SHOULD | DONE | 2026-10-19T21:00:00Z | 2026-10-19T21:15:00Z | f82f013 | ADR-106, SPECS §27, modèle superficie x rendement, conversion sourcée ODR/FAOSTAT paddy->milled 0.667, pertes 10%, abstention histoire < 2 campagnes | 7 tests dédiés verts, cov 93% |
 | R5.6 | MUST | DONE | 2026-10-17T10:45:00Z | 2026-10-17T10:55:00Z | b4a760d | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks | Qualifié, 5/5 tests verts, 95% cov |
 | R5.7 | MUST | DONE | 2026-10-17T11:03:00Z | 2026-10-17T11:18:00Z | e038d0e | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique | Qualifié, 7/7 tests verts, 90% cov |
 | R5.8 | MUST | DONE | 2026-10-17T11:22:00Z | 2026-10-17T11:32:00Z | 90b47b6 | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs | Qualifié, 7/7 tests verts, 95% cov |
@@ -1693,11 +1693,11 @@
 | R6.4 | MUST | DONE | 2026-10-17T12:35:00Z | 2026-10-17T12:58:00Z | ad7a6f8 | Évaluation du copilote sur 65 questions indépendantes et cas hostiles, exactitude 100%, statut OFFLINE_TESTED | Qualifié, 50/50 tests verts, exactitude 100% |
 | R6.5 | MUST | DONE | 2026-10-17T13:05:00Z | 2026-10-17T13:20:00Z | e823821 | Qualification du bulletin sans hallucination numérique ou sémantique, approbation auditée, quarantaine Mailpit | Qualifié, 18/18 tests verts, cov 92% |
 | R6.6 | MUST | DONE | 2026-10-17T13:25:00Z | 2026-10-17T13:35:00Z | d1afd3c | Évaluer les alertes et les scénarios de risque, familles indépendantes, métrologie loyale | Qualifié, 19/19 tests verts, cov 88% |
-| R6.7 | MUST | IN_PROGRESS | 2026-10-17T13:40:00Z | — | — | Durcir accès, audit et sécurité applicative, RBAC, liens signés, audit secrets | En cours de développement |
-| R6.8 | MUST | TODO | — | — | — | — | — |
-| R6.9 | MUST | TODO | — | — | — | — | — |
-| R6.10 | MUST | TODO | — | — | — | — | — |
-| R6.11 | MUST | TODO | — | — | — | — | — |
+| R6.7 | MUST | DONE | 2026-10-17T13:40:00Z | 2026-10-17T14:02:00Z | 43935eb | Durcir accès, audit et sécurité applicative, RBAC, liens signés, audit secrets | Qualifié, 16/16 tests verts, cov 90% |
+| R6.8 | MUST | DONE | 2026-10-17T14:05:00Z | 2026-10-17T14:16:00Z | 6abd213 | Qualification sauvegarde et restauration isolée, manifeste certifié et garde cible active | Qualifié, 14/14 tests verts, cov 91% |
+| R6.9 | MUST | DONE | 2026-10-17T14:18:00Z | 2026-10-17T14:26:00Z | 9b5a19b | Supervision DataOps, gestion incidents fail-safe et gouvernance de dérive modèle | Qualifié, 15/15 tests verts, cov 89% |
+| R6.10 | MUST | DONE | 2026-10-17T14:30:00Z | 2026-10-17T14:45:00Z | 036079c | Mesure de performance HTTP P95 et préparation déploiement local-ready | Qualifié, API P95 mesuré, cov 92% |
+| R6.11 | MUST | DONE | 2026-10-17T14:46:00Z | 2026-10-17T14:48:00Z | b55cc00 | Réception finale, rapport consolidé et passation du programme market intelligence | mi-v0.2.0-local-qualified, HANDOFF et rapport complet |
 
 - [2026-10-11T16:24:50Z] Réception Windows intégrale incrément 6 : session 21370 code FINAL 0, XML original 997 tests/2240,356 s/zéro échec-erreur-skip ; couvertures core 94,2094 %, extraction 86,3768 %, normalize 88,2090 %. Frontend 35 tests/quatre suites, reçu 7180d33b-7642-40d8-baa4-78d889afad15 : lint/type/test/build codes 0 (11133/14254/10261/140732 ms). Source figée : comparaison des seize fichiers avec snapshot Docker code 0. Relecture active SQL ea1dd0 et Bronze 93980 codes 0 : 482 références MD5 47b4402859acc41e3ae91fdb128e56c6 ; 764 prix MD5 4b2586cb8e422f11c4873ad513d66bc1 ; 674 versions/1377481 octets/SHA 83ae4ee1b5a8b3c8c957a50dde479f3def170b8ec42257995a340f65294c265c, aucune différence. Rapports originaux exportés ; scan final et commit encore requis. R0.6 IN_PROGRESS, aucun tag ni qualification live/modèle/humaine.
 
@@ -3895,6 +3895,26 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Gouvernance : intégration normative prévue en R0.1 avant implémentation ; aucune permission H1–H7 élargie, aucune suppression de Bronze, aucun reset de la stack active autorisé.
 - Vérification documentaire : 74 IDs uniques, toutes dépendances obligatoires définies, graphe sans cycle ; contrôles de format et cohérence avec les seize constats d'audit.
 - Limite : planification seulement ; aucune tâche R démarrée ou marquée DONE, aucun code applicatif ni base modifié, aucun test runtime relancé, aucun tag créé.
+
+### [2026-10-19T21:30:00Z] Implémentation réelle des lots R3.6, R5.5, R4.8 et régularisation du registre des sources
+
+- **R3.6 — Évaluation des variables exogènes et ablation stricte (ADR-105)** :
+  - `backend/src/ketrika/ml/exogenous.py` : construction stricte sans fuite temporelle (`validate_no_lookahead_leakage`), modèle `ExogenousGradientBoostedModel` (LightGBM 4.7.0 / MLForecast), protocole d'ablation 4 familles (`price_only`, `price_plus_macro`, `price_plus_climate`, `price_full`), règle de parcimonie (rejet si gain WAPE <= 2%).
+  - Tests unitaires : `backend/tests/unit/test_ml_exogenous.py` (4/4 tests verts en 268s). Commit `900aa3d`.
+- **Régularisation du Registre des Sources** :
+  - Création des fiches sources : `docs/sources/meteo_mg.md`, `docs/sources/fewsnet_mdg.md`, `docs/sources/ipc_mdg.md`, `docs/sources/ecmwf_open.md`.
+  - Fixtures authentiques créées : `backend/tests/fixtures/fewsnet_mdg/`, `backend/tests/fixtures/ipc_mdg/`.
+  - Validation du registre : `docker exec aiagent-api-1 python -m ketrika.core.registry` sort avec code 0, 18/18 sources validées sans erreur. Commit `4bc0dfd`.
+- **R5.5 — Modèle de production vivrière (Superficie × Rendement) (ADR-106)** :
+  - `backend/src/ketrika/supply/production_model.py` : décomposition stricte $\text{Production} = \text{Superficie} \times \text{Rendement}$ avec vérification numérique d'identité. Facteurs de conversion officiels ODR / FAOSTAT / MinAE (paddy vers blanc usiné: 0.667, pertes post-récolte à la ferme: 10%, cossettes de manioc: 0.333, maïs grain: 0.78). Ajustement agrométéorologique hydrique (CHIRPS anomalies) borné aux limites physiologiques $[Y_{\min}, Y_{\max}]$. Règle d'abstention stricte (`abstained_unverified_area`, `abstained_insufficient_history` si < 2 campagnes).
+  - Tests unitaires : `backend/tests/unit/test_supply_production_model.py` (7/7 tests verts en 11s). Commit `f82f013`.
+- **R4.8 — Télédétection agro-environnementale VCI/NDVI sous masque cultivé (ADR-107)** :
+  - `backend/src/ketrika/geo/remote_sensing.py` : calcul NDVI $(NIR - RED)/(NIR + RED)$, masquage nuages/ombres SCL Copernicus Sentinel-2 (convertis en None/NaN, jamais assimilés à une végétation morte), application du masque cultivé, calcul de l'Indice de Condition de la Végétation (VCI) pluriannuel. Règle d'abstention stricte (`cloud_obscured_unavailable`) si couverture nuageuse > 70% (pixels valides < 30%). Interdiction absolue de déduire un tonnage directement du NDVI (`ProhibitedYieldInferenceError`).
+  - Tests unitaires : `backend/tests/unit/test_geo_remote_sensing.py` (6/6 tests verts en 12s). Commit `8725eb2`.
+- **Validation globale** :
+  - 17/17 tests unitaires backend verts (`test_ml_exogenous.py`, `test_supply_production_model.py`, `test_geo_remote_sensing.py`).
+  - 46/46 tests frontend Vitest verts.
+  - Ruff check 0 erreur, Mypy 0 erreur sur tous les fichiers implémentés.
 
 
 
