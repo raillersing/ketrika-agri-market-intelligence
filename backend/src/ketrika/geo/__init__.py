@@ -44,6 +44,19 @@ from ketrika.geo.raster import (
     is_within_madagascar_bbox,
     validate_bbox,
 )
+from ketrika.geo.remote_sensing import (
+    CLOUD_AND_OBSCURATION_SCL,
+    CroplandVCIResult,
+    ProhibitedYieldInferenceError,
+    RemoteSensingStatus,
+    Sentinel2SCLClass,
+    VegetationConditionClass,
+    classify_vci,
+    compute_pixel_ndvi,
+    compute_vci,
+    evaluate_cropland_vegetation_condition,
+    infer_production_tonnes_from_ndvi,
+)
 
 __all__ = [
     "CRS_WGS84",
@@ -82,4 +95,15 @@ __all__ = [
     "get_calendar_history",
     "get_documented_trade_corridors_for_market",
     "supersede_calendar_record",
+    "Sentinel2SCLClass",
+    "CLOUD_AND_OBSCURATION_SCL",
+    "RemoteSensingStatus",
+    "VegetationConditionClass",
+    "CroplandVCIResult",
+    "ProhibitedYieldInferenceError",
+    "compute_pixel_ndvi",
+    "compute_vci",
+    "classify_vci",
+    "evaluate_cropland_vegetation_condition",
+    "infer_production_tonnes_from_ndvi",
 ]
