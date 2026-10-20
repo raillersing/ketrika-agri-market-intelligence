@@ -1,5 +1,9 @@
 """Ketrika Gold layer: materialized analytical views, KPI metrics and refresh pipelines."""
 
+from ketrika.gold.compatibility import (
+    check_and_upgrade_historical_gold_definitions,
+    is_gold_definition_outdated,
+)
 from ketrika.gold.dq import (
     DqCheckResult,
     GoldDqRejected,
@@ -37,6 +41,8 @@ __all__ = [
     "ORDERED_GOLD_VIEWS",
     "init_gold_views",
     "refresh_gold_views",
+    "check_and_upgrade_historical_gold_definitions",
+    "is_gold_definition_outdated",
     "calculate_variation",
     "calculate_calendar_aligned_variation",
     "audit_source_family_independence",
