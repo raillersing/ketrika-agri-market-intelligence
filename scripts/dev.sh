@@ -9,7 +9,7 @@ shift || true
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 qa_compose() {
-  docker compose --env-file "$REPO_ROOT/scripts/qualification.env" --project-name ketrika-qualification-main-integration -f "$REPO_ROOT/docker-compose.qualification.yml" "$@"
+  docker compose --env-file "$REPO_ROOT/scripts/qualification.env" --project-name ketrika-qualification-main-final -f "$REPO_ROOT/docker-compose.qualification.yml" "$@"
 }
 
 qa_proof_args() {
@@ -37,7 +37,7 @@ qa_owned_resource() {
   if docker "$resource_kind" inspect "$resource_name" >/dev/null 2>&1; then
     resource_scope="$(docker "$resource_kind" inspect --format '{{index .Labels "ketrika.scope"}}' "$resource_name")"
     resource_project="$(docker "$resource_kind" inspect --format '{{index .Labels "com.docker.compose.project"}}' "$resource_name")"
-    if [ "$resource_scope" != "qualification" ] || [ "$resource_project" != "ketrika-qualification-main-integration" ]; then
+    if [ "$resource_scope" != "qualification" ] || [ "$resource_project" != "ketrika-qualification-main-final" ]; then
       echo "Refusing foreign qualification resource: $resource_name" >&2
       exit 1
     fi
@@ -46,9 +46,9 @@ qa_owned_resource() {
 
 qa_prepare() {
   docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r03 python -m ketrika.core.qualification compose /workspace/docker-compose.qualification.yml
-  qa_owned_resource network ketrika_qualification_main_integration_network
+  qa_owned_resource network ketrika_qualification_main_final_network
   for qa_volume in pgdata bronze backend_venv_r03 backend_source_r03 web_source_r03 web_node_modules_r03 web_next_r03 browser_venv_r03; do
-    qa_owned_resource volume "ketrika_qualification_main_integration_$qa_volume"
+    qa_owned_resource volume "ketrika_qualification_main_final_$qa_volume"
   done
   qa_compose config --quiet
   if [ "${1:-}" = check ]; then
@@ -80,7 +80,7 @@ qa_isolated() {
       qa_proof_args
       qa_compose run --rm --no-deps "${QA_PROOF_ARGS[@]}" api sh /workspace/scripts/qa-backend.sh check
       qa_compose run --rm --no-deps "${QA_PROOF_ARGS[@]}" web sh /workspace/scripts/qa-web.sh check
-      docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" --mount type=volume,source=ketrika_qualification_main_integration_web_node_modules_r03,target=/frontend,readonly -e PYTHONPATH=/workspace/backend/src "${QA_PROOF_ARGS[@]}" ketrika-backend:qa-codex-r03 python -m ketrika.core.qualification_reports check-frontend /frontend/.qa-results --commit "$qa_commit"
+      docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" --mount type=volume,source=ketrika_qualification_main_final_web_node_modules_r03,target=/frontend,readonly -e PYTHONPATH=/workspace/backend/src "${QA_PROOF_ARGS[@]}" ketrika-backend:qa-codex-r03 python -m ketrika.core.qualification_reports check-frontend /frontend/.qa-results --commit "$qa_commit"
       ;;
     test) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh test "$@" ;;
     governance) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh governance ;;
@@ -181,9 +181,9 @@ case "$COMMAND" in
   qualify)
     [ "$#" -ge 1 ] && [ "$#" -le 2 ] || { echo "qualify requires R0|all and optional relative evidence directory" >&2; exit 1; }
     case "$1" in R0|all) ;; *) echo "Unavailable qualification phase" >&2; exit 1 ;; esac
-    qa_owned_resource volume ketrika_qualification_main_integration_backend_venv_r03
+    qa_owned_resource volume ketrika_qualification_main_final_backend_venv_r03
     qa_proof_args
-    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" --mount type=volume,source=ketrika_qualification_main_integration_backend_venv_r03,target=/reports -e PYTHONPATH=/workspace/backend/src "${QA_PROOF_ARGS[@]}" ketrika-backend:qa-codex-r03 python -m ketrika.core.qualify "$1" --commit "$qa_commit" --evidence "${2:-docs/evidence/qualification}"
+    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" --mount type=volume,source=ketrika_qualification_main_final_backend_venv_r03,target=/reports -e PYTHONPATH=/workspace/backend/src "${QA_PROOF_ARGS[@]}" ketrika-backend:qa-codex-r03 python -m ketrika.core.qualify "$1" --commit "$qa_commit" --evidence "${2:-docs/evidence/qualification}"
     ;;
   test-network)
     docker compose exec -T api pytest -m "network"
@@ -194,7 +194,7 @@ case "$COMMAND" in
     ;;
   rebuild-smoke)
     [ "$#" -eq 1 ] && { [ "$1" = prepare ] || [ "$1" = replay ]; } || { echo "rebuild-smoke requires prepare|replay" >&2; exit 1; }
-    qa_owned_resource volume ketrika_qualification_main_integration_backend_venv_r03
+    qa_owned_resource volume ketrika_qualification_main_final_backend_venv_r03
     for rebuild_suffix in pgdata socket copy reports; do
       rebuild_name="ketrika_rebuild_qualification_$rebuild_suffix"
       if docker volume inspect "$rebuild_name" >/dev/null 2>&1; then

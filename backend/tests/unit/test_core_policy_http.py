@@ -19,7 +19,9 @@ def public_fixture_robots(httpserver):
 def test_offline_error_raised_when_http_offline_enabled():
     """Verify that HTTP_OFFLINE=1 prevents any network request and raises OfflineError."""
     policy = PolicyEngine()
-    client = PoliteHttpClient(policy_engine=policy, budget_backend=MemoryBudgetBackend())
+    client = PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True
+    )
     client.bind_source("fixture_policy", 500, 100)
 
     with patch("ketrika.core.policy.get_settings") as mock_settings:
@@ -36,7 +38,9 @@ def test_robots_txt_disallow_prevents_request():
         "http://forbidden.gov.mg",
         "User-Agent: *\nDisallow: /private/\n",
     )
-    client = PoliteHttpClient(policy_engine=policy, budget_backend=MemoryBudgetBackend())
+    client = PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True
+    )
     client.bind_source("fixture_policy", 500, 100)
 
     with pytest.raises(PolicyStop) as exc_info:
@@ -52,7 +56,9 @@ def test_challenge_or_captcha_triggers_policy_stop(httpserver: HTTPServer):
         content_type="text/html",
     )
     policy = PolicyEngine()
-    client = PoliteHttpClient(policy_engine=policy, budget_backend=MemoryBudgetBackend())
+    client = PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True
+    )
     client.bind_source("fixture_policy", 500, 100)
 
     with pytest.raises(PolicyStop) as exc_info:
@@ -66,7 +72,9 @@ def test_status_401_or_403_triggers_policy_stop(httpserver: HTTPServer):
         "Access Denied", status=403, content_type="text/plain"
     )
     policy = PolicyEngine()
-    client = PoliteHttpClient(policy_engine=policy, budget_backend=MemoryBudgetBackend())
+    client = PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True
+    )
     client.bind_source("fixture_policy", 500, 100)
 
     with pytest.raises(PolicyStop) as exc_info:
@@ -89,7 +97,9 @@ def test_http_429_respects_retry_after(httpserver: HTTPServer):
     )
 
     policy = PolicyEngine()
-    client = PoliteHttpClient(policy_engine=policy, budget_backend=MemoryBudgetBackend())
+    client = PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True
+    )
     client.bind_source("fixture_policy", 500, 100)
 
     start = time.monotonic()
@@ -110,7 +120,9 @@ def test_http_304_not_modified_returns_no_content(httpserver: HTTPServer):
     ).respond_with_data("", status=304, headers={"ETag": '"abc123etag"'})
 
     policy = PolicyEngine()
-    client = PoliteHttpClient(policy_engine=policy, budget_backend=MemoryBudgetBackend())
+    client = PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True
+    )
     client.bind_source("fixture_policy", 500, 100)
 
     res = client.get(
@@ -130,7 +142,9 @@ def test_rate_limiter_throttles_within_bound(httpserver: HTTPServer):
 
     max_rps = 10.0  # 10 req/s -> 20 requests take ~1.9s
     policy = PolicyEngine()
-    client = PoliteHttpClient(policy_engine=policy, budget_backend=MemoryBudgetBackend())
+    client = PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True
+    )
     client.bind_source("fixture_policy", 500, 100)
 
     n_requests = 20

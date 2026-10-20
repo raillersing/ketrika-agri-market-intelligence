@@ -135,7 +135,14 @@ def test_unsafe_compose_rejected(case):
         validate_compose(yaml.safe_dump(spec))
 
 
-@pytest.mark.parametrize("project", ["ketrika-qualification", "ketrika-qualification-codex"])
+@pytest.mark.parametrize(
+    "project",
+    [
+        "ketrika-qualification",
+        "ketrika-qualification-codex",
+        "ketrika-qualification-main-integration",
+    ],
+)
 def test_other_qualification_projects_are_rejected(project):
     spec = compose_spec()
     spec["name"] = project
@@ -144,7 +151,12 @@ def test_other_qualification_projects_are_rejected(project):
 
 
 @pytest.mark.parametrize(
-    "volume", ["ketrika_qualification_pgdata", "ketrika_qualification_codex_bronze"]
+    "volume",
+    [
+        "ketrika_qualification_pgdata",
+        "ketrika_qualification_codex_bronze",
+        "ketrika_qualification_main_integration_bronze",
+    ],
 )
 def test_old_qualification_volumes_are_rejected(volume):
     spec = compose_spec()

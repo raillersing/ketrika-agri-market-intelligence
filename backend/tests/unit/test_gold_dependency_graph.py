@@ -71,7 +71,23 @@ def test_actual_repository_gold_has_every_included_silver_dependency():
     expected = {
         AssetKey(f"{entry.source_id}__silver") for entry in source_inventory if entry.included
     }
-    assert len(expected) == 5
+    assert expected == {
+        AssetKey(f"{source_id}__silver")
+        for source_id in (
+            "wb_rtfp_mdg",
+            "faostat",
+            "instat_tbe",
+            "bfm_public",
+            "omh_public",
+            "miasa_odr",
+            "mincc_ppn",
+            "douanes_stats",
+            "fewsnet_mdg",
+            "ipc_mdg",
+            "ecmwf_open",
+            "market_supply",
+        )
+    }
     assert AssetKey("instat_nipc__silver") not in expected
     assert gold_refresh_asset.asset_deps[gold_refresh_asset.key] == expected
     assert defs.get_repository_def() is not None

@@ -189,8 +189,18 @@ def test_forecasting_pipeline_e2e_and_anti_leakage():
             assert float(p50) <= float(p90) + 1e-2
 
         # Check gold.forecast_latest view
-        gold_fc_count = session.execute(text("SELECT count(*) FROM gold.forecast_latest")).scalar()
+        gold_fc_count = session.execute(
+            text("SELECT count(*) FROM gold.forecast_latest WHERE model_run_id = :mid"),
+            {"mid": uuid.UUID(res1["model_run_id"])},
+        ).scalar()
         assert gold_fc_count == res1["forecasts_generated"]
+        # Other target periods from the seed remain visible; no data is deleted
+        # to force the whole view to match this one model run.
+        other_run_count = session.execute(
+            text("SELECT count(*) FROM gold.forecast_latest WHERE model_run_id <> :mid"),
+            {"mid": uuid.UUID(res1["model_run_id"])},
+        ).scalar()
+        assert other_run_count == 2
 
     # 2. Strict Anti-Leakage Test:
     # Inject future observations at 2024-06-01 with an anomalous value

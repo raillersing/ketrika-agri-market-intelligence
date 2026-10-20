@@ -139,3 +139,5 @@ Originaux rouges gzip lossless dans docs/evidence/R0.6 ; aucun incident effacé.
 prepare48784 FINAL1, colonne forecast.model_requested absente dans0002 : les migrations historiques lisent des définitions SQL futures. Première tentative, rollback de la seule QA neuve ketrika-qualification-main-integration. Repli ADR109 : définitions historiques bornées et migration additive0018, sans restaurer/effacer de données actives. prepare36218 FINAL0 après correction ; réception complète encore requise.
 
 Corpus72215 :3 échecs de taille reçue,32 succès avant SIGINT (JUnit conservé). Un reçu synthétique périmé et43 fichiers non inventoriés corrigés sans promotion d'authenticité,36947 FINAL0/123 tests ciblés. Aucun blocage humain ni succès produit déduit ; réception complète encore requise.
+
+Préparation41573 : perte de connexion seed après migrations0018, backend PostgreSQL PID917 exit2 (pas la transition initiale, serveur final actif depuis06:33:46). Cause inconnue, récupération automatique06:42:57 sans reset ;4078 FINAL0/85 tests après reprise, aucun skip. Garder incident INVESTIGATING, pas de correction causale inventée ; réception complète encore requise.

@@ -66,12 +66,18 @@ def test_price_anomaly_spike_and_drop_pipeline(db_session: Session) -> None:
     seed_synthetic_gold_data(db_session)
     db_session.commit()
 
-    src_rec = db_session.execute(select(SourceRecord)).scalars().first()
+    src_rec = db_session.get(
+        SourceRecord, uuid.uuid5(SOURCE_RECORD_ID_BASE, "synthetic-generator-v2:miasa_odr_0")
+    )
     assert src_rec is not None
+    assert src_rec.source_id == "miasa_odr"
 
     # Retrieve another source record for multi-source confirmation
-    all_src_recs = db_session.execute(select(SourceRecord)).scalars().all()
-    src_rec_second = all_src_recs[1] if len(all_src_recs) > 1 else src_rec
+    src_rec_second = db_session.get(
+        SourceRecord, uuid.uuid5(SOURCE_RECORD_ID_BASE, "synthetic-generator-v2:wfp_hdx_mdg_0")
+    )
+    assert src_rec_second is not None
+    assert src_rec_second.source_id == "wfp_hdx_mdg"
 
     # 2. Inject PRICE SPIKE for Rice (Month 2024-03)
     # Baseline was ~2800-3000 MGA. We inject 5500 MGA from 2 sources (+80% chg_1m, z > 5)
@@ -224,6 +230,7 @@ def test_price_anomaly_spike_and_drop_pipeline(db_session: Session) -> None:
     assert rspike.chg_1m is not None and rspike.chg_1m > 0.15
     assert rspike.severity == "high"  # Multi-source confirmation
     assert rspike.n_sources >= 2
+    assert rspike.n_independent_families >= 2
 
     # Check Maize Drop anomaly
     maize_drops = [

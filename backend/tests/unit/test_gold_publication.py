@@ -7,6 +7,7 @@ import pytest
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from ketrika.gold.dq import GoldDqRejected, PublicationDenominators
 from ketrika.gold.provenance_gate import PublicationCheck
 from ketrika.gold.refresh import (
     ORDERED_GOLD_VIEWS,
@@ -14,6 +15,34 @@ from ketrika.gold.refresh import (
     publication_views,
     refresh_gold_views,
 )
+
+
+@pytest.fixture(autouse=True)
+def isolate_publication_control_from_unrelated_dq_queries(monkeypatch):
+    """These mocks test transaction control, not the real DQ SQL exercised in integration."""
+    monkeypatch.setattr("ketrika.gold.refresh.check_blocking_dq_gate", lambda *args, **kwargs: [])
+    monkeypatch.setattr(
+        "ketrika.gold.refresh.get_publication_denominators",
+        lambda *args, **kwargs: PublicationDenominators(0, 0, 0, 0, 0, 0, 0, 0, 0),
+    )
+
+
+def test_blocking_dq_error_stops_publication_before_savepoint(monkeypatch):
+    session = MagicMock(spec=Session)
+    session.execute.return_value.scalar.return_value = 1
+
+    def reject(*args, **kwargs):
+        raise GoldDqRejected("synthetic_dq_rejection")
+
+    monkeypatch.setattr("ketrika.gold.refresh.check_blocking_dq_gate", reject)
+    with patch(
+        "ketrika.gold.refresh.require_gold_provenance",
+        return_value=PublicationCheck("empty", (), None),
+    ):
+        with pytest.raises(GoldDqRejected, match="synthetic_dq_rejection"):
+            refresh_gold_views(session, views=["weather_monthly"], reader=MagicMock())
+    assert not refreshes(session)
+    session.begin_nested.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -147,12 +176,10 @@ def test_concurrent_failure_has_local_savepoint_before_nonconcurrent_retry() -> 
 def test_initialization_creates_all_views_unpopulated_without_certification() -> None:
     session = MagicMock(spec=Session)
     result = init_gold_views(session)
-    assert result == {"views_initialized": len(ORDERED_GOLD_VIEWS), "views_populated": 0}
+    assert result == {"views_initialized": 14, "views_populated": 0}
     statements = [str(call.args[0]) for call in session.execute.call_args_list]
-    assert len(statements) == len(ORDERED_GOLD_VIEWS) + 1
-    for view, statement in zip(
-        ORDERED_GOLD_VIEWS, statements[: len(ORDERED_GOLD_VIEWS)], strict=True
-    ):
+    assert len(statements) == 15
+    for view, statement in zip(ORDERED_GOLD_VIEWS, statements[:14], strict=True):
         assert f"CREATE MATERIALIZED VIEW gold.{view} AS" in statement
         assert "WITH NO DATA;" in statement
     session.commit.assert_not_called()

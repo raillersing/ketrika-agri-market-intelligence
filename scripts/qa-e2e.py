@@ -75,18 +75,53 @@ def main() -> int:
 
             # R2.10: Economy observatory navigation, dimensions and responsive checks
             eco_res = context.request.get("/api/v1/economic/dashboard")
-            assert eco_res.ok, f"Authenticated same-origin economic dashboard: {eco_res.status}"
+            assert eco_res.status == 503, f"Unqualified macro must fail closed: {eco_res.status}"
+            assert eco_res.json()["detail"] == "economic_data_not_qualified"
             page.goto("/economy")
-            expect(page.get_by_text("Observatoire Économique & Conjoncture", exact=True)).to_be_visible()
-            expect(page.get_by_text("ADR-070", exact=True)).to_be_visible()
+            expect(
+                page.get_by_text("Observatoire Économique & Conjoncture", exact=True)
+            ).to_be_visible()
+            unavailable = page.get_by_text(
+                "Données économiques non qualifiées ou temporairement indisponibles.", exact=True
+            )
+            expect(unavailable).to_be_visible()
+            expect(
+                page.get_by_text(
+                    "Aucune donnée disponible pour cette dimension économique.", exact=True
+                )
+            ).to_have_count(0)
+            page.reload()
+            expect(unavailable).to_be_visible()
             page.screenshot(path=str(directory / "economy.png"), full_page=True)
-            completed.append("economy observatory renders")
+            completed.append("economy explicitly reports unqualified data after reload")
 
             # R2.10: Mobile responsive check at 390px width (SPECS §22)
             page.set_viewport_size({"width": 390, "height": 844})
-            expect(page.get_by_text("Observatoire Économique & Conjoncture", exact=True)).to_be_visible()
+            expect(
+                page.get_by_text("Observatoire Économique & Conjoncture", exact=True)
+            ).to_be_visible()
+            expect(unavailable).to_be_visible()
+            assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
+            content = page.get_by_role("main").first.bounding_box()
+            assert content is not None and content["width"] >= 360 and content["x"] <= 16
+            message = unavailable.bounding_box()
+            assert message is not None and message["x"] >= 0
+            assert message["x"] + message["width"] <= 390
+            navigation = page.locator("#primary-navigation")
+            expect(navigation).not_to_be_visible()
+            page.get_by_role("button", name="Ouvrir la navigation", exact=True).click()
+            expect(navigation).to_be_visible()
+            page.keyboard.press("Escape")
+            expect(navigation).not_to_be_visible()
+            page.get_by_role("button", name="Ouvrir la navigation", exact=True).click()
+            page.get_by_role("navigation", name="Navigation principale").get_by_role(
+                "link", name="Économie & Conjoncture", exact=True
+            ).click()
+            expect(navigation).not_to_be_visible()
+            completed.append("mobile navigation opens, closes with Escape and with its link")
+            expect(page.get_by_text("100% Provenance vérifiée", exact=True)).to_have_count(0)
             page.screenshot(path=str(directory / "economy_mobile_390px.png"), full_page=True)
-            completed.append("economy mobile 390px responsive view")
+            completed.append("economy uses full content width at 390px without clipped message")
 
             # Restore desktop viewport
             page.set_viewport_size({"width": 1280, "height": 800})

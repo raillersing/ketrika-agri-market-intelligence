@@ -68,7 +68,7 @@ def test_dummy_csv_pipeline_lifecycle_and_supersession(httpserver, db_session):
 
     httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy_engine = PolicyEngine()
-    http_client = PoliteHttpClient(policy_engine=policy_engine)
+    http_client = PoliteHttpClient(policy_engine=policy_engine, allow_loopback=True)
     bronze_store = BronzeStore()
 
     ctx = RunContext(

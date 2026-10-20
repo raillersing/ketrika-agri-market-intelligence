@@ -15,7 +15,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
-$QaComposeArgs = @("compose", "--env-file", (Join-Path $RepoRoot "scripts/qualification.env"), "--project-name", "ketrika-qualification-main-integration", "-f", (Join-Path $RepoRoot "docker-compose.qualification.yml"))
+$QaComposeArgs = @("compose", "--env-file", (Join-Path $RepoRoot "scripts/qualification.env"), "--project-name", "ketrika-qualification-main-final", "-f", (Join-Path $RepoRoot "docker-compose.qualification.yml"))
 
 function Invoke-QaDocker {
     param([string[]]$DockerArgs)
@@ -31,7 +31,7 @@ function Test-QaResourceOwnership {
         $labelJson = & docker $Kind inspect --format '{{json .Labels}}' $Name
         if ($LASTEXITCODE -ne 0) { throw "Cannot inspect qualification labels" }
         $labels = $labelJson | ConvertFrom-Json
-        if ($labels.'ketrika.scope' -ne "qualification" -or $labels.'com.docker.compose.project' -ne "ketrika-qualification-main-integration") {
+        if ($labels.'ketrika.scope' -ne "qualification" -or $labels.'com.docker.compose.project' -ne "ketrika-qualification-main-final") {
             throw "Refusing foreign qualification resource: $Name"
         }
     }
@@ -80,9 +80,9 @@ function Invoke-QaIsolated {
         Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qa_manifest", $RemainingArgs[0], "--validate-only"))
     }
     Invoke-QaDocker -DockerArgs @("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qualification", "compose", "/workspace/docker-compose.qualification.yml")
-    Test-QaResourceOwnership -Kind "network" -Name "ketrika_qualification_main_integration_network"
+    Test-QaResourceOwnership -Kind "network" -Name "ketrika_qualification_main_final_network"
     foreach ($suffix in @("pgdata", "bronze", "backend_venv_r03", "backend_source_r03", "web_source_r03", "web_node_modules_r03", "web_next_r03", "browser_venv_r03")) {
-        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_main_integration_$suffix"
+        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_main_final_$suffix"
     }
     Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("config", "--quiet"))
     if ($Action -eq "check") {
@@ -96,7 +96,7 @@ function Invoke-QaIsolated {
             $proofArgs = Get-QaProofArgs
             Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps") + $proofArgs + @("api", "sh", "/workspace/scripts/qa-backend.sh", "check"))
             Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps") + $proofArgs + @("web", "sh", "/workspace/scripts/qa-web.sh", "check"))
-            Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "--mount", "type=volume,source=ketrika_qualification_main_integration_web_node_modules_r03,target=/frontend,readonly", "-e", "PYTHONPATH=/workspace/backend/src") + $proofArgs + @("ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qualification_reports", "check-frontend", "/frontend/.qa-results", "--commit", (Get-QaCommit)))
+            Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "--mount", "type=volume,source=ketrika_qualification_main_final_web_node_modules_r03,target=/frontend,readonly", "-e", "PYTHONPATH=/workspace/backend/src") + $proofArgs + @("ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qualification_reports", "check-frontend", "/frontend/.qa-results", "--commit", (Get-QaCommit)))
         }
         "test" { Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "test") + $RemainingArgs) }
         "governance" { Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "governance")) }
@@ -220,10 +220,10 @@ switch ($Command) {
     }
     "qualify" {
         if ($ArgsList.Count -lt 1 -or $ArgsList.Count -gt 2 -or $ArgsList[0] -notin @("R0", "all")) { throw "qualify requires R0|all and optional relative evidence directory" }
-        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_main_integration_backend_venv_r03"
+        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_main_final_backend_venv_r03"
         $proofArgs = Get-QaProofArgs
         $evidence = if ($ArgsList.Count -eq 2) { $ArgsList[1] } else { "docs/evidence/qualification" }
-        Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "--mount", "type=volume,source=ketrika_qualification_main_integration_backend_venv_r03,target=/reports", "-e", "PYTHONPATH=/workspace/backend/src") + $proofArgs + @("ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qualify", $ArgsList[0], "--commit", (Get-QaCommit), "--evidence", $evidence))
+        Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "--mount", "type=volume,source=ketrika_qualification_main_final_backend_venv_r03,target=/reports", "-e", "PYTHONPATH=/workspace/backend/src") + $proofArgs + @("ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qualify", $ArgsList[0], "--commit", (Get-QaCommit), "--evidence", $evidence))
         exit 0
     }
     "test-network" {
@@ -239,7 +239,7 @@ switch ($Command) {
     }
     "rebuild-smoke" {
         if ($ArgsList.Count -ne 1 -or $ArgsList[0] -notin @("prepare", "replay")) { throw "rebuild-smoke requires prepare|replay" }
-        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_main_integration_backend_venv_r03"
+        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_main_final_backend_venv_r03"
         foreach ($suffix in @("pgdata", "socket", "copy", "reports")) {
             $name = "ketrika_rebuild_qualification_$suffix"
             $existing = @(& docker volume ls --format '{{.Name}}')

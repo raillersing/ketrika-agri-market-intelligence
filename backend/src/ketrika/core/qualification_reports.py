@@ -21,10 +21,10 @@ MAX_REPORT_BYTES = 16 * 1024 * 1024
 MAX_CASES = 100000
 
 ENVIRONMENT_IDENTITY = {
-    "project": "ketrika-qualification-main-integration",
+    "project": "ketrika-qualification-main-final",
     "database": "ketrika_qualification",
     "bronze_bucket": "ketrika-qa-bronze",
-    "network": "ketrika_qualification_main_integration_network",
+    "network": "ketrika_qualification_main_final_network",
     "dataset_mode": "test",
 }
 
@@ -36,6 +36,9 @@ E2E_SCENARIOS = (
     "protected profile authenticates the browser session",
     "authenticated same-origin prices API",
     "price explorer renders",
+    "economy explicitly reports unqualified data after reload",
+    "mobile navigation opens, closes with Escape and with its link",
+    "economy uses full content width at 390px without clipped message",
     "UI logout removes session",
     "API rejects access after logout",
     "UI remains protected after logout",

@@ -32,7 +32,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R1.9 | MUST | TODO | qualification FAOSTAT, distinction paddy/blanchi, 20 ans riz (2004-2023), 7 tests verts, couverture 81%, golden 100% |
 | R1.10 | MUST | TODO | requalification géographie, manifeste machine, 23 régions Loi 2021-010, non-assignation aveugle, 16 tests verts, couverture 90% |
 | R1.11 | MUST | TODO | 95068e9 : qualification NASA POWER v1.1.0, cohérence physique, sentinelles -999, non-assignation aveugle, 10 tests verts, couverture 93% ; live BLOCKED (B-R010) |
-| R1.12 | MUST | TODO | actualisation, reprise, alertes Mailpit, santé UI/API, zéro requête sous PolicyStop, 5 tests verts |
+| R1.12 | MUST | IN_PROGRESS | Collecte manuelle préparée sur branche ; réception combinée en cours, dépendances/live non reçus. Historique : actualisation/reprise/Mailpit/santé UI/API, cinq tests. Aucun DONE déduit. |
 | R1.13 | MUST | TODO | Gate R1 validé : matrice 9 sources, 7 actives / 2 offline (B-R009, B-R010), 109 tests verts, tag mi-r1-qualified |
 | R2.1 | MUST | IN_PROGRESS | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts |
 | R2.2 | MUST | IN_PROGRESS | Taxonomie auditée, conversions avec preuves empiriques, gardes physiques massique/volumique, gardes d'agrégation Gold, file de revue des alias < 0.90, 38 tests verts, 90% couverture core |

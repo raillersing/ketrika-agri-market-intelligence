@@ -1531,3 +1531,16 @@
 - Connecteurs : distinguer parser_version d'acquisition immuable et version de traitement choisie, qui reste strictement contrôlée entre connecteur, batch et résultat ; conserver source/clé/SHA/MIME/URL/date/octets. Porter les tests d'immuabilité correspondants. L'accès loopback est explicite dans les fixtures de tests seulement, jamais ouvert par défaut en production. Édition Douanes2024 explicite dans son scénario.
 - Réception : garder tous les scénarios/contre-exemples et adapter les nombres de vues au périmètre réel ; tests corpus/versions ciblés pendant correction, puis une réception globale sur le lot stabilisé.
 
+## ADR-112 | 2026-10-20 | Clôture des régressions héritées et QA finale neuve
+
+- Preuve9786 FINAL1 :427 succès/dix échecs/900,04s, originaux JUnit/inventaire conservés. Cinq fixtures loopback non alignées, quatre lectures de vue macro volontairement non peuplée, un scénario d'anomalie sélectionnant arbitrairement le premier SourceRecord de tout l'historique.
+- Décision : opt-in test-only restant, helper de rejeu vérifiant le refus macro sans lire son cache, références synthétiques ODR/WFP déterministes pour le scénario d'anomalie (seuils z/variation et indépendance conservés). Adapter les mocks transactionnels Gold sans remplacer la preuve SQL, et compter les prévisions du run testé sans effacer celles d'autres périodes.
+- Isolation : réception suivante sur projet fixe neuf ketrika-qualification-main-final, réseau/huit volumes ketrika_qualification_main_final_*. Préserver entièrement la QA précédente et ses objets ; ne pas accumuler un nouvel historique synthétique dans la destination de diagnostic. Images identiques partagées en lecture seule. Gardes/reçus mis à jour sans élargir les destinations autorisées.
+- Limites : pas de gain de vitesse revendiqué avant mesure comparable ; aucun test scientifique supprimé, aucun seuil réduit, aucune remise à zéro de base/Bronze existant.
+
+## ADR-113 | 2026-10-20 | Réception navigateur cohérente avec le refus macro
+
+- Constat readonly avant réception finale : backend economic/dashboard refuse déjà la macro non qualifiée503 ; ancien E2E attend200 et son reçu omet deux scénarios qu'il exécute. La page transforme ce refus en chargement impossible puis affiche simultanément une absence de données.
+- Décision : message503 explicite et pas de faux état vide, ajustements de titre mobile limités, E2E lié à douze scénarios exacts (authentification, refus macro/reload, navigation/largeur mobile, logout). Aucun déblocage du Gold macro ni changement du contrat de valeurs.
+- Complément : diagnostic de clic Sources en QA uniquement avec verrou concurrent SQL transitoire, libéré en fin de transaction ; navigateur sur localhost réel, session créée par formulaire, POST409 sans création de reçu, reçu antérieur SQL relu/reload, quota inchangé et rendu390px. Ni mock d'endpoint ni collecte externe, aucune politique de source durablement modifiée ; preuve négative logicielle, pas une acquisition live ni une performance de marché.
+

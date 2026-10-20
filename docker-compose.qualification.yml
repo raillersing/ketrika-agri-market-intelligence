@@ -1,6 +1,6 @@
 # Public local test credentials only; this profile never reads the active .env.
 # Bronze volumes are retained. No published ports and no external network.
-name: ketrika-qualification-main-integration
+name: ketrika-qualification-main-final
 
 x-test-environment: &test-environment
   APP_ENV: test
@@ -130,33 +130,33 @@ services:
 
 networks:
   qualification:
-    name: ketrika_qualification_main_integration_network
+    name: ketrika_qualification_main_final_network
     internal: true
     labels:
       ketrika.scope: qualification
 
 volumes:
   qa_pgdata:
-    name: ketrika_qualification_main_integration_pgdata
+    name: ketrika_qualification_main_final_pgdata
     labels: {ketrika.scope: qualification}
   qa_bronze:
-    name: ketrika_qualification_main_integration_bronze
+    name: ketrika_qualification_main_final_bronze
     labels: {ketrika.scope: qualification}
   qa_backend_venv:
-    name: ketrika_qualification_main_integration_backend_venv_r03
+    name: ketrika_qualification_main_final_backend_venv_r03
     labels: {ketrika.scope: qualification}
   qa_backend_source:
-    name: ketrika_qualification_main_integration_backend_source_r03
+    name: ketrika_qualification_main_final_backend_source_r03
     labels: {ketrika.scope: qualification}
   qa_web_source:
-    name: ketrika_qualification_main_integration_web_source_r03
+    name: ketrika_qualification_main_final_web_source_r03
     labels: {ketrika.scope: qualification}
   qa_web_node_modules:
-    name: ketrika_qualification_main_integration_web_node_modules_r03
+    name: ketrika_qualification_main_final_web_node_modules_r03
     labels: {ketrika.scope: qualification}
   qa_web_next:
-    name: ketrika_qualification_main_integration_web_next_r03
+    name: ketrika_qualification_main_final_web_next_r03
     labels: {ketrika.scope: qualification}
   qa_browser_venv:
-    name: ketrika_qualification_main_integration_browser_venv_r03
+    name: ketrika_qualification_main_final_browser_venv_r03
     labels: {ketrika.scope: qualification}

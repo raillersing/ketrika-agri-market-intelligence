@@ -114,7 +114,9 @@ function EconomyContent() {
           fetch("/api/v1/economic/pilot-context", { credentials: "include" }),
         ]);
 
-        if (!dashRes.ok) throw new Error("Impossible de charger le tableau économique.");
+        if (!dashRes.ok) throw new Error(dashRes.status === 503
+          ? "Données économiques non qualifiées ou temporairement indisponibles."
+          : "Impossible de charger le tableau économique.");
         const dashData: EconomicDashboardResponse = await dashRes.json();
         setDashboard(dashData);
 
@@ -156,11 +158,11 @@ function EconomyContent() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
-              <BarChart3 className="w-6 h-6 text-emerald-400" />
+            <h1 className="min-w-0 text-2xl font-extrabold tracking-tight text-white flex items-start gap-2.5">
+              <BarChart3 className="w-6 h-6 shrink-0 text-emerald-400" />
               Observatoire Économique & Conjoncture
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+            <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
               ADR-070
             </span>
           </div>
@@ -316,7 +318,7 @@ function EconomyContent() {
           <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
           Chargement du tableau économique...
         </div>
-      ) : !dashboard || !dashboard.dimensions[activeDimension] ? (
+      ) : error ? null : !dashboard || !dashboard.dimensions[activeDimension] ? (
         <div className="glass-card rounded-2xl p-12 text-center text-xs text-slate-400 font-mono">
           Aucune donnée disponible pour cette dimension économique.
         </div>

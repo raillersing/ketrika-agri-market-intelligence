@@ -1644,7 +1644,7 @@
 | R1.9 | MUST | TODO | — | — | — | — | — |
 | R1.10 | MUST | TODO | — | — | — | — | — |
 | R1.11 | MUST | TODO | — | — | — | — | — |
-| R1.12 | MUST | TODO | — | — | — | — | — |
+| R1.12 | MUST | IN_PROGRESS | 2026-10-20T05:45:33Z | — | — | Collecte manuelle API/SQL/UI préparée sur branche basée sur75d8674, réception combinée en cours | Demande utilisateur explicite ; dépendances/live non reçus, aucun DONE/tag |
 | R1.13 | MUST | TODO | — | — | — | — | — |
 | R2.1 | MUST | IN_PROGRESS | 2026-10-15T20:45:00Z | 2026-10-15T21:20:00Z | e513803 | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts | BL-013 résolu pour macro/temps |
 | R2.2 | MUST | IN_PROGRESS | 2026-10-15T21:30:00Z | 2026-10-15T22:00:00Z | 54c24d1 | Audit taxonomie, unités, grains, densités et gardes de comparabilité Gold | 38 tests verts, couverture 90%, 0 régression |
@@ -3971,4 +3971,13 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Cause réelle sur /workspace/backend : reçu périmé de tests/e2e_data/synthetic_gold_dataset.py et43 entrées absentes. Diagnostic /app initial non équivalent écarté ; aucune conclusion d'absence de scripts sur source réelle. Manifeste réparé sans mutation d'archives :116 fichiers/817369octets,8 authentiques (4 documents/4 annotations,53 cellules),46 synthétiques/62 non vérifiés. Aucun nom de fichier « authentique » n'est une preuve.
 - ADR111 : versions d'acquisition/traitement distinctes sans muter le parent, opt-in loopback limité aux tests, édition Douanes2024 explicite, assertions13 vues publiables avec exclusion macro.36947 FINAL0 :123 tests/46,53s incluant corpus/versions/ledger/phases/garde DQ ; lint/format407 verts.
 - Prochaine action : nouveau commit du lot stabilisé, un check complet puis E2E avant réception main. Aucune collecte live, performance scientifique ou tâche R DONE déduite.
+
+### [2026-10-20T06:56:19Z] Régressions9786 regroupées — gel du lot final
+
+-9786 FINAL1 :427 succès/dix échecs/900,04s ; originaux JUnit gzip/inventaire archivés, aucune couverture globale/frontend reçu. Causes : cinq fixtures loopback, quatre lectures de macro volontairement non peuplée, choix arbitraire du premier SourceRecord dans le scénario d'anomalie.
+- ADR112 : fixtures corrigées, helper legacy vérifie le refus macro, parents synthétiques ODR/WFP explicites et indépendance>=2 conservée, mocks transactionnels Gold séparés du DQ SQL, prévisions comptées par run sans effacer deux périodes seed. Graphe Gold vérifie les douze sources AGY exactes.
+- Nouvelle QA ketrika-qualification-main-final : réseau/huit volumes dédiés, anciens environnements intégralement conservés.41573 FINAL1 avant tests : PostgreSQL backendPID917 exit2 à06:40:13, connexion seed perdue ; récupération automatique observée à06:42:57, cause précise inconnue/OOMKilled=false. Aucun reset/restore/suppression. Copie optionnelle de cache Mypy38866 terminée0 avant tentative d'arrêt14854 (conteneur déjà disparu), aucun processus réellement interrompu par cet arrêt. Initialisation web76699/browser22955 terminées0.
+-4078 FINAL0 :85 tests/119,62s incluant gardes QA/HTTP/Gold, graphe12, cycle CSV et anomalies hausse/baisse.9548 FINAL0 :62 tests de reçus/6,42s ;73079 FINAL0/TypeScript.7763 lint/format409 verts avant reprise du diagnostic readonly,8585 signale uniquement son ordre d'imports (config explicite ensuite).
+- ADR113 : E2E attend le refus503 économique déjà imposé par backend, message UI explicite sans faux vide et douze scénarios exacts. Diagnostic Sources readonly préparé avant gel : vrai formulaire localhost, clic sous verrou concurrent transitoire,409 sans nouveau reçu ni émission, reçu antérieur/reload/mobile ; aucune politique durable de source modifiée.
+- R1.12 marqué IN_PROGRESS sur demande explicite de collecte, pas DONE : dépendances/live non reçus. Cohérence visée7 DONE/52 IN_PROGRESS/15 TODO ; aucun tag créé. Prochaine action : check complet sur nouveau commit figé, E2E puis diagnostic readonly et réception main seulement si verts.
 

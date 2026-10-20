@@ -2,10 +2,11 @@
 
 from typing import Any
 
+import pytest
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from ketrika.gold.provenance_gate import GoldProvenanceRejected
+from ketrika.gold.provenance_gate import GoldProvenanceRejected, tables_for_views
 from ketrika.gold.refresh import ORDERED_GOLD_VIEWS
 from ketrika.pipelines.rebuild import rebuild_database
 
@@ -24,7 +25,10 @@ def rejected_legacy_rebuild(
     assert stats["source_cell_rate"] is None
     assert stats["provenance_scope"] == "source_cells_not_authenticity_conversions_or_model"
     for view in ORDERED_GOLD_VIEWS:
-        if view != "source_health":
+        if view == "economic_dashboard":
+            with pytest.raises(ValueError, match="macro_publication_not_qualified"):
+                tables_for_views([view])
+        elif view != "source_health":
             assert session.scalar(text(f"SELECT count(*) FROM gold.{view}")) == 0
     return stats
 
