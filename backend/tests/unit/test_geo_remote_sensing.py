@@ -44,6 +44,13 @@ def test_pixel_ndvi_calculation_and_scl_cloud_masking() -> None:
     # 4. Zero denominator edge-case
     assert compute_pixel_ndvi(0.0, 0.0, scl=Sentinel2SCLClass.VEGETATION) is None
 
+    # 5. Unphysical or negative reflectance rejection (C022 fail-closed)
+    assert compute_pixel_ndvi(-0.05, 0.10, scl=Sentinel2SCLClass.VEGETATION) is None
+    assert compute_pixel_ndvi(0.50, -0.02, scl=Sentinel2SCLClass.VEGETATION) is None
+    assert compute_pixel_ndvi(2.50, 0.10, scl=Sentinel2SCLClass.VEGETATION) is None
+    assert compute_pixel_ndvi(float("inf"), 0.10, scl=Sentinel2SCLClass.VEGETATION) is None
+    assert compute_pixel_ndvi(0.50, float("nan"), scl=Sentinel2SCLClass.VEGETATION) is None
+
 
 def test_vci_calculation_and_agronomic_classification() -> None:
     """Test VCI normalization relative to historical bounds and condition classification."""
@@ -80,9 +87,13 @@ def test_vci_calculation_and_agronomic_classification() -> None:
     assert compute_vci(None, min_ndvi, max_ndvi) is None
     assert classify_vci(None) == VegetationConditionClass.UNAVAILABLE
 
+    # Rejection of flat or inverted historical bounds (C022: never fabricate 50.0)
+    assert compute_vci(0.50, 0.50, 0.50) is None
+    assert compute_vci(0.50, 0.80, 0.20) is None
+
 
 def test_evaluate_cropland_vegetation_condition_nominal_clear_sky() -> None:
-    """Test spatial evaluation on clear sky scene over cropland."""
+    """Test spatial evaluation on clear sky scene over cropland with verified STAC asset."""
     # 10 pixels: 6 cropland (mask=1), 4 non-cropland (forest/water, mask=0)
     # Cropland pixels are clear vegetation (SCL=4)
     # NIR=0.55, RED=0.15 -> NDVI = 0.40 / 0.70 = 0.571
@@ -98,6 +109,7 @@ def test_evaluate_cropland_vegetation_condition_nominal_clear_sky() -> None:
         scl_band=scl,
         historical_ndvi_min=0.20,
         historical_ndvi_max=0.80,
+        stac_item_id="S2B_MSIL2A_20231201T070219_R120_T38KRE",
     )
 
     assert res.status == RemoteSensingStatus.QUALIFIED
@@ -111,6 +123,45 @@ def test_evaluate_cropland_vegetation_condition_nominal_clear_sky() -> None:
     # VCI = 100 * (0.571 - 0.20) / (0.80 - 0.20) = 100 * 0.371 / 0.60 = 61.8% -> Favorable
     assert res.vci_mean == pytest.approx(61.9, abs=0.5)
     assert res.condition_class == VegetationConditionClass.FAVORABLE
+    assert res.abstention_reason is None
+
+
+def test_unverified_stac_returns_table_calculation_unverified() -> None:
+    """Ensure in-memory array calculations without STAC asset provenance are distinguished (C022)."""
+    res = evaluate_cropland_vegetation_condition(
+        nir_band=[0.55, 0.55],
+        red_band=[0.15, 0.15],
+        cropland_mask=[1, 1],
+        historical_ndvi_min=0.20,
+        historical_ndvi_max=0.80,
+        stac_item_id=None,  # No STAC item ID
+    )
+    assert res.status == RemoteSensingStatus.TABLE_CALCULATION_UNVERIFIED
+    assert "without verified STAC item asset provenance" in (res.abstention_reason or "")
+
+
+def test_invalid_historical_range_rejection() -> None:
+    """Ensure flat, inverted, or missing historical NDVI ranges are rejected (C022)."""
+    # Inverted range: min 0.8 > max 0.2
+    res_inv = evaluate_cropland_vegetation_condition(
+        nir_band=[0.55, 0.55],
+        red_band=[0.15, 0.15],
+        cropland_mask=[1, 1],
+        historical_ndvi_min=0.80,
+        historical_ndvi_max=0.20,
+    )
+    assert res_inv.status == RemoteSensingStatus.INVALID_HISTORICAL_RANGE
+    assert "Historical NDVI bounds must be verified" in (res_inv.abstention_reason or "")
+
+    # Flat range: min 0.5 == max 0.5
+    res_flat = evaluate_cropland_vegetation_condition(
+        nir_band=[0.55, 0.55],
+        red_band=[0.15, 0.15],
+        cropland_mask=[1, 1],
+        historical_ndvi_min=0.50,
+        historical_ndvi_max=0.50,
+    )
+    assert res_flat.status == RemoteSensingStatus.INVALID_HISTORICAL_RANGE
 
 
 def test_strict_abstention_on_cloud_cover_over_70_percent() -> None:

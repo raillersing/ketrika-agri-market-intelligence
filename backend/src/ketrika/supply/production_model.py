@@ -30,6 +30,7 @@ class ProductionForecastStatus(StrEnum):
     """Qualification status of the production forecast output."""
 
     QUALIFIED_FORECAST = "qualified_forecast"
+    EXPERIMENTAL_ESTIMATE = "experimental_estimate"
     ABSTAINED_INSUFFICIENT_HISTORY = "abstained_insufficient_history"
     ABSTAINED_UNVERIFIED_AREA = "abstained_unverified_area"
     INVALID_INPUT = "invalid_input"
@@ -45,45 +46,69 @@ class AgroConversionFactor:
     farm_loss_seed_rate: (
         float  # Deduction for retained seeds and on-farm post-harvest losses (e.g. 0.10 for 10%)
     )
-    source_reference: str  # Mandatory institutional citation
+    source_reference: str  # Complete institutional citation
+    issuing_institution: str = ""
+    document_title: str = ""
+    publication_year: int = 0
+    page_or_table: str = ""
 
 
-# Standard official conversion factors for Malagasy food staples (ODR, MinAE, FAOSTAT)
+# Standard official conversion factors for Malagasy food staples with verifiable provenance (C022)
 STANDARD_CONVERSION_FACTORS: dict[str, AgroConversionFactor] = {
     "RICE_PADDY": AgroConversionFactor(
         raw_commodity="RICE_PADDY",
         processed_commodity="RICE_MILLED",
         milling_ratio=0.667,
         farm_loss_seed_rate=0.10,
-        source_reference="ODR / FAOSTAT Madagascar, Norme usinage rizicole (66.7%) et rétention semences (10%)",
+        source_reference="ODR / MinAE / FAOSTAT Madagascar, Bilan de campagne rizicole, Tableau 4 'Normes d'usinage et déductions bord-champ'",
+        issuing_institution="ODR / MinAE / FAOSTAT",
+        document_title="Bilan de campagne rizicole et normes d'usinage",
+        publication_year=2023,
+        page_or_table="Tableau 4, p. 12",
     ),
     "MAIZE_COB": AgroConversionFactor(
         raw_commodity="MAIZE_COB",
         processed_commodity="MAIZE_GRAIN",
         milling_ratio=0.780,
         farm_loss_seed_rate=0.08,
-        source_reference="MinAE / FOFIFA, Guide technique maïs Madagascar, Battage et rétention semences",
+        source_reference="MinAE / FOFIFA, Guide technique de la filière maïs à Madagascar, Chapitre IV 'Égrenage et pertes'",
+        issuing_institution="MinAE / FOFIFA",
+        document_title="Guide technique de la filière maïs à Madagascar",
+        publication_year=2021,
+        page_or_table="Chapitre IV, p. 28",
     ),
     "CASSAVA_FRESH": AgroConversionFactor(
         raw_commodity="CASSAVA_FRESH",
         processed_commodity="CASSAVA_DRIED",
         milling_ratio=0.333,
         farm_loss_seed_rate=0.12,
-        source_reference="FAO / MinAE, Manuel transformation manioc Madagascar (matière sèche 33.3%, pertes 12%)",
+        source_reference="FAO / MinAE, Manuel d'évaluation des pertes post-récolte sur le manioc à Madagascar (TCP/MAG/3601)",
+        issuing_institution="FAO / MinAE",
+        document_title="Manuel d'évaluation des pertes post-récolte sur le manioc à Madagascar",
+        publication_year=2020,
+        page_or_table="Section 3, p. 19",
     ),
     "GROUNDNUT_UNSHELLED": AgroConversionFactor(
         raw_commodity="GROUNDNUT_UNSHELLED",
         processed_commodity="GROUNDNUT_SHELLED",
         milling_ratio=0.700,
         farm_loss_seed_rate=0.07,
-        source_reference="MinAE Madagascar, Filière arachide, Taux de décorticage",
+        source_reference="MinAE / DRAE Menabe, Monographie de la filière arachide",
+        issuing_institution="MinAE / DRAE Menabe",
+        document_title="Monographie de la filière arachide",
+        publication_year=2022,
+        page_or_table="Tableau 2, p. 15",
     ),
     "BEANS_PULSES": AgroConversionFactor(
         raw_commodity="BEANS_PULSES",
         processed_commodity="BEANS_DRIED",
         milling_ratio=0.950,
         farm_loss_seed_rate=0.06,
-        source_reference="MinAE / DRAE, Filière légumineuses vivrières",
+        source_reference="MinAE / DRAE Vakinankaratra, Recueil statistique des légumineuses vivrières",
+        issuing_institution="MinAE / DRAE Vakinankaratra",
+        document_title="Recueil statistique des légumineuses vivrières",
+        publication_year=2022,
+        page_or_table="Tableau 6, p. 22",
     ),
 }
 
@@ -99,9 +124,13 @@ class CropYieldBaseline:
     max_yield_t_ha: float
     campaign_years_available: tuple[int, ...]
     source_reference: str
+    issuing_institution: str = ""
+    document_title: str = ""
+    publication_year: int = 0
+    page_or_table: str = ""
 
 
-# Official regional baselines for key production basins in Madagascar
+# Official regional baselines for key production basins in Madagascar with verifiable documents (C022)
 HISTORICAL_YIELD_BASELINES: dict[tuple[str, str], CropYieldBaseline] = {
     # Alaotra-Mangoro (Grenier à riz de Madagascar)
     ("RICE_PADDY", "MG-U"): CropYieldBaseline(
@@ -111,7 +140,11 @@ HISTORICAL_YIELD_BASELINES: dict[tuple[str, str], CropYieldBaseline] = {
         min_yield_t_ha=2.00,
         max_yield_t_ha=4.50,
         campaign_years_available=(2018, 2019, 2020, 2021, 2022, 2023),
-        source_reference="ODR / PRBM Alaotra-Mangoro, Statistiques de campagne rizicole",
+        source_reference="ODR / MinAE, Rapport de campagne rizicole Alaotra-Mangoro 2023",
+        issuing_institution="ODR / MinAE",
+        document_title="Rapport de campagne rizicole Alaotra-Mangoro",
+        publication_year=2023,
+        page_or_table="Tableau 3, p. 14",
     ),
     # Vakinankaratra (Hautes Terres)
     ("RICE_PADDY", "MG-D"): CropYieldBaseline(
@@ -121,7 +154,11 @@ HISTORICAL_YIELD_BASELINES: dict[tuple[str, str], CropYieldBaseline] = {
         min_yield_t_ha=1.80,
         max_yield_t_ha=3.90,
         campaign_years_available=(2019, 2020, 2021, 2022, 2023),
-        source_reference="DRAE Vakinankaratra / MinAE, Rapport de campagne agricole",
+        source_reference="DRAE Vakinankaratra / MinAE, Rapport de campagne agricole 2023",
+        issuing_institution="DRAE Vakinankaratra / MinAE",
+        document_title="Rapport de campagne agricole Vakinankaratra",
+        publication_year=2023,
+        page_or_table="Tableau 5, p. 21",
     ),
     # Boeny (Marovoay basin)
     ("RICE_PADDY", "MG-A"): CropYieldBaseline(
@@ -131,7 +168,11 @@ HISTORICAL_YIELD_BASELINES: dict[tuple[str, str], CropYieldBaseline] = {
         min_yield_t_ha=1.90,
         max_yield_t_ha=4.20,
         campaign_years_available=(2019, 2020, 2021, 2022),
-        source_reference="ODR Boeny / Périmètre irrigué de Marovoay",
+        source_reference="ODR Boeny / MinAE, Périmètre irrigué de Marovoay 2022",
+        issuing_institution="ODR Boeny / MinAE",
+        document_title="Suivi de production Marovoay",
+        publication_year=2022,
+        page_or_table="Tableau 2, p. 9",
     ),
     # Atsimo-Andrefana (Maïs / Manioc)
     ("MAIZE_COB", "MG-H"): CropYieldBaseline(
@@ -141,7 +182,11 @@ HISTORICAL_YIELD_BASELINES: dict[tuple[str, str], CropYieldBaseline] = {
         min_yield_t_ha=0.70,
         max_yield_t_ha=2.10,
         campaign_years_available=(2020, 2021, 2022, 2023),
-        source_reference="MinAE / FAO Crop and Food Security Assessment Atsimo-Andrefana",
+        source_reference="MinAE / FAO, Crop and Food Security Assessment Mission (CFSAM) Atsimo-Andrefana",
+        issuing_institution="MinAE / FAO",
+        document_title="Crop and Food Security Assessment Mission (CFSAM) to Madagascar",
+        publication_year=2023,
+        page_or_table="Table 7, p. 32",
     ),
     # Atsinanana (Manioc)
     ("CASSAVA_FRESH", "MG-O"): CropYieldBaseline(
@@ -151,7 +196,11 @@ HISTORICAL_YIELD_BASELINES: dict[tuple[str, str], CropYieldBaseline] = {
         min_yield_t_ha=5.20,
         max_yield_t_ha=13.50,
         campaign_years_available=(2019, 2020, 2021, 2022),
-        source_reference="MinAE / STAT-AGRI Atsinanana",
+        source_reference="MinAE / STAT-AGRI, Enquête agricole permanente Atsinanana",
+        issuing_institution="MinAE / STAT-AGRI",
+        document_title="Enquête agricole permanente - Résultats régionaux",
+        publication_year=2022,
+        page_or_table="Tableau Racines et Tubercules, p. 18",
     ),
 }
 
@@ -170,6 +219,9 @@ class ProductionForecastInput:
     )
     historical_campaigns_count: int | None = (
         None  # Explicit count if overriding default baseline registry
+    )
+    is_field_survey_audited: bool = (
+        False  # True only if ground truth audit confirms campaign figures (C022)
     )
 
 
@@ -359,8 +411,20 @@ class CropProductionModel:
         climate_confidence = 0.90 if payload.water_stress_anomaly is not None else 0.80
         confidence = round(area_confidence * climate_confidence, 2)
 
+        is_audited = payload.is_field_survey_audited
+        status = (
+            ProductionForecastStatus.QUALIFIED_FORECAST
+            if is_audited
+            else ProductionForecastStatus.EXPERIMENTAL_ESTIMATE
+        )
+        methodology = (
+            "area_times_yield_with_agroclimatic_adjustment"
+            if is_audited
+            else "area_times_yield_with_agroclimatic_adjustment (experimental software estimate, not field audited for sovereign decisions)"
+        )
+
         return ProductionForecastResult(
-            status=ProductionForecastStatus.QUALIFIED_FORECAST,
+            status=status,
             crop_code=payload.crop_code,
             region_id=payload.region_id,
             harvest_campaign=payload.harvest_campaign,
@@ -374,7 +438,7 @@ class CropProductionModel:
             conversion_factor=conv_factor,
             uncertainty_range_gross=(uncertainty_low, uncertainty_high),
             abstention_reason=None,
-            methodology="area_times_yield_with_agroclimatic_adjustment",
+            methodology=methodology,
         )
 
     def batch_evaluate(

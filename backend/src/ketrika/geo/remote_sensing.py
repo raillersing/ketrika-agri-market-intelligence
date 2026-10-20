@@ -60,6 +60,8 @@ class RemoteSensingStatus(StrEnum):
     CLOUD_OBSCURED_UNAVAILABLE = "cloud_obscured_unavailable"
     INSUFFICIENT_CROPLAND = "insufficient_cropland"
     INVALID_BANDS = "invalid_bands"
+    INVALID_HISTORICAL_RANGE = "invalid_historical_range"
+    TABLE_CALCULATION_UNVERIFIED = "table_calculation_unverified"
 
 
 class VegetationConditionClass(StrEnum):
@@ -100,12 +102,16 @@ def compute_pixel_ndvi(
 
     Returns None if:
     - scl indicates cloud, shadow, defective pixel, or no-data
-    - reflectance values are unphysical or divisor <= 0
+    - reflectance values are unphysical (< 0.0 or > 1.5), non-finite, or divisor <= 0
     """
     if scl is not None and scl in CLOUD_AND_OBSCURATION_SCL:
         return None
 
-    if math.isnan(nir) or math.isnan(red):
+    if not (math.isfinite(nir) and math.isfinite(red)):
+        return None
+
+    # Physical Sentinel-2 BOA surface reflectances must be in [0.0, 1.5] (C022 fail-closed)
+    if nir < 0.0 or red < 0.0 or nir > 1.5 or red > 1.5:
         return None
 
     denom = nir + red
@@ -113,8 +119,9 @@ def compute_pixel_ndvi(
         return None
 
     ndvi = (nir - red) / denom
-    # Clamp to physical range [-1.0, 1.0]
-    return max(-1.0, min(1.0, ndvi))
+    if not (-1.0 <= ndvi <= 1.0):
+        return None
+    return ndvi
 
 
 def compute_vci(
@@ -126,13 +133,20 @@ def compute_vci(
 
     VCI = 100 * (NDVI - NDVI_min) / (NDVI_max - NDVI_min)
     Bounded in [0.0, 100.0].
+
+    Returns None if ndvi is None or if historical range is flat/inverted (delta <= 1e-4).
+    Never fabricates an arbitrary neutral VCI (C022).
     """
     if ndvi is None:
         return None
 
+    if not (math.isfinite(ndvi) and math.isfinite(ndvi_min) and math.isfinite(ndvi_max)):
+        return None
+
     delta = ndvi_max - ndvi_min
-    if delta <= 1e-5:
-        return 50.0  # Neutral if historical range is flat
+    if delta <= 1e-4:
+        # Flat or inverted historical range cannot evaluate relative condition (C022)
+        return None
 
     raw_vci = 100.0 * (ndvi - ndvi_min) / delta
     return max(0.0, min(100.0, raw_vci))
@@ -160,17 +174,20 @@ def evaluate_cropland_vegetation_condition(
     red_band: Sequence[float],
     cropland_mask: Sequence[int],
     scl_band: Sequence[int] | None = None,
-    historical_ndvi_min: float = 0.20,
-    historical_ndvi_max: float = 0.85,
+    historical_ndvi_min: float | None = 0.20,
+    historical_ndvi_max: float | None = 0.85,
     min_valid_cropland_ratio: float = 0.30,
     source_asset: str = "sentinel2_l2a_copernicus",
     stac_item_id: str | None = None,
 ) -> CroplandVCIResult:
     """Evaluate cropland vegetation condition over an array of pixels.
 
-    Enforces ADR-107:
+    Enforces ADR-107 & C022 scientific rigor:
     - Excludes non-cropland pixels (cropland_mask == 0).
     - Excludes cloud and cloud-shadow pixels via SCL mask.
+    - Historical NDVI range must be strictly increasing (min < max); flat or inverted bounds rejected.
+    - STAC item ID is required for authoritative QUALIFIED status; in-memory calculations without STAC
+      provenance are labeled TABLE_CALCULATION_UNVERIFIED.
     - If valid cropland pixels < min_valid_cropland_ratio (default 30%, i.e. > 70% cloud cover),
       strictly returns 'cloud_obscured_unavailable'.
     """
@@ -187,6 +204,31 @@ def evaluate_cropland_vegetation_condition(
             ndvi_mean=None,
             vci_mean=None,
             abstention_reason="Array dimension mismatch between NIR, RED, and cropland mask",
+            source_asset=source_asset,
+            stac_item_id=stac_item_id,
+        )
+
+    if (
+        historical_ndvi_min is None
+        or historical_ndvi_max is None
+        or not (math.isfinite(historical_ndvi_min) and math.isfinite(historical_ndvi_max))
+        or historical_ndvi_max <= historical_ndvi_min
+        or (historical_ndvi_max - historical_ndvi_min) < 0.01
+    ):
+        return CroplandVCIResult(
+            status=RemoteSensingStatus.INVALID_HISTORICAL_RANGE,
+            condition_class=VegetationConditionClass.UNAVAILABLE,
+            total_pixels=n_pixels,
+            cropland_pixels=0,
+            cloud_pixels=0,
+            valid_cropland_pixels=0,
+            valid_cropland_ratio=0.0,
+            ndvi_mean=None,
+            vci_mean=None,
+            abstention_reason=(
+                f"Historical NDVI bounds must be verified with strictly increasing range (min < max). "
+                f"Got min={historical_ndvi_min}, max={historical_ndvi_max}. Arbitrary default bounds prohibited by C022 / ADR-107."
+            ),
             source_asset=source_asset,
             stac_item_id=stac_item_id,
         )
@@ -274,8 +316,24 @@ def evaluate_cropland_vegetation_condition(
     mean_vci = compute_vci(mean_ndvi, historical_ndvi_min, historical_ndvi_max)
     condition_class = classify_vci(mean_vci)
 
+    # Scientific qualification requires verifiable STAC asset provenance (C022)
+    has_stac_provenance = bool(stac_item_id and stac_item_id.strip())
+    status = (
+        RemoteSensingStatus.QUALIFIED
+        if has_stac_provenance
+        else RemoteSensingStatus.TABLE_CALCULATION_UNVERIFIED
+    )
+    abstention_reason = (
+        None
+        if has_stac_provenance
+        else (
+            "Calculated from in-memory arrays without verified STAC item asset provenance (C022). "
+            "Not an authoritative Sentinel acquisition."
+        )
+    )
+
     return CroplandVCIResult(
-        status=RemoteSensingStatus.QUALIFIED,
+        status=status,
         condition_class=condition_class,
         total_pixels=n_pixels,
         cropland_pixels=cropland_count,
@@ -284,7 +342,7 @@ def evaluate_cropland_vegetation_condition(
         valid_cropland_ratio=round(valid_cropland_ratio, 3),
         ndvi_mean=round(mean_ndvi, 3),
         vci_mean=round(mean_vci, 1) if mean_vci is not None else None,
-        abstention_reason=None,
+        abstention_reason=abstention_reason,
         source_asset=source_asset,
         stac_item_id=stac_item_id,
     )

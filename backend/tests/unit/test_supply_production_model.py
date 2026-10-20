@@ -16,7 +16,7 @@ def model() -> CropProductionModel:
 
 
 def test_conversion_factors_completeness_and_sources(model: CropProductionModel) -> None:
-    """Verify that all standard staple commodities have sourced conversion factors."""
+    """Verify that all standard staple commodities have sourced conversion factors and full bibliographic metadata (C022)."""
     staples = ["RICE_PADDY", "MAIZE_COB", "CASSAVA_FRESH", "GROUNDNUT_UNSHELLED", "BEANS_PULSES"]
     for staple in staples:
         factor = model.get_conversion_factor(staple)
@@ -24,6 +24,10 @@ def test_conversion_factors_completeness_and_sources(model: CropProductionModel)
         assert 0.0 < factor.milling_ratio <= 1.0
         assert 0.0 <= factor.farm_loss_seed_rate < 0.5
         assert len(factor.source_reference.strip()) > 10, "Missing institutional citation"
+        assert len(factor.issuing_institution.strip()) > 0, "Missing issuing institution"
+        assert len(factor.document_title.strip()) > 0, "Missing document title"
+        assert factor.publication_year >= 2020, f"Outdated or missing publication year for {staple}"
+        assert len(factor.page_or_table.strip()) > 0, "Missing page/table citation"
 
     # Specific check for Malagasy rice standard (ODR / FAOSTAT: 0.667 milling, 10% on-farm loss/seed)
     paddy_conv = model.get_conversion_factor("RICE_PADDY")
@@ -33,8 +37,22 @@ def test_conversion_factors_completeness_and_sources(model: CropProductionModel)
 
 
 def test_mathematical_identity_production_area_yield(model: CropProductionModel) -> None:
-    """Test strict mathematical identity Production = Area × Yield and unit consistency."""
-    # Alaotra-Mangoro (MG-U) Rice Paddy: baseline = 3.20 t/ha
+    """Test strict mathematical identity Production = Area × Yield and audited status distinction (C022)."""
+    # 1. Experimental unverified estimate (default)
+    payload_unaudited = ProductionForecastInput(
+        crop_code="RICE_PADDY",
+        region_id="MG-U",
+        harvest_campaign=2024,
+        harvested_area_ha=1000.0,
+        area_source_kind=AreaSourceKind.OFFICIAL_CADASTRE_SURVEY,
+        water_stress_anomaly=0.0,  # Neutral weather
+        is_field_survey_audited=False,
+    )
+    result_unaudited = model.evaluate(payload_unaudited)
+    assert result_unaudited.status == ProductionForecastStatus.EXPERIMENTAL_ESTIMATE
+    assert "experimental software estimate" in result_unaudited.methodology
+
+    # 2. Audited ground truth forecast
     payload = ProductionForecastInput(
         crop_code="RICE_PADDY",
         region_id="MG-U",
@@ -42,6 +60,7 @@ def test_mathematical_identity_production_area_yield(model: CropProductionModel)
         harvested_area_ha=1000.0,
         area_source_kind=AreaSourceKind.OFFICIAL_CADASTRE_SURVEY,
         water_stress_anomaly=0.0,  # Neutral weather
+        is_field_survey_audited=True,
     )
 
     result = model.evaluate(payload)
@@ -71,6 +90,7 @@ def test_agroclimatic_yield_adjustment_bounds(model: CropProductionModel) -> Non
         harvested_area_ha=500.0,
         area_source_kind=AreaSourceKind.REMOTE_SENSING_CROPLAND,
         water_stress_anomaly=-2.0,
+        is_field_survey_audited=True,
     )
     drought_res = model.evaluate(drought_payload)
     assert drought_res.status == ProductionForecastStatus.QUALIFIED_FORECAST
@@ -85,6 +105,7 @@ def test_agroclimatic_yield_adjustment_bounds(model: CropProductionModel) -> Non
         harvested_area_ha=500.0,
         area_source_kind=AreaSourceKind.OFFICIAL_CADASTRE_SURVEY,
         water_stress_anomaly=-5.0,
+        is_field_survey_audited=True,
     )
     catastrophic_res = model.evaluate(catastrophic_payload)
     assert catastrophic_res.estimated_yield_t_ha == 2.00
@@ -98,6 +119,7 @@ def test_agroclimatic_yield_adjustment_bounds(model: CropProductionModel) -> Non
         harvested_area_ha=500.0,
         area_source_kind=AreaSourceKind.OFFICIAL_CADASTRE_SURVEY,
         water_stress_anomaly=4.0,
+        is_field_survey_audited=True,
     )
     excess_res = model.evaluate(excess_payload)
     assert excess_res.estimated_yield_t_ha == 4.50
@@ -169,7 +191,7 @@ def test_invalid_negative_or_zero_area(model: CropProductionModel) -> None:
 def test_batch_evaluation_and_cassava_maize_conversions(model: CropProductionModel) -> None:
     """Test batch evaluation covering maize and cassava agro-industrial processing."""
     inputs = [
-        # Atsimo-Andrefana Maize
+        # Atsimo-Andrefana Maize (Audited)
         ProductionForecastInput(
             crop_code="MAIZE_COB",
             region_id="MG-H",
@@ -177,8 +199,9 @@ def test_batch_evaluation_and_cassava_maize_conversions(model: CropProductionMod
             harvested_area_ha=200.0,
             area_source_kind=AreaSourceKind.OFFICIAL_CADASTRE_SURVEY,
             water_stress_anomaly=-0.5,
+            is_field_survey_audited=True,
         ),
-        # Atsinanana Cassava
+        # Atsinanana Cassava (Unaudited remote sensing estimate)
         ProductionForecastInput(
             crop_code="CASSAVA_FRESH",
             region_id="MG-O",
@@ -186,6 +209,7 @@ def test_batch_evaluation_and_cassava_maize_conversions(model: CropProductionMod
             harvested_area_ha=100.0,
             area_source_kind=AreaSourceKind.REMOTE_SENSING_CROPLAND,
             water_stress_anomaly=0.5,
+            is_field_survey_audited=False,
         ),
     ]
 
@@ -203,7 +227,7 @@ def test_batch_evaluation_and_cassava_maize_conversions(model: CropProductionMod
 
     # Check cassava
     cassava_res = results[1]
-    assert cassava_res.status == ProductionForecastStatus.QUALIFIED_FORECAST
+    assert cassava_res.status == ProductionForecastStatus.EXPERIMENTAL_ESTIMATE
     assert cassava_res.gross_harvest_tonnes is not None
     assert cassava_res.milled_processed_tonnes is not None
     assert cassava_res.conversion_factor is not None

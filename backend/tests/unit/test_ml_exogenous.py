@@ -127,3 +127,49 @@ def test_evaluate_feature_ablation_decision_rule(synthetic_history):
     report_dict = report.to_dict()
     assert report_dict["baseline_wape"] > 0
     assert len(report_dict["family_results"]) == 4
+    # Scientific rigor: phrase 'statistically significant' must not be claimed without formal test (C022)
+    assert "statistically significant" not in report.decision_reason.lower()
+
+
+def test_exogenous_feature_config_rejects_zero_or_negative_lags() -> None:
+    """Ensure lag <= 0 is strictly rejected to prevent target leakage (C022)."""
+    with pytest.raises(ValueError, match="Lag must be an integer >= 1"):
+        ExogenousFeatureConfig(lags=(0,))
+
+    with pytest.raises(ValueError, match="Lag must be an integer >= 1"):
+        ExogenousFeatureConfig(lags=(-1, 2))
+
+    with pytest.raises(ValueError, match="At least one lag must be specified"):
+        ExogenousFeatureConfig(lags=())
+
+
+def test_build_exogenous_features_rejects_non_monotonic_dates() -> None:
+    """Ensure unordered or duplicate dates are rejected before feature generation."""
+    unordered_dates = [date(2023, 2, 1), date(2023, 1, 1), date(2023, 3, 1)]
+    prices = np.array([2000.0, 2100.0, 2200.0])
+    with pytest.raises(ValueError, match="Dates must be strictly monotonically increasing"):
+        build_exogenous_features(
+            dates=unordered_dates,
+            prices=prices,
+            config=ExogenousFeatureConfig(lags=(1,)),
+        )
+
+
+def test_evaluate_feature_ablation_abstains_on_insufficient_history() -> None:
+    """Ensure explicit parsimony abstention when history is too short for selection and holdout."""
+    dates = [date(2023, m, 1) for m in range(1, 13)]
+    prices = np.linspace(2000, 2500, 12)
+
+    report = evaluate_feature_ablation(
+        dates=dates,
+        prices=prices,
+        min_train_size=24,
+        n_folds=4,
+        holdout_folds=2,
+    )
+
+    assert report.retained is False
+    assert report.best_family == "price_only"
+    assert "Insufficient history" in report.decision_reason
+    assert "Explicit parsimony abstention" in report.decision_reason
+    assert report.family_results == {}
