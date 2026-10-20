@@ -2,6 +2,7 @@
 
 import json
 import uuid
+from functools import partial
 
 import pytest
 from sqlalchemy import create_engine, select
@@ -14,7 +15,7 @@ from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import check_db_connection
 from ketrika.core.http import PoliteHttpClient
 from ketrika.core.models.db import ProductionObservation, SourceRecord, TradeFlow
-from ketrika.core.policy import PolicyEngine
+from ketrika.core.policy import PolicyEngine, validate_candidate_url
 from ketrika.core.registry import find_repo_root
 from ketrika.core.settings import get_settings
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
@@ -48,7 +49,9 @@ def json_content() -> str:
 
 
 @pytest.mark.integration
-def test_faostat_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, json_content: str):
+def test_faostat_backfill_dq_and_rebuild_lifecycle(
+    httpserver, db_session, json_content: str, monkeypatch: pytest.MonkeyPatch
+):
     """Verify CC3-CC6: backfill execution, idempotence, supersession, DQ checks and offline rebuild."""
     # Ensure fresh Silver/Gold state
     wipe_silver_gold_tables(db_session)
@@ -64,11 +67,17 @@ def test_faostat_backfill_dq_and_rebuild_lifecycle(httpserver, db_session, json_
         unique_json, content_type="application/json"
     )
     api_url = httpserver.url_for(endpoint_path)
+    # Both URL and transport guards opt in to this local-only fixture.
+    monkeypatch.setattr("ketrika.connectors.faostat.ALLOWED_FAO_DOMAINS", ["localhost"])
+    monkeypatch.setattr(
+        "ketrika.connectors.faostat.validate_candidate_url",
+        partial(validate_candidate_url, allow_loopback=True),
+    )
 
     bronze_store = BronzeStore()
     httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy = PolicyEngine()
-    http_client = PoliteHttpClient(policy_engine=policy)
+    http_client = PoliteHttpClient(policy_engine=policy, allow_loopback=True)
     connector = FaostatConnector()
 
     ctx = RunContext(

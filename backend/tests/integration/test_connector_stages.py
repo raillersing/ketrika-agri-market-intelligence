@@ -41,7 +41,7 @@ def test_committed_bronze_replayed_without_http_then_revision_is_append_only(htt
     connector.source_id = identifier
     engine = create_engine(get_settings().database_url)
     try:
-        with CountingHttp(policy_engine=policy) as http:
+        with CountingHttp(policy_engine=policy, allow_loopback=True) as http:
             ctx = RunContext(
                 source_id=identifier,
                 http_client=http,
@@ -110,7 +110,11 @@ def test_committed_bronze_replayed_without_http_then_revision_is_append_only(htt
 
 
 @pytest.mark.integration
-def test_dagster_materializes_real_bronze_input_once_and_silver_rows(httpserver):
+def test_dagster_materializes_real_bronze_input_once_and_silver_rows(httpserver, monkeypatch):
+    monkeypatch.setattr(
+        "ketrika.pipelines.factory.PoliteHttpClient",
+        lambda **kwargs: PoliteHttpClient(**kwargs, allow_loopback=True),
+    )
     identifier = f"dummy_dagster_{uuid.uuid4().hex}"
     path = f"/{identifier}.csv"
     httpserver.expect_request("/robots.txt").respond_with_data("", status=404)

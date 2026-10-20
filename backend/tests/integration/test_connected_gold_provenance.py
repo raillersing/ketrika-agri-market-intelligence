@@ -168,7 +168,8 @@ def test_production_check_controls_actual_gold_sql(damaged, monkeypatch, request
     finally:
         event.remove(engine, "before_cursor_execute", capture_sql)
     assert result.success is (not damaged)
-    assert len(statements) == (0 if damaged else 12)
+    assert len(statements) == (0 if damaged else 13)
+    assert all("economic_dashboard" not in statement for statement in statements)
     evaluations = result.get_asset_check_evaluations()
     assert len(evaluations) == 2
     provenance = next(

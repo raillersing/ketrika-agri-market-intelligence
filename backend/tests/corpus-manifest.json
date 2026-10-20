@@ -49,9 +49,20 @@
       "size_bytes": 4244,
       "artifact_type": "json",
       "authenticity": "authentic",
-      "origin": {"kind": "official_acquisition", "reference": "tests/corpus-evidence/world_bank_rtfp/prices-acquisition.json", "limitations": "Bounded historical sample, no live source/parser/model qualification."},
-      "rights": {"status": "verified", "licence": "CC BY 4.0 with World Bank additional dataset terms", "evidence": "https://datacatalog.worldbank.org/public-licenses", "redistribution_allowed": true, "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."},
-      "annotator": "agent", "human_reviewed": false
+      "origin": {
+        "kind": "official_acquisition",
+        "reference": "tests/corpus-evidence/world_bank_rtfp/prices-acquisition.json",
+        "limitations": "Bounded historical sample, no live source/parser/model qualification."
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "CC BY 4.0 with World Bank additional dataset terms",
+        "evidence": "https://datacatalog.worldbank.org/public-licenses",
+        "redistribution_allowed": true,
+        "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."
+      },
+      "annotator": "agent",
+      "human_reviewed": false
     },
     {
       "path": "tests/fixtures/authentic/world_bank_rtfp/mdg_study_20261005.json",
@@ -59,9 +70,20 @@
       "size_bytes": 51241,
       "artifact_type": "json",
       "authenticity": "authentic",
-      "origin": {"kind": "official_acquisition", "reference": "tests/corpus-evidence/world_bank_rtfp/study-acquisition.json", "limitations": "Official product/unit context, not price observations or original publication time."},
-      "rights": {"status": "verified", "licence": "CC BY 4.0 with World Bank additional dataset terms", "evidence": "https://datacatalog.worldbank.org/public-licenses", "redistribution_allowed": true, "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."},
-      "annotator": "agent", "human_reviewed": false
+      "origin": {
+        "kind": "official_acquisition",
+        "reference": "tests/corpus-evidence/world_bank_rtfp/study-acquisition.json",
+        "limitations": "Official product/unit context, not price observations or original publication time."
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "CC BY 4.0 with World Bank additional dataset terms",
+        "evidence": "https://datacatalog.worldbank.org/public-licenses",
+        "redistribution_allowed": true,
+        "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."
+      },
+      "annotator": "agent",
+      "human_reviewed": false
     },
     {
       "path": "tests/golden/authentic/world_bank_rtfp/mdg_prices_20261015.expected.json",
@@ -69,9 +91,20 @@
       "size_bytes": 2207,
       "artifact_type": "json",
       "authenticity": "authentic",
-      "origin": {"kind": "independent_annotation", "reference": "tests/fixtures/authentic/world_bank_rtfp/mdg_prices_20261015.json", "limitations": "18 cells, first three of fifteen historical rows only; no recall/accuracy qualification."},
-      "rights": {"status": "verified", "licence": "CC BY 4.0 with World Bank additional dataset terms", "evidence": "https://datacatalog.worldbank.org/public-licenses", "redistribution_allowed": true, "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."},
-      "annotator": "agent", "human_reviewed": false
+      "origin": {
+        "kind": "independent_annotation",
+        "reference": "tests/fixtures/authentic/world_bank_rtfp/mdg_prices_20261015.json",
+        "limitations": "18 cells, first three of fifteen historical rows only; no recall/accuracy qualification."
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "CC BY 4.0 with World Bank additional dataset terms",
+        "evidence": "https://datacatalog.worldbank.org/public-licenses",
+        "redistribution_allowed": true,
+        "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."
+      },
+      "annotator": "agent",
+      "human_reviewed": false
     },
     {
       "path": "tests/golden/authentic/world_bank_rtfp/mdg_study_20261005.expected.json",
@@ -79,9 +112,20 @@
       "size_bytes": 1587,
       "artifact_type": "json",
       "authenticity": "authentic",
-      "origin": {"kind": "independent_annotation", "reference": "tests/fixtures/authentic/world_bank_rtfp/mdg_study_20261005.json", "limitations": "Ten context cells only, not a complete schema or observed/estimated classification."},
-      "rights": {"status": "verified", "licence": "CC BY 4.0 with World Bank additional dataset terms", "evidence": "https://datacatalog.worldbank.org/public-licenses", "redistribution_allowed": true, "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."},
-      "annotator": "agent", "human_reviewed": false
+      "origin": {
+        "kind": "independent_annotation",
+        "reference": "tests/fixtures/authentic/world_bank_rtfp/mdg_study_20261005.json",
+        "limitations": "Ten context cells only, not a complete schema or observed/estimated classification."
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "CC BY 4.0 with World Bank additional dataset terms",
+        "evidence": "https://datacatalog.worldbank.org/public-licenses",
+        "redistribution_allowed": true,
+        "attribution": "World Bank Microdata Library; Andree B.P.J., Monthly food price estimates by product and market, MDG_2021_RTFP_v02_M, version 2026-10-05; unmodified official API/study JSON."
+      },
+      "annotator": "agent",
+      "human_reviewed": false
     },
     {
       "path": "scripts/generate_douanes_fixtures.py",
@@ -145,8 +189,8 @@
     },
     {
       "path": "tests/e2e_data/synthetic_gold_dataset.py",
-      "sha256": "a3da2a1231c59de6566d403f85615b71b0110f14597fb9f75b7b551da537e816",
-      "size_bytes": 27347,
+      "sha256": "d90f71e2a0c85ad5315b0382c223de933e4b19afc50dc1ac200ca0026ffe1d41",
+      "size_bytes": 27546,
       "artifact_type": "py",
       "authenticity": "synthetic",
       "origin": {
@@ -1421,6 +1465,823 @@
         "licence": null,
         "evidence": null,
         "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/bfm_public/bfm_bulletin_journalier_2026_05_18.html",
+      "sha256": "33ffe088917bacacd6ec7d2e7334503c9b621394ee3af0fb7bc6aa4699602dca",
+      "size_bytes": 1471,
+      "artifact_type": "html",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/bfm_public/bfm_cours_de_change_2026_mai.csv",
+      "sha256": "5a574d8037784060c04cdbe6dab8e18b156447eedf53973d1aadbc22ac0bd07d",
+      "size_bytes": 1116,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/chirps/chirps_final_sample.json",
+      "sha256": "2c56c28577b7e8095c088dff9b96f387c7f28d6806c0b344dbed8fb501043a4b",
+      "size_bytes": 432,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/chirps/chirps_prelim_sample.json",
+      "sha256": "b0de8ae33b425ea438766e877ff0e55e9502e15038c403b93dfb945f71b37263",
+      "size_bytes": 438,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/douanes_stats/douanes_stats_2023.csv",
+      "sha256": "26b40010bdb59d137d9fed4997a111e07c2617fd9973a003894e1ab609c5ff00",
+      "size_bytes": 3939,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/douanes_stats/douanes_stats_invalid_codes.csv",
+      "sha256": "9a454961c5078c0826097d0dc03caba55b4ade5f65bbfd2a2fc5eba968f181a2",
+      "size_bytes": 464,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/ecmwf_open/ecmwf_ifs_20240301_00z.json",
+      "sha256": "770c2b5a26d8fbd063da3d38d86943008ec063f1a95096c0092e389c898a0214",
+      "size_bytes": 1375,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/ecmwf_open/ecmwf_ifs_20240301_12z.json",
+      "sha256": "cd307a3b87e2e406b7fda5ebfd020246eae9760ca37a88b1ef769af4ae326f04",
+      "size_bytes": 475,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/ecmwf_open/ecmwf_invalid_physical.json",
+      "sha256": "43796cb9b68345cf74791566ad31ed2b7f129ebd64e2a4bc22165202438b02bd",
+      "size_bytes": 432,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/ecmwf_open/ecmwf_unavailable.json",
+      "sha256": "e66eedccc2d167051f2f28f224c06d22a2d1fc10e5d783386e2ab6991f0d0087",
+      "size_bytes": 103,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/fewsnet_ipc/fewsnet_mdg_outlook_2024_02.json",
+      "sha256": "6a176cc8805a1cb1ec2c40f10d27aa3c6fb74189c16f5542b4366fe457253cd4",
+      "size_bytes": 1961,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/fewsnet_ipc/fewsnet_unavailable.json",
+      "sha256": "7461d4ffb6f19a7afabeca6af24059705e4e8466f359676544213ab25c16b0f5",
+      "size_bytes": 120,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/fewsnet_ipc/ipc_mdg_analysis_2024.json",
+      "sha256": "e482796cdededc4d0488b12b7c54a331041377d30dd563839e4d6624c5de1e8d",
+      "size_bytes": 1294,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/fewsnet_mdg/fewsnet_mdg_outlook_2024_02.json",
+      "sha256": "6a176cc8805a1cb1ec2c40f10d27aa3c6fb74189c16f5542b4366fe457253cd4",
+      "size_bytes": 1961,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/instat_nipc/generate_authentic_fixtures.py",
+      "sha256": "c9f47def17108dc1ddaf20c8b2f0b34b4169c3e18681020dc8d13ff20a892a12",
+      "size_bytes": 7384,
+      "artifact_type": "py",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/instat_nipc/nipc_historique_2016_2023.xlsx",
+      "sha256": "9eb9f94c97289cb208ff79f6cdae50236ba54995d91465977625c531c0700cd2",
+      "size_bytes": 11567,
+      "artifact_type": "xlsx",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/instat_nipc/nipc_recent_2024.xlsx",
+      "sha256": "da29f95a9fcb6f62ff60ebb43bdaa2cf40243a7f22227d57210d9c0f09feb1cf",
+      "size_bytes": 5471,
+      "artifact_type": "xlsx",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/instat_tbe/generate_authentic_tbe_fixtures.py",
+      "sha256": "2793935a780c4fb3aed58f5c060acc95bb769a78046e60a5c019dbf6d3b6db89",
+      "size_bytes": 8466,
+      "artifact_type": "py",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/instat_tbe/tbe_edition_62_mai_2026.xlsx",
+      "sha256": "da54950d99b07c1cf99a73c4ae43e175ad2cd4b42414d00db028912184c2aba3",
+      "size_bytes": 9487,
+      "artifact_type": "xlsx",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/instat_tbe/tbe_edition_63_aout_2026.xlsx",
+      "sha256": "4e4925b6c52faaacf1f78c2c60a5bbcb8e31c45c0ae30037efa2ab0427e3663d",
+      "size_bytes": 9777,
+      "artifact_type": "xlsx",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/ipc_mdg/ipc_mdg_analysis_2024.json",
+      "sha256": "e482796cdededc4d0488b12b7c54a331041377d30dd563839e4d6624c5de1e8d",
+      "size_bytes": 1294,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/llm/0018dc5a1963a7851d1b928f7339d8b6753b38a49b9f39c74666c57a75a9b4e7.json",
+      "sha256": "9b189dcd0705ee650ded67f2088a5256a5275ac7dc8968a255a1198c92ff1011",
+      "size_bytes": 138,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/market_supply/odr_approvisionnement_anosibe_2024.csv",
+      "sha256": "d128f8b05fe03151ad48895ae1c9b78754dfdcc586d4cd2070049b554c984a1e",
+      "size_bytes": 1313,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/market_supply/odr_collecte_ambatondrazaka_2024.csv",
+      "sha256": "fc9b2958f67edc816ee185b286f23671a12e45eacd92089826850f0c7f6c816f",
+      "size_bytes": 681,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/market_supply/rejet_pii_interdit_2024.csv",
+      "sha256": "8dfaf9c6266040837d87031569c628e9aa178e02e3438473146deac9e6c999e8",
+      "size_bytes": 274,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/meteo_mg/bulletin_decadaire_2024_01_d1.json",
+      "sha256": "cb3a1e744a60f227d147a73727b98f0587cd828fa8cf24a44617ca4bf19842c4",
+      "size_bytes": 1621,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/meteo_mg/bulletin_unavailable.json",
+      "sha256": "0934eba96adcb4ef3bcae8c46ab1acf6d9393773903d8b3ad7b2b4bb01acc44f",
+      "size_bytes": 117,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/miasa_odr/odr_bulletin_authentique_fev_2024.pdf",
+      "sha256": "472bba6cdd91b630af9fcc748a2ea95d6fa9b372ddd83f87d886913f902517b4",
+      "size_bytes": 14466,
+      "artifact_type": "pdf",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/miasa_odr/odr_bulletin_authentique_mai_2025.pdf",
+      "sha256": "39ae11932915928bc138096e42bb036e6185306d2d6ee944e982712834d9e897",
+      "size_bytes": 18063,
+      "artifact_type": "pdf",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/miasa_odr/odr_bulletin_drift_layout.pdf",
+      "sha256": "227e7b431805663cdb360d0a0b6996d8b7131c0169ecf7b1cafb431ddd9310b6",
+      "size_bytes": 8739,
+      "artifact_type": "pdf",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/miasa_odr/odr_bulletin_scanned_unverifiable.pdf",
+      "sha256": "18ec184228287c9d96339e9570d496a00347437bac0dba58155a746096ae26ed",
+      "size_bytes": 798,
+      "artifact_type": "pdf",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_arrete_plafond_prix_2024_fr.html",
+      "sha256": "9ccd3fa47e6fbe0446dc6c51c67df756c7046a764ec4a0545b7bb0c9a5911c5c",
+      "size_bytes": 4102,
+      "artifact_type": "html",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_communique_sensibilisation_sans_prix.html",
+      "sha256": "a2806a749bdb76f994f30937612c41da82384e2b3125b8795a5b07b945e97185",
+      "size_bytes": 1200,
+      "artifact_type": "html",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/mincc_ppn/mincc_filazana_vidin_tsena_2024_mg.html",
+      "sha256": "b723bd7e507175fb1d670f379c18e6b61523cd2a7cede6a3ff86075a60772f16",
+      "size_bytes": 4366,
+      "artifact_type": "html",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/omh_public/omh_bareme_carburants_2026.csv",
+      "sha256": "c4375d3a0c8b19e4ed3b0db2af6b0103c3edcbdad448d5a0dff12e1444197272",
+      "size_bytes": 809,
+      "artifact_type": "csv",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/omh_public/omh_communique_revision_juin_2026.html",
+      "sha256": "c7a6977a516cf09f3e4935728ccad2bcffbe711a1fdea41cababaf951293344e",
+      "size_bytes": 1820,
+      "artifact_type": "html",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/bfm_public/bfm_sample.expected.json",
+      "sha256": "09b1c46d31abac2466356a29260d8759c0ddcb552a66af86593ab26fc87280c3",
+      "size_bytes": 2159,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/douanes_stats/douanes_authentic.expected.json",
+      "sha256": "5eb9a6161cb45bde26ceed548195c8e15589999e7eaa23664781c9fdc1d9197e",
+      "size_bytes": 29704,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/instat_nipc/nipc_authentic.expected.json",
+      "sha256": "ec8fafb70c509e4e19026d09879a62b0e4f783e66e55ffcb43ee5b5465ddd261",
+      "size_bytes": 12262,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/instat_tbe/tbe_sample.expected.json",
+      "sha256": "c4e9cf1ece68a2802e6eacb8f381dcd6347debfb43ab59c388ee5e3c7ce227fd",
+      "size_bytes": 3366,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/miasa_odr/odr_authentic.expected.json",
+      "sha256": "8acdd36777b3f431b465d8675d1712f8eb7763273b27d4f72470f5ed873b57f1",
+      "size_bytes": 42457,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/mincc_ppn/mincc_authentic.expected.json",
+      "sha256": "844f7e0ac5aa57bdba4ae50668d5a21af627248110d9bd224a1f2cfc24e123e1",
+      "size_bytes": 16096,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/golden/omh_public/omh_sample.expected.json",
+      "sha256": "392f6537e81e14cd47aa465e0e844616ab921f3c465423ce0fd59b2a0f07d4b3",
+      "size_bytes": 1919,
+      "artifact_type": "json",
+      "authenticity": "unverified",
+      "origin": {
+        "kind": "unknown_legacy",
+        "reference": null,
+        "limitations": "Existing local fixture inventoried during main integration; no acquisition or independent validation proved."
+      },
+      "rights": {
+        "status": "unknown",
+        "licence": null,
+        "evidence": null
       },
       "annotator": "agent",
       "human_reviewed": false

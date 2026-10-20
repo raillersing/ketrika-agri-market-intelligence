@@ -178,7 +178,6 @@ def test_native_wb_batch_dispatches_to_persisted_context_parser_not_legacy_csv()
         ("object_key", "different-key"),
         ("content_sha256", "0" * 64),
         ("mime_type", "application/json"),
-        ("parser_version", "2.0.0"),
         ("source_url", "https://example.invalid/different"),
         ("published_at", datetime(2026, 10, 10, tzinfo=UTC)),
     ],
@@ -200,6 +199,22 @@ def test_altered_object_prevents_parse_without_mutating_store():
     connector.parse.assert_not_called()
     ctx.bronze_store.client.put_object.assert_not_called()
     ctx.bronze_store.client.delete_object.assert_not_called()
+
+
+def test_processing_version_is_independent_of_immutable_acquisition_version():
+    connector, ctx, session, batch, _, reference, _ = fixture()
+    reference.parser_version = "older-acquisition-v0"
+    consume_connector_silver(connector, ctx, session, batch)
+    connector.parse.assert_called_once()
+    assert reference.parser_version == "older-acquisition-v0"
+    assert batch.parser_version == connector.parser_version == "1.0.0"
+
+
+def test_parse_result_version_must_match_the_selected_processing_version():
+    connector, ctx, session, batch, *_ = fixture()
+    connector.parse.return_value = ParseResult(parser_version="unexpected-v2")
+    with pytest.raises(ValueError, match="silver_parse_version_mismatch"):
+        consume_connector_silver(connector, ctx, session, batch)
 
 
 @pytest.mark.parametrize(

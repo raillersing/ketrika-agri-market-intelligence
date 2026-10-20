@@ -1,6 +1,7 @@
 """Integration test for World Bank RTFP connector end-to-end backfill and DQ (CC3-CC6, T3.2)."""
 
 import uuid
+from functools import partial
 
 import pytest
 from sqlalchemy import create_engine, select
@@ -13,7 +14,7 @@ from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import check_db_connection
 from ketrika.core.http import PoliteHttpClient
 from ketrika.core.models.db import PriceObservation, SourceRecord
-from ketrika.core.policy import PolicyEngine
+from ketrika.core.policy import PolicyEngine, validate_candidate_url
 from ketrika.core.registry import find_repo_root
 from ketrika.core.settings import get_settings
 from ketrika.pipelines import rebuild as rebuild_module
@@ -49,7 +50,7 @@ def csv_content() -> str:
 
 @pytest.mark.integration
 def test_wb_rtfp_backfill_dq_and_rebuild_lifecycle(
-    httpserver, db_session, csv_content: str, monkeypatch
+    httpserver, db_session, csv_content: str, monkeypatch: pytest.MonkeyPatch
 ):
     """Verify CC3-CC6: backfill execution, idempotence, supersession, DQ checks and offline rebuild."""
     # Ensure fresh Silver/Gold state
@@ -62,11 +63,16 @@ def test_wb_rtfp_backfill_dq_and_rebuild_lifecycle(
     endpoint_path = f"/wb_rtfp_{run_tag}/prices.csv"
     httpserver.expect_request(endpoint_path).respond_with_data(unique_csv, content_type="text/csv")
     csv_url = httpserver.url_for(endpoint_path)
+    monkeypatch.setattr("ketrika.connectors.wb_rtfp_mdg.ALLOWED_WB_DOMAINS", ["localhost"])
+    monkeypatch.setattr(
+        "ketrika.connectors.wb_rtfp_mdg.validate_candidate_url",
+        partial(validate_candidate_url, allow_loopback=True),
+    )
 
     bronze_store = BronzeStore()
     httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy = PolicyEngine()
-    http_client = PoliteHttpClient(policy_engine=policy)
+    http_client = PoliteHttpClient(policy_engine=policy, allow_loopback=True)
     connector = WbRtfpMdgConnector()
 
     ctx = RunContext(

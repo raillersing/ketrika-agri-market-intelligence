@@ -169,7 +169,8 @@ def test_explicit_structure_blocks_actual_gold_refresh(drift, format_id, request
     finally:
         event.remove(engine, "before_cursor_execute", capture_sql)
     assert result.success is (not drift)
-    assert len(statements) == (0 if drift else 12)
+    assert len(statements) == (0 if drift else 13)
+    assert all("economic_dashboard" not in statement for statement in statements)
     evaluations = result.get_asset_check_evaluations()
     assert len(evaluations) == 2
     provenance = next(
@@ -187,7 +188,7 @@ def test_explicit_structure_blocks_actual_gold_refresh(drift, format_id, request
         populated = session.scalar(
             text("SELECT count(*) FROM pg_matviews WHERE schemaname='gold' AND ispopulated")
         )
-        assert populated == (0 if drift else 12)
+        assert populated == (0 if drift else 13)
         if not drift:
             assert session.scalar(text("SELECT count(*) FROM gold.price_obs_current")) == 1
             assert session.scalar(

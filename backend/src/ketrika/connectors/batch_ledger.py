@@ -122,7 +122,6 @@ def _validate_parents(session: Session, batch: BronzeBatch) -> None:
             parent.content_sha256,
             parent.mime_type,
             parent.source_url,
-            parent.parser_version,
             _date(parent.published_at),
         ) != (
             batch.source_id,
@@ -130,7 +129,6 @@ def _validate_parents(session: Session, batch: BronzeBatch) -> None:
             artifact.content_sha256,
             artifact.mime_type,
             artifact.url,
-            batch.parser_version,
             _date(artifact.published_at),
         ):
             raise ValueError("batch_ledger_reference_mismatch")

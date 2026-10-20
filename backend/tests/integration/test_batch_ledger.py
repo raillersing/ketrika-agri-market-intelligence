@@ -116,6 +116,21 @@ def test_members_roll_back_without_deleting_preexisting_parents() -> None:
 
 
 @pytest.mark.integration
+def test_new_processing_version_preserves_acquisition_metadata() -> None:
+    with get_session() as session:
+        original = prepare(session)
+    batch = replace(original, parser_version="fixture-v2")
+    assert batch_digest(batch) != batch_digest(original)
+    with get_session() as session:
+        persist_bronze_batch(session, batch)
+    with get_session() as session:
+        assert read_bronze_batch(session, batch.ingestion_run_id) == batch
+        parent = session.get(SourceRecord, UUID(batch.artifacts[0].source_record_id))
+        assert parent is not None and parent.parser_version == "fixture-v1"
+        assert not session.dirty and not session.new and not session.deleted
+
+
+@pytest.mark.integration
 def test_conflicting_repeat_and_wrong_parent_are_not_accepted() -> None:
     with get_session() as session:
         batch = prepare(session)

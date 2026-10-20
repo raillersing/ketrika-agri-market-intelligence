@@ -3965,3 +3965,10 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Source9a3da92 / empreinte d98292bd8fdf753eb18365b5a19497abaa7de0ffb3bc08663fdbd7066ed4d020 ; QA neuve dédiée. Ruff/format407 verts, mypy406 fichiers :12 erreurs sur deux fixtures supply utilisant le sous-type enrichi sans son contexte. Aucun pytest/frontend ni couverture globale exécutés ; aucun succès global.
 - Correction : ces deux fixtures simples restent ParsedStockRecord de production, les scénarios avec prix gardent leur sous-type synthétique explicite. Aucun faux identifiant/default ajouté. Nouveau check requis sur contenu corrigé ; main encore75d8674.
 
+### [2026-10-20T06:15:00Z] Corpus et compatibilité des phases — corrections groupées
+
+-72215 FINAL2 après SIGINT explicite sur rouge confirmé :3 échecs corpus/32 succès/254,86s ; JUnit original dans docs/evidence/MAIN_COLLECTION_CHECK_72215_RED_JUNIT.xml.gz. Ruff/format407/mypy406/cohérence74 verts ; aucun frontend/couverture globale reçu.
+- Cause réelle sur /workspace/backend : reçu périmé de tests/e2e_data/synthetic_gold_dataset.py et43 entrées absentes. Diagnostic /app initial non équivalent écarté ; aucune conclusion d'absence de scripts sur source réelle. Manifeste réparé sans mutation d'archives :116 fichiers/817369octets,8 authentiques (4 documents/4 annotations,53 cellules),46 synthétiques/62 non vérifiés. Aucun nom de fichier « authentique » n'est une preuve.
+- ADR111 : versions d'acquisition/traitement distinctes sans muter le parent, opt-in loopback limité aux tests, édition Douanes2024 explicite, assertions13 vues publiables avec exclusion macro.36947 FINAL0 :123 tests/46,53s incluant corpus/versions/ledger/phases/garde DQ ; lint/format407 verts.
+- Prochaine action : nouveau commit du lot stabilisé, un check complet puis E2E avant réception main. Aucune collecte live, performance scientifique ou tâche R DONE déduite.
+

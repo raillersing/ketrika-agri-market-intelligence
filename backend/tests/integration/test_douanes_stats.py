@@ -60,6 +60,7 @@ def test_douanes_stats_backfill_dq_rebuild_and_revision_cycle(
         bronze_store=bronze_store,
         policy_engine=policy,
         offline=True,
+        metadata={"file_url": "https://www.douanes.gov.mg/stats/douanes_stats_2024.csv"},
     )
 
     # 1. CC3: Backfill initial run (douanes_stats_2024.csv, 36 records)

@@ -198,7 +198,6 @@ def consume_connector_silver(
                 reference.object_key,
                 reference.content_sha256,
                 reference.mime_type,
-                reference.parser_version,
                 reference.source_url,
                 reference.published_at,
             ) != (
@@ -206,7 +205,6 @@ def consume_connector_silver(
                 artifact.object_key,
                 artifact.content_sha256,
                 artifact.mime_type,
-                batch.parser_version,
                 artifact.url,
                 artifact.published_at,
             ):
