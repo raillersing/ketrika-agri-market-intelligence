@@ -27,9 +27,9 @@
   docker run --rm -v "${PWD}:/path" zricethezav/gitleaks:latest detect --source="/path" --config="/path/.gitleaks.toml" --verbose
   ```
 - **Résultats chiffrés :**
-  - **319 commits audités** sur l'ensemble de l'historique étendu (programmes MVP T et R0–R6).
-  - **~205 Mo de données et diffs inspectés**.
-  - **0 secret réel détecté** (`no leaks found`).
+  - **320 commits audités** sur l'ensemble de l'historique étendu (programmes MVP T et R0–R6).
+  - **205,24 Mo de données et diffs inspectés en 35m42s**.
+  - **0 secret détecté** (`no leaks found`). Code de sortie : 0.
 - **Audit des 5 alertes historiques (100 % faux positifs documentés) :**
   1. `partition_key="odr_anosibe_2024"` dans `backend/src/ketrika/connectors/market_supply.py` (commit `d52bef0`) : identifiant textuel de partition de données pour les enquêtes de l'Observatoire du Riz à Anosibe, détecté à tort par la règle générique `generic-api-key` en raison du suffixe `_key`. Aucun secret.
   2. `partition_key="odr_ambatondrazaka_2024"` dans `backend/src/ketrika/connectors/market_supply.py` (commit `d52bef0`) : identifiant de partition de données ODR Ambatondrazaka (faux positif `generic-api-key`). Aucun secret.
