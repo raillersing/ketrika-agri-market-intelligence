@@ -295,9 +295,16 @@ def test_gate_q5_customs_import_cif_cost_and_transmission():
 # =========================================================================
 
 
-def test_gate_r2_strict_dimension_isolation_and_no_composite_score():
-    """Verify that economic dashboard strictly enforces 5 autonomous dimensions and never invents a composite score."""
+def test_gate_r2_strict_dimension_isolation_and_no_composite_score(monkeypatch):
+    """Check real refusal, then response shape only; not qualified economic data."""
     client = TestClient(app)
+    refused = client.get("/v1/economic/dashboard")
+    assert refused.status_code == 503
+    assert refused.json()["detail"] == "economic_data_not_qualified"
+    monkeypatch.setattr(
+        "ketrika.api.routers.economic.query_economic_dashboard_from_db",
+        lambda *args, **kwargs: [],
+    )
     resp = client.get("/v1/economic/dashboard")
     assert resp.status_code == 200
     data = resp.json()

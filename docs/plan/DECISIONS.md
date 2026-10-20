@@ -1544,3 +1544,9 @@
 - Décision : message503 explicite et pas de faux état vide, ajustements de titre mobile limités, E2E lié à douze scénarios exacts (authentification, refus macro/reload, navigation/largeur mobile, logout). Aucun déblocage du Gold macro ni changement du contrat de valeurs.
 - Complément : diagnostic de clic Sources en QA uniquement avec verrou concurrent SQL transitoire, libéré en fin de transaction ; navigateur sur localhost réel, session créée par formulaire, POST409 sans création de reçu, reçu antérieur SQL relu/reload, quota inchangé et rendu390px. Ni mock d'endpoint ni collecte externe, aucune politique de source durablement modifiée ; preuve négative logicielle, pas une acquisition live ni une performance de marché.
 
+## ADR-114 | 2026-10-20 | Distinguer refus économique réel et test de format
+
+- Diagnostic readonly73846 sur6386d31 : test_gate_r2_strict_dimension_isolation_and_no_composite_score exige200 mais reçoit le503 conforme (un échec/33,60s, aucune SQL mutante). Le check76385 du même contenu ne peut être reçu ; arrêt explicite après100 succès/655,92s, JUnit conservé, aucun résultat global/couverture/frontend déduit.
+- Décision : ce cas vérifie d'abord le503 réel et son motif, puis contrôle la structure des cinq dimensions avec une entrée vide explicitement mockée dans ce seul test. Cela n'est pas une preuve de Gold qualifié et ne clôt pas R2.11. Aucun changement de code applicatif ni seuil.
+- Réception : contrôle ciblé de ce contrat, puis check complet sur nouveau contenu figé conformément à§3.3.
+

@@ -3981,3 +3981,9 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - ADR113 : E2E attend le refus503 économique déjà imposé par backend, message UI explicite sans faux vide et douze scénarios exacts. Diagnostic Sources readonly préparé avant gel : vrai formulaire localhost, clic sous verrou concurrent transitoire,409 sans nouveau reçu ni émission, reçu antérieur/reload/mobile ; aucune politique durable de source modifiée.
 - R1.12 marqué IN_PROGRESS sur demande explicite de collecte, pas DONE : dépendances/live non reçus. Cohérence visée7 DONE/52 IN_PROGRESS/15 TODO ; aucun tag créé. Prochaine action : check complet sur nouveau commit figé, E2E puis diagnostic readonly et réception main seulement si verts.
 
+### [2026-10-20T07:14:00Z] Dernière attente de gate économique corrigée — source applicative inchangée
+
+- Diagnostic readonly73846 sur6386d31 : un échec/33,60s, attente200 vs503 conforme dans le test de structure R2.11. Aucun accès SQL mutant ; le check76385 du même contenu ne pouvait être reçu. Arrêt SIGINT explicite :76385 FINAL2/100 succès/655,92s, JUnit original archivé dans MAIN_COLLECTION_CHECK_76385_INTERRUPTED_JUNIT.xml.gz ; aucune couverture/frontend globale déduite.
+- ADR114 : vérification initiale du refus503 réel, puis format des cinq dimensions avec résultat vide explicitement mocké et local au test. Aucun garde produit affaibli, aucune donnée qualifiée.29385 FINAL0 : six tests du gate/43,55s et lint ciblé verts.
+- Code applicatif6386d31 inchangé par ce correctif de test. Nouveau check complet obligatoire après commit, puis E2E/diagnostic Sources sur même contenu et intégration main seulement après réception. Reprendre le processus connu, pas de redémarrage sur simple nouveau message utilisateur.
+
