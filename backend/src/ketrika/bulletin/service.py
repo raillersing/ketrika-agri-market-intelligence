@@ -146,7 +146,9 @@ def send_bulletin_preview_to_mailpit(
     from email.mime.text import MIMEText
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"[KETRIKA PREVIEW] Bulletin Vivrier PPN - Semaine du {bulletin.period_start} au {bulletin.period_end}"
+    msg["Subject"] = (
+        f"[KETRIKA PREVIEW] Bulletin Vivrier PPN - Semaine du {bulletin.period_start} au {bulletin.period_end}"
+    )
     msg["From"] = "bulletin-preview@ketrika.local"
     msg["To"] = "preview@mailpit.local"
 
@@ -155,7 +157,9 @@ def send_bulletin_preview_to_mailpit(
 
     try:
         with smtplib.SMTP(smtp_host, smtp_port, timeout=5) as server:
-            server.sendmail("bulletin-preview@ketrika.local", ["preview@mailpit.local"], msg.as_string())
+            server.sendmail(
+                "bulletin-preview@ketrika.local", ["preview@mailpit.local"], msg.as_string()
+            )
         logger.info("bulletin_preview_sent_to_mailpit", bulletin_id=str(bulletin.bulletin_id))
         return True
     except Exception as e:

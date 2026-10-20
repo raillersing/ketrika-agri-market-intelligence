@@ -548,7 +548,10 @@ class MinccPpnConnector(Connector):
                                 stock_status=stock_status or "unknown",
                                 coverage_days=coverage_days,
                                 extraction_method="deterministic",
-                                evidence={"row": row_idx, "cells": [_scrub_pii(str(c)) for c in row]},
+                                evidence={
+                                    "row": row_idx,
+                                    "cells": [_scrub_pii(str(c)) for c in row],
+                                },
                                 confidence=1.0,
                             )
                             records.append(stock_rec)
@@ -585,22 +588,19 @@ class MinccPpnConnector(Connector):
                         continue
 
                     ev_lower = p_item.evidence_text.lower()
-                    is_ceiling = (
-                        getattr(p_item, "value_kind", "point") == "max"
-                        or any(
-                            k in ev_lower
-                            for k in (
-                                "plafond",
-                                "farany ambony",
-                                "administré",
-                                "administre",
-                                "réglementé",
-                                "reglemente",
-                                "arrêté",
-                                "arrete",
-                                "décret",
-                                "decret",
-                            )
+                    is_ceiling = getattr(p_item, "value_kind", "point") == "max" or any(
+                        k in ev_lower
+                        for k in (
+                            "plafond",
+                            "farany ambony",
+                            "administré",
+                            "administre",
+                            "réglementé",
+                            "reglemente",
+                            "arrêté",
+                            "arrete",
+                            "décret",
+                            "decret",
                         )
                     )
                     value_kind = "max" if is_ceiling else "point"

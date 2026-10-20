@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from typing import Any
+from uuid import UUID
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import text
@@ -12,11 +14,14 @@ from sqlalchemy.orm import Session
 from ketrika.api.auth import get_current_user, require_admin
 from ketrika.api.errors import NotFoundException, ProblemDetailException
 from ketrika.api.schemas import (
+    CollectionInput,
     SourceHealthItem,
     SourceItem,
     SourceRefreshResponse,
     SourceRunItem,
 )
+from ketrika.connectors import manual_collection
+from ketrika.connectors.manual_collection import RECOMPUTE_VIEWS
 from ketrika.core.db import get_db
 from ketrika.gold.refresh import refresh_gold_views
 
@@ -189,20 +194,34 @@ def list_recent_runs(
     ]
 
 
-RECOMPUTE_VIEWS = [
-    "price_obs_current",
-    "price_monthly",
-    "price_monthly_best",
-    "price_changes",
-    "stock_latest",
-    "trade_monthly",
-    "import_dependency",
-    "weather_monthly",
-    "cpi_food",
-    "market_health",
-    "source_health",
-    "forecast_latest",
-]
+@router.get("/collection-options", dependencies=[Depends(get_current_user)])
+def collection_options() -> list[str]:
+    return manual_collection.eligible_sources()
+
+
+@router.get("/collections", dependencies=[Depends(get_current_user)])
+def collection_history() -> list[dict[str, Any]]:
+    return manual_collection.recent_collections()
+
+
+@router.get("/collections/{request_id}", dependencies=[Depends(get_current_user)])
+def collection_receipt(request_id: UUID) -> dict[str, Any]:
+    try:
+        return manual_collection.read_collection(request_id)
+    except manual_collection.CollectionError as error:
+        raise ProblemDetailException(error.status, "Collecte indisponible", str(error)) from None
+
+
+@router.post("/collect", dependencies=[Depends(require_admin)])
+def collect_sources(body: CollectionInput) -> dict[str, Any]:
+    try:
+        return manual_collection.collect(body.request_id, body.source_id)
+    except manual_collection.CollectionError as error:
+        raise ProblemDetailException(error.status, "Collecte indisponible", str(error)) from None
+    except SQLAlchemyError:
+        raise ProblemDetailException(
+            503, "Collecte indisponible", "collection_storage_unavailable"
+        ) from None
 
 
 def _recompute(session: Session) -> SourceRefreshResponse:

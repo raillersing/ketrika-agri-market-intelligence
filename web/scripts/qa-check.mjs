@@ -48,8 +48,8 @@ export function runChecks() {
     receipt.dataset = "mixed";
     receipt.captured_at = new Date().toISOString();
     receipt.environment = {
-      project: "ketrika-qualification", database: "ketrika_qualification",
-      bronze_bucket: "ketrika-qa-bronze", network: "ketrika_qualification_network",
+      project: "ketrika-qualification-main-integration", database: "ketrika_qualification",
+      bronze_bucket: "ketrika-qa-bronze", network: "ketrika_qualification_main_integration_network",
       dataset_mode: "test",
       backend_image_id: process.env.KETRIKA_PROOF_BACKEND_IMAGE_ID,
       web_image_id: process.env.KETRIKA_PROOF_WEB_IMAGE_ID,

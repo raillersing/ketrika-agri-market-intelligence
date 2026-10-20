@@ -137,7 +137,8 @@ class SupplyQualityChecker:
         if isinstance(record, StockRecord):
             return {
                 "target": record.target or QuantityTarget.STOCK_INVENTORY.value,
-                "measurement_mode": record.measurement_mode or QuantityMeasurementMode.DECLARED_TRADER.value,
+                "measurement_mode": record.measurement_mode
+                or QuantityMeasurementMode.DECLARED_TRADER.value,
                 "market_code": record.market_code or "UNKNOWN_MARKET",
                 "product_raw": record.product_raw,
                 "period_start": record.period_start,
@@ -149,12 +150,15 @@ class SupplyQualityChecker:
         # StockObservation
         return {
             "target": getattr(record, "target", None) or QuantityTarget.STOCK_INVENTORY.value,
-            "measurement_mode": getattr(record, "measurement_mode", None) or QuantityMeasurementMode.DECLARED_TRADER.value,
+            "measurement_mode": getattr(record, "measurement_mode", None)
+            or QuantityMeasurementMode.DECLARED_TRADER.value,
             "market_code": getattr(record, "market_code", None) or "UNKNOWN_MARKET",
             "product_raw": record.product_raw,
             "period_start": record.period_start,
             "period_end": record.period_end,
-            "quantity_value": float(record.quantity_value) if record.quantity_value is not None else None,
+            "quantity_value": float(record.quantity_value)
+            if record.quantity_value is not None
+            else None,
             "quantity_raw": record.quantity_raw,
             "unit_raw": record.unit_raw,
         }
@@ -228,7 +232,9 @@ class SupplyQualityChecker:
                             quantity_kg=q_val,
                             measurement_mode=primary["measurement_mode"],
                             raw_unit=primary["unit_raw"],
-                            raw_quantity=str(primary["quantity_raw"]) if primary["quantity_raw"] is not None else None,
+                            raw_quantity=str(primary["quantity_raw"])
+                            if primary["quantity_raw"] is not None
+                            else None,
                         )
                     else:
                         # Non-enquêté: absence de relevé != zéro
@@ -264,7 +270,10 @@ class SupplyQualityChecker:
 
         for (m_code, prod, target), rec_list in grouped.items():
             # For cumulative targets (flows), check if a longer period subsumes shorter periods
-            if target not in (QuantityTarget.INFLOW_ARRIVAL.value, QuantityTarget.HARVEST_VOLUME.value):
+            if target not in (
+                QuantityTarget.INFLOW_ARRIVAL.value,
+                QuantityTarget.HARVEST_VOLUME.value,
+            ):
                 continue
 
             for parent in rec_list:
@@ -346,13 +355,19 @@ class SupplyQualityChecker:
             total_qty = sum(c.quantity_kg or 0.0 for c in surveyed_cells)
 
             measured_scale = sum(
-                1 for c in surveyed_cells if c.measurement_mode == QuantityMeasurementMode.MEASURED_SCALE.value
+                1
+                for c in surveyed_cells
+                if c.measurement_mode == QuantityMeasurementMode.MEASURED_SCALE.value
             )
             declared_trader = sum(
-                1 for c in surveyed_cells if c.measurement_mode == QuantityMeasurementMode.DECLARED_TRADER.value
+                1
+                for c in surveyed_cells
+                if c.measurement_mode == QuantityMeasurementMode.DECLARED_TRADER.value
             )
             estimated_survey = sum(
-                1 for c in surveyed_cells if c.measurement_mode == QuantityMeasurementMode.ESTIMATED_SURVEY.value
+                1
+                for c in surveyed_cells
+                if c.measurement_mode == QuantityMeasurementMode.ESTIMATED_SURVEY.value
             )
 
             cert_ratio = (measured_scale / surveyed_count) if surveyed_count > 0 else 0.0
@@ -426,7 +441,9 @@ class SupplyQualityChecker:
                         converted_kg=actual_kg,
                         expected_kg=expected_kg,
                         is_valid=is_valid,
-                        discrepancy_reason=None if is_valid else f"Discrepancy of {diff:.2f} kg from standard factor",
+                        discrepancy_reason=None
+                        if is_valid
+                        else f"Discrepancy of {diff:.2f} kg from standard factor",
                     )
                 )
             except ValueError:
@@ -453,7 +470,9 @@ class SupplyQualityChecker:
         target: str = QuantityTarget.INFLOW_ARRIVAL.value,
     ) -> SupplyDataQualityReport:
         """Run complete metrological quality audit on supply records."""
-        coverage_stats = self.calculate_market_coverage(records, start_date, end_date, target=target)
+        coverage_stats = self.calculate_market_coverage(
+            records, start_date, end_date, target=target
+        )
         double_counts = self.detect_temporal_overlap_double_counting(records)
         conversion_audits = self.audit_unit_conversions(records)
 
@@ -466,7 +485,11 @@ class SupplyQualityChecker:
             cell.quantity_kg is None for cell in matrix.values() if cell.is_missing
         )
 
-        is_valid = (len(double_counts) == 0) and (len(invalid_conversions) == 0) and missing_vs_zero_respected
+        is_valid = (
+            (len(double_counts) == 0)
+            and (len(invalid_conversions) == 0)
+            and missing_vs_zero_respected
+        )
 
         markets = sorted({s.market_code for s in coverage_stats})
 

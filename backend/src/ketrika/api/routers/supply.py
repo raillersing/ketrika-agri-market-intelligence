@@ -33,7 +33,9 @@ def get_supply_peak_forecast(
     zone_code: str = Query("ZONE_ALAOTRA", description="Production basin code"),
     market_code: str = Query("MDG_ANOSIBE", description="Target market code"),
     campaign: str = Query("2024", description="Campaign year"),
-    logistics_lag_dekads: int = Query(1, ge=0, le=6, description="Logistics lag in dekads from basin to market"),
+    logistics_lag_dekads: int = Query(
+        1, ge=0, le=6, description="Logistics lag in dekads from basin to market"
+    ),
     as_of_date: date | None = Query(None, description="As-of cutoff date for observations"),
     session: Session = Depends(get_db),
 ) -> SupplyWindowPrediction:
@@ -41,7 +43,8 @@ def get_supply_peak_forecast(
     # 1. Load authentic crop calendar
     calendar_records = load_crop_calendar()
     matching_crops = [
-        r for r in calendar_records
+        r
+        for r in calendar_records
         if r.crop.upper() == crop.upper() and r.zone_code.upper() == zone_code.upper()
     ]
 
@@ -196,7 +199,9 @@ def run_decision_scenario(
         matching = [r for r in cal if r.zone_code == "ZONE_ALAOTRA" and r.crop == "RICE"]
         rec = matching[0] if matching else cal[0]
         hw = HarvestWindowModel().project_baseline_window(rec, year=2024)
-        pred = SupplyPeakForecastEngine().predict_supply_window(hw, market_code=scenario.market_code)
+        pred = SupplyPeakForecastEngine().predict_supply_window(
+            hw, market_code=scenario.market_code
+        )
         return engine.run_commercial_buyer_journey(
             scenario=scenario,
             supply_prediction=pred,
@@ -210,4 +215,3 @@ def run_decision_scenario(
             scenario=scenario,
             baseline_harvest_window=hw,
         )
-

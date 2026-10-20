@@ -17,9 +17,13 @@ class AreaSourceKind(StrEnum):
     """Provenance and validation tier of harvested area figures."""
 
     OFFICIAL_CADASTRE_SURVEY = "official_cadastre_survey"  # DRAE / MinAE direct agricultural census
-    REMOTE_SENSING_CROPLAND = "remote_sensing_cropland"  # Satellite cropland mask (ESA WorldCover / Copernicus)
+    REMOTE_SENSING_CROPLAND = (
+        "remote_sensing_cropland"  # Satellite cropland mask (ESA WorldCover / Copernicus)
+    )
     DECLARED_COMMUNE_ESTIMATE = "declared_commune_estimate"  # Communal administrative estimation
-    NATIONAL_UNVERIFIED = "national_unverified"  # FAOSTAT national top-down estimate (unverified at local level)
+    NATIONAL_UNVERIFIED = (
+        "national_unverified"  # FAOSTAT national top-down estimate (unverified at local level)
+    )
 
 
 class ProductionForecastStatus(StrEnum):
@@ -38,7 +42,9 @@ class AgroConversionFactor:
     raw_commodity: str
     processed_commodity: str
     milling_ratio: float  # Physical extraction rate from raw to processed (e.g. 0.667 for paddy to milled rice)
-    farm_loss_seed_rate: float  # Deduction for retained seeds and on-farm post-harvest losses (e.g. 0.10 for 10%)
+    farm_loss_seed_rate: (
+        float  # Deduction for retained seeds and on-farm post-harvest losses (e.g. 0.10 for 10%)
+    )
     source_reference: str  # Mandatory institutional citation
 
 
@@ -159,8 +165,12 @@ class ProductionForecastInput:
     harvest_campaign: int
     harvested_area_ha: float
     area_source_kind: AreaSourceKind
-    water_stress_anomaly: float | None = None  # Standardized rainfall anomaly in standard deviations (e.g. -1.5)
-    historical_campaigns_count: int | None = None  # Explicit count if overriding default baseline registry
+    water_stress_anomaly: float | None = (
+        None  # Standardized rainfall anomaly in standard deviations (e.g. -1.5)
+    )
+    historical_campaigns_count: int | None = (
+        None  # Explicit count if overriding default baseline registry
+    )
 
 
 @dataclass(frozen=True)
@@ -212,7 +222,9 @@ class CropProductionModel:
         """
         key = (crop_code, region_id)
         if key not in self.baselines:
-            raise KeyError(f"No agronomic yield baseline recorded for crop '{crop_code}' in region '{region_id}'")
+            raise KeyError(
+                f"No agronomic yield baseline recorded for crop '{crop_code}' in region '{region_id}'"
+            )
 
         baseline = self.baselines[key]
         base_yield = baseline.baseline_yield_t_ha
@@ -365,6 +377,8 @@ class CropProductionModel:
             methodology="area_times_yield_with_agroclimatic_adjustment",
         )
 
-    def batch_evaluate(self, payloads: list[ProductionForecastInput]) -> list[ProductionForecastResult]:
+    def batch_evaluate(
+        self, payloads: list[ProductionForecastInput]
+    ) -> list[ProductionForecastResult]:
         """Execute batch production evaluation."""
         return [self.evaluate(p) for p in payloads]

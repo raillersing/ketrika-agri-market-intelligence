@@ -124,7 +124,9 @@ def test_meteo_mg_parse_standard_bulletin():
     assert analamanga.evidence["valid_to"] == "2024-01-10"
 
     # Verify qualitative advisories (ADR-082 strict adherence: no invented probabilities)
-    adv_alaotra = next(r for r in advisory_records if r.evidence.get("location_scope") == "Alaotra-Mangoro")
+    adv_alaotra = next(
+        r for r in advisory_records if r.evidence.get("location_scope") == "Alaotra-Mangoro"
+    )
     assert adv_alaotra.event_type == "agroclimate_advisory"
     assert "Avis agro-climatique DGM: favorable" in adv_alaotra.title
     assert "développement végétatif du paddy" in (adv_alaotra.summary or "")

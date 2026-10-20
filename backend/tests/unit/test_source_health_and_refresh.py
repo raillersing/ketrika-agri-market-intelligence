@@ -277,7 +277,10 @@ def test_r1_12_failure_and_idempotent_recovery() -> None:
     mock_bronze.client = MagicMock()
     body_rec = MagicMock()
     body_rec.read.return_value = rec_content
-    mock_bronze.client.get_object.return_value = {"Body": body_rec, "ContentLength": len(rec_content)}
+    mock_bronze.client.get_object.return_value = {
+        "Body": body_rec,
+        "ContentLength": len(rec_content),
+    }
     ctx.bronze_store = mock_bronze
 
     with (

@@ -14,6 +14,11 @@ ValueKind = Literal["observed", "imputed", "forecast", "projected", "composite"]
 # ===================== AUTH =====================
 
 
+class CollectionInput(BaseModel):
+    request_id: uuid.UUID
+    source_id: str | None = Field(default=None, pattern=r"^[a-z][a-z0-9_]{0,99}$")
+
+
 class LoginRequest(BaseModel):
     """User credentials for session authentication."""
 

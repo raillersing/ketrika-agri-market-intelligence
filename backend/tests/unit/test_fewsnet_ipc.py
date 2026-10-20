@@ -308,4 +308,3 @@ def test_fewsnet_ipc_loader_insertion_and_idempotence():
     status2, event_id2 = load_record_with_supersession(session, rec, source_id, source_record_id)
     assert status2 == "idempotent_skipped"
     assert event_id2 == added_event.event_id
-

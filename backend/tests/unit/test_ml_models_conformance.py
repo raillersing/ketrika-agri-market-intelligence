@@ -44,7 +44,20 @@ def test_naive_last_exact_calculation():
 def test_seasonal_naive_annual_exact_calculation():
     """Verify SeasonalNaive with season_length=12 takes values from 12 months prior."""
     # Construct 24 months of data with known seasonal pattern
-    base_pattern = [100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 210.0]
+    base_pattern = [
+        100.0,
+        110.0,
+        120.0,
+        130.0,
+        140.0,
+        150.0,
+        160.0,
+        170.0,
+        180.0,
+        190.0,
+        200.0,
+        210.0,
+    ]
     # Year 2 slightly higher
     y = np.array(base_pattern + [v + 10.0 for v in base_pattern], dtype=float)
     assert len(y) == 24
@@ -96,7 +109,9 @@ def test_insufficient_history_explicit_fallback_traceability_a09():
     arima = AutoARIMAModel(season_length=12)
     res_arima = arima.fit_predict(medium_series, h=h)
     assert res_arima.model_requested == "AutoARIMA"
-    assert res_arima.model_effective != "AutoARIMA"  # Crucial A09 assertion: never display ARIMA when fallback ran
+    assert (
+        res_arima.model_effective != "AutoARIMA"
+    )  # Crucial A09 assertion: never display ARIMA when fallback ran
     assert res_arima.model_effective in ("SeasonalNaive", "NaiveLast", "DeterministicBaseline")
     assert res_arima.status == "fallback"
     assert "insufficient_history" in (res_arima.fallback_reason or "")
@@ -121,13 +136,17 @@ def test_training_gap_imputation_clean_and_interpolated():
     assert imputed[3] == pytest.approx(130.0, abs=1e-3)
 
     # 3. Excessive consecutive gap: 5 consecutive missing months > max_gap=4
-    excessive_gap = np.array([100.0, np.nan, np.nan, np.nan, np.nan, np.nan, 200.0, 210.0, 220.0, 230.0])
+    excessive_gap = np.array(
+        [100.0, np.nan, np.nan, np.nan, np.nan, np.nan, 200.0, 210.0, 220.0, 230.0]
+    )
     imputed, reason = impute_training_gaps(excessive_gap, max_gap=4, max_missing_ratio=0.60)
     assert imputed is None
     assert "excessive_consecutive_gap" in (reason or "")
 
     # 4. Excessive missing ratio: 4 out of 10 missing = 40% > max_missing_ratio=0.30
-    excessive_ratio = np.array([100.0, np.nan, 120.0, np.nan, 140.0, np.nan, 160.0, np.nan, 180.0, 190.0])
+    excessive_ratio = np.array(
+        [100.0, np.nan, 120.0, np.nan, 140.0, np.nan, 160.0, np.nan, 180.0, 190.0]
+    )
     imputed, reason = impute_training_gaps(excessive_ratio, max_gap=4, max_missing_ratio=0.30)
     assert imputed is None
     assert "excessive_missing_ratio" in (reason or "")

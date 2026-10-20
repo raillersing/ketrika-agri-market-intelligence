@@ -41,14 +41,16 @@ class Sentinel2SCLClass(IntEnum):
 
 
 # Classes that obscure ground vegetation and must be strictly masked out
-CLOUD_AND_OBSCURATION_SCL: frozenset[int] = frozenset({
-    Sentinel2SCLClass.NO_DATA,
-    Sentinel2SCLClass.SATURATED_OR_DEFECTIVE,
-    Sentinel2SCLClass.CLOUD_SHADOWS,
-    Sentinel2SCLClass.CLOUD_MEDIUM_PROBABILITY,
-    Sentinel2SCLClass.CLOUD_HIGH_PROBABILITY,
-    Sentinel2SCLClass.THIN_CIRRUS,
-})
+CLOUD_AND_OBSCURATION_SCL: frozenset[int] = frozenset(
+    {
+        Sentinel2SCLClass.NO_DATA,
+        Sentinel2SCLClass.SATURATED_OR_DEFECTIVE,
+        Sentinel2SCLClass.CLOUD_SHADOWS,
+        Sentinel2SCLClass.CLOUD_MEDIUM_PROBABILITY,
+        Sentinel2SCLClass.CLOUD_HIGH_PROBABILITY,
+        Sentinel2SCLClass.THIN_CIRRUS,
+    }
+)
 
 
 class RemoteSensingStatus(StrEnum):

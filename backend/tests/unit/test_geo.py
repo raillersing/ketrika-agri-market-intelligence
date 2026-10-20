@@ -368,5 +368,3 @@ def test_geo_error_handling_and_corrupt_files(tmp_path: pytest.TempPathFactory) 
     # 6. validate_geo on broken directory produces errors list instead of crash
     errs = validate_geo(geo_dir=proc_dir, taxonomy_dir=t_dir)
     assert len(errs) > 0
-
-

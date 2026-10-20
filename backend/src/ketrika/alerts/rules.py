@@ -215,8 +215,16 @@ def evaluate_stockout_risk_rules(session: Session) -> list[AlertCandidate]:
     candidates: list[AlertCandidate] = []
 
     for r in rows:
-        cov_days = float(r.latest_coverage_days) if getattr(r, "latest_coverage_days", None) is not None else None
-        qty_val = float(r.latest_quantity_value) if getattr(r, "latest_quantity_value", None) is not None else None
+        cov_days = (
+            float(r.latest_coverage_days)
+            if getattr(r, "latest_coverage_days", None) is not None
+            else None
+        )
+        qty_val = (
+            float(r.latest_quantity_value)
+            if getattr(r, "latest_quantity_value", None) is not None
+            else None
+        )
         has_quantities = (cov_days is not None) or (qty_val is not None)
 
         # High severity requires documented quantities supporting shortage (ADR-100 / R6.6)
@@ -267,7 +275,6 @@ def evaluate_stockout_risk_rules(session: Session) -> list[AlertCandidate]:
         )
 
     return candidates
-
 
 
 def evaluate_climate_risk_rules(session: Session) -> list[AlertCandidate]:
@@ -428,7 +435,8 @@ def evaluate_alert_metrics_and_scenarios(session: Session) -> dict[str, Any]:
     spikes = [c for c in candidates if c.rule_code == "PRICE_SPIKE"]
     multi_source_spikes = [s for s in spikes if int(s.evidence.get("n_sources", 1)) >= 2]
     neutralized_derivation_spikes = [
-        s for s in multi_source_spikes
+        s
+        for s in multi_source_spikes
         if s.evidence.get("has_dependent_derivation", False) and s.severity != "high"
     ]
 
@@ -457,7 +465,9 @@ def evaluate_alert_metrics_and_scenarios(session: Session) -> dict[str, Any]:
             "total_spikes": len(spikes),
             "multi_source_spikes": len(multi_source_spikes),
             "neutralized_derivative_spikes": len(neutralized_derivation_spikes),
-            "high_severity_confirmed_by_independent_families": sum(1 for s in spikes if s.severity == "high"),
+            "high_severity_confirmed_by_independent_families": sum(
+                1 for s in spikes if s.severity == "high"
+            ),
         },
         "stockout_quantitative_audit": {
             "total_stockout_risks": len(stockouts),
@@ -466,4 +476,3 @@ def evaluate_alert_metrics_and_scenarios(session: Session) -> dict[str, Any]:
         },
         "ground_truth_metrics": ground_truth_audit,
     }
-

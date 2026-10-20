@@ -27,10 +27,9 @@ VIEWS = (
 
 def upgrade() -> None:
     directory = Path(__file__).resolve().parents[2] / "src" / "ketrika" / "gold" / "sql"
-    files = sorted(directory.glob("*.sql"))
-    if [file.name for file in files] != [
-        f"{index:03d}_{view}.sql" for index, view in enumerate(VIEWS, 1)
-    ]:
+    files = [directory / f"{index:03d}_{view}.sql" for index, view in enumerate(VIEWS, 1)]
+    files[-1] = Path(__file__).resolve().parents[1] / "sql" / "012_forecast_latest_pre_0012.sql"
+    if not all(file.is_file() for file in files):
         raise RuntimeError("gold_schema_definition_missing")
     definitions = [file.read_text(encoding="utf-8") for file in files]
     if any("WITH NO DATA;" not in definition for definition in definitions):

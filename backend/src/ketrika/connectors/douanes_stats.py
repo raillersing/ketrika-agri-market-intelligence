@@ -265,9 +265,7 @@ class DouanesStatsConnector(Connector):
                 product_raw = f"Produit SH {hs_code}"
 
             partner_raw = _clean_str(
-                row.get("pays_partenaire")
-                or row.get("pays_origine")
-                or row.get("pays_destination")
+                row.get("pays_partenaire") or row.get("pays_origine") or row.get("pays_destination")
             )
             partner_iso3 = _clean_str(row.get("code_iso3_pays") or "")
 

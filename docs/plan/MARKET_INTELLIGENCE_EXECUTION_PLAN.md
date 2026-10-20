@@ -21,70 +21,71 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.7 | MUST | DONE | main442a20c, source971702e : Windows1538/35/build, E2E9, inclusion160, empreinte exacte, préservation et gitleaks0 ; aucun KPI marché qualifié |
 | R0.8 | MUST | IN_PROGRESS | Correctif8de251f reçu,empreinte main exacte74169 ;check78714 FINAL0/1725 backend/35 web/build,contexte partagé et supersession vérifiés. Révisions authentiques/recalcul scientifique non qualifiés ; lots Antigravity audités non reçus |
 | R0.9 | MUST | TODO | — |
-| R1.1 | MUST | DONE | 15a8e75 : registre sources.yaml requalifié, familles anti-fuite, cadences distinctes |
-| R1.2 | MUST | DONE | 2f9d872 : moteur CatalogDiscoveryEngine, pagination bornée, anti-SSRF validé |
-| R1.3 | MUST | DONE | d5c4124 : qualification INSTAT NIPC, découverte dynamique, multi-feuilles |
-| R1.4 | MUST | DONE | 1ef3119 : qualification MiASA ODR, CC-R authentique (75 valeurs, 100% exactitude/rappel) |
-| R1.5 | MUST | DONE | c39ae82 : qualification MinCC PPN, prix max vs constatés, anti-PII, silence stock respecté |
-| R1.6 | MUST | DONE | cbb91b0 : qualification Douanes Stats, flux vs totaux annuels, SH vérifiés (74 valeurs, 100% exactitude) |
-| R1.7 | MUST | BLOCKED | 6 tests verts, couverture 88%, golden 100% ; collecte live BLOCKED (B-R009, HDX 403, AGENTS §8.1) |
-| R1.8 | MUST | DONE | qualification Banque mondiale RTFP, schéma C3 (wfp_fao), 10 tests verts, couverture 95%, golden 100% |
-| R1.9 | MUST | DONE | qualification FAOSTAT, distinction paddy/blanchi, 20 ans riz (2004-2023), 7 tests verts, couverture 81%, golden 100% |
-| R1.10 | MUST | DONE | requalification géographie, manifeste machine, 23 régions Loi 2021-010, non-assignation aveugle, 16 tests verts, couverture 90% |
-| R1.11 | MUST | DONE | 95068e9 : qualification NASA POWER v1.1.0, cohérence physique, sentinelles -999, non-assignation aveugle, 10 tests verts, couverture 93% ; live BLOCKED (B-R010) |
-| R1.12 | MUST | DONE | actualisation, reprise, alertes Mailpit, santé UI/API, zéro requête sous PolicyStop, 5 tests verts |
-| R1.13 | MUST | DONE | Gate R1 validé : matrice 9 sources, 7 actives / 2 offline (B-R009, B-R010), 109 tests verts, tag mi-r1-qualified |
-| R2.1 | MUST | DONE | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts |
-| R2.2 | MUST | DONE | Taxonomie auditée, conversions avec preuves empiriques, gardes physiques massique/volumique, gardes d'agrégation Gold, file de revue des alias < 0.90, 38 tests verts, 90% couverture core |
-| R2.3 | MUST | DONE | DQ, agrégations, alignement calendaire, indépendance de familles, 59 tests verts, 95% couverture |
-| R2.4 | MUST | DONE | Matrice de couverture SQL gold.market_coverage, lacunes indépendantes, pilote riz local/importé (Analamanga, Alaotra-Mangoro, Atsinanana + National), garde authenticité, 16 tests verts, couverture 94% |
-| R2.5 | MUST | DONE | Nouveau connecteur instat_tbe, ingestion Excel multi-éditions, conservation fréquences réelles sans faux mois, traçabilité institution primaire, 15 tests verts, 97% couverture |
-| R2.6 | MUST | DONE | Nouveau connecteur bfm_public, cours journaliers USD/EUR, respect des jours ouvrés sans interpolation, conventions achat/vente/moyen, 17 tests verts, 85% couverture |
-| R2.7 | MUST | DONE | Nouveau connecteur omh_public, gazole/super/pétrole, prix réglementés, séparation date d'effet vs publication, 14 tests verts, 81% couverture |
-| R2.8 | MUST | DONE | Tableau économique interprétable, dimensions étanches, fiches métriques, gestion stricte nullité, 19 tests verts, 97% couverture |
-| R2.9 | MUST | DONE | Exposition données/limites API, pagination [1, 1000], export CSV /v1/macro /v1/market/coverage /v1/economic/indicators, types OpenAPI/TS synchronisés, 6 tests verts, couverture 94% |
-| R2.10 | MUST | DONE | Vues marché et économie livrées, route /economy, 5 dimensions, 14 fiches métriques, complétude, 39 tests vitest verts, responsive 390px validé |
-| R3.1 | MUST | DONE | ADR-073, SPECS §17, clé explicite 5 composantes, national/régional, grille sans trous compressés, 36 mois min, 12 récents, cohortes, 16 tests verts, couverture 98% |
-| R3.2 | MUST | DONE | ADR-074, SPECS §17.2, datasets historiques as-of C2/C4, traçabilité temporelle, empreinte SHA-256 canonique, partitionnement sans fuite, 8 tests verts, couverture 92% |
-| R3.3 | MUST | DONE | ADR-075, SPECS §17.3, références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, 9 tests verts, couverture ML 84% |
-| R3.4 | MUST | DONE | ADR-076, SPECS §17.3, protocole d'évaluation trois phases, 6 fenêtres rolling-origin, étanchéité de sélection, holdout out-of-sample, décomposition par horizon, 6 tests verts, couverture 96% |
-| R3.5 | MUST | DONE | ADR-077, SPECS §17.3, intervalles conformes non paramétriques, seuil N_calib >= 8, uncalibrated_heuristic, intervalle Wilson 95%, audits couverture/largeur, 5 tests verts, couverture 96% |
-| R3.6 | SHOULD | DONE | ADR-105, SPECS §17.3, évaluation exogène macro BFM/OMH et climat CHIRPS, protocole d'ablation 4 familles, règle de parcimonie, validation anti-fuite, 4 tests verts, 70 tests ML verts, cov 94% |
-| R3.7 | MUST | DONE | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation, 4 tests verts, 53 tests ML verts, couverture 92% |
-| R3.8 | MUST | DONE | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines, 7 tests verts, couverture ML 92%, rapport publié |
-| R3.9 | MUST | DONE | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified |
-| R4.1 | MUST | DONE | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, séparation météo observée vs prévue, calendriers culturaux, migration 0014, 8 tests verts, couverture 94% |
-| R4.2 | MUST | DONE | ADR-081, SPECS §26, connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage raster Madagascar, 7 tests verts, couverture 85% |
-| R4.3 | MUST | DONE | ADR-082, SPECS §26, connecteur meteo_mg, extraction déterministe bulletins DGM, séparation émission/validité, refus probabilités inventées, 6 tests verts, couverture 89% |
-| R4.4 | MUST | DONE | ADR-083, SPECS §26, connecteurs fewsnet_mdg et ipc_mdg, séparation stricte courant vs projeté, 8 tests verts, couverture 91% |
-| R4.5 | MUST | DONE | ADR-084, SPECS §26, connecteur ecmwf_open, météo prévue archivable obs.weather_forecast, 7 tests verts, couverture 89% |
-| R4.6 | MUST | DONE | ADR-085, SPECS §26, module ketrika.geo.anomalies, seuil baseline N>=10 ans, abstention si insuffisant, anomalies pluie/température, agrégation zonale vérifiée, 15 tests verts, couverture 92% |
-| R4.7 | MUST | DONE | ADR-086, SPECS §26, versioning calendriers culturaux, disjonction baseline vs recommandation, corridors commerciaux prouvés, migration 0015, 23 tests verts, couverture 92% |
-| R4.8 | SHOULD | DONE | ADR-107, SPECS §26, télédétection agro-environnementale, masquage nuages SCL Sentinel-2, NDVI, VCI sous masque cultivé, abstention nuages > 70%, interdiction inférence directe tonnes, 6 tests verts, cov 92% |
+| R1.1 | MUST | TODO | 15a8e75 : registre sources.yaml requalifié, familles anti-fuite, cadences distinctes |
+| R1.2 | MUST | TODO | 2f9d872 : moteur CatalogDiscoveryEngine, pagination bornée, anti-SSRF validé |
+| R1.3 | MUST | TODO | d5c4124 : qualification INSTAT NIPC, découverte dynamique, multi-feuilles |
+| R1.4 | MUST | TODO | 1ef3119 : qualification MiASA ODR, CC-R authentique (75 valeurs, 100% exactitude/rappel) |
+| R1.5 | MUST | TODO | c39ae82 : qualification MinCC PPN, prix max vs constatés, anti-PII, silence stock respecté |
+| R1.6 | MUST | TODO | cbb91b0 : qualification Douanes Stats, flux vs totaux annuels, SH vérifiés (74 valeurs, 100% exactitude) |
+| R1.7 | MUST | TODO | 6 tests verts, couverture 88%, golden 100% ; collecte live BLOCKED (B-R009, HDX 403, AGENTS §8.1) |
+| R1.8 | MUST | TODO | qualification Banque mondiale RTFP, schéma C3 (wfp_fao), 10 tests verts, couverture 95%, golden 100% |
+| R1.9 | MUST | TODO | qualification FAOSTAT, distinction paddy/blanchi, 20 ans riz (2004-2023), 7 tests verts, couverture 81%, golden 100% |
+| R1.10 | MUST | TODO | requalification géographie, manifeste machine, 23 régions Loi 2021-010, non-assignation aveugle, 16 tests verts, couverture 90% |
+| R1.11 | MUST | TODO | 95068e9 : qualification NASA POWER v1.1.0, cohérence physique, sentinelles -999, non-assignation aveugle, 10 tests verts, couverture 93% ; live BLOCKED (B-R010) |
+| R1.12 | MUST | TODO | actualisation, reprise, alertes Mailpit, santé UI/API, zéro requête sous PolicyStop, 5 tests verts |
+| R1.13 | MUST | TODO | Gate R1 validé : matrice 9 sources, 7 actives / 2 offline (B-R009, B-R010), 109 tests verts, tag mi-r1-qualified |
+| R2.1 | MUST | IN_PROGRESS | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts |
+| R2.2 | MUST | IN_PROGRESS | Taxonomie auditée, conversions avec preuves empiriques, gardes physiques massique/volumique, gardes d'agrégation Gold, file de revue des alias < 0.90, 38 tests verts, 90% couverture core |
+| R2.3 | MUST | IN_PROGRESS | DQ, agrégations, alignement calendaire, indépendance de familles, 59 tests verts, 95% couverture |
+| R2.4 | MUST | IN_PROGRESS | Matrice de couverture SQL gold.market_coverage, lacunes indépendantes, pilote riz local/importé (Analamanga, Alaotra-Mangoro, Atsinanana + National), garde authenticité, 16 tests verts, couverture 94% |
+| R2.5 | MUST | IN_PROGRESS | Nouveau connecteur instat_tbe, ingestion Excel multi-éditions, conservation fréquences réelles sans faux mois, traçabilité institution primaire, 15 tests verts, 97% couverture |
+| R2.6 | MUST | IN_PROGRESS | Nouveau connecteur bfm_public, cours journaliers USD/EUR, respect des jours ouvrés sans interpolation, conventions achat/vente/moyen, 17 tests verts, 85% couverture |
+| R2.7 | MUST | IN_PROGRESS | Nouveau connecteur omh_public, gazole/super/pétrole, prix réglementés, séparation date d'effet vs publication, 14 tests verts, 81% couverture |
+| R2.8 | MUST | IN_PROGRESS | Tableau économique interprétable, dimensions étanches, fiches métriques, gestion stricte nullité, 19 tests verts, 97% couverture |
+| R2.9 | MUST | IN_PROGRESS | Exposition données/limites API, pagination [1, 1000], export CSV /v1/macro /v1/market/coverage /v1/economic/indicators, types OpenAPI/TS synchronisés, 6 tests verts, couverture 94% |
+| R2.10 | MUST | IN_PROGRESS | Vues marché et économie livrées, route /economy, 5 dimensions, 14 fiches métriques, complétude, 39 tests vitest verts, responsive 390px validé |
+| R2.11 | MUST | IN_PROGRESS | Miroir rétabli depuis PROGRESS, preuve historique 79338e1 ; pas de nouvelle qualification par cette réparation documentaire. |
+| R3.1 | MUST | IN_PROGRESS | ADR-073, SPECS §17, clé explicite 5 composantes, national/régional, grille sans trous compressés, 36 mois min, 12 récents, cohortes, 16 tests verts, couverture 98% |
+| R3.2 | MUST | IN_PROGRESS | ADR-074, SPECS §17.2, datasets historiques as-of C2/C4, traçabilité temporelle, empreinte SHA-256 canonique, partitionnement sans fuite, 8 tests verts, couverture 92% |
+| R3.3 | MUST | IN_PROGRESS | ADR-075, SPECS §17.3, références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, 9 tests verts, couverture ML 84% |
+| R3.4 | MUST | IN_PROGRESS | ADR-076, SPECS §17.3, protocole d'évaluation trois phases, 6 fenêtres rolling-origin, étanchéité de sélection, holdout out-of-sample, décomposition par horizon, 6 tests verts, couverture 96% |
+| R3.5 | MUST | IN_PROGRESS | ADR-077, SPECS §17.3, intervalles conformes non paramétriques, seuil N_calib >= 8, uncalibrated_heuristic, intervalle Wilson 95%, audits couverture/largeur, 5 tests verts, couverture 96% |
+| R3.6 | SHOULD | IN_PROGRESS | ADR-105, SPECS §17.3, évaluation exogène macro BFM/OMH et climat CHIRPS, protocole d'ablation 4 familles, règle de parcimonie, validation anti-fuite, 4 tests verts, 70 tests ML verts, cov 94% |
+| R3.7 | MUST | IN_PROGRESS | ADR-078, SPECS §17/§19, publication prévisions, limites/abstentions, API REST paginée/CSV, PriceChart transparent, zéro extrapolation, 4 tests verts, 53 tests ML verts, couverture 92% |
+| R3.8 | MUST | IN_PROGRESS | ADR-079, SPECS §17.4, évaluation réelle et suivi erreurs maturées, décomposition produit/zone/horizon/saison, benchmarking baselines, 7 tests verts, couverture ML 92%, rapport publié |
+| R3.9 | MUST | IN_PROGRESS | Gate de prévision des prix validé, 6 critères normatifs prouvés, couverture ML 92%, tag mi-r3-qualified |
+| R4.1 | MUST | IN_PROGRESS | ADR-080, SPECS §26, contrats géospatiaux/agroclimatiques, séparation météo observée vs prévue, calendriers culturaux, migration 0014, 8 tests verts, couverture 94% |
+| R4.2 | MUST | IN_PROGRESS | ADR-081, SPECS §26, connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage raster Madagascar, 7 tests verts, couverture 85% |
+| R4.3 | MUST | IN_PROGRESS | ADR-082, SPECS §26, connecteur meteo_mg, extraction déterministe bulletins DGM, séparation émission/validité, refus probabilités inventées, 6 tests verts, couverture 89% |
+| R4.4 | MUST | IN_PROGRESS | ADR-083, SPECS §26, connecteurs fewsnet_mdg et ipc_mdg, séparation stricte courant vs projeté, 8 tests verts, couverture 91% |
+| R4.5 | MUST | IN_PROGRESS | ADR-084, SPECS §26, connecteur ecmwf_open, météo prévue archivable obs.weather_forecast, 7 tests verts, couverture 89% |
+| R4.6 | MUST | IN_PROGRESS | ADR-085, SPECS §26, module ketrika.geo.anomalies, seuil baseline N>=10 ans, abstention si insuffisant, anomalies pluie/température, agrégation zonale vérifiée, 15 tests verts, couverture 92% |
+| R4.7 | MUST | IN_PROGRESS | ADR-086, SPECS §26, versioning calendriers culturaux, disjonction baseline vs recommandation, corridors commerciaux prouvés, migration 0015, 23 tests verts, couverture 92% |
+| R4.8 | SHOULD | IN_PROGRESS | ADR-107, SPECS §26, télédétection agro-environnementale, masquage nuages SCL Sentinel-2, NDVI, VCI sous masque cultivé, abstention nuages > 70%, interdiction inférence directe tonnes, 6 tests verts, cov 92% |
 | R4.9 | SHOULD | TODO | — |
 | R4.10 | SHOULD | TODO | — |
-| R4.11 | MUST | DONE | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie, 7 tests verts, couverture 92% |
-| R4.12 | MUST | DONE | Gate agroclimat/météo validé, 8 critères normatifs prouvés, couverture ketrika.geo 92%, tag mi-r4-qualified, 8 tests dédiés verts, 66 tests agroclimat verts, 0 fausse probabilité, zéro faux zéro |
-| R5.1 | MUST | DONE | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole de relevé anti-PII, prévention double comptage, 7 tests verts, couverture 93% |
-| R5.2 | MUST | DONE | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 |
-| R5.3 | MUST | DONE | Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels |
-| R5.4 | MUST | DONE | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique |
-| R5.5 | SHOULD | DONE | ADR-106, SPECS §27, modèle superficie x rendement, conversion sourcée ODR/FAOSTAT paddy->milled 0.667, pertes 10%, abstention histoire < 2 campagnes, 7 tests verts, cov 93% |
-| R5.6 | MUST | DONE | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks, 5 tests verts, cov 95% |
-| R5.7 | MUST | DONE | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique, 7 tests verts, cov 90% |
-| R5.8 | MUST | DONE | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs, 7 tests verts, cov 95% |
-| R5.9 | MUST | DONE | 2026-10-17T11:50:00Z |
-| R6.1 | MUST | DONE | 2026-10-17T12:05:00Z |
-| R6.2 | MUST | DONE | 2026-10-17T12:18:00Z |
-| R6.3 | MUST | DONE | 2026-10-17T12:33:00Z |
-| R6.4 | MUST | DONE | 2026-10-17T12:58:00Z |
-| R6.5 | MUST | DONE | 2026-10-17T13:20:00Z |
-| R6.6 | MUST | DONE | 2026-10-17T13:35:00Z |
-| R6.7 | MUST | DONE | 2026-10-17T14:02:00Z |
-| R6.8 | MUST | DONE | 2026-10-17T14:16:00Z |
-| R6.9 | MUST | DONE | 2026-10-17T14:26:00Z |
-| R6.10 | MUST | DONE | 2026-10-17T14:45:00Z |
-| R6.11 | MUST | DONE | 2026-10-17T14:48:00Z |
+| R4.11 | MUST | IN_PROGRESS | ADR-087, SPECS §19/§26.5, API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche, corridors et phénologie, 7 tests verts, couverture 92% |
+| R4.12 | MUST | IN_PROGRESS | Gate agroclimat/météo validé, 8 critères normatifs prouvés, couverture ketrika.geo 92%, tag mi-r4-qualified, 8 tests dédiés verts, 66 tests agroclimat verts, 0 fausse probabilité, zéro faux zéro |
+| R5.1 | MUST | IN_PROGRESS | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole de relevé anti-PII, prévention double comptage, 7 tests verts, couverture 93% |
+| R5.2 | MUST | IN_PROGRESS | Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 |
+| R5.3 | MUST | IN_PROGRESS | Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels |
+| R5.4 | MUST | IN_PROGRESS | Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique |
+| R5.5 | SHOULD | IN_PROGRESS | ADR-106, SPECS §27, modèle superficie x rendement, conversion sourcée ODR/FAOSTAT paddy->milled 0.667, pertes 10%, abstention histoire < 2 campagnes, 7 tests verts, cov 93% |
+| R5.6 | MUST | IN_PROGRESS | Bilan d'offre sans double comptage, équation de conservation, flux vs stocks, 5 tests verts, cov 95% |
+| R5.7 | MUST | IN_PROGRESS | Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique, 7 tests verts, cov 90% |
+| R5.8 | MUST | IN_PROGRESS | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs, 7 tests verts, cov 95% |
+| R5.9 | MUST | IN_PROGRESS | 2026-10-17T11:50:00Z |
+| R6.1 | MUST | IN_PROGRESS | 2026-10-17T12:05:00Z |
+| R6.2 | MUST | IN_PROGRESS | 2026-10-17T12:18:00Z |
+| R6.3 | MUST | IN_PROGRESS | 2026-10-17T12:33:00Z |
+| R6.4 | MUST | IN_PROGRESS | 2026-10-17T12:58:00Z |
+| R6.5 | MUST | IN_PROGRESS | 2026-10-17T13:20:00Z |
+| R6.6 | MUST | IN_PROGRESS | 2026-10-17T13:35:00Z |
+| R6.7 | MUST | IN_PROGRESS | 2026-10-17T14:02:00Z |
+| R6.8 | MUST | IN_PROGRESS | 2026-10-17T14:16:00Z |
+| R6.9 | MUST | IN_PROGRESS | 2026-10-17T14:26:00Z |
+| R6.10 | MUST | IN_PROGRESS | 2026-10-17T14:45:00Z |
+| R6.11 | MUST | IN_PROGRESS | 2026-10-17T14:48:00Z |
 
 ## 1. Résultat attendu et limites d'autorité
 

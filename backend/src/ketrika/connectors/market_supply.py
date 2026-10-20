@@ -8,7 +8,7 @@ import json
 import logging
 from collections.abc import Iterable
 from datetime import UTC, date, datetime
-from typing import Any
+from typing import Any, ClassVar
 
 from ketrika.connectors.base import (
     Connector,
@@ -34,6 +34,7 @@ class MarketSupplyConnector(Connector):
     """Ingests official and institutional market supply observations (arrivals and stocks) under zero-PII rules."""
 
     source_id = "market_supply"
+    parser_version: ClassVar[str] = "1.0.0"
 
     def discover(self, ctx: RunContext) -> Iterable[DiscoveredItem]:
         """Discover available market supply datasets from registered institutional drops or metadata."""
@@ -44,7 +45,9 @@ class MarketSupplyConnector(Connector):
                     yield DiscoveredItem(
                         url=str(u["url"]),
                         partition_key=str(u.get("partition_key", "supply_drop_custom")),
-                        hints={str(k): str(v) for k, v in u.get("hints", {}).items()} if isinstance(u.get("hints"), dict) else {},
+                        hints={str(k): str(v) for k, v in u.get("hints", {}).items()}
+                        if isinstance(u.get("hints"), dict)
+                        else {},
                     )
             return
 
@@ -74,7 +77,9 @@ class MarketSupplyConnector(Connector):
 
         raw_bytes = ctx.bronze_store.get(artifact.object_key)
         if not raw_bytes:
-            return ParseResult(records=[], issues=[{"error": "Empty artifact payload"}], parser_version="1.0.0")
+            return ParseResult(
+                records=[], issues=[{"error": "Empty artifact payload"}], parser_version="1.0.0"
+            )
 
         # Attempt to decode text
         try:
@@ -106,7 +111,9 @@ class MarketSupplyConnector(Connector):
         try:
             reader = csv.DictReader(io.StringIO(text_content))
             if not reader.fieldnames:
-                return ParseResult(records=[], issues=[{"error": "CSV contains no header"}], parser_version="1.0.0")
+                return ParseResult(
+                    records=[], issues=[{"error": "CSV contains no header"}], parser_version="1.0.0"
+                )
 
             # Pre-scan headers for PII
             header_dict = dict.fromkeys(reader.fieldnames, "")
@@ -128,7 +135,9 @@ class MarketSupplyConnector(Connector):
         """Parse and normalize a single CSV row into StockRecord."""
         target_str = (row.get("target") or "stock_inventory").strip().lower()
         if target_str not in [t.value for t in QuantityTarget]:
-            raise ValueError(f"Invalid target '{target_str}'. Expected one of {[t.value for t in QuantityTarget]}")
+            raise ValueError(
+                f"Invalid target '{target_str}'. Expected one of {[t.value for t in QuantityTarget]}"
+            )
 
         mode_str = (row.get("measurement_mode") or "declared_trader").strip().lower()
         if mode_str not in [m.value for m in QuantityMeasurementMode]:
@@ -142,7 +151,9 @@ class MarketSupplyConnector(Connector):
         if not product_raw:
             raise ValueError("product_raw is required")
 
-        location_raw = (row.get("location_raw") or row.get("market_name") or row.get("market_code") or "").strip()
+        location_raw = (
+            row.get("location_raw") or row.get("market_name") or row.get("market_code") or ""
+        ).strip()
         market_code = (row.get("market_code") or "").strip() or None
 
         # Parse dates
@@ -174,7 +185,9 @@ class MarketSupplyConnector(Connector):
         quantity_kg = convert_quantity_to_kg(qty_raw, unit_enum, product_code=product_raw)
 
         published_at_str = (row.get("published_at") or "").strip()
-        published_at = datetime.fromisoformat(published_at_str).astimezone(UTC) if published_at_str else None
+        published_at = (
+            datetime.fromisoformat(published_at_str).astimezone(UTC) if published_at_str else None
+        )
 
         stock_status = (row.get("stock_status") or "sufficient").strip()
 

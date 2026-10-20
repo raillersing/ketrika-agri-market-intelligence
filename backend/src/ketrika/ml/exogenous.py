@@ -147,9 +147,7 @@ def build_exogenous_features(
     if config.include_climate and climate_series:
         for name, series in sorted(climate_series.items()):
             if len(series) != n:
-                raise ValueError(
-                    f"Climate series {name} length {len(series)} != prices length {n}"
-                )
+                raise ValueError(f"Climate series {name} length {len(series)} != prices length {n}")
             feature_names.append(f"climate_{name}_lag1")
             col = [float(series[i - 1]) for i in range(max_lag, n)]
             columns.append(col)
@@ -330,13 +328,7 @@ def evaluate_feature_ablation(
         denom = float(np.sum(actuals))
         wape = float(np.sum(errors) / denom) if denom > 0 else 0.0
         mae = float(np.mean(errors))
-        smape = float(
-            np.mean(
-                2.0
-                * errors
-                / np.maximum(np.abs(actuals) + np.abs(preds), 1e-6)
-            )
-        )
+        smape = float(np.mean(2.0 * errors / np.maximum(np.abs(actuals) + np.abs(preds), 1e-6)))
 
         if fam_name == "price_only":
             baseline_wape = wape
@@ -358,11 +350,7 @@ def evaluate_feature_ablation(
     best_wape = baseline_wape
 
     for fam_name, res in family_results.items():
-        delta = (
-            ((res.wape - baseline_wape) / baseline_wape) * 100.0
-            if baseline_wape > 0
-            else 0.0
-        )
+        delta = ((res.wape - baseline_wape) / baseline_wape) * 100.0 if baseline_wape > 0 else 0.0
         updated_res = AblationFamilyResult(
             family_name=res.family_name,
             feature_names=res.feature_names,

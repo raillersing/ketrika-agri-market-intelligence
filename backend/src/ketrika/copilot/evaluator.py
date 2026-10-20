@@ -102,7 +102,9 @@ class CopilotBenchmarkRunner:
         if eval_file_path is None:
             # Look in standard locations
             candidates = [
-                Path(__file__).resolve().parent.parent.parent.parent / "tests" / "copilot_eval.yaml",
+                Path(__file__).resolve().parent.parent.parent.parent
+                / "tests"
+                / "copilot_eval.yaml",
                 Path("/app/tests/copilot_eval.yaml"),
                 Path("tests/copilot_eval.yaml"),
             ]
@@ -132,7 +134,10 @@ class CopilotBenchmarkRunner:
     def run_benchmark(self) -> CopilotEvaluationSummary:
         """Run all evaluation questions and compile the benchmark report."""
         if self.use_mock_db:
-            with patch("ketrika.copilot.agent.execute_copilot_query", side_effect=_mock_copilot_query_executor):
+            with patch(
+                "ketrika.copilot.agent.execute_copilot_query",
+                side_effect=_mock_copilot_query_executor,
+            ):
                 return self._execute_benchmark_loop()
         else:
             return self._execute_benchmark_loop()
@@ -152,8 +157,12 @@ class CopilotBenchmarkRunner:
             q_text = str(item.get("question", "")).strip()
             category = str(item.get("category", "general"))
             expected_target = str(item.get("expected_target_view", "")).strip()
-            is_adversarial = bool(item.get("is_adversarial", False)) or category == "adversarial_security"
-            is_abstain = bool(item.get("expected_abstain", False)) or category == "abstain_out_of_scope"
+            is_adversarial = (
+                bool(item.get("is_adversarial", False)) or category == "adversarial_security"
+            )
+            is_abstain = (
+                bool(item.get("expected_abstain", False)) or category == "abstain_out_of_scope"
+            )
 
             if category not in categories_map:
                 categories_map[category] = CategorySummary(category=category)
@@ -341,7 +350,9 @@ class CopilotBenchmarkRunner:
 
         cat_dict: dict[str, dict[str, Any]] = {}
         for cat, csum in categories_map.items():
-            csum.accuracy_pct = round((csum.passed / csum.total) * 100.0, 2) if csum.total > 0 else 0.0
+            csum.accuracy_pct = (
+                round((csum.passed / csum.total) * 100.0, 2) if csum.total > 0 else 0.0
+            )
             cat_dict[cat] = asdict(csum)
 
         return CopilotEvaluationSummary(

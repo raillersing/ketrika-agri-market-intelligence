@@ -96,14 +96,10 @@ def check_provenance_complete(session: Session, source_id: str | None = None) ->
         )
         row = session.execute(sql).fetchone()
 
-    try:
-        total_num = int(row[0]) if row and row[0] is not None else 0
-        valid_num = int(row[1]) if row and row[1] is not None else 0
-    except (TypeError, ValueError):
-        total_num = 0
-        valid_num = 0
+    total = row[0] if row else 0
+    valid = row[1] if row else 0
 
-    rate = (valid_num / total_num * 100.0) if total_num > 0 else 100.0
+    rate = (valid / total * 100.0) if total > 0 else 100.0
     passed = rate >= 100.0
 
     return DqCheckResult(
@@ -113,7 +109,7 @@ def check_provenance_complete(session: Session, source_id: str | None = None) ->
         passed=passed,
         metric=round(rate, 2),
         threshold=100.0,
-        details={"total_records": total_num, "valid_provenance": valid_num},
+        details={"total_records": total, "valid_provenance": valid},
     )
 
 
@@ -403,26 +399,16 @@ def get_publication_denominators(
         )
         r_row = session.execute(row_sql).fetchone()
 
-    def _to_int(val: Any) -> int:
-        if type(val) is int:
-            return val
-        if isinstance(val, (float, str)):
-            try:
-                return int(val)
-            except (TypeError, ValueError):
-                return 0
-        return 0
+    total_files = f_row[0] if f_row else 0
+    parsed_files = f_row[1] if f_row else 0
+    failed_files = f_row[2] if f_row else 0
+    review_files = f_row[3] if f_row else 0
+    pending_files = f_row[4] if f_row else 0
 
-    total_files = _to_int(f_row[0]) if f_row else 0
-    parsed_files = _to_int(f_row[1]) if f_row else 0
-    failed_files = _to_int(f_row[2]) if f_row else 0
-    review_files = _to_int(f_row[3]) if f_row else 0
-    pending_files = _to_int(f_row[4]) if f_row else 0
-
-    candidate_rows = _to_int(r_row[0]) if r_row else 0
-    accepted_rows = _to_int(r_row[1]) if r_row else 0
-    rejected_rows = _to_int(r_row[2]) if r_row else 0
-    review_rows = _to_int(r_row[3]) if r_row else 0
+    candidate_rows = r_row[0] if r_row else 0
+    accepted_rows = r_row[1] if r_row else 0
+    rejected_rows = r_row[2] if r_row else 0
+    review_rows = r_row[3] if r_row else 0
 
     denominators = PublicationDenominators(
         candidate_files=total_files,
@@ -439,9 +425,89 @@ def get_publication_denominators(
     return denominators
 
 
+def check_publication_parse_success(
+    session: Session, candidate_record_ids: tuple[uuid.UUID, ...]
+) -> DqCheckResult:
+    """Check every complete related batch, never only its surviving observations."""
+    if any(not isinstance(value, uuid.UUID) for value in candidate_record_ids):
+        raise GoldDqRejected("invalid_publication_candidate_scope")
+    if not candidate_record_ids:
+        return DqCheckResult(
+            "parse_success_rate",
+            None,
+            "publication_batches",
+            True,
+            0.0,
+            99.0,
+            {"state": "empty", "rate": None, "groups": []},
+        )
+    rows = session.execute(
+        text("""
+        WITH candidates AS (
+            SELECT unnest(CAST(:candidate_ids AS uuid[])) AS source_record_id
+        ), relevant_batches AS (
+            SELECT DISTINCT m.run_id FROM meta.ingestion_batch_member m
+            JOIN candidates c USING (source_record_id)
+        ), scope AS (
+            SELECT m.run_id::text AS group_id, m.source_record_id, batch.n_artifacts AS expected_total
+            FROM meta.ingestion_batch_member m JOIN relevant_batches b USING (run_id)
+            JOIN meta.ingestion_batch batch USING (run_id)
+            UNION ALL
+            SELECT 'legacy:' || c.source_record_id::text, c.source_record_id, 1
+            FROM candidates c WHERE NOT EXISTS (
+                SELECT 1 FROM meta.ingestion_batch_member m
+                WHERE m.source_record_id = c.source_record_id
+            )
+        )
+        SELECT scope.group_id, count(*)::integer AS total,
+            count(*) FILTER (WHERE sr.extraction_status = 'parsed')::integer AS parsed,
+            min(scope.expected_total)::integer AS expected_total
+        FROM scope LEFT JOIN meta.source_record sr USING (source_record_id)
+        GROUP BY scope.group_id ORDER BY scope.group_id
+    """),
+        {"candidate_ids": list(set(candidate_record_ids))},
+    ).all()
+    if not rows:
+        raise GoldDqRejected("publication_parse_scope_missing")
+    groups: list[dict[str, Any]] = []
+    for group_id, total, parsed, expected_total in rows:
+        if (
+            type(total) is not int
+            or type(parsed) is not int
+            or total <= 0
+            or not 0 <= parsed <= total
+            or total != expected_total
+        ):
+            raise GoldDqRejected("publication_parse_counts_invalid")
+        groups.append(
+            {
+                "group_id": str(group_id),
+                "total": total,
+                "parsed": parsed,
+                "rate": parsed / total * 100.0,
+            }
+        )
+    minimum = min(float(group["rate"]) for group in groups)
+    return DqCheckResult(
+        "parse_success_rate",
+        None,
+        "publication_batches",
+        minimum >= 99.0,
+        minimum,
+        99.0,
+        {
+            "state": "measured",
+            "groups": groups,
+            "scope": "complete_related_batches_current_parse_status",
+        },
+    )
+
 
 def check_blocking_dq_gate(
-    session: Session, source_id: str | None = None
+    session: Session,
+    source_id: str | None = None,
+    *,
+    candidate_record_ids: tuple[uuid.UUID, ...] | None = None,
 ) -> list[DqCheckResult]:
     """Execute blocking DQ gate checks and refuse publication if any fails (SPECS §14, R2.3).
 
@@ -461,7 +527,11 @@ def check_blocking_dq_gate(
         )
 
     # 2. Parse success rate (threshold 99.0%)
-    parse_check = check_parse_success_rate(session, source_id)
+    parse_check = (
+        check_parse_success_rate(session, source_id)
+        if candidate_record_ids is None
+        else check_publication_parse_success(session, candidate_record_ids)
+    )
     checks.append(parse_check)
     if not parse_check.passed:
         raise GoldDqRejected(

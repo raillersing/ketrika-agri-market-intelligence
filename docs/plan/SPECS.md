@@ -1836,3 +1836,8 @@ Les quantités sont des grandeurs extensives soumises à une typologie stricte p
 - Les cumuls temporels de flux ne peuvent être effectués qu'entre observations disjointes dans le temps.
 
 
+### Extension collecte manuelle — ADR-108 (2026-10-20)
+
+POST /v1/sources/collect est réservé aux administrateurs, avec request_id UUID obligatoire et source_id optionnel. La sélection est limitée aux connecteurs enregistrés et aux permissions de collecte autorisées. Les reçus sont persistés dans meta.collection_request (migration 0017) ; un même identifiant et une même sélection ne réémettent pas de requête. Une sélection différente ou un propriétaire concurrent provoquent 409.
+GET /v1/sources/collection-options, /collections et /collections/{request_id} exigent une session authentifiée. Une opération abandonnée devient interrupted sans relance automatique. Le recalcul Gold reste distinct de l'acquisition, aucune fraîcheur n'est déduite de sa seule réussite. Les erreurs ne divulguent ni SQL ni secrets. L'interface affiche les résultats persistés, les étapes réelles et les limites du connecteur Banque mondiale (quinze estimations imputées).
+

@@ -124,7 +124,9 @@ def test_ecmwf_open_two_runs_succession():
                 content_sha256="sha1",
                 is_new=True,
             ),
-            RunContext(source_id="ecmwf_open", run_id="r1", bronze_store=DummyBronzeStore(b1.read())),
+            RunContext(
+                source_id="ecmwf_open", run_id="r1", bronze_store=DummyBronzeStore(b1.read())
+            ),
         )
 
     with open(f2, "rb") as b2:
@@ -137,7 +139,9 @@ def test_ecmwf_open_two_runs_succession():
                 content_sha256="sha2",
                 is_new=True,
             ),
-            RunContext(source_id="ecmwf_open", run_id="r2", bronze_store=DummyBronzeStore(b2.read())),
+            RunContext(
+                source_id="ecmwf_open", run_id="r2", bronze_store=DummyBronzeStore(b2.read())
+            ),
         )
 
     assert len(res1.records) == 4

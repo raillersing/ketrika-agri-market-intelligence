@@ -209,7 +209,9 @@ def validate_taxonomy(taxonomy_dir: Path | str | None = None) -> list[str]:
 
         # R2.2 Rice vs Paddy distinction
         norm_alias = norm.lower()
-        if a.product_code == "RICE_PADDY" and any(k in norm_alias for k in ("blanc", "white", "blanchi")):
+        if a.product_code == "RICE_PADDY" and any(
+            k in norm_alias for k in ("blanc", "white", "blanchi")
+        ):
             errors.append(
                 f"Paddy alias '{a.alias}' mistakenly references milled white rice characteristics"
             )

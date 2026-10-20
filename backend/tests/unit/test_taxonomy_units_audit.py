@@ -240,9 +240,7 @@ def test_uncalibrated_units_excluded_from_comparable() -> None:
     assert status_gony == "uncertain"
 
     # Daba for CASSAVA_FRESH: confidence 0.70 -> uncertain, val is None
-    val_daba, _, conf_daba, status_daba = convert_to_base(
-        1.0, "daba", product_code="CASSAVA_FRESH"
-    )
+    val_daba, _, conf_daba, status_daba = convert_to_base(1.0, "daba", product_code="CASSAVA_FRESH")
     assert val_daba is None
     assert conf_daba < 0.80
     assert status_daba == "uncertain"
@@ -327,7 +325,9 @@ def test_missing_values_never_default_to_zero() -> None:
 
 def test_aggregation_guard_refuses_mixed_currencies() -> None:
     """Interdire moyenne entre devises différentes sans conversion préalable."""
-    item_mga = ComparablePriceItem(price_mga_per_base=Decimal("3000"), base_unit="kg", currency="MGA")
+    item_mga = ComparablePriceItem(
+        price_mga_per_base=Decimal("3000"), base_unit="kg", currency="MGA"
+    )
     item_usd = ComparablePriceItem(price_mga_per_base=Decimal("1"), base_unit="kg", currency="USD")
 
     with pytest.raises(IncompatibleAggregationError, match="incompatible_currencies"):
@@ -345,10 +345,16 @@ def test_aggregation_guard_refuses_mixed_base_units() -> None:
 
 def test_aggregation_guard_refuses_mixing_index_and_price() -> None:
     """Interdire moyenne entre indice (base 100) et prix nominal en Ariary."""
-    item_price = ComparablePriceItem(price_mga_per_base=Decimal("3000"), base_unit="kg", is_index=False)
-    item_index = ComparablePriceItem(price_mga_per_base=Decimal("125.4"), base_unit="kg", is_index=True)
+    item_price = ComparablePriceItem(
+        price_mga_per_base=Decimal("3000"), base_unit="kg", is_index=False
+    )
+    item_index = ComparablePriceItem(
+        price_mga_per_base=Decimal("125.4"), base_unit="kg", is_index=True
+    )
 
-    with pytest.raises(IncompatibleAggregationError, match="cannot_aggregate_index_with_nominal_prices"):
+    with pytest.raises(
+        IncompatibleAggregationError, match="cannot_aggregate_index_with_nominal_prices"
+    ):
         validate_comparable_group([item_price, item_index])
 
     with pytest.raises(IncompatibleAggregationError, match="cannot_aggregate_index_as_price"):
@@ -364,7 +370,9 @@ def test_aggregation_guard_refuses_unsegmented_actor_levels() -> None:
         price_mga_per_base=Decimal("1500"), base_unit="kg", actor_level="farmgate"
     )
 
-    with pytest.raises(IncompatibleAggregationError, match="cannot_aggregate_incompatible_actor_levels"):
+    with pytest.raises(
+        IncompatibleAggregationError, match="cannot_aggregate_incompatible_actor_levels"
+    ):
         validate_comparable_group([item_retail, item_farmgate], allow_mixed_actors=False)
 
     # When explicit opt-in is granted, validation passes
@@ -551,23 +559,87 @@ def test_validate_taxonomy_catches_all_defects(tmp_path) -> None:
 
     # 1. Duplicate product codes and schema errors
     prods = [
-        {"product_code": "RICE_PADDY", "canonical_name_fr": "Paddy", "category": "cereal", "base_unit": "kg"},
-        {"product_code": "RICE_PADDY", "canonical_name_fr": "Paddy Bis", "category": "cereal", "base_unit": "kg"},
-        {"product_code": "RICE_WHITE_LOCAL", "canonical_name_fr": "Riz Blanc", "category": "cereal", "base_unit": "pound"},
-        {"product_code": "RICE_WHITE_IMPORTED", "canonical_name_fr": "Riz Imp", "category": "cereal", "base_unit": "kg", "hs6_codes": ["123"]},
-        {"product_code": "MAIZE_GRAIN", "canonical_name_fr": "Maïs", "category": "cereal", "base_unit": "kg", "faostat_item_codes": [0]},
+        {
+            "product_code": "RICE_PADDY",
+            "canonical_name_fr": "Paddy",
+            "category": "cereal",
+            "base_unit": "kg",
+        },
+        {
+            "product_code": "RICE_PADDY",
+            "canonical_name_fr": "Paddy Bis",
+            "category": "cereal",
+            "base_unit": "kg",
+        },
+        {
+            "product_code": "RICE_WHITE_LOCAL",
+            "canonical_name_fr": "Riz Blanc",
+            "category": "cereal",
+            "base_unit": "pound",
+        },
+        {
+            "product_code": "RICE_WHITE_IMPORTED",
+            "canonical_name_fr": "Riz Imp",
+            "category": "cereal",
+            "base_unit": "kg",
+            "hs6_codes": ["123"],
+        },
+        {
+            "product_code": "MAIZE_GRAIN",
+            "canonical_name_fr": "Maïs",
+            "category": "cereal",
+            "base_unit": "kg",
+            "faostat_item_codes": [0],
+        },
     ]
     with open(tmp_path / "products.yaml", "w", encoding="utf-8") as f:
         yaml.safe_dump(prods, f)
 
     # 2. Defective aliases
     aliases = [
-        {"alias": "unknown product ref", "lang": "fr", "product_code": "DOES_NOT_EXIST", "confidence": 0.95, "evidence": "Some proof"},
-        {"alias": "dup alias", "lang": "fr", "product_code": "RICE_PADDY", "confidence": 0.95, "evidence": "Proof 1"},
-        {"alias": "dup  alias", "lang": "fr", "product_code": "RICE_PADDY", "confidence": 0.95, "evidence": "Proof 2"},
-        {"alias": "low conf no note", "lang": "fr", "product_code": "RICE_PADDY", "confidence": 0.85, "note": "", "evidence": "Proof"},
-        {"alias": "paddy blanc blanchi", "lang": "fr", "product_code": "RICE_PADDY", "confidence": 0.95, "evidence": "Contradictory proof"},
-        {"alias": "akotry milled", "lang": "fr", "product_code": "RICE_WHITE_LOCAL", "confidence": 0.95, "evidence": "Contradictory proof"},
+        {
+            "alias": "unknown product ref",
+            "lang": "fr",
+            "product_code": "DOES_NOT_EXIST",
+            "confidence": 0.95,
+            "evidence": "Some proof",
+        },
+        {
+            "alias": "dup alias",
+            "lang": "fr",
+            "product_code": "RICE_PADDY",
+            "confidence": 0.95,
+            "evidence": "Proof 1",
+        },
+        {
+            "alias": "dup  alias",
+            "lang": "fr",
+            "product_code": "RICE_PADDY",
+            "confidence": 0.95,
+            "evidence": "Proof 2",
+        },
+        {
+            "alias": "low conf no note",
+            "lang": "fr",
+            "product_code": "RICE_PADDY",
+            "confidence": 0.85,
+            "note": "",
+            "evidence": "Proof",
+        },
+        {
+            "alias": "paddy blanc blanchi",
+            "lang": "fr",
+            "product_code": "RICE_PADDY",
+            "confidence": 0.95,
+            "evidence": "Contradictory proof",
+        },
+        {
+            "alias": "akotry milled",
+            "lang": "fr",
+            "product_code": "RICE_WHITE_LOCAL",
+            "confidence": 0.95,
+            "evidence": "Contradictory proof",
+        },
     ]
     with open(tmp_path / "aliases.yaml", "w", encoding="utf-8") as f:
         yaml.safe_dump(aliases, f)
@@ -668,8 +740,13 @@ def test_validate_units_catches_all_defects(tmp_path) -> None:
     assert any("Mass unit 'bad_mass' must have target_unit 'kg'" in e for e in errors)
     assert any("Volume unit 'bad_volume' must have target_unit 'l'" in e for e in errors)
     assert any("has confidence 0.85 >= 0.8 but missing evidence" in e for e in errors)
-    assert any("override for 'RICE_WHITE_LOCAL' has confidence >= 0.8 but missing evidence" in e for e in errors)
-    assert any("override for 'RICE_WHITE_LOCAL' has invalid target_unit 'yards'" in e for e in errors)
+    assert any(
+        "override for 'RICE_WHITE_LOCAL' has confidence >= 0.8 but missing evidence" in e
+        for e in errors
+    )
+    assert any(
+        "override for 'RICE_WHITE_LOCAL' has invalid target_unit 'yards'" in e for e in errors
+    )
 
 
 def test_get_unit_and_conversion_exceptions() -> None:
@@ -692,8 +769,12 @@ def test_get_unit_and_conversion_exceptions() -> None:
 def test_aggregation_guards_additional_invariants() -> None:
     """Verify multiple products refusal, empty groups and negative price filtering."""
     # 1. Multiple products
-    i1 = ComparablePriceItem(price_mga_per_base=Decimal("2000"), base_unit="kg", product_code="RICE_WHITE_LOCAL")
-    i2 = ComparablePriceItem(price_mga_per_base=Decimal("1500"), base_unit="kg", product_code="MAIZE_GRAIN")
+    i1 = ComparablePriceItem(
+        price_mga_per_base=Decimal("2000"), base_unit="kg", product_code="RICE_WHITE_LOCAL"
+    )
+    i2 = ComparablePriceItem(
+        price_mga_per_base=Decimal("1500"), base_unit="kg", product_code="MAIZE_GRAIN"
+    )
     with pytest.raises(IncompatibleAggregationError, match="cannot_aggregate_multiple_products"):
         validate_comparable_group([i1, i2])
 
@@ -705,4 +786,3 @@ def test_aggregation_guards_additional_invariants() -> None:
     i_neg = ComparablePriceItem(price_mga_per_base=Decimal("-500"), base_unit="kg")
     i_zero = ComparablePriceItem(price_mga_per_base=Decimal("0"), base_unit="kg")
     assert filter_comparable_items([i_neg, i_zero]) == []
-

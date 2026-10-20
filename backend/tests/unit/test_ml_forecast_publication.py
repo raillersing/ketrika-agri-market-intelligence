@@ -47,7 +47,9 @@ def dummy_price_series() -> list[EligibleSeries]:
     ]
 
 
-def test_series_fingerprint_deterministic_and_unique(dummy_price_series: list[EligibleSeries]) -> None:
+def test_series_fingerprint_deterministic_and_unique(
+    dummy_price_series: list[EligibleSeries],
+) -> None:
     """Lineage fingerprint must be strictly deterministic and sensitive to content."""
     cutoff = date(2026, 1, 1)
     fp1 = compute_series_fingerprint(cutoff, dummy_price_series)
@@ -77,7 +79,9 @@ def test_run_price_forecasting_pipeline_preserves_lineage_and_metadata(
         excluded_series=[],
         summary_reasons={},
     )
-    monkeypatch.setattr("ketrika.ml.forecast.audit_series_eligibility", lambda **kwargs: mock_report)
+    monkeypatch.setattr(
+        "ketrika.ml.forecast.audit_series_eligibility", lambda **kwargs: mock_report
+    )
 
     # Mock refresh_gold_views
     monkeypatch.setattr("ketrika.ml.forecast.refresh_gold_views", lambda *args, **kwargs: None)
@@ -152,7 +156,9 @@ def test_forecast_abstentions_and_rejections_recorded(monkeypatch: pytest.Monkey
         excluded_series=excluded,
         summary_reasons={},
     )
-    monkeypatch.setattr("ketrika.ml.forecast.audit_series_eligibility", lambda **kwargs: mock_report)
+    monkeypatch.setattr(
+        "ketrika.ml.forecast.audit_series_eligibility", lambda **kwargs: mock_report
+    )
 
     mock_session = MagicMock()
 

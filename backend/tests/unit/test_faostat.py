@@ -388,4 +388,3 @@ def test_faostat_evidence_schema_c3(faostat_fixture_bytes: bytes) -> None:
                 assert record.evidence.get("is_forecast_or_estimated") is False
         elif isinstance(record, TradeFlowRecord):
             assert "is_forecast_or_estimated" in record.evidence
-

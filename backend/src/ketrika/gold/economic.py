@@ -20,7 +20,9 @@ from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
-DimensionType = Literal["inflation", "exchange_rate", "fuel_energy", "external_trade", "real_activity"]
+DimensionType = Literal[
+    "inflation", "exchange_rate", "fuel_energy", "external_trade", "real_activity"
+]
 CompletenessStatus = Literal["complete", "partial", "no_data"]
 
 # Null reason codes
@@ -255,6 +257,7 @@ ECONOMIC_METRIC_CARDS: dict[str, EconomicMetricCard] = {
 # CALCULATIONS & GUARDS
 # =========================================================================
 
+
 def calculate_safe_variation(
     current_val: float | None,
     prev_val: float | None,
@@ -318,8 +321,12 @@ def audit_inflation_vs_market_price_distinctness(
 ) -> dict[str, Any]:
     """Audit formal separation between CPI food inflation and direct market price variation."""
     return {
-        "cpi_food_inflation_rate_pct": round(cpi_food_chg_12m * 100.0, 2) if cpi_food_chg_12m is not None else None,
-        "market_price_variation_rate_pct": round(market_price_chg_12m * 100.0, 2) if market_price_chg_12m is not None else None,
+        "cpi_food_inflation_rate_pct": round(cpi_food_chg_12m * 100.0, 2)
+        if cpi_food_chg_12m is not None
+        else None,
+        "market_price_variation_rate_pct": round(market_price_chg_12m * 100.0, 2)
+        if market_price_chg_12m is not None
+        else None,
         "spread_pct_points": (
             round((market_price_chg_12m - cpi_food_chg_12m) * 100.0, 2)
             if (cpi_food_chg_12m is not None and market_price_chg_12m is not None)
@@ -336,6 +343,7 @@ def audit_inflation_vs_market_price_distinctness(
 # =========================================================================
 # DATA MODELS & QUERIES
 # =========================================================================
+
 
 @dataclass
 class IndicatorObservationItem:

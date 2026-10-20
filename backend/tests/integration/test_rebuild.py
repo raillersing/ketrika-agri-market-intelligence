@@ -62,7 +62,7 @@ def test_rebuild_preserves_exact_counts_offline(httpserver, db_session):
     bronze_store = BronzeStore()
     httpserver.expect_request("/robots.txt").respond_with_data("", status=404)
     policy = PolicyEngine()
-    http_client = PoliteHttpClient(policy_engine=policy)
+    http_client = PoliteHttpClient(policy_engine=policy, allow_loopback=True)
 
     connector = DummyCsvConnector()
     connector.source_id = source_id
@@ -107,7 +107,7 @@ def test_rebuild_preserves_exact_counts_offline(httpserver, db_session):
     # Qualified CSV cells only; not a full historical-store R0.8 certification.
     rebuild_stats = rebuild_database(session=db_session, offline=True, source_id=source_id)
     assert rebuild_stats["source_records_replayed"] >= 1
-    assert rebuild_stats["gold_views_refreshed"] == 12
+    assert rebuild_stats["gold_views_refreshed"] == 13
 
     # 4. Check count after rebuild
     obs_after = list(db_session.execute(stmt).scalars().all())

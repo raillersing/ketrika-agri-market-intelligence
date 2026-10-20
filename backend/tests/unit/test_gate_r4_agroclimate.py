@@ -228,7 +228,11 @@ def test_gate_r4_c5_ecmwf_open_data_weather_forecast_integrity():
     assert len(result.issues) == 0
     assert len(result.records) >= 1
     for r in result.records:
-        if r.predicted_p10 is not None and r.predicted_p90 is not None and r.predicted_value is not None:
+        if (
+            r.predicted_p10 is not None
+            and r.predicted_p90 is not None
+            and r.predicted_value is not None
+        ):
             assert r.predicted_p10 <= r.predicted_value <= r.predicted_p90
 
 
@@ -267,7 +271,11 @@ def test_gate_r4_c6_agroclimatic_anomalies_and_baseline_threshold():
     assert isinstance(anomaly, ClimateAnomalyResult)
     assert anomaly.percent_of_normal is not None
     assert anomaly.percent_of_normal < 100.0  # Deficit
-    assert anomaly.risk_level in [AgroClimateRiskLevel.MEDIUM, AgroClimateRiskLevel.HIGH, AgroClimateRiskLevel.CRITICAL]
+    assert anomaly.risk_level in [
+        AgroClimateRiskLevel.MEDIUM,
+        AgroClimateRiskLevel.HIGH,
+        AgroClimateRiskLevel.CRITICAL,
+    ]
 
     # 4. Anomaly computation on invalid baseline (None) yields abstention status
     anomaly_refused = compute_climate_anomaly(
@@ -319,7 +327,10 @@ def test_gate_r4_c7_crop_calendar_versioning_and_trade_corridors():
     supplying_basins = {c["basin_zone_code"] for c in tana_corridors}
     assert "ZONE_ALAOTRA" in supplying_basins
     for c in tana_corridors:
-        assert c["proof_status"] in [MarketLinkProofStatus.DOCUMENTED_TRADE_CORRIDOR, MarketLinkProofStatus.OFFICIAL_SUPPLY_BASIN]
+        assert c["proof_status"] in [
+            MarketLinkProofStatus.DOCUMENTED_TRADE_CORRIDOR,
+            MarketLinkProofStatus.OFFICIAL_SUPPLY_BASIN,
+        ]
 
     # 4. Extra fields rejection (no invented prices or quantities)
     with pytest.raises(ValidationError):

@@ -203,7 +203,8 @@ def test_price_anomaly_spike_and_drop_pipeline(db_session: Session) -> None:
     # 4. Refresh Gold materialized views
     ref_res = refresh_gold_views(db_session)
     db_session.commit()
-    assert ref_res["count"] == 12
+    assert ref_res["count"] == 13
+    assert ref_res["withheld_views"] == {"economic_dashboard": "macro_publication_not_qualified"}
 
     # 5. Detect statistical price anomalies
     anomalies = detect_price_anomalies(db_session, z_threshold=3.0, chg_threshold=0.15)

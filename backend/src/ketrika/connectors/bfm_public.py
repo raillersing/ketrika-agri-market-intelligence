@@ -153,7 +153,11 @@ class Connector:
             if discovery_res.editions:
                 items: list[DiscoveredItem] = []
                 for edition in discovery_res.editions:
-                    fmt = "csv" if edition.url.endswith(".csv") else ("xlsx" if edition.url.endswith((".xlsx", ".xls")) else "html")
+                    fmt = (
+                        "csv"
+                        if edition.url.endswith(".csv")
+                        else ("xlsx" if edition.url.endswith((".xlsx", ".xls")) else "html")
+                    )
                     items.append(
                         DiscoveredItem(
                             url=edition.url,
@@ -181,7 +185,11 @@ class Connector:
         mime = (
             "text/csv"
             if fmt == "csv"
-            else ("text/html" if fmt == "html" else "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            else (
+                "text/html"
+                if fmt == "html"
+                else "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
         )
         return ctx.fetch_and_store(item, mime_type=mime)
 
@@ -190,7 +198,9 @@ class Connector:
         raw_bytes = getattr(artifact, "content", None)
         if raw_bytes is None:
             if ctx.bronze_store is None:
-                raise ValueError("Bronze store is required in RunContext when artifact has no direct content")
+                raise ValueError(
+                    "Bronze store is required in RunContext when artifact has no direct content"
+                )
             raw_bytes = ctx.bronze_store.get(artifact.object_key)
 
         if not raw_bytes:
@@ -272,7 +282,11 @@ class Connector:
                     continue
 
             # Data rows
-            d_str = row[header_idx["date"]].strip() if "date" in header_idx and len(row) > header_idx["date"] else ""
+            d_str = (
+                row[header_idx["date"]].strip()
+                if "date" in header_idx and len(row) > header_idx["date"]
+                else ""
+            )
             if not d_str:
                 continue
 
@@ -286,7 +300,9 @@ class Connector:
 
             # Invariant: verify weekday (no silent weekend interpolation)
             if not is_business_trading_day(obs_date):
-                logger.warning("BFM observation date %s is a weekend; skipping non-trading day", obs_date)
+                logger.warning(
+                    "BFM observation date %s is a weekend; skipping non-trading day", obs_date
+                )
                 continue
 
             curr = (

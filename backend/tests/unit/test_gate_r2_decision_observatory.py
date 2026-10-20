@@ -29,6 +29,7 @@ from ketrika.gold.economic import (
 # QUESTION Q1: RICE RETAIL PRICE & REGIONAL DISPERSION (R2.4, SPECS §19)
 # =========================================================================
 
+
 def test_gate_q1_rice_retail_price_analamanga():
     """Q1: What is the observed median retail price of local white rice in Analamanga for the reference period?"""
     mock_row = MarketCoverageRow(
@@ -53,9 +54,13 @@ def test_gate_q1_rice_retail_price_analamanga():
         age_days=30,
     )
 
-    with patch("ketrika.api.routers.coverage.query_market_coverage_matrix", return_value=[mock_row]):
+    with patch(
+        "ketrika.api.routers.coverage.query_market_coverage_matrix", return_value=[mock_row]
+    ):
         client = TestClient(app)
-        resp = client.get("/v1/market/coverage?product=RICE_WHITE_LOCAL&location=MDG11&actor_level=retail")
+        resp = client.get(
+            "/v1/market/coverage?product=RICE_WHITE_LOCAL&location=MDG11&actor_level=retail"
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert len(data) == 1
@@ -76,6 +81,7 @@ def test_gate_q1_rice_retail_price_analamanga():
 # QUESTION Q2: SERIES CONTINUITY & CALENDAR GAP AUDIT (R2.4, ADR-004)
 # =========================================================================
 
+
 def test_gate_q2_series_continuity_and_gap_audit():
     """Q2: What is the completeness, continuity and gap list for the Analamanga rice series?"""
     mock_summary = SeriesCoverageSummary(
@@ -95,9 +101,14 @@ def test_gate_q2_series_continuity_and_gap_audit():
         is_pilot_candidate=True,
     )
 
-    with patch("ketrika.api.routers.coverage.compute_series_gaps_independent_sql", return_value=mock_summary):
+    with patch(
+        "ketrika.api.routers.coverage.compute_series_gaps_independent_sql",
+        return_value=mock_summary,
+    ):
         client = TestClient(app)
-        resp = client.get("/v1/market/coverage/gaps?product=RICE_WHITE_LOCAL&location=MDG11&actor_level=retail")
+        resp = client.get(
+            "/v1/market/coverage/gaps?product=RICE_WHITE_LOCAL&location=MDG11&actor_level=retail"
+        )
         assert resp.status_code == 200
         data = resp.json()
 
@@ -114,6 +125,7 @@ def test_gate_q2_series_continuity_and_gap_audit():
 # =========================================================================
 # QUESTION Q3: BFM OFFICIAL MONETARY EXCHANGE RATE (R2.6, ADR-069)
 # =========================================================================
+
 
 def test_gate_q3_bfm_monetary_exchange_rates():
     """Q3: What are the published USD/MGA and EUR/MGA mid rates and is mathematical inverse reciprocity preserved?"""
@@ -192,6 +204,7 @@ def test_gate_q3_bfm_monetary_exchange_rates():
 # QUESTION Q4: OMH OFFICIAL FUEL CEILING & REGULATORY SEPARATION (R2.7)
 # =========================================================================
 
+
 def test_gate_q4_omh_fuel_ceiling_and_regulatory_dates():
     """Q4: What is the regulated fuel price ceiling and how are legal effective and published dates separated?"""
     mock_session = MagicMock()
@@ -204,14 +217,14 @@ def test_gate_q4_omh_fuel_ceiling_and_regulatory_dates():
             "event",
             "MGA/L",
             None,
-            dt.date(2026, 6, 1),   # Legal effective date
+            dt.date(2026, 6, 1),  # Legal effective date
             dt.date(2026, 6, 1),
             "final",
             4900.0,
             "4900",
             "observed",
-            dt.datetime(2026, 5, 30, 20, 0, tzinfo=dt.UTC), # First available
-            dt.datetime(2026, 5, 30, 18, 0, tzinfo=dt.UTC), # Published date of official decree
+            dt.datetime(2026, 5, 30, 20, 0, tzinfo=dt.UTC),  # First available
+            dt.datetime(2026, 5, 30, 18, 0, tzinfo=dt.UTC),  # Published date of official decree
             "omh_public",
         )
     ]
@@ -232,7 +245,7 @@ def test_gate_q4_omh_fuel_ceiling_and_regulatory_dates():
         assert fuel["value"] == 4900.0
         assert fuel["unit"] == "MGA/L"
         assert fuel["period_start"] == "2026-06-01"  # Entry into force
-        assert fuel["published_at"].startswith("2026-05-30") # Official announcement
+        assert fuel["published_at"].startswith("2026-05-30")  # Official announcement
         # Non-negotiable: published_at precedes effective date
         assert fuel["published_at"] < fuel["period_start"]
     finally:
@@ -243,11 +256,12 @@ def test_gate_q4_omh_fuel_ceiling_and_regulatory_dates():
 # QUESTION Q5: CUSTOMS IMPORT CIF UNIT COST & TRANSMISSION (R2.8, R2.10)
 # =========================================================================
 
+
 def test_gate_q5_customs_import_cif_cost_and_transmission():
     """Q5: What is the calculated CIF unit cost of rice import and how does it transmit to local retail price?"""
     # 1. Direct computation of CIF unit cost from customs declaration
     cif_value_mga = 52_000_000_000.0  # 52 billion MGA
-    volume_tons = 20_000.0            # 20,000 metric tons
+    volume_tons = 20_000.0  # 20,000 metric tons
 
     unit_cost, reason = calculate_import_unit_cost(
         import_val_mga=cif_value_mga,
@@ -279,6 +293,7 @@ def test_gate_q5_customs_import_cif_cost_and_transmission():
 # =========================================================================
 # NON-NEGOTIABLE PRINCIPLES & INDEPENDENCE CHECKS (ADR-070, AGENTS §4)
 # =========================================================================
+
 
 def test_gate_r2_strict_dimension_isolation_and_no_composite_score():
     """Verify that economic dashboard strictly enforces 5 autonomous dimensions and never invents a composite score."""

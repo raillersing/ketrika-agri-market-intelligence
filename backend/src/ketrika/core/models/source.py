@@ -44,7 +44,8 @@ class SourceEntrypoint(BaseModel):
         default=None, description="ISO timestamp of last verified HTTP 200"
     )
     verified: bool = Field(
-        default=False, description="Whether this URL has been verified (HTTP 200) with proven provenance"
+        default=False,
+        description="Whether this URL has been verified (HTTP 200) with proven provenance",
     )
 
 
@@ -59,7 +60,8 @@ class SourceDefinition(BaseModel):
     name: str = Field(..., description="Human-readable canonical name")
     owner: str = Field(..., description="Publishing organization or institution")
     source_family: str | None = Field(
-        default=None, description="Family grouping of sources to prevent false independent confirmations"
+        default=None,
+        description="Family grouping of sources to prevent false independent confirmations",
     )
     priority: Priority = Field(default="P1", description="Collection and maintenance priority")
     status: SourceStatus = Field(
@@ -67,7 +69,9 @@ class SourceDefinition(BaseModel):
     )
     access_method: AccessMethod = Field(..., description="Protocol or scraping strategy")
     connector: str = Field(..., description="Import path of connector class or factory")
-    cadence: Cadence = Field(..., description="Frequency of source updates (deprecated alias for collection_cadence)")
+    cadence: Cadence = Field(
+        ..., description="Frequency of source updates (deprecated alias for collection_cadence)"
+    )
     collection_cadence: Cadence | None = Field(
         default=None, description="Actual frequency of technical crawler runs"
     )

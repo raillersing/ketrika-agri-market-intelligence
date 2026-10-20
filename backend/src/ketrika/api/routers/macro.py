@@ -18,9 +18,13 @@ router = APIRouter(prefix="/v1/macro", tags=["macro"])
 
 @router.get("", response_model=list[MacroItem])
 def get_macro(
-    indicator: str | None = Query(None, description="Indicator code (e.g. GDP_NOMINAL_MGA, FX_USD_MGA)"),
+    indicator: str | None = Query(
+        None, description="Indicator code (e.g. GDP_NOMINAL_MGA, FX_USD_MGA)"
+    ),
     geo_scope: str | None = Query(None, description="Geographic scope (e.g. national, pcode)"),
-    vintage: str | None = Query(None, description="Vintage / release status (e.g. preliminary, final)"),
+    vintage: str | None = Query(
+        None, description="Vintage / release status (e.g. preliminary, final)"
+    ),
     from_date: dt.date | None = Query(None, alias="from", description="Start date (YYYY-MM-DD)"),
     to_date: dt.date | None = Query(None, alias="to", description="End date (YYYY-MM-DD)"),
     limit: int = Query(100, ge=1, le=1000, description="Page limit (default 100, max 1000)"),
@@ -72,7 +76,9 @@ def get_macro(
     actual_offset = int(offset.default) if hasattr(offset, "default") else int(offset)
     actual_format = str(format.default) if hasattr(format, "default") else str(format)
 
-    sql += " ORDER BY m.indicator_code, m.period_start ASC, m.vintage ASC LIMIT :limit OFFSET :offset;"
+    sql += (
+        " ORDER BY m.indicator_code, m.period_start ASC, m.vintage ASC LIMIT :limit OFFSET :offset;"
+    )
     params["limit"] = actual_limit
     params["offset"] = actual_offset
     rows = session.execute(text(sql), params).fetchall()

@@ -54,10 +54,7 @@ def test_baseline_window_reproduction_from_official_calendar():
     """Verify that baseline projection reproduces official crop calendar harvest window exactly."""
     calendars = load_crop_calendar()
     # Find Alaotra rice cycle
-    alaotra_records = [
-        r for r in calendars
-        if r.zone_code == "ZONE_ALAOTRA" and r.crop == "RICE"
-    ]
+    alaotra_records = [r for r in calendars if r.zone_code == "ZONE_ALAOTRA" and r.crop == "RICE"]
     assert len(alaotra_records) >= 1
     record = alaotra_records[0]
 
@@ -84,7 +81,8 @@ def test_irrigated_regime_buffers_moderate_rainfall_deficit():
     """Verify that irrigated perimeters with water control buffer moderate rainfall delays."""
     calendars = load_crop_calendar()
     alaotra_irrigated = [
-        r for r in calendars
+        r
+        for r in calendars
         if r.zone_code == "ZONE_ALAOTRA" and r.crop_regime == CropRegime.IRRIGATED
     ][0]
 
@@ -107,8 +105,7 @@ def test_rainfed_crop_shifted_under_severe_early_drought_scenario():
     calendars = load_crop_calendar()
     # Find real rainfed maize in official calendar (e.g. ZONE_SUD or ZONE_CENTRE)
     rainfed_maize_records = [
-        r for r in calendars
-        if r.crop == "MAIZE" and r.crop_regime == CropRegime.RAINFED
+        r for r in calendars if r.crop == "MAIZE" and r.crop_regime == CropRegime.RAINFED
     ]
     assert len(rainfed_maize_records) >= 1
     rainfed_maize = rainfed_maize_records[0]
@@ -165,7 +162,9 @@ def test_independent_empirical_confrontation_with_odr_market_arrivals():
     confrontation = model.evaluate_against_market_arrivals(window, result.records)
 
     assert confrontation.total_records_tested >= 2
-    assert confrontation.arrivals_within_harvest_window_kg >= 180_000.0  # Anosibe rice arrivals in May 2024
+    assert (
+        confrontation.arrivals_within_harvest_window_kg >= 180_000.0
+    )  # Anosibe rice arrivals in May 2024
     assert confrontation.temporal_alignment_ratio >= 0.70
     assert confrontation.peak_inside_window
     assert confrontation.evaluation_verdict == "consistent"

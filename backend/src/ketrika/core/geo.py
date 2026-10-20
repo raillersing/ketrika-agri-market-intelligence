@@ -219,7 +219,9 @@ def validate_geo(
             expected_sha = decl.get("sha256")
             expected_count = decl.get("feature_count")
 
-            target_path = (g_dir.parent / expected_file) if expected_file else (g_dir / f"{lvl_name}.geojson")
+            target_path = (
+                (g_dir.parent / expected_file) if expected_file else (g_dir / f"{lvl_name}.geojson")
+            )
             if not target_path.exists():
                 errors.append(f"Manifest level '{lvl_name}' file not found: {target_path}")
                 continue
@@ -284,9 +286,13 @@ def validate_geo(
             )
         for ent in entities:
             if ent.latitude is not None and not (-26.0 <= ent.latitude <= -11.0):
-                errors.append(f"Entity '{ent.pcode}' latitude {ent.latitude} outside Madagascar bounds")
+                errors.append(
+                    f"Entity '{ent.pcode}' latitude {ent.latitude} outside Madagascar bounds"
+                )
             if ent.longitude is not None and not (43.0 <= ent.longitude <= 51.5):
-                errors.append(f"Entity '{ent.pcode}' longitude {ent.longitude} outside Madagascar bounds")
+                errors.append(
+                    f"Entity '{ent.pcode}' longitude {ent.longitude} outside Madagascar bounds"
+                )
     except Exception as e:
         errors.append(f"Failed to load geographic entities: {e}")
 

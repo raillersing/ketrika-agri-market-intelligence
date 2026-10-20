@@ -137,7 +137,9 @@ def run_price_forecasting_pipeline(
     ]
 
     # Compute lineage fingerprint
-    computed_fingerprint = dataset_fingerprint or compute_series_fingerprint(data_cutoff, eligible_series)
+    computed_fingerprint = dataset_fingerprint or compute_series_fingerprint(
+        data_cutoff, eligible_series
+    )
 
     if not eligible_series:
         logger.warning(
@@ -204,7 +206,9 @@ def run_price_forecasting_pipeline(
         valid_y = y[~np.isnan(y)]
         past_residuals: list[float] = []
         if len(valid_y) > 1:
-            past_residuals = [float(abs(valid_y[i] - valid_y[i - 1])) for i in range(1, len(valid_y))]
+            past_residuals = [
+                float(abs(valid_y[i] - valid_y[i - 1])) for i in range(1, len(valid_y))
+            ]
 
         # Calibrate bounds via non-parametric conformal quantile
         conformal_res = calibrate_conformal_bounds(
@@ -220,8 +224,13 @@ def run_price_forecasting_pipeline(
         final_p90 = conformal_res.p90
         interval_widths = conformal_res.width
 
-        is_baseline = bt_res.best_model_name in ("NaiveLast", "SeasonalNaive") or fit_res.model_effective in ("NaiveLast", "SeasonalNaive")
-        series_status = "baseline_fallback" if (fit_res.status == "fallback" or is_baseline) else fit_res.status
+        is_baseline = bt_res.best_model_name in (
+            "NaiveLast",
+            "SeasonalNaive",
+        ) or fit_res.model_effective in ("NaiveLast", "SeasonalNaive")
+        series_status = (
+            "baseline_fallback" if (fit_res.status == "fallback" or is_baseline) else fit_res.status
+        )
 
         # 5. Create Forecast entities for horizons 1..horizon
         for h_step in range(1, horizon + 1):

@@ -53,7 +53,10 @@ def test_gold_views_sql_e2e_synthetic(db_session: Session):
     # 3. Refresh Gold materialized views in topological order
     refresh_result = refresh_gold_views(db_session)
     db_session.commit()
-    assert refresh_result["count"] == 12
+    assert refresh_result["count"] == 13
+    assert refresh_result["withheld_views"] == {
+        "economic_dashboard": "macro_publication_not_qualified"
+    }
     assert len(refresh_result["errors"]) == 0
 
     # 4. Verify View 1: gold.price_obs_current

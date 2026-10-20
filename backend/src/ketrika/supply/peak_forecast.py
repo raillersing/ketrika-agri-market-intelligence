@@ -343,12 +343,15 @@ class SupplyPeakForecastEngine:
         # Filter historical arrivals as of cutoff
         cycles_observed = 0.0
         qualification = SupplyPeakQualification.BASELINE_LOGISTICS
-        confidence = harvest_window.confidence_score * 0.9  # Baseline confidence discount for logistics
+        confidence = (
+            harvest_window.confidence_score * 0.9
+        )  # Baseline confidence discount for logistics
 
         if historical_arrivals is not None:
             # Strict as-of split: observations strictly <= ref_as_of
             as_of_records = [
-                r for r in historical_arrivals
+                r
+                for r in historical_arrivals
                 if _get_record_date(r) is not None and _get_record_date(r) <= ref_as_of  # type: ignore[operator]
             ]
             report = self.assess_data_sufficiency(as_of_records, min_cycles=2)
@@ -436,14 +439,19 @@ class SupplyPeakForecastEngine:
 
         # Timing error in dekads
         if prediction.predicted_peak_dekad:
-            timing_error_dekads = dekad_difference(prediction.predicted_peak_dekad, obs_peak.peak_dekad)
+            timing_error_dekads = dekad_difference(
+                prediction.predicted_peak_dekad, obs_peak.peak_dekad
+            )
         else:
             timing_error_dekads = 0
 
         # Timing error in days between observed peak date and predicted peak midpoint
         if prediction.predicted_peak_start_date and prediction.predicted_peak_end_date:
             pred_midpoint = prediction.predicted_peak_start_date + timedelta(
-                days=(prediction.predicted_peak_end_date - prediction.predicted_peak_start_date).days // 2
+                days=(
+                    prediction.predicted_peak_end_date - prediction.predicted_peak_start_date
+                ).days
+                // 2
             )
             timing_error_days = (obs_peak.peak_date - pred_midpoint).days
         else:

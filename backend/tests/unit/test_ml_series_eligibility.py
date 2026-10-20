@@ -404,5 +404,7 @@ def test_audit_and_extract_eligible_series_session_mock():
     assert series_list[0].product_code == "rice_milled"
 
     # Compatibility override
-    series_override = extract_eligible_series(session=mock_session, data_cutoff=cutoff, min_points=6)
+    series_override = extract_eligible_series(
+        session=mock_session, data_cutoff=cutoff, min_points=6
+    )
     assert len(series_override) == 1

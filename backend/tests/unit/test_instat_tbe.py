@@ -26,7 +26,9 @@ from ketrika.core.policy import PolicyEngine
 from ketrika.core.registry import load_sources
 
 FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures" / "instat_tbe"
-GOLDEN_PATH = Path(__file__).resolve().parent.parent / "golden" / "instat_tbe" / "tbe_sample.expected.json"
+GOLDEN_PATH = (
+    Path(__file__).resolve().parent.parent / "golden" / "instat_tbe" / "tbe_sample.expected.json"
+)
 
 
 # ============================================================================
@@ -154,7 +156,9 @@ def test_parse_authentic_edition_62_and_golden_match():
 
     found_indicators = {r.indicator_code for r in result.records if isinstance(r, MacroRecord)}
     for exp_ind in expected_indicators:
-        assert exp_ind in found_indicators, f"Expected indicator {exp_ind} missing from parsed records"
+        assert exp_ind in found_indicators, (
+            f"Expected indicator {exp_ind} missing from parsed records"
+        )
 
     # Verify specific sample records from golden
     records_by_key = {
@@ -199,15 +203,19 @@ def test_parse_authentic_edition_63_revisions():
 
     # Edition 63 extends up to June 2026 (2026-06)
     jun_records = [
-        r for r in result.records
+        r
+        for r in result.records
         if isinstance(r, MacroRecord) and r.period_start == date(2026, 6, 1)
     ]
     assert len(jun_records) >= 8
 
     # Q2 2026 GDP must be present
     q2_gdp = [
-        r for r in result.records
-        if isinstance(r, MacroRecord) and r.indicator_code == "GDP_REAL_MGA" and r.period_start == date(2026, 4, 1)
+        r
+        for r in result.records
+        if isinstance(r, MacroRecord)
+        and r.indicator_code == "GDP_REAL_MGA"
+        and r.period_start == date(2026, 4, 1)
     ]
     assert len(q2_gdp) == 1
     assert q2_gdp[0].value == 10120.0
@@ -238,7 +246,8 @@ def test_quarterly_series_strictly_preserved_no_fake_months():
     result = connector.parse(artifact, ctx)
 
     gdp_records = [
-        r for r in result.records
+        r
+        for r in result.records
         if isinstance(r, MacroRecord) and r.indicator_code == "GDP_REAL_MGA"
     ]
     assert len(gdp_records) == 5  # 4 quarters of 2025 + Q1 2026
@@ -275,7 +284,8 @@ def test_republished_cpi_traceability():
     result = connector.parse(artifact, ctx)
 
     cpi_records = [
-        r for r in result.records
+        r
+        for r in result.records
         if isinstance(r, MacroRecord) and r.indicator_code == "CPI_TBE_FOOD"
     ]
     assert len(cpi_records) > 0
@@ -309,6 +319,7 @@ def test_load_macro_record_mock_insertion_and_idempotence():
     )
 
     import uuid
+
     sr_id = uuid.uuid4()
     action, obs_id = load_macro_record_with_supersession(
         session=mock_session,
@@ -351,7 +362,9 @@ def test_instat_tbe_catalog_discovery(
 ) -> None:
     """Verify dynamic discovery of TBE Excel publications from HTML catalog."""
     monkeypatch.setenv("KETRIKA_ALLOW_TEST_LOOPBACK", "1")
-    httpserver.expect_request("/robots.txt").respond_with_data("User-agent: *\nDisallow:\n", status=200)
+    httpserver.expect_request("/robots.txt").respond_with_data(
+        "User-agent: *\nDisallow:\n", status=200
+    )
 
     catalog_html = """
     <html>
@@ -366,7 +379,9 @@ def test_instat_tbe_catalog_discovery(
       </body>
     </html>
     """
-    httpserver.expect_request("/statistiques/tbe").respond_with_data(catalog_html, content_type="text/html")
+    httpserver.expect_request("/statistiques/tbe").respond_with_data(
+        catalog_html, content_type="text/html"
+    )
 
     policy = PolicyEngine()
     policy.set_robots_txt(httpserver.url_for("/"), "User-agent: *\nDisallow:\n")
@@ -399,7 +414,10 @@ def test_instat_tbe_catalog_discovery(
 def test_instat_tbe_discovery_fallback():
     """Verify discovery gracefully falls back when catalog retrieval fails."""
     connector = InstatTbeConnector()
-    ctx = RunContext(source_id="instat_tbe", metadata={"catalog_url": "http://invalid-non-existent-domain.xyz/catalog"})
+    ctx = RunContext(
+        source_id="instat_tbe",
+        metadata={"catalog_url": "http://invalid-non-existent-domain.xyz/catalog"},
+    )
 
     discovered = list(connector.discover(ctx))
     assert len(discovered) == 1

@@ -308,7 +308,9 @@ def test_douanes_dynamic_catalog_discovery(httpserver: HTTPServer) -> None:
       </body>
     </html>
     """
-    httpserver.expect_request("/statistiques").respond_with_data(catalog_html, content_type="text/html")
+    httpserver.expect_request("/statistiques").respond_with_data(
+        catalog_html, content_type="text/html"
+    )
 
     policy = PolicyEngine()
     policy.set_robots_txt(httpserver.url_for("/"), "User-agent: *\nDisallow:\n")
@@ -373,14 +375,12 @@ def test_douanes_annual_total_distinct_from_monthly(
     annual_records = [
         r
         for r in res.records
-        if isinstance(r, TradeFlowRecord)
-        and r.evidence.get("aggregation_level") == "annual_total"
+        if isinstance(r, TradeFlowRecord) and r.evidence.get("aggregation_level") == "annual_total"
     ]
     monthly_records = [
         r
         for r in res.records
-        if isinstance(r, TradeFlowRecord)
-        and r.evidence.get("aggregation_level") == "monthly"
+        if isinstance(r, TradeFlowRecord) and r.evidence.get("aggregation_level") == "monthly"
     ]
     assert len(annual_records) == 2
     assert len(monthly_records) == 36
@@ -394,9 +394,7 @@ def test_douanes_annual_total_distinct_from_monthly(
     india_rice_monthly = [
         r
         for r in monthly_records
-        if r.flow == "import"
-        and r.hs_code == "10063000"
-        and r.partner_iso3 == "IND"
+        if r.flow == "import" and r.hs_code == "10063000" and r.partner_iso3 == "IND"
     ]
     assert len(india_rice_monthly) == 3
     sum_weight = sum(r.weight_kg or 0 for r in india_rice_monthly)
@@ -405,9 +403,7 @@ def test_douanes_annual_total_distinct_from_monthly(
     india_rice_annual = next(
         r
         for r in annual_records
-        if r.flow == "import"
-        and r.hs_code == "10063000"
-        and r.partner_iso3 == "IND"
+        if r.flow == "import" and r.hs_code == "10063000" and r.partner_iso3 == "IND"
     )
     assert india_rice_annual.weight_kg == sum_weight
     assert india_rice_annual.value_mga == sum_val_mga
@@ -644,5 +640,3 @@ def test_douanes_fetch_offline_and_metadata_overrides(run_context: RunContext) -
     )
     with pytest.raises(FileNotFoundError):
         connector.fetch(missing_item, ctx_meta)
-
-

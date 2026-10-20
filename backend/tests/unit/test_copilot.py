@@ -172,8 +172,11 @@ def test_copilot_evaluation_benchmark_22_questions() -> None:
     all_questions = data.get("questions", [])
     # Filter to analytical regression questions (excluding adversarial security tests and explicit abstentions)
     questions = [
-        q for q in all_questions
-        if not q.get("is_adversarial") and not q.get("expected_abstain") and q.get("expected_target_view") not in ("abstain", "forbidden")
+        q
+        for q in all_questions
+        if not q.get("is_adversarial")
+        and not q.get("expected_abstain")
+        and q.get("expected_target_view") not in ("abstain", "forbidden")
     ]
     assert len(questions) >= 20, f"Expected >= 20 evaluation questions, got {len(questions)}"
 

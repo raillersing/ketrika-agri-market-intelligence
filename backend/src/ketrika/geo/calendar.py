@@ -14,7 +14,9 @@ from ketrika.geo.contracts import (
 def is_month_in_window(month: int, start_month: int, end_month: int) -> bool:
     """Determine if a month (1-12) falls within a window, handling annual calendar wrap-around."""
     if not (1 <= month <= 12 and 1 <= start_month <= 12 and 1 <= end_month <= 12):
-        raise ValueError(f"Months must be between 1 and 12: month={month}, start={start_month}, end={end_month}")
+        raise ValueError(
+            f"Months must be between 1 and 12: month={month}, start={start_month}, end={end_month}"
+        )
 
     if start_month <= end_month:
         return start_month <= month <= end_month
@@ -95,7 +97,9 @@ def get_calendar_history(
     matched = [
         r
         for r in records
-        if r.zone_code == zone_code and r.product_code == product_code and r.season_name == season_name
+        if r.zone_code == zone_code
+        and r.product_code == product_code
+        and r.season_name == season_name
     ]
     # Return sorted with active first, then previous versions
     return sorted(matched, key=lambda r: (not r.is_active, r.calendar_version))

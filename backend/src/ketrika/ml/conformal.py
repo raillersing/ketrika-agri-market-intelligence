@@ -145,7 +145,11 @@ def calibrate_conformal_bounds(
 
     if n_res < min_residuals:
         # Insufficient sample to calibrate: use dispersion fallback with explicit uncalibrated label
-        std_val = fallback_std if (fallback_std is not None and fallback_std > 0) else float(np.mean(mean_clean) * 0.08)
+        std_val = (
+            fallback_std
+            if (fallback_std is not None and fallback_std > 0)
+            else float(np.mean(mean_clean) * 0.08)
+        )
         std_val = max(std_val, 5.0)
 
         lo_arr = np.maximum(mean_clean - 1.28 * std_val, 0.0)

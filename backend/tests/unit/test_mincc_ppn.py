@@ -366,7 +366,9 @@ def test_mincc_dynamic_catalog_discovery(
 ) -> None:
     """R1.5 / R1.2: Dynamic catalog discovery following HTML links on commerce.gov.mg."""
     monkeypatch.setenv("KETRIKA_ALLOW_TEST_LOOPBACK", "1")
-    httpserver.expect_request("/robots.txt").respond_with_data("User-agent: *\nDisallow:\n", status=200)
+    httpserver.expect_request("/robots.txt").respond_with_data(
+        "User-agent: *\nDisallow:\n", status=200
+    )
 
     catalog_html = """
     <html>
@@ -382,7 +384,9 @@ def test_mincc_dynamic_catalog_discovery(
       </body>
     </html>
     """
-    httpserver.expect_request("/ppn/actualites").respond_with_data(catalog_html, content_type="text/html")
+    httpserver.expect_request("/ppn/actualites").respond_with_data(
+        catalog_html, content_type="text/html"
+    )
 
     policy = PolicyEngine()
     policy.set_robots_txt(httpserver.url_for("/"), "User-agent: *\nDisallow:\n")
@@ -497,7 +501,9 @@ def test_mincc_ordinal_stock_never_converted_to_tonnes(
     # Qualitative-only stock for Sucre blanc
     sucre_stock = next(r for r in stocks if r.product_raw == "Sucre blanc")
     assert sucre_stock.stock_status == "tight"
-    assert sucre_stock.quantity_value is None, "Ordinal stock must never be converted to float quantity"
+    assert sucre_stock.quantity_value is None, (
+        "Ordinal stock must never be converted to float quantity"
+    )
     assert sucre_stock.unit_raw is None, "Unit must be None when no physical volume is given"
 
     # Qualitative-only stock for Maïs grain sec
@@ -778,4 +784,3 @@ def test_mincc_authentic_corpus_golden(
     has_ordinal = any(s.unit_raw is None and s.quantity_value is None for s in stocks)
     assert has_tonnes is True
     assert has_ordinal is True
-

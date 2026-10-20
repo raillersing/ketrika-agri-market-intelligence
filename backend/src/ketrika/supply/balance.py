@@ -102,7 +102,9 @@ class SupplyBalanceEngine:
             "period_start": rec.period_start,
             "period_end": rec.period_end,
             "quantity_value": float(rec.quantity_value) if rec.quantity_value is not None else None,
-            "source_record_id": str(rec.source_record_id) if getattr(rec, "source_record_id", None) else None,
+            "source_record_id": str(rec.source_record_id)
+            if getattr(rec, "source_record_id", None)
+            else None,
         }
 
     def check_customs_vs_market_double_count(
@@ -175,7 +177,8 @@ class SupplyBalanceEngine:
         # Identify initial stock: inventory record closest to period_start (at or before period_start)
         best_init: dict[str, Any] | None = None
         initial_candidates = [
-            s for s in stock_records
+            s
+            for s in stock_records
             if s["period_start"] <= period_start or s["period_end"] <= period_start
         ]
         if initial_candidates:
@@ -186,8 +189,10 @@ class SupplyBalanceEngine:
 
         # Identify final stock: inventory record closest to period_end
         final_candidates = [
-            s for s in stock_records
-            if s is not best_init and (s["period_end"] >= period_end or s["period_start"] >= period_start)
+            s
+            for s in stock_records
+            if s is not best_init
+            and (s["period_end"] >= period_end or s["period_start"] >= period_start)
         ]
         if final_candidates:
             final_candidates.sort(key=lambda s: abs((s["period_end"] - period_end).days))
@@ -213,7 +218,9 @@ class SupplyBalanceEngine:
                 term_name="outflow_sales",
                 quantity_kg=outflows_kg if outflows_kg > 0 else None,
                 is_observed=outflows_kg > 0,
-                notes="Observed formal commercial market sales" if outflows_kg > 0 else "Unobserved: informal retail sales not surveyed",
+                notes="Observed formal commercial market sales"
+                if outflows_kg > 0
+                else "Unobserved: informal retail sales not surveyed",
             ),
             "post_harvest_losses": BalanceTerm(
                 term_name="post_harvest_losses",
@@ -329,26 +336,32 @@ class SupplyBalanceEngine:
                 term_name="outflow_sales",
                 quantity_kg=round(simulated_sales_kg, 2),
                 is_observed=False,
-                assumption_id=assump_map.get("daily_market_sales_kg", ScenarioAssumption(
-                    assumption_id="default_sales",
-                    parameter_name="daily_market_sales_kg",
-                    parameter_value=daily_sales_kg,
-                    unit="kg/day",
-                    rationale="Assumed daily consumption rate",
-                )).assumption_id,
+                assumption_id=assump_map.get(
+                    "daily_market_sales_kg",
+                    ScenarioAssumption(
+                        assumption_id="default_sales",
+                        parameter_name="daily_market_sales_kg",
+                        parameter_value=daily_sales_kg,
+                        unit="kg/day",
+                        rationale="Assumed daily consumption rate",
+                    ),
+                ).assumption_id,
                 notes=f"Simulated sales ({daily_sales_kg:,.0f} kg/day over {duration_days} days)",
             ),
             "post_harvest_losses": BalanceTerm(
                 term_name="post_harvest_losses",
                 quantity_kg=round(simulated_losses_kg, 2),
                 is_observed=False,
-                assumption_id=assump_map.get("post_harvest_loss_rate_pct", ScenarioAssumption(
-                    assumption_id="default_losses",
-                    parameter_name="post_harvest_loss_rate_pct",
-                    parameter_value=loss_rate_pct,
-                    unit="percent",
-                    rationale="Standard FAO post-harvest loss rate",
-                )).assumption_id,
+                assumption_id=assump_map.get(
+                    "post_harvest_loss_rate_pct",
+                    ScenarioAssumption(
+                        assumption_id="default_losses",
+                        parameter_name="post_harvest_loss_rate_pct",
+                        parameter_value=loss_rate_pct,
+                        unit="percent",
+                        rationale="Standard FAO post-harvest loss rate",
+                    ),
+                ).assumption_id,
                 notes=f"Simulated loss rate ({loss_rate_pct:.1f}% of inflows)",
             ),
             "final_stock": BalanceTerm(

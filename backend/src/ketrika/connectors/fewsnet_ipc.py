@@ -118,7 +118,8 @@ class FewsnetConnector:
                             {
                                 "kind": "document_unavailable",
                                 "detail": doc.get(
-                                    "reason", "Document non publié par FEWS NET ou le groupe technique IPC"
+                                    "reason",
+                                    "Document non publié par FEWS NET ou le groupe technique IPC",
                                 ),
                                 "url": artifact.url,
                             }

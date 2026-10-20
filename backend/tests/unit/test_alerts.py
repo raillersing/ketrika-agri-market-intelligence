@@ -233,7 +233,9 @@ def test_evaluate_rules_unit_scenarios() -> None:
     stockouts = evaluate_stockout_risk_rules(mock_session)
     assert len(stockouts) == 1
     assert stockouts[0].rule_code == "STOCKOUT_RISK"
-    assert stockouts[0].severity == "high"  # because latest is 'shortage' with documented critical coverage <= 7 days (ADR-100)
+    assert (
+        stockouts[0].severity == "high"
+    )  # because latest is 'shortage' with documented critical coverage <= 7 days (ADR-100)
 
     # 3. Climate Risk
     mock_session.execute.return_value.fetchall.return_value = [

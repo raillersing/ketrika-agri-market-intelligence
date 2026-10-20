@@ -12,10 +12,10 @@ from urllib.parse import urlsplit
 
 import yaml
 
-PROJECT = "ketrika-qualification"
+PROJECT = "ketrika-qualification-main-integration"
 DATABASE = "ketrika_qualification"
 BUCKET = "ketrika-qa-bronze"
-NETWORK = "ketrika_qualification_network"
+NETWORK = "ketrika_qualification_main_integration_network"
 
 
 class QualificationSafetyError(ValueError):
@@ -82,7 +82,7 @@ def validate_compose(document: str) -> None:
     for volume in volumes.values():
         if (
             not isinstance(volume, dict)
-            or not str(volume.get("name", "")).startswith("ketrika_qualification_")
+            or not str(volume.get("name", "")).startswith("ketrika_qualification_main_integration_")
             or volume.get("external")
             or volume.get("labels", {}).get("ketrika.scope") != "qualification"
         ):

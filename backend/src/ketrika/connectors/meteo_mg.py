@@ -129,7 +129,9 @@ class MeteoMgConnector:
                         issues=[
                             {
                                 "kind": "document_unavailable",
-                                "detail": doc.get("reason", "Official bulletin not published by DGM"),
+                                "detail": doc.get(
+                                    "reason", "Official bulletin not published by DGM"
+                                ),
                                 "url": artifact.url,
                             }
                         ],

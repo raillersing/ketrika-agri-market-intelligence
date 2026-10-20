@@ -37,12 +37,7 @@ AUTHENTIC_HISTORIC_PATH = (
 )
 
 AUTHENTIC_RECENT_PATH = (
-    find_repo_root()
-    / "backend"
-    / "tests"
-    / "fixtures"
-    / "instat_nipc"
-    / "nipc_recent_2024.xlsx"
+    find_repo_root() / "backend" / "tests" / "fixtures" / "instat_nipc" / "nipc_recent_2024.xlsx"
 )
 
 AUTHENTIC_GOLDEN_PATH = (
@@ -307,8 +302,7 @@ def test_instat_nipc_authentic_corpus_golden(
 
     # Match against reference golden subset for recent file
     expected_subset = [
-        exp for exp in authentic_golden["records"]
-        if exp["period_start"].startswith("2024")
+        exp for exp in authentic_golden["records"] if exp["period_start"].startswith("2024")
     ]
     assert len(expected_subset) == 27
 
@@ -365,13 +359,15 @@ def test_instat_nipc_multi_sheet_and_base_change_preservation(
 
     cpi_recs = [r for r in result.records if isinstance(r, CpiRecord)]
     bases_found = {r.base_period for r in cpi_recs}
-    assert bases_found == {"2016=100", "2011=100"}, "Both 2016 and 2011 bases must be preserved explicitly"
+    assert bases_found == {"2016=100", "2011=100"}, (
+        "Both 2016 and 2011 bases must be preserved explicitly"
+    )
 
     recs_2011 = [r for r in cpi_recs if r.base_period == "2011=100"]
     recs_2016 = [r for r in cpi_recs if r.base_period == "2016=100"]
 
     assert len(recs_2011) == 180  # 60 months * 3 series
-    assert len(recs_2016) > 400   # 96 months across 5 series
+    assert len(recs_2016) > 400  # 96 months across 5 series
 
     # Check that 2011 base series ends at 2015-12 and 2016 base starts at 2016-01
     assert max(r.period_start.year for r in recs_2011) == 2015
@@ -403,7 +399,8 @@ def test_instat_nipc_missing_nd_values_handling(authentic_historic_bytes: bytes)
 
     # In our fixture, Pain et Céréales had "ND" for the first 3 months (2016-01, 2016-02, 2016-03)
     bread_recs = [
-        r for r in result.records
+        r
+        for r in result.records
         if isinstance(r, CpiRecord) and r.series_code == "cpi_bread_cereals"
     ]
     bread_starts = {r.period_start.isoformat() for r in bread_recs}
@@ -449,7 +446,9 @@ def test_instat_nipc_catalog_discovery(
 ) -> None:
     """CC-R / R1.3: Verify dynamic catalog discovery following HTML links to official spreadsheets."""
     monkeypatch.setenv("KETRIKA_ALLOW_TEST_LOOPBACK", "1")
-    httpserver.expect_request("/robots.txt").respond_with_data("User-agent: *\nDisallow:\n", status=200)
+    httpserver.expect_request("/robots.txt").respond_with_data(
+        "User-agent: *\nDisallow:\n", status=200
+    )
 
     catalog_html = """
     <html>

@@ -52,4 +52,3 @@ def is_scanned_pdf(pages: list[PdfPage]) -> bool:
     if not pages:
         return True
     return all(not p.text or not p.text.strip() for p in pages)
-

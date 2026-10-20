@@ -134,7 +134,9 @@ class EligibleSeries:
     quality_grade: str = DEFAULT_QUALITY_GRADE
     unit: str = DEFAULT_UNIT
     cohort: str = "observed"  # "observed" (100% observed) | "mixed" (contains imputed)
-    grid: list[PricePoint] = field(default_factory=list)  # Complete regular monthly grid (start to cutoff)
+    grid: list[PricePoint] = field(
+        default_factory=list
+    )  # Complete regular monthly grid (start to cutoff)
     total_valid_points: int = 0
     recent_points_24m: int = 0
     imputed_points_count: int = 0

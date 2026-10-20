@@ -286,4 +286,3 @@ def test_load_stock_record_with_supersession():
     assert mock_session.add.call_count == 1
     # Check that update was executed to set superseded_by
     assert mock_session.execute.call_count >= 1
-

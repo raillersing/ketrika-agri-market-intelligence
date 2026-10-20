@@ -150,7 +150,9 @@ def test_initialization_creates_all_views_unpopulated_without_certification() ->
     assert result == {"views_initialized": len(ORDERED_GOLD_VIEWS), "views_populated": 0}
     statements = [str(call.args[0]) for call in session.execute.call_args_list]
     assert len(statements) == len(ORDERED_GOLD_VIEWS) + 1
-    for view, statement in zip(ORDERED_GOLD_VIEWS, statements[: len(ORDERED_GOLD_VIEWS)], strict=True):
+    for view, statement in zip(
+        ORDERED_GOLD_VIEWS, statements[: len(ORDERED_GOLD_VIEWS)], strict=True
+    ):
         assert f"CREATE MATERIALIZED VIEW gold.{view} AS" in statement
         assert "WITH NO DATA;" in statement
     session.commit.assert_not_called()

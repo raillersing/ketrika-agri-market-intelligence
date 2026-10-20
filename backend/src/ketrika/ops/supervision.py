@@ -89,7 +89,11 @@ class IncidentManager:
     ) -> IncidentReport:
         """Handle HTTP timeout / 5xx outage on a data source."""
         severity = IncidentSeverity.HIGH if is_p0 else IncidentSeverity.MEDIUM
-        pub_action = PublicationStatus.FROZEN if is_p0 and consecutive_failures >= 3 else PublicationStatus.DEGRADED
+        pub_action = (
+            PublicationStatus.FROZEN
+            if is_p0 and consecutive_failures >= 3
+            else PublicationStatus.DEGRADED
+        )
 
         report = IncidentReport(
             incident_type=IncidentType.HTTP_OUTAGE,
@@ -232,7 +236,7 @@ class IncidentManager:
                 drift_detected=False,
                 automatic_replacement_blocked=False,
                 active_production_model=candidate_model,
-                explanation=f"Candidate model '{candidate_model}' improves WAPE by {delta_wape*100:.2f}% over baseline.",
+                explanation=f"Candidate model '{candidate_model}' improves WAPE by {delta_wape * 100:.2f}% over baseline.",
             )
 
         return ForecastDriftPolicyDecision(

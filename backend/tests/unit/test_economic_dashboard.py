@@ -42,10 +42,17 @@ from ketrika.gold.refresh import ORDERED_GOLD_VIEWS
 # 1. CATALOG AND METRIC CARDS CONFORMANCE
 # =========================================================================
 
+
 def test_economic_metric_cards_catalog_structure():
     """Verify that all 14 canonical metric cards are defined and conform to specs."""
     assert len(ECONOMIC_METRIC_CARDS) >= 14
-    expected_dimensions = {"inflation", "exchange_rate", "fuel_energy", "external_trade", "real_activity"}
+    expected_dimensions = {
+        "inflation",
+        "exchange_rate",
+        "fuel_energy",
+        "external_trade",
+        "real_activity",
+    }
     actual_dimensions = {card.dimension for card in ECONOMIC_METRIC_CARDS.values()}
     assert actual_dimensions == expected_dimensions
 
@@ -66,6 +73,7 @@ def test_economic_metric_cards_catalog_structure():
 # =========================================================================
 # 2. BASE SHIFT & ANTI-IMPLICIT CHAINING GUARDS
 # =========================================================================
+
 
 def test_safe_variation_normal_computation():
     """Verify standard relative variation on identical base."""
@@ -127,6 +135,7 @@ def test_safe_variation_missing_series_guard():
 # 3. PHYSICAL UNIT COMPATIBILITY & CIF IMPORT UNIT COST
 # =========================================================================
 
+
 def test_calculate_import_unit_cost_valid():
     """Verify CIF unit cost calculation in MGA/kg from MGA and tons."""
     # 250,000,000 MGA for 100 metric tons = 250,000,000 / 100,000 kg = 2,500 MGA/kg
@@ -175,6 +184,7 @@ def test_calculate_import_unit_cost_zero_or_negative_volume():
 # 4. TEMPORAL ALIGNMENT & IMPORT DEPENDENCY RATIO
 # =========================================================================
 
+
 def test_calculate_import_dependency_ratio_valid():
     """Verify valid IDR calculation for aligned periods."""
     # Production = 4000 tons, Imports = 1000 tons, Exports = 0 tons
@@ -218,11 +228,12 @@ def test_calculate_import_dependency_ratio_zero_availability():
 # 5. CONCEPT SEPARATION: INFLATION VS MARKET PRICE VARIATION
 # =========================================================================
 
+
 def test_audit_inflation_vs_market_price_distinctness():
     """Verify that CPI food inflation and market price changes are formally segregated."""
     audit = audit_inflation_vs_market_price_distinctness(
-        cpi_food_chg_12m=0.085,       # 8.5% food CPI inflation
-        market_price_chg_12m=0.124,   # 12.4% local rice market price increase
+        cpi_food_chg_12m=0.085,  # 8.5% food CPI inflation
+        market_price_chg_12m=0.124,  # 12.4% local rice market price increase
     )
     assert audit["concepts_strictly_separated"] is True
     assert audit["cpi_food_inflation_rate_pct"] == 8.5
@@ -235,9 +246,17 @@ def test_audit_inflation_vs_market_price_distinctness():
 # 6. SQL VIEW, REFRESH PIPELINE AND PROVENANCE REGISTRATION
 # =========================================================================
 
+
 def test_economic_dashboard_sql_view_and_refresh_registration():
     """Verify 014_economic_dashboard.sql exists and is properly registered in Gold pipelines."""
-    sql_path = Path(__file__).resolve().parent.parent.parent / "src" / "ketrika" / "gold" / "sql" / "014_economic_dashboard.sql"
+    sql_path = (
+        Path(__file__).resolve().parent.parent.parent
+        / "src"
+        / "ketrika"
+        / "gold"
+        / "sql"
+        / "014_economic_dashboard.sql"
+    )
     assert sql_path.exists(), "014_economic_dashboard.sql view file must exist"
     content = sql_path.read_text(encoding="utf-8")
     assert "CREATE MATERIALIZED VIEW gold.economic_dashboard" in content
@@ -254,6 +273,7 @@ def test_economic_dashboard_sql_view_and_refresh_registration():
 # =========================================================================
 # 7. API ENDPOINTS QUALIFICATION
 # =========================================================================
+
 
 def test_api_get_economic_indicators_catalog():
     """Verify GET /v1/economic/indicators returns all metric cards."""
@@ -396,4 +416,3 @@ def test_api_get_economic_dashboard_with_db_rows():
         mock_session.execute.assert_not_called()
     finally:
         app.dependency_overrides.pop(get_db, None)
-

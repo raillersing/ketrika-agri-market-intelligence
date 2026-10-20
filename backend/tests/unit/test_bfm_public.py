@@ -29,7 +29,9 @@ from ketrika.core.policy import PolicyEngine
 from ketrika.core.registry import load_sources
 
 FIXTURES_DIR = Path(__file__).resolve().parent.parent / "fixtures" / "bfm_public"
-GOLDEN_PATH = Path(__file__).resolve().parent.parent / "golden" / "bfm_public" / "bfm_sample.expected.json"
+GOLDEN_PATH = (
+    Path(__file__).resolve().parent.parent / "golden" / "bfm_public" / "bfm_sample.expected.json"
+)
 
 
 # ============================================================================
@@ -70,13 +72,13 @@ def test_bfm_public_connector_constants():
 
 def test_is_business_trading_day():
     """Verify business days are strictly Monday-Friday (0-4), weekends are False."""
-    assert is_business_trading_day(date(2026, 5, 4)) is True   # Monday
-    assert is_business_trading_day(date(2026, 5, 5)) is True   # Tuesday
-    assert is_business_trading_day(date(2026, 5, 6)) is True   # Wednesday
-    assert is_business_trading_day(date(2026, 5, 7)) is True   # Thursday
-    assert is_business_trading_day(date(2026, 5, 8)) is True   # Friday
+    assert is_business_trading_day(date(2026, 5, 4)) is True  # Monday
+    assert is_business_trading_day(date(2026, 5, 5)) is True  # Tuesday
+    assert is_business_trading_day(date(2026, 5, 6)) is True  # Wednesday
+    assert is_business_trading_day(date(2026, 5, 7)) is True  # Thursday
+    assert is_business_trading_day(date(2026, 5, 8)) is True  # Friday
     assert is_business_trading_day(date(2026, 5, 9)) is False  # Saturday
-    assert is_business_trading_day(date(2026, 5, 10)) is False # Sunday
+    assert is_business_trading_day(date(2026, 5, 10)) is False  # Sunday
 
 
 def test_clean_rate_number():
@@ -170,7 +172,9 @@ def test_parse_authentic_csv_fixture_and_golden_match():
         assert matched.evidence["primary_institution"] == sample["primary_institution"]
 
     # 2. Invariant: weekends and holidays must never be present (no silent forward-fill)
-    all_observed_dates = {r.period_start.isoformat() for r in result.records if isinstance(r, MacroRecord)}
+    all_observed_dates = {
+        r.period_start.isoformat() for r in result.records if isinstance(r, MacroRecord)
+    }
     for missing_date in golden["weekend_and_holiday_dates_must_be_missing"]:
         assert missing_date not in all_observed_dates, (
             f"Date {missing_date} was found in observations but should be absent (weekend/holiday)"
@@ -200,7 +204,8 @@ def test_inverse_rate_calculation_in_parsed_records():
     result = connector.parse(artifact, ctx)
 
     usd_mid_recs = [
-        r for r in result.records
+        r
+        for r in result.records
         if isinstance(r, MacroRecord) and r.indicator_code == "EXCHANGE_RATE_USD_MGA"
     ]
     assert len(usd_mid_recs) > 0
@@ -270,7 +275,9 @@ def test_bfm_catalog_discovery(
 ) -> None:
     """Verify dynamic discovery of BFM exchange rate datasets via HTML catalog."""
     monkeypatch.setenv("KETRIKA_ALLOW_TEST_LOOPBACK", "1")
-    httpserver.expect_request("/robots.txt").respond_with_data("User-agent: *\nDisallow:\n", status=200)
+    httpserver.expect_request("/robots.txt").respond_with_data(
+        "User-agent: *\nDisallow:\n", status=200
+    )
 
     catalog_html = """
     <html>
@@ -285,7 +292,9 @@ def test_bfm_catalog_discovery(
       </body>
     </html>
     """
-    httpserver.expect_request("/cours-de-change").respond_with_data(catalog_html, content_type="text/html")
+    httpserver.expect_request("/cours-de-change").respond_with_data(
+        catalog_html, content_type="text/html"
+    )
 
     policy = PolicyEngine()
     policy.set_robots_txt(httpserver.url_for("/"), "User-agent: *\nDisallow:\n")
@@ -318,7 +327,10 @@ def test_bfm_catalog_discovery(
 def test_bfm_discovery_fallback():
     """Verify discovery gracefully falls back when catalog retrieval fails."""
     connector = BfmPublicConnector()
-    ctx = RunContext(source_id="bfm_public", metadata={"catalog_url": "http://invalid-non-existent-banky.mg/catalog"})
+    ctx = RunContext(
+        source_id="bfm_public",
+        metadata={"catalog_url": "http://invalid-non-existent-banky.mg/catalog"},
+    )
 
     discovered = list(connector.discover(ctx))
     assert len(discovered) == 1
@@ -396,6 +408,7 @@ def test_bfm_load_macro_record_insertion_and_idempotence():
     )
 
     import uuid
+
     sr_id = uuid.uuid4()
     action, obs_id = load_macro_record_with_supersession(
         session=mock_session,
@@ -472,7 +485,9 @@ invalid_date_format,USD,4600.00,4641.00,4620.50
     ind_codes = {r.indicator_code for r in res.records if isinstance(r, MacroRecord)}
     assert "EXCHANGE_RATE_USD_MGA" in ind_codes
     assert "EXCHANGE_RATE_USD_MGA_SELL" in ind_codes
-    assert "EXCHANGE_RATE_USD_MGA_BUY" not in ind_codes  # because invalid_achat failed float conversion
+    assert (
+        "EXCHANGE_RATE_USD_MGA_BUY" not in ind_codes
+    )  # because invalid_achat failed float conversion
 
 
 def test_bfm_html_parsing_weekend_and_empty():

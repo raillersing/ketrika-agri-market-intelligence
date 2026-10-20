@@ -38,6 +38,7 @@ def mock_db_session():
 # 1. HTTP CONCURRENCY BENCHMARK (5 CLIENTS, 100 REQUESTS, P95 < 1000ms)
 # =========================================================================
 
+
 def test_concurrent_authenticated_http_latency_p95(
     mock_db_session: MagicMock,
     monkeypatch: pytest.MonkeyPatch,
@@ -140,6 +141,7 @@ def test_metrological_honesty_performance_disclaimer() -> None:
 # 2. PRODUCTION COMPOSE HARDENING & LEAST PRIVILEGE AUDIT
 # =========================================================================
 
+
 def test_docker_compose_production_hardening() -> None:
     """R6.10 Acceptance: Production Compose shields internal ports and configures healthchecks."""
     repo_root = Path("/workspace")
@@ -177,6 +179,7 @@ def test_docker_compose_production_hardening() -> None:
 # 3. CADDY REVERSE-PROXY CONFIGURATION AUDIT
 # =========================================================================
 
+
 def test_caddyfile_reverse_proxy_configuration() -> None:
     """R6.10 Acceptance: Caddyfile enforces secure TLS headers and proxy routing."""
     repo_root = Path("/workspace")
@@ -201,6 +204,7 @@ def test_caddyfile_reverse_proxy_configuration() -> None:
 # =========================================================================
 # 4. DEPLOYMENT RUNBOOK & GATE H2 CONFORMANCE
 # =========================================================================
+
 
 def test_deployment_runbook_and_gate_h2_conformance() -> None:
     """R6.10 Acceptance: Deployment runbook and bootstrap script declare LOCAL_READY under Gate H2."""

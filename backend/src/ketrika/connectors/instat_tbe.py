@@ -71,7 +71,9 @@ def parse_period_and_frequency(period_raw: str) -> tuple[date, date, str]:
     s = str(period_raw).strip()
 
     # Pattern 1: Quarterly (e.g. 2025-T1, 2025T1, T1-2025, T1 2025)
-    q_match = re.search(r"(\d{4})[-_\s]*[tT]([1-4])", s) or re.search(r"[tT]([1-4])[-_\s]*(\d{4})", s)
+    q_match = re.search(r"(\d{4})[-_\s]*[tT]([1-4])", s) or re.search(
+        r"[tT]([1-4])[-_\s]*(\d{4})", s
+    )
     if q_match:
         if len(q_match.group(1)) == 4:
             year = int(q_match.group(1))
@@ -151,7 +153,9 @@ class Connector:
                     )
                 return items
         except Exception as exc:
-            logger.warning("INSTAT TBE discovery failed (%s); falling back to default entrypoint", exc)
+            logger.warning(
+                "INSTAT TBE discovery failed (%s); falling back to default entrypoint", exc
+            )
 
         return [
             DiscoveredItem(
@@ -174,7 +178,9 @@ class Connector:
         raw_bytes = getattr(artifact, "content", None)
         if raw_bytes is None:
             if ctx.bronze_store is None:
-                raise ValueError("Bronze store is required in RunContext when artifact has no direct content")
+                raise ValueError(
+                    "Bronze store is required in RunContext when artifact has no direct content"
+                )
             raw_bytes = ctx.bronze_store.get(artifact.object_key)
 
         if not raw_bytes:
@@ -213,15 +219,27 @@ class Connector:
                         ed_match = re.search(r"EDITION\s+N[°oO]?\s*(\d+)", txt, re.IGNORECASE)
                         if ed_match:
                             edition_num = int(ed_match.group(1))
-                        pub_match = re.search(r"publication\s*:\s*(\d{4}[-_]\d{2}[-_]\d{2})", txt, re.IGNORECASE)
+                        pub_match = re.search(
+                            r"publication\s*:\s*(\d{4}[-_]\d{2}[-_]\d{2})", txt, re.IGNORECASE
+                        )
                         if pub_match:
                             try:
-                                publication_date = date.fromisoformat(pub_match.group(1).replace("_", "-"))
+                                publication_date = date.fromisoformat(
+                                    pub_match.group(1).replace("_", "-")
+                                )
                             except ValueError:
                                 pass
 
         published_at_dt = (
-            datetime(publication_date.year, publication_date.month, publication_date.day, 12, 0, 0, tzinfo=UTC)
+            datetime(
+                publication_date.year,
+                publication_date.month,
+                publication_date.day,
+                12,
+                0,
+                0,
+                tzinfo=UTC,
+            )
             if publication_date
             else artifact.published_at
         )
@@ -306,7 +324,9 @@ class Connector:
             if "pib reel" in c0_clean:
                 is_quarterly_section = True
                 continue
-            if "indicateurs d activite" in c0_clean or ("tableau 1" in c0_clean and "pib" not in c0_clean):
+            if "indicateurs d activite" in c0_clean or (
+                "tableau 1" in c0_clean and "pib" not in c0_clean
+            ):
                 is_quarterly_section = False
                 continue
             if "periode" in c0_clean:
@@ -354,7 +374,12 @@ class Connector:
                             value=float(row[1]),
                             value_raw=str(row[1]),
                             base_period="2015=100",
-                            vintage="revised" if edition_num and edition_num >= 63 and p_start.year == 2026 and p_start.month <= 3 else "final",
+                            vintage="revised"
+                            if edition_num
+                            and edition_num >= 63
+                            and p_start.year == 2026
+                            and p_start.month <= 3
+                            else "final",
                             observed_or_imputed="observed",
                             published_at=published_at,
                             first_available_at=first_available_at,
@@ -417,7 +442,11 @@ class Connector:
                 continue
             c0 = str(row[0]).strip()
             c0_clean = _clean_text(c0)
-            if "tableau" in c0_clean or "statistiques du commerce" in c0_clean or "periode" in c0_clean:
+            if (
+                "tableau" in c0_clean
+                or "statistiques du commerce" in c0_clean
+                or "periode" in c0_clean
+            ):
                 continue
 
             try:
@@ -575,7 +604,12 @@ class Connector:
             except ValueError:
                 continue
 
-            if freq == "monthly" and len(row) > 1 and row[1] is not None and isinstance(row[1], (int, float)):
+            if (
+                freq == "monthly"
+                and len(row) > 1
+                and row[1] is not None
+                and isinstance(row[1], (int, float))
+            ):
                 recs.append(
                     MacroRecord(
                         indicator_code="CPI_TBE_FOOD",

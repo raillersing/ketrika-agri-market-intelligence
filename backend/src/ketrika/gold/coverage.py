@@ -350,9 +350,7 @@ def audit_pilot_market_coverage(
     total_expected = sum(s.expected_months for s in series_summaries)
     total_observed = sum(s.observed_months for s in series_summaries)
     total_missing = sum(s.missing_months for s in series_summaries)
-    overall_ratio = (
-        round(total_observed / total_expected, 4) if total_expected > 0 else 0.0
-    )
+    overall_ratio = round(total_observed / total_expected, 4) if total_expected > 0 else 0.0
 
     return {
         "pilot_id": config.pilot_id,

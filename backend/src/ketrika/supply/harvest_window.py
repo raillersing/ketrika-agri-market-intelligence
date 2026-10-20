@@ -254,8 +254,16 @@ class HarvestWindowModel:
 
         # 3. Apply dekadal shift to harvest start, end and peak
         # Parse start and end dekad components
-        s_y, s_m, s_d = int(base.window_start_dekad[:4]), int(base.window_start_dekad[5:7]), int(base.window_start_dekad[9])
-        e_y, e_m, e_d = int(base.window_end_dekad[:4]), int(base.window_end_dekad[5:7]), int(base.window_end_dekad[9])
+        s_y, s_m, s_d = (
+            int(base.window_start_dekad[:4]),
+            int(base.window_start_dekad[5:7]),
+            int(base.window_start_dekad[9]),
+        )
+        e_y, e_m, e_d = (
+            int(base.window_end_dekad[:4]),
+            int(base.window_end_dekad[5:7]),
+            int(base.window_end_dekad[9]),
+        )
 
         ns_y, ns_m, ns_d = shift_dekad(s_y, s_m, s_d, shift)
         ne_y, ne_m, ne_d = shift_dekad(e_y, e_m, e_d, shift)
@@ -268,7 +276,11 @@ class HarvestWindowModel:
         new_p_end: date | None = None
 
         if base.peak_harvest_dekad is not None:
-            p_y, p_m, p_d = int(base.peak_harvest_dekad[:4]), int(base.peak_harvest_dekad[5:7]), int(base.peak_harvest_dekad[9])
+            p_y, p_m, p_d = (
+                int(base.peak_harvest_dekad[:4]),
+                int(base.peak_harvest_dekad[5:7]),
+                int(base.peak_harvest_dekad[9]),
+            )
             np_y, np_m, np_d = shift_dekad(p_y, p_m, p_d, shift)
             new_peak_dekad = format_dekad_label(np_y, np_m, np_d)
             new_p_start, _ = get_dekad_bounds(np_y, np_m, 1)
@@ -281,7 +293,7 @@ class HarvestWindowModel:
             product_code=record.product_code,
             season_name=record.season_name,
             crop_cycle=record.crop_cycle,
-            campaign=f"campaign_{year}_{year+1}",
+            campaign=f"campaign_{year}_{year + 1}",
             crop_regime=str(record.crop_regime),
             window_start_dekad=format_dekad_label(ns_y, ns_m, ns_d),
             window_end_dekad=format_dekad_label(ne_y, ne_m, ne_d),
@@ -336,14 +348,19 @@ class HarvestWindowModel:
             # Compare product compatibility (e.g. RICE_PADDY matches rice_vary_gasy or rice_paddy)
             crop_lower = harvest_window.crop.lower()
             prod_lower = prod.lower()
-            if crop_lower not in prod_lower and harvest_window.product_code.lower() not in prod_lower:
+            if (
+                crop_lower not in prod_lower
+                and harvest_window.product_code.lower() not in prod_lower
+            ):
                 continue
 
-            matching.append({
-                "period_start": p_start,
-                "period_end": p_end,
-                "quantity_kg": q_val,
-            })
+            matching.append(
+                {
+                    "period_start": p_start,
+                    "period_end": p_end,
+                    "quantity_kg": q_val,
+                }
+            )
 
         if not matching:
             return HarvestConfrontationResult(
@@ -411,7 +428,7 @@ class HarvestWindowModel:
             evaluation_verdict=verdict,
             confrontation_details=(
                 f"Confronted against {len(matching)} market arrival observations: "
-                f"{within_kg:,.1f} kg ({ratio*100:.1f}%) occurred within the projected window. "
+                f"{within_kg:,.1f} kg ({ratio * 100:.1f}%) occurred within the projected window. "
                 f"Peak arrival observed on {peak_date} (inside_window={peak_inside})."
             ),
         )

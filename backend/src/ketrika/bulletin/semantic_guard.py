@@ -120,7 +120,10 @@ def validate_semantic_consistency(
         val_kind = fact_data.get("value_kind", "observed")
         if val_kind == "observed":
             context = extract_context_window(prose_with_placeholders, fact_id)
-            if context and any(k in context for k in ["prévision future", "anticipé pour le mois prochain", "projeté"]):
+            if context and any(
+                k in context
+                for k in ["prévision future", "anticipé pour le mois prochain", "projeté"]
+            ):
                 issues.append(
                     f"Incohérence temporelle sur {fact_id} : Une observation rétrospective ne peut être qualifiée de prévision future."
                 )

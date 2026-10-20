@@ -130,7 +130,6 @@ def verify_signed_action_token(
     return payload
 
 
-
 def generate_api_key_pair() -> tuple[str, str, str]:
     """Generate raw API key, prefix, and argon2 hash.
 

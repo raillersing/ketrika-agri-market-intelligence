@@ -78,7 +78,17 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
     words = q.split()
     if words:
         first_token = words[0].strip("();,").lower()
-        if first_token in ("select", "drop", "delete", "update", "insert", "with", "alter", "create", "truncate"):
+        if first_token in (
+            "select",
+            "drop",
+            "delete",
+            "update",
+            "insert",
+            "with",
+            "alter",
+            "create",
+            "truncate",
+        ):
             return question.strip()
 
     # 1. Price forecasting (Prévisions, horizons p10/p50/p90)
@@ -94,7 +104,21 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         """.strip()
 
     # 2. Climat / Précipitations / Météo (évalué avant anomalies pour intercepter les anomalies de pluie)
-    if any(k in q for k in ["pluie", "précipitation", "precipitation", "climat", "météo", "meteo", "pluviométri", "pluviometri", "sécheresse", "secheresse"]):
+    if any(
+        k in q
+        for k in [
+            "pluie",
+            "précipitation",
+            "precipitation",
+            "climat",
+            "météo",
+            "meteo",
+            "pluviométri",
+            "pluviometri",
+            "sécheresse",
+            "secheresse",
+        ]
+    ):
         loc_clause = resolve_location_clause(q, "WHERE")
         return f"""
         SELECT location_name, month, precip_total_mm, baseline_precip_mm, rain_anom_pct
@@ -169,7 +193,19 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         """.strip()
 
     # Commerce extérieur (douanes, imports/exports) - exclusion stricte de l'adjectif "important"
-    if any(k in q for k in ["importation", "importations", "exportation", "exportations", "douane", "douanes", "commerce extérieur", "commerce exterieur"]) or any(
+    if any(
+        k in q
+        for k in [
+            "importation",
+            "importations",
+            "exportation",
+            "exportations",
+            "douane",
+            "douanes",
+            "commerce extérieur",
+            "commerce exterieur",
+        ]
+    ) or any(
         w in q.split() for w in ["import", "imports", "export", "exports", "douane", "commerce"]
     ):
         prod = resolve_product_code(q)
@@ -205,7 +241,8 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
 
     # 10. Source health / Retard / Fraîcheur / DataOps
     if any(k in q for k in ["sla", "retard", "fraîcheur", "fraicheur", "stale"]) or (
-        "source" in q and any(k in q for k in ["santé", "sante", "health", "statut", "état", "etat"])
+        "source" in q
+        and any(k in q for k in ["santé", "sante", "health", "statut", "état", "etat"])
     ):
         return """
         SELECT source_id, priority, freshness_days, freshness_sla_days, is_stale
@@ -243,20 +280,113 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
 
 
 AGRICULTURAL_KEYWORDS: tuple[str, ...] = (
-    "riz", "vary", "makalioka", "tsipala", "maïs", "mais", "katsaka", "manioc", "mangahazo",
-    "huile", "menaka", "sucre", "siramamy", "farine", "légumineuse", "legumineuse", "haricot",
-    "voamena", "lojy", "arachide", "blé", "ble", "ppn", "prix", "vidiny", "vidin'ny", "cours",
-    "tarif", "ariary", "mga", "marché", "marche", "tsena", "anosibe", "grossiste", "détail",
-    "detail", "stock", "rupture", "disponibilité", "disponibilite", "tension", "soudure",
-    "récolte", "recolte", "vokatra", "culture", "production", "import", "export", "douane",
-    "commerce", "dépendance", "dependance", "idr", "météo", "meteo", "pluie", "orana",
-    "précipitation", "precipitation", "climat", "sécheresse", "secheresse", "cyclone",
-    "inondation", "ipc", "cpi", "inflation", "indice", "flambée", "flambee", "hausse", "baisse",
-    "chute", "anomalie", "volatilité", "volatilite", "source", "sla", "retard", "fraîcheur",
-    "fraicheur", "santé", "sante", "score", "prévision", "prevision", "futur", "horizon",
-    "p10", "p50", "p90", "analamanga", "alaotra", "vakinankaratra", "boeny", "atsimo",
-    "atsinanana", "antananarivo", "toamasina", "mahajanga", "antsirabe", "toliara",
-    "madagascar", "produit", "vivrier",
+    "riz",
+    "vary",
+    "makalioka",
+    "tsipala",
+    "maïs",
+    "mais",
+    "katsaka",
+    "manioc",
+    "mangahazo",
+    "huile",
+    "menaka",
+    "sucre",
+    "siramamy",
+    "farine",
+    "légumineuse",
+    "legumineuse",
+    "haricot",
+    "voamena",
+    "lojy",
+    "arachide",
+    "blé",
+    "ble",
+    "ppn",
+    "prix",
+    "vidiny",
+    "vidin'ny",
+    "cours",
+    "tarif",
+    "ariary",
+    "mga",
+    "marché",
+    "marche",
+    "tsena",
+    "anosibe",
+    "grossiste",
+    "détail",
+    "detail",
+    "stock",
+    "rupture",
+    "disponibilité",
+    "disponibilite",
+    "tension",
+    "soudure",
+    "récolte",
+    "recolte",
+    "vokatra",
+    "culture",
+    "production",
+    "import",
+    "export",
+    "douane",
+    "commerce",
+    "dépendance",
+    "dependance",
+    "idr",
+    "météo",
+    "meteo",
+    "pluie",
+    "orana",
+    "précipitation",
+    "precipitation",
+    "climat",
+    "sécheresse",
+    "secheresse",
+    "cyclone",
+    "inondation",
+    "ipc",
+    "cpi",
+    "inflation",
+    "indice",
+    "flambée",
+    "flambee",
+    "hausse",
+    "baisse",
+    "chute",
+    "anomalie",
+    "volatilité",
+    "volatilite",
+    "source",
+    "sla",
+    "retard",
+    "fraîcheur",
+    "fraicheur",
+    "santé",
+    "sante",
+    "score",
+    "prévision",
+    "prevision",
+    "futur",
+    "horizon",
+    "p10",
+    "p50",
+    "p90",
+    "analamanga",
+    "alaotra",
+    "vakinankaratra",
+    "boeny",
+    "atsimo",
+    "atsinanana",
+    "antananarivo",
+    "toamasina",
+    "mahajanga",
+    "antsirabe",
+    "toliara",
+    "madagascar",
+    "produit",
+    "vivrier",
 )
 
 

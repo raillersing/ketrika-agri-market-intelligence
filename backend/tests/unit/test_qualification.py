@@ -135,6 +135,24 @@ def test_unsafe_compose_rejected(case):
         validate_compose(yaml.safe_dump(spec))
 
 
+@pytest.mark.parametrize("project", ["ketrika-qualification", "ketrika-qualification-codex"])
+def test_other_qualification_projects_are_rejected(project):
+    spec = compose_spec()
+    spec["name"] = project
+    with pytest.raises(QualificationSafetyError):
+        validate_compose(yaml.safe_dump(spec))
+
+
+@pytest.mark.parametrize(
+    "volume", ["ketrika_qualification_pgdata", "ketrika_qualification_codex_bronze"]
+)
+def test_old_qualification_volumes_are_rejected(volume):
+    spec = compose_spec()
+    next(iter(spec["volumes"].values()))["name"] = volume
+    with pytest.raises(QualificationSafetyError):
+        validate_compose(yaml.safe_dump(spec))
+
+
 def coverage_report(covered=80):
     return {
         "files": {

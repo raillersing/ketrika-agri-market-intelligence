@@ -93,11 +93,15 @@ def classify_rainfall_anomaly(
         return AgroClimateRiskLevel.LOW
 
     # Severe drought: < 50% of normal or Z <= -2.0
-    if percent_of_normal < 50.0 or (standardized_anomaly is not None and standardized_anomaly <= -2.0):
+    if percent_of_normal < 50.0 or (
+        standardized_anomaly is not None and standardized_anomaly <= -2.0
+    ):
         return AgroClimateRiskLevel.CRITICAL
 
     # Moderate deficit: 50% to 75% of normal or -2.0 < Z <= -1.0
-    if percent_of_normal < 75.0 or (standardized_anomaly is not None and standardized_anomaly <= -1.0):
+    if percent_of_normal < 75.0 or (
+        standardized_anomaly is not None and standardized_anomaly <= -1.0
+    ):
         return AgroClimateRiskLevel.HIGH
 
     # Normal regime: 75% to 125% of normal

@@ -90,7 +90,11 @@ def sample_bulletin_facts() -> dict[str, dict]:
 
 def test_bulletin_zero_unreferenced_digits(sample_bulletin_facts: dict[str, dict]) -> None:
     """Verify validate_prose strictly forbids any literal digit outside placeholders."""
-    allowed = set(sample_bulletin_facts.keys()) | {"period_start", "period_end", "sources_attribution"}
+    allowed = set(sample_bulletin_facts.keys()) | {
+        "period_start",
+        "period_end",
+        "sources_attribution",
+    }
 
     # Compliant prose: only placeholders
     clean_prose = "Le prix du riz s'établit à {{f001}} avec une variation de {{f002}}."
@@ -111,7 +115,9 @@ def test_bulletin_directional_semantic_guard_rejects_polarity_inversion(
     """Verify validate_semantic_consistency detects deliberate direction inversion."""
     # f002 is +8.5% (an INCREASE)
     # Deliberate inversion: text claims it is a drop/decrease
-    inverted_prose = "La filière enregistre une forte baisse historique de {{f002}} sur les marchés."
+    inverted_prose = (
+        "La filière enregistre une forte baisse historique de {{f002}} sur les marchés."
+    )
     valid, issues = validate_semantic_consistency(inverted_prose, sample_bulletin_facts)
     assert valid is False
     assert len(issues) >= 1
@@ -136,7 +142,9 @@ def test_bulletin_directional_semantic_guard_rejects_polarity_inversion(
 
 def test_bulletin_unproven_causality_rejection(sample_bulletin_facts: dict[str, dict]) -> None:
     """Verify speculative causalities are detected and rejected."""
-    speculative_prose = "La variation de {{f002}} résulte d'une spéculation illégale généralisée des grossistes."
+    speculative_prose = (
+        "La variation de {{f002}} résulte d'une spéculation illégale généralisée des grossistes."
+    )
     valid, issues = validate_semantic_consistency(speculative_prose, sample_bulletin_facts)
     assert valid is False
     assert any("Causalité spéculative" in issue for issue in issues)
@@ -227,7 +235,9 @@ def test_bulletin_approval_audited_workflow() -> None:
     assert isinstance(approved.approved_at, datetime)
 
     # Attempting to re-approve an already approved bulletin raises an error
-    with pytest.raises(ValueError, match="Impossible d'approuver un bulletin avec le statut 'approved'"):
+    with pytest.raises(
+        ValueError, match="Impossible d'approuver un bulletin avec le statut 'approved'"
+    ):
         approve_bulletin(fake_session, b_id, approved_by="another_user@ketrika.mg")
 
 
@@ -301,7 +311,7 @@ def test_build_bulletin_facts_with_mock_gold_session() -> None:
     # Setup execute mock sequence
     exec_results = [
         MagicMock(fetchone=MagicMock(return_value=mock_rice)),  # query_rice_nat
-        MagicMock(fetchone=MagicMock(return_value=mock_mh)),    # query_mh
+        MagicMock(fetchone=MagicMock(return_value=mock_mh)),  # query_mh
         MagicMock(fetchall=MagicMock(return_value=[mock_reg_high, mock_reg_low])),  # query_reg
         MagicMock(fetchall=MagicMock(return_value=[mock_ppn1])),  # query_ppn
         MagicMock(fetchall=MagicMock(return_value=[mock_stock1])),  # query_stocks
@@ -380,4 +390,3 @@ def test_approve_bulletin_not_found_raises() -> None:
     fake_session.get.return_value = None
     with pytest.raises(ValueError, match="introuvable"):
         approve_bulletin(fake_session, uuid.uuid4(), "admin@ketrika.mg")
-

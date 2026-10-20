@@ -78,7 +78,9 @@ def test_copilot_response_structure_and_provenance_metadata() -> None:
     )
 
     with pytest.MonkeyPatch.context() as mp:
-        mp.setattr("ketrika.copilot.agent.execute_copilot_query", lambda *args, **kwargs: mock_result)
+        mp.setattr(
+            "ketrika.copilot.agent.execute_copilot_query", lambda *args, **kwargs: mock_result
+        )
         res = agent.ask("Quel est le dernier prix du riz blanc à Analamanga ?")
 
     assert "Riz blanc local" in res["answer_markdown"]
@@ -119,7 +121,11 @@ def test_benchmark_22_questions_coverage_and_safety() -> None:
     assert len(questions) >= 20
 
     for item in questions:
-        if item.get("expected_abstain") or item.get("is_adversarial") or item.get("expected_target_view") in ("abstain", "forbidden"):
+        if (
+            item.get("expected_abstain")
+            or item.get("is_adversarial")
+            or item.get("expected_target_view") in ("abstain", "forbidden")
+        ):
             continue
         q_text = item["question"]
         expected_view = item["expected_target_view"]
@@ -128,7 +134,9 @@ def test_benchmark_22_questions_coverage_and_safety() -> None:
         assert sql != "", f"Question was unexpectedly abstained: '{q_text}'"
         assert "gold" in sql.lower()
         view_short = expected_view.split(".")[-1]
-        assert view_short in sql.lower(), f"Expected view '{expected_view}' not found in SQL for '{q_text}'"
+        assert view_short in sql.lower(), (
+            f"Expected view '{expected_view}' not found in SQL for '{q_text}'"
+        )
 
 
 def test_fastapi_copilot_ask_endpoint() -> None:

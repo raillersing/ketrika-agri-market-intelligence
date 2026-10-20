@@ -117,7 +117,10 @@ def refresh_gold_views(
     schema_registry: SchemaContractRegistry | None = None,
 ) -> dict[str, Any]:
     """Fresh cell check and atomic publication; no model/conversion qualification."""
-    requested = ORDERED_GOLD_VIEWS if views is None else views
+    withheld = {"economic_dashboard": "macro_publication_not_qualified"} if views is None else {}
+    requested = (
+        [view for view in ORDERED_GOLD_VIEWS if view not in withheld] if views is None else views
+    )
     target_views = publication_views(requested)
     logger.info("Refreshing %d Gold materialized views...", len(target_views))
 
@@ -133,8 +136,7 @@ def refresh_gold_views(
         proof_reader = reader if reader is not None else BronzeProofReader(BronzeStore())
         check = require_gold_provenance(session, proof_reader, target_views)
         structure = require_gold_structure(session, proof_reader, check, schema_registry)
-        if check.state != "empty":
-            check_blocking_dq_gate(session)
+        dq_checks = check_blocking_dq_gate(session, candidate_record_ids=check.candidate_record_ids)
         denominators = get_publication_denominators(session)
         with session.begin_nested():
             for view_name in target_views:
@@ -158,6 +160,7 @@ def refresh_gold_views(
     logger.info("Successfully refreshed %d Gold materialized views.", len(refreshed))
     return {
         "views_refreshed": refreshed,
+        "withheld_views": withheld,
         "errors": {},
         "count": len(refreshed),
         "provenance_state": check.state,
@@ -171,6 +174,10 @@ def refresh_gold_views(
         "structure_artifacts_total": structure.total,
         "structure_artifacts_valid": structure.valid,
         "structure_scope": "publication_candidate_artifacts_not_authenticity_or_model",
+        "publication_parse_checks": [
+            item.details for item in dq_checks if item.check_name == "parse_success_rate"
+        ],
+        "denominators_scope": "global_inventory",
         "denominators": {
             "candidate_files": denominators.candidate_files,
             "parsed_files": denominators.parsed_files,

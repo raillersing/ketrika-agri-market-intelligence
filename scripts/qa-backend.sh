@@ -34,7 +34,7 @@ case "${1:-check}" in
     python -m ketrika.core.execution_plan --root /workspace
     export KETRIKA_QA_INVENTORY=/app/.venv/qa-inventory.json
     export KETRIKA_QA_INVENTORY_OWNER_PID=$$
-    run_pytest -m 'not network' --maxfail=1 --cov=ketrika.core --cov=ketrika.extraction --cov=ketrika.normalize --cov-report=term-missing --cov-report=json:/app/.venv/qa-coverage.json --junitxml=/app/.venv/qa-tests.xml
+    run_pytest -m 'not network' --maxfail=10 --cov=ketrika.core --cov=ketrika.extraction --cov=ketrika.normalize --cov-report=term-missing --cov-report=json:/app/.venv/qa-coverage.json --junitxml=/app/.venv/qa-tests.xml
     python -m ketrika.core.qualification_reports check-junit /app/.venv/qa-tests.xml /app/.venv/qa-inventory.json --root /workspace --commit "$KETRIKA_SOURCE_COMMIT" --minimum-tests 340 --minimum-integrations 32
     python -m ketrika.core.qualification coverage /app/.venv/qa-coverage.json
     ;;

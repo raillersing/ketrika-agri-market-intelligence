@@ -21,10 +21,10 @@ MAX_REPORT_BYTES = 16 * 1024 * 1024
 MAX_CASES = 100000
 
 ENVIRONMENT_IDENTITY = {
-    "project": "ketrika-qualification",
+    "project": "ketrika-qualification-main-integration",
     "database": "ketrika_qualification",
     "bronze_bucket": "ketrika-qa-bronze",
-    "network": "ketrika_qualification_network",
+    "network": "ketrika_qualification_main_integration_network",
     "dataset_mode": "test",
 }
 

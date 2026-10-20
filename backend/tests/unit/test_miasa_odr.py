@@ -390,10 +390,7 @@ def test_miasa_odr_authentic_corpus_golden(
         assert len(price_recs) == len(expected_records)
         all_parsed_records.extend(price_recs)
 
-        parsed_map = {
-            (r.product_raw, r.location_raw, r.actor_level): r
-            for r in price_recs
-        }
+        parsed_map = {(r.product_raw, r.location_raw, r.actor_level): r for r in price_recs}
 
         correct_fields = 0
         total_fields = 0
@@ -462,36 +459,48 @@ def test_miasa_odr_neighboring_cell_evidence_rejected() -> None:
     )
 
     # 1. Correct evidence with expected location matching -> Verified
-    assert verify_evidence(
-        value=3150.0,
-        evidence={"page": 1, "text": "Boeny (Mahajanga Tsaramandroso) 3 150"},
-        page_text=page_text,
-        expected_location="Boeny (Mahajanga Tsaramandroso)",
-    ) is True
+    assert (
+        verify_evidence(
+            value=3150.0,
+            evidence={"page": 1, "text": "Boeny (Mahajanga Tsaramandroso) 3 150"},
+            page_text=page_text,
+            expected_location="Boeny (Mahajanga Tsaramandroso)",
+        )
+        is True
+    )
 
     # 2. Neighboring row/cell: price 3 150 attributed to Diana -> Rejected
-    assert verify_evidence(
-        value=3150.0,
-        evidence={"page": 1, "text": "Boeny (Mahajanga Tsaramandroso) 3 150"},
-        page_text=page_text,
-        expected_location="Diana (Antsiranana Bazar)",
-    ) is False
+    assert (
+        verify_evidence(
+            value=3150.0,
+            evidence={"page": 1, "text": "Boeny (Mahajanga Tsaramandroso) 3 150"},
+            page_text=page_text,
+            expected_location="Diana (Antsiranana Bazar)",
+        )
+        is False
+    )
 
     # 3. Neighboring row/cell: price 3 250 with evidence snippet from Atsinanana -> Rejected
-    assert verify_evidence(
-        value=3250.0,
-        evidence={"page": 1, "text": "Atsinanana (Toamasina I) 3 450"},
-        page_text=page_text,
-        expected_location="Diana (Antsiranana Bazar)",
-    ) is False
+    assert (
+        verify_evidence(
+            value=3250.0,
+            evidence={"page": 1, "text": "Atsinanana (Toamasina I) 3 450"},
+            page_text=page_text,
+            expected_location="Diana (Antsiranana Bazar)",
+        )
+        is False
+    )
 
     # 4. Wrong numeric value even if location matches -> Rejected
-    assert verify_evidence(
-        value=4000.0,
-        evidence={"page": 1, "text": "Boeny (Mahajanga Tsaramandroso) 3 150"},
-        page_text=page_text,
-        expected_location="Boeny (Mahajanga Tsaramandroso)",
-    ) is False
+    assert (
+        verify_evidence(
+            value=4000.0,
+            evidence={"page": 1, "text": "Boeny (Mahajanga Tsaramandroso) 3 150"},
+            page_text=page_text,
+            expected_location="Boeny (Mahajanga Tsaramandroso)",
+        )
+        is False
+    )
 
 
 def test_miasa_odr_scanned_pdf_needs_review(odr_pdf_bytes_scanned: bytes) -> None:
@@ -546,7 +555,9 @@ def test_miasa_odr_dynamic_catalog_discovery(
 ) -> None:
     """R1.4 / R1.2: Dynamic catalog discovery following HTML links on agriculture.gov.mg."""
     monkeypatch.setenv("KETRIKA_ALLOW_TEST_LOOPBACK", "1")
-    httpserver.expect_request("/robots.txt").respond_with_data("User-agent: *\nDisallow:\n", status=200)
+    httpserver.expect_request("/robots.txt").respond_with_data(
+        "User-agent: *\nDisallow:\n", status=200
+    )
 
     catalog_html = """
     <html>
@@ -562,7 +573,9 @@ def test_miasa_odr_dynamic_catalog_discovery(
       </body>
     </html>
     """
-    httpserver.expect_request("/odr/bulletins").respond_with_data(catalog_html, content_type="text/html")
+    httpserver.expect_request("/odr/bulletins").respond_with_data(
+        catalog_html, content_type="text/html"
+    )
 
     policy = PolicyEngine()
     policy.set_robots_txt(httpserver.url_for("/"), "User-agent: *\nDisallow:\n")
@@ -591,7 +604,9 @@ def test_miasa_odr_dynamic_catalog_discovery(
     assert any("bulletin_905.pdf" in u for u in urls)
     assert any("bulletin_904.pdf" in u for u in urls)
     assert any("bulletin_903.pdf" in u for u in urls)
-    assert all(d.partition_key is not None and d.partition_key.startswith("odr_bulletin_") for d in discovered)
+    assert all(
+        d.partition_key is not None and d.partition_key.startswith("odr_bulletin_")
+        for d in discovered
+    )
     assert all(d.hints.get("publisher") == "MiASA/ODR" for d in discovered)
     assert all(d.hints.get("format") == "pdf" for d in discovered)
-

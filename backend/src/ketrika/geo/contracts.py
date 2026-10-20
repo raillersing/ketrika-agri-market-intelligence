@@ -217,7 +217,9 @@ class CropCalendarRecord(BaseModel):
         # Disallow invented tonnage or price projections
         for prohibited in ("tonnage", "yield_projection", "price_forecast", "market_price_peak"):
             if hasattr(self, prohibited):
-                raise ValueError(f"Crop calendar cannot contain economic projection field '{prohibited}' (ADR-086)")
+                raise ValueError(
+                    f"Crop calendar cannot contain economic projection field '{prohibited}' (ADR-086)"
+                )
 
         # Entries without authentic source or marked unverified cannot be eligible for alerts
         if not self.verified or not self.source_reference.strip():
@@ -226,7 +228,9 @@ class CropCalendarRecord(BaseModel):
         # Populate month lists if empty
         if not self.planting_months:
             if self.planting_start_month <= self.planting_end_month:
-                self.planting_months = list(range(self.planting_start_month, self.planting_end_month + 1))
+                self.planting_months = list(
+                    range(self.planting_start_month, self.planting_end_month + 1)
+                )
             else:
                 self.planting_months = list(range(self.planting_start_month, 13)) + list(
                     range(1, self.planting_end_month + 1)
@@ -234,7 +238,9 @@ class CropCalendarRecord(BaseModel):
 
         if not self.harvest_months:
             if self.harvest_start_month <= self.harvest_end_month:
-                self.harvest_months = list(range(self.harvest_start_month, self.harvest_end_month + 1))
+                self.harvest_months = list(
+                    range(self.harvest_start_month, self.harvest_end_month + 1)
+                )
             else:
                 self.harvest_months = list(range(self.harvest_start_month, 13)) + list(
                     range(1, self.harvest_end_month + 1)

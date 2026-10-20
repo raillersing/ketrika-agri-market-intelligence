@@ -251,7 +251,9 @@ class CatalogDiscoveryEngine:
         )
 
         try:
-            resp: FetchResult = self.http_client.get(feed_url, etag=etag, last_modified=last_modified)
+            resp: FetchResult = self.http_client.get(
+                feed_url, etag=etag, last_modified=last_modified
+            )
         except Exception as exc:
             return DiscoveryResult(
                 status=DiscoveryStatus.DISCOVERY_FAILED,
@@ -349,9 +351,7 @@ class CatalogDiscoveryEngine:
             )
 
         status = (
-            DiscoveryStatus.NEW_EDITIONS_AVAILABLE
-            if editions
-            else DiscoveryStatus.NO_NEW_EDITION
+            DiscoveryStatus.NEW_EDITIONS_AVAILABLE if editions else DiscoveryStatus.NO_NEW_EDITION
         )
         return DiscoveryResult(
             status=status,
@@ -413,7 +413,10 @@ def classify_ingestion_outcome(
     if discovery_result.status == DiscoveryStatus.DISCOVERY_FAILED:
         return "discovery_failed"
 
-    if discovery_result.status == DiscoveryStatus.NO_NEW_EDITION or discovery_result.new_editions_count == 0:
+    if (
+        discovery_result.status == DiscoveryStatus.NO_NEW_EDITION
+        or discovery_result.new_editions_count == 0
+    ):
         return "no_new_edition"
 
     if parse_results is not None:

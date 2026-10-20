@@ -26,6 +26,7 @@ from ketrika.gold.coverage import MarketCoverageRow
 # 1. MACRO ROUTE PAGINATION, METADATA AND CSV EXPORT
 # =========================================================================
 
+
 def test_api_macro_json_metadata_and_pagination():
     """Verify /v1/macro pagination and exhaustive metadata exposure."""
     mock_session = MagicMock()
@@ -157,6 +158,7 @@ def test_api_macro_csv_export():
 # 2. MARKET COVERAGE ROUTE PAGINATION AND CSV EXPORT
 # =========================================================================
 
+
 def test_api_market_coverage_pagination_and_csv():
     """Verify /v1/market/coverage pagination and CSV export."""
     mock_cell = MarketCoverageRow(
@@ -182,7 +184,10 @@ def test_api_market_coverage_pagination_and_csv():
     )
 
     from unittest.mock import patch
-    with patch("ketrika.api.routers.coverage.query_market_coverage_matrix", return_value=[mock_cell]):
+
+    with patch(
+        "ketrika.api.routers.coverage.query_market_coverage_matrix", return_value=[mock_cell]
+    ):
         client = TestClient(app)
 
         # JSON with pagination
@@ -210,6 +215,7 @@ def test_api_market_coverage_pagination_and_csv():
 # =========================================================================
 # 3. ECONOMIC INDICATORS ROUTE PAGINATION AND CSV EXPORT
 # =========================================================================
+
 
 def test_api_economic_indicators_pagination_and_csv():
     """Verify /v1/economic/indicators pagination and CSV export."""
@@ -245,6 +251,7 @@ def test_api_economic_indicators_pagination_and_csv():
 # 4. ERROR FORMATTING (RFC 7807 PROBLEM DETAILS)
 # =========================================================================
 
+
 def test_api_pagination_limit_out_of_bounds_validation():
     """Verify invalid limit values (< 1 or > 1000) return 422 with validation errors."""
     client = TestClient(app)
@@ -265,6 +272,7 @@ def test_api_pagination_limit_out_of_bounds_validation():
 # =========================================================================
 # 5. PROTECTED ADMIN ROUTES NON-PUBLIC ENFORCEMENT
 # =========================================================================
+
 
 def test_api_admin_routes_strictly_reject_unauthenticated():
     """Verify admin endpoints return 401 or 403 when unauthenticated."""

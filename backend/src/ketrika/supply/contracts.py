@@ -49,32 +49,34 @@ class MarketType(StrEnum):
 
 
 # Forbidden personal data field names (AGENTS.md §8.3 strict ban on PII)
-FORBIDDEN_PII_FIELDS: frozenset[str] = frozenset({
-    "trader_name",
-    "name",
-    "first_name",
-    "last_name",
-    "phone",
-    "telephone",
-    "tel",
-    "mobile",
-    "email",
-    "mail",
-    "driver_name",
-    "driver_id",
-    "driver_phone",
-    "vehicle_plate",
-    "plate_number",
-    "immatriculation",
-    "national_id",
-    "cin",
-    "passport",
-    "nif",
-    "stat",
-    "address",
-    "home_address",
-    "contact_person",
-})
+FORBIDDEN_PII_FIELDS: frozenset[str] = frozenset(
+    {
+        "trader_name",
+        "name",
+        "first_name",
+        "last_name",
+        "phone",
+        "telephone",
+        "tel",
+        "mobile",
+        "email",
+        "mail",
+        "driver_name",
+        "driver_id",
+        "driver_phone",
+        "vehicle_plate",
+        "plate_number",
+        "immatriculation",
+        "national_id",
+        "cin",
+        "passport",
+        "nif",
+        "stat",
+        "address",
+        "home_address",
+        "contact_person",
+    }
+)
 
 # Product mass density conversion factors for traditional non-metric units (kg per unit)
 UNIT_CONVERSION_TABLE: dict[tuple[QuantityUnit, str], float] = {
@@ -111,7 +113,9 @@ UNIT_CONVERSION_TABLE: dict[tuple[QuantityUnit, str], float] = {
 }
 
 
-def convert_quantity_to_kg(quantity_raw: float, unit: QuantityUnit, product_code: str = "*") -> float:
+def convert_quantity_to_kg(
+    quantity_raw: float, unit: QuantityUnit, product_code: str = "*"
+) -> float:
     """Convert raw quantity in specified unit to standard metric kilograms."""
     if quantity_raw <= 0:
         raise ValueError(f"Quantity must be strictly positive, got {quantity_raw}")
@@ -133,9 +137,13 @@ def validate_payload_no_pii(payload: dict[str, Any]) -> None:
     for key in payload:
         low_key = key.lower().replace("-", "_")
         if low_key in FORBIDDEN_PII_FIELDS:
-            raise ValueError(f"Forbidden PII field detected in payload: '{key}'. PII is strictly prohibited.")
+            raise ValueError(
+                f"Forbidden PII field detected in payload: '{key}'. PII is strictly prohibited."
+            )
         # Sub-string match for sensitive identifiers
-        if any(term in low_key for term in ("phone", "email", "trader_name", "driver_", "plate_number")):
+        if any(
+            term in low_key for term in ("phone", "email", "trader_name", "driver_", "plate_number")
+        ):
             raise ValueError(f"Forbidden PII keyword pattern detected in field: '{key}'.")
 
 
@@ -145,16 +153,26 @@ class SurveyMetadata(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     protocol_code: str = "KETRIKA_SUPPLY_PILOT_v1.0"
-    surveyor_identifier: str = Field(..., description="Role-based anonymous surveyor ID (e.g. 'ENQ_01')")
-    institution_partner: str = Field("Observatoire du Riz / Direction Régionale MinAE", description="Originating entity")
-    sampling_frame: str = Field(..., description="Sampling method: census, systematic_sample, purposive_hub")
+    surveyor_identifier: str = Field(
+        ..., description="Role-based anonymous surveyor ID (e.g. 'ENQ_01')"
+    )
+    institution_partner: str = Field(
+        "Observatoire du Riz / Direction Régionale MinAE", description="Originating entity"
+    )
+    sampling_frame: str = Field(
+        ..., description="Sampling method: census, systematic_sample, purposive_hub"
+    )
 
     @field_validator("surveyor_identifier")
     @classmethod
     def validate_anonymous_surveyor(cls, v: str) -> str:
         # Surveyor identifier must be an anonymous code, never a human name
-        if re.search(r"\b(monsieur|madame|m\.|mme|jean|pierre|rakoto|rasoa|randria)\b", v, re.IGNORECASE):
-            raise ValueError(f"Surveyor identifier '{v}' appears to contain a personal name. Use anonymous codes like 'ENQ_01'.")
+        if re.search(
+            r"\b(monsieur|madame|m\.|mme|jean|pierre|rakoto|rasoa|randria)\b", v, re.IGNORECASE
+        ):
+            raise ValueError(
+                f"Surveyor identifier '{v}' appears to contain a personal name. Use anonymous codes like 'ENQ_01'."
+            )
         return v
 
 
@@ -201,11 +219,19 @@ class QuantityObservationRecord(BaseModel):
         if self.target == QuantityTarget.INFLOW_ARRIVAL:
             if self.period_start is not None and self.period_end is not None:
                 if self.period_start > self.period_end:
-                    raise ValueError(f"period_start ({self.period_start}) cannot be later than period_end ({self.period_end})")
+                    raise ValueError(
+                        f"period_start ({self.period_start}) cannot be later than period_end ({self.period_end})"
+                    )
         # 2. Stock inventory requires point-in-time observed_date
         if self.target == QuantityTarget.STOCK_INVENTORY:
-            if self.period_start is not None and self.period_end is not None and self.period_start != self.period_end:
-                raise ValueError("Stock inventory is a point-in-time stock measure and cannot span a multi-day period.")
+            if (
+                self.period_start is not None
+                and self.period_end is not None
+                and self.period_start != self.period_end
+            ):
+                raise ValueError(
+                    "Stock inventory is a point-in-time stock measure and cannot span a multi-day period."
+                )
         return self
 
 
@@ -219,14 +245,20 @@ def validate_no_double_counting(records: list[QuantityObservationRecord]) -> lis
     targets_present = {r.target for r in records}
 
     # Violation 1: Mixing flow (arrival) and static stock in cumulative sum
-    if QuantityTarget.INFLOW_ARRIVAL in targets_present and QuantityTarget.STOCK_INVENTORY in targets_present:
+    if (
+        QuantityTarget.INFLOW_ARRIVAL in targets_present
+        and QuantityTarget.STOCK_INVENTORY in targets_present
+    ):
         violations.append(
             "DOUBLE_COUNTING_RISK: Dataset contains both INFLOW_ARRIVAL (flow) and STOCK_INVENTORY (state). "
             "They must NEVER be summed together."
         )
 
     # Violation 2: Mixing harvest volume (production) and market arrivals
-    if QuantityTarget.HARVEST_VOLUME in targets_present and QuantityTarget.INFLOW_ARRIVAL in targets_present:
+    if (
+        QuantityTarget.HARVEST_VOLUME in targets_present
+        and QuantityTarget.INFLOW_ARRIVAL in targets_present
+    ):
         violations.append(
             "DOUBLE_COUNTING_RISK: Dataset contains both HARVEST_VOLUME (basin production) and INFLOW_ARRIVAL (market). "
             "Summing them causes double counting of the supply corridor."

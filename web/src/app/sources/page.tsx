@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 
 import { freshnessLabel, freshnessSummary, measuredFreshness, recomputeIndicators } from "../../lib/sources-state";
+import { ManualCollectionStatus, useManualCollection } from "../../components/ManualCollection";
 
 interface SourceItem {
   sourceId: string;
@@ -278,20 +279,12 @@ export default function SourcesPage() {
     }
   };
 
+  const collection = useManualCollection(() => { void loadData(); });
   const handleRefreshSource = async (sourceId: string) => {
-    if (requestPending.current || !canRefresh) return;
-    requestPending.current = true;
+    if (requestPending.current || !canRefresh || collection.busy) return;
     setRefreshingSourceId(sourceId);
-    try {
-      const message = await recomputeIndicators(`/api/v1/sources/${encodeURIComponent(sourceId)}/refresh`);
-      await loadData();
-      showToast("success", message);
-    } catch (error) {
-      showToast("error", error instanceof Error ? error.message : "Résultat non confirmé.");
-    } finally {
-      requestPending.current = false;
-      setRefreshingSourceId(null);
-    }
+    try { await collection.start(sourceId); }
+    finally { setRefreshingSourceId(null); }
   };
 
   // Filtrage intelligent
@@ -374,24 +367,29 @@ export default function SourcesPage() {
             </h1>
 
             <p className="text-sm text-slate-300 leading-relaxed">
-              Consultez les sources et recalculez les indicateurs des données existantes en{" "}
+              Collectez les publications publiques autorisées et recalculez leurs indicateurs en{" "}
               <strong className="text-white font-semibold">1 clic</strong>, sans aucune
               manipulation technique ni code complexe.
             </p>
           </div>
 
           {/* Bouton d'action principal héroïque */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3">
             <button
               onClick={handleRefreshAll}
-              disabled={isRefreshingAll || refreshingSourceId !== null || !canRefresh}
+              disabled={isRefreshingAll || refreshingSourceId !== null || collection.busy || !canRefresh}
               className="relative group inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-xl shadow-emerald-950/60 hover:shadow-emerald-900/80 border border-emerald-400/40 active:scale-98 transition-all disabled:opacity-60 disabled:pointer-events-none"
             >
               <RefreshCw className={`w-4 h-4 ${isRefreshingAll ? "animate-spin text-white" : "group-hover:rotate-180 transition-transform duration-500"}`} />
               <span>{isRefreshingAll ? "Recalcul en cours..." : "Recalculer les indicateurs"}</span>
               <Sparkles className="w-4 h-4 text-emerald-200 group-hover:scale-110 transition-transform" />
             </button>
-            {!canRefresh && <p className="text-xs text-slate-300">Recalcul réservé aux administrateurs.</p>}
+            {!canRefresh && <p className="text-xs text-slate-300">Collecte et recalcul réservés aux administrateurs.</p>}
+            <button
+              onClick={() => collection.start()}
+              disabled={!canRefresh || collection.busy || isRefreshingAll || collection.eligible.length === 0}
+              className="rounded-2xl bg-cyan-500 px-5 py-4 font-bold text-slate-950 disabled:opacity-50"
+            >{collection.busy ? "Collecte en cours…" : "Collecter les nouvelles données"}</button>
 
             <button
               aria-expanded={guideOpen}
@@ -423,6 +421,7 @@ export default function SourcesPage() {
         )}
       </div>
 
+      <ManualCollectionStatus receipt={collection.receipt} error={collection.error} />
       {/* Guide d'utilisation très clair pour non-technicien */}
       {guideOpen && (
         <div id="sources-guide" className="glass-panel rounded-3xl p-6 sm:p-7 border border-emerald-500/20 bg-emerald-950/10 space-y-5 animate-in slide-in-from-top-3 duration-300">
@@ -433,7 +432,7 @@ export default function SourcesPage() {
               </div>
               <div>
                 <h2 className="text-base font-bold text-white">
-                  Guide d&apos;utilisation simple : Que fait le recalcul ?
+                  Guide d&apos;utilisation : Collecter ou recalculer ?
                 </h2>
                 <p className="text-xs text-slate-400">
                   Comprendre le fonctionnement sans jargon informatique.
@@ -454,7 +453,7 @@ export default function SourcesPage() {
                 Choisissez votre action
               </h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Cliquez sur <strong className="text-emerald-300">« Recalculer les indicateurs »</strong>. Cette action administrateur utilise uniquement les données déjà présentes, même depuis une carte source.
+                Cliquez sur <strong className="text-emerald-300">« Collecter les nouvelles données »</strong> pour les sources autorisées, ou « Collecter » sur une carte. « Recalculer les indicateurs » utilise seulement les données déjà présentes.
               </p>
             </div>
 
@@ -466,7 +465,7 @@ export default function SourcesPage() {
                 Vérification avant publication
               </h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Le moteur contrôle la provenance avant de recalculer les indicateurs. Il peut refuser la publication si les preuves sont insuffisantes. Aucune nouvelle publication externe n’est téléchargée ici.
+                La collecte télécharge les documents publics, les archive puis contrôle et intègre leurs données. La publication des indicateurs peut être refusée si les preuves sont insuffisantes.
               </p>
             </div>
 
@@ -478,7 +477,7 @@ export default function SourcesPage() {
                 Consultez le résultat
               </h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Attendez la réponse du serveur. Un recalcul réussi ne prouve pas que les sources sont fraîches et ne régénère pas les bulletins.
+                Suivez les étapes réelles et le résultat par source. Le suivi reste disponible après rechargement. Aucun nombre ne garantit une fraîcheur universelle ; les bulletins ne sont pas régénérés.
               </p>
             </div>
           </div>
@@ -487,7 +486,7 @@ export default function SourcesPage() {
             <p className="flex items-center gap-1.5">
               <Zap className="w-4 h-4 text-amber-400 shrink-0" />
               <span>
-                <strong>Bon à savoir :</strong> Le calendrier configuré ne garantit pas la réussite des collectes. Consultez l’historique ; le lancement manuel d’une collecte n’est pas encore disponible sur cette page.
+                <strong>Bon à savoir :</strong> Une source peut ne publier aucun nouveau document ou refuser l’accès. Une collecte interrompue n’est jamais relancée automatiquement.
               </span>
             </p>
           </div>
@@ -739,11 +738,11 @@ export default function SourcesPage() {
 
                   <button
                     onClick={() => handleRefreshSource(source.sourceId)}
-                    disabled={refreshingSourceId !== null || isRefreshingAll || !canRefresh || source.status !== "active"}
+                    disabled={refreshingSourceId !== null || isRefreshingAll || collection.busy || !canRefresh || !collection.eligible.includes(source.sourceId)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50"
                   >
                     <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
-                    <span>{isRefreshing ? "Recalcul..." : "Recalculer"}</span>
+                    <span>{isRefreshing ? "Collecte..." : "Collecter"}</span>
                   </button>
                 </div>
               </div>
@@ -811,11 +810,11 @@ export default function SourcesPage() {
                       <td className="px-5 py-4 text-right">
                         <button
                           onClick={() => handleRefreshSource(source.sourceId)}
-                          disabled={refreshingSourceId !== null || isRefreshingAll || !canRefresh || source.status !== "active"}
+                          disabled={refreshingSourceId !== null || isRefreshingAll || collection.busy || !canRefresh || !collection.eligible.includes(source.sourceId)}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50"
                         >
                           <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
-                          <span>{isRefreshing ? "Recalcul..." : "Recalculer"}</span>
+                          <span>{isRefreshing ? "Collecte..." : "Collecter"}</span>
                         </button>
                       </td>
                     </tr>

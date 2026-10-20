@@ -34,7 +34,9 @@ def synthetic_history():
     macro_usd = np.linspace(3600, 4600, n) + np.random.normal(0, 30, n)
 
     # Climate series (rainfall anomaly in mm)
-    climate_rain = 50 * np.sin(2 * np.pi * np.array([d.month for d in dates]) / 12.0) + np.random.normal(0, 10, n)
+    climate_rain = 50 * np.sin(
+        2 * np.pi * np.array([d.month for d in dates]) / 12.0
+    ) + np.random.normal(0, 10, n)
 
     return dates, prices, {"usd_mga": macro_usd}, {"rainfall_anomaly": climate_rain}
 
@@ -66,7 +68,9 @@ def test_validate_no_lookahead_leakage():
     dates = [date(2023, 1, 1), date(2023, 2, 1), date(2023, 3, 1)]
     # Target date is 2023-03-01 (index 2)
     # Valid past features
-    validate_no_lookahead_leakage(dates, origin_index=2, feature_timestamps=[date(2023, 1, 1), date(2023, 2, 1)])
+    validate_no_lookahead_leakage(
+        dates, origin_index=2, feature_timestamps=[date(2023, 1, 1), date(2023, 2, 1)]
+    )
 
     # Fatal leakage: feature timestamp equals or exceeds target date
     with pytest.raises(ValueError, match="Lookahead leakage detected"):

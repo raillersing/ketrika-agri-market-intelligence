@@ -61,7 +61,9 @@ def test_traditional_vs_seasonal_recommendation():
     assert len(traditional) >= 8
 
     # Seasonal recommendation for 2023/2024
-    recommendations = [r for r in records if r.calendar_type == CalendarType.SEASONAL_RECOMMENDATION]
+    recommendations = [
+        r for r in records if r.calendar_type == CalendarType.SEASONAL_RECOMMENDATION
+    ]
     assert len(recommendations) >= 1
 
     rec_2023 = recommendations[0]

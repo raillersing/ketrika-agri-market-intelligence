@@ -196,10 +196,7 @@ def _parse_table_grid(
         return [], []
 
     # 1. Inspect preamble lines for base period and geographic scope
-    preamble_texts = [
-        " ".join(str(c) for c in row if c is not None)
-        for row in rows[:15]
-    ]
+    preamble_texts = [" ".join(str(c) for c in row if c is not None) for row in rows[:15]]
     base_period = default_base or _detect_base_period(preamble_texts)
     geo_scope = default_scope or _detect_geo_scope(preamble_texts, sheet_name=sheet_name)
 
@@ -223,7 +220,10 @@ def _parse_table_grid(
 
         # Check for series presence
         has_series = any(
-            any(k in c for k in ("ensemble", "general", "aliment", "nourriture", "riz", "cpi", "pain"))
+            any(
+                k in c
+                for k in ("ensemble", "general", "aliment", "nourriture", "riz", "cpi", "pain")
+            )
             for c in cleaned_cells
         )
 
@@ -347,7 +347,11 @@ class InstatNipcConnector:
         if file_urls and isinstance(file_urls, list):
             for u in file_urls:
                 url_str = str(u)
-                fmt = "xlsx" if url_str.endswith(".xlsx") else ("xls" if url_str.endswith(".xls") else "csv")
+                fmt = (
+                    "xlsx"
+                    if url_str.endswith(".xlsx")
+                    else ("xls" if url_str.endswith(".xls") else "csv")
+                )
                 yield DiscoveredItem(
                     url=url_str,
                     partition_key="nipc_national",
@@ -359,7 +363,11 @@ class InstatNipcConnector:
         file_url = ctx.metadata.get("file_url")
         if file_url:
             url_str = str(file_url)
-            fmt = "xlsx" if url_str.endswith(".xlsx") else ("xls" if url_str.endswith(".xls") else "csv")
+            fmt = (
+                "xlsx"
+                if url_str.endswith(".xlsx")
+                else ("xls" if url_str.endswith(".xls") else "csv")
+            )
             yield DiscoveredItem(
                 url=url_str,
                 partition_key="nipc_national",
@@ -479,7 +487,8 @@ class InstatNipcConnector:
         if not all_records:
             return ParseResult(
                 records=[],
-                issues=all_issues or [
+                issues=all_issues
+                or [
                     {
                         "kind": "header_not_found",
                         "detail": "Failed to locate valid NIPC header in any sheet",

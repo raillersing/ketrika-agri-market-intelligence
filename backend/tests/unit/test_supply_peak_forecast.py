@@ -7,7 +7,6 @@ from datetime import date
 
 import pytest
 
-from ketrika.connectors.records import StockRecord
 from ketrika.geo.contracts import CropCalendarRecord, load_crop_calendar
 from ketrika.supply.contracts import QuantityTarget
 from ketrika.supply.harvest_window import HarvestWindowModel, HarvestWindowProjection
@@ -18,16 +17,14 @@ from ketrika.supply.peak_forecast import (
     dekad_difference,
     parse_dekad_label,
 )
+from tests.supply_fixtures import SyntheticStockRecord as StockRecord
 
 
 @pytest.fixture
 def alaotra_rice_calendar() -> CropCalendarRecord:
     """Authentic baseline crop calendar for Lac Alaotra main rice (vary Asara)."""
     calendars = load_crop_calendar()
-    alaotra_records = [
-        r for r in calendars
-        if r.zone_code == "ZONE_ALAOTRA" and r.crop == "RICE"
-    ]
+    alaotra_records = [r for r in calendars if r.zone_code == "ZONE_ALAOTRA" and r.crop == "RICE"]
     assert alaotra_records, "Alaotra rice calendar record not found in taxonomy"
     return alaotra_records[0]
 
@@ -53,7 +50,9 @@ def test_dekad_parsing_and_arithmetic() -> None:
     assert dekad_difference("2024-05-D1", "2024-05-D1") == 0
 
 
-def test_supply_window_prediction_with_logistics_lag(alaotra_harvest_window: HarvestWindowProjection) -> None:
+def test_supply_window_prediction_with_logistics_lag(
+    alaotra_harvest_window: HarvestWindowProjection,
+) -> None:
     """C2: Validate supply window prediction with logistics lag (+1 dekad)."""
     engine = SupplyPeakForecastEngine()
 
@@ -291,7 +290,9 @@ def test_observed_peak_derived_strictly_from_physical_quantities() -> None:
     assert peaks[0].peak_quantity_kg == 250_000.0
 
 
-def test_independent_evaluation_on_real_odr_arrivals(alaotra_harvest_window: HarvestWindowProjection) -> None:
+def test_independent_evaluation_on_real_odr_arrivals(
+    alaotra_harvest_window: HarvestWindowProjection,
+) -> None:
     """C6: Independent empirical evaluation against authentic ODR Anosibe May 2024 arrivals."""
     engine = SupplyPeakForecastEngine()
 
@@ -348,7 +349,7 @@ def test_independent_evaluation_on_real_odr_arrivals(alaotra_harvest_window: Har
             natural_key="w3",
             product_raw="Riz blanc",
             location_raw="Anosibe",
-            period_start=date(2024, 6, 5),   # June D1
+            period_start=date(2024, 6, 5),  # June D1
             period_end=date(2024, 6, 5),
             quantity_raw="180 t",
             quantity_value=180_000.0,
@@ -417,4 +418,3 @@ def test_supply_api_endpoints() -> None:
         assert data_suff["is_sufficient"] is False
     finally:
         app.dependency_overrides.clear()
-

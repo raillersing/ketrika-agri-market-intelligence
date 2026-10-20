@@ -73,7 +73,9 @@ def _get_facultative_sources() -> list[FacultativeSourceStatus]:
 @router.get("/summary", response_model=ClimateSummaryResponse)
 def get_climate_summary(
     location: str = Query("MDG11", description="District or Region P-code (e.g. MDG11)"),
-    month: str | None = Query(None, description="Reference month (YYYY-MM-01), defaults to latest available"),
+    month: str | None = Query(
+        None, description="Reference month (YYYY-MM-01), defaults to latest available"
+    ),
     session: Session = Depends(get_db),
 ) -> ClimateSummaryResponse:
     """Consolidated agroclimate summary by zone explaining observed, forecasted and phenological states."""
@@ -83,7 +85,9 @@ def get_climate_summary(
         .filter(or_(Location.pcode == location, Location.name == location))
         .first()
     )
-    loc_name = loc_record.name if (loc_record and loc_record.name) else f"Région/District {location}"
+    loc_name = (
+        loc_record.name if (loc_record and loc_record.name) else f"Région/District {location}"
+    )
     loc_pcode = loc_record.pcode if (loc_record and loc_record.pcode) else location
 
     # 2. Reference Month
@@ -309,7 +313,9 @@ def get_climate_anomalies(
                 month=m,
                 variable=variable,
                 observed_value=rain_val,
-                baseline_mean=rain_val / (anom_pct / 100.0) if (anom_pct and anom_pct > 0) else None,
+                baseline_mean=rain_val / (anom_pct / 100.0)
+                if (anom_pct and anom_pct > 0)
+                else None,
                 baseline_years=30,  # Climatology 1991-2020
                 anomaly_pct=anom_pct,
                 risk_level=risk,
@@ -326,7 +332,9 @@ def get_climate_anomalies(
 @router.get("/forecasts", response_model=list[ClimateForecastItem])
 def get_climate_forecasts(
     location: str | None = Query(None, description="District or Region P-code"),
-    model: str | None = Query(None, description="Numerical weather prediction model e.g. ecmwf_ifs"),
+    model: str | None = Query(
+        None, description="Numerical weather prediction model e.g. ecmwf_ifs"
+    ),
     variable: str | None = Query(None, description="Weather variable e.g. precip_mm"),
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
@@ -359,7 +367,9 @@ def get_climate_forecasts(
                 horizon_hours=wf.horizon_hours,
                 variable=wf.variable,
                 model_name=wf.model_name,
-                predicted_value=float(wf.predicted_value) if wf.predicted_value is not None else None,
+                predicted_value=float(wf.predicted_value)
+                if wf.predicted_value is not None
+                else None,
                 predicted_p10=float(wf.predicted_p10) if wf.predicted_p10 is not None else None,
                 predicted_p90=float(wf.predicted_p90) if wf.predicted_p90 is not None else None,
                 unit=wf.unit,
@@ -376,7 +386,9 @@ def get_climate_forecasts(
 def get_crop_calendars(
     zone_code: str | None = Query(None, description="Basin code e.g. ZONE_ALAOTRA"),
     product: str | None = Query(None, description="Product code e.g. RICE_PADDY"),
-    month: int | None = Query(None, ge=1, le=12, description="Month for active stage detection (1-12)"),
+    month: int | None = Query(
+        None, ge=1, le=12, description="Month for active stage detection (1-12)"
+    ),
 ) -> list[CropCalendarItem]:
     """Retrieve verified crop calendars, active phenological phases and trade corridors (ADR-086)."""
     records: list[CropCalendarRecord] = load_crop_calendar()

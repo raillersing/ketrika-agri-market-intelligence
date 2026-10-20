@@ -82,10 +82,10 @@ def mock_db_session(client_user: UserAccount, admin_user: UserAccount):
     app.dependency_overrides.pop(get_db, None)
 
 
-
 # =========================================================================
 # 1. RBAC CONTROLS: CLIENT CANNOT MUTATE REVIEWS, BULLETINS, ALERTS, KEYS
 # =========================================================================
+
 
 def test_client_role_cannot_modify_review_items(client_user: UserAccount) -> None:
     """R6.7 Acceptance: Client role is strictly forbidden from resolving review items."""
@@ -149,7 +149,6 @@ def test_client_role_cannot_modify_alert_state(client_user: UserAccount) -> None
     assert "Administrator privileges required" in resp.json()["detail"]
 
 
-
 def test_unauthenticated_request_rejected_on_admin_routes() -> None:
     """R6.7 Acceptance: Unauthenticated requests return 401 Unauthorized."""
     client = TestClient(app)
@@ -160,13 +159,16 @@ def test_unauthenticated_request_rejected_on_admin_routes() -> None:
     assert "Authentication required" in resp.json()["detail"]
 
     # Invalid Bearer token
-    resp_invalid = client.get("/v1/admin/review", headers={"Authorization": "Bearer invalid_garbage_token"})
+    resp_invalid = client.get(
+        "/v1/admin/review", headers={"Authorization": "Bearer invalid_garbage_token"}
+    )
     assert resp_invalid.status_code == 401
 
 
 # =========================================================================
 # 2. CRYPTOGRAPHIC SIGNED ACTION LINKS & EXPIRY ENFORCEMENT
 # =========================================================================
+
 
 def test_signed_action_token_nominal_and_verification() -> None:
     """R6.7 Acceptance: Signed action link verified within validity window."""
@@ -177,7 +179,9 @@ def test_signed_action_token_nominal_and_verification() -> None:
     assert isinstance(token, str)
     assert len(token) > 20
 
-    payload = verify_signed_action_token(token, expected_action=action, expected_resource_id=resource_id)
+    payload = verify_signed_action_token(
+        token, expected_action=action, expected_resource_id=resource_id
+    )
     assert payload["action"] == action
     assert payload["resource_id"] == resource_id
     assert payload["exp"] > payload["iat"]
@@ -197,25 +201,34 @@ def test_expired_signed_action_token_strictly_rejected() -> None:
 
 def test_tampered_or_mismatched_signed_action_token_rejected() -> None:
     """R6.7 Acceptance: Action mismatch, resource mismatch, or tampering raises security exception."""
-    token = create_signed_action_token(action="download_pdf", resource_id="res-001", expires_seconds=60)
+    token = create_signed_action_token(
+        action="download_pdf", resource_id="res-001", expires_seconds=60
+    )
 
     # Action mismatch -> 403 ForbiddenException
     with pytest.raises(ForbiddenException, match="Action mismatch"):
-        verify_signed_action_token(token, expected_action="delete_bulletin", expected_resource_id="res-001")
+        verify_signed_action_token(
+            token, expected_action="delete_bulletin", expected_resource_id="res-001"
+        )
 
     # Resource mismatch -> 403 ForbiddenException
     with pytest.raises(ForbiddenException, match="Resource mismatch"):
-        verify_signed_action_token(token, expected_action="download_pdf", expected_resource_id="res-999")
+        verify_signed_action_token(
+            token, expected_action="download_pdf", expected_resource_id="res-999"
+        )
 
     # Tampered token string -> 401 UnauthorizedException
     tampered = token[:-4] + "fake"
     with pytest.raises(UnauthorizedException, match="Invalid signed action link"):
-        verify_signed_action_token(tampered, expected_action="download_pdf", expected_resource_id="res-001")
+        verify_signed_action_token(
+            tampered, expected_action="download_pdf", expected_resource_id="res-001"
+        )
 
 
 # =========================================================================
 # 3. LOGOUT AND ACTIVE TOKEN REVOCATION
 # =========================================================================
+
 
 def test_logout_actively_revokes_token_and_blocks_subsequent_access(
     admin_user: UserAccount,
@@ -256,6 +269,7 @@ def test_logout_actively_revokes_token_and_blocks_subsequent_access(
 # 4. CONTAINER SECURITY POSTURE & LEAST PRIVILEGE
 # =========================================================================
 
+
 def test_docker_security_posture_non_root_and_unexposed_internal_services() -> None:
     """R6.7 Acceptance: Container uses non-root app user; internal database/storage have no unshielded host ports in prod."""
     repo_root = Path("/workspace")
@@ -279,16 +293,21 @@ def test_docker_security_posture_non_root_and_unexposed_internal_services() -> N
     # In prod, Caddy alone binds to host ports 80/443
     # Check that 'db' service does NOT have host ports mapped
     db_section = compose_prod_content.split("db:")[1].split("api:")[0]
-    assert "ports:" not in db_section, "Database service in prod must not expose host ports directly"
+    assert "ports:" not in db_section, (
+        "Database service in prod must not expose host ports directly"
+    )
 
     # API service does not map host ports directly
     api_section = compose_prod_content.split("api:")[1].split("dagster-webserver:")[0]
-    assert "ports:" not in api_section, "API service in prod must be reverse-proxied by Caddy, no direct host ports"
+    assert "ports:" not in api_section, (
+        "API service in prod must be reverse-proxied by Caddy, no direct host ports"
+    )
 
 
 # =========================================================================
 # 5. ZERO COMMITTED SECRETS AUDIT CHECK
 # =========================================================================
+
 
 def test_static_secrets_audit_no_exposed_api_keys() -> None:
     """R6.7 Acceptance: Static audit ensuring no real production API keys or credentials exist in git tree."""
@@ -320,6 +339,7 @@ def test_static_secrets_audit_no_exposed_api_keys() -> None:
 # =========================================================================
 # 6. AUTHENTICATION HELPERS & FLOWS COVERAGE
 # =========================================================================
+
 
 def test_password_hashing_and_verification() -> None:
     """Verify Argon2id password hashing and comparison."""
@@ -423,4 +443,3 @@ def test_auth_routes_login_and_me(
     assert resp_me.status_code == 200
     assert resp_me.json()["email"] == admin_user.email
     assert resp_me.json()["role"] == "admin"
-

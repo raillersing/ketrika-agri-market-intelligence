@@ -1,6 +1,5 @@
 """Unit tests for agro-climatic anomalies and zonal aggregations (R4.6, ADR-085, SPECS §26)."""
 
-
 from ketrika.geo.anomalies import (
     ClimateBaseline,
     compute_climate_anomaly,
@@ -20,7 +19,9 @@ def test_compute_climate_baseline_success():
     history = [100.0, 110.0, 90.0, 105.0, 95.0, 120.0, 80.0, 100.0, 105.0, 95.0]
     years = list(range(2010, 2020))
 
-    baseline = compute_climate_baseline(history, years, min_years=10, variable=WeatherVariable.PRECIP_MM)
+    baseline = compute_climate_baseline(
+        history, years, min_years=10, variable=WeatherVariable.PRECIP_MM
+    )
     assert baseline is not None
     assert baseline.sample_size == 10
     assert baseline.mean == 100.0
@@ -111,9 +112,15 @@ def test_zonal_aggregation_hand_calculated_grid():
     """Criterion: Small 3x3 test raster with hand-calculated aggregate, nodata and coastal mask."""
     # 3x3 grid: 7 valid cells, 2 nodata cells (-9999.0)
     grid_values = [
-        10.0, 20.0, 30.0,
-        -9999.0, 40.0, 50.0,
-        60.0, 70.0, -9999.0,
+        10.0,
+        20.0,
+        30.0,
+        -9999.0,
+        40.0,
+        50.0,
+        60.0,
+        70.0,
+        -9999.0,
     ]
     # Sum of valid cells = 10 + 20 + 30 + 40 + 50 + 60 + 70 = 280.0
     # Valid count = 7, simple mean = 280.0 / 7 = 40.0

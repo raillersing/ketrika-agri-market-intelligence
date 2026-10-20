@@ -1503,3 +1503,24 @@
 - **Alternatives :** Tuer/arrêter les projets existants de l'utilisateur (rejeté par l'utilisateur).
 - **Conséquences :** Isolation parfaite sans conflit de ports avec d'autres conteneurs sur l'hôte, et conformité totale avec le plan d'acceptation via les variables d'environnement.
 
+## ADR-108 | 2026-10-20 | Intégration ciblée de la collecte manuelle sur main
+
+- Contexte : autorisation utilisateur explicite d'intégrer sur main ; Antigravity a ajouté les migrations 0013 à 0016 et des capacités agroclimatiques. La réception de la branche Codex ne qualifie pas cette combinaison.
+- Décision : porter uniquement la collecte manuelle, ses contrats, interface et tests ; ajouter 0017 après 0016 sans remplacer l'historique Antigravity. Conserver les autres capacités. UUID idempotent, verrou transactionnel partagé avec le recalcul, reçus SQL durables, mêmes propriétaires Bronze/Silver et politiques HTTP ; aucun succès simulé.
+- Réception : projet fixe ketrika-qualification-main-integration, réseau et huit volumes neufs ketrika_qualification_main_integration_* ; images Codex existantes partagées en lecture seule, aucun retag/build concurrent. Gardes et reçus liés au nouveau namespace. Environnement isolé de la base active et de l'ancienne QA Codex (graphe Alembic différent), check complet puis E2E sur contenu figé avant fusion locale. Aucun push possible sans remote configuré.
+- Limites : collecte Banque mondiale bornée à quinze estimations imputées, pas marché observé complet ; aucune qualification scientifique ou humaine déduite des tests logiciels.
+- Alternatives : fusion globale ancienne branche refusée car elle effacerait des ajouts Antigravity ; réutilisation de l'ancienne base QA refusée sans compatibilité de migrations.
+- Conséquences : historique et données préservés ; les statuts R existants ne sont pas promus par ce lot. Le validateur constate R2.11 absent du miroir et R1.1 divergent de PROGRESS. Restaurer le miroir depuis PROGRESS (canonique), puis remettre IN_PROGRESS les DONE dont les dépendances ne sont pas DONE, de manière transitive. Conserver les preuves historiques et le code ; ni effacement de tags ni nouvelle certification. Lint/format préexistants corrigés mécaniquement, sans changement des seuils.
+
+## ADR-109 | 2026-10-20 | Installation neuve des migrations et portée Gold
+
+- Constat vérifié : prepare48784 échoue sur une base neuve isolée dans0002, car la définition forecast courante exige model_requested créé en0012. Transaction annulée, aucune base active modifiée.
+- Décision : restaurer les définitions historiques des douze vues dans0002/0005, avec snapshot forecast pré0012 ; élargir explicitement le suivi Alembic en0011 sans renommer les révisions publiées. Ajouter0018 après0017 pour installer les vues postérieures au schéma et retirer le droit Silver indu de copilot_ro. Aucun effacement d'historique ou de Bronze.
+- Alternative : initialisation depuis un dump actif refusée car elle masquerait le défaut d'installation. Réception sur la même base neuve après rollback, puis check complet obligatoire.
+
+## ADR-110 | 2026-10-20 | Publication des vues qualifiables et garde par lots
+
+- Contexte : main refuse explicitement la publication macro non qualifiée mais inclut encore cette vue dans son rafraîchissement par défaut ; tests historiques attendent encore0010/douze vues malgré les migrations actuelles.
+- Décision : porter les corrections déjà éprouvées de portée Gold/DQ : exclure explicitement economic_dashboard du rafraîchissement par défaut avec motif visible ; conserver son refus explicite. Appliquer le seuil existant99% aux lots candidats complets, échecs inclus, plutôt qu'à tout l'historique sans rapport. Inventaire global distinct des dénominateurs de publication. Aucun seuil réduit.
+- Tests : conserver et adapter les scénarios d'intégration au graphe Alembic courant (tête attendue calculée, jamais suppression du contrôle),14 définitions et13 vues publiables ; ajouter les scénarios SQL de garde par lot. Anciennes preuves ne qualifient pas cette combinaison ; check complet obligatoire. Diagnostic global borné à dix échecs au lieu d'un, sans modifier sélection/seuil/codes de sortie, pour regrouper les corrections. Les scénarios supply utilisent un sous-type synthétique de test déclarant explicitement le contexte de prix anciennement ignoré par Pydantic ; aucun champ ajouté au DTO de production.
+

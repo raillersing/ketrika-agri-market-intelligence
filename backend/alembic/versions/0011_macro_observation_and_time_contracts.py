@@ -13,6 +13,7 @@ depends_on = None
 
 
 def upgrade() -> None:
+    op.execute("ALTER TABLE alembic_version ALTER COLUMN version_num TYPE VARCHAR(128)")
     op.execute("""
     CREATE TABLE obs.macro_observation (
       observation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -28,7 +28,9 @@ from ketrika.core.policy import (
 def allow_fixture_loopback(monkeypatch: pytest.MonkeyPatch, httpserver: HTTPServer) -> None:
     """Allow loopback and register default robots.txt for local HTTPServer fixture calls."""
     monkeypatch.setenv("KETRIKA_ALLOW_TEST_LOOPBACK", "1")
-    httpserver.expect_request("/robots.txt").respond_with_data("User-agent: *\nDisallow:\n", status=200)
+    httpserver.expect_request("/robots.txt").respond_with_data(
+        "User-agent: *\nDisallow:\n", status=200
+    )
 
 
 def test_ssrf_rejection_for_forbidden_targets() -> None:
@@ -39,14 +41,14 @@ def test_ssrf_rejection_for_forbidden_targets() -> None:
         "localhost",
         "sub.localhost",
         "169.254.169.254",  # AWS/GCP/Azure instance metadata
-        "169.254.1.1",      # Link-local IPv4
-        "10.0.0.1",         # RFC 1918 Class A
-        "172.16.0.1",       # RFC 1918 Class B
-        "192.168.1.1",      # RFC 1918 Class C
+        "169.254.1.1",  # Link-local IPv4
+        "10.0.0.1",  # RFC 1918 Class A
+        "172.16.0.1",  # RFC 1918 Class B
+        "192.168.1.1",  # RFC 1918 Class C
         "metadata.google.internal",
         "app.internal",
         "device.local",
-        "::1",              # IPv6 loopback
+        "::1",  # IPv6 loopback
     ]
 
     for host in forbidden_hosts:
@@ -144,13 +146,21 @@ def test_html_discovery_bounded_pagination(httpserver: HTTPServer) -> None:
     </body></html>
     """
 
-    httpserver.expect_request("/catalog", query_string="").respond_with_data(p1_html, content_type="text/html")
-    httpserver.expect_request("/catalog", query_string="page=2").respond_with_data(p2_html, content_type="text/html")
-    httpserver.expect_request("/catalog", query_string="page=3").respond_with_data(p3_html, content_type="text/html")
+    httpserver.expect_request("/catalog", query_string="").respond_with_data(
+        p1_html, content_type="text/html"
+    )
+    httpserver.expect_request("/catalog", query_string="page=2").respond_with_data(
+        p2_html, content_type="text/html"
+    )
+    httpserver.expect_request("/catalog", query_string="page=3").respond_with_data(
+        p3_html, content_type="text/html"
+    )
 
     policy = PolicyEngine()
     policy.set_robots_txt(httpserver.url_for("/"), "User-agent: *\nDisallow:\n")
-    client = PoliteHttpClient(policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True)
+    client = PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True
+    )
     client.bind_source("miasa_odr", 500, 100.0)
 
     # Set max_pages = 2 -> Should only fetch page 1 and page 2, discovering 4 editions
@@ -185,7 +195,9 @@ def test_html_discovery_handles_304_not_modified(httpserver: HTTPServer) -> None
 
     policy = PolicyEngine()
     policy.set_robots_txt(httpserver.url_for("/"), "User-agent: *\nDisallow:\n")
-    client = PoliteHttpClient(policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True)
+    client = PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True
+    )
     client.bind_source("miasa_odr", 500, 100.0)
 
     engine = CatalogDiscoveryEngine(source_id="miasa_odr", http_client=client, allow_loopback=True)
@@ -221,11 +233,15 @@ def test_rss_feed_discovery(httpserver: HTTPServer) -> None:
       </channel>
     </rss>
     """
-    httpserver.expect_request("/feed.xml").respond_with_data(rss_xml, content_type="application/rss+xml")
+    httpserver.expect_request("/feed.xml").respond_with_data(
+        rss_xml, content_type="application/rss+xml"
+    )
 
     policy = PolicyEngine()
     policy.set_robots_txt(httpserver.url_for("/"), "User-agent: *\nDisallow:\n")
-    client = PoliteHttpClient(policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True)
+    client = PoliteHttpClient(
+        policy_engine=policy, budget_backend=MemoryBudgetBackend(), allow_loopback=True
+    )
     client.bind_source("mincc_ppn", 500, 100.0)
 
     engine = CatalogDiscoveryEngine(source_id="mincc_ppn", http_client=client, allow_loopback=True)

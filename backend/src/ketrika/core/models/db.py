@@ -390,7 +390,9 @@ class StockObservation(Base):
     stock_status: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     coverage_days: Mapped[float | None] = mapped_column(NUMERIC(8, 2), nullable=True)
     target: Mapped[str] = mapped_column(TEXT, nullable=False, server_default="stock_inventory")
-    measurement_mode: Mapped[str] = mapped_column(TEXT, nullable=False, server_default="declared_trader")
+    measurement_mode: Mapped[str] = mapped_column(
+        TEXT, nullable=False, server_default="declared_trader"
+    )
     market_type: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     market_code: Mapped[str | None] = mapped_column(TEXT, nullable=True)
     extraction_method: Mapped[str] = mapped_column(TEXT, nullable=False)

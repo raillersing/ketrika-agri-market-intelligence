@@ -172,7 +172,9 @@ def verify_backup_integrity(
                     f"pg_restore --list failed on {dump_path.name}: {res.stderr.decode('utf-8', errors='replace')}"
                 )
         except subprocess.TimeoutExpired as err:
-            raise CorruptedBackupError(f"pg_restore verification timed out on {dump_path.name}") from err
+            raise CorruptedBackupError(
+                f"pg_restore verification timed out on {dump_path.name}"
+            ) from err
 
     return True, f"Backup {dump_path.name} verified successfully (SHA-256: {actual_sha256[:16]}...)"
 
@@ -198,7 +200,10 @@ def enforce_active_target_guard(
         and allow_overwrite is False.
     """
     clean_target = target_database.strip().lower()
-    protected = [name.strip().lower() for name in (active_database_names or DEFAULT_PROTECTED_ACTIVE_DATABASES)]
+    protected = [
+        name.strip().lower()
+        for name in (active_database_names or DEFAULT_PROTECTED_ACTIVE_DATABASES)
+    ]
 
     if clean_target in protected and not allow_overwrite:
         raise ActiveDatabaseOverwriteBlockedError(

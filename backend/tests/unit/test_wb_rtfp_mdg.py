@@ -404,4 +404,3 @@ Madagascar,MDG,Analamanga,Anosibe,2024-03-01,Rice,kg,MGA,invalid_price,invalid_p
     rec = result.records[0]
     assert isinstance(rec, PriceRecord)
     assert rec.price_value is None
-

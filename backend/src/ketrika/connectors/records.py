@@ -77,9 +77,13 @@ class StockRecord(RecordBase):
     stock_status: str | None = None  # sufficient | tight | shortage | unknown
     coverage_days: float | None = None
     published_at: datetime | None = None
-    target: str = "stock_inventory"  # stock_inventory | inflow_arrival | harvest_volume | outflow_sales
+    target: str = (
+        "stock_inventory"  # stock_inventory | inflow_arrival | harvest_volume | outflow_sales
+    )
     measurement_mode: str = "declared_trader"  # measured_scale | declared_trader | estimated_survey
-    market_type: str | None = None  # primary_collection | regional_wholesale | terminal_urban | retail_local
+    market_type: str | None = (
+        None  # primary_collection | regional_wholesale | terminal_urban | retail_local
+    )
     market_code: str | None = None
 
 
@@ -248,7 +252,11 @@ class EventRecord(RecordBase):
 
     def model_post_init(self, __context: object) -> None:
         """Align period_start and period_end with event_date if set and at default."""
-        if self.event_date is not None and self.period_start == date.today() and self.period_end == date.today():
+        if (
+            self.event_date is not None
+            and self.period_start == date.today()
+            and self.period_end == date.today()
+        ):
             self.period_start = self.event_date
             self.period_end = self.event_date
 

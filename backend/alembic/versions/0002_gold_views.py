@@ -19,16 +19,16 @@ Revises: 0001_initial_schema
 Create Date: 2026-10-07 05:15:00
 """
 
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence, Union
 
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "0002_gold_views"
-down_revision: Union[str, None] = "0001_initial_schema"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "0001_initial_schema"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -37,8 +37,23 @@ def upgrade() -> None:
     if not base_dir.exists():
         base_dir = Path("/app/src/ketrika/gold/sql")
 
-    sql_files = sorted(base_dir.glob("*.sql"))
-    if not sql_files:
+    views = (
+        "price_obs_current",
+        "price_monthly",
+        "price_monthly_best",
+        "price_changes",
+        "stock_latest",
+        "trade_monthly",
+        "import_dependency",
+        "weather_monthly",
+        "cpi_food",
+        "market_health",
+        "source_health",
+        "forecast_latest",
+    )
+    sql_files = [base_dir / f"{index:03d}_{view}.sql" for index, view in enumerate(views, 1)]
+    sql_files[-1] = Path(__file__).resolve().parents[1] / "sql" / "012_forecast_latest_pre_0012.sql"
+    if not all(file.is_file() for file in sql_files):
         raise RuntimeError(f"No Gold view SQL files found in {base_dir}")
 
     for sql_file in sql_files:

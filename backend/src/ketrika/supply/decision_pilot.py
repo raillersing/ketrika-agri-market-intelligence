@@ -352,7 +352,14 @@ class DecisionPilotEngine:
                 baseline_value=monthly_demand_tonnes,
                 scenario_value=observed_monthly_arrivals_tonnes,
                 absolute_change=round(supply_gap_tonnes, 1),
-                relative_change_pct=round(((observed_monthly_arrivals_tonnes - monthly_demand_tonnes) / monthly_demand_tonnes) * 100.0, 1),
+                relative_change_pct=round(
+                    (
+                        (observed_monthly_arrivals_tonnes - monthly_demand_tonnes)
+                        / monthly_demand_tonnes
+                    )
+                    * 100.0,
+                    1,
+                ),
                 unit="tonnes/month",
                 interpretation=f"Taux de couverture de la demande par les arrivages constatés: {coverage_pct}%",
             ),

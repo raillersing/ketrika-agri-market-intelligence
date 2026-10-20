@@ -63,11 +63,7 @@ class WfpHdxMdgConnector:
             root = find_repo_root()
             base_dir = root / "backend" if (root / "backend").exists() else root
             fixture_path = (
-                base_dir
-                / "tests"
-                / "fixtures"
-                / "wfp_hdx_mdg"
-                / "wfp_food_prices_mdg_sample.csv"
+                base_dir / "tests" / "fixtures" / "wfp_hdx_mdg" / "wfp_food_prices_mdg_sample.csv"
             )
             if not fixture_path.exists():
                 raise FileNotFoundError(f"Offline fixture not found at {fixture_path}")

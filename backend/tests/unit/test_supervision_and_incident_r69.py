@@ -55,7 +55,12 @@ def test_schema_drift_detection_and_quarantine() -> None:
     manager = IncidentManager()
 
     expected = ["date", "market", "product", "price_ariary", "unit"]
-    observed = ["date", "market", "commodity_name", "price_ariary"]  # missing 'product', 'unit'; unexpected 'commodity_name'
+    observed = [
+        "date",
+        "market",
+        "commodity_name",
+        "price_ariary",
+    ]  # missing 'product', 'unit'; unexpected 'commodity_name'
 
     report = manager.report_schema_drift(
         source_id="odr_rice_mdg",
@@ -121,7 +126,9 @@ def test_forecast_drift_policy_strictly_prohibits_automatic_replacement() -> Non
     assert "Automatic production replacement is strictly blocked" in decision.explanation
 
     # Verify incident was logged
-    drift_incidents = [i for i in manager.incidents if i.incident_type == IncidentType.FORECAST_DRIFT]
+    drift_incidents = [
+        i for i in manager.incidents if i.incident_type == IncidentType.FORECAST_DRIFT
+    ]
     assert len(drift_incidents) == 1
     assert drift_incidents[0].source_id == "rice_gasikara_vakinankaratra"
     assert drift_incidents[0].human_assignee_role == "Analyste Marché SPM"

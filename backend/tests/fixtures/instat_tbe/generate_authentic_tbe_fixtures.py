@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import openpyxl
-from openpyxl.styles import Alignment, Font
+from openpyxl.styles import Font
 from openpyxl.worksheet.worksheet import Worksheet
 
 FIXTURES_DIR = Path(__file__).resolve().parent
@@ -39,7 +39,9 @@ def build_tbe_workbook(
     ws_notes["A5"] = (
         "FIXTURE SYNTHETIQUE : aucune acquisition officielle ni données de terrain attestées."
     )
-    ws_notes["A6"] = "Sources primaires partenaires : Direction Générale des Douanes (DGD), Banky Foiben'i Madagasikara (BFM), JIRAMA."
+    ws_notes["A6"] = (
+        "Sources primaires partenaires : Direction Générale des Douanes (DGD), Banky Foiben'i Madagasikara (BFM), JIRAMA."
+    )
 
     # Sheet 2: Secteur Réel
     ws_reel = wb.create_sheet(title="Secteur Réel")
@@ -79,9 +81,13 @@ def build_tbe_workbook(
             row_cursor += 1
 
     # Add quarterly real GDP at bottom of real sector sheet (DO NOT MERGE AS MONTHS!)
-    ws_reel.cell(row=row_cursor + 1, column=1, value="TABLEAU 1-BIS: PIB REEL TRIMESTRIEL (MILLIARDS MGA)").font = Font(bold=True)
+    ws_reel.cell(
+        row=row_cursor + 1, column=1, value="TABLEAU 1-BIS: PIB REEL TRIMESTRIEL (MILLIARDS MGA)"
+    ).font = Font(bold=True)
     ws_reel.cell(row=row_cursor + 2, column=1, value="Période (Trimestre)").font = Font(bold=True)
-    ws_reel.cell(row=row_cursor + 2, column=2, value="PIB Réel (Milliards MGA)").font = Font(bold=True)
+    ws_reel.cell(row=row_cursor + 2, column=2, value="PIB Réel (Milliards MGA)").font = Font(
+        bold=True
+    )
 
     q_row = row_cursor + 3
     quarters = [

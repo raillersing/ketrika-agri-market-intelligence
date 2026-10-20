@@ -119,9 +119,15 @@ def test_deterministic_recomputation_identical_fingerprint():
     """Verify that rebuilding the dataset from different raw ordering yields identical canonical SHA-256."""
     as_of = datetime(2024, 3, 1, 0, 0, tzinfo=UTC)
 
-    r1 = _make_raw_record(month="2023-11-01", price=2400.0, published_at=datetime(2023, 11, 15, tzinfo=UTC))
-    r2 = _make_raw_record(month="2023-12-01", price=2450.0, published_at=datetime(2023, 12, 15, tzinfo=UTC))
-    r3 = _make_raw_record(month="2024-01-01", price=2500.0, published_at=datetime(2024, 1, 15, tzinfo=UTC))
+    r1 = _make_raw_record(
+        month="2023-11-01", price=2400.0, published_at=datetime(2023, 11, 15, tzinfo=UTC)
+    )
+    r2 = _make_raw_record(
+        month="2023-12-01", price=2450.0, published_at=datetime(2023, 12, 15, tzinfo=UTC)
+    )
+    r3 = _make_raw_record(
+        month="2024-01-01", price=2500.0, published_at=datetime(2024, 1, 15, tzinfo=UTC)
+    )
 
     ds1 = build_as_of_dataset(as_of=as_of, raw_records=[r1, r2, r3])
     # Shuffled input order

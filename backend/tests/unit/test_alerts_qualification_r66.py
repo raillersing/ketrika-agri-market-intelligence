@@ -362,4 +362,3 @@ def test_evaluate_alerts_reopens_resolved_alert_with_notifications() -> None:
             assert resolved_alert.severity == "high"
             assert resolved_alert.evidence["miss_count"] == 0
             mock_dispatch.assert_called_once_with(resolved_alert, settings=mock_settings)
-

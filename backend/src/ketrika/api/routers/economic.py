@@ -265,7 +265,9 @@ def get_pilot_economic_context(
         rice_import_unit_cost_mga_per_kg=cif_cost,
         cpi_food_chg_12m_pct=round(cpi_food * 100.0, 2) if cpi_food is not None else None,
         local_rice_market_price_mga_per_kg=market_price,
-        local_rice_price_chg_12m_pct=round(market_price_chg * 100.0, 2) if market_price_chg is not None else None,
+        local_rice_price_chg_12m_pct=round(market_price_chg * 100.0, 2)
+        if market_price_chg is not None
+        else None,
         distinctness_audit=distinctness,
         status=status,
     )

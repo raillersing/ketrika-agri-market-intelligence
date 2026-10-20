@@ -138,9 +138,13 @@ class MiasaOdrConnector(Connector):
             return
 
         # 2. Dynamic Catalog Discovery (R1.2, R1.4)
-        catalog_url = ctx.metadata.get("catalog_url") or "http://www.agriculture.gov.mg/odr/bulletins"
+        catalog_url = (
+            ctx.metadata.get("catalog_url") or "http://www.agriculture.gov.mg/odr/bulletins"
+        )
         allow_loopback = ctx.metadata.get("allow_loopback", False)
-        allowed_domains: list[str] = list(ctx.metadata.get("allowed_domains") or ["agriculture.gov.mg"])
+        allowed_domains: list[str] = list(
+            ctx.metadata.get("allowed_domains") or ["agriculture.gov.mg"]
+        )
         if allow_loopback:
             allowed_domains.extend(["localhost", "127.0.0.1"])
 
@@ -165,7 +169,9 @@ class MiasaOdrConnector(Connector):
             if discovery_res.editions:
                 for edition in discovery_res.editions:
                     ed_match = re.search(r"bulletin[-_]?(\d+)", edition.url, re.IGNORECASE)
-                    ed_id = ed_match.group(1) if ed_match else (edition.edition_identifier or "unknown")
+                    ed_id = (
+                        ed_match.group(1) if ed_match else (edition.edition_identifier or "unknown")
+                    )
                     hints = dict(
                         edition.hints,
                         parent_url=edition.parent_url,
@@ -190,19 +196,34 @@ class MiasaOdrConnector(Connector):
                 url="http://www.agriculture.gov.mg/odr/bulletin_850.pdf",
                 partition_key="odr_bulletin_850",
                 published_at=datetime(2024, 1, 22, 8, 0, tzinfo=UTC),
-                hints={"edition": "850", "period": "2024-01", "publisher": "MiASA/ODR", "format": "pdf"},
+                hints={
+                    "edition": "850",
+                    "period": "2024-01",
+                    "publisher": "MiASA/ODR",
+                    "format": "pdf",
+                },
             ),
             DiscoveredItem(
                 url="http://www.agriculture.gov.mg/odr/bulletin_710.pdf",
                 partition_key="odr_bulletin_710",
                 published_at=datetime(2021, 10, 25, 8, 0, tzinfo=UTC),
-                hints={"edition": "710", "period": "2021-10", "publisher": "MiASA/ODR", "format": "pdf"},
+                hints={
+                    "edition": "710",
+                    "period": "2021-10",
+                    "publisher": "MiASA/ODR",
+                    "format": "pdf",
+                },
             ),
             DiscoveredItem(
                 url="http://www.agriculture.gov.mg/odr/bulletin_520.pdf",
                 partition_key="odr_bulletin_520",
                 published_at=datetime(2018, 5, 20, 8, 0, tzinfo=UTC),
-                hints={"edition": "520", "period": "2018-05", "publisher": "MiASA/ODR", "format": "pdf"},
+                hints={
+                    "edition": "520",
+                    "period": "2018-05",
+                    "publisher": "MiASA/ODR",
+                    "format": "pdf",
+                },
             ),
         ]
         yield from catalog

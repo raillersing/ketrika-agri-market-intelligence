@@ -38,8 +38,8 @@ PROHIBITED_INJECTION_PATTERNS: tuple[str, ...] = (
 
 SECRET_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"(AIza[0-9A-Za-z_\-]{30,45})"),  # Gemini / Google API Key
-    re.compile(r"(sk-[a-zA-Z0-9]{20,})"),        # OpenAI Key
-    re.compile(r"(postgres://[^\s]+)"),          # DB URL with password
+    re.compile(r"(sk-[a-zA-Z0-9]{20,})"),  # OpenAI Key
+    re.compile(r"(postgres://[^\s]+)"),  # DB URL with password
     re.compile(r"(password=['\"][^'\"]+['\"])", re.IGNORECASE),
 )
 
@@ -282,7 +282,9 @@ class BoundedWorkflowRunner:
 
         # Update step metrics
         step.status = WorkflowStepStatus.COMPLETED
-        step.output_summary = sanitize_audit_log(result.get("summary", "Step executed successfully"))
+        step.output_summary = sanitize_audit_log(
+            result.get("summary", "Step executed successfully")
+        )
         step.tool_calls_count = result.get("tool_calls", 1)
         step.tokens_consumed = result.get("tokens", 150)
         step.cost_usd = result.get("cost_usd", estimated_step_cost)
@@ -317,7 +319,9 @@ class BoundedWorkflowRunner:
     ) -> bool:
         """Idempotently publish a workflow output, strictly preventing duplicate publication."""
         if output_id in state.published_outputs:
-            logger.warning("Output '%s' already published. Skipping duplicate publication.", output_id)
+            logger.warning(
+                "Output '%s' already published. Skipping duplicate publication.", output_id
+            )
             return False  # Not re-published
 
         state.published_outputs.append(output_id)

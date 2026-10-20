@@ -123,7 +123,9 @@ def get_pilot_configuration(
 ) -> PilotConfigResponse:
     """Retrieve pilot configuration, economic justifications, impossible capabilities, and authenticity status."""
     config = load_pilot_config()
-    auth_check = check_pilot_authenticity(session=session, pilot_config=config, raise_on_error=False)
+    auth_check = check_pilot_authenticity(
+        session=session, pilot_config=config, raise_on_error=False
+    )
 
     return PilotConfigResponse(
         pilot_id=config.pilot_id,

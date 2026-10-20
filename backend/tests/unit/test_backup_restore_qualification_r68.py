@@ -34,6 +34,7 @@ from ketrika.ops.backup_restore import (
 # 1. MANIFEST CREATION & SERIALIZATION
 # =========================================================================
 
+
 def test_backup_manifest_creation_and_serialization(tmp_path: Path) -> None:
     """R6.8 Acceptance: Certified manifest accurately records dump metadata and checksum."""
     fake_dump = tmp_path / "ketrika_backup_20261017_120000.dump"
@@ -77,12 +78,22 @@ def test_backup_manifest_creation_and_serialization(tmp_path: Path) -> None:
 # 2. ACTIVE TARGET GUARD (PREVENTS ACCIDENTAL PRODUCTION OVERWRITE)
 # =========================================================================
 
+
 def test_active_target_guard_blocks_production_overwrites() -> None:
     """R6.8 Acceptance: Guard strictly refuses restorations pointing to active databases."""
-    protected_names = ["ketrika", "KETRIKA", "ketrika_prod", "ketrika_active", "production", "postgres"]
+    protected_names = [
+        "ketrika",
+        "KETRIKA",
+        "ketrika_prod",
+        "ketrika_active",
+        "production",
+        "postgres",
+    ]
 
     for name in protected_names:
-        with pytest.raises(ActiveDatabaseOverwriteBlockedError, match="is an active production database"):
+        with pytest.raises(
+            ActiveDatabaseOverwriteBlockedError, match="is an active production database"
+        ):
             enforce_active_target_guard(target_database=name, allow_overwrite=False)
 
 
@@ -111,6 +122,7 @@ def test_active_target_guard_allows_overwrite_only_when_explicitly_forced() -> N
 # 3. BACKUP INTEGRITY & CHECKSUM VERIFICATION
 # =========================================================================
 
+
 def test_verify_backup_integrity_nominal(tmp_path: Path) -> None:
     """R6.8 Acceptance: Uncorrupted dump with valid companion checksum passes verification."""
     dump_file = tmp_path / "valid_backup.dump"
@@ -136,7 +148,9 @@ def test_verify_backup_integrity_corrupted_checksum_fails(tmp_path: Path) -> Non
     dump_file.write_bytes(b"Original_Good_Data")
 
     sha_file = tmp_path / "corrupted_backup.dump.sha256"
-    sha_file.write_text("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  corrupted_backup.dump\n")
+    sha_file.write_text(
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  corrupted_backup.dump\n"
+    )
 
     with pytest.raises(CorruptedBackupError, match="Checksum mismatch"):
         verify_backup_integrity(dump_file, check_pg_restore=False)
@@ -161,12 +175,15 @@ def test_verify_backup_integrity_manifest_hash_mismatch(tmp_path: Path) -> None:
     dump_file.write_bytes(b"State_AFTER_UNAUTHORIZED_MUTATION")
 
     with pytest.raises(CorruptedBackupError, match="Manifest SHA-256 mismatch"):
-        verify_backup_integrity(dump_file, manifest_path=dump_file.with_suffix(".meta.json"), check_pg_restore=False)
+        verify_backup_integrity(
+            dump_file, manifest_path=dump_file.with_suffix(".meta.json"), check_pg_restore=False
+        )
 
 
 # =========================================================================
 # 4. POST-RESTORATION CLONE CONSISTENCY VALIDATION
 # =========================================================================
+
 
 def test_validate_restored_clone_consistency_nominal() -> None:
     """R6.8 Acceptance: Restored clone record counts match source expected volumes."""
@@ -206,6 +223,7 @@ def test_validate_restored_clone_consistency_mismatch_detected() -> None:
 # =========================================================================
 # 5. SHELL SCRIPTS CONTRACT AUDIT (deploy/backup.sh & deploy/restore.sh)
 # =========================================================================
+
 
 def test_deploy_backup_script_contract() -> None:
     """R6.8 Acceptance: deploy/backup.sh incorporates manifest, checksum, and immutability."""

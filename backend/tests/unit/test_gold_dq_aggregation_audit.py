@@ -204,8 +204,18 @@ def test_price_conflict_detection_and_dispersion_metrics():
 
     # Case 1: High divergence between two sources (Source A = 2500, Source B = 3500, ratio = 1.40 >= 1.25)
     high_conflict_group = [
-        {"source_id": "miasa_odr", "source_family": "madagascar_gov", "min_price": 2400.0, "max_price": 2600.0},
-        {"source_id": "wfp_hdx_mdg", "source_family": "un_wfp", "min_price": 3400.0, "max_price": 3600.0},
+        {
+            "source_id": "miasa_odr",
+            "source_family": "madagascar_gov",
+            "min_price": 2400.0,
+            "max_price": 2600.0,
+        },
+        {
+            "source_id": "wfp_hdx_mdg",
+            "source_family": "un_wfp",
+            "min_price": 3400.0,
+            "max_price": 3600.0,
+        },
     ]
     res_high = compute_mock_group_conflict(high_conflict_group)
     assert res_high["has_conflict"] is True
@@ -215,8 +225,18 @@ def test_price_conflict_detection_and_dispersion_metrics():
 
     # Case 2: Agreement between two sources (Source A = 2900, Source B = 3000, ratio = 3000/2900 = 1.034 < 1.25)
     agreement_group = [
-        {"source_id": "miasa_odr", "source_family": "madagascar_gov", "min_price": 2900.0, "max_price": 2950.0},
-        {"source_id": "wfp_hdx_mdg", "source_family": "un_wfp", "min_price": 2950.0, "max_price": 3000.0},
+        {
+            "source_id": "miasa_odr",
+            "source_family": "madagascar_gov",
+            "min_price": 2900.0,
+            "max_price": 2950.0,
+        },
+        {
+            "source_id": "wfp_hdx_mdg",
+            "source_family": "un_wfp",
+            "min_price": 2950.0,
+            "max_price": 3000.0,
+        },
     ]
     res_agree = compute_mock_group_conflict(agreement_group)
     assert res_agree["has_conflict"] is False
@@ -231,7 +251,9 @@ def test_price_conflict_detection_and_dispersion_metrics():
 def test_priority_arbitration_observed_vs_imputed():
     """Verify that observed data strictly precedes imputed data in gold.price_monthly_best arbitration."""
 
-    def rank_source_priority(priority: str, has_observed: bool, n_obs: int, source_id: str) -> tuple[int, int, str]:
+    def rank_source_priority(
+        priority: str, has_observed: bool, n_obs: int, source_id: str
+    ) -> tuple[int, int, str]:
         if priority == "P0" and has_observed:
             tier = 1
         elif priority == "P1" and has_observed:
@@ -273,32 +295,58 @@ def test_priority_arbitration_observed_vs_imputed():
 def test_incomparable_aggregation_guards():
     """Verify that validate_comparable_group strictly rejects physical and economic mismatches."""
     # 1. Mixed currencies
-    with pytest.raises(IncompatibleAggregationError, match="incompatible_currencies_in_aggregation"):
-        validate_comparable_group([
-            ComparablePriceItem(price_mga_per_base=Decimal("3000"), base_unit="kg", currency="MGA"),
-            ComparablePriceItem(price_mga_per_base=Decimal("1"), base_unit="kg", currency="USD"),
-        ])
+    with pytest.raises(
+        IncompatibleAggregationError, match="incompatible_currencies_in_aggregation"
+    ):
+        validate_comparable_group(
+            [
+                ComparablePriceItem(
+                    price_mga_per_base=Decimal("3000"), base_unit="kg", currency="MGA"
+                ),
+                ComparablePriceItem(
+                    price_mga_per_base=Decimal("1"), base_unit="kg", currency="USD"
+                ),
+            ]
+        )
 
     # 2. Mixed units (mass vs volume)
     with pytest.raises(IncompatibleAggregationError, match="cannot_aggregate_mixed_base_units"):
-        validate_comparable_group([
-            ComparablePriceItem(price_mga_per_base=Decimal("3000"), base_unit="kg"),
-            ComparablePriceItem(price_mga_per_base=Decimal("8000"), base_unit="l"),
-        ])
+        validate_comparable_group(
+            [
+                ComparablePriceItem(price_mga_per_base=Decimal("3000"), base_unit="kg"),
+                ComparablePriceItem(price_mga_per_base=Decimal("8000"), base_unit="l"),
+            ]
+        )
 
     # 3. Mixing price index with nominal price
-    with pytest.raises(IncompatibleAggregationError, match="cannot_aggregate_index_with_nominal_prices"):
-        validate_comparable_group([
-            ComparablePriceItem(price_mga_per_base=Decimal("3000"), base_unit="kg", is_index=False),
-            ComparablePriceItem(price_mga_per_base=Decimal("120"), base_unit="kg", is_index=True),
-        ])
+    with pytest.raises(
+        IncompatibleAggregationError, match="cannot_aggregate_index_with_nominal_prices"
+    ):
+        validate_comparable_group(
+            [
+                ComparablePriceItem(
+                    price_mga_per_base=Decimal("3000"), base_unit="kg", is_index=False
+                ),
+                ComparablePriceItem(
+                    price_mga_per_base=Decimal("120"), base_unit="kg", is_index=True
+                ),
+            ]
+        )
 
     # 4. Mixed actors without explicit segmentation
-    with pytest.raises(IncompatibleAggregationError, match="cannot_aggregate_incompatible_actor_levels"):
-        validate_comparable_group([
-            ComparablePriceItem(price_mga_per_base=Decimal("1500"), base_unit="kg", actor_level="farmgate"),
-            ComparablePriceItem(price_mga_per_base=Decimal("3000"), base_unit="kg", actor_level="retail"),
-        ])
+    with pytest.raises(
+        IncompatibleAggregationError, match="cannot_aggregate_incompatible_actor_levels"
+    ):
+        validate_comparable_group(
+            [
+                ComparablePriceItem(
+                    price_mga_per_base=Decimal("1500"), base_unit="kg", actor_level="farmgate"
+                ),
+                ComparablePriceItem(
+                    price_mga_per_base=Decimal("3000"), base_unit="kg", actor_level="retail"
+                ),
+            ]
+        )
 
 
 def test_missing_values_never_default_to_zero():
@@ -368,7 +416,11 @@ def test_blocking_dq_gate_passes_when_all_checks_pass():
     # Mock provenance check: 100% valid
     mock_session.execute.side_effect = [
         MagicMock(fetchone=lambda: (10, 10)),  # check_provenance_complete
-        MagicMock(scalars=lambda: MagicMock(all=lambda: [MagicMock(extraction_status="parsed") for _ in range(5)])),  # check_parse_success_rate
+        MagicMock(
+            scalars=lambda: MagicMock(
+                all=lambda: [MagicMock(extraction_status="parsed") for _ in range(5)]
+            )
+        ),  # check_parse_success_rate
         MagicMock(scalar=lambda: 0),  # check_llm_unverified_in_gold
     ]
 
@@ -405,7 +457,9 @@ def test_blocking_dq_gate_refuses_when_unverified_llm_in_gold():
     mock_session = MagicMock()
     mock_session.execute.side_effect = [
         MagicMock(fetchone=lambda: (10, 10)),  # prov OK
-        MagicMock(scalars=lambda: MagicMock(all=lambda: [MagicMock(extraction_status="parsed")])),  # parse OK
+        MagicMock(
+            scalars=lambda: MagicMock(all=lambda: [MagicMock(extraction_status="parsed")])
+        ),  # parse OK
         MagicMock(scalar=lambda: 3),  # 3 unverified LLM records in Gold!
     ]
     with pytest.raises(GoldDqRejected, match="blocking_dq_llm_unverified_in_gold"):
@@ -535,7 +589,9 @@ def test_gold_sql_files_contain_updated_contracts():
     price_prev=st.floats(min_value=100.0, max_value=50000.0),
     lag_months=st.integers(min_value=1, max_value=12),
 )
-def test_hypothesis_calendar_variation_exactness(price_t: float, price_prev: float, lag_months: int):
+def test_hypothesis_calendar_variation_exactness(
+    price_t: float, price_prev: float, lag_months: int
+):
     """Property test: For any positive prices and valid lag, calculate_calendar_aligned_variation matches formula."""
     curr_month = date(2024, 6, 1)
     # Compute expected target date
@@ -635,10 +691,12 @@ def test_check_freshness_and_manage_alerts_lifecycle():
     # Row tuple: (source_id, freshness_sla_days, freshness_days, is_stale, last_fetched_at)
     mock_session.execute.side_effect = [
         # Query 1: gold.source_health returns one stale source and one fresh source
-        MagicMock(fetchall=lambda: [
-            ("miasa_odr", 28, 45.0, True, "2024-01-01T00:00:00Z"),
-            ("wfp_hdx_mdg", 62, 10.0, False, "2024-02-15T00:00:00Z"),
-        ]),
+        MagicMock(
+            fetchall=lambda: [
+                ("miasa_odr", 28, 45.0, True, "2024-01-01T00:00:00Z"),
+                ("wfp_hdx_mdg", 62, 10.0, False, "2024-02-15T00:00:00Z"),
+            ]
+        ),
         # Query 2: existing alert lookup for miasa_odr (None -> new alert created)
         MagicMock(scalar_one_or_none=lambda: None),
         # Query 3: existing alert lookup for wfp_hdx_mdg (None -> no alert needed)
@@ -662,7 +720,9 @@ def test_run_all_dq_checks_battery():
     mock_session = MagicMock()
     mock_session.execute.side_effect = [
         MagicMock(fetchone=lambda: (10, 10)),  # provenance
-        MagicMock(scalars=lambda: MagicMock(all=lambda: [MagicMock(extraction_status="parsed")])),  # parse
+        MagicMock(
+            scalars=lambda: MagicMock(all=lambda: [MagicMock(extraction_status="parsed")])
+        ),  # parse
         MagicMock(scalar=lambda: 0),  # price range
         MagicMock(scalar=lambda: 0),  # llm unverified
         MagicMock(fetchall=lambda: []),  # freshness

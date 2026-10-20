@@ -108,11 +108,7 @@ class WbRtfpMdgConnector:
             root = find_repo_root()
             base_dir = root / "backend" if (root / "backend").exists() else root
             fixture_path = (
-                base_dir
-                / "tests"
-                / "fixtures"
-                / "wb_rtfp_mdg"
-                / "wb_rtfp_mdg_sample.csv"
+                base_dir / "tests" / "fixtures" / "wb_rtfp_mdg" / "wb_rtfp_mdg_sample.csv"
             )
             if not fixture_path.exists():
                 raise FileNotFoundError(f"Offline fixture not found at {fixture_path}")
@@ -188,13 +184,9 @@ class WbRtfpMdgConnector:
                     continue
 
                 market = (
-                    row_dict.get("market_name", "").strip()
-                    or row_dict.get("market", "").strip()
+                    row_dict.get("market_name", "").strip() or row_dict.get("market", "").strip()
                 )
-                adm1 = (
-                    row_dict.get("adm1_name", "").strip()
-                    or row_dict.get("admin1", "").strip()
-                )
+                adm1 = row_dict.get("adm1_name", "").strip() or row_dict.get("admin1", "").strip()
 
                 # Geographic resolution (R1.8, C3):
                 # If neither market nor adm1 is available, issue unresolved_location_needs_review

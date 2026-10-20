@@ -29,7 +29,9 @@ def alaotra_harvest_window() -> HarvestWindowProjection:
 
 
 @pytest.fixture
-def alaotra_supply_prediction(alaotra_harvest_window: HarvestWindowProjection) -> SupplyWindowPrediction:
+def alaotra_supply_prediction(
+    alaotra_harvest_window: HarvestWindowProjection,
+) -> SupplyWindowPrediction:
     """Projected supply window for Anosibe with +1 dekad logistics lag."""
     engine = SupplyPeakForecastEngine()
     return engine.predict_supply_window(
@@ -83,7 +85,9 @@ def test_public_regulator_journey() -> None:
     assert gap_metric.relative_change_pct < 0.0
 
     # 30-day buffer target
-    buffer_metric = next(m for m in report.impacts if m.metric_name == "strategic_buffer_reserve_target")
+    buffer_metric = next(
+        m for m in report.impacts if m.metric_name == "strategic_buffer_reserve_target"
+    )
     assert buffer_metric.scenario_value == 26_250.0
 
     assert "Surveiller les arrivages portuaires" in report.decision_recommendation
@@ -108,11 +112,14 @@ def test_commercial_buyer_journey(alaotra_supply_prediction: SupplyWindowPredict
 
     # Target volume 5 000 t, 12% peak discount on 3400 MGA/kg
     # Savings = 5000 * 1000 * 3400 * 0.12 = 2 040 000 000 MGA
-    savings_metric = next(m for m in report.impacts if m.metric_name == "estimated_procurement_savings")
+    savings_metric = next(
+        m for m in report.impacts if m.metric_name == "estimated_procurement_savings"
+    )
     assert savings_metric.absolute_change == -2_040_000_000.0
     assert savings_metric.relative_change_pct == -12.0
 
     assert "fenêtre de pic prévue" in report.decision_recommendation
+    assert alaotra_supply_prediction.predicted_peak_dekad is not None
     assert alaotra_supply_prediction.predicted_peak_dekad in report.decision_recommendation
 
 
@@ -185,6 +192,7 @@ def test_security_against_injection_and_unvetted_parameters() -> None:
 
     malicious_params = dict(sc.parameters)
     from ketrika.supply.decision_pilot import ScenarioParameter
+
     malicious_params["arbitrary_injected_variable"] = ScenarioParameter(
         name="arbitrary_injected_variable",
         value=999.0,

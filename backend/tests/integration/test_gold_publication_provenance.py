@@ -3,9 +3,12 @@
 import hashlib
 import json
 from copy import deepcopy
+from pathlib import Path
 from uuid import uuid4
 
 import pytest
+from alembic.config import Config
+from alembic.script import ScriptDirectory
 from sqlalchemy import event, select, text
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -44,9 +47,15 @@ def test_real_publication_rejects_bad_provenance_and_rolls_back_partial_sql(
     with get_session() as session:
         target = session.get_bind().engine.url
         require_synthetic_test_database(target.host, target.database)
+        config = Config()
+        config.set_main_option(
+            "script_location", str(Path(__file__).resolve().parents[2] / "alembic")
+        )
+        expected_head = ScriptDirectory.from_config(config).get_current_head()
+        assert expected_head is not None
         assert (
             session.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
-            == "0010_http_policy_budget"
+            == expected_head
         )
         store = BronzeStore()
         assert store.bucket == "ketrika-qa-bronze"
@@ -59,7 +68,7 @@ def test_real_publication_rejects_bad_provenance_and_rolls_back_partial_sql(
             == before_references
         )
         counts = seed_synthetic_gold_data(session)
-        assert init_gold_views(session) == {"views_initialized": 12, "views_populated": 0}
+        assert init_gold_views(session) == {"views_initialized": 14, "views_populated": 0}
         assert (
             session.execute(
                 text("SELECT count(*) FROM pg_matviews WHERE schemaname='gold' AND ispopulated")
@@ -74,7 +83,10 @@ def test_real_publication_rejects_bad_provenance_and_rolls_back_partial_sql(
         expected = sum(
             counts[key] for key in ("price", "stock", "trade", "production", "weather", "cpi")
         )
-        assert published["count"] == 12 and published["errors"] == {}
+        assert published["count"] == 13 and published["errors"] == {}
+        assert published["withheld_views"] == {
+            "economic_dashboard": "macro_publication_not_qualified"
+        }
         assert (
             published["source_observations_valid"]
             == published["source_observations_total"]

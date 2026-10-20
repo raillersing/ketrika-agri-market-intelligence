@@ -80,7 +80,6 @@ def logout(
     return {"status": "logged_out", "revoked": bool(token_to_revoke)}
 
 
-
 @router.get("/me", response_model=UserSummary)
 def get_me(user: UserAccount = Depends(get_current_user)) -> UserSummary:
     """Return profile of currently authenticated user."""

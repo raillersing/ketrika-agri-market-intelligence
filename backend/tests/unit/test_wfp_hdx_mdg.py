@@ -275,4 +275,3 @@ def test_wfp_fetch_offline_into_bronze() -> None:
     assert artifact.object_key.startswith("wfp_hdx_mdg/")
     assert len(artifact.content_sha256) == 64
     assert artifact.mime_type == "text/csv"
-

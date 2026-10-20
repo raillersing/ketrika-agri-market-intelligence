@@ -286,7 +286,9 @@ class AnalyticalToolCatalog:
                     median_price_mga=float(r.get("median_price", 0.0) or 0.0),
                     chg_1m_pct=float(r["chg_1m"]) if r.get("chg_1m") is not None else None,
                     chg_12m_pct=float(r["chg_12m"]) if r.get("chg_12m") is not None else None,
-                    z_score_robust=float(r["z_score_robust"]) if r.get("z_score_robust") is not None else None,
+                    z_score_robust=float(r["z_score_robust"])
+                    if r.get("z_score_robust") is not None
+                    else None,
                     vol_12=float(r["vol_12"]) if r.get("vol_12") is not None else None,
                 )
             )
@@ -437,7 +439,8 @@ class AnalyticalToolCatalog:
 
         calendars = load_crop_calendar()
         matches = [
-            c for c in calendars
+            c
+            for c in calendars
             if c.zone_code.upper() == clean_zone.upper() and c.crop.upper() == clean_crop
         ]
 
@@ -454,7 +457,11 @@ class AnalyticalToolCatalog:
             m = matches[0]
 
         regime_str = m.crop_regime.value if hasattr(m.crop_regime, "value") else str(m.crop_regime)
-        peak_str = f"Mois {m.peak_harvest_month}" if m.peak_harvest_month else f"Mois {m.harvest_start_month}"
+        peak_str = (
+            f"Mois {m.peak_harvest_month}"
+            if m.peak_harvest_month
+            else f"Mois {m.harvest_start_month}"
+        )
         return CropCalendarOutput(
             zone_code=m.zone_code,
             crop=m.crop,

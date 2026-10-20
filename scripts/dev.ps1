@@ -15,7 +15,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
-$QaComposeArgs = @("compose", "--env-file", (Join-Path $RepoRoot "scripts/qualification.env"), "--project-name", "ketrika-qualification", "-f", (Join-Path $RepoRoot "docker-compose.qualification.yml"))
+$QaComposeArgs = @("compose", "--env-file", (Join-Path $RepoRoot "scripts/qualification.env"), "--project-name", "ketrika-qualification-main-integration", "-f", (Join-Path $RepoRoot "docker-compose.qualification.yml"))
 
 function Invoke-QaDocker {
     param([string[]]$DockerArgs)
@@ -31,7 +31,7 @@ function Test-QaResourceOwnership {
         $labelJson = & docker $Kind inspect --format '{{json .Labels}}' $Name
         if ($LASTEXITCODE -ne 0) { throw "Cannot inspect qualification labels" }
         $labels = $labelJson | ConvertFrom-Json
-        if ($labels.'ketrika.scope' -ne "qualification" -or $labels.'com.docker.compose.project' -ne "ketrika-qualification") {
+        if ($labels.'ketrika.scope' -ne "qualification" -or $labels.'com.docker.compose.project' -ne "ketrika-qualification-main-integration") {
             throw "Refusing foreign qualification resource: $Name"
         }
     }
@@ -56,10 +56,10 @@ function Get-QaCommit {
 
 function Get-QaProofArgs {
     $proofCommit = Get-QaCommit
-    $fingerprint = & docker run --rm --network none --mount "type=bind,source=$RepoRoot,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-r03 python -m ketrika.core.qualification_reports fingerprint /workspace
+    $fingerprint = & docker run --rm --network none --mount "type=bind,source=$RepoRoot,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r03 python -m ketrika.core.qualification_reports fingerprint /workspace
     if ($LASTEXITCODE -ne 0 -or $fingerprint -notmatch '^[0-9a-f]{64}$') { throw "Cannot bind source snapshot" }
     $result = @("-e", "KETRIKA_SOURCE_COMMIT=$proofCommit", "-e", "KETRIKA_SOURCE_FINGERPRINT=$fingerprint")
-    foreach ($entry in @(@("BACKEND", "ketrika-backend:qa-r03"), @("WEB", "ketrika-web:qa-r03"), @("BROWSER", "ketrika-backend:qa-browser-r03"))) {
+    foreach ($entry in @(@("BACKEND", "ketrika-backend:qa-codex-r03"), @("WEB", "ketrika-web:qa-codex-r03"), @("BROWSER", "ketrika-backend:qa-codex-browser-r03"))) {
         $imageId = & docker image inspect --format '{{.Id}}' $entry[1]
         if ($LASTEXITCODE -ne 0 -or $imageId -notmatch '^sha256:[0-9a-f]{64}$') { throw "Cannot bind runtime image" }
         $result += @("-e", ("KETRIKA_PROOF_" + $entry[0] + "_IMAGE_ID=" + $imageId))
@@ -77,12 +77,12 @@ function Invoke-QaIsolated {
     }
     if ($Action -eq "qa") {
         if ($RemainingArgs.Count -ne 1) { throw "QA requires exactly one configured task ID" }
-        Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-r03", "python", "-m", "ketrika.core.qa_manifest", $RemainingArgs[0], "--validate-only"))
+        Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qa_manifest", $RemainingArgs[0], "--validate-only"))
     }
-    Invoke-QaDocker -DockerArgs @("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-r03", "python", "-m", "ketrika.core.qualification", "compose", "/workspace/docker-compose.qualification.yml")
-    Test-QaResourceOwnership -Kind "network" -Name "ketrika_qualification_network"
+    Invoke-QaDocker -DockerArgs @("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qualification", "compose", "/workspace/docker-compose.qualification.yml")
+    Test-QaResourceOwnership -Kind "network" -Name "ketrika_qualification_main_integration_network"
     foreach ($suffix in @("pgdata", "bronze", "backend_venv_r03", "backend_source_r03", "web_source_r03", "web_node_modules_r03", "web_next_r03", "browser_venv_r03")) {
-        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_$suffix"
+        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_main_integration_$suffix"
     }
     Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("config", "--quiet"))
     if ($Action -eq "check") {
@@ -96,7 +96,7 @@ function Invoke-QaIsolated {
             $proofArgs = Get-QaProofArgs
             Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps") + $proofArgs + @("api", "sh", "/workspace/scripts/qa-backend.sh", "check"))
             Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps") + $proofArgs + @("web", "sh", "/workspace/scripts/qa-web.sh", "check"))
-            Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "--mount", "type=volume,source=ketrika_qualification_web_node_modules_r03,target=/frontend,readonly", "-e", "PYTHONPATH=/workspace/backend/src") + $proofArgs + @("ketrika-backend:qa-r03", "python", "-m", "ketrika.core.qualification_reports", "check-frontend", "/frontend/.qa-results", "--commit", (Get-QaCommit)))
+            Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "--mount", "type=volume,source=ketrika_qualification_main_integration_web_node_modules_r03,target=/frontend,readonly", "-e", "PYTHONPATH=/workspace/backend/src") + $proofArgs + @("ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qualification_reports", "check-frontend", "/frontend/.qa-results", "--commit", (Get-QaCommit)))
         }
         "test" { Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "test") + $RemainingArgs) }
         "governance" { Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("run", "--rm", "--no-deps", "api", "sh", "/workspace/scripts/qa-backend.sh", "governance")) }
@@ -145,7 +145,7 @@ function Show-Help {
 switch ($Command) {
     "qa-profile" {
         if ($ArgsList.Count -ne 1) { throw "QA profile requires one relative XML report path" }
-        Invoke-QaDocker -DockerArgs @("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-r03", "python", "-m", "ketrika.core.qa_profile", $ArgsList[0])
+        Invoke-QaDocker -DockerArgs @("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qa_profile", $ArgsList[0])
         exit 0
     }
     "help" {
@@ -209,9 +209,9 @@ switch ($Command) {
         exit 0
     }
     "qa-build" {
-        Invoke-QaDocker -DockerArgs @("build", "--target", "base", "-t", "ketrika-backend:qa-r03", (Join-Path $RepoRoot "backend"))
-        Invoke-QaDocker -DockerArgs @("build", "-t", "ketrika-web:qa-r03", (Join-Path $RepoRoot "web"))
-        Invoke-QaDocker -DockerArgs @("build", "--target", "backend-browser", "-t", "ketrika-backend:qa-browser-r03", (Join-Path $RepoRoot "backend"))
+        Invoke-QaDocker -DockerArgs @("build", "--target", "base", "-t", "ketrika-backend:qa-codex-r03", (Join-Path $RepoRoot "backend"))
+        Invoke-QaDocker -DockerArgs @("build", "-t", "ketrika-web:qa-codex-r03", (Join-Path $RepoRoot "web"))
+        Invoke-QaDocker -DockerArgs @("build", "--target", "backend-browser", "-t", "ketrika-backend:qa-codex-browser-r03", (Join-Path $RepoRoot "backend"))
         exit 0
     }
     "qa" {
@@ -220,10 +220,10 @@ switch ($Command) {
     }
     "qualify" {
         if ($ArgsList.Count -lt 1 -or $ArgsList.Count -gt 2 -or $ArgsList[0] -notin @("R0", "all")) { throw "qualify requires R0|all and optional relative evidence directory" }
-        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_backend_venv_r03"
+        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_main_integration_backend_venv_r03"
         $proofArgs = Get-QaProofArgs
         $evidence = if ($ArgsList.Count -eq 2) { $ArgsList[1] } else { "docs/evidence/qualification" }
-        Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "--mount", "type=volume,source=ketrika_qualification_backend_venv_r03,target=/reports", "-e", "PYTHONPATH=/workspace/backend/src") + $proofArgs + @("ketrika-backend:qa-r03", "python", "-m", "ketrika.core.qualify", $ArgsList[0], "--commit", (Get-QaCommit), "--evidence", $evidence))
+        Invoke-QaDocker -DockerArgs (@("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "--mount", "type=volume,source=ketrika_qualification_main_integration_backend_venv_r03,target=/reports", "-e", "PYTHONPATH=/workspace/backend/src") + $proofArgs + @("ketrika-backend:qa-codex-r03", "python", "-m", "ketrika.core.qualify", $ArgsList[0], "--commit", (Get-QaCommit), "--evidence", $evidence))
         exit 0
     }
     "test-network" {
@@ -239,7 +239,7 @@ switch ($Command) {
     }
     "rebuild-smoke" {
         if ($ArgsList.Count -ne 1 -or $ArgsList[0] -notin @("prepare", "replay")) { throw "rebuild-smoke requires prepare|replay" }
-        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_backend_venv_r03"
+        Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_main_integration_backend_venv_r03"
         foreach ($suffix in @("pgdata", "socket", "copy", "reports")) {
             $name = "ketrika_rebuild_qualification_$suffix"
             $existing = @(& docker volume ls --format '{{.Name}}')

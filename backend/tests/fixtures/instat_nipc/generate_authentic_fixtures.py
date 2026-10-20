@@ -84,7 +84,7 @@ def build_historic_workbook(dest_path: Path) -> None:
 
             # Introduce some ND cells for the earliest 3 months of pain & cereales
             if month_idx < 3:
-                val_pain = "ND"
+                val_pain: str | float = "ND"
             else:
                 val_pain = round(base_pain + month_idx * 0.68, 2)
 
@@ -129,6 +129,7 @@ def build_recent_workbook(dest_path: Path) -> None:
     """Build authentic monthly NIPC workbook with French date names and revisions."""
     wb = openpyxl.Workbook()
     ws = wb.active
+    assert isinstance(ws, Worksheet)
     ws.title = "NIPC 2024 Mensuel"
 
     ws["A1"] = "REPUBLIQUE DE MADAGASCAR"
