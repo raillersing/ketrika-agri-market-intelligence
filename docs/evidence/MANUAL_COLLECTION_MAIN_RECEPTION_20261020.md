@@ -24,4 +24,10 @@ Ces preuves sont logicielles. Elles ne qualifient ni fraîcheur universelle, ni 
 
 Sauvegarde préalable active : `backups/ketrika_backup_20261020_083019.dump` (ignorée par git, non publiée). Base avant migration : 0016. Empreintes de conservation avant migration : source_record 482 / `970aa1dde9b2ece31fd785ede51f435c`, prix 764 / `fa29f041c264ca68db87f00f50aa2f23`, stocks 35 / `76b3fbe69e5377f78fe3cf2d63ab39f2`, météo 116 / `0214411a665b52f4121647c034856c43` (MD5 agrégat ordonné des lignes, contrôle de conservation, pas identité Bronze).
 
-Fusion et activation ne sont pas encore attestées par cette entrée. Aucun remote git configuré : aucun push revendiqué.
+Fusion fast-forward53649 FINAL0 : main75d8674 →5e4a004, tous les commits AGY conservés. Aucun remote git configuré : aucun push revendiqué.
+
+Activation :29315 FINAL1, upgrade0018 refusé car la base active ancienne gardait price_monthly sans source_family ; rollback confirmé0016/empreintes identiques. Maintenance opérateur48664 FINAL0 avec la fonction existante init_gold_views :14 définitions actuelles non peuplées, zéro observation modifiée.93060 FINAL0 : migration0018. Les quatre effectifs/empreintes ci-dessus sont strictement identiques après migration. Les caches invalidés sont des données dérivées, récupérables par recalcul contrôlé, pas par publication forcée. Runbook ajouté ; automatisation et test de toutes les formes historiques restent BL-019, non revendiqués comme livrés.
+
+Sonde54863 : les trois routes Sources200, mais sortie1 sur un mauvais chemin santé /health404 ;35386 FINAL0 sur le vrai /v1/health200. Navigateur actif70230 FINAL1 : ancien bundle Next encore servi malgré nouveaux fichiers. Redémarrage du seul frontend33511 FINAL0 ; même parcours22475 FINAL0 : connexion formulaire, Sources200, bouton global activé, options200 (douanes_stats, faostat, miasa_odr, mincc_ppn, wb_rtfp_mdg), historique200, mobile390 sans débordement. Capture viewport MAIN_COLLECTION_ACTIVE_22475_MOBILE.png inspectée visuellement. Aucune collecte externe émise ni seuil modifié.
+
+Les clôtures suivantes ne changent que documentation/preuves ; le contenu applicatif reste celui du check78730. Les caches ne sont pas déclarés repeuplés et la fraîcheur des marchés n'est pas certifiée par cette réception.
