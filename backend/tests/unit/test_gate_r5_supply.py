@@ -23,6 +23,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from ketrika.api.main import app
+from ketrika.connectors.records import StockRecord as ParsedStockRecord
 from ketrika.connectors.records import TradeFlowRecord
 from ketrika.core.db import get_db
 from ketrika.geo.contracts import CropCalendarRecord, load_crop_calendar
@@ -218,7 +219,7 @@ def test_gate_r5_criterion_5_mass_conservation_and_no_double_count() -> None:
     # 1. Mass conservation holds on analytical scenario:
     # Initial: 100t, Inflow: 300t, Outflow: 250t, Loss: 15t -> Expected final: 135t
     records = [
-        StockRecord(
+        ParsedStockRecord(
             target=QuantityTarget.STOCK_INVENTORY.value,
             market_code="MKT_ANOSIBE",
             location_raw="Marché d'Anosibe",
@@ -231,7 +232,7 @@ def test_gate_r5_criterion_5_mass_conservation_and_no_double_count() -> None:
             extraction_method="deterministic",
             confidence=1.0,
         ),
-        StockRecord(
+        ParsedStockRecord(
             target=QuantityTarget.INFLOW_ARRIVAL.value,
             market_code="MKT_ANOSIBE",
             location_raw="Marché d'Anosibe",

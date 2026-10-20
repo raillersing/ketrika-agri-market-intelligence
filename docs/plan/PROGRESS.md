@@ -3960,3 +3960,8 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 -70280 diagnostic types rouge sur403 fichiers :117 erreurs, regroupées dans les générateurs synthétiques, contrat parser_version manquant et champs de contexte de tests supply. Corrections appliquées sans ignore : types explicites, classe de contexte synthétique déclarée et champ poids canonique. Réception globale obligatoire sur source figée ; aucun succès global revendiqué.
 - Suppression du seul conteneur temporaire annulé non démarré api-run-1b2eba41b62b ; aucun volume/donnée supprimé. Fusion main encore conditionnée au check complet et E2E.
 
+### [2026-10-20T06:03:21Z] Réception13164 rouge avant exécution des tests
+
+- Source9a3da92 / empreinte d98292bd8fdf753eb18365b5a19497abaa7de0ffb3bc08663fdbd7066ed4d020 ; QA neuve dédiée. Ruff/format407 verts, mypy406 fichiers :12 erreurs sur deux fixtures supply utilisant le sous-type enrichi sans son contexte. Aucun pytest/frontend ni couverture globale exécutés ; aucun succès global.
+- Correction : ces deux fixtures simples restent ParsedStockRecord de production, les scénarios avec prix gardent leur sous-type synthétique explicite. Aucun faux identifiant/default ajouté. Nouveau check requis sur contenu corrigé ; main encore75d8674.
+
