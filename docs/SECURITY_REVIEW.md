@@ -27,11 +27,18 @@
   docker run --rm -v "${PWD}:/path" zricethezav/gitleaks:latest detect --source="/path" --config="/path/.gitleaks.toml" --verbose
   ```
 - **Résultats chiffrés :**
-  - **48 commits scannés** sur l'ensemble de l'historique depuis le commit initial `d109bb7`.
-  - **~2,85 Mo de code inspecté**.
-  - **0 secret détecté** (`no leaks found`).
+  - **319 commits audités** sur l'ensemble de l'historique étendu (programmes MVP T et R0–R6).
+  - **~205 Mo de données et diffs inspectés**.
+  - **0 secret réel détecté** (`no leaks found`).
+- **Audit des 5 alertes historiques (100 % faux positifs documentés) :**
+  1. `partition_key="odr_anosibe_2024"` dans `backend/src/ketrika/connectors/market_supply.py` (commit `d52bef0`) : identifiant textuel de partition de données pour les enquêtes de l'Observatoire du Riz à Anosibe, détecté à tort par la règle générique `generic-api-key` en raison du suffixe `_key`. Aucun secret.
+  2. `partition_key="odr_ambatondrazaka_2024"` dans `backend/src/ketrika/connectors/market_supply.py` (commit `d52bef0`) : identifiant de partition de données ODR Ambatondrazaka (faux positif `generic-api-key`). Aucun secret.
+  3. `assert items_list[0].partition_key == "chirps_final_2023_12"` dans `backend/tests/unit/test_chirps.py` (commit `fbf16c6`) : assertion de test unitaire sur la clé de partitionnement décadaire CHIRPS. Aucun secret.
+  4. `assert items[0].partition_key == "mdg_food_prices_2024"` dans `backend/tests/unit/test_wb_rtfp_mdg.py` (commit `2801da5`) : assertion de test unitaire sur la clé de partition du dataset Banque Mondiale RTFP. Aucun secret.
+  5. `S3_BUCKET_BRONZE=ketrika-bronze` adjacent au placeholder `<R2_SECRET_ACCESS_KEY>` dans `docs/runbooks/deploy.md` (commit `d0504cb`) : gabarit de documentation technique de déploiement contenant des balises indicatives de configuration, sans valeur secrète. Aucun secret.
 - **Configuration `.gitleaks.toml` :**
-  - Exclusion explicite des faux positifs liés aux empreintes cryptographiques déterministes de tests (clés de cache de replay LLM `cache_key` et identifiants de partition de bulletins `odr_bulletin_NNN`).
+  - Ajout des expressions régulières ciblées dans `allowlist.regexes` pour neutraliser strictement ces 5 faux positifs sans désactiver le scanner global.
+  - Vérification par `zricethezav/gitleaks:latest detect` confirmant un code de sortie 0 (`no leaks found`).
 
 ---
 

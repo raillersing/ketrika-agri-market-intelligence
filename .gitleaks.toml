@@ -15,4 +15,10 @@ regexes = [
     '''dummy_dagster_f1196e09722e43719f44a7cb10249ff2__bronze''',
     '''odr_bulletin_\d+''',
     '''"cache_key": "[a-f0-9]{64}"''',
+    # Data partition keys matched by generic-api-key rule (not credentials)
+    '''odr_(anosibe|ambatondrazaka)_2024''',
+    '''chirps_final_\d+_\d+''',
+    '''mdg_food_prices_\d+''',
+    # Documentation placeholder template in deploy runbook (not a credential)
+    '''S3_BUCKET_BRONZE=ketrika-bronze''',
 ]
