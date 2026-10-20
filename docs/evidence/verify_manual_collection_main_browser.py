@@ -26,6 +26,7 @@ def budget_total() -> int:
 
 
 def main() -> int:
+    expect.set_options(timeout=60000)
     validate_environment(os.environ)
     output = Path("/app/.venv/qa-browser-results") / ("collection-" + uuid.uuid4().hex)
     output.mkdir(parents=True)

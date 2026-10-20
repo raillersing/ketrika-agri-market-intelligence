@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "commit": "790201bb9a4d82cdb1ff28048550005ec707416f",
+  "source_fingerprint": "82b5961c7b7e91d45e6fec7c4c37fdd25635ca7176ba9bdee5bff6d02dc720a0",
+  "environment": {
+    "project": "ketrika-qualification-main-final",
+    "database": "ketrika_qualification",
+    "bronze_bucket": "ketrika-qa-bronze",
+    "network": "ketrika_qualification_main_final_network",
+    "dataset_mode": "test",
+    "backend_image_id": "sha256:493523bfd299513b1287f6bf4a94cf2ae07ac14daa6da5c622735d8eb9e1d5a7",
+    "web_image_id": "sha256:c45a054e8c6299b89b47979a87d4f4d0f4e3fd62dcf71fd03e23bafee5159a91",
+    "browser_image_id": "sha256:2646169d3348b9d52388664d307e05e38b18e0a72869dcdae906cdece75f66cf"
+  },
+  "dataset": "mixed",
+  "captured_at": "2026-10-20T08:32:20.095870+00:00",
+  "scope": "read-only owner-lock, real UI/API; no live source qualification",
+  "passed": true,
+  "fixture": "transient SQL advisory lock, no source policy or observed data changed",
+  "rejected_request": {
+    "request_id": "925cafb8-98cc-45dc-ab06-12a6bf19598f",
+    "source_id": "wb_rtfp_mdg"
+  },
+  "response_status": 409,
+  "prior_receipt": {
+    "request_id": "46abb2c7-152f-49c8-a87e-8d65a092455b",
+    "selection": null,
+    "status": "partial",
+    "stage": "finished",
+    "source_ids": [
+      "first",
+      "second"
+    ],
+    "outcomes": [
+      {
+        "status": "failed",
+        "n_records": 0,
+        "source_id": "first"
+      },
+      {
+        "status": "success",
+        "n_records": 0,
+        "source_id": "second"
+      }
+    ],
+    "publication": "failed",
+    "started_at": "2026-10-20T08:06:14.741023Z",
+    "finished_at": "2026-10-20T08:06:14.777278Z"
+  },
+  "budget_before": 444,
+  "budget_after": 444,
+  "no_new_receipt": true,
+  "secure_context": true,
+  "reload_matches": true,
+  "mobile_width": 390,
+  "browser_errors": []
+}
