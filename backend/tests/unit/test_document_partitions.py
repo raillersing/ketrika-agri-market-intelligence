@@ -66,5 +66,5 @@ def test_actual_registered_jobs_match_eligible_sources_without_new_assets():
     assert {job.name for job in document_replay_jobs} == {
         f"{entry.source_id}__document_replay" for entry in source_inventory if entry.included
     }
-    assert len(document_replay_jobs) == 5
+    assert len(document_replay_jobs) == 12
     assert "instat_nipc__document_replay" not in {job.name for job in document_replay_jobs}

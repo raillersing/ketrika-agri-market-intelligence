@@ -63,7 +63,10 @@ def test_explicit_empty_requires_actual_empty_numeric_views_and_no_rate() -> Non
     stats = empty_statistics()
     with patch("tests.legacy_replay.rebuild_database", return_value=stats):
         assert rejected_legacy_rebuild(session, "legacy", allow_empty=True) == stats
-    assert session.scalar.call_count == 11
+    assert session.scalar.call_count == 12
+    assert all(
+        "economic_dashboard" not in str(call.args[0]) for call in session.scalar.call_args_list
+    )
 
 
 @pytest.mark.parametrize("bad", ["qualified", "rate", "rows", "counts"])

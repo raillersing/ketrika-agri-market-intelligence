@@ -154,7 +154,26 @@ def load_crop_calendar(
     if not isinstance(data, list):
         raise ValueError(f"Expected YAML list in {path}, got {type(data).__name__}")
 
-    return [CropCalendarEntry.model_validate(item) for item in data]
+    from ketrika.geo.contracts import CalendarType, CropCalendarRecord
+
+    result: list[CropCalendarEntry] = []
+    for item in data:
+        if isinstance(item, dict) and "product_code" in item:
+            rich = CropCalendarRecord.model_validate(item)
+            if (
+                rich.calendar_type != CalendarType.TRADITIONAL_BASELINE
+                or not rich.verified
+                or not rich.eligible_for_alerts
+                or not rich.is_active
+                or rich.superseded_by is not None
+            ):
+                continue
+            projected = {key: getattr(rich, key) for key in CropCalendarEntry.model_fields}
+            projected["source"] = rich.source or rich.source_reference
+            result.append(CropCalendarEntry.model_validate(projected))
+        else:
+            result.append(CropCalendarEntry.model_validate(item))
+    return result
 
 
 def resolve_location(

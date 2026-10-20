@@ -1845,3 +1845,5 @@ Précisions ADR-109–111 : les douze définitions historiques Gold sont figées
 
 Réception ADR-112/113 : namespace final ketrika-qualification-main-final et ressources ketrika_qualification_main_final_* strictement isolés. Le parcours navigateur contrôle douze scénarios exacts, notamment le503 économique et sa présentation sans état vide trompeur. Le diagnostic de clic concurrent est readonly côté données/politiques : verrou transitoire, POST409, aucun nouveau reçu, reçu antérieur conservé et quotas inchangés.
 
+Compatibilité ADR-115 : core.geo.load_crop_calendar conserve son DTO strict MVP. Les entrées enrichies sont d'abord validées intégralement avec le contrat riche strict ; seules les baselines déclarées vérifiées/éligibles/actives/non supersédées sont projetées pour ce lecteur historique. Les campagnes et entrées non vérifiées ne sont pas supprimées du YAML ni du lecteur riche. BudgetGuard rétablit les dépenses directes et refuse montants/limites non finis ou négatifs ; réserve atomique et enregistrement direct sont deux chemins distincts, sans qualification d'un plafond distribué par ces tests.
+

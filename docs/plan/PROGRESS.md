@@ -3987,3 +3987,11 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - ADR114 : vérification initiale du refus503 réel, puis format des cinq dimensions avec résultat vide explicitement mocké et local au test. Aucun garde produit affaibli, aucune donnée qualifiée.29385 FINAL0 : six tests du gate/43,55s et lint ciblé verts.
 - Code applicatif6386d31 inchangé par ce correctif de test. Nouveau check complet obligatoire après commit, puis E2E/diagnostic Sources sur même contenu et intégration main seulement après réception. Reprendre le processus connu, pas de redémarrage sur simple nouveau message utilisateur.
 
+### [2026-10-20T07:55:23Z] Huit échecs de réception corrigés en lot stabilisé
+
+-1662 FINAL1 sur f14d005 :2281 succès/huit échecs/1473,74s, zéro skip ; JUnit/couverture/inventaire originaux MAIN_COLLECTION_CHECK_1662_RED_* conservés. Aucun frontend exécuté ni succès global déduit.
+- ADR115 : dépenses directes BudgetGuard à nouveau comptabilisées sous verrou, coûts/limites négatifs et non finis refusés ; exposition SQL+mémoire conservative explicitée, pas de qualification multi-processus.71597 FINAL0 confirme application active LLM_PROVIDER=replay/clé Gemini absente, sans divulgation de secret.
+- Calendrier MVP : validation intégrale stricte des entrées riches puis projection des seules baselines déclarées vérifiées/éligibles/actives/non supersédées ; aucun YAML ni drapeau verified modifié. Les données riches, campagnes et entrées exploratoires restent conservées. Fixture météo initialise ses quatre attributs nouveaux et leurs révisions sont testées sans réécriture des valeurs.
+- Inventaires renforcés :12 jobs documentaires,18 sources avec familles,23 tables de contenu et12 vues numériques vérifiables (pas de lecture de la macro non peuplée).40289 FINAL0 :146 tests/26,81s, huit causes et vingt nouveaux contre-exemples ;74576 FINAL0/types trois fichiers, lint/format concernés verts. Annotation générique explicite, aucune ignore/exception de test ajoutée.
+- Filtres globaux bornés sur petit écran (ADR113), cinq changements de classes CSS sans modification des données ; réception navigateur390px obligatoire. Prochain lot figé : un check complet puis E2E/diagnostic préparé, aucun nouveau code pendant réception et aucun DONE R/tag anticipé.
+

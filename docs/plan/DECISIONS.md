@@ -1541,7 +1541,7 @@
 ## ADR-113 | 2026-10-20 | Réception navigateur cohérente avec le refus macro
 
 - Constat readonly avant réception finale : backend economic/dashboard refuse déjà la macro non qualifiée503 ; ancien E2E attend200 et son reçu omet deux scénarios qu'il exécute. La page transforme ce refus en chargement impossible puis affiche simultanément une absence de données.
-- Décision : message503 explicite et pas de faux état vide, ajustements de titre mobile limités, E2E lié à douze scénarios exacts (authentification, refus macro/reload, navigation/largeur mobile, logout). Aucun déblocage du Gold macro ni changement du contrat de valeurs.
+- Décision : message503 explicite et pas de faux état vide, titre mobile et bornage des sélecteurs globaux à la largeur disponible, E2E lié à douze scénarios exacts (authentification, refus macro/reload, navigation/largeur mobile, logout). Aucun déblocage du Gold macro ni changement du contrat de valeurs.
 - Complément : diagnostic de clic Sources en QA uniquement avec verrou concurrent SQL transitoire, libéré en fin de transaction ; navigateur sur localhost réel, session créée par formulaire, POST409 sans création de reçu, reçu antérieur SQL relu/reload, quota inchangé et rendu390px. Ni mock d'endpoint ni collecte externe, aucune politique de source durablement modifiée ; preuve négative logicielle, pas une acquisition live ni une performance de marché.
 
 ## ADR-114 | 2026-10-20 | Distinguer refus économique réel et test de format
@@ -1549,4 +1549,12 @@
 - Diagnostic readonly73846 sur6386d31 : test_gate_r2_strict_dimension_isolation_and_no_composite_score exige200 mais reçoit le503 conforme (un échec/33,60s, aucune SQL mutante). Le check76385 du même contenu ne peut être reçu ; arrêt explicite après100 succès/655,92s, JUnit conservé, aucun résultat global/couverture/frontend déduit.
 - Décision : ce cas vérifie d'abord le503 réel et son motif, puis contrôle la structure des cinq dimensions avec une entrée vide explicitement mockée dans ce seul test. Cela n'est pas une preuve de Gold qualifié et ne clôt pas R2.11. Aucun changement de code applicatif ni seuil.
 - Réception : contrôle ciblé de ce contrat, puis check complet sur nouveau contenu figé conformément à§3.3.
+
+## ADR-115 | 2026-10-20 | Réconciliation complète des huit échecs hérités
+
+-1662 FINAL1 sur f14d005 :2281 succès/huit échecs/1473,74s ; JUnit/couverture/inventaire originaux archivés, aucun succès frontend/global déduit. Causes intégralement recensées.
+- Budget : restaurer la comptabilisation des dépenses directes dans record_spend sous verrou ; refuser coûts/limites négatifs ou non finis avant modification. Les appels à réserve atomique du workflow restent distincts des enregistrements directs Gemini ; aucune réduction de plafond ni qualification budgétaire multi-processus déduite. Le total SQL plus mémoire reste une exposition conservative, pas un relevé de facturation.
+- Calendrier : conserver le modèle MVP strict ; valider chaque entrée enrichie avec CropCalendarRecord strict, puis projeter uniquement les baselines déclarées vérifiées/éligibles/actives/non supersédées dans la forme héritée. Recommandations saisonnières et entrées exploratoires restent accessibles via le contrat riche, sans réécriture du YAML ni promotion du drapeau verified. L'ancien format reste accepté strictement, y compris son drapeau false.
+- Fixtures : initialiser explicitement les nouveaux attributs météo représentant une ligne SQL déjà persistée ; ajouter leurs cas de révision. Inventaires actualisés et renforcés :12 jobs documentaires,18 sources,23 tables de contenu,12 vues numériques réellement vérifiables hors macro/source_health. Aucun contrôle d'immuabilité supprimé.
+- Réception : tests ciblés des huit causes et contre-exemples, puis check complet sur lot figé ; conserver tous les scénarios scientifiques et leurs seuils.
 

@@ -208,7 +208,8 @@ def test_empty_tables_are_present_not_successful_rebuild():
     tables = {table: [] for table in TABLES}
     columns = {table: sorted(OBS_COLUMNS.get(table, {"metric"})) for table in TABLES}
     manifest = canonical_manifest(tables, columns)
-    assert len(manifest["tables"]) == 19
+    assert len(manifest["tables"]) == 23
+    assert set(manifest["tables"]) == set(TABLES)
     assert all(item["count"] == 0 for item in manifest["tables"].values())
     assert "passed" not in manifest  # identity is not a replay/authenticity claim
 

@@ -90,8 +90,8 @@ export function GlobalFilters() {
   const isCustom = currentProduct !== "rice_milled" || currentRegion !== "" || currentActor !== "";
 
   return (
-    <div className="bg-slate-950/60 border-b border-white/[0.07] px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 sticky top-16 z-10 backdrop-blur-md">
-      <div className="flex flex-wrap items-center gap-2.5">
+    <div className="bg-slate-950/60 border-b border-white/[0.07] px-3 md:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 sticky top-16 z-10 backdrop-blur-md [&_select]:max-w-full">
+      <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2.5">
         {/* Label */}
         <div className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-slate-400 mr-1">
           <Filter className="w-3.5 h-3.5 text-emerald-400" />
@@ -99,7 +99,7 @@ export function GlobalFilters() {
         </div>
 
         {/* Produit Selector Pill */}
-        <div className="relative inline-flex items-center">
+        <div className="relative inline-flex max-w-full items-center">
           <Wheat className="w-3.5 h-3.5 text-emerald-400 absolute left-3 pointer-events-none" />
           <select
             value={currentProduct}
@@ -117,7 +117,7 @@ export function GlobalFilters() {
         </div>
 
         {/* Région Selector Pill */}
-        <div className="relative inline-flex items-center">
+        <div className="relative inline-flex max-w-full items-center">
           <MapPin className="w-3.5 h-3.5 text-sky-400 absolute left-3 pointer-events-none" />
           <select
             value={currentRegion}
@@ -135,7 +135,7 @@ export function GlobalFilters() {
         </div>
 
         {/* Niveau Acteur Selector Pill */}
-        <div className="relative inline-flex items-center">
+        <div className="relative inline-flex max-w-full items-center">
           <Users className="w-3.5 h-3.5 text-purple-400 absolute left-3 pointer-events-none" />
           <select
             value={currentActor}

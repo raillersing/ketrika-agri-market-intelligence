@@ -18,7 +18,7 @@ def test_registry_file_validates_without_errors() -> None:
 def test_all_sources_define_source_family() -> None:
     """Verify every registered source specifies a source_family (C3 anti-leakage rule)."""
     sources = load_sources()
-    assert len(sources) == 13
+    assert len(sources) == 18
 
     for s in sources:
         assert s.source_family is not None, f"Source '{s.source_id}' is missing source_family"

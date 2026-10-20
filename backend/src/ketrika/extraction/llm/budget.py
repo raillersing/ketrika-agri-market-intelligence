@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import threading
 import uuid
 from datetime import UTC, datetime
@@ -34,11 +35,18 @@ class BudgetGuard:
         self.per_run_limit_usd = (
             per_run_limit_usd if per_run_limit_usd is not None else settings.llm_per_run_budget_usd
         )
+        self._validate_amount(self.monthly_limit_usd)
+        self._validate_amount(self.per_run_limit_usd)
         self._in_memory_spend: float = 0.0
         self._lock = threading.Lock()
 
+    @staticmethod
+    def _validate_amount(value: float) -> None:
+        if not math.isfinite(value) or value < 0:
+            raise BudgetExceededError("invalid budget amount")
+
     def get_monthly_spend(self, session: Session | None = None) -> float:
-        """Calculate total spend for the current calendar month in UTC."""
+        """Return conservative exposure: SQL charges plus local spend/reservations."""
         db_spend = 0.0
         if session is not None:
             now = datetime.now(UTC)
@@ -59,6 +67,8 @@ class BudgetGuard:
         session: Session | None = None,
     ) -> None:
         """Check if cost can be incurred without violating monthly or per-run limits."""
+        self._validate_amount(cost_usd)
+        self._validate_amount(current_run_spend)
         if current_run_spend + cost_usd > self.per_run_limit_usd:
             raise BudgetExceededError(
                 f"LLM call would exceed per-run budget: {current_run_spend + cost_usd:.4f}$ > {self.per_run_limit_usd:.2f}$"
@@ -83,6 +93,7 @@ class BudgetGuard:
 
     def rollback_reservation(self, cost_usd: float) -> None:
         """Roll back an in-memory reserved budget amount if execution was canceled or failed."""
+        self._validate_amount(cost_usd)
         with self._lock:
             self._in_memory_spend = max(0.0, self._in_memory_spend - cost_usd)
 
@@ -100,10 +111,10 @@ class BudgetGuard:
         status: str = "ok",
         source_record_id: uuid.UUID | None = None,
     ) -> None:
-        """Record spend in database if session available, and in memory (if not already reserved)."""
+        """Record direct spend; reservation-only workflows must not record it twice."""
+        self._validate_amount(cost_usd)
         with self._lock:
-            # If called directly without check_and_reserve, add to in_memory
-            pass
+            self._in_memory_spend += cost_usd
 
         if session is not None:
             llm_call = LlmCall(
