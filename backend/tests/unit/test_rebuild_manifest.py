@@ -210,9 +210,7 @@ def test_empty_tables_are_present_not_successful_rebuild():
     columns = {table: sorted(OBS_COLUMNS.get(table, {"metric"})) for table in TABLES}
     manifest = canonical_manifest(tables, columns)
     assert len(manifest["tables"]) == len(TABLES)
-    assert len(TABLES) == (
-        len(OBS_COLUMNS) + len(ORDERED_GOLD_VIEWS) - len(UNPUBLISHED_GOLD_VIEWS)
-    )
+    assert len(TABLES) == (len(OBS_COLUMNS) + len(ORDERED_GOLD_VIEWS) - len(UNPUBLISHED_GOLD_VIEWS))
     assert "gold.economic_dashboard" not in TABLES
     assert set(manifest["tables"]) == set(TABLES)
     assert all(item["count"] == 0 for item in manifest["tables"].values())
