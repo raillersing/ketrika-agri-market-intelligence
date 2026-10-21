@@ -1,8 +1,11 @@
-"""Unit tests for crop production forecasting model (Area × Yield) (R5.5, ADR-106)."""
+"""Unit tests for crop production forecasting model (Area × Yield) (R5.5, ADR-106, ADR-116)."""
+
+from dataclasses import replace
 
 import pytest
 
 from ketrika.supply.production_model import (
+    HISTORICAL_YIELD_BASELINES,
     AreaSourceKind,
     CropProductionModel,
     ProductionForecastInput,
@@ -15,28 +18,52 @@ def model() -> CropProductionModel:
     return CropProductionModel()
 
 
-def test_conversion_factors_completeness_and_sources(model: CropProductionModel) -> None:
-    """Verify that all standard staple commodities have sourced conversion factors and full bibliographic metadata (C022)."""
+@pytest.fixture
+def verified_model() -> CropProductionModel:
+    """Model whose yield baselines carry document-verified references (ADR-116)."""
+    baselines = {
+        key: replace(item, reference_verified=True)
+        for key, item in HISTORICAL_YIELD_BASELINES.items()
+    }
+    return CropProductionModel(baselines=baselines)
+
+
+def test_registry_provenance_policy(model: CropProductionModel) -> None:
+    """C022-A / ADR-116: unverified references stay flagged; no unverifiable bibliographic precision."""
     staples = ["RICE_PADDY", "MAIZE_COB", "CASSAVA_FRESH", "GROUNDNUT_UNSHELLED", "BEANS_PULSES"]
     for staple in staples:
         factor = model.get_conversion_factor(staple)
         assert factor is not None, f"Missing conversion factor for {staple}"
         assert 0.0 < factor.milling_ratio <= 1.0
         assert 0.0 <= factor.farm_loss_seed_rate < 0.5
-        assert len(factor.source_reference.strip()) > 10, "Missing institutional citation"
+        assert len(factor.source_reference.strip()) > 10, "Missing institutional descriptor"
         assert len(factor.issuing_institution.strip()) > 0, "Missing issuing institution"
-        assert len(factor.document_title.strip()) > 0, "Missing document title"
-        assert factor.publication_year >= 2020, f"Outdated or missing publication year for {staple}"
-        assert len(factor.page_or_table.strip()) > 0, "Missing page/table citation"
+        assert factor.reference_verified is False, (
+            f"Unverified reference must stay flagged False for {staple}"
+        )
+        assert factor.publication_year == 0, f"No unverifiable publication year for {staple}"
+        assert factor.page_or_table == "", f"No unverifiable page/table citation for {staple}"
+        assert factor.document_title == "", f"No unverifiable document title for {staple}"
 
-    # Specific check for Malagasy rice standard (ODR / FAOSTAT: 0.667 milling, 10% on-farm loss/seed)
+    for baseline in HISTORICAL_YIELD_BASELINES.values():
+        assert baseline.reference_verified is False, (
+            "Unverified yield baseline must stay flagged False"
+        )
+        assert baseline.publication_year == 0, "No unverifiable publication year allowed"
+        assert baseline.page_or_table == "", "No unverifiable page/table citation allowed"
+        assert baseline.document_title == "", "No unverifiable document title allowed"
+
+    # Specific check for Malagasy rice standard (ODR: 0.667 milling, 10% on-farm loss/seed)
     paddy_conv = model.get_conversion_factor("RICE_PADDY")
     assert paddy_conv is not None
     assert paddy_conv.milling_ratio == 0.667
     assert paddy_conv.farm_loss_seed_rate == 0.10
 
 
-def test_mathematical_identity_production_area_yield(model: CropProductionModel) -> None:
+def test_mathematical_identity_production_area_yield(
+    model: CropProductionModel,
+    verified_model: CropProductionModel,
+) -> None:
     """Test strict mathematical identity Production = Area × Yield and audited status distinction (C022)."""
     # 1. Experimental unverified estimate (default)
     payload_unaudited = ProductionForecastInput(
@@ -52,7 +79,7 @@ def test_mathematical_identity_production_area_yield(model: CropProductionModel)
     assert result_unaudited.status == ProductionForecastStatus.EXPERIMENTAL_ESTIMATE
     assert "experimental software estimate" in result_unaudited.methodology
 
-    # 2. Audited ground truth forecast
+    # 2. Audited ground truth forecast on a verified baseline (ADR-116)
     payload = ProductionForecastInput(
         crop_code="RICE_PADDY",
         region_id="MG-U",
@@ -63,7 +90,7 @@ def test_mathematical_identity_production_area_yield(model: CropProductionModel)
         is_field_survey_audited=True,
     )
 
-    result = model.evaluate(payload)
+    result = verified_model.evaluate(payload)
 
     assert result.status == ProductionForecastStatus.QUALIFIED_FORECAST
     assert result.harvested_area_ha == 1000.0
@@ -79,7 +106,29 @@ def test_mathematical_identity_production_area_yield(model: CropProductionModel)
     assert result.confidence_score >= 0.80
 
 
-def test_agroclimatic_yield_adjustment_bounds(model: CropProductionModel) -> None:
+def test_mathematical_identity_requires_verified_reference(
+    model: CropProductionModel,
+) -> None:
+    """ADR-116: field-audited figures with an unverified baseline reference remain experimental."""
+    payload = ProductionForecastInput(
+        crop_code="RICE_PADDY",
+        region_id="MG-U",
+        harvest_campaign=2024,
+        harvested_area_ha=1000.0,
+        area_source_kind=AreaSourceKind.OFFICIAL_CADASTRE_SURVEY,
+        water_stress_anomaly=0.0,
+        is_field_survey_audited=True,
+    )
+    result = model.evaluate(payload)
+
+    assert result.status == ProductionForecastStatus.EXPERIMENTAL_ESTIMATE
+    assert "experimental software estimate" in result.methodology
+    assert "yield baseline reference not document-verified" in result.methodology
+
+
+def test_agroclimatic_yield_adjustment_bounds(
+    verified_model: CropProductionModel,
+) -> None:
     """Test that yield adjusts with rainfall anomaly and stays within physiological limits."""
     # 1. Drought scenario (anomaly = -2.0 sigma) in Alaotra (base 3.2, min 2.0, max 4.5)
     # Expected adjusted = 3.2 * (1 - 0.12 * 2.0) = 3.2 * 0.76 = 2.432 t/ha
@@ -92,7 +141,7 @@ def test_agroclimatic_yield_adjustment_bounds(model: CropProductionModel) -> Non
         water_stress_anomaly=-2.0,
         is_field_survey_audited=True,
     )
-    drought_res = model.evaluate(drought_payload)
+    drought_res = verified_model.evaluate(drought_payload)
     assert drought_res.status == ProductionForecastStatus.QUALIFIED_FORECAST
     assert drought_res.estimated_yield_t_ha == pytest.approx(2.432, abs=0.01)
     assert drought_res.gross_harvest_tonnes == pytest.approx(500.0 * 2.432, abs=0.5)
@@ -107,7 +156,7 @@ def test_agroclimatic_yield_adjustment_bounds(model: CropProductionModel) -> Non
         water_stress_anomaly=-5.0,
         is_field_survey_audited=True,
     )
-    catastrophic_res = model.evaluate(catastrophic_payload)
+    catastrophic_res = verified_model.evaluate(catastrophic_payload)
     assert catastrophic_res.estimated_yield_t_ha == 2.00
     assert catastrophic_res.gross_harvest_tonnes == 1000.0
 
@@ -121,7 +170,7 @@ def test_agroclimatic_yield_adjustment_bounds(model: CropProductionModel) -> Non
         water_stress_anomaly=4.0,
         is_field_survey_audited=True,
     )
-    excess_res = model.evaluate(excess_payload)
+    excess_res = verified_model.evaluate(excess_payload)
     assert excess_res.estimated_yield_t_ha == 4.50
     assert excess_res.gross_harvest_tonnes == 2250.0
 
@@ -188,7 +237,9 @@ def test_invalid_negative_or_zero_area(model: CropProductionModel) -> None:
     assert res.gross_harvest_tonnes is None
 
 
-def test_batch_evaluation_and_cassava_maize_conversions(model: CropProductionModel) -> None:
+def test_batch_evaluation_and_cassava_maize_conversions(
+    verified_model: CropProductionModel,
+) -> None:
     """Test batch evaluation covering maize and cassava agro-industrial processing."""
     inputs = [
         # Atsimo-Andrefana Maize (Audited)
@@ -213,7 +264,7 @@ def test_batch_evaluation_and_cassava_maize_conversions(model: CropProductionMod
         ),
     ]
 
-    results = model.batch_evaluate(inputs)
+    results = verified_model.batch_evaluate(inputs)
     assert len(results) == 2
 
     # Check maize
