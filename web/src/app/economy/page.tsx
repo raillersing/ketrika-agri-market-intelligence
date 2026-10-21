@@ -114,11 +114,15 @@ function EconomyContent() {
           fetch("/api/v1/economic/pilot-context", { credentials: "include" }),
         ]);
 
-        if (!dashRes.ok) throw new Error(dashRes.status === 503
-          ? "Données économiques non qualifiées ou temporairement indisponibles."
-          : "Impossible de charger le tableau économique.");
-        const dashData: EconomicDashboardResponse = await dashRes.json();
-        setDashboard(dashData);
+        if (dashRes.ok) {
+          const dashData: EconomicDashboardResponse = await dashRes.json();
+          setDashboard(dashData);
+        } else if (dashRes.status === 503) {
+          // Macroeconomic dashboard is in qualified withholding (ADR-070 / R2.8)
+          setDashboard(null);
+        } else {
+          throw new Error("Impossible de charger le tableau économique.");
+        }
 
         if (catalogRes.ok) {
           const catalogData: EconomicMetricCard[] = await catalogRes.json();
@@ -282,7 +286,7 @@ function EconomyContent() {
         {Object.entries(DIMENSION_CONFIG).map(([key, config]) => {
           const Icon = config.icon;
           const isActive = activeDimension === key;
-          const dimData = dashboard?.dimensions[key];
+          const dimData = dashboard?.dimensions?.[key];
           const completeness = dimData?.completeness || "no_data";
 
           return (
@@ -318,7 +322,7 @@ function EconomyContent() {
           <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
           Chargement du tableau économique...
         </div>
-      ) : error ? null : !dashboard || !dashboard.dimensions[activeDimension] ? (
+      ) : error ? null : !dashboard || !dashboard.dimensions?.[activeDimension] ? (
         <div className="glass-card rounded-2xl p-12 text-center text-xs text-slate-400 font-mono">
           Aucune donnée disponible pour cette dimension économique.
         </div>

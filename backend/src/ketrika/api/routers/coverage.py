@@ -88,15 +88,16 @@ def get_market_coverage(
 @router.get("/coverage/gaps", response_model=SeriesCoverageSummaryItem)
 def get_series_gaps(
     product: str = Query(..., description="Product code (e.g. RICE_WHITE_LOCAL)"),
-    location: str = Query(..., description="Location P-code (e.g. MDG11)"),
+    location: str | None = Query(None, description="Location P-code (default: MDG11)"),
     actor_level: str = Query("retail", description="Actor level (default: retail)"),
     session: Session = Depends(get_db),
 ) -> SeriesCoverageSummaryItem:
     """Compute independent calendar gaps and coverage ratio for a single series in SQL."""
+    target_loc = location or "MDG11"
     summary = compute_series_gaps_independent_sql(
         session=session,
         product_code=product,
-        location_pcode=location,
+        location_pcode=target_loc,
         actor_level=actor_level,
     )
     return SeriesCoverageSummaryItem(

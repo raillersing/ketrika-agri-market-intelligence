@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from ketrika.api.schemas import StockItem
 from ketrika.core.db import get_db
+from ketrika.gold.compatibility import is_gold_view_populated
 
 router = APIRouter(prefix="/v1/stocks", tags=["stocks"])
 
@@ -21,6 +22,9 @@ def get_stocks(
     session: Session = Depends(get_db),
 ) -> list[StockItem]:
     """Retrieve the latest observed stock status by product and location (SPECS §19)."""
+    if not is_gold_view_populated(session, "stock_latest"):
+        return []
+
     sql = """
         SELECT
             product_code,

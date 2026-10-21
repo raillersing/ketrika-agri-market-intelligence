@@ -22,6 +22,7 @@ from ketrika.core.models.db import Location, WeatherForecast
 from ketrika.geo.anomalies import classify_rainfall_anomaly
 from ketrika.geo.calendar import detect_phenological_stage
 from ketrika.geo.contracts import CropCalendarRecord, load_crop_calendar
+from ketrika.gold.compatibility import is_gold_view_populated
 
 router = APIRouter(prefix="/v1/climate", tags=["climate"])
 
@@ -95,18 +96,20 @@ def get_climate_summary(
     ref_month_int = int(ref_month_str.split("-")[1])
 
     # 3. Query Observed Weather & Anomaly
-    obs_sql = """
-        SELECT
-            month::text AS month,
-            precip_total_mm::float,
-            (rain_anom_pct * 100.0)::float AS precip_anomaly_pct,
-            ((t2m_max_avg_c + t2m_min_avg_c) / 2.0)::float AS t2m_mean
-        FROM gold.weather_monthly
-        WHERE (location_pcode = :loc OR location_id::text = :loc)
-        ORDER BY month DESC
-        LIMIT 1;
-    """
-    obs_row = session.execute(text(obs_sql), {"loc": loc_pcode}).fetchone()
+    obs_row = None
+    if is_gold_view_populated(session, "weather_monthly"):
+        obs_sql = """
+            SELECT
+                month::text AS month,
+                precip_total_mm::float,
+                (rain_anom_pct * 100.0)::float AS precip_anomaly_pct,
+                ((t2m_max_avg_c + t2m_min_avg_c) / 2.0)::float AS t2m_mean
+            FROM gold.weather_monthly
+            WHERE (location_pcode = :loc OR location_id::text = :loc)
+            ORDER BY month DESC
+            LIMIT 1;
+        """
+        obs_row = session.execute(text(obs_sql), {"loc": loc_pcode}).fetchone()
 
     obs_precip: float | None = None
     precip_anom_pct: float | None = None

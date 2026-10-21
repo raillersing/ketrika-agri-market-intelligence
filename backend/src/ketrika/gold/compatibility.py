@@ -90,3 +90,22 @@ def check_and_upgrade_historical_gold_definitions(
         "Successfully aligned historical Gold definitions up to index %03d.", target_cutoff_index
     )
     return True
+
+
+def is_gold_view_populated(bind: Connection | Session, view_name: str) -> bool:
+    """Return True if gold.<view_name> is a populated materialized view in PostgreSQL.
+
+    Guarantees that SELECT queries against gold views will never fail with
+    psycopg.errors.ObjectNotInPrerequisiteState (SQLSTATE 55000).
+    """
+    try:
+        val = bind.execute(
+            text(
+                "SELECT ispopulated FROM pg_matviews "
+                "WHERE schemaname = 'gold' AND matviewname = :mv"
+            ),
+            {"mv": view_name},
+        ).scalar()
+        return bool(val)
+    except Exception:
+        return False

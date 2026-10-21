@@ -24,6 +24,7 @@ from ketrika.api.schemas import (
     PerformanceMetricsSummary,
 )
 from ketrika.core.db import get_db
+from ketrika.gold.compatibility import is_gold_view_populated
 from ketrika.ml.evaluation import (
     EvaluationRecord,
     MaturedForecastEvaluator,
@@ -45,6 +46,11 @@ def get_forecasts(
     session: Session = Depends(get_db),
 ) -> Any:
     """Retrieve the latest or historical price forecasts with conformal intervals (SPECS §17, §19, ADR-078)."""
+    if not model_run_id and not is_gold_view_populated(session, "forecast_latest"):
+        if format.lower() == "csv":
+            return export_csv_response([], filename="forecasts.csv")
+        return []
+
     params: dict[str, Any] = {"limit": limit, "offset": offset}
 
     if model_run_id:

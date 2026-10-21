@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from ketrika.api.schemas import TradeItem
 from ketrika.core.db import get_db
+from ketrika.gold.compatibility import is_gold_view_populated
 
 router = APIRouter(prefix="/v1/trade", tags=["trade"])
 
@@ -23,6 +24,9 @@ def get_trade(
     session: Session = Depends(get_db),
 ) -> list[TradeItem]:
     """Retrieve monthly trade flows (import / export) for PPN commodities (SPECS §19)."""
+    if not is_gold_view_populated(session, "trade_monthly"):
+        return []
+
     sql = """
         SELECT
             product_code,

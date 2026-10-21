@@ -161,6 +161,7 @@ services:
 
   web:
     image: ketrika-web:dev
+    init: true
     build:
       context: ./web
       dockerfile: Dockerfile

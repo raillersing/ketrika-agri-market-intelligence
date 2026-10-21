@@ -33,6 +33,7 @@ RECOMPUTE_VIEWS = [
     "market_health",
     "source_health",
     "forecast_latest",
+    "market_coverage",
 ]
 
 

@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from ketrika.api.schemas import MarketHealthItem
 from ketrika.core.db import get_db
+from ketrika.gold.compatibility import is_gold_view_populated
 
 router = APIRouter(prefix="/v1/kpis", tags=["kpis"])
 
@@ -22,6 +23,9 @@ def get_market_health(
     session: Session = Depends(get_db),
 ) -> list[MarketHealthItem]:
     """Retrieve Market Health Score (0-100) and its 4 underlying components (SPECS §16, §19)."""
+    if not is_gold_view_populated(session, "market_health"):
+        return []
+
     sql = """
         SELECT
             product_code,

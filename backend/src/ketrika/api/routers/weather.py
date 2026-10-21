@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from ketrika.api.schemas import WeatherAnomalyItem
 from ketrika.core.db import get_db
+from ketrika.gold.compatibility import is_gold_view_populated
 
 router = APIRouter(prefix="/v1/weather", tags=["weather"])
 
@@ -22,6 +23,9 @@ def get_weather_anomalies(
     session: Session = Depends(get_db),
 ) -> list[WeatherAnomalyItem]:
     """Retrieve monthly weather observations, precip anomalies and temperatures (SPECS §19)."""
+    if not is_gold_view_populated(session, "weather_monthly"):
+        return []
+
     sql = """
         SELECT
             location_pcode,
