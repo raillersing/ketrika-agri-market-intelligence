@@ -173,3 +173,77 @@ def test_evaluate_feature_ablation_abstains_on_insufficient_history() -> None:
     assert "Insufficient history" in report.decision_reason
     assert "Explicit parsimony abstention" in report.decision_reason
     assert report.family_results == {}
+
+
+def test_build_exogenous_features_demand_as_of_when_declared(synthetic_history) -> None:
+    """Declaring as-of availability requires every exogenous series to be covered (C022)."""
+    dates, prices, macro, climate = synthetic_history
+
+    with pytest.raises(ValueError, match="Missing declared as-of availability dates"):
+        build_exogenous_features(
+            dates=dates,
+            prices=prices,
+            macro_series=macro,
+            climate_series=climate,
+            series_as_of={"macro:usd_mga": list(dates)},
+        )
+
+    with pytest.raises(ValueError, match="length"):
+        build_exogenous_features(
+            dates=dates,
+            prices=prices,
+            macro_series=macro,
+            series_as_of={"macro:usd_mga": list(dates)[:4]},
+        )
+
+
+def test_build_exogenous_features_refuses_delayed_publication(synthetic_history) -> None:
+    """A value whose REAL availability equals the target date is fatal leakage (C022)."""
+    dates, prices, macro = synthetic_history[0], synthetic_history[1], synthetic_history[2]
+
+    # Simulate a value published with a one-period delay: the macro level at index i-1
+    # is only actually available at dates[i], ie exactly the target date.
+    delayed_as_of = list(dates[1:]) + [dates[-1]]
+
+    with pytest.raises(ValueError, match="Lookahead leakage detected"):
+        build_exogenous_features(
+            dates=dates,
+            prices=prices,
+            macro_series=macro,
+            series_as_of={"macro:usd_mga": delayed_as_of},
+        )
+
+
+def test_evaluate_feature_ablation_reports_holdout_separation(synthetic_history) -> None:
+    """Reported metrics come from the independent holdout; selection folds stay separate (C022)."""
+    dates, prices, macro, climate = synthetic_history
+
+    report = evaluate_feature_ablation(
+        dates=dates,
+        prices=prices,
+        macro_series=macro,
+        climate_series=climate,
+        n_folds=4,
+        min_train_size=24,
+        holdout_folds=2,
+    )
+
+    assert report.baseline_wape > 0
+    price_only = report.family_results["price_only"]
+    # Headline metrics are computed ONLY on the two holdout folds, not on all six
+    assert price_only.n_samples == 2, "Holdout metrics must be measured on holdout folds only"
+    # Phase separation must be explicit in the decision reason (C022)
+    assert "holdout" in report.decision_reason.lower()
+    # No statistical significance wording anywhere in the decision (C022)
+    assert "statistically significant" not in report.decision_reason.lower()
+
+
+def test_evaluate_feature_ablation_refuses_zero_folds() -> None:
+    dates = [date(2024, m, 1) for m in range(1, 13)]
+    prices = np.linspace(2000, 2600, 12)
+
+    with pytest.raises(ValueError, match="at least one selection fold"):
+        evaluate_feature_ablation(dates=dates, prices=prices, min_train_size=6, n_folds=0)
+
+    with pytest.raises(ValueError, match="one holdout fold"):
+        evaluate_feature_ablation(dates=dates, prices=prices, min_train_size=6, holdout_folds=0)

@@ -8,7 +8,9 @@ Implements:
    - price_plus_macro (adds currency exchange and fuel price lags)
    - price_plus_climate (adds rainfall anomaly and temperature lags)
    - price_full (combines all feature families)
-4. Parsimony decision rule: complexity rejected unless statistically significant out-of-sample gain.
+4. Parsimony decision rule with strict phase separation: selection folds choose the
+   candidate, an independent holdout must confirm the gain; no statistical
+   significance claim, explicit abstention on insufficient history.
 """
 
 from __future__ import annotations
@@ -104,11 +106,20 @@ def build_exogenous_features(
     macro_series: dict[str, np.ndarray] | None = None,
     climate_series: dict[str, np.ndarray] | None = None,
     config: ExogenousFeatureConfig | None = None,
+    series_as_of: dict[str, list[date]] | None = None,
 ) -> tuple[np.ndarray, np.ndarray, list[str]]:
     """Build tabular feature matrix X and target y with strict anti-leakage temporal alignment.
 
     At index t (origin date dates[t]), feature values MUST strictly depend on data known
     at or before t-1. Lags are verified to guarantee zero future information leakage.
+
+    Exogenous arrays are aligned with ``dates`` by index. This alignment alone does not
+    prove real publication as-of (C022) : each exogenous series may additionally declare
+    its real availability dates through ``series_as_of`` with keys ``macro:<name>`` and
+    ``climate:<name>``. When declared, the audit compares the ACTUAL availability date of
+    the value used in each row against the target date and refuses any delayed publication
+    that would still be consumed as if it were known. When not declared, the aligned
+    observation date remains the documented availability convention already audited.
     """
     if config is None:
         config = ExogenousFeatureConfig()
@@ -125,8 +136,27 @@ def build_exogenous_features(
     for i in range(1, n):
         if dates[i] <= dates[i - 1]:
             raise ValueError(
-                f"Dates must be strictly monotonically increasing, got {dates[i-1]} followed by {dates[i]}"
+                f"Dates must be strictly monotonically increasing, got {dates[i - 1]} followed by {dates[i]}"
             )
+
+    def resolve_as_of(kind: str, name: str) -> list[date] | None:
+        if series_as_of is None:
+            return None
+        key = f"{kind}:{name}"
+        if key not in series_as_of:
+            raise ValueError(
+                f"Missing declared as-of availability dates for {key}; "
+                "declare the real publication availability per value (C022)"
+            )
+        declared = series_as_of[key]
+        if len(declared) != n:
+            raise ValueError(
+                f"As-of availability dates for {key} length {len(declared)} != prices length {n}"
+            )
+        return list(declared)
+
+    macro_as_of: dict[str, list[date] | None] = {}
+    climate_as_of: dict[str, list[date] | None] = {}
 
     # Build feature columns
     feature_names: list[str] = []
@@ -159,6 +189,7 @@ def build_exogenous_features(
             feature_names.append(f"macro_{name}_lag1")
             col = [float(series[i - 1]) for i in range(max_lag, n)]
             columns.append(col)
+            macro_as_of[name] = resolve_as_of("macro", name)
 
     # 4. Agroclimatic features (strictly lagged by >= 1)
     if config.include_climate and climate_series:
@@ -168,14 +199,19 @@ def build_exogenous_features(
             feature_names.append(f"climate_{name}_lag1")
             col = [float(series[i - 1]) for i in range(max_lag, n)]
             columns.append(col)
+            climate_as_of[name] = resolve_as_of("climate", name)
 
     # Strict anti-leakage audit: actively verify each observation row (C022)
     for i in range(max_lag, n):
         row_feature_dates = [dates[i - lag] for lag in config.lags]
         if config.include_macro and macro_series:
-            row_feature_dates.extend([dates[i - 1]] * len(macro_series))
+            for name in sorted(macro_series):
+                declared = macro_as_of[name]
+                row_feature_dates.append(declared[i - 1] if declared is not None else dates[i - 1])
         if config.include_climate and climate_series:
-            row_feature_dates.extend([dates[i - 1]] * len(climate_series))
+            for name in sorted(climate_series):
+                declared = climate_as_of[name]
+                row_feature_dates.append(declared[i - 1] if declared is not None else dates[i - 1])
         validate_no_lookahead_leakage(dates, origin_index=i, feature_timestamps=row_feature_dates)
 
     X = np.column_stack(columns)
@@ -279,10 +315,14 @@ def evaluate_feature_ablation(
     4. 'price_full'
 
     Enforces ADR-105 parsimony & C022 scientific rigor:
-    - Model selection and independent out-of-sample holdout are strictly decoupled.
-    - If no exogenous candidate beats the baseline by at least `significance_threshold_pct`
-      on the independent holdout, the simpler univariable model is retained.
+    - Model selection uses ONLY the selection folds that precede the final holdout.
+    - The final holdout folds are NEVER used for selection; a candidate must also
+      confirm its gain on that independent holdout to be retained.
+    - No statistical significance is claimed: thresholds are heuristic gains and
+      abstention is explicit when history cannot support selection plus holdout.
     """
+    if n_folds < 1 or holdout_folds < 1:
+        raise ValueError("Ablation requires at least one selection fold and one holdout fold")
     configs: dict[str, ExogenousFeatureConfig] = {
         "price_only": ExogenousFeatureConfig(
             include_seasonal_sin_cos=True, include_macro=False, include_climate=False
@@ -318,7 +358,9 @@ def evaluate_feature_ablation(
             family_results={},
         )
 
-    family_evaluations: dict[str, list[tuple[float, float]]] = {k: [] for k in configs}
+    # Strict phase separation (C022): the model selection NEVER sees the holdout folds.
+    selection_evaluations: dict[str, list[tuple[float, float]]] = {k: [] for k in configs}
+    holdout_evaluations: dict[str, list[tuple[float, float]]] = {k: [] for k in configs}
     family_features: dict[str, list[str]] = {}
 
     # Build matrices for each family
@@ -334,87 +376,127 @@ def evaluate_feature_ablation(
         family_matrices[fam_name] = (X, y)
         family_features[fam_name] = f_names
 
-    # Run rolling-origin splits: selection folds followed by independent holdout
+    # Run rolling-origin splits: selection folds strictly separated from holdout folds
     total_effective_samples = len(family_matrices["price_only"][1])
-    eval_origins = list(range(total_effective_samples - n_folds - holdout_folds, total_effective_samples))
+    selection_origins = range(
+        total_effective_samples - n_folds - holdout_folds, total_effective_samples - holdout_folds
+    )
+    holdout_origins = range(total_effective_samples - holdout_folds, total_effective_samples)
 
-    for origin in eval_origins:
-        for fam_name in configs:
-            X, y = family_matrices[fam_name]
+    def run_folds(fam_name: str, origins: range) -> list[tuple[float, float]]:
+        X, y = family_matrices[fam_name]
+        pairs: list[tuple[float, float]] = []
+        for origin in origins:
             X_train, y_train = X[:origin], y[:origin]
             X_test, y_test = X[origin : origin + 1], y[origin : origin + 1]
-
             model = ExogenousGradientBoostedModel()
             model.fit(X_train, y_train)
             pred = model.predict(X_test)[0]
-            actual = y_test[0]
-            family_evaluations[fam_name].append((actual, pred))
+            pairs.append((float(y_test[0]), float(pred)))
+        return pairs
 
-    # Compute aggregate metrics for each family
-    family_results: dict[str, AblationFamilyResult] = {}
-    baseline_wape = 0.0
+    for fam_name in configs:
+        selection_evaluations[fam_name] = run_folds(fam_name, selection_origins)
+        holdout_evaluations[fam_name] = run_folds(fam_name, holdout_origins)
 
-    for fam_name, pairs in family_evaluations.items():
+    def aggregate(pairs: list[tuple[float, float]]) -> tuple[float, float, float]:
+        """Return (wape, mae, smape) over the given (actual, predicted) pairs."""
+        if not pairs:
+            return 0.0, 0.0, 0.0
         actuals = np.array([p[0] for p in pairs])
         preds = np.array([p[1] for p in pairs])
         errors = np.abs(actuals - preds)
-
         denom = float(np.sum(actuals))
         wape = float(np.sum(errors) / denom) if denom > 0 else 0.0
         mae = float(np.mean(errors))
         smape = float(np.mean(2.0 * errors / np.maximum(np.abs(actuals) + np.abs(preds), 1e-6)))
+        return wape, mae, smape
 
-        if fam_name == "price_only":
-            baseline_wape = wape
+    # Phase 1 - model selection on selection folds ONLY
+    selection_metrics: dict[str, tuple[float, float, float]] = {
+        fam: aggregate(pairs) for fam, pairs in selection_evaluations.items()
+    }
+    selection_baseline = selection_metrics["price_only"][0]
+    selection_delta: dict[str, float] = {}
+    for fam, (wape, _mae, _smape) in selection_metrics.items():
+        if fam == "price_only":
+            selection_delta[fam] = 0.0
+            continue
+        delta = (
+            ((wape - selection_baseline) / selection_baseline) * 100.0
+            if selection_baseline > 0
+            else 0.0
+        )
+        selection_delta[fam] = delta
 
+    sel_best_family, sel_best_wape = "price_only", selection_baseline
+    for fam, (wape, _mae, _smape) in selection_metrics.items():
+        if wape < sel_best_wape:
+            sel_best_family, sel_best_wape = fam, wape
+    sel_best_delta = selection_delta[sel_best_family]
+
+    selection_improved = (
+        sel_best_family != "price_only" and sel_best_delta <= significance_threshold_pct
+    )
+
+    # Phase 2 - independent holdout evaluation of every family (reported metrics)
+    holdout_metrics: dict[str, tuple[float, float, float]] = {
+        fam: aggregate(pairs) for fam, pairs in holdout_evaluations.items()
+    }
+    baseline_wape = holdout_metrics["price_only"][0]
+
+    family_results: dict[str, AblationFamilyResult] = {}
+    for fam_name in configs:
+        wape, mae, smape = holdout_metrics[fam_name]
+        delta = ((wape - baseline_wape) / baseline_wape) * 100.0 if baseline_wape > 0 else 0.0
         family_results[fam_name] = AblationFamilyResult(
             family_name=fam_name,
             feature_names=family_features[fam_name],
             wape=wape,
             mae=mae,
             smape=smape,
-            delta_wape_pct=0.0,
-            n_samples=len(pairs),
-            n_folds=n_folds + holdout_folds,
-        )
-
-    # Compute delta WAPE percentage relative to baseline
-    updated_results: dict[str, AblationFamilyResult] = {}
-    best_family = "price_only"
-    best_wape = baseline_wape
-
-    for fam_name, res in family_results.items():
-        delta = ((res.wape - baseline_wape) / baseline_wape) * 100.0 if baseline_wape > 0 else 0.0
-        updated_res = AblationFamilyResult(
-            family_name=res.family_name,
-            feature_names=res.feature_names,
-            wape=res.wape,
-            mae=res.mae,
-            smape=res.smape,
             delta_wape_pct=delta,
-            n_samples=res.n_samples,
-            n_folds=res.n_folds,
+            n_samples=holdout_folds,
+            n_folds=n_folds,
         )
-        updated_results[fam_name] = updated_res
 
-        if updated_res.wape < best_wape:
-            best_wape = updated_res.wape
-            best_family = fam_name
-
-    # Parsimony rule: only retain exogenous model if improvement reaches heuristic threshold
-    best_delta = updated_results[best_family].delta_wape_pct
-    retained = (best_family != "price_only") and (best_delta <= significance_threshold_pct)
-
-    if retained:
+    # Parsimony rule: selection-phase improvement must ALSO be confirmed on the
+    # independent holdout before any exogenous candidate is retained.
+    best_family = "price_only"
+    retained = False
+    if not selection_improved:
         decision_reason = (
-            f"Exogenous family '{best_family}' retained: demonstrated a heuristic out-of-sample "
-            f"WAPE reduction of {abs(best_delta):.1f}% over the univariable baseline (threshold {abs(significance_threshold_pct):.1f}%)."
+            f"Univariable baseline 'price_only' retained by parsimony: best candidate '{sel_best_family}' "
+            f"achieved {sel_best_delta:+.1f}% WAPE delta on {n_folds} selection folds "
+            f"(required improvement <= {significance_threshold_pct:.1f}%). "
+            f"Independent holdout measured on {holdout_folds} final folds only."
         )
     else:
-        decision_reason = (
-            f"Univariable baseline 'price_only' retained by parsimony: best candidate '{best_family}' "
-            f"achieved {best_delta:+.1f}% WAPE delta (required improvement <= {significance_threshold_pct:.1f}%)."
+        holdout_baseline = baseline_wape
+        holdout_candidate = holdout_metrics[sel_best_family][0]
+        holdout_delta = (
+            ((holdout_candidate - holdout_baseline) / holdout_baseline) * 100.0
+            if holdout_baseline > 0
+            else 0.0
         )
+        if holdout_delta <= significance_threshold_pct:
+            retained = True
+            best_family = sel_best_family
+            decision_reason = (
+                f"Exogenous family '{best_family}' retained: heuristic WAPE reduction of "
+                f"{abs(sel_best_delta):.1f}% over the univariable baseline on {n_folds} selection folds, "
+                f"confirmed on the {holdout_folds}-fold independent holdout ({abs(holdout_delta):.1f}% "
+                f"reduction). Threshold {abs(significance_threshold_pct):.1f}%; heuristic gain, "
+                "not a statistical significance claim."
+            )
+        else:
+            decision_reason = (
+                f"Exogenous candidate '{sel_best_family}' improved WAPE by {abs(sel_best_delta):.1f}% "
+                f"on the {n_folds} selection folds but FAILED independent holdout confirmation "
+                f"({holdout_delta:+.1f}% on {holdout_folds} final folds; required improvement "
+                f"<= {significance_threshold_pct:.1f}%). Univariable baseline 'price_only' retained. "
+                "Heuristic gains are not statistical significance."
+            )
 
     return ExogenousAblationReport(
         series_id=series_id,
@@ -424,5 +506,5 @@ def evaluate_feature_ablation(
         best_family=best_family,
         retained=retained,
         decision_reason=decision_reason,
-        family_results=updated_results,
+        family_results=family_results,
     )
