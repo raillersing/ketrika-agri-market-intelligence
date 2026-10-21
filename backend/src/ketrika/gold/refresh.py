@@ -122,7 +122,7 @@ def refresh_gold_views(
 ) -> dict[str, Any]:
     """Fresh cell check and atomic publication; no model/conversion qualification."""
     withheld = (
-        {view: "macro_publication_not_qualified" for view in UNPUBLISHED_GOLD_VIEWS}
+        dict.fromkeys(UNPUBLISHED_GOLD_VIEWS, "macro_publication_not_qualified")
         if views is None
         else {}
     )
