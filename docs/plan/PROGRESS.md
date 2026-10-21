@@ -1,5 +1,23 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-21T15:58:00Z] Durcissement des vues Gold non peuplées, ingestion réelle WB et stabilisation frontend
+
+- **Durcissement API (Éradication des erreurs 500) :** Implémentation du helper fail-closed `is_gold_view_populated(bind, view_name)` dans `backend/src/ketrika/gold/compatibility.py`. Protection des routeurs `/v1/prices`, `/v1/prices/latest`, `/v1/trade`, `/v1/forecasts`, `/v1/kpis/market-health`, `/v1/market/coverage`, `/v1/climate/summary`, `/v1/stocks`, `/v1/weather/anomalies`. Élimination du 422 sur `/v1/market/coverage/gaps` (paramètre `location` rendu optionnel avec valeur par défaut `MDG11`).
+- **Données réelles et provenance intégrale :**
+  - Nettoyage rigoureux des 728 observations sans preuve de cellule créées lors de phases de test antérieures par marquage `superseded_by = observation_id` en conformité absolue avec le trigger PostgreSQL d'immuabilité `obs.check_obs_superseded_only()`.
+  - Insertion de l'alias géographique authentique pour le marché d'Alakamisy (`MDG12`, `Vakinankaratra`) dans `ref.location_alias`.
+  - Ingestion réelle et normalisation de 15 observations mensuelles authentiques de la Banque Mondiale (`wb_rtfp_mdg`) pour `RICE_WHITE_LOCAL` (mai 2010 à juillet 2011, prix 1004.69 à 1368.61 MGA/kg) avec chaîne de provenance complète (Bronze sha256 -> SourceRecord -> Silver -> Gold).
+  - Rafraîchissement réussi de 13 vues matérialisées Gold (`price_obs_current`, `price_monthly`, `price_monthly_best`, `price_changes`, `stock_latest`, `trade_monthly`, `import_dependency`, `weather_monthly`, `cpi_food`, `market_health`, `source_health`, `forecast_latest`, `market_coverage`). Seul `economic_dashboard` reste non peuplé conformément à la rétention macroéconomique ADR-070.
+  - Ajout de `market_coverage` dans `RECOMPUTE_VIEWS`.
+- **Résilience frontend web et santé du conteneur :**
+  - Correction de `web/src/app/economy/page.tsx` : navigation sécurisée `dashboard?.dimensions?.[key]` pour éviter l'exception `TypeError` non gérée lorsque `dashboard = null` lors d'une réponse 503 (ADR-070).
+  - Ajout de `init: true` pour le service `web` dans `docker-compose.yml`, éliminant l'accumulation de 34 000 processus zombies de healthcheck `[wget]` et ramenant les temps de réponse de 120s à moins de 2s.
+- **Vérifications :**
+  - 100 % des 12 routes applicatives testées avec authentification JWT admin et fonctionnelles (HTTP 200) : `/`, `/prices`, `/economy`, `/sources`, `/trade`, `/climate`, `/map`, `/alerts`, `/bulletins`, `/copilot`, `/system`, `/admin/review`.
+  - 16/16 tests de couverture et pilote passés avec succès (`tests/unit/test_market_coverage_and_pilot.py`).
+  - Commits : `fce0284` (worktree `work/scientific-conformance-and-gold-20261021`) et `3980ab0` (branche `main`).
+
+
 ### [2026-10-19T19:45:00Z] Intégration et validation ciblée du correctif Sources et recalcul (ADR-100)
 
 - Audit et coordination : messages C003–C007 et C011 traités ; réponses A004–A006 déposées. Alignement complet sur les principes de vérité d'ADR-100.
