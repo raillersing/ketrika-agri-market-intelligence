@@ -4017,3 +4017,8 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Gitleaks incrémental 39e3b4b..dd5831f sur clone figé :9 commits/49,15Ko/0,363s/0 secret, code0. SECURITY_REVIEW misà jour (329 commits cumulés). Statuts miroir inchangés :7 DONE/52 IN_PROGRESS/15 TODO ; aucune tâche R promue DONE, aucun tag créé.
 - Qualification documentaire des références de conversion/rendement reste ouverte (reference_verified=False) : dépend d'un accès documentaire vérifié, pas d'un travail logiciel restant. Prochaine action : intégration fast-forward sur main après revue de cette clôture, sans déplacer les tags historiques.
 
+### [2026-10-21T09:05:00Z] Intégration main et première publication GitHub
+
+- Fast-forward main 39e3b4b → 587566e (fast-forward uniquement, 14 fichiers/852 insertions, aucun commit écrasé, tags historiques intacts). Branches de travail conservées localement, non poussées.
+- Publication distante : push initial `origin/main` = 587566e sur github.com/raillersing/ketrika-agri-market-intelligence (dépôt préalablement vide, ls-remote confirmé après push). Scan gitleaks complet (320 commits) et incrémental (39e3b4b..dd5831f, 0 secret) préalables à la publication. Aucun tag poussé ; aucun statut R/promotion déduite de la publication.
+
