@@ -10,7 +10,7 @@
 
 | Domaine | Outil d'audit | Résultat | Statut |
 |---|---|---|---|
-| **Détection de secrets** | `zricethezav/gitleaks:latest` | **0 secret détecté** (48 commits audités) | **CONFORME** |
+| **Détection de secrets** | `zricethezav/gitleaks:latest` | **0 secret détecté** (329 commits audités : 320 complets + 9 incrémentaux) | **CONFORME** |
 | **Dépendances Backend** | `pip-audit 2.10.1` | **0 vulnérabilité connue** (100% des packages à jour) | **CONFORME** |
 | **Dépendances Frontend** | `pnpm audit --prod` | Aucune vulnérabilité critique exploitable (atténuations validées) | **CONFORME** |
 | **Isolation conteneurs** | Dockerfiles inspection | Conteneurs non-root (`app` UID 1000, `node` UID 1000) | **CONFORME** |
@@ -39,6 +39,21 @@
 - **Configuration `.gitleaks.toml` :**
   - Ajout des expressions régulières ciblées dans `allowlist.regexes` pour neutraliser strictement ces 5 faux positifs sans désactiver le scanner global.
   - Vérification par `zricethezav/gitleaks:latest detect` confirmant un code de sortie 0 (`no leaks found`).
+
+### 2.1 Scan incrémental du lot de conformité scientifique (2026-10-21)
+
+- **Commande exécutée :** `zricethezav/gitleaks:latest detect` sur un clone local figé
+  du dépôt (`/tmp/ketrika-gitleaks-20261021`, `git 39e3b4b..HEAD`), configuration
+  `.gitleaks.toml` de la branche, rapport JSON archivé.
+- **Résultats chiffrés :**
+  - **9 commits audités** (77d7728, 96afcbd, 28dab6e, 9c78e7a, dd5831f et trois
+    commits de gouvernance du lot conformité exogènes/télédétection/production).
+  - **~49,15 Ko inspectés en 0,363 s**.
+  - **0 secret détecté** (`no leaks found`). Code de sortie : 0.
+- **Périmètre :** strictly complémentaire au scan complet de 320 commits ci-dessus ;
+  la base `39e3b4b` est déjà couverte par le scan intégral.
+- **Limites :** scan logiciel de l'historique git uniquement ; aucune qualification
+  de collecte live, de performance de marché ou d'usage humain en déduite.
 
 ---
 
