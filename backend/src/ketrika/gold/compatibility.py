@@ -80,9 +80,13 @@ def check_and_upgrade_historical_gold_definitions(
         if index <= target_cutoff_index:
             sql_content = f.read_text(encoding="utf-8")
             if "WITH NO DATA;" not in sql_content:
-                raise RuntimeError(f"Gold SQL definition {f.name} requires unpopulated WITH NO DATA")
+                raise RuntimeError(
+                    f"Gold SQL definition {f.name} requires unpopulated WITH NO DATA"
+                )
             logger.info("Auto-upgrading historical Gold view definition: %s", f.name)
             bind.execute(text(sql_content))
 
-    logger.info("Successfully aligned historical Gold definitions up to index %03d.", target_cutoff_index)
+    logger.info(
+        "Successfully aligned historical Gold definitions up to index %03d.", target_cutoff_index
+    )
     return True
