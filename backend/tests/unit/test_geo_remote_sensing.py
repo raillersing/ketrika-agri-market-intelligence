@@ -189,6 +189,8 @@ def test_strict_abstention_on_cloud_cover_over_70_percent() -> None:
         red_band=red,
         cropland_mask=cropland,
         scl_band=scl,
+        historical_ndvi_min=0.20,
+        historical_ndvi_max=0.80,
         min_valid_cropland_ratio=0.30,
     )
 
@@ -209,6 +211,8 @@ def test_insufficient_cropland_or_dimension_mismatch() -> None:
         nir_band=[0.5, 0.5],
         red_band=[0.1, 0.1],
         cropland_mask=[0, 0],
+        historical_ndvi_min=0.20,
+        historical_ndvi_max=0.80,
     )
     assert res_no_crop.status == RemoteSensingStatus.INSUFFICIENT_CROPLAND
     assert res_no_crop.ndvi_mean is None
@@ -218,9 +222,34 @@ def test_insufficient_cropland_or_dimension_mismatch() -> None:
         nir_band=[0.5, 0.5, 0.5],
         red_band=[0.1, 0.1],
         cropland_mask=[1, 1],
+        historical_ndvi_min=0.20,
+        historical_ndvi_max=0.80,
     )
     assert res_mismatch.status == RemoteSensingStatus.INVALID_BANDS
     assert res_mismatch.ndvi_mean is None
+
+
+def test_missing_or_degenerate_historical_bounds_rejected() -> None:
+    """C022-B: historical NDVI bounds are mandatory; no arbitrary defaults."""
+    # 1. Bounds omitted entirely -> INVALID_HISTORICAL_RANGE
+    res_no_bounds = evaluate_cropland_vegetation_condition(
+        nir_band=[0.5, 0.4],
+        red_band=[0.1, 0.1],
+        cropland_mask=[1, 1],
+    )
+    assert res_no_bounds.status == RemoteSensingStatus.INVALID_HISTORICAL_RANGE
+    assert res_no_bounds.ndvi_mean is None
+    assert "Arbitrary default bounds prohibited" in (res_no_bounds.abstention_reason or "")
+
+    # 2. Bounds too narrow (bandwidth < 0.01) -> INVALID_HISTORICAL_RANGE
+    res_narrow = evaluate_cropland_vegetation_condition(
+        nir_band=[0.5, 0.4],
+        red_band=[0.1, 0.1],
+        cropland_mask=[1, 1],
+        historical_ndvi_min=0.50,
+        historical_ndvi_max=0.502,
+    )
+    assert res_narrow.status == RemoteSensingStatus.INVALID_HISTORICAL_RANGE
 
 
 def test_prohibited_production_tonnage_inference() -> None:

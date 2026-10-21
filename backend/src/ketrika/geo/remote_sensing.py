@@ -6,6 +6,8 @@ This module implements:
 2. NDVI (Normalized Difference Vegetation Index) calculation on valid surface reflectance.
 3. Cropland masking restricting analysis to verified agricultural parcels.
 4. VCI (Vegetation Condition Index) calculation relative to multi-year historical bounds.
+   Historical bounds are MANDATORY call-site arguments derived from a documented historical
+   NDVI distribution; this module never fabricates neutral constants (C022-B).
 5. Strict abstention rule: if valid cropland pixels < 30% (cloud cover > 70%),
    returns 'cloud_obscured_unavailable' to avoid false drought alarms.
 6. Absolute prohibition of inferring harvest tonnage directly from NDVI alone.
@@ -174,8 +176,8 @@ def evaluate_cropland_vegetation_condition(
     red_band: Sequence[float],
     cropland_mask: Sequence[int],
     scl_band: Sequence[int] | None = None,
-    historical_ndvi_min: float | None = 0.20,
-    historical_ndvi_max: float | None = 0.85,
+    historical_ndvi_min: float | None = None,
+    historical_ndvi_max: float | None = None,
     min_valid_cropland_ratio: float = 0.30,
     source_asset: str = "sentinel2_l2a_copernicus",
     stac_item_id: str | None = None,
@@ -185,7 +187,9 @@ def evaluate_cropland_vegetation_condition(
     Enforces ADR-107 & C022 scientific rigor:
     - Excludes non-cropland pixels (cropland_mask == 0).
     - Excludes cloud and cloud-shadow pixels via SCL mask.
-    - Historical NDVI range must be strictly increasing (min < max); flat or inverted bounds rejected.
+    - Historical NDVI bounds are MANDATORY and must come from a documented
+      historical range (min < max); the signature supplies NO default constants
+      so arbitrary defaults can never be silently converted into observed history.
     - STAC item ID is required for authoritative QUALIFIED status; in-memory calculations without STAC
       provenance are labeled TABLE_CALCULATION_UNVERIFIED.
     - If valid cropland pixels < min_valid_cropland_ratio (default 30%, i.e. > 70% cloud cover),
