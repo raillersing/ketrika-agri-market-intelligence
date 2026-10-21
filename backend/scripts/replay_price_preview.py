@@ -20,6 +20,7 @@ from ketrika.pipelines.rebuild_qualification import (
     require_destination,
     require_network_none,
     run_offline_replay,
+    versioned_recompute_receipt,
 )
 
 
@@ -37,6 +38,9 @@ def main() -> None:
         session.commit()
         result = run_offline_replay(session, store)
         result["dataset"] = "authentic WB historical sample, partial"
+        receipt = versioned_recompute_receipt(session, min_points=1)
+        result["versioned_recompute"] = receipt
+        result["forecasts_recomputed"] = receipt["forecasts_recomputed"]
         report = Path("/out") / f"replay-{uuid4().hex}.json"
         with report.open("x") as output:
             json.dump(result, output, sort_keys=True, indent=2)

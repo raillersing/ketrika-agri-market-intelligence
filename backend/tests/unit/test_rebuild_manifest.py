@@ -15,6 +15,7 @@ from ketrika.core.rebuild_manifest import (
     capture_database,
     compare_manifests,
 )
+from ketrika.gold.refresh import ORDERED_GOLD_VIEWS, UNPUBLISHED_GOLD_VIEWS
 
 
 @pytest.fixture
@@ -208,10 +209,34 @@ def test_empty_tables_are_present_not_successful_rebuild():
     tables = {table: [] for table in TABLES}
     columns = {table: sorted(OBS_COLUMNS.get(table, {"metric"})) for table in TABLES}
     manifest = canonical_manifest(tables, columns)
-    assert len(manifest["tables"]) == 23
+    assert len(manifest["tables"]) == len(TABLES)
+    assert len(TABLES) == (
+        len(OBS_COLUMNS) + len(ORDERED_GOLD_VIEWS) - len(UNPUBLISHED_GOLD_VIEWS)
+    )
+    assert "gold.economic_dashboard" not in TABLES
     assert set(manifest["tables"]) == set(TABLES)
     assert all(item["count"] == 0 for item in manifest["tables"].values())
     assert "passed" not in manifest  # identity is not a replay/authenticity claim
+
+
+def test_database_inventory_tolerates_publication_reserved_views():
+    class InventoryResult:
+        def scalars(self):
+            return sorted(TABLES | {"gold.economic_dashboard"})
+
+    class Session:
+        statements = []
+
+        def execute(self, statement):
+            self.statements.append(str(statement))
+            if len(self.statements) == 1:
+                return InventoryResult()
+            raise ManifestError("reached_capture_reads")
+
+    session = Session()
+    with pytest.raises(ManifestError, match="reached_capture_reads"):
+        capture_database(session)
+    assert session.statements[0].startswith("SELECT schemaname || '.' || tablename")
 
 
 def test_database_inventory_checked_before_reading_rows():

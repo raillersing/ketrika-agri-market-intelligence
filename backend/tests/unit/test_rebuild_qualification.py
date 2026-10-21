@@ -1,15 +1,20 @@
 """Fail-closed offline destination checks; mocks are not a real SQL replay receipt."""
 
+import re
 from types import SimpleNamespace
 
 import pytest
 from sqlalchemy.engine import make_url
 
+from ketrika.core.bronze import BronzeStore
+from ketrika.core.rebuild_bronze import LocalBronzeClient
 from ketrika.core.rebuild_manifest import OBS_COLUMNS
 from ketrika.pipelines.rebuild_qualification import (
     DATABASE,
     SOCKET,
     RebuildSafetyError,
+    bronze_inventory_fingerprint,
+    compare_versioned_recompute,
     require_business_baseline,
     require_destination,
     require_network_none,
@@ -114,3 +119,61 @@ def test_missing_or_invalid_kernel_evidence_refused(tmp_path, header):
         require_network_none(interfaces, routes)
     with pytest.raises(RebuildSafetyError, match="evidence_unreadable"):
         require_network_none(interfaces, tmp_path / "missing")
+
+
+DIGEST_A = "a" * 64
+DIGEST_B = "b" * 64
+
+
+def local_store(tmp_path, objects):
+    return BronzeStore(
+        bucket_name="synthetic-offline-copy",
+        client=LocalBronzeClient(tmp_path, "synthetic-offline-copy", objects),
+    )
+
+
+def test_bronze_inventory_fingerprint_order_insensitive(tmp_path):
+    objects = {
+        "source/blob.csv": {"sha256": DIGEST_A, "size_bytes": 4},
+        "source/study.json": {"sha256": DIGEST_B, "size_bytes": 2},
+    }
+    first = bronze_inventory_fingerprint(local_store(tmp_path, objects))
+    reversed_store = local_store(tmp_path, dict(reversed(list(objects.items()))))
+    assert first == bronze_inventory_fingerprint(reversed_store)
+    assert first["count"] == 2
+    assert re.fullmatch("[0-9a-f]{64}", first["sha256"]) is not None
+
+
+def test_bronze_inventory_fingerprint_changes_when_descriptor_changes(tmp_path):
+    objects = {"source/blob.csv": {"sha256": DIGEST_A, "size_bytes": 4}}
+    different = {
+        "source/blob.csv": {"sha256": DIGEST_A, "size_bytes": 5},
+        "source/study.json": {"sha256": DIGEST_B, "size_bytes": 2},
+    }
+    assert bronze_inventory_fingerprint(
+        local_store(tmp_path, objects)
+    ) != bronze_inventory_fingerprint(local_store(tmp_path, different))
+
+
+def test_non_local_bronze_client_refused_for_inventory_fingerprint():
+    with pytest.raises(RebuildSafetyError, match="requires_local_bronze_copy"):
+        bronze_inventory_fingerprint(BronzeStore(bucket_name="bucket", client=SimpleNamespace()))
+
+
+def test_versioned_recompute_comparison_excludes_only_documented_technical():
+    run_one = {"n_series": 1, "forecasts_generated": 3, "model_run_id": "aaa11111"}
+    run_two = {"n_series": 1, "forecasts_generated": 3, "model_run_id": "bbb22222"}
+    assert compare_versioned_recompute(run_one, run_two, ((), ()), ([], []))
+
+
+def test_versioned_recompute_comparison_detects_business_divergence():
+    run_one = {"n_series": 1, "forecasts_generated": 3, "model_run_id": "aaa11111"}
+    run_two = {"n_series": 1, "forecasts_generated": 3, "model_run_id": "aaa11111"}
+    assert not compare_versioned_recompute(run_one, {"n_series": 2}, ((), ()), ([], []))
+    assert not compare_versioned_recompute(run_one, run_two, ((1,), (2,)), ([], []))
+
+
+def test_versioned_recompute_comparison_accepts_abstained_runs():
+    run_one = {"status": "abstained", "reason": "no_eligible_series", "n_series": 0}
+    run_two = {"status": "abstained", "reason": "no_eligible_series", "n_series": 0}
+    assert compare_versioned_recompute(run_one, run_two, ((), ()), ([], []))

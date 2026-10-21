@@ -50,6 +50,10 @@ GOLD_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "market_coverage": ("price_monthly",),
 }
 
+# Publication-reserved Gold caches: the R2 macro publication gate forbids any
+# refresh through the provenance entry point, so content identity excludes them.
+UNPUBLISHED_GOLD_VIEWS: frozenset[str] = frozenset({"economic_dashboard"})
+
 
 def publication_views(requested: list[str]) -> list[str]:
     """Include every consumed Gold cache; no stale dependency certification."""
@@ -117,7 +121,11 @@ def refresh_gold_views(
     schema_registry: SchemaContractRegistry | None = None,
 ) -> dict[str, Any]:
     """Fresh cell check and atomic publication; no model/conversion qualification."""
-    withheld = {"economic_dashboard": "macro_publication_not_qualified"} if views is None else {}
+    withheld = (
+        {view: "macro_publication_not_qualified" for view in UNPUBLISHED_GOLD_VIEWS}
+        if views is None
+        else {}
+    )
     requested = (
         [view for view in ORDERED_GOLD_VIEWS if view not in withheld] if views is None else views
     )

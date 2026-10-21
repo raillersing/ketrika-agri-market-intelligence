@@ -34,6 +34,7 @@ from ketrika.pipelines.rebuild_qualification import (
     require_destination,
     require_network_none,
     run_offline_replay,
+    versioned_recompute_receipt,
 )
 
 SOURCE = "dummy_offline_qualification"
@@ -152,8 +153,8 @@ def prepare(session: Session) -> None:
             url="",
             is_new=False,
         )
-        for record in connector.parse(artifact, context).records:
-            load_record_with_supersession(session, record, SOURCE, descriptor.source_record_id)
+        for parsed in connector.parse(artifact, context).records:
+            load_record_with_supersession(session, parsed, SOURCE, descriptor.source_record_id)
     init_gold_views(session)
     from ketrika.core.provenance_bronze import BronzeProofReader
 
@@ -177,8 +178,19 @@ def main() -> None:
             source_ids = set(session.scalars(select(SourceRecord.source_id)))
             if source_ids != {SOURCE}:
                 raise RebuildSafetyError("synthetic_smoke_contains_foreign_source")
-            result = run_offline_replay(session, local_store())
+            # Post-upgrade Gold definitions may be recreated empty; repopulate
+            # the prepared clone before capture, like the authentic preview worker.
+            store = local_store()
+            init_gold_views(session)
+            from ketrika.core.provenance_bronze import BronzeProofReader
+
+            refresh_gold_views(session, reader=BronzeProofReader(store))
+            session.commit()
+            result = run_offline_replay(session, store)
             result["dataset"] = "synthetic"
+            receipt = versioned_recompute_receipt(session, min_points=1)
+            result["versioned_recompute"] = receipt
+            result["forecasts_recomputed"] = receipt["forecasts_recomputed"]
             output = Path("/reports/runs") / uuid4().hex
             output.mkdir(exist_ok=False)
             (output / "replay.json").write_text(json.dumps(result, sort_keys=True, indent=2) + "\n")

@@ -15,14 +15,19 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from ketrika.core.models.db import Base
-from ketrika.gold.refresh import ORDERED_GOLD_VIEWS
+from ketrika.gold.refresh import ORDERED_GOLD_VIEWS, UNPUBLISHED_GOLD_VIEWS
 
 OBS_COLUMNS = {
     name: frozenset(column.name for column in table.columns)
     for name, table in Base.metadata.tables.items()
     if table.schema == "obs"
 }
-TABLES = frozenset(OBS_COLUMNS) | frozenset("gold." + view for view in ORDERED_GOLD_VIEWS)
+# Publication-reserved views can never be populated outside the R2 macro gate;
+# their unpopulated state is out of scope for content identity receipts.
+RESERVED_GOLD_TABLES = frozenset("gold." + view for view in UNPUBLISHED_GOLD_VIEWS)
+TABLES = (
+    frozenset(OBS_COLUMNS) | frozenset("gold." + view for view in ORDERED_GOLD_VIEWS)
+) - RESERVED_GOLD_TABLES
 
 
 class ManifestError(ValueError):
@@ -200,7 +205,7 @@ def capture_database(session: Session) -> dict[str, Any]:
             )
         ).scalars()
     )
-    if actual != TABLES:
+    if actual - RESERVED_GOLD_TABLES != TABLES:
         raise ManifestError("manifest_database_inventory_mismatch")
     tables, columns = {}, {}
     for table in sorted(TABLES):

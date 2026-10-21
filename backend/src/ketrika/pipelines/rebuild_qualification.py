@@ -25,6 +25,42 @@ from ketrika.pipelines.rebuild import rebuild_database
 DATABASE = "ketrika_rebuild_qualification"
 SOCKET = "/run/ketrika-rebuild"
 
+# Documented technical exclusion (uuid of the immutable run lineage); times live
+# outside the compared result, in the persisted ml rows only.
+EXCLUDED_RUN_TECHNICAL = ("model_run_id",)
+
+_MODEL_RUN_COLUMNS = (
+    "task",
+    "model_name",
+    "model_version",
+    "data_cutoff",
+    "params",
+    "metrics",
+)
+
+_FORECAST_COLUMNS = (
+    "series_key",
+    "product_id",
+    "location_id",
+    "actor_level",
+    "target_period",
+    "horizon",
+    "p10",
+    "p50",
+    "p90",
+    "model_requested",
+    "model_effective",
+    "is_baseline",
+    "is_calibrated",
+    "calibration_sample_size",
+    "status",
+    "fallback_reason",
+    "currency",
+    "unit",
+    "interval_width",
+    "coverage_rate_80",
+)
+
 
 class RebuildSafetyError(ValueError):
     """Stable diagnostic, no DSN/credentials/collected content."""
@@ -85,6 +121,122 @@ def protected_inventory(session: Session) -> dict[str, Any]:
     return {"tables": result, "sha256": hashlib.sha256(payload).hexdigest()}
 
 
+def bronze_inventory_fingerprint(store: BronzeStore) -> dict[str, Any]:
+    """Canonical order sha256 of the declared local copy inventory; no reads.
+
+    Belt-and-braces control over the already verified per-GET integrity.
+    """
+    if not isinstance(store.client, LocalBronzeClient):
+        raise RebuildSafetyError("rebuild_requires_local_bronze_copy")
+    objects = sorted(
+        (
+            {"key": key, "sha256": digest, "size_bytes": size}
+            for key, (digest, size) in store.client.objects.items()
+        ),
+        key=lambda descriptor: str(descriptor["key"]),
+    )
+    payload = json.dumps(objects, sort_keys=True, separators=(",", ":")).encode()
+    return {"count": len(objects), "sha256": hashlib.sha256(payload).hexdigest()}
+
+
+def compare_versioned_recompute(
+    run_a: dict[str, Any], run_b: dict[str, Any], model_rows: tuple, forecast_rows: tuple
+) -> bool:
+    """Business outputs only; the documented technical exclusion never hides a diff."""
+
+    def business(run: dict[str, Any]) -> dict[str, Any]:
+        return {key: value for key, value in run.items() if key not in EXCLUDED_RUN_TECHNICAL}
+
+    return (
+        business(run_a) == business(run_b)
+        and model_rows[0] == model_rows[1]
+        and forecast_rows[0] == forecast_rows[1]
+    )
+
+
+def versioned_recompute_receipt(
+    session: Session,
+    *,
+    horizon: int = 3,
+    min_points: int = 36,
+    cohort: str = "mixed",
+) -> dict[str, Any]:
+    """Separate versioned recompute step (plan R0.8 item 4), never inside replay.
+
+    Two executions against the same versioned dataset fingerprint on a dedicated
+    destination; business outputs compared; committed to persist the receipts.
+    Offline clones publish Gold separately, so refresh_gold stays False.
+    """
+    data_cutoff = session.execute(
+        text("SELECT max(period_start)::date FROM obs.price_observation")
+    ).scalar_one()
+    from ketrika.ml.forecast import run_price_forecasting_pipeline
+
+    runs: list[dict[str, Any]] = [
+        run_price_forecasting_pipeline(
+            session=session,
+            data_cutoff=data_cutoff,
+            horizon=horizon,
+            min_points=min_points,
+            cohort=cohort,
+            refresh_gold=False,
+        )
+        for _ in range(2)
+    ]
+    model_rows: list[tuple] = []
+    forecast_rows: list[list] = []
+    for run in runs:
+        model_run_id = run.get("model_run_id")
+        if model_run_id is None:
+            model_rows.append(())
+            forecast_rows.append([])
+            continue
+        model_row = session.execute(
+            text(
+                "SELECT " + ", ".join(_MODEL_RUN_COLUMNS) + " "
+                "FROM ml.model_run WHERE model_run_id = :id"
+            ),
+            {"id": model_run_id},
+        ).one()
+        model_rows.append(tuple(model_row))
+        forecast_rows.append(
+            [
+                tuple(row)
+                for row in session.execute(
+                    text(
+                        "SELECT " + ", ".join(_FORECAST_COLUMNS) + " "
+                        "FROM ml.forecast WHERE model_run_id = :id "
+                        "ORDER BY series_key, target_period, horizon"
+                    ),
+                    {"id": model_run_id},
+                ).all()
+            ]
+        )
+    recompute_equal = compare_versioned_recompute(
+        runs[0], runs[1], tuple(model_rows), tuple(forecast_rows)
+    )
+    session.commit()
+    return {
+        "version": 1,
+        "scope": "versioned recompute on a dedicated destination; no model qualification claim",
+        "data_cutoff": data_cutoff.isoformat(),
+        "horizon": horizon,
+        "cohort": cohort,
+        "min_points_required": min_points,
+        "dataset_fingerprint": runs[0]["dataset_fingerprint"],
+        "eligible_series": runs[0]["n_series"],
+        "forecasts_generated": [run["forecasts_generated"] for run in runs],
+        "n_abstentions": [run["n_abstentions"] for run in runs],
+        "recompute_equal": recompute_equal,
+        "forecasts_recomputed": bool(recompute_equal and runs[0]["n_series"] > 0),
+        "excluded_technical": ["model_run_id", "trained_at", "generated_at", "forecast_id"],
+        "runs": [
+            {key: value for key, value in run.items() if key not in EXCLUDED_RUN_TECHNICAL}
+            for run in runs
+        ],
+    }
+
+
 def run_offline_replay(session: Session, store: BronzeStore) -> dict[str, Any]:
     """No seed, restore or subset filter; caller supplies an already prepared clone."""
     network_before = require_network_none()
@@ -92,6 +244,7 @@ def run_offline_replay(session: Session, store: BronzeStore) -> dict[str, Any]:
     if not isinstance(store.client, LocalBronzeClient):
         raise RebuildSafetyError("rebuild_requires_local_bronze_copy")
     session.execute(text("SET TIME ZONE 'UTC'"))
+    inventory_before = bronze_inventory_fingerprint(store)
     descriptors = list(
         session.execute(
             text(
@@ -126,6 +279,7 @@ def run_offline_replay(session: Session, store: BronzeStore) -> dict[str, Any]:
     after = capture_database(session)
     protected_after = protected_inventory(session)
     diff = compare_manifests(before, after)
+    inventory_after = bronze_inventory_fingerprint(store)
     network_after = require_network_none()
     passed = (
         diff["content_identical"]
@@ -135,9 +289,10 @@ def run_offline_replay(session: Session, store: BronzeStore) -> dict[str, Any]:
         and stats["source_records_skipped"] == 0
         and stats["records_rejected"] == 0
         and network_before == network_after
+        and inventory_before == inventory_after
     )
     return {
-        "version": 1,
+        "version": 2,
         "status": "PARTIAL",
         "scope": "software replay, not authentic corpus or scientific/model qualification",
         "replay_passed": passed,
@@ -150,6 +305,9 @@ def run_offline_replay(session: Session, store: BronzeStore) -> dict[str, Any]:
         "protected_before": protected_before,
         "protected_after": protected_after,
         "replay_stats": stats,
+        "bronze_inventory_before": inventory_before,
+        "bronze_inventory_after": inventory_after,
+        "bronze_inventory_verified": inventory_before == inventory_after,
         "authenticity_qualified": False,
         "original_s3_versions_verified": False,
         "forecasts_recomputed": False,
