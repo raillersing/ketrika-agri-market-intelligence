@@ -1,5 +1,7 @@
 # BLOCKERS : registre des blocages et incidents
 
+| B-R084 | R0.8 / audit A012 | 2026-10-23 | Audit SQL READ ONLY :794 observations prix,728 superseded_by=observation_id ;15 WB imputées courantes, aucune observation ODR/MinCC/WFP courante parmi les sources inspectées | Mise à l'écart historique via auto-supersession rapportée A012 : trigger d'immuabilité respecté techniquement mais lien ne désigne aucune nouvelle révision | 1 : audit sans mutation ; manifeste refuse auto-liens/cycles avec contre-exemples ; réparation active différée à un contrat de quarantaine reçu, aucune restauration/effacement | Ne pas utiliser ce sous-ensemble pour qualifier le marché, sa fraîcheur ou un corpus de révisions authentiques | INVESTIGATING |
+
 Clôture logicielle du2026-10-17 : B-R074–083 sont corrigés sur la branche
 fix/agy-publication-audit-20261016, source9b63847, non fusionnée dans main.
 Preuves finales : check78513 FINAL0/1762 backend/43 frontend/build ;

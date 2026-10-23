@@ -1,5 +1,7 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR-117 (réception R0.8) : les lectures API de vues Gold non peuplées répondent503 RFC7807 avec code `gold_not_published`, pas200/vide ou faux compte nul. Les filtres sans résultat sur une vue effectivement publiée répondent200 selon leur DTO habituel. Les prévisions par model_run_id lisent leur run indépendamment de forecast_latest. Le reçu de conservation de copie Bronze relit et vérifie SHA/taille de tous les objets déclarés avant/après rejeu ; l'inventaire de descripteurs seul n'établit pas cette conservation. Aucun statut d'authenticité ou de performance marché n'en découle.
+
 > Normatif. Tout écart **DOIT** faire l'objet d'un ADR (`AGENTS.md` §5.2).
 > Les valeurs marquées `verified: false` sont des **amorces à vérifier** par l'agent. Ce ne sont pas des vérités.
 

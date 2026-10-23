@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from ketrika.api.csv_utils import export_csv_response
 from ketrika.api.errors import NotFoundException
+from ketrika.api.gold_availability import require_gold_view
 from ketrika.api.schemas import (
     ObservationDetailResponse,
     PriceLatestItem,
@@ -20,7 +21,6 @@ from ketrika.api.schemas import (
 from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import get_db
 from ketrika.core.models.db import PriceObservation, SourceRecord
-from ketrika.gold.compatibility import is_gold_view_populated
 
 router = APIRouter(prefix="/v1", tags=["prices"])
 
@@ -41,10 +41,7 @@ def get_prices(
 ) -> Any:
     """Retrieve historical aggregated price series (SPECS §19)."""
     target_matview = "price_monthly" if source else "price_monthly_best"
-    if not is_gold_view_populated(session, target_matview):
-        if format.lower() == "csv":
-            return export_csv_response([], filename="prices.csv")
-        return []
+    require_gold_view(session, target_matview)
 
     table_name = "gold.price_monthly" if source else "gold.price_monthly_best"
     source_col = "source_id" if source else "chosen_source_id"
@@ -130,8 +127,7 @@ def get_prices_latest(
     session: Session = Depends(get_db),
 ) -> list[PriceLatestItem]:
     """Retrieve the latest monthly price for each geographic entity at given admin level (SPECS §19)."""
-    if not is_gold_view_populated(session, "price_monthly_best"):
-        return []
+    require_gold_view(session, "price_monthly_best")
 
     prod_filter = "AND (product_code = :prod OR product_id::text = :prod)" if product else ""
     query_sql = f"""

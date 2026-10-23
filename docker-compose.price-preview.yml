@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 30
   web:
-    image: ketrika-backend:qa-r03
+    image: ketrika-backend:qa-codex-r03
     read_only: true
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
@@ -41,7 +41,7 @@ services:
       db: {condition: service_healthy}
     command: [/app/.venv/bin/python, /workspace/backend/scripts/price_preview.py, serve]
   prepare:
-    image: ketrika-backend:qa-r03
+    image: ketrika-backend:qa-codex-r03
     user: "0:0"
     network_mode: none
     read_only: true
@@ -75,5 +75,5 @@ volumes:
     name: ketrika_price_preview_copy_20261015
     labels: {ketrika.scope: price-preview}
   preview_venv:
-    name: ketrika_qualification_backend_venv_r03
+    name: ketrika_qualification_main_final_backend_venv_r03
     external: true

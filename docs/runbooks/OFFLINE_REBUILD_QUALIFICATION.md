@@ -3,6 +3,25 @@
 Statut : **IN_PROGRESS**. Aucun rebuild actif, aucune réception R0.8 ou gate
 R0.9. Ce document distingue implémentation, tests logiciels et preuve réelle.
 
+## Réception en cours du2026-10-23 (ADR-117)
+
+Le lot work/r0-reception-20261024 reprend les reçus et le recalcul versionné de
+work/r08-receipts-20261021, sans les présenter comme preuves du code nouveau.
+Les deux profils de rejeu utilisent désormais l'image qa-codex-r03 et le venv
+main-final de la même réception. Aucun ancien volume n'est supprimé.
+
+Le contrôle de copie Bronze relit tous les objets déclarés, avec taille/SHA
+frais, avant et après rejeu ; une corruption à descripteurs constants échoue.
+Le manifeste refuse les auto-supersessions et cycles. Le recalcul séparé
+contrôle sa destination socket et l'absence de réseau avant tout SQL métier.
+Ces contrôles ne qualifient ni l'authenticité d'une révision ni un modèle.
+
+Audit A012 readonly :728 anciennes observations actives ont été mises à
+l'écart par auto-liens. Ne pas utiliser cette base comme corpus de révisions
+authentiques et ne pas la réparer par reset, suppression ou restauration.
+Les vues API non publiées renvoient503/code gold_not_published ; un résultat
+réellement vide sur une vue peuplée garde200. La base active reste intacte.
+
 ## Rejeu logiciel désormais exécutable
 
 `scripts/dev.ps1 rebuild-smoke prepare` initialise explicitement la nouvelle

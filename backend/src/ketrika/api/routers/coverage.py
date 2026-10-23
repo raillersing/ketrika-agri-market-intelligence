@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from ketrika.api.csv_utils import export_csv_response
+from ketrika.api.gold_availability import require_gold_view
 from ketrika.api.schemas import (
     ImpossibleCapabilityItem,
     MarketCoverageItem,
@@ -39,6 +40,7 @@ def get_market_coverage(
     session: Session = Depends(get_db),
 ) -> Any:
     """Retrieve market coverage matrix cells with pagination and CSV export (SPECS §19, R2.4, ADR-071)."""
+    require_gold_view(session, "market_coverage")
     rows = query_market_coverage_matrix(
         session=session,
         product_code=product,
@@ -93,6 +95,7 @@ def get_series_gaps(
     session: Session = Depends(get_db),
 ) -> SeriesCoverageSummaryItem:
     """Compute independent calendar gaps and coverage ratio for a single series in SQL."""
+    require_gold_view(session, "market_coverage")
     target_loc = location or "MDG11"
     summary = compute_series_gaps_independent_sql(
         session=session,

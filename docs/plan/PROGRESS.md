@@ -1,5 +1,14 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-23T21:06:00Z] Reprise R0.8 et audit des changements A012
+
+- Autorisation utilisateur de poursuivre les tâches restantes. Branche work/r0-reception-20261024 basée sur main585c47f, worktree Linux dédié. R0.8 reste IN_PROGRESS ; aucune ancienne preuve ne reçoit le contenu récent. Canal A012 relu, réservation C030 déposée.
+- Mini-plan : auditer3980ab0 et parents/révisions/Gold actifs en lecture seule ; reprendre les incréments R0.8 existants sans fusion globale ; compléter les contrôles et tests négatifs ; recevoir une source stabilisée unique (check complet + rejeu sans réseau) ; synchroniser statuts et passer au gate éligible. Aucun reset/restore/rebuild actif, aucune mutation d'archives Bronze.
+- Incident runtime préalable : frontend aiagent-web-1 redémarre « Command dev not found ». Les mounts exposent /app sans package.json alors que le checkout contient le script dev ; diagnostic des bind mounts Docker Desktop, pas une dépendance Next à réinstaller aveuglément.
+- Incréments R0.8 repris par cherry-pick ciblé :0c49147/63498e7/e66421f, sans écraser les correctifs main. ADR117 avant code :503 explicite vs cache vide, relecture fraîche des octets Bronze, refus cycles, garde réseau/destination du recalcul.10702 FINAL0 :117 unités/87,86s ;41521 FINAL0 :lint/format/types trois modules et quatre nouveaux cas cycles/destination/11,94s. Aucun check global ni qualification R0.8 déduit.
+- Audit SQL95738 READ ONLY :794 prix,728 auto-liens,15 WB imputés courants ; B-R084 documenté sans réparation active. Frontend seulement : montage Windows vide remplacé par volume de code main585c47f en lecture seule, ancien montage/volumes conservés, mêmes dépendances/cache/ports ;75132 FINAL0 démarrage et82955 FINAL0 GET/login200, conteneur healthy. Incident de copie permissions22083 puis mountpoint readonly56602 résolus sur le volume neuf uniquement, aucune donnée supprimée. Override opérateur au canal coordination/runtime-web-20261024.yml, pas une mutation des services tiers.
+- Prochaine preuve : réception complète de la source figée et rejeu dédié sans réseau sur corpus conservé, sans nouveau téléchargement ni reset/restore actif. R0.8 IN_PROGRESS et miroir inchangés ; les preuves anciennes jointes sont historiques.
+
 ### [2026-10-21T15:58:00Z] Durcissement des vues Gold non peuplées, ingestion réelle WB et stabilisation frontend
 
 - **Durcissement API (Éradication des erreurs 500) :** Implémentation du helper fail-closed `is_gold_view_populated(bind, view_name)` dans `backend/src/ketrika/gold/compatibility.py`. Protection des routeurs `/v1/prices`, `/v1/prices/latest`, `/v1/trade`, `/v1/forecasts`, `/v1/kpis/market-health`, `/v1/market/coverage`, `/v1/climate/summary`, `/v1/stocks`, `/v1/weather/anomalies`. Élimination du 422 sur `/v1/market/coverage/gaps` (paramètre `location` rendu optionnel avec valeur par défaut `MDG11`).

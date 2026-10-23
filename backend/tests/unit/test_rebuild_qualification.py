@@ -1,5 +1,6 @@
 """Fail-closed offline destination checks; mocks are not a real SQL replay receipt."""
 
+import hashlib
 import re
 from types import SimpleNamespace
 
@@ -7,7 +8,7 @@ import pytest
 from sqlalchemy.engine import make_url
 
 from ketrika.core.bronze import BronzeStore
-from ketrika.core.rebuild_bronze import LocalBronzeClient
+from ketrika.core.rebuild_bronze import LocalBronzeClient, LocalBronzeError
 from ketrika.core.rebuild_manifest import OBS_COLUMNS
 from ketrika.pipelines.rebuild_qualification import (
     DATABASE,
@@ -18,6 +19,7 @@ from ketrika.pipelines.rebuild_qualification import (
     require_business_baseline,
     require_destination,
     require_network_none,
+    versioned_recompute_receipt,
 )
 
 
@@ -83,6 +85,14 @@ def test_actual_bound_server_checked(actual):
     assert all(statement.startswith("SELECT ") for statement in session.statements)
 
 
+def test_recompute_refuses_active_destination_before_read_or_write(monkeypatch):
+    monkeypatch.setattr("ketrika.pipelines.rebuild_qualification.require_network_none", lambda: {})
+    session = FakeSession(URL.replace(DATABASE, "ketrika"))
+    with pytest.raises(RebuildSafetyError, match="destination_not_dedicated"):
+        versioned_recompute_receipt(session)
+    assert session.statements == []
+
+
 def test_network_none_kernel_observations(tmp_path):
     interfaces = tmp_path / "net"
     interfaces.mkdir()
@@ -121,11 +131,15 @@ def test_missing_or_invalid_kernel_evidence_refused(tmp_path, header):
         require_network_none(interfaces, tmp_path / "missing")
 
 
-DIGEST_A = "a" * 64
-DIGEST_B = "b" * 64
+DIGEST_A = hashlib.sha256(b"rice").hexdigest()
+DIGEST_B = hashlib.sha256(b"{}").hexdigest()
 
 
 def local_store(tmp_path, objects):
+    for digest, content in ((DIGEST_A, b"rice"), (DIGEST_B, b"{}")):
+        path = tmp_path / (digest + ".blob")
+        if not path.exists():
+            path.write_bytes(content)
     return BronzeStore(
         bucket_name="synthetic-offline-copy",
         client=LocalBronzeClient(tmp_path, "synthetic-offline-copy", objects),
@@ -147,7 +161,7 @@ def test_bronze_inventory_fingerprint_order_insensitive(tmp_path):
 def test_bronze_inventory_fingerprint_changes_when_descriptor_changes(tmp_path):
     objects = {"source/blob.csv": {"sha256": DIGEST_A, "size_bytes": 4}}
     different = {
-        "source/blob.csv": {"sha256": DIGEST_A, "size_bytes": 5},
+        "source/blob.csv": {"sha256": DIGEST_A, "size_bytes": 4},
         "source/study.json": {"sha256": DIGEST_B, "size_bytes": 2},
     }
     assert bronze_inventory_fingerprint(
@@ -158,6 +172,19 @@ def test_bronze_inventory_fingerprint_changes_when_descriptor_changes(tmp_path):
 def test_non_local_bronze_client_refused_for_inventory_fingerprint():
     with pytest.raises(RebuildSafetyError, match="requires_local_bronze_copy"):
         bronze_inventory_fingerprint(BronzeStore(bucket_name="bucket", client=SimpleNamespace()))
+
+
+@pytest.mark.parametrize("mutation", ["same_size", "truncated", "missing"])
+def test_inventory_rereads_bytes_even_when_descriptors_are_unchanged(tmp_path, mutation):
+    store = local_store(tmp_path, {"rice": {"sha256": DIGEST_A, "size_bytes": 4}})
+    assert bronze_inventory_fingerprint(store)["count"] == 1
+    path = tmp_path / (DIGEST_A + ".blob")
+    if mutation == "missing":
+        path.unlink()
+    else:
+        path.write_bytes(b"corn" if mutation == "same_size" else b"r")
+    with pytest.raises(LocalBronzeError):
+        bronze_inventory_fingerprint(store)
 
 
 def test_versioned_recompute_comparison_excludes_only_documented_technical():

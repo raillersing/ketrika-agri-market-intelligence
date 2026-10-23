@@ -18,7 +18,7 @@ services:
       timeout: 5s
       retries: 30
   worker:
-    image: ketrika-backend:qa-r03
+    image: ketrika-backend:qa-codex-r03
     network_mode: none
     read_only: true
     cap_drop: [ALL]
@@ -63,5 +63,5 @@ volumes:
     name: ketrika_rebuild_qualification_reports
     labels: {ketrika.scope: rebuild-qualification}
   rebuild_venv:
-    name: ketrika_qualification_backend_venv_r03
+    name: ketrika_qualification_main_final_backend_venv_r03
     external: true

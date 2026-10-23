@@ -1,5 +1,12 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-117 | 2026-10-23 | Accepté | Réception R0.8 et disponibilité Gold explicite
+
+- Contexte : A012 remplace des erreurs SQL par des listes vides, confondant cache non publié et résultat réellement vide ; son contrôle interne intercepte aussi une panne SQL. Le contrôle Bronze R0.8 repris calcule seulement l'empreinte des descripteurs déclarés, pas celle des octets après rejeu. L'audit readonly actif relève728 liens de supersession vers eux-mêmes : ce n'est pas une révision source valide.
+- Décision : les routes de lecture Gold (prix, stocks, commerce, météo, santé, prévisions courantes, couverture) refusent un cache non peuplé avec503 RFC7807/code gold_not_published. Une vue peuplée sans résultat reste200/vide. Les prévisions explicitement sélectionnées par run restent indépendantes du cache. Le reçu Bronze relit chaque objet via le lecteur borné SHA/taille avant et après rejeu. Les tests distinguent ces états et corruption d'octets à descripteurs constants.
+- Alternatives : conserver200/vide (rejeté : fausse absence de données), publier automatiquement (rejeté : contourne les gates), effacer ou restaurer les observations actives pour enlever les auto-liens (rejeté : mutation non reçue).
+- Conséquences : modification explicite du contrat d'indisponibilité API, aucun changement des DTO200 ni accès réseau supplémentaire ; R0.8 demeure PARTIAL tant que corpus réel/révisions et recalcul scientifique ne sont pas reçus. Réparation des728 auto-liens à spécifier séparément ; cet audit ne la réalise pas et ne requalifie pas les prix historiques en observations.
+
 > Format : `ADR-NNN | date | statut | contexte | décision | alternatives | conséquences`
 
 ## ADR-104 : rétablir la vérité du recalcul Sources et la publication gardée

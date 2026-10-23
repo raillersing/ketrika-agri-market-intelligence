@@ -91,6 +91,22 @@ def test_equal_counts_never_hide_changed_business_field(snapshot, field, value):
     assert diff["before"]["sha256"] != diff["after"]["sha256"]
 
 
+@pytest.mark.parametrize("length", [1, 2, 4])
+def test_revision_cycles_cannot_be_certified_as_an_identical_replay(snapshot, length):
+    tables, columns = snapshot
+    first = tables["obs.price_observation"][0]
+    rows = [first]
+    for index in range(1, length):
+        row = copy.deepcopy(first)
+        row.update(observation_id=uuid4(), price_raw=str(2800 + index))
+        rows.append(row)
+    for index, row in enumerate(rows):
+        row["superseded_by"] = rows[(index + 1) % length]["observation_id"]
+    tables["obs.price_observation"] = rows
+    with pytest.raises(ManifestError, match="manifest_revision_cycle"):
+        canonical_manifest(tables, columns)
+
+
 def test_revision_links_survive_regenerated_uuids(snapshot):
     tables, columns = snapshot
     old = tables["obs.price_observation"][0]

@@ -134,6 +134,26 @@ def canonical_manifest(
             identities[identity] = stable
             business_ids.add((table, stable))
 
+    # A supersession must terminate. Self-links and longer cycles are not revisions.
+    targets = {}
+    for table in sorted(OBS_COLUMNS):
+        for row in tables[table]:
+            if row.get("superseded_by") is not None:
+                targets[(table, _identifier(row["observation_id"]))] = (
+                    table,
+                    _identifier(row["superseded_by"]),
+                )
+    checked = set()
+    for start in targets:
+        path = set()
+        current = start
+        while current in targets and current not in checked:
+            if current in path:
+                raise ManifestError("manifest_revision_cycle")
+            path.add(current)
+            current = targets[current]
+        checked.update(path)
+
     def link(table: str, value: Any) -> list[Any]:
         if value is None:
             return _value(None)

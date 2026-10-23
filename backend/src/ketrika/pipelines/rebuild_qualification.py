@@ -122,12 +122,12 @@ def protected_inventory(session: Session) -> dict[str, Any]:
 
 
 def bronze_inventory_fingerprint(store: BronzeStore) -> dict[str, Any]:
-    """Canonical order sha256 of the declared local copy inventory; no reads.
-
-    Belt-and-braces control over the already verified per-GET integrity.
-    """
+    """Re-read every declared object and bind its actual bytes to the inventory."""
     if not isinstance(store.client, LocalBronzeClient):
         raise RebuildSafetyError("rebuild_requires_local_bronze_copy")
+    for key in sorted(store.client.objects):
+        # get performs a fresh bounded read, size/SHA and path safety checks.
+        store.get(key)
     objects = sorted(
         (
             {"key": key, "sha256": digest, "size_bytes": size}
@@ -167,6 +167,8 @@ def versioned_recompute_receipt(
     destination; business outputs compared; committed to persist the receipts.
     Offline clones publish Gold separately, so refresh_gold stays False.
     """
+    require_network_none()
+    require_destination(session)
     data_cutoff = session.execute(
         text("SELECT max(period_start)::date FROM obs.price_observation")
     ).scalar_one()
