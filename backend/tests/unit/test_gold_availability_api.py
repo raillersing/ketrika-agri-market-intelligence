@@ -10,6 +10,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from ketrika.api.errors import ProblemDetailException, problem_exception_handler
 from ketrika.api.routers import coverage, forecasts, kpis, prices, stocks, trade, weather
 from ketrika.core.db import get_db
+from ketrika.gold.coverage import (
+    compute_series_gaps_independent_sql,
+    query_market_coverage_matrix,
+)
 
 PATHS = (
     "/v1/prices",
@@ -69,3 +73,11 @@ def test_historical_run_does_not_require_latest_gold_cache():
     assert response.status_code == 200
     assert response.json() == []
     assert "pg_matviews" not in str(session.execute.call_args)
+
+
+def test_internal_coverage_cannot_fabricate_zero_coverage_from_unpublished_cache():
+    _, session = make_api(False)
+    with pytest.raises(ValueError, match="gold_not_published"):
+        query_market_coverage_matrix(session)
+    with pytest.raises(ValueError, match="gold_not_published"):
+        compute_series_gaps_independent_sql(session, "RICE_WHITE_LOCAL", "MDG11", "retail")

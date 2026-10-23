@@ -1,0 +1,3726 @@
+{
+  "after": {
+    "sha256": "a5924132987037efe10bc457f74503d823207ce8fac1cfdb250dd5dffbf1abef",
+    "tables": {
+      "gold.cpi_food": {
+        "columns": [
+          "base_period",
+          "chg_12m",
+          "chg_1m",
+          "geo_scope",
+          "index_value",
+          "month",
+          "series_code",
+          "series_label"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.forecast_latest": {
+        "columns": [
+          "actor_level",
+          "calibration_sample_size",
+          "cohort",
+          "coverage_rate_80",
+          "currency",
+          "data_cutoff",
+          "dataset_fingerprint",
+          "fallback_reason",
+          "forecast_id",
+          "generated_at",
+          "horizon",
+          "interval_width",
+          "is_baseline",
+          "is_calibrated",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "model_effective",
+          "model_name",
+          "model_requested",
+          "model_run_id",
+          "model_version",
+          "p10",
+          "p50",
+          "p90",
+          "product_code",
+          "product_id",
+          "product_name",
+          "series_key",
+          "status",
+          "target_period",
+          "trained_at",
+          "unit"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.import_dependency": {
+        "columns": [
+          "export_tonnes",
+          "import_dependency_ratio",
+          "import_tonnes",
+          "net_availability_tonnes",
+          "product_code",
+          "product_id",
+          "product_name",
+          "production_tonnes",
+          "year"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.market_coverage": {
+        "columns": [
+          "actor_level",
+          "admin_level",
+          "age_days",
+          "has_observed",
+          "imputed_share",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "max_price",
+          "median_price",
+          "min_price",
+          "month",
+          "n_families",
+          "n_obs",
+          "n_sources",
+          "observed_or_imputed",
+          "product_code",
+          "product_id",
+          "product_name",
+          "source_families",
+          "sources"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.market_health": {
+        "columns": [
+          "coverage",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "market_health_score",
+          "month",
+          "product_code",
+          "product_id",
+          "product_name",
+          "score_affordability",
+          "score_availability",
+          "score_climate",
+          "score_stability"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.price_changes": {
+        "columns": [
+          "actor_level",
+          "admin_level",
+          "chg_12m",
+          "chg_1m",
+          "chg_3m",
+          "chosen_source_id",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "mad_12",
+          "med_12",
+          "median_price",
+          "month",
+          "product_code",
+          "product_id",
+          "product_name",
+          "vol_12",
+          "z_score_robust"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.price_monthly": {
+        "columns": [
+          "actor_level",
+          "admin_level",
+          "has_observed",
+          "imputed_share",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "max_price",
+          "median_price",
+          "min_price",
+          "month",
+          "n_obs",
+          "price_spread",
+          "priority",
+          "product_code",
+          "product_id",
+          "product_name",
+          "source_family",
+          "source_id",
+          "stddev_price"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.price_monthly_best": {
+        "columns": [
+          "actor_level",
+          "admin_level",
+          "chosen_source_family",
+          "chosen_source_id",
+          "group_spread",
+          "has_conflict",
+          "imputed_share",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "max_price",
+          "median_price",
+          "min_price",
+          "month",
+          "n_families",
+          "n_obs",
+          "n_sources",
+          "observed_or_imputed",
+          "priority",
+          "product_code",
+          "product_id",
+          "product_name"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.price_obs_current": {
+        "columns": [
+          "actor_level",
+          "admin_level",
+          "base_unit",
+          "confidence",
+          "conversion_status",
+          "currency_raw",
+          "evidence",
+          "extraction_method",
+          "ingested_at",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "location_raw",
+          "market_name",
+          "missing_code",
+          "month",
+          "natural_key",
+          "observation_id",
+          "observed_or_imputed",
+          "period_end",
+          "period_start",
+          "price_mga_per_base",
+          "price_raw",
+          "price_value",
+          "priority",
+          "product_code",
+          "product_id",
+          "product_name",
+          "product_raw",
+          "published_at",
+          "quality_grade",
+          "source_family",
+          "source_id",
+          "source_record_id",
+          "unit_raw",
+          "variety"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.source_health": {
+        "columns": [
+          "freshness_days",
+          "freshness_sla_days",
+          "is_stale",
+          "last_fetched_at",
+          "last_run_finished_at",
+          "last_run_started_at",
+          "latest_run_status",
+          "n_records_30d",
+          "open_review_items",
+          "parse_success_rate",
+          "priority",
+          "source_id",
+          "source_name",
+          "source_status"
+        ],
+        "count": 1,
+        "rows": [
+          {
+            "freshness_days": [
+              "int",
+              "659"
+            ],
+            "freshness_sla_days": [
+              "int",
+              "30"
+            ],
+            "is_stale": [
+              "bool",
+              true
+            ],
+            "last_fetched_at": [
+              "datetime",
+              "2025-01-02T00:00:00+00:00"
+            ],
+            "last_run_finished_at": [
+              "null"
+            ],
+            "last_run_started_at": [
+              "null"
+            ],
+            "latest_run_status": [
+              "null"
+            ],
+            "n_records_30d": [
+              "int",
+              "0"
+            ],
+            "open_review_items": [
+              "int",
+              "0"
+            ],
+            "parse_success_rate": [
+              "decimal",
+              "1"
+            ],
+            "priority": [
+              "text",
+              "P0"
+            ],
+            "source_id": [
+              "text",
+              "dummy_offline_qualification"
+            ],
+            "source_name": [
+              "text",
+              "Synthetic offline software smoke"
+            ],
+            "source_status": [
+              "text",
+              "active"
+            ]
+          }
+        ],
+        "sha256": "de7ccdeb2657007ba0ba8d40b262923d819913ab2d598e57050b673162758810"
+      },
+      "gold.stock_latest": {
+        "columns": [
+          "admin_level",
+          "base_unit",
+          "coverage_days",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "period_end",
+          "period_start",
+          "product_code",
+          "product_id",
+          "product_name",
+          "published_at",
+          "quantity_base",
+          "stock_status",
+          "trend"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.trade_monthly": {
+        "columns": [
+          "flow",
+          "month",
+          "n_records",
+          "product_code",
+          "product_id",
+          "product_name",
+          "value_mga",
+          "value_usd",
+          "weight_tonnes"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.weather_monthly": {
+        "columns": [
+          "baseline_precip_mm",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "month",
+          "precip_total_mm",
+          "rain_anom_3m",
+          "rain_anom_pct",
+          "rh2m_avg_pct",
+          "t2m_max_avg_c",
+          "t2m_min_avg_c"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.cpi_observation": {
+        "columns": [
+          "base_period",
+          "confidence",
+          "evidence",
+          "extraction_method",
+          "geo_scope",
+          "index_value",
+          "ingested_at",
+          "natural_key",
+          "observation_id",
+          "period_end",
+          "period_start",
+          "published_at",
+          "series_code",
+          "series_label",
+          "source_record_id",
+          "superseded_by"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.event": {
+        "columns": [
+          "confidence",
+          "event_date",
+          "event_id",
+          "event_type",
+          "evidence",
+          "extraction_method",
+          "ingested_at",
+          "location_ids",
+          "product_ids",
+          "severity",
+          "source_record_id",
+          "summary",
+          "title"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.macro_observation": {
+        "columns": [
+          "base_period",
+          "confidence",
+          "evidence",
+          "extraction_method",
+          "first_available_at",
+          "frequency",
+          "geo_scope",
+          "indicator_code",
+          "indicator_name",
+          "ingested_at",
+          "natural_key",
+          "observation_id",
+          "observed_or_imputed",
+          "period_end",
+          "period_start",
+          "published_at",
+          "review_status",
+          "source_record_id",
+          "superseded_by",
+          "unit",
+          "value",
+          "value_raw",
+          "vintage"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.price_observation": {
+        "columns": [
+          "actor_level",
+          "base_unit",
+          "confidence",
+          "conversion_status",
+          "currency_raw",
+          "evidence",
+          "extraction_method",
+          "ingested_at",
+          "location_id",
+          "location_raw",
+          "market_name",
+          "missing_code",
+          "natural_key",
+          "observation_id",
+          "observed_or_imputed",
+          "package_quantity",
+          "package_unit",
+          "period_end",
+          "period_start",
+          "price_mga_per_base",
+          "price_raw",
+          "price_value",
+          "product_id",
+          "product_raw",
+          "published_at",
+          "quality_grade",
+          "review_status",
+          "source_record_id",
+          "superseded_by",
+          "unit_raw",
+          "variety"
+        ],
+        "count": 2,
+        "rows": [
+          {
+            "actor_level": [
+              "text",
+              "retail"
+            ],
+            "base_unit": [
+              "null"
+            ],
+            "confidence": [
+              "decimal",
+              "1"
+            ],
+            "conversion_status": [
+              "text",
+              "exact"
+            ],
+            "currency_raw": [
+              "text",
+              "MGA"
+            ],
+            "evidence": [
+              "object",
+              [
+                [
+                  "price_identity",
+                  [
+                    "object",
+                    [
+                      [
+                        "natural_key",
+                        [
+                          "text",
+                          "442a4e7fc99d47490e379d9349fae28207813448efca3f8bb713bd0f0e4b20b7"
+                        ]
+                      ],
+                      [
+                        "scope",
+                        [
+                          "text",
+                          "internal_exact_raw_grain_not_source_or_human_qualification"
+                        ]
+                      ],
+                      [
+                        "statistical_kind",
+                        [
+                          "text",
+                          "point"
+                        ]
+                      ],
+                      [
+                        "version",
+                        [
+                          "text",
+                          "price_identity_v2"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "provenance",
+                  [
+                    "object",
+                    [
+                      [
+                        "cells",
+                        [
+                          "array",
+                          [
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "price"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "2800"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "price_value"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "number"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "value"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "product"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "Riz blanc local"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "product_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "market"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "Antananarivo"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "location_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "period_start"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "2025-01-01"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "period_start"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "unit"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "kg"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "unit_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "currency"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "MGA"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "currency_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [
+                        "delimiter",
+                        [
+                          "text",
+                          ","
+                        ]
+                      ],
+                      [
+                        "format",
+                        [
+                          "text",
+                          "csv"
+                        ]
+                      ],
+                      [
+                        "row",
+                        [
+                          "int",
+                          "0"
+                        ]
+                      ],
+                      [
+                        "version",
+                        [
+                          "int",
+                          "1"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "row",
+                  [
+                    "object",
+                    [
+                      [
+                        "actor_level",
+                        [
+                          "text",
+                          "retail"
+                        ]
+                      ],
+                      [
+                        "currency",
+                        [
+                          "text",
+                          "MGA"
+                        ]
+                      ],
+                      [
+                        "market",
+                        [
+                          "text",
+                          "Antananarivo"
+                        ]
+                      ],
+                      [
+                        "period_end",
+                        [
+                          "text",
+                          "2025-01-31"
+                        ]
+                      ],
+                      [
+                        "period_start",
+                        [
+                          "text",
+                          "2025-01-01"
+                        ]
+                      ],
+                      [
+                        "price",
+                        [
+                          "text",
+                          "2800"
+                        ]
+                      ],
+                      [
+                        "product",
+                        [
+                          "text",
+                          "Riz blanc local"
+                        ]
+                      ],
+                      [
+                        "unit",
+                        [
+                          "text",
+                          "kg"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            "extraction_method": [
+              "text",
+              "deterministic"
+            ],
+            "location_id": [
+              "null"
+            ],
+            "location_raw": [
+              "text",
+              "Antananarivo"
+            ],
+            "market_name": [
+              "null"
+            ],
+            "missing_code": [
+              "null"
+            ],
+            "natural_key": [
+              "text",
+              "442a4e7fc99d47490e379d9349fae28207813448efca3f8bb713bd0f0e4b20b7"
+            ],
+            "observation_id": [
+              "observation",
+              "obs.price_observation",
+              "885be83525b7f41c1a72cac5cc43cd2572fede52d0cdde692bbdf9e808d6c605"
+            ],
+            "observed_or_imputed": [
+              "text",
+              "observed"
+            ],
+            "package_quantity": [
+              "null"
+            ],
+            "package_unit": [
+              "null"
+            ],
+            "period_end": [
+              "date",
+              "2025-01-31"
+            ],
+            "period_start": [
+              "date",
+              "2025-01-01"
+            ],
+            "price_mga_per_base": [
+              "null"
+            ],
+            "price_raw": [
+              "text",
+              "2800"
+            ],
+            "price_value": [
+              "decimal",
+              "2800"
+            ],
+            "product_id": [
+              "null"
+            ],
+            "product_raw": [
+              "text",
+              "Riz blanc local"
+            ],
+            "published_at": [
+              "null"
+            ],
+            "quality_grade": [
+              "null"
+            ],
+            "review_status": [
+              "text",
+              "accepted"
+            ],
+            "source_record_id": [
+              "uuid",
+              "05e1edbb-2ef4-4dbe-b162-5a190972fa0f"
+            ],
+            "superseded_by": [
+              "observation",
+              "obs.price_observation",
+              "131e1a8e456b4655c2740575380481600ce3bbf72f8eb16899c9eed75d619c79"
+            ],
+            "unit_raw": [
+              "text",
+              "kg"
+            ],
+            "variety": [
+              "null"
+            ]
+          },
+          {
+            "actor_level": [
+              "text",
+              "retail"
+            ],
+            "base_unit": [
+              "null"
+            ],
+            "confidence": [
+              "decimal",
+              "1"
+            ],
+            "conversion_status": [
+              "text",
+              "exact"
+            ],
+            "currency_raw": [
+              "text",
+              "MGA"
+            ],
+            "evidence": [
+              "object",
+              [
+                [
+                  "price_identity",
+                  [
+                    "object",
+                    [
+                      [
+                        "natural_key",
+                        [
+                          "text",
+                          "442a4e7fc99d47490e379d9349fae28207813448efca3f8bb713bd0f0e4b20b7"
+                        ]
+                      ],
+                      [
+                        "scope",
+                        [
+                          "text",
+                          "internal_exact_raw_grain_not_source_or_human_qualification"
+                        ]
+                      ],
+                      [
+                        "statistical_kind",
+                        [
+                          "text",
+                          "point"
+                        ]
+                      ],
+                      [
+                        "version",
+                        [
+                          "text",
+                          "price_identity_v2"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "provenance",
+                  [
+                    "object",
+                    [
+                      [
+                        "cells",
+                        [
+                          "array",
+                          [
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "price"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "2900"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "price_value"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "number"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "value"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "product"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "Riz blanc local"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "product_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "market"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "Antananarivo"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "location_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "period_start"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "2025-01-01"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "period_start"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "unit"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "kg"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "unit_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "currency"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "MGA"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "currency_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [
+                        "delimiter",
+                        [
+                          "text",
+                          ","
+                        ]
+                      ],
+                      [
+                        "format",
+                        [
+                          "text",
+                          "csv"
+                        ]
+                      ],
+                      [
+                        "row",
+                        [
+                          "int",
+                          "0"
+                        ]
+                      ],
+                      [
+                        "version",
+                        [
+                          "int",
+                          "1"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "row",
+                  [
+                    "object",
+                    [
+                      [
+                        "actor_level",
+                        [
+                          "text",
+                          "retail"
+                        ]
+                      ],
+                      [
+                        "currency",
+                        [
+                          "text",
+                          "MGA"
+                        ]
+                      ],
+                      [
+                        "market",
+                        [
+                          "text",
+                          "Antananarivo"
+                        ]
+                      ],
+                      [
+                        "period_end",
+                        [
+                          "text",
+                          "2025-01-31"
+                        ]
+                      ],
+                      [
+                        "period_start",
+                        [
+                          "text",
+                          "2025-01-01"
+                        ]
+                      ],
+                      [
+                        "price",
+                        [
+                          "text",
+                          "2900"
+                        ]
+                      ],
+                      [
+                        "product",
+                        [
+                          "text",
+                          "Riz blanc local"
+                        ]
+                      ],
+                      [
+                        "unit",
+                        [
+                          "text",
+                          "kg"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            "extraction_method": [
+              "text",
+              "deterministic"
+            ],
+            "location_id": [
+              "null"
+            ],
+            "location_raw": [
+              "text",
+              "Antananarivo"
+            ],
+            "market_name": [
+              "null"
+            ],
+            "missing_code": [
+              "null"
+            ],
+            "natural_key": [
+              "text",
+              "442a4e7fc99d47490e379d9349fae28207813448efca3f8bb713bd0f0e4b20b7"
+            ],
+            "observation_id": [
+              "observation",
+              "obs.price_observation",
+              "131e1a8e456b4655c2740575380481600ce3bbf72f8eb16899c9eed75d619c79"
+            ],
+            "observed_or_imputed": [
+              "text",
+              "observed"
+            ],
+            "package_quantity": [
+              "null"
+            ],
+            "package_unit": [
+              "null"
+            ],
+            "period_end": [
+              "date",
+              "2025-01-31"
+            ],
+            "period_start": [
+              "date",
+              "2025-01-01"
+            ],
+            "price_mga_per_base": [
+              "null"
+            ],
+            "price_raw": [
+              "text",
+              "2900"
+            ],
+            "price_value": [
+              "decimal",
+              "2900"
+            ],
+            "product_id": [
+              "null"
+            ],
+            "product_raw": [
+              "text",
+              "Riz blanc local"
+            ],
+            "published_at": [
+              "null"
+            ],
+            "quality_grade": [
+              "null"
+            ],
+            "review_status": [
+              "text",
+              "accepted"
+            ],
+            "source_record_id": [
+              "uuid",
+              "0e25270a-c816-47b2-b5b7-3c2bce946848"
+            ],
+            "superseded_by": [
+              "null"
+            ],
+            "unit_raw": [
+              "text",
+              "kg"
+            ],
+            "variety": [
+              "null"
+            ]
+          }
+        ],
+        "sha256": "fb7253bc7d7b8336501c1291f9c06c0727c963ffc393bc6bc599b00d1fcec1e2"
+      },
+      "obs.production_observation": {
+        "columns": [
+          "confidence",
+          "element",
+          "evidence",
+          "extraction_method",
+          "flag_raw",
+          "ingested_at",
+          "location_id",
+          "natural_key",
+          "observation_id",
+          "observed_or_imputed",
+          "period_end",
+          "period_start",
+          "product_id",
+          "product_raw",
+          "published_at",
+          "source_record_id",
+          "superseded_by",
+          "unit_raw",
+          "value",
+          "value_raw"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.stock_observation": {
+        "columns": [
+          "base_unit",
+          "confidence",
+          "coverage_days",
+          "evidence",
+          "extraction_method",
+          "ingested_at",
+          "location_id",
+          "location_raw",
+          "market_code",
+          "market_type",
+          "measurement_mode",
+          "natural_key",
+          "observation_id",
+          "period_end",
+          "period_start",
+          "product_id",
+          "product_raw",
+          "published_at",
+          "quantity_base",
+          "quantity_raw",
+          "quantity_value",
+          "review_status",
+          "source_record_id",
+          "stock_status",
+          "superseded_by",
+          "target",
+          "unit_raw"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.trade_flow": {
+        "columns": [
+          "confidence",
+          "evidence",
+          "extraction_method",
+          "flow",
+          "hs_code",
+          "ingested_at",
+          "natural_key",
+          "observation_id",
+          "partner_iso3",
+          "partner_raw",
+          "period_end",
+          "period_start",
+          "product_id",
+          "product_raw",
+          "published_at",
+          "review_status",
+          "source_record_id",
+          "superseded_by",
+          "value_mga",
+          "value_raw",
+          "value_usd",
+          "weight_kg",
+          "weight_raw"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.weather_forecast": {
+        "columns": [
+          "evidence",
+          "forecast_id",
+          "horizon_hours",
+          "ingested_at",
+          "issued_at",
+          "location_id",
+          "method",
+          "model_name",
+          "predicted_p10",
+          "predicted_p90",
+          "predicted_value",
+          "raw_payload",
+          "source_record_id",
+          "spatial_resolution",
+          "superseded_by",
+          "unit",
+          "valid_from",
+          "valid_to",
+          "variable"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.weather_observation": {
+        "columns": [
+          "coverage_ratio",
+          "date",
+          "evidence",
+          "extraction_method",
+          "ingested_at",
+          "location_id",
+          "location_raw",
+          "method",
+          "observation_id",
+          "provider",
+          "raster_source_record_id",
+          "source_record_id",
+          "spatial_resolution",
+          "stage",
+          "superseded_by",
+          "value",
+          "value_raw",
+          "variable"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    "version": 1
+  },
+  "authenticity_qualified": false,
+  "before": {
+    "sha256": "a5924132987037efe10bc457f74503d823207ce8fac1cfdb250dd5dffbf1abef",
+    "tables": {
+      "gold.cpi_food": {
+        "columns": [
+          "base_period",
+          "chg_12m",
+          "chg_1m",
+          "geo_scope",
+          "index_value",
+          "month",
+          "series_code",
+          "series_label"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.forecast_latest": {
+        "columns": [
+          "actor_level",
+          "calibration_sample_size",
+          "cohort",
+          "coverage_rate_80",
+          "currency",
+          "data_cutoff",
+          "dataset_fingerprint",
+          "fallback_reason",
+          "forecast_id",
+          "generated_at",
+          "horizon",
+          "interval_width",
+          "is_baseline",
+          "is_calibrated",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "model_effective",
+          "model_name",
+          "model_requested",
+          "model_run_id",
+          "model_version",
+          "p10",
+          "p50",
+          "p90",
+          "product_code",
+          "product_id",
+          "product_name",
+          "series_key",
+          "status",
+          "target_period",
+          "trained_at",
+          "unit"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.import_dependency": {
+        "columns": [
+          "export_tonnes",
+          "import_dependency_ratio",
+          "import_tonnes",
+          "net_availability_tonnes",
+          "product_code",
+          "product_id",
+          "product_name",
+          "production_tonnes",
+          "year"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.market_coverage": {
+        "columns": [
+          "actor_level",
+          "admin_level",
+          "age_days",
+          "has_observed",
+          "imputed_share",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "max_price",
+          "median_price",
+          "min_price",
+          "month",
+          "n_families",
+          "n_obs",
+          "n_sources",
+          "observed_or_imputed",
+          "product_code",
+          "product_id",
+          "product_name",
+          "source_families",
+          "sources"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.market_health": {
+        "columns": [
+          "coverage",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "market_health_score",
+          "month",
+          "product_code",
+          "product_id",
+          "product_name",
+          "score_affordability",
+          "score_availability",
+          "score_climate",
+          "score_stability"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.price_changes": {
+        "columns": [
+          "actor_level",
+          "admin_level",
+          "chg_12m",
+          "chg_1m",
+          "chg_3m",
+          "chosen_source_id",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "mad_12",
+          "med_12",
+          "median_price",
+          "month",
+          "product_code",
+          "product_id",
+          "product_name",
+          "vol_12",
+          "z_score_robust"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.price_monthly": {
+        "columns": [
+          "actor_level",
+          "admin_level",
+          "has_observed",
+          "imputed_share",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "max_price",
+          "median_price",
+          "min_price",
+          "month",
+          "n_obs",
+          "price_spread",
+          "priority",
+          "product_code",
+          "product_id",
+          "product_name",
+          "source_family",
+          "source_id",
+          "stddev_price"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.price_monthly_best": {
+        "columns": [
+          "actor_level",
+          "admin_level",
+          "chosen_source_family",
+          "chosen_source_id",
+          "group_spread",
+          "has_conflict",
+          "imputed_share",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "max_price",
+          "median_price",
+          "min_price",
+          "month",
+          "n_families",
+          "n_obs",
+          "n_sources",
+          "observed_or_imputed",
+          "priority",
+          "product_code",
+          "product_id",
+          "product_name"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.price_obs_current": {
+        "columns": [
+          "actor_level",
+          "admin_level",
+          "base_unit",
+          "confidence",
+          "conversion_status",
+          "currency_raw",
+          "evidence",
+          "extraction_method",
+          "ingested_at",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "location_raw",
+          "market_name",
+          "missing_code",
+          "month",
+          "natural_key",
+          "observation_id",
+          "observed_or_imputed",
+          "period_end",
+          "period_start",
+          "price_mga_per_base",
+          "price_raw",
+          "price_value",
+          "priority",
+          "product_code",
+          "product_id",
+          "product_name",
+          "product_raw",
+          "published_at",
+          "quality_grade",
+          "source_family",
+          "source_id",
+          "source_record_id",
+          "unit_raw",
+          "variety"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.source_health": {
+        "columns": [
+          "freshness_days",
+          "freshness_sla_days",
+          "is_stale",
+          "last_fetched_at",
+          "last_run_finished_at",
+          "last_run_started_at",
+          "latest_run_status",
+          "n_records_30d",
+          "open_review_items",
+          "parse_success_rate",
+          "priority",
+          "source_id",
+          "source_name",
+          "source_status"
+        ],
+        "count": 1,
+        "rows": [
+          {
+            "freshness_days": [
+              "int",
+              "659"
+            ],
+            "freshness_sla_days": [
+              "int",
+              "30"
+            ],
+            "is_stale": [
+              "bool",
+              true
+            ],
+            "last_fetched_at": [
+              "datetime",
+              "2025-01-02T00:00:00+00:00"
+            ],
+            "last_run_finished_at": [
+              "null"
+            ],
+            "last_run_started_at": [
+              "null"
+            ],
+            "latest_run_status": [
+              "null"
+            ],
+            "n_records_30d": [
+              "int",
+              "0"
+            ],
+            "open_review_items": [
+              "int",
+              "0"
+            ],
+            "parse_success_rate": [
+              "decimal",
+              "1"
+            ],
+            "priority": [
+              "text",
+              "P0"
+            ],
+            "source_id": [
+              "text",
+              "dummy_offline_qualification"
+            ],
+            "source_name": [
+              "text",
+              "Synthetic offline software smoke"
+            ],
+            "source_status": [
+              "text",
+              "active"
+            ]
+          }
+        ],
+        "sha256": "de7ccdeb2657007ba0ba8d40b262923d819913ab2d598e57050b673162758810"
+      },
+      "gold.stock_latest": {
+        "columns": [
+          "admin_level",
+          "base_unit",
+          "coverage_days",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "period_end",
+          "period_start",
+          "product_code",
+          "product_id",
+          "product_name",
+          "published_at",
+          "quantity_base",
+          "stock_status",
+          "trend"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.trade_monthly": {
+        "columns": [
+          "flow",
+          "month",
+          "n_records",
+          "product_code",
+          "product_id",
+          "product_name",
+          "value_mga",
+          "value_usd",
+          "weight_tonnes"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "gold.weather_monthly": {
+        "columns": [
+          "baseline_precip_mm",
+          "location_id",
+          "location_name",
+          "location_pcode",
+          "month",
+          "precip_total_mm",
+          "rain_anom_3m",
+          "rain_anom_pct",
+          "rh2m_avg_pct",
+          "t2m_max_avg_c",
+          "t2m_min_avg_c"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.cpi_observation": {
+        "columns": [
+          "base_period",
+          "confidence",
+          "evidence",
+          "extraction_method",
+          "geo_scope",
+          "index_value",
+          "ingested_at",
+          "natural_key",
+          "observation_id",
+          "period_end",
+          "period_start",
+          "published_at",
+          "series_code",
+          "series_label",
+          "source_record_id",
+          "superseded_by"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.event": {
+        "columns": [
+          "confidence",
+          "event_date",
+          "event_id",
+          "event_type",
+          "evidence",
+          "extraction_method",
+          "ingested_at",
+          "location_ids",
+          "product_ids",
+          "severity",
+          "source_record_id",
+          "summary",
+          "title"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.macro_observation": {
+        "columns": [
+          "base_period",
+          "confidence",
+          "evidence",
+          "extraction_method",
+          "first_available_at",
+          "frequency",
+          "geo_scope",
+          "indicator_code",
+          "indicator_name",
+          "ingested_at",
+          "natural_key",
+          "observation_id",
+          "observed_or_imputed",
+          "period_end",
+          "period_start",
+          "published_at",
+          "review_status",
+          "source_record_id",
+          "superseded_by",
+          "unit",
+          "value",
+          "value_raw",
+          "vintage"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.price_observation": {
+        "columns": [
+          "actor_level",
+          "base_unit",
+          "confidence",
+          "conversion_status",
+          "currency_raw",
+          "evidence",
+          "extraction_method",
+          "ingested_at",
+          "location_id",
+          "location_raw",
+          "market_name",
+          "missing_code",
+          "natural_key",
+          "observation_id",
+          "observed_or_imputed",
+          "package_quantity",
+          "package_unit",
+          "period_end",
+          "period_start",
+          "price_mga_per_base",
+          "price_raw",
+          "price_value",
+          "product_id",
+          "product_raw",
+          "published_at",
+          "quality_grade",
+          "review_status",
+          "source_record_id",
+          "superseded_by",
+          "unit_raw",
+          "variety"
+        ],
+        "count": 2,
+        "rows": [
+          {
+            "actor_level": [
+              "text",
+              "retail"
+            ],
+            "base_unit": [
+              "null"
+            ],
+            "confidence": [
+              "decimal",
+              "1"
+            ],
+            "conversion_status": [
+              "text",
+              "exact"
+            ],
+            "currency_raw": [
+              "text",
+              "MGA"
+            ],
+            "evidence": [
+              "object",
+              [
+                [
+                  "price_identity",
+                  [
+                    "object",
+                    [
+                      [
+                        "natural_key",
+                        [
+                          "text",
+                          "442a4e7fc99d47490e379d9349fae28207813448efca3f8bb713bd0f0e4b20b7"
+                        ]
+                      ],
+                      [
+                        "scope",
+                        [
+                          "text",
+                          "internal_exact_raw_grain_not_source_or_human_qualification"
+                        ]
+                      ],
+                      [
+                        "statistical_kind",
+                        [
+                          "text",
+                          "point"
+                        ]
+                      ],
+                      [
+                        "version",
+                        [
+                          "text",
+                          "price_identity_v2"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "provenance",
+                  [
+                    "object",
+                    [
+                      [
+                        "cells",
+                        [
+                          "array",
+                          [
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "price"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "2800"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "price_value"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "number"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "value"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "product"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "Riz blanc local"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "product_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "market"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "Antananarivo"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "location_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "period_start"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "2025-01-01"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "period_start"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "unit"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "kg"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "unit_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "currency"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "MGA"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "currency_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [
+                        "delimiter",
+                        [
+                          "text",
+                          ","
+                        ]
+                      ],
+                      [
+                        "format",
+                        [
+                          "text",
+                          "csv"
+                        ]
+                      ],
+                      [
+                        "row",
+                        [
+                          "int",
+                          "0"
+                        ]
+                      ],
+                      [
+                        "version",
+                        [
+                          "int",
+                          "1"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "row",
+                  [
+                    "object",
+                    [
+                      [
+                        "actor_level",
+                        [
+                          "text",
+                          "retail"
+                        ]
+                      ],
+                      [
+                        "currency",
+                        [
+                          "text",
+                          "MGA"
+                        ]
+                      ],
+                      [
+                        "market",
+                        [
+                          "text",
+                          "Antananarivo"
+                        ]
+                      ],
+                      [
+                        "period_end",
+                        [
+                          "text",
+                          "2025-01-31"
+                        ]
+                      ],
+                      [
+                        "period_start",
+                        [
+                          "text",
+                          "2025-01-01"
+                        ]
+                      ],
+                      [
+                        "price",
+                        [
+                          "text",
+                          "2800"
+                        ]
+                      ],
+                      [
+                        "product",
+                        [
+                          "text",
+                          "Riz blanc local"
+                        ]
+                      ],
+                      [
+                        "unit",
+                        [
+                          "text",
+                          "kg"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            "extraction_method": [
+              "text",
+              "deterministic"
+            ],
+            "location_id": [
+              "null"
+            ],
+            "location_raw": [
+              "text",
+              "Antananarivo"
+            ],
+            "market_name": [
+              "null"
+            ],
+            "missing_code": [
+              "null"
+            ],
+            "natural_key": [
+              "text",
+              "442a4e7fc99d47490e379d9349fae28207813448efca3f8bb713bd0f0e4b20b7"
+            ],
+            "observation_id": [
+              "observation",
+              "obs.price_observation",
+              "885be83525b7f41c1a72cac5cc43cd2572fede52d0cdde692bbdf9e808d6c605"
+            ],
+            "observed_or_imputed": [
+              "text",
+              "observed"
+            ],
+            "package_quantity": [
+              "null"
+            ],
+            "package_unit": [
+              "null"
+            ],
+            "period_end": [
+              "date",
+              "2025-01-31"
+            ],
+            "period_start": [
+              "date",
+              "2025-01-01"
+            ],
+            "price_mga_per_base": [
+              "null"
+            ],
+            "price_raw": [
+              "text",
+              "2800"
+            ],
+            "price_value": [
+              "decimal",
+              "2800"
+            ],
+            "product_id": [
+              "null"
+            ],
+            "product_raw": [
+              "text",
+              "Riz blanc local"
+            ],
+            "published_at": [
+              "null"
+            ],
+            "quality_grade": [
+              "null"
+            ],
+            "review_status": [
+              "text",
+              "accepted"
+            ],
+            "source_record_id": [
+              "uuid",
+              "05e1edbb-2ef4-4dbe-b162-5a190972fa0f"
+            ],
+            "superseded_by": [
+              "observation",
+              "obs.price_observation",
+              "131e1a8e456b4655c2740575380481600ce3bbf72f8eb16899c9eed75d619c79"
+            ],
+            "unit_raw": [
+              "text",
+              "kg"
+            ],
+            "variety": [
+              "null"
+            ]
+          },
+          {
+            "actor_level": [
+              "text",
+              "retail"
+            ],
+            "base_unit": [
+              "null"
+            ],
+            "confidence": [
+              "decimal",
+              "1"
+            ],
+            "conversion_status": [
+              "text",
+              "exact"
+            ],
+            "currency_raw": [
+              "text",
+              "MGA"
+            ],
+            "evidence": [
+              "object",
+              [
+                [
+                  "price_identity",
+                  [
+                    "object",
+                    [
+                      [
+                        "natural_key",
+                        [
+                          "text",
+                          "442a4e7fc99d47490e379d9349fae28207813448efca3f8bb713bd0f0e4b20b7"
+                        ]
+                      ],
+                      [
+                        "scope",
+                        [
+                          "text",
+                          "internal_exact_raw_grain_not_source_or_human_qualification"
+                        ]
+                      ],
+                      [
+                        "statistical_kind",
+                        [
+                          "text",
+                          "point"
+                        ]
+                      ],
+                      [
+                        "version",
+                        [
+                          "text",
+                          "price_identity_v2"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "provenance",
+                  [
+                    "object",
+                    [
+                      [
+                        "cells",
+                        [
+                          "array",
+                          [
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "price"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "2900"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "price_value"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "number"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "value"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "product"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "Riz blanc local"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "product_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "market"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "Antananarivo"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "location_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "period_start"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "2025-01-01"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "period_start"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "unit"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "kg"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "unit_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "object",
+                              [
+                                [
+                                  "column",
+                                  [
+                                    "text",
+                                    "currency"
+                                  ]
+                                ],
+                                [
+                                  "expected",
+                                  [
+                                    "text",
+                                    "MGA"
+                                  ]
+                                ],
+                                [
+                                  "field",
+                                  [
+                                    "text",
+                                    "currency_raw"
+                                  ]
+                                ],
+                                [
+                                  "kind",
+                                  [
+                                    "text",
+                                    "text"
+                                  ]
+                                ],
+                                [
+                                  "role",
+                                  [
+                                    "text",
+                                    "identity"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [
+                        "delimiter",
+                        [
+                          "text",
+                          ","
+                        ]
+                      ],
+                      [
+                        "format",
+                        [
+                          "text",
+                          "csv"
+                        ]
+                      ],
+                      [
+                        "row",
+                        [
+                          "int",
+                          "0"
+                        ]
+                      ],
+                      [
+                        "version",
+                        [
+                          "int",
+                          "1"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "row",
+                  [
+                    "object",
+                    [
+                      [
+                        "actor_level",
+                        [
+                          "text",
+                          "retail"
+                        ]
+                      ],
+                      [
+                        "currency",
+                        [
+                          "text",
+                          "MGA"
+                        ]
+                      ],
+                      [
+                        "market",
+                        [
+                          "text",
+                          "Antananarivo"
+                        ]
+                      ],
+                      [
+                        "period_end",
+                        [
+                          "text",
+                          "2025-01-31"
+                        ]
+                      ],
+                      [
+                        "period_start",
+                        [
+                          "text",
+                          "2025-01-01"
+                        ]
+                      ],
+                      [
+                        "price",
+                        [
+                          "text",
+                          "2900"
+                        ]
+                      ],
+                      [
+                        "product",
+                        [
+                          "text",
+                          "Riz blanc local"
+                        ]
+                      ],
+                      [
+                        "unit",
+                        [
+                          "text",
+                          "kg"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            "extraction_method": [
+              "text",
+              "deterministic"
+            ],
+            "location_id": [
+              "null"
+            ],
+            "location_raw": [
+              "text",
+              "Antananarivo"
+            ],
+            "market_name": [
+              "null"
+            ],
+            "missing_code": [
+              "null"
+            ],
+            "natural_key": [
+              "text",
+              "442a4e7fc99d47490e379d9349fae28207813448efca3f8bb713bd0f0e4b20b7"
+            ],
+            "observation_id": [
+              "observation",
+              "obs.price_observation",
+              "131e1a8e456b4655c2740575380481600ce3bbf72f8eb16899c9eed75d619c79"
+            ],
+            "observed_or_imputed": [
+              "text",
+              "observed"
+            ],
+            "package_quantity": [
+              "null"
+            ],
+            "package_unit": [
+              "null"
+            ],
+            "period_end": [
+              "date",
+              "2025-01-31"
+            ],
+            "period_start": [
+              "date",
+              "2025-01-01"
+            ],
+            "price_mga_per_base": [
+              "null"
+            ],
+            "price_raw": [
+              "text",
+              "2900"
+            ],
+            "price_value": [
+              "decimal",
+              "2900"
+            ],
+            "product_id": [
+              "null"
+            ],
+            "product_raw": [
+              "text",
+              "Riz blanc local"
+            ],
+            "published_at": [
+              "null"
+            ],
+            "quality_grade": [
+              "null"
+            ],
+            "review_status": [
+              "text",
+              "accepted"
+            ],
+            "source_record_id": [
+              "uuid",
+              "0e25270a-c816-47b2-b5b7-3c2bce946848"
+            ],
+            "superseded_by": [
+              "null"
+            ],
+            "unit_raw": [
+              "text",
+              "kg"
+            ],
+            "variety": [
+              "null"
+            ]
+          }
+        ],
+        "sha256": "fb7253bc7d7b8336501c1291f9c06c0727c963ffc393bc6bc599b00d1fcec1e2"
+      },
+      "obs.production_observation": {
+        "columns": [
+          "confidence",
+          "element",
+          "evidence",
+          "extraction_method",
+          "flag_raw",
+          "ingested_at",
+          "location_id",
+          "natural_key",
+          "observation_id",
+          "observed_or_imputed",
+          "period_end",
+          "period_start",
+          "product_id",
+          "product_raw",
+          "published_at",
+          "source_record_id",
+          "superseded_by",
+          "unit_raw",
+          "value",
+          "value_raw"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.stock_observation": {
+        "columns": [
+          "base_unit",
+          "confidence",
+          "coverage_days",
+          "evidence",
+          "extraction_method",
+          "ingested_at",
+          "location_id",
+          "location_raw",
+          "market_code",
+          "market_type",
+          "measurement_mode",
+          "natural_key",
+          "observation_id",
+          "period_end",
+          "period_start",
+          "product_id",
+          "product_raw",
+          "published_at",
+          "quantity_base",
+          "quantity_raw",
+          "quantity_value",
+          "review_status",
+          "source_record_id",
+          "stock_status",
+          "superseded_by",
+          "target",
+          "unit_raw"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.trade_flow": {
+        "columns": [
+          "confidence",
+          "evidence",
+          "extraction_method",
+          "flow",
+          "hs_code",
+          "ingested_at",
+          "natural_key",
+          "observation_id",
+          "partner_iso3",
+          "partner_raw",
+          "period_end",
+          "period_start",
+          "product_id",
+          "product_raw",
+          "published_at",
+          "review_status",
+          "source_record_id",
+          "superseded_by",
+          "value_mga",
+          "value_raw",
+          "value_usd",
+          "weight_kg",
+          "weight_raw"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.weather_forecast": {
+        "columns": [
+          "evidence",
+          "forecast_id",
+          "horizon_hours",
+          "ingested_at",
+          "issued_at",
+          "location_id",
+          "method",
+          "model_name",
+          "predicted_p10",
+          "predicted_p90",
+          "predicted_value",
+          "raw_payload",
+          "source_record_id",
+          "spatial_resolution",
+          "superseded_by",
+          "unit",
+          "valid_from",
+          "valid_to",
+          "variable"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "obs.weather_observation": {
+        "columns": [
+          "coverage_ratio",
+          "date",
+          "evidence",
+          "extraction_method",
+          "ingested_at",
+          "location_id",
+          "location_raw",
+          "method",
+          "observation_id",
+          "provider",
+          "raster_source_record_id",
+          "source_record_id",
+          "spatial_resolution",
+          "stage",
+          "superseded_by",
+          "value",
+          "value_raw",
+          "variable"
+        ],
+        "count": 0,
+        "rows": [],
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    "version": 1
+  },
+  "bronze_inventory_after": {
+    "count": 2,
+    "sha256": "8f2afb7c7e7d4daeedc1b448147f888274a8e36ffb7587fd91ff48b8b7a4a76b"
+  },
+  "bronze_inventory_before": {
+    "count": 2,
+    "sha256": "8f2afb7c7e7d4daeedc1b448147f888274a8e36ffb7587fd91ff48b8b7a4a76b"
+  },
+  "bronze_inventory_verified": true,
+  "database": "ketrika_rebuild_qualification",
+  "dataset": "synthetic",
+  "diff": {
+    "after_sha256": "a5924132987037efe10bc457f74503d823207ce8fac1cfdb250dd5dffbf1abef",
+    "before_sha256": "a5924132987037efe10bc457f74503d823207ce8fac1cfdb250dd5dffbf1abef",
+    "changed_tables": {},
+    "content_identical": true,
+    "version": 1
+  },
+  "forecasts_recomputed": false,
+  "network_after": {
+    "external_ipv4_routes": 0,
+    "interfaces": [
+      "lo"
+    ]
+  },
+  "network_before": {
+    "external_ipv4_routes": 0,
+    "interfaces": [
+      "lo"
+    ]
+  },
+  "original_s3_versions_verified": false,
+  "protected_after": {
+    "sha256": "60d72f98491de949c98376b9b10d5115cd6cf7866e85be8363fcaf52bd4b4052",
+    "tables": {
+      "meta.source": {
+        "count": 1,
+        "rows": [
+          "{\"spec\": {\"name\": \"Synthetic offline software smoke\", \"priority\": \"P0\", \"freshness_sla_days\": 30}, \"status\": \"active\", \"source_id\": \"dummy_offline_qualification\", \"updated_at\": \"2026-10-15T14:40:21.589683+00:00\"}"
+        ]
+      },
+      "meta.source_record": {
+        "count": 2,
+        "rows": [
+          "{\"http_etag\": null, \"mime_type\": \"text/csv\", \"source_id\": \"dummy_offline_qualification\", \"fetched_at\": \"2025-01-01T00:00:00+00:00\", \"object_key\": \"dummy_offline_qualification/2025/01/f1a0ba4ba6e4b4ecfa344ec0039c584f6a9c9cc1fc1877703d5c0ae3d56842ca.csv\", \"source_url\": \"\", \"http_status\": 0, \"published_at\": null, \"retrieved_via\": \"manual_upload\", \"content_sha256\": \"f1a0ba4ba6e4b4ecfa344ec0039c584f6a9c9cc1fc1877703d5c0ae3d56842ca\", \"parser_version\": \"1.0.1\", \"source_record_id\": \"05e1edbb-2ef4-4dbe-b162-5a190972fa0f\", \"extraction_status\": \"parsed\", \"http_last_modified\": null}",
+          "{\"http_etag\": null, \"mime_type\": \"text/csv\", \"source_id\": \"dummy_offline_qualification\", \"fetched_at\": \"2025-01-02T00:00:00+00:00\", \"object_key\": \"dummy_offline_qualification/2025/01/0d6bd78df81dabde1bfeba24f8a7c9dadc62b01d8a5663f15581a73f3194bc4c.csv\", \"source_url\": \"\", \"http_status\": 0, \"published_at\": null, \"retrieved_via\": \"manual_upload\", \"content_sha256\": \"0d6bd78df81dabde1bfeba24f8a7c9dadc62b01d8a5663f15581a73f3194bc4c\", \"parser_version\": \"1.0.1\", \"source_record_id\": \"0e25270a-c816-47b2-b5b7-3c2bce946848\", \"extraction_status\": \"parsed\", \"http_last_modified\": null}"
+        ]
+      },
+      "ref.crop_calendar": {
+        "count": 0,
+        "rows": []
+      },
+      "ref.location": {
+        "count": 30,
+        "rows": [
+          "{\"geom\": null, \"name\": \"Alaotra-Mangoro\", \"pcode\": \"MDG33\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"f0f260f0-e692-4975-88ba-37c5b537d930\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Amoron'i Mania\", \"pcode\": \"MDG22\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"704fe7fc-5914-45a4-bcdb-aace9c5771e3\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Analamanga\", \"pcode\": \"MDG11\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"cdefd600-c7d9-4ee8-b5da-ab8c3b94b8db\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Analanjirofo\", \"pcode\": \"MDG32\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"e46bdaf1-0b08-48cd-b353-a4c7b2b39c12\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Androy\", \"pcode\": \"MDG52\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"d2f1789b-ebe7-4de1-a794-c3e73209c7ba\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Anosy\", \"pcode\": \"MDG53\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"1e0c861e-19c2-4c6c-8702-f5bd7eb4c4d2\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Antananarivo Renivohitra\", \"pcode\": \"MDG1101\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"cdefd600-c7d9-4ee8-b5da-ab8c3b94b8db\", \"valid_from\": null, \"admin_level\": 2, \"location_id\": \"3c019c43-d0b7-4f7c-a6c6-68d1f12a8331\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Antsirabe I\", \"pcode\": \"MDG1201\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"76de4e88-0bf9-47de-b990-56d08a08d54f\", \"valid_from\": null, \"admin_level\": 2, \"location_id\": \"11ca3849-e723-4ab3-b75a-4c70527088cc\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Atsimo-Andrefana\", \"pcode\": \"MDG51\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"12636e09-c389-4a66-a650-af5d6da46b3a\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Atsimo-Atsinanana\", \"pcode\": \"MDG26\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"d888f8b1-9867-4463-8163-54beed06d6a1\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Atsinanana\", \"pcode\": \"MDG31\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"57b868dc-f7dc-4518-a7ff-e164a3107627\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Betsiboka\", \"pcode\": \"MDG43\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"f6418a89-b977-47c2-9ad6-f4d3941d4904\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Boeny\", \"pcode\": \"MDG41\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"a5b59757-8cde-4b51-80a4-97b9cf14a081\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Bongolava\", \"pcode\": \"MDG14\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"f236360d-429f-492f-b683-47caedd51b86\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Commune Urbaine d'Antananarivo\", \"pcode\": \"MDG110101\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"3c019c43-d0b7-4f7c-a6c6-68d1f12a8331\", \"valid_from\": null, \"admin_level\": 3, \"location_id\": \"54da68d4-a98d-4167-9cdb-bbe2e16acddd\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Commune Urbaine d'Antsirabe\", \"pcode\": \"MDG120101\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"11ca3849-e723-4ab3-b75a-4c70527088cc\", \"valid_from\": null, \"admin_level\": 3, \"location_id\": \"29cfb9b2-5674-40d6-ba36-ce1ef2dce41d\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Commune Urbaine de Toamasina\", \"pcode\": \"MDG310101\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"f5dd1b16-a3bf-4227-9288-d495ec377616\", \"valid_from\": null, \"admin_level\": 3, \"location_id\": \"772ade38-36b1-42fe-9c42-5643dcaa3cef\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Diana\", \"pcode\": \"MDG71\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"46c469f2-9ed1-4f66-b663-636e29ec49ff\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Fitovinany\", \"pcode\": \"MDG24\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"5e15f944-f4bf-4cdc-851b-029f8f3050a3\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Haute Matsiatra\", \"pcode\": \"MDG21\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"16b8cd78-4d15-4508-a5c7-1e4dc552551f\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Ihorombe\", \"pcode\": \"MDG25\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"3fdcf82e-ff19-47f9-8918-83c42a054cb3\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Itasy\", \"pcode\": \"MDG13\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"4ea2e4ab-ef15-4497-a0e5-1ce0074c098a\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Madagascar\", \"pcode\": \"MDG\", \"centroid\": null, \"valid_to\": null, \"parent_id\": null, \"valid_from\": null, \"admin_level\": 0, \"location_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Melaky\", \"pcode\": \"MDG44\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"4e169bed-d043-493c-8551-1379e5ac227b\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Menabe\", \"pcode\": \"MDG54\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"a544c80e-aa03-4763-9659-34a66f580757\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Sava\", \"pcode\": \"MDG72\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"78a390d5-bd22-40e9-ac18-2fad5098864e\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Sofia\", \"pcode\": \"MDG42\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"5d09a945-6d3b-40c4-a376-85f3e3f45254\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Toamasina I\", \"pcode\": \"MDG3101\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"57b868dc-f7dc-4518-a7ff-e164a3107627\", \"valid_from\": null, \"admin_level\": 2, \"location_id\": \"f5dd1b16-a3bf-4227-9288-d495ec377616\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Vakinankaratra\", \"pcode\": \"MDG12\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"76de4e88-0bf9-47de-b990-56d08a08d54f\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Vatovavy\", \"pcode\": \"MDG23\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"c796e2f5-17c8-4ff6-b6a8-38572bd2f705\", \"boundary_version\": \"2024.1\"}"
+        ]
+      },
+      "ref.location_alias": {
+        "count": 38,
+        "rows": [
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"alaotra mangoro\", \"confidence\": 1.00, \"location_id\": \"f0f260f0-e692-4975-88ba-37c5b537d930\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"ambatosoa\", \"confidence\": 0.85, \"location_id\": \"e46bdaf1-0b08-48cd-b353-a4c7b2b39c12\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"amoron i mania\", \"confidence\": 1.00, \"location_id\": \"704fe7fc-5914-45a4-bcdb-aace9c5771e3\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"analamanga\", \"confidence\": 1.00, \"location_id\": \"cdefd600-c7d9-4ee8-b5da-ab8c3b94b8db\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"analanjirofo\", \"confidence\": 1.00, \"location_id\": \"e46bdaf1-0b08-48cd-b353-a4c7b2b39c12\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"androy\", \"confidence\": 1.00, \"location_id\": \"d2f1789b-ebe7-4de1-a794-c3e73209c7ba\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"anosy\", \"confidence\": 1.00, \"location_id\": \"1e0c861e-19c2-4c6c-8702-f5bd7eb4c4d2\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"antananarivo renivohitra\", \"confidence\": 1.00, \"location_id\": \"3c019c43-d0b7-4f7c-a6c6-68d1f12a8331\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"antananarivo\", \"confidence\": 0.95, \"location_id\": \"3c019c43-d0b7-4f7c-a6c6-68d1f12a8331\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"antsirabe i\", \"confidence\": 1.00, \"location_id\": \"11ca3849-e723-4ab3-b75a-4c70527088cc\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"antsirabe\", \"confidence\": 0.95, \"location_id\": \"11ca3849-e723-4ab3-b75a-4c70527088cc\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"atsimo andrefana\", \"confidence\": 1.00, \"location_id\": \"12636e09-c389-4a66-a650-af5d6da46b3a\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"atsimo atsinanana\", \"confidence\": 1.00, \"location_id\": \"d888f8b1-9867-4463-8163-54beed06d6a1\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"atsinanana\", \"confidence\": 1.00, \"location_id\": \"57b868dc-f7dc-4518-a7ff-e164a3107627\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"betsiboka\", \"confidence\": 1.00, \"location_id\": \"f6418a89-b977-47c2-9ad6-f4d3941d4904\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"boeny\", \"confidence\": 1.00, \"location_id\": \"a5b59757-8cde-4b51-80a4-97b9cf14a081\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"bongolava\", \"confidence\": 1.00, \"location_id\": \"f236360d-429f-492f-b683-47caedd51b86\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"diana\", \"confidence\": 1.00, \"location_id\": \"46c469f2-9ed1-4f66-b663-636e29ec49ff\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"fitovinany\", \"confidence\": 1.00, \"location_id\": \"5e15f944-f4bf-4cdc-851b-029f8f3050a3\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"grande ile\", \"confidence\": 0.90, \"location_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"haute matsiatra\", \"confidence\": 1.00, \"location_id\": \"16b8cd78-4d15-4508-a5c7-1e4dc552551f\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"ihorombe\", \"confidence\": 1.00, \"location_id\": \"3fdcf82e-ff19-47f9-8918-83c42a054cb3\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"itasy\", \"confidence\": 1.00, \"location_id\": \"4ea2e4ab-ef15-4497-a0e5-1ce0074c098a\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"madagascar\", \"confidence\": 1.00, \"location_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"matsiatra ambony\", \"confidence\": 1.00, \"location_id\": \"16b8cd78-4d15-4508-a5c7-1e4dc552551f\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"mdg\", \"confidence\": 1.00, \"location_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"melaky\", \"confidence\": 1.00, \"location_id\": \"4e169bed-d043-493c-8551-1379e5ac227b\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"menabe\", \"confidence\": 1.00, \"location_id\": \"a544c80e-aa03-4763-9659-34a66f580757\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"repoblikan i madagasikara\", \"confidence\": 1.00, \"location_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"sava\", \"confidence\": 1.00, \"location_id\": \"78a390d5-bd22-40e9-ac18-2fad5098864e\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"sofia\", \"confidence\": 1.00, \"location_id\": \"5d09a945-6d3b-40c4-a376-85f3e3f45254\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"tamatave\", \"confidence\": 0.95, \"location_id\": \"f5dd1b16-a3bf-4227-9288-d495ec377616\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"tananarive\", \"confidence\": 0.95, \"location_id\": \"3c019c43-d0b7-4f7c-a6c6-68d1f12a8331\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"toamasina i\", \"confidence\": 1.00, \"location_id\": \"f5dd1b16-a3bf-4227-9288-d495ec377616\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"toamasina\", \"confidence\": 0.95, \"location_id\": \"f5dd1b16-a3bf-4227-9288-d495ec377616\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"vakinankaratra\", \"confidence\": 1.00, \"location_id\": \"76de4e88-0bf9-47de-b990-56d08a08d54f\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"vatovavy fitovinany\", \"confidence\": 0.85, \"location_id\": \"c796e2f5-17c8-4ff6-b6a8-38572bd2f705\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"vatovavy\", \"confidence\": 1.00, \"location_id\": \"c796e2f5-17c8-4ff6-b6a8-38572bd2f705\"}"
+        ]
+      },
+      "ref.product": {
+        "count": 15,
+        "rows": [
+          "{\"category\": \"cereal\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"100590\"], \"product_id\": \"17bb7d55-f7a8-4d61-814c-e54502f72515\", \"product_code\": \"MAIZE_GRAIN\", \"canonical_name_fr\": \"Ma\u00efs grain\", \"faostat_item_codes\": [\"56\"]}",
+          "{\"category\": \"cereal\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"100610\"], \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\", \"product_code\": \"RICE_PADDY\", \"canonical_name_fr\": \"Riz paddy\", \"faostat_item_codes\": [\"27\"]}",
+          "{\"category\": \"cereal\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"100630\"], \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"product_code\": \"RICE_WHITE_IMPORTED\", \"canonical_name_fr\": \"Riz blanc import\u00e9\", \"faostat_item_codes\": []}",
+          "{\"category\": \"cereal\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"100630\"], \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"product_code\": \"RICE_WHITE_LOCAL\", \"canonical_name_fr\": \"Riz blanc local\", \"faostat_item_codes\": []}",
+          "{\"category\": \"flour\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"110100\"], \"product_id\": \"a3f1c949-523f-4d63-8eec-06591d98a8b2\", \"product_code\": \"WHEAT_FLOUR\", \"canonical_name_fr\": \"Farine de bl\u00e9\", \"faostat_item_codes\": [\"16\"]}",
+          "{\"category\": \"oil\", \"verified\": true, \"base_unit\": \"l\", \"hs6_codes\": [\"150790\", \"151190\", \"151219\"], \"product_id\": \"fa24d01f-449d-4e85-a60f-711c8f4743ea\", \"product_code\": \"VEG_OIL\", \"canonical_name_fr\": \"Huile alimentaire (v\u00e9g\u00e9tale)\", \"faostat_item_codes\": []}",
+          "{\"category\": \"pulse\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071333\"], \"product_id\": \"ed96d770-d070-49ce-881c-c9a0e10caf3b\", \"product_code\": \"BEANS_DRY\", \"canonical_name_fr\": \"Haricot sec\", \"faostat_item_codes\": [\"176\"]}",
+          "{\"category\": \"pulse\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071340\"], \"product_id\": \"bdb78650-8b57-443d-be8b-045e67ce0f9a\", \"product_code\": \"LENTILS\", \"canonical_name_fr\": \"Lentilles\", \"faostat_item_codes\": [\"201\"]}",
+          "{\"category\": \"pulse\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071390\"], \"product_id\": \"295744d1-a520-46d5-8d00-208cc66ec395\", \"product_code\": \"BAMBARA_GROUNDNUT\", \"canonical_name_fr\": \"Pois de bambara (voanjobory)\", \"faostat_item_codes\": [\"203\"]}",
+          "{\"category\": \"pulse\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071390\"], \"product_id\": \"5113351d-1cbf-4187-b0ef-2d0f39ac2dc5\", \"product_code\": \"LIMA_BEANS\", \"canonical_name_fr\": \"Pois du Cap (kabaro)\", \"faostat_item_codes\": []}",
+          "{\"category\": \"pulse_oilseed\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"120241\", \"120242\"], \"product_id\": \"7f7b768c-1f6a-4cea-a4fe-e1d2d4a28965\", \"product_code\": \"GROUNDNUT\", \"canonical_name_fr\": \"Arachide\", \"faostat_item_codes\": [\"242\"]}",
+          "{\"category\": \"root_tuber\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071410\"], \"product_id\": \"219a3043-7c3e-404e-8cea-f210a64e9bc0\", \"product_code\": \"CASSAVA_DRIED\", \"canonical_name_fr\": \"Manioc sec\", \"faostat_item_codes\": []}",
+          "{\"category\": \"root_tuber\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071410\"], \"product_id\": \"22f7acc8-cc2e-4505-8b47-1984b590be5d\", \"product_code\": \"CASSAVA_FRESH\", \"canonical_name_fr\": \"Manioc frais\", \"faostat_item_codes\": [\"125\"]}",
+          "{\"category\": \"root_tuber\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071420\"], \"product_id\": \"8be97f54-5bf9-48b9-94f4-70cf02474d55\", \"product_code\": \"SWEET_POTATO\", \"canonical_name_fr\": \"Patate douce\", \"faostat_item_codes\": [\"122\"]}",
+          "{\"category\": \"sugar\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"170114\", \"170199\"], \"product_id\": \"965bc48f-0d31-45d4-be44-07a31c484d70\", \"product_code\": \"SUGAR\", \"canonical_name_fr\": \"Sucre\", \"faostat_item_codes\": []}"
+        ]
+      },
+      "ref.product_alias": {
+        "count": 35,
+        "rows": [
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"1afd538b-6b7f-4a8b-a587-ff687b5bc7c1\", \"source_id\": null, \"alias_norm\": \"rice (local)\", \"confidence\": 0.95, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"alias_display\": \"Rice (local)\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"46d6169f-b7c5-48a8-9db1-e5d0bd40822f\", \"source_id\": null, \"alias_norm\": \"cassava (fresh)\", \"confidence\": 0.95, \"product_id\": \"22f7acc8-cc2e-4505-8b47-1984b590be5d\", \"alias_display\": \"Cassava (fresh)\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"855abd1b-5f68-4310-9c50-ceb424afdb97\", \"source_id\": null, \"alias_norm\": \"rice\", \"confidence\": 0.80, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"alias_display\": \"Rice\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"98c59ee0-eb37-4367-8880-121dffcda193\", \"source_id\": null, \"alias_norm\": \"sugar\", \"confidence\": 0.95, \"product_id\": \"965bc48f-0d31-45d4-be44-07a31c484d70\", \"alias_display\": \"Sugar\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"99ff47ab-c54b-4f1b-bfc1-8e95f61aee40\", \"source_id\": null, \"alias_norm\": \"beans (dry)\", \"confidence\": 0.95, \"product_id\": \"ed96d770-d070-49ce-881c-c9a0e10caf3b\", \"alias_display\": \"Beans (dry)\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"d2558c61-f4fe-4e79-a6ee-82de45cbe955\", \"source_id\": null, \"alias_norm\": \"oil (vegetable)\", \"confidence\": 0.95, \"product_id\": \"fa24d01f-449d-4e85-a60f-711c8f4743ea\", \"alias_display\": \"Oil (vegetable)\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"d78932c5-b76e-46c7-b4c6-87309b5a321c\", \"source_id\": null, \"alias_norm\": \"wheat\", \"confidence\": 0.90, \"product_id\": \"a3f1c949-523f-4d63-8eec-06591d98a8b2\", \"alias_display\": \"Wheat\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"e418ba5d-1a45-4a46-b24a-1bf70a950a6b\", \"source_id\": null, \"alias_norm\": \"maize\", \"confidence\": 0.95, \"product_id\": \"17bb7d55-f7a8-4d61-814c-e54502f72515\", \"alias_display\": \"Maize\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"ed9e62c1-98ac-4feb-876e-1e44383f4461\", \"source_id\": null, \"alias_norm\": \"cassava\", \"confidence\": 0.90, \"product_id\": \"22f7acc8-cc2e-4505-8b47-1984b590be5d\", \"alias_display\": \"Cassava\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"f490472f-7a6a-4436-8671-8f016ec64d0b\", \"source_id\": null, \"alias_norm\": \"rice (imported)\", \"confidence\": 0.95, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"alias_display\": \"Rice (imported)\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"199517c1-97aa-48b6-9b88-d6a7807e64b9\", \"source_id\": null, \"alias_norm\": \"farine de ble\", \"confidence\": 0.95, \"product_id\": \"a3f1c949-523f-4d63-8eec-06591d98a8b2\", \"alias_display\": \"Farine de ble\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"258beac0-f9d8-48fc-9a6d-96bf33b6a7b9\", \"source_id\": null, \"alias_norm\": \"riz importe\", \"confidence\": 0.95, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"alias_display\": \"riz import\u00e9\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"3628e3cf-04fe-42a5-ae39-ae5067e6331a\", \"source_id\": null, \"alias_norm\": \"sucre de canne ou de betterave\", \"confidence\": 0.95, \"product_id\": \"965bc48f-0d31-45d4-be44-07a31c484d70\", \"alias_display\": \"Sucre de canne ou de betterave\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"398a15ce-6225-4dee-9442-502302e160f3\", \"source_id\": null, \"alias_norm\": \"huile alimentaire vrac\", \"confidence\": 0.95, \"product_id\": \"fa24d01f-449d-4e85-a60f-711c8f4743ea\", \"alias_display\": \"Huile alimentaire vrac\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"59c873b9-b025-467f-8baf-c8b91257cb19\", \"source_id\": null, \"alias_norm\": \"sucre blanc\", \"confidence\": 0.95, \"product_id\": \"965bc48f-0d31-45d4-be44-07a31c484d70\", \"alias_display\": \"Sucre blanc\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"81bffdc0-d31a-4e66-94cf-8f003e73ef46\", \"source_id\": null, \"alias_norm\": \"riz blanc local\", \"confidence\": 1.00, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"alias_display\": \"Riz blanc local\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"9c3e2783-26d7-4cc5-b394-82f274d373e9\", \"source_id\": null, \"alias_norm\": \"riz semi-blanchi ou blanchi\", \"confidence\": 0.95, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"alias_display\": \"Riz semi-blanchi ou blanchi\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"a8140fe6-a7bb-435a-a10d-e1e3915116a1\", \"source_id\": null, \"alias_norm\": \"paddy\", \"confidence\": 0.95, \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\", \"alias_display\": \"paddy\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"c70d168b-cfde-4763-b6de-e235d5e78755\", \"source_id\": null, \"alias_norm\": \"riz paddy\", \"confidence\": 1.00, \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\", \"alias_display\": \"Riz paddy\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"d3589207-f976-4424-b874-27aba6857331\", \"source_id\": null, \"alias_norm\": \"riz blanc importe\", \"confidence\": 1.00, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"alias_display\": \"Riz blanc import\u00e9\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"f32d1801-eb50-4508-acbe-9f4f614888cc\", \"source_id\": null, \"alias_norm\": \"huile de palme et fractions\", \"confidence\": 0.95, \"product_id\": \"fa24d01f-449d-4e85-a60f-711c8f4743ea\", \"alias_display\": \"Huile de palme et fractions\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"0f06d53d-b4be-40ef-8c7c-271224940524\", \"source_id\": null, \"alias_norm\": \"voanjo\", \"confidence\": 0.85, \"product_id\": \"7f7b768c-1f6a-4cea-a4fe-e1d2d4a28965\", \"alias_display\": \"voanjo\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"108d9682-cf27-47c1-982d-8a4d34ae160a\", \"source_id\": null, \"alias_norm\": \"vomanga\", \"confidence\": 0.85, \"product_id\": \"8be97f54-5bf9-48b9-94f4-70cf02474d55\", \"alias_display\": \"vomanga\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"12c02483-6038-41ba-aad3-1773fb8cb5f3\", \"source_id\": null, \"alias_norm\": \"katsaka\", \"confidence\": 0.85, \"product_id\": \"17bb7d55-f7a8-4d61-814c-e54502f72515\", \"alias_display\": \"katsaka\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"387dd738-40cd-4593-bf27-210260ab3c0f\", \"source_id\": null, \"alias_norm\": \"vary\", \"confidence\": 0.60, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"alias_display\": \"vary\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"44396818-5514-432d-93a6-60f40d503f1e\", \"source_id\": null, \"alias_norm\": \"siramamy\", \"confidence\": 0.90, \"product_id\": \"965bc48f-0d31-45d4-be44-07a31c484d70\", \"alias_display\": \"siramamy\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"47b4ff66-101c-484c-a0f5-28d24525b48a\", \"source_id\": null, \"alias_norm\": \"mangahazo\", \"confidence\": 0.80, \"product_id\": \"22f7acc8-cc2e-4505-8b47-1984b590be5d\", \"alias_display\": \"mangahazo\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"727d6859-2bc9-46a9-bf78-f12888229c23\", \"source_id\": null, \"alias_norm\": \"tsaramaso\", \"confidence\": 0.85, \"product_id\": \"ed96d770-d070-49ce-881c-c9a0e10caf3b\", \"alias_display\": \"tsaramaso\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"7eb1d3da-856a-410e-b452-9434ac60f28e\", \"source_id\": null, \"alias_norm\": \"voanjobory\", \"confidence\": 0.90, \"product_id\": \"295744d1-a520-46d5-8d00-208cc66ec395\", \"alias_display\": \"voanjobory\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"a4218e2e-4c31-45b6-acb4-366a9b34ef42\", \"source_id\": null, \"alias_norm\": \"kabaro\", \"confidence\": 0.85, \"product_id\": \"5113351d-1cbf-4187-b0ef-2d0f39ac2dc5\", \"alias_display\": \"kabaro\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"bc1391b8-1ee7-46a4-9a40-3d3270e54d72\", \"source_id\": null, \"alias_norm\": \"menaka\", \"confidence\": 0.80, \"product_id\": \"fa24d01f-449d-4e85-a60f-711c8f4743ea\", \"alias_display\": \"menaka\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"cf8bf957-4333-4d90-81bd-13697fbcf31e\", \"source_id\": null, \"alias_norm\": \"akotry\", \"confidence\": 0.90, \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\", \"alias_display\": \"akotry\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"ee4648ea-1e00-4af3-82c8-db6664b9d25d\", \"source_id\": null, \"alias_norm\": \"lafarinina\", \"confidence\": 0.80, \"product_id\": \"a3f1c949-523f-4d63-8eec-06591d98a8b2\", \"alias_display\": \"lafarinina\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"f75e1c51-1e55-4e87-8f6c-8d34a8decbef\", \"source_id\": null, \"alias_norm\": \"vary vahiny\", \"confidence\": 0.85, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"alias_display\": \"vary vahiny\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"f964158f-833f-42df-b23d-558fafde1ec5\", \"source_id\": null, \"alias_norm\": \"vary gasy\", \"confidence\": 0.90, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"alias_display\": \"vary gasy\", \"human_reviewed\": false}"
+        ]
+      },
+      "ref.unit_conversion": {
+        "count": 16,
+        "rows": [
+          "{\"factor\": 0.001000, \"evidence\": \"Sous-multiple SI (1 g = 0.001 kg)\", \"base_unit\": \"kg\", \"unit_code\": \"g\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 0.001000, \"evidence\": \"Sous-multiple SI (1 ml = 0.001 l)\", \"base_unit\": \"l\", \"unit_code\": \"ml\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 0.220000, \"evidence\": \"\u00c9tude ODR/CIRAD : 1 kapoaka de paddy = ~220 g (densit\u00e9 apparente moindre)\", \"base_unit\": \"kg\", \"unit_code\": \"kapoaka\", \"confidence\": 0.85, \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\"}",
+          "{\"factor\": 0.260000, \"evidence\": \"Mesures march\u00e9s locaux : 1 kapoaka de ma\u00efs grain = ~260 g\", \"base_unit\": \"kg\", \"unit_code\": \"kapoaka\", \"confidence\": 0.80, \"product_id\": \"17bb7d55-f7a8-4d61-814c-e54502f72515\"}",
+          "{\"factor\": 0.280000, \"evidence\": \"Mesures march\u00e9s locaux : 1 kapoaka de haricots secs = ~280 g\", \"base_unit\": \"kg\", \"unit_code\": \"kapoaka\", \"confidence\": 0.80, \"product_id\": \"ed96d770-d070-49ce-881c-c9a0e10caf3b\"}",
+          "{\"factor\": 0.280000, \"evidence\": \"Mesures march\u00e9s urbains : 1 kapoaka de riz import\u00e9 = ~280 g\", \"base_unit\": \"kg\", \"unit_code\": \"kapoaka\", \"confidence\": 0.85, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\"}",
+          "{\"factor\": 0.285000, \"evidence\": \"\u00c9tude ODR/INSTAT : 1 kapoaka de riz blanc local = ~285 g\", \"base_unit\": \"kg\", \"unit_code\": \"kapoaka\", \"confidence\": 0.85, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\"}",
+          "{\"factor\": 1.000000, \"evidence\": \"Bouteille scell\u00e9e d'huile alimentaire de 1 litre\", \"base_unit\": \"l\", \"unit_code\": \"bouteille_1l\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 1.000000, \"evidence\": \"Unit\u00e9 de base SI de masse\", \"base_unit\": \"kg\", \"unit_code\": \"kg\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 1.000000, \"evidence\": \"Unit\u00e9 standard de volume pour liquides alimentaires\", \"base_unit\": \"l\", \"unit_code\": \"l\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 10.000000, \"evidence\": \"Relev\u00e9s r\u00e9gionaux MiASA : 1 daba de paddy = environ 10 kg (45-50 kapoaka)\", \"base_unit\": \"kg\", \"unit_code\": \"daba\", \"confidence\": 0.80, \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\"}",
+          "{\"factor\": 100.000000, \"evidence\": \"Unit\u00e9 m\u00e9trique historique (1 qx = 100 kg)\", \"base_unit\": \"kg\", \"unit_code\": \"qx\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 1000.000000, \"evidence\": \"Unit\u00e9 m\u00e9trique l\u00e9gale (1 t = 1000 kg)\", \"base_unit\": \"kg\", \"unit_code\": \"t\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 12.000000, \"evidence\": \"Observation march\u00e9s ruraux (estimation variable sans pes\u00e9e standard)\", \"base_unit\": \"kg\", \"unit_code\": \"daba\", \"confidence\": 0.70, \"product_id\": \"22f7acc8-cc2e-4505-8b47-1984b590be5d\"}",
+          "{\"factor\": 25.000000, \"evidence\": \"Conditionnement commercial standard de 25 kg\", \"base_unit\": \"kg\", \"unit_code\": \"sac_25kg\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 50.000000, \"evidence\": \"Conditionnement commercial standard certifi\u00e9 de 50 kg (riz, sucre, farine)\", \"base_unit\": \"kg\", \"unit_code\": \"sac_50kg\", \"confidence\": 1.00, \"product_id\": null}"
+        ]
+      }
+    }
+  },
+  "protected_before": {
+    "sha256": "60d72f98491de949c98376b9b10d5115cd6cf7866e85be8363fcaf52bd4b4052",
+    "tables": {
+      "meta.source": {
+        "count": 1,
+        "rows": [
+          "{\"spec\": {\"name\": \"Synthetic offline software smoke\", \"priority\": \"P0\", \"freshness_sla_days\": 30}, \"status\": \"active\", \"source_id\": \"dummy_offline_qualification\", \"updated_at\": \"2026-10-15T14:40:21.589683+00:00\"}"
+        ]
+      },
+      "meta.source_record": {
+        "count": 2,
+        "rows": [
+          "{\"http_etag\": null, \"mime_type\": \"text/csv\", \"source_id\": \"dummy_offline_qualification\", \"fetched_at\": \"2025-01-01T00:00:00+00:00\", \"object_key\": \"dummy_offline_qualification/2025/01/f1a0ba4ba6e4b4ecfa344ec0039c584f6a9c9cc1fc1877703d5c0ae3d56842ca.csv\", \"source_url\": \"\", \"http_status\": 0, \"published_at\": null, \"retrieved_via\": \"manual_upload\", \"content_sha256\": \"f1a0ba4ba6e4b4ecfa344ec0039c584f6a9c9cc1fc1877703d5c0ae3d56842ca\", \"parser_version\": \"1.0.1\", \"source_record_id\": \"05e1edbb-2ef4-4dbe-b162-5a190972fa0f\", \"extraction_status\": \"parsed\", \"http_last_modified\": null}",
+          "{\"http_etag\": null, \"mime_type\": \"text/csv\", \"source_id\": \"dummy_offline_qualification\", \"fetched_at\": \"2025-01-02T00:00:00+00:00\", \"object_key\": \"dummy_offline_qualification/2025/01/0d6bd78df81dabde1bfeba24f8a7c9dadc62b01d8a5663f15581a73f3194bc4c.csv\", \"source_url\": \"\", \"http_status\": 0, \"published_at\": null, \"retrieved_via\": \"manual_upload\", \"content_sha256\": \"0d6bd78df81dabde1bfeba24f8a7c9dadc62b01d8a5663f15581a73f3194bc4c\", \"parser_version\": \"1.0.1\", \"source_record_id\": \"0e25270a-c816-47b2-b5b7-3c2bce946848\", \"extraction_status\": \"parsed\", \"http_last_modified\": null}"
+        ]
+      },
+      "ref.crop_calendar": {
+        "count": 0,
+        "rows": []
+      },
+      "ref.location": {
+        "count": 30,
+        "rows": [
+          "{\"geom\": null, \"name\": \"Alaotra-Mangoro\", \"pcode\": \"MDG33\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"f0f260f0-e692-4975-88ba-37c5b537d930\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Amoron'i Mania\", \"pcode\": \"MDG22\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"704fe7fc-5914-45a4-bcdb-aace9c5771e3\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Analamanga\", \"pcode\": \"MDG11\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"cdefd600-c7d9-4ee8-b5da-ab8c3b94b8db\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Analanjirofo\", \"pcode\": \"MDG32\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"e46bdaf1-0b08-48cd-b353-a4c7b2b39c12\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Androy\", \"pcode\": \"MDG52\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"d2f1789b-ebe7-4de1-a794-c3e73209c7ba\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Anosy\", \"pcode\": \"MDG53\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"1e0c861e-19c2-4c6c-8702-f5bd7eb4c4d2\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Antananarivo Renivohitra\", \"pcode\": \"MDG1101\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"cdefd600-c7d9-4ee8-b5da-ab8c3b94b8db\", \"valid_from\": null, \"admin_level\": 2, \"location_id\": \"3c019c43-d0b7-4f7c-a6c6-68d1f12a8331\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Antsirabe I\", \"pcode\": \"MDG1201\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"76de4e88-0bf9-47de-b990-56d08a08d54f\", \"valid_from\": null, \"admin_level\": 2, \"location_id\": \"11ca3849-e723-4ab3-b75a-4c70527088cc\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Atsimo-Andrefana\", \"pcode\": \"MDG51\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"12636e09-c389-4a66-a650-af5d6da46b3a\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Atsimo-Atsinanana\", \"pcode\": \"MDG26\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"d888f8b1-9867-4463-8163-54beed06d6a1\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Atsinanana\", \"pcode\": \"MDG31\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"57b868dc-f7dc-4518-a7ff-e164a3107627\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Betsiboka\", \"pcode\": \"MDG43\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"f6418a89-b977-47c2-9ad6-f4d3941d4904\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Boeny\", \"pcode\": \"MDG41\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"a5b59757-8cde-4b51-80a4-97b9cf14a081\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Bongolava\", \"pcode\": \"MDG14\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"f236360d-429f-492f-b683-47caedd51b86\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Commune Urbaine d'Antananarivo\", \"pcode\": \"MDG110101\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"3c019c43-d0b7-4f7c-a6c6-68d1f12a8331\", \"valid_from\": null, \"admin_level\": 3, \"location_id\": \"54da68d4-a98d-4167-9cdb-bbe2e16acddd\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Commune Urbaine d'Antsirabe\", \"pcode\": \"MDG120101\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"11ca3849-e723-4ab3-b75a-4c70527088cc\", \"valid_from\": null, \"admin_level\": 3, \"location_id\": \"29cfb9b2-5674-40d6-ba36-ce1ef2dce41d\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Commune Urbaine de Toamasina\", \"pcode\": \"MDG310101\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"f5dd1b16-a3bf-4227-9288-d495ec377616\", \"valid_from\": null, \"admin_level\": 3, \"location_id\": \"772ade38-36b1-42fe-9c42-5643dcaa3cef\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Diana\", \"pcode\": \"MDG71\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"46c469f2-9ed1-4f66-b663-636e29ec49ff\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Fitovinany\", \"pcode\": \"MDG24\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"5e15f944-f4bf-4cdc-851b-029f8f3050a3\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Haute Matsiatra\", \"pcode\": \"MDG21\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"16b8cd78-4d15-4508-a5c7-1e4dc552551f\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Ihorombe\", \"pcode\": \"MDG25\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"3fdcf82e-ff19-47f9-8918-83c42a054cb3\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Itasy\", \"pcode\": \"MDG13\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"4ea2e4ab-ef15-4497-a0e5-1ce0074c098a\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Madagascar\", \"pcode\": \"MDG\", \"centroid\": null, \"valid_to\": null, \"parent_id\": null, \"valid_from\": null, \"admin_level\": 0, \"location_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Melaky\", \"pcode\": \"MDG44\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"4e169bed-d043-493c-8551-1379e5ac227b\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Menabe\", \"pcode\": \"MDG54\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"a544c80e-aa03-4763-9659-34a66f580757\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Sava\", \"pcode\": \"MDG72\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"78a390d5-bd22-40e9-ac18-2fad5098864e\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Sofia\", \"pcode\": \"MDG42\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"5d09a945-6d3b-40c4-a376-85f3e3f45254\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Toamasina I\", \"pcode\": \"MDG3101\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"57b868dc-f7dc-4518-a7ff-e164a3107627\", \"valid_from\": null, \"admin_level\": 2, \"location_id\": \"f5dd1b16-a3bf-4227-9288-d495ec377616\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Vakinankaratra\", \"pcode\": \"MDG12\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"76de4e88-0bf9-47de-b990-56d08a08d54f\", \"boundary_version\": \"2024.1\"}",
+          "{\"geom\": null, \"name\": \"Vatovavy\", \"pcode\": \"MDG23\", \"centroid\": null, \"valid_to\": null, \"parent_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\", \"valid_from\": null, \"admin_level\": 1, \"location_id\": \"c796e2f5-17c8-4ff6-b6a8-38572bd2f705\", \"boundary_version\": \"2024.1\"}"
+        ]
+      },
+      "ref.location_alias": {
+        "count": 38,
+        "rows": [
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"alaotra mangoro\", \"confidence\": 1.00, \"location_id\": \"f0f260f0-e692-4975-88ba-37c5b537d930\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"ambatosoa\", \"confidence\": 0.85, \"location_id\": \"e46bdaf1-0b08-48cd-b353-a4c7b2b39c12\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"amoron i mania\", \"confidence\": 1.00, \"location_id\": \"704fe7fc-5914-45a4-bcdb-aace9c5771e3\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"analamanga\", \"confidence\": 1.00, \"location_id\": \"cdefd600-c7d9-4ee8-b5da-ab8c3b94b8db\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"analanjirofo\", \"confidence\": 1.00, \"location_id\": \"e46bdaf1-0b08-48cd-b353-a4c7b2b39c12\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"androy\", \"confidence\": 1.00, \"location_id\": \"d2f1789b-ebe7-4de1-a794-c3e73209c7ba\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"anosy\", \"confidence\": 1.00, \"location_id\": \"1e0c861e-19c2-4c6c-8702-f5bd7eb4c4d2\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"antananarivo renivohitra\", \"confidence\": 1.00, \"location_id\": \"3c019c43-d0b7-4f7c-a6c6-68d1f12a8331\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"antananarivo\", \"confidence\": 0.95, \"location_id\": \"3c019c43-d0b7-4f7c-a6c6-68d1f12a8331\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"antsirabe i\", \"confidence\": 1.00, \"location_id\": \"11ca3849-e723-4ab3-b75a-4c70527088cc\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"antsirabe\", \"confidence\": 0.95, \"location_id\": \"11ca3849-e723-4ab3-b75a-4c70527088cc\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"atsimo andrefana\", \"confidence\": 1.00, \"location_id\": \"12636e09-c389-4a66-a650-af5d6da46b3a\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"atsimo atsinanana\", \"confidence\": 1.00, \"location_id\": \"d888f8b1-9867-4463-8163-54beed06d6a1\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"atsinanana\", \"confidence\": 1.00, \"location_id\": \"57b868dc-f7dc-4518-a7ff-e164a3107627\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"betsiboka\", \"confidence\": 1.00, \"location_id\": \"f6418a89-b977-47c2-9ad6-f4d3941d4904\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"boeny\", \"confidence\": 1.00, \"location_id\": \"a5b59757-8cde-4b51-80a4-97b9cf14a081\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"bongolava\", \"confidence\": 1.00, \"location_id\": \"f236360d-429f-492f-b683-47caedd51b86\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"diana\", \"confidence\": 1.00, \"location_id\": \"46c469f2-9ed1-4f66-b663-636e29ec49ff\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"fitovinany\", \"confidence\": 1.00, \"location_id\": \"5e15f944-f4bf-4cdc-851b-029f8f3050a3\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"grande ile\", \"confidence\": 0.90, \"location_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"haute matsiatra\", \"confidence\": 1.00, \"location_id\": \"16b8cd78-4d15-4508-a5c7-1e4dc552551f\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"ihorombe\", \"confidence\": 1.00, \"location_id\": \"3fdcf82e-ff19-47f9-8918-83c42a054cb3\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"itasy\", \"confidence\": 1.00, \"location_id\": \"4ea2e4ab-ef15-4497-a0e5-1ce0074c098a\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"madagascar\", \"confidence\": 1.00, \"location_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"matsiatra ambony\", \"confidence\": 1.00, \"location_id\": \"16b8cd78-4d15-4508-a5c7-1e4dc552551f\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"mdg\", \"confidence\": 1.00, \"location_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"melaky\", \"confidence\": 1.00, \"location_id\": \"4e169bed-d043-493c-8551-1379e5ac227b\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"menabe\", \"confidence\": 1.00, \"location_id\": \"a544c80e-aa03-4763-9659-34a66f580757\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"repoblikan i madagasikara\", \"confidence\": 1.00, \"location_id\": \"399f418b-0a87-4a60-95ff-7c3898d95d19\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"sava\", \"confidence\": 1.00, \"location_id\": \"78a390d5-bd22-40e9-ac18-2fad5098864e\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"sofia\", \"confidence\": 1.00, \"location_id\": \"5d09a945-6d3b-40c4-a376-85f3e3f45254\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"tamatave\", \"confidence\": 0.95, \"location_id\": \"f5dd1b16-a3bf-4227-9288-d495ec377616\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"tananarive\", \"confidence\": 0.95, \"location_id\": \"3c019c43-d0b7-4f7c-a6c6-68d1f12a8331\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"toamasina i\", \"confidence\": 1.00, \"location_id\": \"f5dd1b16-a3bf-4227-9288-d495ec377616\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"toamasina\", \"confidence\": 0.95, \"location_id\": \"f5dd1b16-a3bf-4227-9288-d495ec377616\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"vakinankaratra\", \"confidence\": 1.00, \"location_id\": \"76de4e88-0bf9-47de-b990-56d08a08d54f\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"vatovavy fitovinany\", \"confidence\": 0.85, \"location_id\": \"c796e2f5-17c8-4ff6-b6a8-38572bd2f705\"}",
+          "{\"origin\": \"seed\", \"source_id\": null, \"alias_norm\": \"vatovavy\", \"confidence\": 1.00, \"location_id\": \"c796e2f5-17c8-4ff6-b6a8-38572bd2f705\"}"
+        ]
+      },
+      "ref.product": {
+        "count": 15,
+        "rows": [
+          "{\"category\": \"cereal\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"100590\"], \"product_id\": \"17bb7d55-f7a8-4d61-814c-e54502f72515\", \"product_code\": \"MAIZE_GRAIN\", \"canonical_name_fr\": \"Ma\u00efs grain\", \"faostat_item_codes\": [\"56\"]}",
+          "{\"category\": \"cereal\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"100610\"], \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\", \"product_code\": \"RICE_PADDY\", \"canonical_name_fr\": \"Riz paddy\", \"faostat_item_codes\": [\"27\"]}",
+          "{\"category\": \"cereal\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"100630\"], \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"product_code\": \"RICE_WHITE_IMPORTED\", \"canonical_name_fr\": \"Riz blanc import\u00e9\", \"faostat_item_codes\": []}",
+          "{\"category\": \"cereal\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"100630\"], \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"product_code\": \"RICE_WHITE_LOCAL\", \"canonical_name_fr\": \"Riz blanc local\", \"faostat_item_codes\": []}",
+          "{\"category\": \"flour\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"110100\"], \"product_id\": \"a3f1c949-523f-4d63-8eec-06591d98a8b2\", \"product_code\": \"WHEAT_FLOUR\", \"canonical_name_fr\": \"Farine de bl\u00e9\", \"faostat_item_codes\": [\"16\"]}",
+          "{\"category\": \"oil\", \"verified\": true, \"base_unit\": \"l\", \"hs6_codes\": [\"150790\", \"151190\", \"151219\"], \"product_id\": \"fa24d01f-449d-4e85-a60f-711c8f4743ea\", \"product_code\": \"VEG_OIL\", \"canonical_name_fr\": \"Huile alimentaire (v\u00e9g\u00e9tale)\", \"faostat_item_codes\": []}",
+          "{\"category\": \"pulse\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071333\"], \"product_id\": \"ed96d770-d070-49ce-881c-c9a0e10caf3b\", \"product_code\": \"BEANS_DRY\", \"canonical_name_fr\": \"Haricot sec\", \"faostat_item_codes\": [\"176\"]}",
+          "{\"category\": \"pulse\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071340\"], \"product_id\": \"bdb78650-8b57-443d-be8b-045e67ce0f9a\", \"product_code\": \"LENTILS\", \"canonical_name_fr\": \"Lentilles\", \"faostat_item_codes\": [\"201\"]}",
+          "{\"category\": \"pulse\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071390\"], \"product_id\": \"295744d1-a520-46d5-8d00-208cc66ec395\", \"product_code\": \"BAMBARA_GROUNDNUT\", \"canonical_name_fr\": \"Pois de bambara (voanjobory)\", \"faostat_item_codes\": [\"203\"]}",
+          "{\"category\": \"pulse\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071390\"], \"product_id\": \"5113351d-1cbf-4187-b0ef-2d0f39ac2dc5\", \"product_code\": \"LIMA_BEANS\", \"canonical_name_fr\": \"Pois du Cap (kabaro)\", \"faostat_item_codes\": []}",
+          "{\"category\": \"pulse_oilseed\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"120241\", \"120242\"], \"product_id\": \"7f7b768c-1f6a-4cea-a4fe-e1d2d4a28965\", \"product_code\": \"GROUNDNUT\", \"canonical_name_fr\": \"Arachide\", \"faostat_item_codes\": [\"242\"]}",
+          "{\"category\": \"root_tuber\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071410\"], \"product_id\": \"219a3043-7c3e-404e-8cea-f210a64e9bc0\", \"product_code\": \"CASSAVA_DRIED\", \"canonical_name_fr\": \"Manioc sec\", \"faostat_item_codes\": []}",
+          "{\"category\": \"root_tuber\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071410\"], \"product_id\": \"22f7acc8-cc2e-4505-8b47-1984b590be5d\", \"product_code\": \"CASSAVA_FRESH\", \"canonical_name_fr\": \"Manioc frais\", \"faostat_item_codes\": [\"125\"]}",
+          "{\"category\": \"root_tuber\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"071420\"], \"product_id\": \"8be97f54-5bf9-48b9-94f4-70cf02474d55\", \"product_code\": \"SWEET_POTATO\", \"canonical_name_fr\": \"Patate douce\", \"faostat_item_codes\": [\"122\"]}",
+          "{\"category\": \"sugar\", \"verified\": true, \"base_unit\": \"kg\", \"hs6_codes\": [\"170114\", \"170199\"], \"product_id\": \"965bc48f-0d31-45d4-be44-07a31c484d70\", \"product_code\": \"SUGAR\", \"canonical_name_fr\": \"Sucre\", \"faostat_item_codes\": []}"
+        ]
+      },
+      "ref.product_alias": {
+        "count": 35,
+        "rows": [
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"1afd538b-6b7f-4a8b-a587-ff687b5bc7c1\", \"source_id\": null, \"alias_norm\": \"rice (local)\", \"confidence\": 0.95, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"alias_display\": \"Rice (local)\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"46d6169f-b7c5-48a8-9db1-e5d0bd40822f\", \"source_id\": null, \"alias_norm\": \"cassava (fresh)\", \"confidence\": 0.95, \"product_id\": \"22f7acc8-cc2e-4505-8b47-1984b590be5d\", \"alias_display\": \"Cassava (fresh)\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"855abd1b-5f68-4310-9c50-ceb424afdb97\", \"source_id\": null, \"alias_norm\": \"rice\", \"confidence\": 0.80, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"alias_display\": \"Rice\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"98c59ee0-eb37-4367-8880-121dffcda193\", \"source_id\": null, \"alias_norm\": \"sugar\", \"confidence\": 0.95, \"product_id\": \"965bc48f-0d31-45d4-be44-07a31c484d70\", \"alias_display\": \"Sugar\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"99ff47ab-c54b-4f1b-bfc1-8e95f61aee40\", \"source_id\": null, \"alias_norm\": \"beans (dry)\", \"confidence\": 0.95, \"product_id\": \"ed96d770-d070-49ce-881c-c9a0e10caf3b\", \"alias_display\": \"Beans (dry)\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"d2558c61-f4fe-4e79-a6ee-82de45cbe955\", \"source_id\": null, \"alias_norm\": \"oil (vegetable)\", \"confidence\": 0.95, \"product_id\": \"fa24d01f-449d-4e85-a60f-711c8f4743ea\", \"alias_display\": \"Oil (vegetable)\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"d78932c5-b76e-46c7-b4c6-87309b5a321c\", \"source_id\": null, \"alias_norm\": \"wheat\", \"confidence\": 0.90, \"product_id\": \"a3f1c949-523f-4d63-8eec-06591d98a8b2\", \"alias_display\": \"Wheat\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"e418ba5d-1a45-4a46-b24a-1bf70a950a6b\", \"source_id\": null, \"alias_norm\": \"maize\", \"confidence\": 0.95, \"product_id\": \"17bb7d55-f7a8-4d61-814c-e54502f72515\", \"alias_display\": \"Maize\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"ed9e62c1-98ac-4feb-876e-1e44383f4461\", \"source_id\": null, \"alias_norm\": \"cassava\", \"confidence\": 0.90, \"product_id\": \"22f7acc8-cc2e-4505-8b47-1984b590be5d\", \"alias_display\": \"Cassava\", \"human_reviewed\": false}",
+          "{\"lang\": \"en\", \"origin\": \"seed\", \"alias_id\": \"f490472f-7a6a-4436-8671-8f016ec64d0b\", \"source_id\": null, \"alias_norm\": \"rice (imported)\", \"confidence\": 0.95, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"alias_display\": \"Rice (imported)\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"199517c1-97aa-48b6-9b88-d6a7807e64b9\", \"source_id\": null, \"alias_norm\": \"farine de ble\", \"confidence\": 0.95, \"product_id\": \"a3f1c949-523f-4d63-8eec-06591d98a8b2\", \"alias_display\": \"Farine de ble\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"258beac0-f9d8-48fc-9a6d-96bf33b6a7b9\", \"source_id\": null, \"alias_norm\": \"riz importe\", \"confidence\": 0.95, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"alias_display\": \"riz import\u00e9\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"3628e3cf-04fe-42a5-ae39-ae5067e6331a\", \"source_id\": null, \"alias_norm\": \"sucre de canne ou de betterave\", \"confidence\": 0.95, \"product_id\": \"965bc48f-0d31-45d4-be44-07a31c484d70\", \"alias_display\": \"Sucre de canne ou de betterave\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"398a15ce-6225-4dee-9442-502302e160f3\", \"source_id\": null, \"alias_norm\": \"huile alimentaire vrac\", \"confidence\": 0.95, \"product_id\": \"fa24d01f-449d-4e85-a60f-711c8f4743ea\", \"alias_display\": \"Huile alimentaire vrac\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"59c873b9-b025-467f-8baf-c8b91257cb19\", \"source_id\": null, \"alias_norm\": \"sucre blanc\", \"confidence\": 0.95, \"product_id\": \"965bc48f-0d31-45d4-be44-07a31c484d70\", \"alias_display\": \"Sucre blanc\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"81bffdc0-d31a-4e66-94cf-8f003e73ef46\", \"source_id\": null, \"alias_norm\": \"riz blanc local\", \"confidence\": 1.00, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"alias_display\": \"Riz blanc local\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"9c3e2783-26d7-4cc5-b394-82f274d373e9\", \"source_id\": null, \"alias_norm\": \"riz semi-blanchi ou blanchi\", \"confidence\": 0.95, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"alias_display\": \"Riz semi-blanchi ou blanchi\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"a8140fe6-a7bb-435a-a10d-e1e3915116a1\", \"source_id\": null, \"alias_norm\": \"paddy\", \"confidence\": 0.95, \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\", \"alias_display\": \"paddy\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"c70d168b-cfde-4763-b6de-e235d5e78755\", \"source_id\": null, \"alias_norm\": \"riz paddy\", \"confidence\": 1.00, \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\", \"alias_display\": \"Riz paddy\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"d3589207-f976-4424-b874-27aba6857331\", \"source_id\": null, \"alias_norm\": \"riz blanc importe\", \"confidence\": 1.00, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"alias_display\": \"Riz blanc import\u00e9\", \"human_reviewed\": false}",
+          "{\"lang\": \"fr\", \"origin\": \"seed\", \"alias_id\": \"f32d1801-eb50-4508-acbe-9f4f614888cc\", \"source_id\": null, \"alias_norm\": \"huile de palme et fractions\", \"confidence\": 0.95, \"product_id\": \"fa24d01f-449d-4e85-a60f-711c8f4743ea\", \"alias_display\": \"Huile de palme et fractions\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"0f06d53d-b4be-40ef-8c7c-271224940524\", \"source_id\": null, \"alias_norm\": \"voanjo\", \"confidence\": 0.85, \"product_id\": \"7f7b768c-1f6a-4cea-a4fe-e1d2d4a28965\", \"alias_display\": \"voanjo\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"108d9682-cf27-47c1-982d-8a4d34ae160a\", \"source_id\": null, \"alias_norm\": \"vomanga\", \"confidence\": 0.85, \"product_id\": \"8be97f54-5bf9-48b9-94f4-70cf02474d55\", \"alias_display\": \"vomanga\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"12c02483-6038-41ba-aad3-1773fb8cb5f3\", \"source_id\": null, \"alias_norm\": \"katsaka\", \"confidence\": 0.85, \"product_id\": \"17bb7d55-f7a8-4d61-814c-e54502f72515\", \"alias_display\": \"katsaka\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"387dd738-40cd-4593-bf27-210260ab3c0f\", \"source_id\": null, \"alias_norm\": \"vary\", \"confidence\": 0.60, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"alias_display\": \"vary\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"44396818-5514-432d-93a6-60f40d503f1e\", \"source_id\": null, \"alias_norm\": \"siramamy\", \"confidence\": 0.90, \"product_id\": \"965bc48f-0d31-45d4-be44-07a31c484d70\", \"alias_display\": \"siramamy\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"47b4ff66-101c-484c-a0f5-28d24525b48a\", \"source_id\": null, \"alias_norm\": \"mangahazo\", \"confidence\": 0.80, \"product_id\": \"22f7acc8-cc2e-4505-8b47-1984b590be5d\", \"alias_display\": \"mangahazo\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"727d6859-2bc9-46a9-bf78-f12888229c23\", \"source_id\": null, \"alias_norm\": \"tsaramaso\", \"confidence\": 0.85, \"product_id\": \"ed96d770-d070-49ce-881c-c9a0e10caf3b\", \"alias_display\": \"tsaramaso\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"7eb1d3da-856a-410e-b452-9434ac60f28e\", \"source_id\": null, \"alias_norm\": \"voanjobory\", \"confidence\": 0.90, \"product_id\": \"295744d1-a520-46d5-8d00-208cc66ec395\", \"alias_display\": \"voanjobory\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"a4218e2e-4c31-45b6-acb4-366a9b34ef42\", \"source_id\": null, \"alias_norm\": \"kabaro\", \"confidence\": 0.85, \"product_id\": \"5113351d-1cbf-4187-b0ef-2d0f39ac2dc5\", \"alias_display\": \"kabaro\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"bc1391b8-1ee7-46a4-9a40-3d3270e54d72\", \"source_id\": null, \"alias_norm\": \"menaka\", \"confidence\": 0.80, \"product_id\": \"fa24d01f-449d-4e85-a60f-711c8f4743ea\", \"alias_display\": \"menaka\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"cf8bf957-4333-4d90-81bd-13697fbcf31e\", \"source_id\": null, \"alias_norm\": \"akotry\", \"confidence\": 0.90, \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\", \"alias_display\": \"akotry\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"ee4648ea-1e00-4af3-82c8-db6664b9d25d\", \"source_id\": null, \"alias_norm\": \"lafarinina\", \"confidence\": 0.80, \"product_id\": \"a3f1c949-523f-4d63-8eec-06591d98a8b2\", \"alias_display\": \"lafarinina\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"f75e1c51-1e55-4e87-8f6c-8d34a8decbef\", \"source_id\": null, \"alias_norm\": \"vary vahiny\", \"confidence\": 0.85, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\", \"alias_display\": \"vary vahiny\", \"human_reviewed\": false}",
+          "{\"lang\": \"mg\", \"origin\": \"seed\", \"alias_id\": \"f964158f-833f-42df-b23d-558fafde1ec5\", \"source_id\": null, \"alias_norm\": \"vary gasy\", \"confidence\": 0.90, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\", \"alias_display\": \"vary gasy\", \"human_reviewed\": false}"
+        ]
+      },
+      "ref.unit_conversion": {
+        "count": 16,
+        "rows": [
+          "{\"factor\": 0.001000, \"evidence\": \"Sous-multiple SI (1 g = 0.001 kg)\", \"base_unit\": \"kg\", \"unit_code\": \"g\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 0.001000, \"evidence\": \"Sous-multiple SI (1 ml = 0.001 l)\", \"base_unit\": \"l\", \"unit_code\": \"ml\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 0.220000, \"evidence\": \"\u00c9tude ODR/CIRAD : 1 kapoaka de paddy = ~220 g (densit\u00e9 apparente moindre)\", \"base_unit\": \"kg\", \"unit_code\": \"kapoaka\", \"confidence\": 0.85, \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\"}",
+          "{\"factor\": 0.260000, \"evidence\": \"Mesures march\u00e9s locaux : 1 kapoaka de ma\u00efs grain = ~260 g\", \"base_unit\": \"kg\", \"unit_code\": \"kapoaka\", \"confidence\": 0.80, \"product_id\": \"17bb7d55-f7a8-4d61-814c-e54502f72515\"}",
+          "{\"factor\": 0.280000, \"evidence\": \"Mesures march\u00e9s locaux : 1 kapoaka de haricots secs = ~280 g\", \"base_unit\": \"kg\", \"unit_code\": \"kapoaka\", \"confidence\": 0.80, \"product_id\": \"ed96d770-d070-49ce-881c-c9a0e10caf3b\"}",
+          "{\"factor\": 0.280000, \"evidence\": \"Mesures march\u00e9s urbains : 1 kapoaka de riz import\u00e9 = ~280 g\", \"base_unit\": \"kg\", \"unit_code\": \"kapoaka\", \"confidence\": 0.85, \"product_id\": \"31b314cb-72c8-4e2b-855e-6c2ef06b5c0d\"}",
+          "{\"factor\": 0.285000, \"evidence\": \"\u00c9tude ODR/INSTAT : 1 kapoaka de riz blanc local = ~285 g\", \"base_unit\": \"kg\", \"unit_code\": \"kapoaka\", \"confidence\": 0.85, \"product_id\": \"97bb834b-130f-4953-b9ac-6eebb6eb189e\"}",
+          "{\"factor\": 1.000000, \"evidence\": \"Bouteille scell\u00e9e d'huile alimentaire de 1 litre\", \"base_unit\": \"l\", \"unit_code\": \"bouteille_1l\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 1.000000, \"evidence\": \"Unit\u00e9 de base SI de masse\", \"base_unit\": \"kg\", \"unit_code\": \"kg\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 1.000000, \"evidence\": \"Unit\u00e9 standard de volume pour liquides alimentaires\", \"base_unit\": \"l\", \"unit_code\": \"l\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 10.000000, \"evidence\": \"Relev\u00e9s r\u00e9gionaux MiASA : 1 daba de paddy = environ 10 kg (45-50 kapoaka)\", \"base_unit\": \"kg\", \"unit_code\": \"daba\", \"confidence\": 0.80, \"product_id\": \"48d172b1-e3b2-4172-b10d-7dc9803279a3\"}",
+          "{\"factor\": 100.000000, \"evidence\": \"Unit\u00e9 m\u00e9trique historique (1 qx = 100 kg)\", \"base_unit\": \"kg\", \"unit_code\": \"qx\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 1000.000000, \"evidence\": \"Unit\u00e9 m\u00e9trique l\u00e9gale (1 t = 1000 kg)\", \"base_unit\": \"kg\", \"unit_code\": \"t\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 12.000000, \"evidence\": \"Observation march\u00e9s ruraux (estimation variable sans pes\u00e9e standard)\", \"base_unit\": \"kg\", \"unit_code\": \"daba\", \"confidence\": 0.70, \"product_id\": \"22f7acc8-cc2e-4505-8b47-1984b590be5d\"}",
+          "{\"factor\": 25.000000, \"evidence\": \"Conditionnement commercial standard de 25 kg\", \"base_unit\": \"kg\", \"unit_code\": \"sac_25kg\", \"confidence\": 1.00, \"product_id\": null}",
+          "{\"factor\": 50.000000, \"evidence\": \"Conditionnement commercial standard certifi\u00e9 de 50 kg (riz, sucre, farine)\", \"base_unit\": \"kg\", \"unit_code\": \"sac_50kg\", \"confidence\": 1.00, \"product_id\": null}"
+        ]
+      }
+    }
+  },
+  "replay_passed": true,
+  "replay_stats": {
+    "gold_publication_state": "empty",
+    "gold_views_refreshed": 13,
+    "gold_wiped": {
+      "gold_matviews_refreshed": 13,
+      "gold_tables_truncated": 0
+    },
+    "provenance_scope": "source_cells_not_authenticity_conversions_or_model",
+    "records_inserted": 1,
+    "records_rejected": 0,
+    "records_skipped": 0,
+    "records_superseded": 1,
+    "source_cell_rate": null,
+    "source_observations_total": 0,
+    "source_observations_valid": 0,
+    "source_records_replayed": 2,
+    "source_records_skipped": 0,
+    "source_records_total": 2
+  },
+  "scope": "software replay, not authentic corpus or scientific/model qualification",
+  "status": "PARTIAL",
+  "version": 2,
+  "versioned_recompute": {
+    "cohort": "mixed",
+    "data_cutoff": "2025-01-01",
+    "dataset_fingerprint": "14973c591b26d5116b3ce3508c60adfe345a1201723a45f18dacc0293da2ec7a",
+    "eligible_series": 0,
+    "excluded_technical": [
+      "model_run_id",
+      "trained_at",
+      "generated_at",
+      "forecast_id"
+    ],
+    "forecasts_generated": [
+      0,
+      0
+    ],
+    "forecasts_recomputed": false,
+    "horizon": 3,
+    "min_points_required": 1,
+    "n_abstentions": [
+      0,
+      0
+    ],
+    "recompute_equal": true,
+    "runs": [
+      {
+        "abstentions": [],
+        "dataset_fingerprint": "14973c591b26d5116b3ce3508c60adfe345a1201723a45f18dacc0293da2ec7a",
+        "forecasts_generated": 0,
+        "n_abstentions": 0,
+        "n_series": 0,
+        "reason": "no_eligible_series",
+        "status": "abstained"
+      },
+      {
+        "abstentions": [],
+        "dataset_fingerprint": "14973c591b26d5116b3ce3508c60adfe345a1201723a45f18dacc0293da2ec7a",
+        "forecasts_generated": 0,
+        "n_abstentions": 0,
+        "n_series": 0,
+        "reason": "no_eligible_series",
+        "status": "abstained"
+      }
+    ],
+    "scope": "versioned recompute on a dedicated destination; no model qualification claim",
+    "version": 1
+  }
+}

@@ -140,7 +140,7 @@ def query_market_coverage_matrix(
 ) -> list[MarketCoverageRow]:
     """Retrieve market coverage cells from gold.market_coverage with optional filters."""
     if not is_gold_view_populated(session, "market_coverage"):
-        return []
+        raise ValueError("gold_not_published")
 
     sql = """
         SELECT
@@ -229,23 +229,7 @@ def compute_series_gaps_independent_sql(
     Guarantee: independent gap computation without flattery or cherry-picking.
     """
     if not is_gold_view_populated(session, "market_coverage"):
-        return SeriesCoverageSummary(
-            product_code=product_code,
-            product_name=None,
-            location_pcode=location_pcode,
-            location_name=None,
-            admin_level=None,
-            actor_level=actor_level,
-            expected_months=0,
-            observed_months=0,
-            missing_months=0,
-            coverage_ratio=0.0,
-            missing_months_list=[],
-            source_families=[],
-            start_month=None,
-            end_month=None,
-            is_pilot_candidate=False,
-        )
+        raise ValueError("gold_not_published")
 
     query = text(
         """
