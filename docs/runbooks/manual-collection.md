@@ -10,8 +10,10 @@ publication. Il est enregistré dans PostgreSQL et relu après rechargement.
 Les documents nouveaux, les enregistrements intégrés/révisés et les sources
 abouties sont comptés séparément. Zéro document nouveau est possible.
 Une collecte peut durer plusieurs minutes ; aucune promesse de fraîcheur globale.
-La Banque mondiale est bornée à15 estimations c_rice avec contexte d'étude,
-pas l'intégralité des prix ni des cours observés en temps réel.
+La Banque mondiale sélectionne jusqu'à120 estimations c_rice avec contexte d'étude,
+de janvier de l'année UTC courante moins six au mois courant inclus (84 mois maximum).
+La disponibilité des mois et marchés dépend du fournisseur : couverture partielle,
+sans garantie de fraîcheur, valeurs imputées. Les anciennes acquisitions restent rejouables.
 
 Une source en échec ne bloque pas les autres. Le statut de publication est
 distinct : les données peuvent être archivées/intégrées sans publication Gold

@@ -1,5 +1,11 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-23T22:12:00Z] R0.8 IN_PROGRESS — fenêtre WB récente, lot indépendant
+
+- Worktree r08-current-corpus-20261024, base1a6641c ; réception6735 figée dans l'autre worktree, aucune mutation de sa destination/source. Mini-plan : contractualiser ADR118 ; construire URL mensuelle bornée ; raccorder discovery/UI/runbook ; vérifier bornes et compatibilité historique ; recevoir le lot seulement après libération QA. Pas de DONE ni tag anticipé, miroir IN_PROGRESS inchangé.
+-73785 FINAL0 : quatre tests/9,91s, Ruff/format et Mypy du connecteur verts ;88729 FINAL0 après ajout du raccordement discovery/UTC : cinq tests/5,78s, lint/format verts, Docker sans réseau/venv readonly/base QA non utilisée. Les deux essais préliminaires ont signalé zip strict puis format avant tests, corrigés sans réduire les règles.
+-39303 FINAL0 : inspection du paquet officiel120 lignes, parseur2.0.0 et preuves contre contexte d'étude archivés,2020-01 à2026-10, toutes imputées. UUID éphémères de diagnostic uniquement, aucun ledger/SQL/S3 écrit ; ni authenticité/droits ni normalisation/modèle qualifiés. Reçu d'acquisition61316 conservé en evidence, statut pending. Réception globale du nouveau lot encore à faire ; aucun test de ce worktree ne reçoit le contenu de l'autre.
+
 ### [2026-10-23T22:04:00Z] Check complet vert, régression A012 révélée par le navigateur
 
 -88562 FINAL0 sur82d7e28 :2393 backend/zéro échec-erreur-skip/1395,24s,167 intégrations incluses ; couvertures core92,4084/extraction87,7660/normalize88,2624 %. Frontend c31630a8... :50 tests/sept suites/4,11s/lint/typecheck/build16 pages verts. Originaux JUnit gzip/inventaire/couverture et reçus frontend archivés ; ce check ne reçoit pas les changements futurs.

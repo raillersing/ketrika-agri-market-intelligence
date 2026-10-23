@@ -1,5 +1,12 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-118 | 2026-10-23 | Accepté | Fenêtre récente WB bornée
+
+- Contexte : limit=15 sans filtre temporel retourne des estimations historiques. Acquisition officielle61316 :120 lignes,2020-01 à2026-10, SHA9d17c04cb0ddb0886afb677685aecfc4e746deb14b0284155466b26ceef695e3, candidat hors base active.
+- Décision : conserver DATA_URL pour les reçus historiques ; découvrir une URL bornée à120 lignes, MDG et c_rice positif, avec liste explicite des mois depuis janvier de l'année UTC courante moins six jusqu'au mois courant inclus. Maximum84 mois, aucune date future. L'URL téléchargée reste archivée ; le rejeu ne redécouvre pas les documents.
+- Justification : NADA ne traite >/< que pour les valeurs numériques ; une comparaison de dates chaîne renvoie une sélection vide trompeuse. Référence primaire : https://raw.githubusercontent.com/ihsn/nada/master/application/models/Data_table_mongo_model.php ; endpoint vérifié par61316.
+- Alternatives : quinze lignes anciennes ; pagination nationale complète hors lot. Conséquences : jusqu'à120 estimations imputées, aucune garantie de couverture nationale, d'ordre des marchés, de disponibilité mensuelle ni de fraîcheur. Parseur/provenance, quotas, droits et seuils inchangés. Aucune révision authentique ni clôture R0.8 déduite.
+
 ## ADR-117 | 2026-10-23 | Accepté | Réception R0.8 et disponibilité Gold explicite
 
 - Contexte : A012 remplace des erreurs SQL par des listes vides, confondant cache non publié et résultat réellement vide ; son contrôle interne intercepte aussi une panne SQL. Le contrôle Bronze R0.8 repris calcule seulement l'empreinte des descripteurs déclarés, pas celle des octets après rejeu. L'audit readonly actif relève728 liens de supersession vers eux-mêmes : ce n'est pas une révision source valide.
