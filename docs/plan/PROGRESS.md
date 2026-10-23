@@ -1,5 +1,17 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-23T22:35:00Z] Correctifs A012/R0.8 reçus comme logiciel, programme PARTIAL
+
+-8021 FINAL0 : douze scénarios navigateur/57,305s, source1a6641c et empreinte9fe21b58... inchangées ; prix200, refus macro503 expliqué après reload, mobile390px/navigation/déconnexion et protection401, zéro erreur JS. Capture mobile inspectée ; reçu original archivé, trace privée hors Git SHA0d0bb6738babd379cc437c5ecab9eb93fc68776fda38110e4493d2c09f8f413b.
+-29829 FINAL1 initial : un contrôle/douze, login503 pendant démarrage API puis sonde200 ; reprise8021 du seul conteneur navigateur sur services déjà prêts, mêmes assertions/code/images/environnement. Aucun check backend répété. Futur runner prêt-API corrigé dans l'autre worktree et inclus dans sa réception complète27111 surac11e47.
+- Réception consolidée : R0.8_RECEPTION_20261024.md ; originaux6735/88562 et deux rouges E2E conservés. HANDOFF et bilan corrigés PARTIAL, anciens rapports100% archivés non reçus. Sept DONE/52 IN_PROGRESS/15 TODO, aucun nouveau tag ni réception de révisions authentiques. Main585c47f et données actives préservés pendant réception.
+
+### [2026-10-23T22:28:00Z] Réception logicielle1a6641c — check complet vert
+
+-6735 FINAL0, point d'entrée scripts/dev.sh check avec transport Docker détaché préalablement contrôlé :2393 backend/1230,13s/zéro échec-erreur-skip ;167 intégrations incluses (163 layout/163 marqueur). Ruff/format412/Mypy411/cohérence74 verts ; couvertures core92,4084/extraction87,7660/normalize88,2624 %. Source1a6641c8df8b1fcd16c43cb5a1cac44549d373a7, empreinte9fe21b586447da62dcb57a90d5ba108ac164af736377b97c6d339727efc82843.
+- Frontend8e1e1363-0e4f-4ed9-aa0b-cfc6186e4571 :50 tests/sept suites/4,17s, lint/types/build16 pages verts. Originaux R0.8_CHECK_6735_* archivés avant toute nouvelle utilisation QA. Environnement main-final isolé, images inchangées. E2E29829 en cours sur le même contenu, pas de résultat anticipé ni de nouveau code dans cette branche pendant réception.
+- Pas de qualification scientifique par ce check : les rejeux bornés restent PARTIAL, révisions authentiques/S3 original/recalcul éligible non reçus ; R0.8 reste IN_PROGRESS et miroir inchangé. Nouveau connecteur récent4226a29 préparé dans autre worktree, sa réception globale reste distincte.
+
 ### [2026-10-23T22:04:00Z] Check complet vert, régression A012 révélée par le navigateur
 
 -88562 FINAL0 sur82d7e28 :2393 backend/zéro échec-erreur-skip/1395,24s,167 intégrations incluses ; couvertures core92,4084/extraction87,7660/normalize88,2624 %. Frontend c31630a8... :50 tests/sept suites/4,11s/lint/typecheck/build16 pages verts. Originaux JUnit gzip/inventaire/couverture et reçus frontend archivés ; ce check ne reçoit pas les changements futurs.
@@ -1675,7 +1687,7 @@
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
 | R0.6 | MUST | DONE | 2026-10-10T19:32:37Z | 2026-10-14T08:38:21Z | 173c41a | A/B1/B2/C intégrés ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118, vingt fichiers exacts et données actives préservées ; voir LOT_C_RECEPTION.md | B-R054–058 résolus ; BL-010/016 résolus ; BL-013 partiel/R2.1 ; pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | 2026-10-14T08:46:31Z | 2026-10-15T06:50:00Z | 442a20c | R0.7_FINAL_RECEPTION.md : Windows1538/35/build, E2E9, inclusion160, empreinte main exacte, gitleaks0 et préservation | Qualify sans bundle PARTIAL/code1 attendu ; aucune qualification opérationnelle |
-| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | ef626d2 (lot logiciel seulement) | Windows1612/35/build, inclusion71, rejeu CLI natif sans réseau et manifestes identiques ; R0.8_SOFTWARE_RECEPTION.md | Corpus authentique/révisions réelles/ML non qualifiés ; aucun rebuild actif |
+| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | 1a6641c (lot logiciel seulement) | Check6735 FINAL0 :2393 backend/50 web/build16,167 intégrations ; E2E8021 FINAL0/12 ; R0.8_RECEPTION_20261024.md | Corpus authentique/révisions réelles/S3 original/ML non qualifiés ; aucun rebuild actif |
 | R0.9 | MUST | TODO | — | — | — | — | — |
 | R1.1 | MUST | TODO | — | — | — | — | — |
 | R1.2 | MUST | TODO | — | — | — | — | — |

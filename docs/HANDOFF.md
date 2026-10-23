@@ -1,63 +1,72 @@
-# HANDOFF : Guide de passation et actions humaines attendues
+# Passation du programme — PARTIAL, non clôturé
 
-> **Statut :** Document normatif de passation de Ketrika Agri Market Intelligence (AGENTS.md §3.2 & §5.3, R6.11).  
-> **Version finale du programme :** `mi-v0.2.0-local-qualified` (scellé le 2026-10-17T14:48:00Z).  
-> **Rapport d'acceptation consolidé :** [`docs/MARKET_INTELLIGENCE_REPORT.md`](MARKET_INTELLIGENCE_REPORT.md).
+Mise à jour2026-10-23 UTC. PROGRESS.md reste canonique :7 DONE,
+52 IN_PROGRESS,15 TODO ;69 MUST et5 SHOULD. Aucun nouveau tag final.
+Les anciens tags et rapports ne prouvent pas la réception actuelle.
 
----
+## Travail en cours
 
-## 1. État de Clôture du Programme Market Intelligence (R0–R6)
+Branche work/r0-reception-20261024, basée sur main585c47f. R0.8 reste
+IN_PROGRESS : mécanisme de rejeu reçu historiquement côté logiciel, mais
+révisions authentiques, inventaire S3 original et recalcul scientifique
+encore non qualifiés. Correctifs1a6641c reçus :check6735 vert (2393 backend,
+50 frontend/build16), E2E8021 vert (12 scénarios). La fenêtre WB récente
+ac11e47 fait l'objet de sa réception27111 séparée, encore en cours.
 
-Le programme complet Ketrika Agri Market Intelligence est **100 % développé, testé et qualifié** :
-- **74/74 tâches MUST (Phases R0 à R6) sont `DONE`**.
-- **Tous les gates intermédiaires sont validés et scellés :**
-  - `mi-r0-qualified` : Socle de qualification isolée, SQL Guard, intégrité réseau.
-  - `mi-r1-qualified` : Normalisation PPN 7 filières, Bronze immuable SHA-256.
-  - `mi-r2-qualified` : Observatoires macro-économique, change, carburants, commerce.
-  - `mi-r3-qualified` : Modélisation des cours, conformal calibration et baselines WAPE.
-  - `mi-r4-qualified` : Marchés régionaux, disparités spatiales et anomalies de prix.
-  - `mi-r5-qualified` : Récoltes décadaires, bilan d'offre, flux douaniers et pilote décisionnel 3 profils.
-  - `mi-v0.2.0-local-qualified` : Aide à la décision, copilote sans hallucination (65/65 tests), bulletin scellé, alertes anti-faux consensus, durcissement des accès, sauvegarde/restauration certifiée, et performance HTTP P95 < 1s sous 5 clients concurrents.
+Audit A012 :728 auto-liens superseded_by ne constituent pas des révisions
+source ; B-R084 reste ouvert. Aucune réparation active par ce lot. Les
+quinze lignes WB courantes observées par l'audit sont imputées et
+historiques, pas des cours de marché actuels. Le clone WB a rejoué deux
+documents/quinze lignes sans différence mais sans candidat Gold ni
+prévision éligible : preuve bornée, pas qualification complète.
 
----
+## Données nécessaires pour lever les limites de R0.8
 
-## 2. Matrice des Gates d'Autorité Humaine (H1 à H7) & Actions Requises
+| Besoin | Format et droits | Réception attendue |
+|---|---|---|
+| Correction réelle d'une valeur source | Deux versions originales d'un même bulletin/fichier officiel, dates, URL ou origine autorisée, droit de réutilisation documenté ; même produit/lieu/période | Deux objets Bronze intacts, parseur avec preuves de cellules, nouvelle ligne et véritable lien vers la révision ; rejeu hors réseau identique |
+| Corpus annoté et normalisable | Bruts officiels, métadonnées de période/unité/devise/produit/lieu, annotations indépendantes et statut de revue honnête | Normalisation sans alias inventé ; Gold publié uniquement après tous les gates |
+| Inventaire Bronze original | Export versionné d'un bucket autorisé, tailles/SHA/version_id et copie en lecture seule sur destination dédiée | Identité originale vérifiée séparément de la simple copie locale |
+| Recalcul scientifique | Historique éligible, versions dataset/modèle et protocole temporel | Résultats reproductibles, évaluations indépendantes ; abstention si données insuffisantes |
 
-Conformément à la constitution de l'agent (`AGENTS.md` §5.3), ces actions sont **exclusivement réservées à l'intervention humaine** :
+Une nouvelle acquisition WB du2026-10-23 a récupéré cinq réponses HTTP
+(robots/documents), sans chargement actif. Les quinze valeurs sont
+identiques à l'archive : elle ne fournit pas la correction réelle demandée.
+Ses droits et annotations ne sont pas qualifiés par le seul téléchargement.
+Une acquisition distincte61316 a obtenu120 estimations récentes2020-01 à
+2026-10, parsées hors réseau avec preuves contre le contexte officiel
+(39303). Elles restent hors base active et non qualifiées. Branche4226a29 :
+sélection mensuelle récente raccordée à la collecte manuelle, tests ciblés
+verts, réception globale encore à faire ; ne pas la présenter comme livrée.
+La demande documentaire à l'utilisateur est non bloquante pour les travaux
+logiciels et diagnostics sûrs restants.
 
-| ID | Domaine | Statut Actuel | Action Humaine Requise pour Exploitation en Production |
-|---|---|---|---|
-| **H1** | **Clés API LLM** | Mode `replay` & mock testés au vert (100%) | Renseigner `GEMINI_API_KEY` (ou clé Anthropic/OpenAI) dans le fichier `.env` sur le VPS. |
-| **H2** | **Hébergement VPS & Domaine** | `LOCAL_READY` (prêt à déployer) | 1. Provisionner un serveur VPS Ubuntu 24.04 LTS (2 vCPU, 4 Go RAM min) chez un hébergeur.<br>2. Pointer le DNS du domaine (ex. `market.ketrika.mg`) vers l'adresse IP du VPS.<br>3. Configurer les identifiants Cloudflare R2 ou MinIO pour le stockage Bronze.<br>4. Suivre [`docs/runbooks/DEPLOYMENT_RUNBOOK.md`](runbooks/DEPLOYMENT_RUNBOOK.md). |
-| **H3** | **Diffusion externe (Emails / Telegram)** | Verrouillé (`EXTERNAL_SEND_ENABLED=0`, Mailpit) | 1. Souscrire à un service SMTP transactionnel sécurisé (ex. Brevo, Resend).<br>2. Renseigner `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` dans `.env`.<br>3. Basculer `EXTERNAL_SEND_ENABLED=1` après validation des listes de diffusion. |
-| **H4** | **Partenariats plateformes privées** | Politique éthique « permission d'abord » appliquée | Prendre contact avec les plateformes agricoles partenaires (ex. Tantsah) via le modèle [`docs/outreach/tantsah_outreach.md`](outreach/tantsah_outreach.md). |
-| **H5** | **Revue humaine des alias & golden sets** | Étiquetés `human_reviewed=false` | Les analystes du ministère ou de la SPM peuvent se connecter sur `/admin/review` pour approuver formellement les nouveaux alias à confiance < 0,9. |
-| **H6** | **Plafond budgétaire LLM & HTTP** | Garde-fous actifs (20 $/mois, 500 req/j) | Ajuster `LLM_MONTHLY_BUDGET_USD` dans `.env` selon les quotas alloués par la direction. |
-| **H7** | **Relations institutionnelles** | Courriers officiels rédigés dans `docs/outreach/` | Transmettre par voie hiérarchique les correspondances de partenariat aux institutions :<br>- MiASA / ODR ([`docs/outreach/miasa_odr_outreach.md`](outreach/miasa_odr_outreach.md))<br>- Ministère du Commerce / SPM ([`docs/outreach/mincc_outreach.md`](outreach/mincc_outreach.md))<br>- INSTAT ([`docs/outreach/instat_outreach.md`](outreach/instat_outreach.md)). |
+## Suite autorisée
 
----
+Recevoir le lot stabilisé, compléter R0.8, puis gate R0.9 avant les tâches
+R1 dépendantes. Les connecteurs, modèles, pages, alertes et copilote existants
+ne sont pas à reconstruire : terminer corrections et qualification selon le
+plan. Ne déclarer aucune phase terminée par le nombre de tests seul.
 
-## 3. Qualification Terrain & Essai Décisionnel (R5.8)
+## Gates humains et sécurité
 
-> **Mention normative loyale (R6.11) :** L'usage institutionnel réel en situation de crise ou de négociation commerciale reste étiqueté `NOT_EVALUATED`.  
-> Pour qualifier cet usage en conditions réelles :
-> 1. Déployer la stack sur un environnement accessible aux analystes régionaux (DRDA) et régulateurs SPM.
-> 2. Dérouler le protocole d'essai humain formalisé dans [`docs/protocols/decision_pilot_protocol.md`](protocols/decision_pilot_protocol.md) avec les 3 profils d'acteurs (Régulateur, Acheteur grossiste, Vulgarisateur agricole).
-> 3. Consigner les retours d'expérience pour faire évoluer le statut vers `FIELD_TESTED`.
+- H1 : replay/déterministe sans clé LLM ; aucune obligation de dépenser.
+- H2 : aucune provision ni achat par l'agent ; déploiement non revendiqué.
+- H3 : brouillons/Mailpit uniquement ; aucun envoi réel sans autorisation.
+- H4 : marketplaces/sites privés hors périmètre MVP, sans connecteur.
+- H5 : human_reviewed=false tant que non relu ; ne pas inventer une revue.
+- H6 : budgets de configuration et par source, pas de hausse implicite.
+- H7 : aucun contact humain externe par l'agent.
 
----
+## Runtime et preuves
 
-## 4. Runbooks Opérationnels Clés
+Frontend actif remis en service depuis une copie readonly du code main585c47f,
+volume ketrika_runtime_web_585c47f et override opérateur au canal partagé.
+Connexion HTTP200 et conteneur healthy vérifiés ; pas d'essai humain déduit.
+Les volumes SQL/S3 et travaux concurrents sont conservés. Le dépôt GitHub
+privé existe ; contrôler le SHA distant avant toute affirmation de push.
 
-- **Déploiement en production :** [`docs/runbooks/DEPLOYMENT_RUNBOOK.md`](runbooks/DEPLOYMENT_RUNBOOK.md)
-- **Gestion des incidents (panne HTTP, dérive de schéma, budget, forecast, runs) :** [`docs/runbooks/INCIDENT_RUNBOOK.md`](runbooks/INCIDENT_RUNBOOK.md)
-- **Sauvegarde et restauration certifiée :** scripts `deploy/backup.sh` et `deploy/restore.sh` (confiné aux clones isolés sous ADR-102).
-
----
-
-## 5. Dépôt Git & Références
-
-- **Branche principale stable :** `main` (worktree `work/r1-sources-prep`)
-- **Tag officiel de clôture :** `mi-v0.2.0-local-qualified`
-- **Rapport complet d'acceptation :** [`docs/MARKET_INTELLIGENCE_REPORT.md`](MARKET_INTELLIGENCE_REPORT.md)
-- **Rapport d'acceptation MVP historique :** [`docs/MVP_REPORT.md`](MVP_REPORT.md)
+Voir [audit A012](evidence/R0.8_A012_AUDIT_20261024.md),
+[runbook](runbooks/OFFLINE_REBUILD_QUALIFICATION.md), PROGRESS et BLOCKERS.
+L'ancienne passation annonçant100% est conservée dans
+[l'archive historique non reçue](evidence/HANDOFF_20261017_HISTORICAL_UNRECEIVED.md).

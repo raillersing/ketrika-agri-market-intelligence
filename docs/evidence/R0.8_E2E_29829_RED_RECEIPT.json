@@ -1,0 +1,40 @@
+{
+  "scope": "Docker browser software, synthetic QA environment",
+  "passed": false,
+  "version": 1,
+  "commit": "1a6641c8df8b1fcd16c43cb5a1cac44549d373a7",
+  "source_fingerprint": "9fe21b586447da62dcb57a90d5ba108ac164af736377b97c6d339727efc82843",
+  "environment": {
+    "project": "ketrika-qualification-main-final",
+    "database": "ketrika_qualification",
+    "bronze_bucket": "ketrika-qa-bronze",
+    "network": "ketrika_qualification_main_final_network",
+    "dataset_mode": "test",
+    "backend_image_id": "sha256:493523bfd299513b1287f6bf4a94cf2ae07ac14daa6da5c622735d8eb9e1d5a7",
+    "web_image_id": "sha256:c45a054e8c6299b89b47979a87d4f4d0f4e3fd62dcf71fd03e23bafee5159a91",
+    "browser_image_id": "sha256:2646169d3348b9d52388664d307e05e38b18e0a72869dcdae906cdece75f66cf"
+  },
+  "dataset": "mixed",
+  "captured_at": "2026-10-23T22:29:46.813972+00:00",
+  "expected_checks": [
+    "protected UI redirects without a session",
+    "form login establishes HttpOnly session",
+    "reload retains authentication",
+    "protected profile authenticates the browser session",
+    "authenticated same-origin prices API",
+    "price explorer renders",
+    "economy explicitly reports unqualified data after reload",
+    "mobile navigation opens, closes with Escape and with its link",
+    "economy uses full content width at 390px without clipped message",
+    "UI logout removes session",
+    "API rejects access after logout",
+    "UI remains protected after logout"
+  ],
+  "reason": "Page URL expected to be 'http://web:3000/'\nActual value: http://web:3000/login?from=%2Fprices \nCall log:\n  - Expect \"to_have_url\" with timeout 120000ms\n    233 \u00d7 locator resolved to <html lang=\"fr\" class=\"dark\">\u2026</html>\n        - unexpected value \"http://web:3000/login?from=%2Fprices\"\n\nAria snapshot:\n- main:\n  - text: K\n  - heading \"Ketrika\" [level=1]\n  - paragraph: Agri Market Intelligence \u2022 Madagascar\n  - paragraph: Plateforme souveraine de veille \u00e9conomique sur les produits de premi\u00e8re n\u00e9cessit\u00e9 (PPN vivriers).\n  - text: Identifiants invalides Identifiant / Email\n  - img\n  - textbox \"analyste@ketrika.mg\": admin@ketrika.local\n  - text: Mot de passe\n  - img\n  - textbox \"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\": change-me\n  - button \"Acc\u00e9der \u00e0 l'espace analyste\":\n    - text: Acc\u00e9der \u00e0 l'espace analyste\n    - img\n  - text: \"Identifiants d\u00e9mo : admin@ketrika.local\u2022change-me\"\n- alert",
+  "duration_seconds": 147.56,
+  "browser_errors": [],
+  "completed_checks": [
+    "protected UI redirects without a session"
+  ],
+  "checks": 1
+}

@@ -1,0 +1,88 @@
+{
+  "source_id": "wb_rtfp_mdg",
+  "status": "downloaded_pending_corpus_validation",
+  "receipts": [
+    {
+      "filename": "study.json",
+      "source_url": "https://microdata.worldbank.org/metadata/export/8240/json",
+      "catalogue_url": "https://microdata.worldbank.org/catalog/8240/study-description",
+      "http_status": 200,
+      "fetched_at": "2026-10-23T21:24:39.242417Z",
+      "redirect_chain": [
+        "https://microdata.worldbank.org/metadata/export/8240/json"
+      ],
+      "sha256": "4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860",
+      "size_bytes": 51241,
+      "mime_type": "application/json",
+      "headers_mime": "application/json; charset=utf-8"
+    },
+    {
+      "filename": "sample.json",
+      "source_url": "https://microdata.worldbank.org/api/tables/data/fcv/wld_2021_rtfp_v02_m?limit=15&c%5BISO3%5D=MDG&fields=ISO3%2Ccountry%2Cadm1_name%2Cadm2_name%2Cmkt_name%2Cprice_date%2Ccurrency%2Cc_rice%2Cdata_coverage%2Cspatially_interpolated&c%5Bc_rice%5D=%3E0",
+      "catalogue_url": "https://microdata.worldbank.org/catalog/8240/study-description",
+      "http_status": 200,
+      "fetched_at": "2026-10-23T21:24:47.540354Z",
+      "redirect_chain": [
+        "https://microdata.worldbank.org/api/tables/data/fcv/wld_2021_rtfp_v02_m?limit=15&c%5BISO3%5D=MDG&fields=ISO3%2Ccountry%2Cadm1_name%2Cadm2_name%2Cmkt_name%2Cprice_date%2Ccurrency%2Cc_rice%2Cdata_coverage%2Cspatially_interpolated&c%5Bc_rice%5D=%3E0"
+      ],
+      "sha256": "bc4a01e5f443898a916678c84213ab29f30534b642f8da3b7ea6ca509c566c15",
+      "size_bytes": 3511,
+      "mime_type": "application/json",
+      "headers_mime": "application/json; charset=utf-8"
+    },
+    {
+      "filename": "public-licenses.html",
+      "source_url": "https://datacatalog.worldbank.org/public-licenses",
+      "catalogue_url": "https://microdata.worldbank.org/catalog/8240/study-description",
+      "http_status": 200,
+      "fetched_at": "2026-10-23T21:24:49.930187Z",
+      "redirect_chain": [
+        "https://datacatalog.worldbank.org/public-licenses"
+      ],
+      "sha256": "c7c9b31441ea4a1fa27990f4b11f385587469c5c2bda4ec4fc7a6561db6d2422",
+      "size_bytes": 17119,
+      "mime_type": "text/html",
+      "headers_mime": "text/html; charset=utf-8"
+    }
+  ],
+  "trace": [
+    {
+      "url": "https://microdata.worldbank.org/robots.txt",
+      "status": 404,
+      "mime": "text/html",
+      "location": null,
+      "fetched_at": "2026-10-23T21:24:38.218421Z"
+    },
+    {
+      "url": "https://microdata.worldbank.org/metadata/export/8240/json",
+      "status": 200,
+      "mime": "application/json; charset=utf-8",
+      "location": null,
+      "fetched_at": "2026-10-23T21:24:39.242417Z"
+    },
+    {
+      "url": "https://microdata.worldbank.org/api/tables/data/fcv/wld_2021_rtfp_v02_m?limit=15&c%5BISO3%5D=MDG&fields=ISO3%2Ccountry%2Cadm1_name%2Cadm2_name%2Cmkt_name%2Cprice_date%2Ccurrency%2Cc_rice%2Cdata_coverage%2Cspatially_interpolated&c%5Bc_rice%5D=%3E0",
+      "status": 200,
+      "mime": "application/json; charset=utf-8",
+      "location": null,
+      "fetched_at": "2026-10-23T21:24:47.540354Z"
+    },
+    {
+      "url": "https://datacatalog.worldbank.org/robots.txt",
+      "status": 200,
+      "mime": "text/plain; charset=UTF-8",
+      "location": null,
+      "fetched_at": "2026-10-23T21:24:49.323714Z"
+    },
+    {
+      "url": "https://datacatalog.worldbank.org/public-licenses",
+      "status": 200,
+      "mime": "text/html; charset=utf-8",
+      "location": null,
+      "fetched_at": "2026-10-23T21:24:49.930187Z"
+    }
+  ],
+  "user_agent": "KetrikaAgriBot/0.1 (+https://ketrika.ai/bot); contact@example.com",
+  "rights_status": "unverified",
+  "authenticity_qualified": false
+}
