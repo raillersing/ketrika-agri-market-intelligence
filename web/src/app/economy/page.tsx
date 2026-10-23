@@ -120,6 +120,7 @@ function EconomyContent() {
         } else if (dashRes.status === 503) {
           // Macroeconomic dashboard is in qualified withholding (ADR-070 / R2.8)
           setDashboard(null);
+          setError("Données économiques non qualifiées ou temporairement indisponibles.");
         } else {
           throw new Error("Impossible de charger le tableau économique.");
         }
