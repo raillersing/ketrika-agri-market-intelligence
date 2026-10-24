@@ -1,5 +1,10 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-24T15:45:00Z] R0.8 IN_PROGRESS — espace disque du runner CI
+
+- CI40106612564/PR1 : construction froide MinIO et images applicatives réussie ;2398 backend/568,82s/zéro échec-erreur-skip/167 intégrations, couvertures92,4084/87,7660/88,2624 %. Échec réel avant frontend : no space left on device pendant copie du module SWC dans le volume node_modules. Aucun succès frontend ni global déduit.
+- Worktree indépendant work/r0-ci-disk-20261024, basec9b4916, checkout limité à la gouvernance et au workflow. Le check local52578 dans r0-ci-minio continue sans mutation de sa source/destination. Mini-plan : mesurer disque CI ; libérer le cache du constructeur après qa-build ; conserver quatre images/volumes ; recevoir le même check complet sur le runner corrigé. Aucun test/benchmark supprimé ni seuil réduit, miroir R0.8 IN_PROGRESS inchangé.
+
 ### [2026-10-24T12:58:00Z] R0.8 IN_PROGRESS — réparer la construction CI neuve
 
 - CI40034974447 sur main06483dd : images applicatives construites, check arrêté avant pytest par pull minio/minio refusé. Les anciens checks locaux verts ne qualifient pas une construction froide. ADR119/SPECS avant code ; travail séparé dans work/r0-ci-minio-20261024, baseac11e47, sans mutation de l'E2E76823 en cours dans l'autre worktree.

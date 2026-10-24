@@ -1,5 +1,7 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR-119 / CI éphémère : après qa-build et avant check, relever l'espace disque, purger uniquement le cache du constructeur Docker puis relever le disque de nouveau. Les images finales, conteneurs et volumes sont conservés ; aucune purge locale ni changement de sélection/seuil de tests. Cette variation de l'environnement est reçue par un check CI complet.
+
 ADR-119 : qa-build construit également ketrika-minio:qa-r0 depuis les commits officiels serveur07c3a429bfed433e49018cb0f78a52145d4bedeb/client7394ce0dd2a80935aded936b09fa12cbb3cb8096 avec Go1.24.6 en stage Docker figé. Le profil QA utilise cette image pour le serveur et minio-init ; les profils actifs restent inchangés. Les licences et la recette documentent l'origine. Une réception complète avec cette nouvelle image est obligatoire.
 
 CI : seule la liste documentaire explicite d'ADR119 est exclue du redéclenchement complet si elle constitue tout le delta. Les modifications de contrats/documentation normative et toute modification applicative ou mixte restent déclenchantes ; l'absence de run documentaire n'est pas une nouvelle qualification logicielle.

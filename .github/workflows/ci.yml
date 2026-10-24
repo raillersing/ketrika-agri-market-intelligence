@@ -41,6 +41,12 @@ jobs:
       - name: Build all locked qualification images through the local entrypoint
         run: bash scripts/dev.sh qa-build
 
+      - name: Release build-only cache on the ephemeral CI runner
+        run: |
+          df -h / /var/lib/docker
+          docker builder prune --all --force
+          df -h / /var/lib/docker
+
       - name: Run the same isolated check as local development
         run: bash scripts/dev.sh check
 
