@@ -2,6 +2,8 @@
 
 ### [2026-10-24T16:35:00Z] Réception et fusion du lot logiciel R0.8 — programme PARTIAL
 
+- Activation vérifiée après fusion : empreinte main7c79ce2e064d6c049bc1b4ed3f8f5e0c0d176dcb8ea7300a4c3d8854c1b836a5 identique ; cohérence documentaire74 tâches verte. Rechargement API bloqué pendant import, redémarrage du seul service puis attente health200. Contrôle70996 FINAL0 : login200, prix WB from2026-01-01/to2026-10-01 HTTP200/dix points mensuels tous imputed. Ancien500 constaté avant activation puis timeout pendant reload, aucun succès déduit de ces essais. Aucune nouvelle collecte ni mutation SQL/S3.
+
 - Check52578 FINAL0 sur c9b4916fa09ea500e13797bcf114d531eed859d1 :2398 backend/2687,15s/zéro échec-erreur-skip,167 intégrations ;50 frontend/sept suites/lint/types/build16 pages verts. Couvertures core92,4084/extraction87,7660/normalize88,2624 %. Originaux compressés, inventaire, couverture, reçus et profil R0.8_CHECK_52578_* archivés ; aucun test relancé pour le profil.
 - E2E87920 FINAL0 :12/12 parcours/172,141s/zéro erreur JS, même empreinte applicative7c79ce2e064d6c049bc1b4ed3f8f5e0c0d176dcb8ea7300a4c3d8854c1b836a5. Trace privée hors Git SHA85d2a7a5672d3fa8d88be22691c86386e80e5d451bd71b1bfdd66d2aaab63e18. MinIO source figée image76f06e28... ; environnement main-final dédié, aucun volume actif remplacé.
 - CI40106612564 :2398 backend verts puis disque insuffisant pendant préparation frontend. Correction7b977f7 : purge du seul cache de construction du runner CI après construction des images, jamais sur hôte partagé. CI40109568864 entièrement verte :2398 backend/574,97s,50 frontend/build16, contrôles négatifs et12 E2E/63,779s. Empreinte identique à la réception locale ; reçus R0.8_CI_40109568864_* conservés.
