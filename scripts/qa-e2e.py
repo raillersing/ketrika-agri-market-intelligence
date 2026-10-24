@@ -38,13 +38,14 @@ def main() -> int:
             for _attempt in range(60):
                 try:
                     response = context.request.get("/login", timeout=10000)
-                    if response.ok:
+                    backend = context.request.get("http://api:8000/v1/health", timeout=10000)
+                    if response.ok and backend.ok:
                         break
                 except Exception:
                     pass
                 time.sleep(1)
             else:
-                raise RuntimeError("Dedicated frontend never became ready")
+                raise RuntimeError("Dedicated frontend and API never became ready")
             page.goto("/prices")
             expect(page).to_have_url(re.compile(r"http://web:3000/login(?:\?.*)?"))
             completed.append("protected UI redirects without a session")

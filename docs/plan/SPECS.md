@@ -1,5 +1,17 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR-119 / CI éphémère : après qa-build et avant check, relever l'espace disque, purger uniquement le cache du constructeur Docker puis relever le disque de nouveau. Les images finales, conteneurs et volumes sont conservés ; aucune purge locale ni changement de sélection/seuil de tests. Cette variation de l'environnement est reçue par un check CI complet.
+
+ADR-119 : qa-build construit également ketrika-minio:qa-r0 depuis les commits officiels serveur07c3a429bfed433e49018cb0f78a52145d4bedeb/client7394ce0dd2a80935aded936b09fa12cbb3cb8096 avec Go1.24.6 en stage Docker figé. Le profil QA utilise cette image pour le serveur et minio-init ; les profils actifs restent inchangés. Les licences et la recette documentent l'origine. Une réception complète avec cette nouvelle image est obligatoire.
+
+CI : seule la liste documentaire explicite d'ADR119 est exclue du redéclenchement complet si elle constitue tout le delta. Les modifications de contrats/documentation normative et toute modification applicative ou mixte restent déclenchantes ; l'absence de run documentaire n'est pas une nouvelle qualification logicielle.
+
+Le Compose dev construit la même recette MinIO sous ketrika-minio:dev pour serveur et initialisation. Cette dernière échoue dès qu'alias, création de bucket ou activation du versioning échouent. Aucun remplacement automatique du MinIO actif ni migration de ses volumes n'est requis par le correctif.
+
+ADR-118 : la collecte manuelle WB sélectionne explicitement les mois de janvier UTC année courante moins six au mois UTC courant, au maximum84 mois et120 lignes MDG/c_rice positif. Cette sélection bornée ne constitue pas une couverture nationale ni une garantie de fraîcheur. Les anciennes URL restent rejouables ; les valeurs restent des estimations imputées.
+
+Les nouveaux outcomes WB exposent scope=bounded_recent_modeled_rice_estimates_not_full_market et leur compte n_records effectivement mesuré. Les anciens reçus bounded_15 demeurent historiques sans réécriture, y compris le reçu actif f10abd37 dont le compte mesuré est120.
+
 ADR-117 (réception R0.8) : les lectures API de vues Gold non peuplées répondent503 RFC7807 avec code `gold_not_published`, pas200/vide ou faux compte nul. Les filtres sans résultat sur une vue effectivement publiée répondent200 selon leur DTO habituel. Les prévisions par model_run_id lisent leur run indépendamment de forecast_latest. Le reçu de conservation de copie Bronze relit et vérifie SHA/taille de tous les objets déclarés avant/après rejeu ; l'inventaire de descripteurs seul n'établit pas cette conservation. Aucun statut d'authenticité ou de performance marché n'en découle.
 
 > Normatif. Tout écart **DOIT** faire l'objet d'un ADR (`AGENTS.md` §5.2).
@@ -212,7 +224,7 @@ Les images utilisent les lockfiles sans repli ; le navigateur est installé dans
 le seul stage `backend-browser` et exécuté non-root sur `http://web:3000` /
 `http://api:8000` du réseau QA. E2E entièrement Docker, jamais Node/Chrome hôte.
 La version de Playwright vient du lockfile, avec navigateur correspondant.
-`qa-build` construit uniquement les trois images dédiées ; `qa-isolated
+`qa-build` construit les trois images applicatives et l'image MinIO QA depuis source (ADR-119) ; `qa-isolated
 negative-build` exige un build réellement non nul sur une copie jetable.
 Réception locale sur versions applicatives verrouillées ; sécurité/déploiement
 et mises à niveau majeures nécessitent leur réception/ADR spécifiques.
@@ -1841,7 +1853,7 @@ Les quantités sont des grandeurs extensives soumises à une typologie stricte p
 ### Extension collecte manuelle — ADR-108 (2026-10-20)
 
 POST /v1/sources/collect est réservé aux administrateurs, avec request_id UUID obligatoire et source_id optionnel. La sélection est limitée aux connecteurs enregistrés et aux permissions de collecte autorisées. Les reçus sont persistés dans meta.collection_request (migration 0017) ; un même identifiant et une même sélection ne réémettent pas de requête. Une sélection différente ou un propriétaire concurrent provoquent 409.
-GET /v1/sources/collection-options, /collections et /collections/{request_id} exigent une session authentifiée. Une opération abandonnée devient interrupted sans relance automatique. Le recalcul Gold reste distinct de l'acquisition, aucune fraîcheur n'est déduite de sa seule réussite. Les erreurs ne divulguent ni SQL ni secrets. L'interface affiche les résultats persistés, les étapes réelles et les limites du connecteur Banque mondiale (quinze estimations imputées).
+GET /v1/sources/collection-options, /collections et /collections/{request_id} exigent une session authentifiée. Une opération abandonnée devient interrupted sans relance automatique. Le recalcul Gold reste distinct de l'acquisition, aucune fraîcheur n'est déduite de sa seule réussite. Les erreurs ne divulguent ni SQL ni secrets. L'interface affiche les résultats persistés, les étapes réelles et les limites du connecteur Banque mondiale (jusqu'à120 estimations imputées sur la fenêtre ADR118).
 
 Précisions ADR-109–111 : les douze définitions historiques Gold sont figées avant0012 ;0018 installe les vues postérieures et rétablit les droits Gold seulement. Par défaut, economic_dashboard reste exclue avec motif macro_publication_not_qualified ; son appel explicite reste refusé. Le seuil de parsing99% porte sur chaque lot complet candidat (échecs inclus), avec comptabilité globale séparée. Le parser_version de SourceRecord est celui de l'acquisition immuable ; la version choisie pour traitement doit correspondre au batch, au connecteur et au ParseResult, sans réécriture du parent. Source, clé, SHA, MIME, URL, date et octets restent vérifiés.
 

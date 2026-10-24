@@ -122,6 +122,18 @@ def test_api_public_and_analytical_endpoints_200(db_session: Session, client: ht
     assert "median_price" in prices[0]
     assert prices[0]["value_kind"] in ("observed", "imputed")
 
+    months = sorted({item["month"] for item in prices})
+    assert len(months) >= 3
+    lower, upper = months[1], months[-2]
+    for bounds in ({"from": lower}, {"to": upper}, {"from": lower, "to": upper}):
+        bounded = client.get("/v1/prices", params={"product": "rice_milled", **bounds})
+        assert bounded.status_code == 200
+        assert {item["month"] for item in bounded.json()} == {
+            month
+            for month in months
+            if bounds.get("from", month) <= month <= bounds.get("to", month)
+        }
+
     r_prices_csv = client.get("/v1/prices?product=rice_milled&format=csv")
     assert r_prices_csv.status_code == 200
     assert "text/csv" in r_prices_csv.headers["content-type"]

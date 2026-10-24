@@ -119,7 +119,7 @@ show_help() {
   echo "  logs <service>     - Follow Docker logs for a specific service"
   echo "  validate-registry  - Validate registry/sources.yaml against Pydantic schema"
   echo "  qa-isolated <cmd>  - Dedicated profile: check, test, governance, prepare"
-  echo "  qa-build           - Build locked backend, web and browser QA images"
+  echo "  qa-build           - Build locked backend, web, browser and MinIO QA images"
   echo "  qa-profile <xml>   - Read archived JUnit timings; no tests or database"
   echo "  qa <task_id>       - Run a declared measured software subset"
 }
@@ -167,6 +167,7 @@ case "$COMMAND" in
     qa_isolated "$@"
     ;;
   qa-build)
+    docker build -t ketrika-minio:qa-r0 "$REPO_ROOT/docker/minio"
     docker build --target base -t ketrika-backend:qa-codex-r03 "$REPO_ROOT/backend"
     docker build -t ketrika-web:qa-codex-r03 "$REPO_ROOT/web"
     docker build --target backend-browser -t ketrika-backend:qa-codex-browser-r03 "$REPO_ROOT/backend"

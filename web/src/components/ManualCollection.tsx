@@ -83,7 +83,7 @@ export function ManualCollectionStatus({ receipt, error }: {
   return <section aria-label="Suivi de la collecte" className="rounded-2xl border border-emerald-500/20 bg-slate-950/60 p-5 space-y-3">
     <h2 className="font-bold text-white">Collecte des sources publiques</h2>
     <p className="text-sm text-slate-300">Seules les sources autorisées disposant d’un connecteur sont sollicitées. Les contrôles et quotas restent obligatoires. La collecte peut prendre plusieurs minutes.</p>
-    <p className="text-xs text-slate-400">Banque mondiale : acquisition bornée à 15 estimations de riz avec contexte officiel, pas la totalité du marché ni des prix observés en temps réel.</p>
+    <p className="text-xs text-slate-400">Banque mondiale : jusqu’à 120 estimations de riz sur une fenêtre récente avec contexte officiel. Couverture partielle, sans garantie de fraîcheur ; ce sont des valeurs imputées.</p>
     {error && <p role="alert" className="text-sm text-amber-300">{error}</p>}
     {receipt && counts ? <>
       <p role="status" aria-live="polite" className="text-sm text-emerald-200">{collectionStage(receipt)}</p>

@@ -3,8 +3,25 @@ name: CI
 on:
   push:
     branches: [main]
+    # AGENTS §3.3: bounded documentary exception; contracts still trigger CI.
+    paths-ignore:
+      - docs/plan/PROGRESS.md
+      - docs/HANDOFF.md
+      - docs/MARKET_INTELLIGENCE_REPORT.md
+      - docs/evidence/R0.8_CHECK_*
+      - docs/evidence/R0.8_E2E_*
+      - docs/evidence/R0.8_CI_*
+      - docs/evidence/R0.8_WB_ACTIVE_CLICK_*
   pull_request:
     branches: [main]
+    paths-ignore:
+      - docs/plan/PROGRESS.md
+      - docs/HANDOFF.md
+      - docs/MARKET_INTELLIGENCE_REPORT.md
+      - docs/evidence/R0.8_CHECK_*
+      - docs/evidence/R0.8_E2E_*
+      - docs/evidence/R0.8_CI_*
+      - docs/evidence/R0.8_WB_ACTIVE_CLICK_*
 
 permissions:
   contents: read
@@ -24,6 +41,12 @@ jobs:
       - name: Build all locked qualification images through the local entrypoint
         run: bash scripts/dev.sh qa-build
 
+      - name: Release build-only cache on the ephemeral CI runner
+        run: |
+          df -h / /var/lib/docker
+          docker builder prune --all --force
+          df -h / /var/lib/docker
+
       - name: Run the same isolated check as local development
         run: bash scripts/dev.sh check
 
@@ -37,5 +60,5 @@ jobs:
         if: failure()
         run: >-
           docker compose --env-file scripts/qualification.env
-          --project-name ketrika-qualification
+          --project-name ketrika-qualification-main-final
           -f docker-compose.qualification.yml ps -a

@@ -3,6 +3,7 @@
 import json
 from concurrent.futures import ThreadPoolExecutor
 from threading import Event
+from urllib.parse import parse_qs, urlsplit
 from uuid import uuid4
 
 import httpx
@@ -46,6 +47,11 @@ def test_real_phases_and_receipts_no_repeat_on_same_request(monkeypatch):
     assert len(result["outcomes"]) == 1
     outcome = result["outcomes"][0]
     assert outcome["status"] == "success"
+    assert outcome["scope"] == "bounded_recent_modeled_rice_estimates_not_full_market"
+    data_url = next(url for url in wire if "/api/tables/data/" in url)
+    selection = parse_qs(urlsplit(data_url).query)
+    assert selection["limit"] == ["120"]
+    assert selection["c[price_date]"]
     assert outcome["n_fetched"] == 2
     assert outcome["n_rejected"] == 0
     assert outcome["run_id"]
