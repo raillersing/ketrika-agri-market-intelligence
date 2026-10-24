@@ -16,8 +16,9 @@ E2E76823 vert (12 scénarios). Sa réception ne qualifie pas les données.
 
 Audit A012 :728 auto-liens superseded_by ne constituent pas des révisions
 source ; B-R084 reste ouvert. Aucune réparation active par ce lot. Les
-quinze lignes WB courantes observées par l'audit sont imputées et
-historiques, pas des cours de marché actuels. Le clone WB a rejoué deux
+quinze lignes WB courantes observées lors de l'audit étaient imputées et
+historiques. Après le clic actif du2026-10-24,135 lignes WB sont courantes,
+toutes imputées, avec des périodes jusqu'à2026-10. Le clone WB a rejoué deux
 documents/quinze lignes sans différence mais sans candidat Gold ni
 prévision éligible : preuve bornée, pas qualification complète.
 
@@ -36,9 +37,18 @@ identiques à l'archive : elle ne fournit pas la correction réelle demandée.
 Ses droits et annotations ne sont pas qualifiés par le seul téléchargement.
 Une acquisition distincte61316 a obtenu120 estimations récentes2020-01 à
 2026-10, parsées hors réseau avec preuves contre le contexte officiel
-(39303). Elles restent hors base active et non qualifiées. Branche4226a29 :
+(39303). Cette sonde n'a rien chargé. Le clic actif63276 a ensuite intégré
+120 estimations via le propriétaire durable normal et publié les vues :
+HTTP200/statussucceeded, zéro rejet, reçu relu après reload, sans qualification
+scientifique des estimations. Branche4226a29 :
 sélection mensuelle récente raccordée à la collecte manuelle, réception
-logicielle27111/76823 verte. Intégration/activation active à confirmer.
+logicielle27111/76823 verte, activation locale3fec099 et clic actif confirmés.
+
+Deux correctifs restent en réception séparée : le libellé de portée hérité
+bounded_15 (le compte120 du reçu est exact, historique conservé), et le500
+des filtres prix from/to (cast SQL non lié). CI froide également à réparer
+par construction MinIO source officielle figée, ADR119. Source en préparation
+dans work/r0-ci-minio-20261024 ; ne pas la déclarer reçue avant son check.
 La demande documentaire à l'utilisateur est non bloquante pour les travaux
 logiciels et diagnostics sûrs restants.
 

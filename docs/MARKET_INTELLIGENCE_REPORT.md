@@ -56,6 +56,13 @@ La CI distante40034974447 a échoué avant les tests sur une image MinIO
 fournisseur retirée. Une construction depuis source officielle figée est
 préparée séparément (ADR119) et doit recevoir son propre environnement.
 
+Le2026-10-24, clic WB réel sur main local3fec099 :120 nouvelles estimations,
+zéro rejet/publication réussie, reçu SQL/API identique après reload et zéro
+erreur JS. La base contient135 lignes WB courantes, toutes imputées, jusqu'à
+2026-10 ; API200/96 points mensuels agrégés. Aucun essai humain ni modèle
+qualifié déduit. Le filtrage par dates500 et le libellé de portée hérité15
+sont corrigés dans le lot distinct en préparation, pas encore reçu.
+
 Audit actif readonly :728 observations portent un auto-lien de remplacement
 (B-R084) ; aucune correction active effectuée. Cette base ne prouve pas un
 corpus authentique de révisions. Détails, SQL reproductible, originaux et

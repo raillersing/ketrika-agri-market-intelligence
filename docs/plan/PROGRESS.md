@@ -1,5 +1,11 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-24T13:35:00Z] Collecte WB en un clic observée sur l'application active
+
+- Main local3fec099 (distant06483dd), source applicativeac11e47 reçue par27111/76823 ; frontend servi depuis volume source readonly ketrika_runtime_web_ac11e47, dépendances/ports conservés.63276 FINAL0 : connexion UI administrateur puis clic WB seul, HTTP200/statussucceeded, deux documents lus/un nouveau Bronze/120 enregistrements/zéro rejet, publication succeeded. Requestf10abd37-94e0-4494-9eca-67042223c926, run185c253b-9523-416f-b1f0-c8342ccb5703,13:12:35Z→13:14:42Z. Reçu API strictement identique à la rélecture persistée, reload réussi, zéro erreur JS. Aucun second clic ni collecte globale.
+- SQL readonly :15 WB courantes2010-05→2011-07 avant,135 après2010-05→2026-10, toutes imputées. API source WB200/96 points mensuels agrégés, value_kind=imputed. Ce n'est pas une qualification des cours observés/modèles ou un essai humain. Originaux JSON/SQL/capture R0.8_WB_ACTIVE_CLICK_20261024* conservés, capture inspectée (viewport en bas de page, pas de prétendue preuve visuelle du compteur).
+- Écarts réellement trouvés : reçu historique f10 porte encore scope bounded_15 malgré le compte120 ; conserver l'original, corriger seulement les futurs reçus. Filtre prix from/to renvoie500, SQL contient :from_date::date non lié par SQLAlchemy. Corrections et scénario PostgreSQL existant renforcé dans work/r0-ci-minio-20261024, avec réception complète obligatoire déjà prévue pour la nouvelle image MinIO. Aucun nouveau DONE/tag, aucune donnée historique effacée.
+
 ### [2026-10-24T13:01:00Z] Fenêtre WB récente — réception logicielle complète
 
 - Sourceac11e477ca5328645b68f022017a0a6ee0a61fc4, empreintef4e5ed4448014353af1e210110a2d1d40df64cc2827b63da600921ae61936cb8.27111 FINAL0 :2398 backend/1307,87s/zéro échec-erreur-skip/167 intégrations ;Ruff/format413/Mypy412/cohérence74 verts, couvertures core92,4084/extraction87,7660/normalize88,2624 %. Frontendca54c6d5... :50 tests/sept suites/lint/types/build16 pages verts. Originaux R0.8_CHECK_27111_* conservés ; reprise du processus achevé, aucune réexécution complète.
