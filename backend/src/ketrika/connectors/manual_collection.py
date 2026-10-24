@@ -157,7 +157,7 @@ def _collect_source(sid: str, request_id: UUID, outcomes: list[dict[str, Any]]) 
             from ketrika.connectors.manual_wb import ManualWbConnector
 
             connector = ManualWbConnector()
-            outcome["scope"] = "bounded_15_modeled_rice_estimates_not_full_market"
+            outcome["scope"] = "bounded_recent_modeled_rice_estimates_not_full_market"
         _progress(request_id, f"bronze:{sid}", outcomes)
         with PoliteHttpClient(policy_engine=ctx.policy_engine) as http:
             ctx.http_client = http

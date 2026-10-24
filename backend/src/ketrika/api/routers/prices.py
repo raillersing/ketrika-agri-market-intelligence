@@ -80,10 +80,10 @@ def get_prices(
         query_sql += " AND actor_level = :actor"
         params["actor"] = actor_level
     if from_date:
-        query_sql += " AND month >= :from_date::date"
+        query_sql += " AND month >= CAST(:from_date AS date)"
         params["from_date"] = from_date
     if to_date:
-        query_sql += " AND month <= :to_date::date"
+        query_sql += " AND month <= CAST(:to_date AS date)"
         params["to_date"] = to_date
     if source:
         query_sql += " AND source_id = :source"

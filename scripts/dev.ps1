@@ -136,7 +136,7 @@ function Show-Help {
     Write-Host "  logs <service>     - Follow Docker logs for a specific service"
     Write-Host "  validate-registry  - Validate registry/sources.yaml against Pydantic schema"
     Write-Host "  qa-isolated <cmd>  - Dedicated profile: check, test, governance, prepare"
-    Write-Host "  qa-build           - Build locked backend, web and browser QA images"
+    Write-Host "  qa-build           - Build locked backend, web, browser and MinIO QA images"
     Write-Host "  qa <task_id>       - Run a declared measured software subset"
     Write-Host "  qa-profile <xml>   - Read archived JUnit timings; no test execution or database"
 }
@@ -209,6 +209,7 @@ switch ($Command) {
         exit 0
     }
     "qa-build" {
+        Invoke-QaDocker -DockerArgs @("build", "-t", "ketrika-minio:qa-r0", (Join-Path $RepoRoot "docker/minio"))
         Invoke-QaDocker -DockerArgs @("build", "--target", "base", "-t", "ketrika-backend:qa-codex-r03", (Join-Path $RepoRoot "backend"))
         Invoke-QaDocker -DockerArgs @("build", "-t", "ketrika-web:qa-codex-r03", (Join-Path $RepoRoot "web"))
         Invoke-QaDocker -DockerArgs @("build", "--target", "backend-browser", "-t", "ketrika-backend:qa-codex-browser-r03", (Join-Path $RepoRoot "backend"))

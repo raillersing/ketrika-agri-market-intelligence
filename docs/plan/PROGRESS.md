@@ -1,5 +1,13 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-24T12:58:00Z] R0.8 IN_PROGRESS — réparer la construction CI neuve
+
+- CI40034974447 sur main06483dd : images applicatives construites, check arrêté avant pytest par pull minio/minio refusé. Les anciens checks locaux verts ne qualifient pas une construction froide. ADR119/SPECS avant code ; travail séparé dans work/r0-ci-minio-20261024, baseac11e47, sans mutation de l'E2E76823 en cours dans l'autre worktree.
+- Mini-plan : figer sources/digests officiels ; construire MinIO et mc en Docker ; raccorder qa-build Linux/PowerShell et profil isolé ; vérifier build/health/versioning ; recevoir le lot complet sur nouvelle image. Ne pas remplacer le stockage actif ni ses volumes, ne pas réduire de test/seuil. Miroir R0.8 IN_PROGRESS inchangé.
+-58042 FINAL0 : image source MinIO construite, serveur07c3a429... et client7394ce0... vérifiés contre les binaires existants ; image initiale762b7e67..., versioning/health verts,98427 FINAL0 : collecte durable/idempotence/portée120 sur le nouveau stockage, un test/28,93s. Complément README dev/QA : couche documentaire reconstruite depuis le cache, aucune recompilation des binaires.
+- Diagnostic actif17588 : API WB sans dates200/96 points imputés ; from/to500, PostgreSQL confirme les placeholders :from_date::date restés non liés. CAST explicite des paramètres, trois bornages inclusifs ajoutés dans le scénario PostgreSQL existant ;88944 FINAL0 : un scénario API/49,37s. Portée future des reçus corrigée sans retoucher f10abd37.84340 FINAL0 :Ruff/format quatre fichiers/Mypy deux modules/bash -n verts. Ces ciblés ne reçoivent pas le lot global.
+- Reprise15:00Z : socket Docker WSL absente après arrêt du proxy Desktop (journaux hôte13:43Z), moteur Windows fonctionnel. Relance du seul proxy officiel avec ses arguments relevés dans les journaux ; socket et montages restaurés, conteneurs/volumes conservés. Premier essai sans argument resources échoué, puis connexion Docker29.8.2 confirmée. API active avait démarré sur un bind vide ; redémarrage du seul aiagent-api-1 après restauration, sans migration ni collecte rejouée. Réception finale à lancer sur source figée après clôture de ces diagnostics.
+
 ### [2026-10-23T22:12:00Z] R0.8 IN_PROGRESS — fenêtre WB récente, lot indépendant
 
 - Worktree r08-current-corpus-20261024, base1a6641c ; réception6735 figée dans l'autre worktree, aucune mutation de sa destination/source. Mini-plan : contractualiser ADR118 ; construire URL mensuelle bornée ; raccorder discovery/UI/runbook ; vérifier bornes et compatibilité historique ; recevoir le lot seulement après libération QA. Pas de DONE ni tag anticipé, miroir IN_PROGRESS inchangé.

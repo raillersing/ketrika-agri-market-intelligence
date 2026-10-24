@@ -51,7 +51,7 @@ services:
       retries: 30
 
   minio:
-    image: minio/minio:latest
+    image: ketrika-minio:qa-r0
     command: server /data --console-address :9001
     environment:
       MINIO_ROOT_USER: qualification-admin
@@ -65,7 +65,7 @@ services:
       retries: 30
 
   minio-init:
-    image: minio/minio:latest
+    image: ketrika-minio:qa-r0
     depends_on:
       minio:
         condition: service_healthy

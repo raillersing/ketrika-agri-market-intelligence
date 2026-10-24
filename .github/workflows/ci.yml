@@ -3,8 +3,25 @@ name: CI
 on:
   push:
     branches: [main]
+    # AGENTS §3.3: bounded documentary exception; contracts still trigger CI.
+    paths-ignore:
+      - docs/plan/PROGRESS.md
+      - docs/HANDOFF.md
+      - docs/MARKET_INTELLIGENCE_REPORT.md
+      - docs/evidence/R0.8_CHECK_*
+      - docs/evidence/R0.8_E2E_*
+      - docs/evidence/R0.8_CI_*
+      - docs/evidence/R0.8_WB_ACTIVE_CLICK_*
   pull_request:
     branches: [main]
+    paths-ignore:
+      - docs/plan/PROGRESS.md
+      - docs/HANDOFF.md
+      - docs/MARKET_INTELLIGENCE_REPORT.md
+      - docs/evidence/R0.8_CHECK_*
+      - docs/evidence/R0.8_E2E_*
+      - docs/evidence/R0.8_CI_*
+      - docs/evidence/R0.8_WB_ACTIVE_CLICK_*
 
 permissions:
   contents: read
@@ -37,5 +54,5 @@ jobs:
         if: failure()
         run: >-
           docker compose --env-file scripts/qualification.env
-          --project-name ketrika-qualification
+          --project-name ketrika-qualification-main-final
           -f docker-compose.qualification.yml ps -a
