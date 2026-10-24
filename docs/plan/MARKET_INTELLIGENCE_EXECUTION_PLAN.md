@@ -19,7 +19,7 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.5 | MUST | DONE | 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
 | R0.6 | MUST | DONE | A/B1/B2/C intégrés main 173c41a ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118/snapshot exact/actif préservé ; logiciel reçu, pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | main442a20c, source971702e : Windows1538/35/build, E2E9, inclusion160, empreinte exacte, préservation et gitleaks0 ; aucun KPI marché qualifié |
-| R0.8 | MUST | IN_PROGRESS | Correctif8de251f reçu,empreinte main exacte74169 ;check78714 FINAL0/1725 backend/35 web/build,contexte partagé et supersession vérifiés. Révisions authentiques/recalcul scientifique non qualifiés ; lots Antigravity audités non reçus |
+| R0.8 | MUST | IN_PROGRESS | Correctifs et fenêtre WB ac11e47 reçus comme logiciel :check27111 FINAL0/2398 backend/50 web/build16/167 intégrations,E2E76823 FINAL0/12. Révisions authentiques/S3 original/recalcul scientifique non qualifiés ; CI MinIO à réparer ; R0.8_WB_WINDOW_RECEPTION_20261024.md |
 | R0.9 | MUST | TODO | — |
 | R1.1 | MUST | TODO | 15a8e75 : registre sources.yaml requalifié, familles anti-fuite, cadences distinctes |
 | R1.2 | MUST | TODO | 2f9d872 : moteur CatalogDiscoveryEngine, pagination bornée, anti-SSRF validé |

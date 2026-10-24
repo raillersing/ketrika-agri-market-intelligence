@@ -1,0 +1,46 @@
+{
+  "scope": "Docker browser software, synthetic QA environment",
+  "passed": false,
+  "version": 1,
+  "commit": "82d7e28aa5d7877715c820010abdc45fa55a65b7",
+  "source_fingerprint": "54a48fdf8e359d23521f7b882c85318535630f1312dc040108d9523f7ca94377",
+  "environment": {
+    "project": "ketrika-qualification-main-final",
+    "database": "ketrika_qualification",
+    "bronze_bucket": "ketrika-qa-bronze",
+    "network": "ketrika_qualification_main_final_network",
+    "dataset_mode": "test",
+    "backend_image_id": "sha256:493523bfd299513b1287f6bf4a94cf2ae07ac14daa6da5c622735d8eb9e1d5a7",
+    "web_image_id": "sha256:c45a054e8c6299b89b47979a87d4f4d0f4e3fd62dcf71fd03e23bafee5159a91",
+    "browser_image_id": "sha256:2646169d3348b9d52388664d307e05e38b18e0a72869dcdae906cdece75f66cf"
+  },
+  "dataset": "mixed",
+  "captured_at": "2026-10-23T21:59:56.571710+00:00",
+  "expected_checks": [
+    "protected UI redirects without a session",
+    "form login establishes HttpOnly session",
+    "reload retains authentication",
+    "protected profile authenticates the browser session",
+    "authenticated same-origin prices API",
+    "price explorer renders",
+    "economy explicitly reports unqualified data after reload",
+    "mobile navigation opens, closes with Escape and with its link",
+    "economy uses full content width at 390px without clipped message",
+    "UI logout removes session",
+    "API rejects access after logout",
+    "UI remains protected after logout"
+  ],
+  "prices_status": 200,
+  "reason": "Locator expected to be visible\nActual value: None\nError: element(s) not found \nCall log:\n  - Expect \"to_be_visible\" get_by_text(\"Donn\u00e9es \u00e9conomiques non qualifi\u00e9es ou temporairement indisponibles.\", exact=True) with timeout 5000ms\n  - waiting for get_by_text(\"Donn\u00e9es \u00e9conomiques non qualifi\u00e9es ou temporairement indisponibles.\", exact=True)\n\nAria snapshot:\n- complementary:\n  - link \"K Ketrika Agri Market Intelligence\":\n    - /url: /\n  - navigation \"Navigation principale\":\n    - text: March\u00e9 & Cours\n    - link \"Vue d'ensemble\":\n      - /url: /\n      - img\n      - text: Vue d'ensemble\n    - link \"Prix vivriers\":\n      - /url: /prices\n      - img\n      - text: Prix vivriers\n    - link \"\u00c9conomie & Conjoncture\":\n      - /url: /economy\n      - img\n      - text: \u00c9conomie & Conjoncture\n    - link \"Carte des march\u00e9s\":\n      - /url: /map\n      - img\n      - text: Carte des march\u00e9s\n    - link \"Commerce ext\u00e9rieur\":\n      - /url: /trade\n      - img\n      - text: Commerce ext\u00e9rieur\n    - text: Intelligence & Risques\n    - link \"Climat & Cultures\":\n      - /url: /climate\n      - img\n      - text: Climat & Cultures\n    - link \"Centre d'alertes\":\n      - /url: /alerts\n      - img\n      - text: Centre d'alertes\n    - link \"Bulletins officiels\":\n      - /url: /bulletins\n      - img\n      - text: Bulletins officiels\n    - link \"Copilote analyste IA\":\n      - /url: /copilot\n      - img\n      - text: Copilote analyste IA\n    - text: Data Platform\n    - link \"Sources & DataOps\":\n      - /url: /sources\n      - img\n      - text: Sources & DataOps\n    - link \"File de revue\":\n      - /url: /admin/review\n      - img\n      - text: File de revue\n    - link \"Architecture Syst\u00e8me\":\n      - /url: /system\n      - img\n      - text: Architecture Syst\u00e8me\n  - text: \u00c9tat de la plateforme\n  - link \"Consulter\":\n    - /url: /system\n  - text: Analyste March\u00e9 admin@ketrika.local\n  - button \"Se d\u00e9connecter\":\n    - img\n- banner:\n  - heading \"\u00c9conomie & Conjoncture\" [level=1]\n  - text: UTC+3\n  - paragraph: Indicateurs \u00e9conomiques et qualification des donn\u00e9es\n  - button \"Rechercher une analyse, un produit, un lieu... K\":\n    - img\n    - text: Rechercher une analyse, un produit, un lieu...\n    - img\n    - text: K\n  - link \"Alertes\":\n    - /url: /alerts\n    - img\n    - text: Alertes\n  - img\n  - link \"Provenance & qualit\u00e9\":\n    - /url: /sources\n  - text: A Analyste March\u00e9 Admin\n- img\n- text: \"Filtres :\"\n- img\n- combobox:\n  - option \"Riz blanc local (makalioka/tsipala)\" [selected]\n  - option \"Paddy (riz non usin\u00e9)\"\n  - option \"Riz import\u00e9 (stock/parfum\u00e9)\"\n  - option \"Ma\u00efs grain jaune/blanc\"\n  - option \"Manioc frais / cossettes\"\n  - option \"Huile v\u00e9g\u00e9tale alimentaire\"\n  - option \"Sucre blanc raffin\u00e9\"\n- img\n- img\n- combobox:\n  - option \"Toutes les r\u00e9gions (National)\" [selected]\n  - option \"Analamanga (Antananarivo)\"\n  - option \"Vakinankaratne (Antsirabe)\"\n  - option \"Itasy (Miarinarivo)\"\n  - option \"Bongolava (Tsiroanomandidy)\"\n  - option \"Haute Matsiatra (Fianarantsoa)\"\n  - option \"Amoron'i Mania (Ambositra)\"\n  - option \"Vatovavy (Mananjary)\"\n  - option \"Fitovinany (Manakara)\"\n  - option \"Atsimo-Atsinanana (Farafangana)\"\n  - option \"Ihorombe (Ihosy)\"\n  - option \"Atsinanana (Toamasina)\"\n  - option \"Analanjirofo (F\u00e9n\u00e9rive-Est)\"\n  - option \"Alaotra-Mangoro (Ambatondrazaka)\"\n  - option \"Boeny (Mahajanga)\"\n  - option \"Sofia (Antsohihy)\"\n  - option \"Betsiboka (Maevatanana)\"\n  - option \"Melaky (Maintirano)\"\n  - option \"Atsimo-Andrefana (Toliara)\"\n  - option \"Androy (Ambovombe)\"\n  - option \"Anosy (Taolagnaro)\"\n  - option \"Menabe (Morondava)\"\n  - option \"DIANA (Antsiranana)\"\n  - option \"SAVA (Sambava)\"\n- img\n- img\n- combobox:\n  - option \"Tous niveaux (Agr\u00e9g\u00e9)\" [selected]\n  - option \"D\u00e9tail (Consommateur)\"\n  - option \"Gros / Demi-gros\"\n  - option \"Producteur (Bord champ)\"\n- img\n- main:\n  - heading \"Observatoire \u00c9conomique & Conjoncture\" [level=1]:\n    - img\n    - text: Observatoire \u00c9conomique & Conjoncture\n  - text: ADR-070\n  - paragraph: \"Tableau \u00e9conomique interpr\u00e9table par dimension \u00e9tanche (inflation, change, \u00e9nergie, commerce ext\u00e9rieur, activit\u00e9). Les indicateurs sont strictement autonomes : aucun score global synth\u00e9tique artificiel n'est calcul\u00e9.\"\n  - button \"Exporter fiches m\u00e9triques (CSV)\":\n    - img\n    - text: Exporter fiches m\u00e9triques (CSV)\n  - 'button \"Inflation & Prix Conso Compl\u00e9tude: no_data\"':\n    - img\n    - text: Inflation & Prix Conso\n  - 'button \"Taux de Change Compl\u00e9tude: no_data\"':\n    - img\n    - text: Taux de Change\n  - 'button \"Carburants & \u00c9nergie Compl\u00e9tude: no_data\"':\n    - img\n    - text: Carburants & \u00c9nergie\n  - 'button \"Commerce Ext\u00e9rieur Compl\u00e9tude: no_data\"':\n    - img\n    - text: Commerce Ext\u00e9rieur\n  - 'button \"Activit\u00e9 R\u00e9elle Compl\u00e9tude: no_data\"':\n    - img\n    - text: Activit\u00e9 R\u00e9elle\n  - text: Aucune donn\u00e9e disponible pour cette dimension \u00e9conomique.\n- alert",
+  "duration_seconds": 96.215,
+  "browser_errors": [],
+  "completed_checks": [
+    "protected UI redirects without a session",
+    "form login establishes HttpOnly session",
+    "reload retains authentication",
+    "protected profile authenticates the browser session",
+    "authenticated same-origin prices API",
+    "price explorer renders"
+  ],
+  "checks": 6
+}

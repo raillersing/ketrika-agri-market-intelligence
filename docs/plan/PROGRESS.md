@@ -1,11 +1,29 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-24T13:01:00Z] Fenêtre WB récente — réception logicielle complète
+
+- Sourceac11e477ca5328645b68f022017a0a6ee0a61fc4, empreintef4e5ed4448014353af1e210110a2d1d40df64cc2827b63da600921ae61936cb8.27111 FINAL0 :2398 backend/1307,87s/zéro échec-erreur-skip/167 intégrations ;Ruff/format413/Mypy412/cohérence74 verts, couvertures core92,4084/extraction87,7660/normalize88,2624 %. Frontendca54c6d5... :50 tests/sept suites/lint/types/build16 pages verts. Originaux R0.8_CHECK_27111_* conservés ; reprise du processus achevé, aucune réexécution complète.
+-76823 FINAL0 :12 scénarios navigateur/279,993s/zéro erreur JS sur le même contenu et mêmes images isolées ;prix200, macro503 explicite après reload, mobile390px et déconnexion401. Le runner attend désormais API et frontend avant connexion ; aucun formulaire réessayé ni assertion supprimée. Reçu original R0.8_E2E_76823_RECEIPT.json ; trace privée hors Git SHA f34cb99f7d62b58f029a7ca89f88821201c8de039316a20bbf250033763f3dcb.
+- Collecte en un clic : sélection MDG/c_rice positive,120 lignes maximum,84 mois maximum sans futur, contexte officiel conservé ; ancienne URL15 rejouable. L'acquisition61316/inspection39303 a120 valeurs imputées2020-01 à2026-10, hors base active et non qualifiées. Ce lot reçoit le mécanisme logiciel, pas une actualisation active ni une révision authentique.
+- Fusion documentaire main06483dd dans cette branche : seul conflit PROGRESS, deux journaux préservés ; code applicatif identique au contenu reçu. R0.8 reste IN_PROGRESS et miroir inchangé. CI40034974447 échoue avant tests sur image MinIO retirée ; réparation indépendante ADR119 en cours dans work/r0-ci-minio-20261024. Aucune CI verte annoncée.
+
 ### [2026-10-23T22:12:00Z] R0.8 IN_PROGRESS — fenêtre WB récente, lot indépendant
 
 - Worktree r08-current-corpus-20261024, base1a6641c ; réception6735 figée dans l'autre worktree, aucune mutation de sa destination/source. Mini-plan : contractualiser ADR118 ; construire URL mensuelle bornée ; raccorder discovery/UI/runbook ; vérifier bornes et compatibilité historique ; recevoir le lot seulement après libération QA. Pas de DONE ni tag anticipé, miroir IN_PROGRESS inchangé.
 -73785 FINAL0 : quatre tests/9,91s, Ruff/format et Mypy du connecteur verts ;88729 FINAL0 après ajout du raccordement discovery/UTC : cinq tests/5,78s, lint/format verts, Docker sans réseau/venv readonly/base QA non utilisée. Les deux essais préliminaires ont signalé zip strict puis format avant tests, corrigés sans réduire les règles.
 -39303 FINAL0 : inspection du paquet officiel120 lignes, parseur2.0.0 et preuves contre contexte d'étude archivés,2020-01 à2026-10, toutes imputées. UUID éphémères de diagnostic uniquement, aucun ledger/SQL/S3 écrit ; ni authenticité/droits ni normalisation/modèle qualifiés. Reçu d'acquisition61316 conservé en evidence, statut pending. Réception globale du nouveau lot encore à faire ; aucun test de ce worktree ne reçoit le contenu de l'autre.
 -29829 FINAL1 sur1a6641c : navigateur voit login503 avant disponibilité API (un contrôle/douze,147,56s), puis sonde API200 après démarrage. Pas de succès E2E déduit ; attente initiale du runner étendue au health API en plus de /login, sans retry du formulaire ni changement des douze assertions métier. Cette correction du chemin QA est incluse dans le nouveau lot qui exige déjà un check complet ; pas de nouveau check de l'ancien lot pour ce helper.
+### [2026-10-23T22:35:00Z] Correctifs A012/R0.8 reçus comme logiciel, programme PARTIAL
+
+-8021 FINAL0 : douze scénarios navigateur/57,305s, source1a6641c et empreinte9fe21b58... inchangées ; prix200, refus macro503 expliqué après reload, mobile390px/navigation/déconnexion et protection401, zéro erreur JS. Capture mobile inspectée ; reçu original archivé, trace privée hors Git SHA0d0bb6738babd379cc437c5ecab9eb93fc68776fda38110e4493d2c09f8f413b.
+-29829 FINAL1 initial : un contrôle/douze, login503 pendant démarrage API puis sonde200 ; reprise8021 du seul conteneur navigateur sur services déjà prêts, mêmes assertions/code/images/environnement. Aucun check backend répété. Futur runner prêt-API corrigé dans l'autre worktree et inclus dans sa réception complète27111 surac11e47.
+- Réception consolidée : R0.8_RECEPTION_20261024.md ; originaux6735/88562 et deux rouges E2E conservés. HANDOFF et bilan corrigés PARTIAL, anciens rapports100% archivés non reçus. Sept DONE/52 IN_PROGRESS/15 TODO, aucun nouveau tag ni réception de révisions authentiques. Main585c47f et données actives préservés pendant réception.
+
+### [2026-10-23T22:28:00Z] Réception logicielle1a6641c — check complet vert
+
+-6735 FINAL0, point d'entrée scripts/dev.sh check avec transport Docker détaché préalablement contrôlé :2393 backend/1230,13s/zéro échec-erreur-skip ;167 intégrations incluses (163 layout/163 marqueur). Ruff/format412/Mypy411/cohérence74 verts ; couvertures core92,4084/extraction87,7660/normalize88,2624 %. Source1a6641c8df8b1fcd16c43cb5a1cac44549d373a7, empreinte9fe21b586447da62dcb57a90d5ba108ac164af736377b97c6d339727efc82843.
+- Frontend8e1e1363-0e4f-4ed9-aa0b-cfc6186e4571 :50 tests/sept suites/4,17s, lint/types/build16 pages verts. Originaux R0.8_CHECK_6735_* archivés avant toute nouvelle utilisation QA. Environnement main-final isolé, images inchangées. E2E29829 en cours sur le même contenu, pas de résultat anticipé ni de nouveau code dans cette branche pendant réception.
+- Pas de qualification scientifique par ce check : les rejeux bornés restent PARTIAL, révisions authentiques/S3 original/recalcul éligible non reçus ; R0.8 reste IN_PROGRESS et miroir inchangé. Nouveau connecteur récent4226a29 préparé dans autre worktree, sa réception globale reste distincte.
 
 ### [2026-10-23T22:04:00Z] Check complet vert, régression A012 révélée par le navigateur
 
@@ -1682,7 +1700,7 @@
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
 | R0.6 | MUST | DONE | 2026-10-10T19:32:37Z | 2026-10-14T08:38:21Z | 173c41a | A/B1/B2/C intégrés ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118, vingt fichiers exacts et données actives préservées ; voir LOT_C_RECEPTION.md | B-R054–058 résolus ; BL-010/016 résolus ; BL-013 partiel/R2.1 ; pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | 2026-10-14T08:46:31Z | 2026-10-15T06:50:00Z | 442a20c | R0.7_FINAL_RECEPTION.md : Windows1538/35/build, E2E9, inclusion160, empreinte main exacte, gitleaks0 et préservation | Qualify sans bundle PARTIAL/code1 attendu ; aucune qualification opérationnelle |
-| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | ef626d2 (lot logiciel seulement) | Windows1612/35/build, inclusion71, rejeu CLI natif sans réseau et manifestes identiques ; R0.8_SOFTWARE_RECEPTION.md | Corpus authentique/révisions réelles/ML non qualifiés ; aucun rebuild actif |
+| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | ac11e47 (lot logiciel seulement) | Check27111 FINAL0 :2398 backend/50 web/build16,167 intégrations ; E2E76823 FINAL0/12 ; R0.8_WB_WINDOW_RECEPTION_20261024.md | Corpus authentique/révisions réelles/S3 original/ML non qualifiés ; CI MinIO à réparer ; aucun rebuild actif |
 | R0.9 | MUST | TODO | — | — | — | — | — |
 | R1.1 | MUST | TODO | — | — | — | — | — |
 | R1.2 | MUST | TODO | — | — | — | — | — |
