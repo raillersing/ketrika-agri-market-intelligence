@@ -1,6 +1,6 @@
 # Ketrika Market Intelligence — bilan PARTIAL
 
-État2026-10-23 UTC, avant fin de réception du lot R0.8 en cours. Ce document
+État2026-10-24 UTC, lot logiciel R0.8 reçu et fusionné par PR1. Ce document
 n'est pas le rapport de clôture R6.11. Aucune qualification globale, aucun
 déploiement ni essai humain n'est revendiqué.
 
@@ -19,9 +19,9 @@ copilote, bulletins et alertes. Leur présence n'établit ni fraîcheur des
 sources, ni couverture économique, ni performance des modèles.
 
 Les corrections C022 ont une réception logicielle historique sur dd5831f.
-Le main585c47f contient des changements ultérieurs A012 dont la réception
-complète doit être renouvelée. Les tests ciblés/HTTP200 d'A012 ne remplacent
-pas cette réception. Les références de rendement/conversion restent non
+Les changements ultérieurs A012 ont reçu les corrections et contrôles
+complets6735/8021 puis52578/87920. Les tests ciblés/HTTP200 d'A012 seuls
+ne prouvaient pas cette réception. Les références de rendement/conversion restent non
 vérifiées et les usages institutionnels NOT_EVALUATED.
 
 ## Lot actuel
@@ -52,16 +52,18 @@ surac11e47 et reçu par27111 (2398 backend/50 web/build16) et76823
 (12 parcours navigateur). Ce paquet n'est pas une révision
 authentique du même produit/lieu/période.
 
-La CI distante40034974447 a échoué avant les tests sur une image MinIO
-fournisseur retirée. Une construction depuis source officielle figée est
-préparée séparément (ADR119) et doit recevoir son propre environnement.
+La CI distante40034974447 avait échoué sur une image MinIO retirée. La
+construction source figée (ADR119) est reçue :check52578,2398 backend/50 web,
+build16 et E2E87920,12 parcours. Après correction du disque du runner CI,
+CI40109568864 est entièrement verte, empreinte applicative identique.
+PR1 fusionnée sur main2250c7b ; stockage actif préservé.
 
 Le2026-10-24, clic WB réel sur main local3fec099 :120 nouvelles estimations,
 zéro rejet/publication réussie, reçu SQL/API identique après reload et zéro
 erreur JS. La base contient135 lignes WB courantes, toutes imputées, jusqu'à
 2026-10 ; API200/96 points mensuels agrégés. Aucun essai humain ni modèle
 qualifié déduit. Le filtrage par dates500 et le libellé de portée hérité15
-sont corrigés dans le lot distinct en préparation, pas encore reçu.
+sont corrigés dans le lot reçu52578/87920 et fusionné sur main.
 
 Audit actif readonly :728 observations portent un auto-lien de remplacement
 (B-R084) ; aucune correction active effectuée. Cette base ne prouve pas un

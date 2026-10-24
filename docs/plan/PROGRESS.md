@@ -1,5 +1,12 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-24T16:35:00Z] Réception et fusion du lot logiciel R0.8 — programme PARTIAL
+
+- Check52578 FINAL0 sur c9b4916fa09ea500e13797bcf114d531eed859d1 :2398 backend/2687,15s/zéro échec-erreur-skip,167 intégrations ;50 frontend/sept suites/lint/types/build16 pages verts. Couvertures core92,4084/extraction87,7660/normalize88,2624 %. Originaux compressés, inventaire, couverture, reçus et profil R0.8_CHECK_52578_* archivés ; aucun test relancé pour le profil.
+- E2E87920 FINAL0 :12/12 parcours/172,141s/zéro erreur JS, même empreinte applicative7c79ce2e064d6c049bc1b4ed3f8f5e0c0d176dcb8ea7300a4c3d8854c1b836a5. Trace privée hors Git SHA85d2a7a5672d3fa8d88be22691c86386e80e5d451bd71b1bfdd66d2aaab63e18. MinIO source figée image76f06e28... ; environnement main-final dédié, aucun volume actif remplacé.
+- CI40106612564 :2398 backend verts puis disque insuffisant pendant préparation frontend. Correction7b977f7 : purge du seul cache de construction du runner CI après construction des images, jamais sur hôte partagé. CI40109568864 entièrement verte :2398 backend/574,97s,50 frontend/build16, contrôles négatifs et12 E2E/63,779s. Empreinte identique à la réception locale ; reçus R0.8_CI_40109568864_* conservés.
+- PR1 fusionnée en2250c7bc5834df09ab5ed736e6a0d47e98305910 ; main local avancé sans réécriture. Scans81601 (six commits/différences de fusion incluses) et45284 (correctif CI) :zéro fuite. Corrections SQL des dates et portée future120 reçues ; reçu historique f10 conservé. R0.8 IN_PROGRESS, miroir inchangé :7 DONE/52 IN_PROGRESS/15 TODO. Révisions authentiques, inventaire original et recalcul scientifique toujours non qualifiés ; aucun tag final.
+
 ### [2026-10-24T15:45:00Z] R0.8 IN_PROGRESS — espace disque du runner CI
 
 - CI40106612564/PR1 : construction froide MinIO et images applicatives réussie ;2398 backend/568,82s/zéro échec-erreur-skip/167 intégrations, couvertures92,4084/87,7660/88,2624 %. Échec réel avant frontend : no space left on device pendant copie du module SWC dans le volume node_modules. Aucun succès frontend ni global déduit.

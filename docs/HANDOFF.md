@@ -1,12 +1,12 @@
 # Passation du programme — PARTIAL, non clôturé
 
-Mise à jour2026-10-23 UTC. PROGRESS.md reste canonique :7 DONE,
+Mise à jour2026-10-24 UTC. PROGRESS.md reste canonique :7 DONE,
 52 IN_PROGRESS,15 TODO ;69 MUST et5 SHOULD. Aucun nouveau tag final.
 Les anciens tags et rapports ne prouvent pas la réception actuelle.
 
 ## Travail en cours
 
-Branche work/r0-reception-20261024, basée sur main585c47f. R0.8 reste
+Main2250c7b, PR1 fusionnée après CI verte40109568864. R0.8 reste
 IN_PROGRESS : mécanisme de rejeu reçu historiquement côté logiciel, mais
 révisions authentiques, inventaire S3 original et recalcul scientifique
 encore non qualifiés. Correctifs1a6641c reçus :check6735 vert (2393 backend,
@@ -44,17 +44,19 @@ scientifique des estimations. Branche4226a29 :
 sélection mensuelle récente raccordée à la collecte manuelle, réception
 logicielle27111/76823 verte, activation locale3fec099 et clic actif confirmés.
 
-Deux correctifs restent en réception séparée : le libellé de portée hérité
-bounded_15 (le compte120 du reçu est exact, historique conservé), et le500
-des filtres prix from/to (cast SQL non lié). CI froide également à réparer
-par construction MinIO source officielle figée, ADR119. Source en préparation
-dans work/r0-ci-minio-20261024 ; ne pas la déclarer reçue avant son check.
+Les corrections du libellé de portée futur120 et du500 des filtres prix
+from/to sont reçues :check52578 vert (2398 backend/50 frontend/build16),
+E2E87920 vert (12 parcours), CI40109568864 verte sur empreinte identique.
+Le reçu historique bounded_15 est conservé, son compte120 était exact.
+La construction MinIO depuis source officielle figée est reçue en QA ;
+aucun stockage actif ni volume existant remplacé. Originaux52578/87920 et
+reçus CI conservés dans docs/evidence. Cette réception reste logicielle.
 La demande documentaire à l'utilisateur est non bloquante pour les travaux
 logiciels et diagnostics sûrs restants.
 
 ## Suite autorisée
 
-Recevoir le lot stabilisé, compléter R0.8, puis gate R0.9 avant les tâches
+Compléter les qualifications manquantes de R0.8, puis gate R0.9 avant les tâches
 R1 dépendantes. Les connecteurs, modèles, pages, alertes et copilote existants
 ne sont pas à reconstruire : terminer corrections et qualification selon le
 plan. Ne déclarer aucune phase terminée par le nombre de tests seul.

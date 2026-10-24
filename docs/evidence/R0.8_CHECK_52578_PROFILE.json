@@ -1,0 +1,134 @@
+{
+  "scope": "junit timing diagnostic only; not execution or qualification",
+  "report_sha256": "2e2daedd37e96add08d975a7b850c470f6872876c79eb27b45e260061b934f0a",
+  "counts": {
+    "tests": 2398,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "summed_testcase_seconds": "2312.896",
+  "parameters_redacted": true,
+  "slowest_groups": [
+    {
+      "classname": "tests.integration.test_miasa_odr",
+      "name": "test_miasa_odr_backfill_dq_and_rebuild_lifecycle",
+      "cases": 1,
+      "seconds": "328.489"
+    },
+    {
+      "classname": "tests.integration.test_api_perf",
+      "name": "test_aggregated_endpoints_latency_p95",
+      "cases": 1,
+      "seconds": "182.618"
+    },
+    {
+      "classname": "tests.unit.test_ml_forecast",
+      "name": "test_forecasting_pipeline_e2e_and_anti_leakage",
+      "cases": 1,
+      "seconds": "96.966"
+    },
+    {
+      "classname": "tests.integration.test_alerts_engine",
+      "name": "test_multi_source_severity_rule",
+      "cases": 1,
+      "seconds": "81.720"
+    },
+    {
+      "classname": "tests.integration.test_gold_publication_provenance",
+      "name": "test_real_publication_rejects_bad_provenance_and_rolls_back_partial_sql",
+      "cases": 1,
+      "seconds": "73.103"
+    },
+    {
+      "classname": "tests.integration.test_api_v1",
+      "name": "test_api_public_and_analytical_endpoints_200",
+      "cases": 1,
+      "seconds": "61.149"
+    },
+    {
+      "classname": "tests.integration.test_bulletin_service",
+      "name": "test_generate_weekly_bulletin_integration",
+      "cases": 1,
+      "seconds": "60.897"
+    },
+    {
+      "classname": "tests.integration.test_manual_collection",
+      "name": "test_ineligible_sources_never_reach_phase_owner",
+      "cases": 5,
+      "seconds": "54.620"
+    },
+    {
+      "classname": "tests.unit.test_units",
+      "name": "test_product_specific_kapoaka_inverse_consistency",
+      "cases": 1,
+      "seconds": "48.600"
+    },
+    {
+      "classname": "tests.unit.test_units",
+      "name": "test_inverse_conversions_are_consistent",
+      "cases": 1,
+      "seconds": "43.934"
+    },
+    {
+      "classname": "tests.integration.test_durable_phases",
+      "name": "test_real_phase_rollback_and_independent_failure",
+      "cases": 8,
+      "seconds": "40.361"
+    },
+    {
+      "classname": "tests.integration.test_manual_collection",
+      "name": "test_real_phases_and_receipts_no_repeat_on_same_request",
+      "cases": 1,
+      "seconds": "39.797"
+    },
+    {
+      "classname": "tests.integration.test_mincc_ppn",
+      "name": "test_mincc_ppn_backfill_dq_and_rebuild_lifecycle",
+      "cases": 1,
+      "seconds": "39.363"
+    },
+    {
+      "classname": "tests.integration.test_price_anomalies",
+      "name": "test_price_anomaly_spike_and_drop_pipeline",
+      "cases": 1,
+      "seconds": "39.332"
+    },
+    {
+      "classname": "tests.integration.test_nasa_power",
+      "name": "test_nasa_power_backfill_dq_and_rebuild_lifecycle",
+      "cases": 1,
+      "seconds": "38.142"
+    },
+    {
+      "classname": "tests.unit.test_taxonomy_units_audit",
+      "name": "test_mass_inverse_conversions_exact",
+      "cases": 1,
+      "seconds": "36.320"
+    },
+    {
+      "classname": "tests.integration.test_native_rtfp_durable",
+      "name": "test_native_batch_records_reusable_reference_identity_without_collecting",
+      "cases": 1,
+      "seconds": "36.135"
+    },
+    {
+      "classname": "tests.integration.test_gold_views",
+      "name": "test_gold_views_sql_e2e_synthetic",
+      "cases": 1,
+      "seconds": "34.729"
+    },
+    {
+      "classname": "tests.unit.test_taxonomy_units_audit",
+      "name": "test_volume_inverse_conversions_exact",
+      "cases": 1,
+      "seconds": "33.555"
+    },
+    {
+      "classname": "tests.integration.test_wfp_hdx_mdg",
+      "name": "test_wfp_hdx_backfill_dq_and_rebuild_lifecycle",
+      "cases": 1,
+      "seconds": "32.042"
+    }
+  ]
+}
