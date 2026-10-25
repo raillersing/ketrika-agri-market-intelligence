@@ -20,3 +20,9 @@ L'avis [Next.js GHSA-f82v-jwr5-mffw](https://github.com/vercel/next.js/security/
 L'avis [Vitest GHSA-5xrq-8626-4rwp](https://github.com/vitest-dev/vitest/security/advisories/GHSA-5xrq-8626-4rwp) est conditionnel au serveur UI/Browser Mode ; aucun serveur Vitest exposé n'a été démontré ici. Les correctifs et éventuelles majeures doivent être décidés par ADR/SPECS puis reçus sur la stack retenue.
 
 Aucun pentest destructif, restauration active, accès tiers ni envoi réel. Cet audit n'autorise pas à acheter/provisionner ni à lever H3/H7.
+
+## Correction reçue H3 —25 octobre2026
+
+AU-05 / ADR122, contenu5400f39 : trois transports SMTP limités à Mailpit dev/test exact1025 ; aucune construction externe/prod ni Telegram, même flag1.32 tests négatifs/positifs ciblés, trois véritables captures internes et check complet2426/52+12 E2E verts. Logs sans destinataire/token/erreur transport brute. Aucun envoi réel autorisé.
+
+Un faux positif generic-api-key détecte le tag de déduplication SYNTHETIC_AU05 dans le seul diagnostic. .gitleaksignore cible uniquement commit5400f39/chemin/règle/ligne33 ; reprise deux commits153668octets/zéro secret. Les risques authentification/révocation/configuration et dépendances demeurent ouverts ; code AU-04 en développement isolé, pas de nouvelle qualification de déploiement.

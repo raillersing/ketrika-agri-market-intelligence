@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowDownRight, ArrowUpRight, Minus, ShieldCheck } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { formatPercent, type ValueKind } from "@/lib/formatters";
 import { ValueKindBadge } from "./ValueKindBadge";
 import { SourceBadge } from "./SourceBadge";
@@ -26,7 +26,7 @@ export function KpiCard({
   unit,
   variation,
   variationPeriod = "m/m",
-  valueKind = "observed",
+  valueKind = null,
   sources = [],
   observationId,
   subtitle,
@@ -111,8 +111,7 @@ export function KpiCard({
           <ProvenanceLink observationId={observationId} />
         ) : (
           <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400/80 font-mono">
-            <ShieldCheck className="w-3 h-3 text-emerald-400" />
-            Vérifié
+            Provenance non liée
           </span>
         )}
       </div>

@@ -55,7 +55,7 @@ export interface paths {
         put?: never;
         /**
          * Logout
-         * @description Clear session cookie.
+         * @description Clear session cookie and actively revoke presented token (ADR-101 / R6.7).
          */
         post: operations["logout_v1_auth_logout_post"];
         delete?: never;
@@ -260,6 +260,86 @@ export interface paths {
         get: operations["get_stocks_v1_stocks_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/supply/peak-forecast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Supply Peak Forecast
+         * @description Abstain until a verified calendar and independent validation are received.
+         */
+        get: operations["get_supply_peak_forecast_v1_supply_peak_forecast_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/supply/sufficiency": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Data Sufficiency
+         * @description Inspect one product and market using real columns; database errors propagate.
+         */
+        get: operations["get_data_sufficiency_v1_supply_sufficiency_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/supply/scenarios/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Scenario Templates
+         * @description Return editable hypotheses, not observed market facts.
+         */
+        get: operations["get_scenario_templates_v1_supply_scenarios_templates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/supply/scenarios/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Run Decision Scenario
+         * @description Reject unproven operational inputs instead of inserting demonstration facts.
+         */
+        post: operations["run_decision_scenario_v1_supply_scenarios_run_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -766,6 +846,128 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/sources/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Recent Runs
+         * @description Retrieve recent data sync and ingestion runs for user-friendly monitoring.
+         */
+        get: operations["list_recent_runs_v1_sources_runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sources/collection-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Collection Options */
+        get: operations["collection_options_v1_sources_collection_options_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sources/collections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Collection History */
+        get: operations["collection_history_v1_sources_collections_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sources/collections/{request_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Collection Receipt */
+        get: operations["collection_receipt_v1_sources_collections__request_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sources/collect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Collect Sources */
+        post: operations["collect_sources_v1_sources_collect_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sources/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh All Market Data */
+        post: operations["refresh_all_market_data_v1_sources_refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/sources/{source_id}/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh Single Source */
+        post: operations["refresh_single_source_v1_sources__source_id__refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/review": {
         parameters: {
             query?: never;
@@ -990,11 +1192,8 @@ export interface components {
             anomaly_pct?: number | null;
             /** Standardized Zscore */
             standardized_zscore?: number | null;
-            /**
-             * Risk Level
-             * @default low
-             */
-            risk_level: string;
+            /** Risk Level */
+            risk_level?: string | null;
             /**
              * Status
              * @default computed
@@ -1017,7 +1216,7 @@ export interface components {
              * @default observed
              * @enum {string}
              */
-            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            value_kind: "observed" | "imputed" | "forecast" | "projected" | "composite";
         };
         /**
          * ClimateEventItem
@@ -1092,7 +1291,7 @@ export interface components {
              * @default projected
              * @enum {string}
              */
-            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            value_kind: "observed" | "imputed" | "forecast" | "projected" | "composite";
             /**
              * Source
              * @default ecmwf_open
@@ -1126,11 +1325,8 @@ export interface components {
              * @default false
              */
             cropland_mask_applied: boolean;
-            /**
-             * Observed Source
-             * @default chirps
-             */
-            observed_source: string;
+            /** Observed Source */
+            observed_source?: string | null;
             /** Temperature Mean C */
             temperature_mean_c?: number | null;
             /** Forecast Next 72H Precip Mm */
@@ -1148,13 +1344,23 @@ export interface components {
              * @default projected
              * @enum {string}
              */
-            forecast_value_kind: "observed" | "imputed" | "forecast" | "composite";
+            forecast_value_kind: "observed" | "imputed" | "forecast" | "projected" | "composite";
             /** Active Crop Cycles */
             active_crop_cycles?: components["schemas"]["CropCalendarItem"][];
             /** Events And Outlooks */
             events_and_outlooks?: components["schemas"]["ClimateEventItem"][];
             /** Facultative Sources */
             facultative_sources?: components["schemas"]["FacultativeSourceStatus"][];
+        };
+        /** CollectionInput */
+        CollectionInput: {
+            /**
+             * Request Id
+             * Format: uuid
+             */
+            request_id: string;
+            /** Source Id */
+            source_id?: string | null;
         };
         /**
          * CopilotAskRequest
@@ -1183,6 +1389,8 @@ export interface components {
             }[];
             /** Value Kinds */
             value_kinds: string[];
+            /** Provenance Summary */
+            provenance_summary?: string | null;
         };
         /**
          * CropCalendarItem
@@ -1248,6 +1456,145 @@ export interface components {
              * @default true
              */
             eligible_for_alerts: boolean;
+        };
+        /**
+         * CycleSufficiencyReport
+         * @description Assessment of historical arrival data sufficiency for empirical seasonal fitting.
+         */
+        CycleSufficiencyReport: {
+            /** Total Cycles Observed */
+            total_cycles_observed: number;
+            /**
+             * Min Cycles Required
+             * @default 2
+             */
+            min_cycles_required: number;
+            /** Is Sufficient */
+            is_sufficient: boolean;
+            /** Total Observations */
+            total_observations: number;
+            /** Earliest Date */
+            earliest_date?: string | null;
+            /** Latest Date */
+            latest_date?: string | null;
+            /** Assessment Note */
+            assessment_note: string;
+        };
+        /**
+         * DecisionImpactMetric
+         * @description Quantified mathematical impact of the simulated scenario against baseline.
+         */
+        DecisionImpactMetric: {
+            /** Metric Name */
+            metric_name: string;
+            /** Baseline Value */
+            baseline_value: number;
+            /** Scenario Value */
+            scenario_value: number;
+            /** Absolute Change */
+            absolute_change: number;
+            /** Relative Change Pct */
+            relative_change_pct: number;
+            /** Unit */
+            unit: string;
+            /** Interpretation */
+            interpretation: string;
+        };
+        /**
+         * DecisionPersona
+         * @description Target stakeholder persona for the decision pilot.
+         * @enum {string}
+         */
+        DecisionPersona: "public_regulator" | "commercial_buyer" | "agricultural_planner";
+        /**
+         * DecisionPilotReport
+         * @description Actionable decision support report for human decision makers.
+         */
+        DecisionPilotReport: {
+            /** Report Id */
+            report_id: string;
+            persona: components["schemas"]["DecisionPersona"];
+            /** Scenario Id */
+            scenario_id: string;
+            /** Title */
+            title: string;
+            /** Market Code */
+            market_code: string;
+            /** Product Code */
+            product_code: string;
+            /** Campaign */
+            campaign: string;
+            /** Impacts */
+            impacts: components["schemas"]["DecisionImpactMetric"][];
+            /** Decision Recommendation */
+            decision_recommendation: string;
+            /** Risk Assessment */
+            risk_assessment: string;
+            /**
+             * Order Generation Prohibited
+             * @default true
+             */
+            order_generation_prohibited: boolean;
+            /** Missing Parameters */
+            missing_parameters?: string[];
+            /**
+             * Human Reviewed
+             * @default false
+             */
+            human_reviewed: boolean;
+            /**
+             * Evaluation Status
+             * @default NOT_EVALUATED
+             */
+            evaluation_status: string;
+            /** Provenance Note */
+            provenance_note: string;
+        };
+        /**
+         * DecisionScenarioDefinition
+         * @description Specification of an actionable market supply scenario.
+         */
+        DecisionScenarioDefinition: {
+            /** Scenario Id */
+            scenario_id: string;
+            /** Title */
+            title: string;
+            persona: components["schemas"]["DecisionPersona"];
+            /** Market Code */
+            market_code: string;
+            /** Product Code */
+            product_code: string;
+            /** Campaign */
+            campaign: string;
+            /** Parameters */
+            parameters: {
+                [key: string]: components["schemas"]["ScenarioParameter"];
+            };
+            /**
+             * Author Id
+             * @default internal_analyst
+             */
+            author_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at?: string;
+            /**
+             * Version
+             * @default v1.0
+             */
+            version: string;
+            /**
+             * Human Reviewed
+             * @default false
+             */
+            human_reviewed: boolean;
+            /**
+             * Evaluation Status
+             * @default NOT_EVALUATED
+             */
+            evaluation_status: string;
         };
         /**
          * DimensionSummaryOut
@@ -1502,7 +1849,7 @@ export interface components {
              * @default forecast
              * @enum {string}
              */
-            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            value_kind: "observed" | "imputed" | "forecast" | "projected" | "composite";
         };
         /**
          * ForecastPerformanceResponse
@@ -1734,7 +2081,7 @@ export interface components {
              * @default composite
              * @enum {string}
              */
-            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            value_kind: "observed" | "imputed" | "forecast" | "projected" | "composite";
             /** Components Present */
             components_present?: string[];
         };
@@ -1824,7 +2171,7 @@ export interface components {
              * @default observed
              * @enum {string}
              */
-            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            value_kind: "observed" | "imputed" | "forecast" | "projected" | "composite";
             /** Extraction Method */
             extraction_method: string;
             /** Confidence */
@@ -1981,7 +2328,7 @@ export interface components {
              * @default observed
              * @enum {string}
              */
-            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            value_kind: "observed" | "imputed" | "forecast" | "projected" | "composite";
             /** Sources */
             sources?: string[];
         };
@@ -2054,6 +2401,27 @@ export interface components {
             resolution_note?: string | null;
             /** Alias Created */
             alias_created?: string | null;
+        };
+        /**
+         * ScenarioParameter
+         * @description A typed parameter for decision scenario simulations.
+         */
+        ScenarioParameter: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number;
+            /** Unit */
+            unit: string;
+            /** Source Justification */
+            source_justification: string;
+            /** Default Value */
+            default_value: number;
+            /**
+             * Is User Override
+             * @default false
+             */
+            is_user_override: boolean;
         };
         /**
          * SeriesCoverageSummaryItem
@@ -2151,6 +2519,70 @@ export interface components {
             last_run_started_at?: string | null;
         };
         /**
+         * SourceRefreshResponse
+         * @description A guarded cache recalculation never claims new collection or freshness.
+         */
+        SourceRefreshResponse: {
+            /** Success */
+            success: boolean;
+            /**
+             * Action
+             * @default recompute
+             * @constant
+             */
+            action: "recompute";
+            /**
+             * Collection Performed
+             * @default false
+             * @constant
+             */
+            collection_performed: false;
+            /**
+             * New Records Count
+             * @default 0
+             * @constant
+             */
+            new_records_count: 0;
+            /** Message */
+            message: string;
+            /** Views Refreshed */
+            views_refreshed?: string[];
+            /**
+             * Refreshed At
+             * Format: date-time
+             */
+            refreshed_at: string;
+        };
+        /**
+         * SourceRunItem
+         * @description Actual ingestion history, not a cache-recalculation receipt.
+         */
+        SourceRunItem: {
+            /** Run Id */
+            run_id: string;
+            /** Source Id */
+            source_id: string;
+            /** Source Name */
+            source_name?: string | null;
+            /** Status */
+            status: string;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Finished At */
+            finished_at?: string | null;
+            /** Duration Seconds */
+            duration_seconds?: number | null;
+            /** N Records */
+            n_records?: number | null;
+            /** N Fetched */
+            n_fetched?: number | null;
+            /** Error */
+            error?: string | null;
+        };
+        /**
          * StockItem
          * @description Latest stock status item.
          */
@@ -2172,9 +2604,81 @@ export interface components {
              * @default observed
              * @enum {string}
              */
-            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            value_kind: "observed" | "imputed" | "forecast" | "projected" | "composite";
             /** Sources */
             sources?: string[];
+        };
+        /**
+         * SupplyPeakQualification
+         * @description Scientific qualification level of the supply peak and window prediction.
+         * @enum {string}
+         */
+        SupplyPeakQualification: "baseline_logistics" | "empirical_seasonal" | "experimental_baseline" | "abstained_insufficient_history";
+        /**
+         * SupplyWindowPrediction
+         * @description Projected market supply window and arrival peak with complete provenance.
+         */
+        SupplyWindowPrediction: {
+            /** Market Code */
+            market_code: string;
+            /** Market Name */
+            market_name?: string | null;
+            /** Supply Zone Code */
+            supply_zone_code: string;
+            /** Crop */
+            crop: string;
+            /** Product Code */
+            product_code: string;
+            /** Campaign */
+            campaign: string;
+            /**
+             * As Of Date
+             * Format: date
+             */
+            as_of_date: string;
+            /** Harvest Window Start Dekad */
+            harvest_window_start_dekad: string;
+            /** Harvest Window End Dekad */
+            harvest_window_end_dekad: string;
+            /** Harvest Peak Dekad */
+            harvest_peak_dekad?: string | null;
+            /**
+             * Logistics Lag Dekads
+             * @default 1
+             */
+            logistics_lag_dekads: number;
+            /** Supply Window Start Dekad */
+            supply_window_start_dekad: string;
+            /** Supply Window End Dekad */
+            supply_window_end_dekad: string;
+            /** Predicted Peak Dekad */
+            predicted_peak_dekad?: string | null;
+            /**
+             * Supply Window Start Date
+             * Format: date
+             */
+            supply_window_start_date: string;
+            /**
+             * Supply Window End Date
+             * Format: date
+             */
+            supply_window_end_date: string;
+            /** Predicted Peak Start Date */
+            predicted_peak_start_date?: string | null;
+            /** Predicted Peak End Date */
+            predicted_peak_end_date?: string | null;
+            qualification: components["schemas"]["SupplyPeakQualification"];
+            /** Confidence Score */
+            confidence_score: number;
+            /** Source Harvest Reference */
+            source_harvest_reference: string;
+            /** Uncertainty Note */
+            uncertainty_note: string;
+            /**
+             * Historical Cycles Evaluated
+             * @default 0
+             */
+            historical_cycles_evaluated: number;
         };
         /**
          * TradeItem
@@ -2198,7 +2702,7 @@ export interface components {
              * @default observed
              * @enum {string}
              */
-            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            value_kind: "observed" | "imputed" | "forecast" | "projected" | "composite";
             /** Sources */
             sources?: string[];
         };
@@ -2247,7 +2751,7 @@ export interface components {
             /** Month */
             month: string;
             /** Precip Total Mm */
-            precip_total_mm: number;
+            precip_total_mm: number | null;
             /** Precip Anomaly Pct */
             precip_anomaly_pct?: number | null;
             /** T2M Mean */
@@ -2257,7 +2761,7 @@ export interface components {
              * @default observed
              * @enum {string}
              */
-            value_kind: "observed" | "imputed" | "forecast" | "composite";
+            value_kind: "observed" | "imputed" | "forecast" | "projected" | "composite";
             /** Sources */
             sources?: string[];
         };
@@ -2326,9 +2830,13 @@ export interface operations {
     logout_v1_auth_logout_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                Authorization?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -2339,8 +2847,17 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        [key: string]: string;
+                        [key: string]: unknown;
                     };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -2594,8 +3111,8 @@ export interface operations {
             query: {
                 /** @description Product code (e.g. RICE_WHITE_LOCAL) */
                 product: string;
-                /** @description Location P-code (e.g. MDG11) */
-                location: string;
+                /** @description Location P-code (default: MDG11) */
+                location?: string | null;
                 /** @description Actor level (default: retail) */
                 actor_level?: string;
             };
@@ -2666,6 +3183,131 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StockItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_supply_peak_forecast_v1_supply_peak_forecast_get: {
+        parameters: {
+            query: {
+                /** @description Explicit campaign year YYYY */
+                campaign: string;
+                crop?: string;
+                zone_code?: string;
+                market_code?: string;
+                logistics_lag_dekads?: number;
+                as_of_date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplyWindowPrediction"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_data_sufficiency_v1_supply_sufficiency_get: {
+        parameters: {
+            query?: {
+                market_code?: string;
+                product?: string;
+                as_of_date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CycleSufficiencyReport"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_scenario_templates_v1_supply_scenarios_templates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: components["schemas"]["DecisionScenarioDefinition"];
+                    };
+                };
+            };
+        };
+    };
+    run_decision_scenario_v1_supply_scenarios_run_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionScenarioDefinition"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DecisionPilotReport"];
                 };
             };
             /** @description Validation Error */
@@ -2938,12 +3580,9 @@ export interface operations {
             query?: {
                 /** @description District or Region P-code */
                 location?: string | null;
-                /** @description Start month (YYYY-MM-01) */
                 from?: string | null;
-                /** @description End month (YYYY-MM-01) */
                 to?: string | null;
-                /** @description Climate variable (precip_mm | t2m_c) */
-                variable?: string;
+                variable?: "precip_mm" | "t2m_c";
             };
             header?: never;
             path?: never;
@@ -3526,6 +4165,253 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SourceHealthItem"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_recent_runs_v1_sources_runs_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: {
+                "X-API-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourceRunItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    collection_options_v1_sources_collection_options_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    collection_history_v1_sources_collections_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    collection_receipt_v1_sources_collections__request_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
+            path: {
+                request_id: string;
+            };
+            cookie?: {
+                session_token?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    collect_sources_v1_sources_collect_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CollectionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refresh_all_market_data_v1_sources_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourceRefreshResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refresh_single_source_v1_sources__source_id__refresh_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
+            path: {
+                source_id: string;
+            };
+            cookie?: {
+                session_token?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourceRefreshResponse"];
                 };
             };
             /** @description Validation Error */

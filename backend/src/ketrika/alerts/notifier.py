@@ -5,8 +5,7 @@ from __future__ import annotations
 import smtplib
 from email.message import EmailMessage
 
-import httpx
-
+from ketrika.alerts.transport_policy import permits_local_smtp_capture
 from ketrika.core.logging import get_logger
 from ketrika.core.models.db import Alert
 from ketrika.core.settings import Settings, get_settings
@@ -83,6 +82,9 @@ def send_smtp_alert(
 ) -> bool:
     """Send alert email via SMTP (Mailpit in local dev)."""
     cfg = settings or get_settings()
+    if not permits_local_smtp_capture(cfg, cfg.smtp_host, cfg.smtp_port):
+        logger.info("smtp_capture_refused_h3", alert_id=str(alert.alert_id))
+        return False
     dest = recipient or cfg.demo_admin_email
 
     msg = EmailMessage()
@@ -101,7 +103,6 @@ def send_smtp_alert(
             "alert_email_sent",
             alert_id=str(alert.alert_id),
             rule=alert.rule_code,
-            recipient=dest,
             host=cfg.smtp_host,
             port=cfg.smtp_port,
         )
@@ -110,7 +111,7 @@ def send_smtp_alert(
         logger.error(
             "alert_email_failed",
             alert_id=str(alert.alert_id),
-            error=str(exc),
+            error_class=type(exc).__name__,
         )
         return False
 
@@ -119,46 +120,13 @@ def send_telegram_alert(
     alert: Alert,
     settings: Settings | None = None,
 ) -> bool:
-    """Send alert via Telegram Bot API with strict H3 gate protection."""
-    cfg = settings or get_settings()
-
-    # AGENTS.md §5.3 Gate H3 / §8: No external network calls when EXTERNAL_SEND_ENABLED=0
-    if not cfg.external_send_enabled:
-        logger.info(
-            "telegram_send_skipped_h3_gate",
-            reason="EXTERNAL_SEND_ENABLED is 0 (AGENTS.md Gate H3)",
-            alert_id=str(alert.alert_id),
-        )
-        return False
-
-    if not cfg.telegram_bot_token or not cfg.telegram_chat_id:
-        logger.debug("telegram_send_skipped_no_credentials")
-        return False
-
-    text_msg = (
-        f"🚨 *KETRIKA ALERTE [{alert.severity.upper()}]*\n\n"
-        f"*{alert.title}*\n"
-        f"• Règle : `{alert.rule_code}`\n"
-        f"• Clé : `{alert.dedupe_key}`\n"
-        f"• Détection : {alert.last_seen_at.strftime('%Y-%m-%d %H:%M UTC')}\n"
+    """Keep the draft local until an explicit human approval contract exists."""
+    logger.info(
+        "telegram_send_skipped_h3_gate",
+        reason="Human approval is absent; environment flags cannot authorise external delivery",
+        alert_id=str(alert.alert_id),
     )
-
-    url = f"https://api.telegram.org/bot{cfg.telegram_bot_token}/sendMessage"
-    payload = {
-        "chat_id": cfg.telegram_chat_id,
-        "text": text_msg,
-        "parse_mode": "Markdown",
-    }
-
-    try:
-        with httpx.Client(timeout=10) as client:
-            resp = client.post(url, json=payload)
-            resp.raise_for_status()
-        logger.info("telegram_alert_sent", alert_id=str(alert.alert_id))
-        return True
-    except Exception as exc:
-        logger.error("telegram_alert_failed", alert_id=str(alert.alert_id), error=str(exc))
-        return False
+    return False
 
 
 def dispatch_alert_notifications(
@@ -183,6 +151,9 @@ def send_pipeline_failure_email(
 ) -> bool:
     """Send pipeline failure notification via SMTP (Mailpit in local dev)."""
     cfg = settings or get_settings()
+    if not permits_local_smtp_capture(cfg, cfg.smtp_host, cfg.smtp_port):
+        logger.info("smtp_capture_refused_h3", job_name=job_name, run_id=run_id)
+        return False
     dest = recipient or cfg.demo_admin_email
 
     msg = EmailMessage()
@@ -221,7 +192,6 @@ Consultez le cockpit sources : http://localhost:3005/sources
             "pipeline_failure_email_sent",
             job_name=job_name,
             run_id=run_id,
-            recipient=dest,
             host=cfg.smtp_host,
             port=cfg.smtp_port,
         )
@@ -231,6 +201,6 @@ Consultez le cockpit sources : http://localhost:3005/sources
             "pipeline_failure_email_failed",
             job_name=job_name,
             run_id=run_id,
-            error=str(exc),
+            error_class=type(exc).__name__,
         )
         return False

@@ -74,19 +74,61 @@
           "auth"
         ],
         "summary": "Logout",
-        "description": "Clear session cookie.",
+        "description": "Clear session cookie and actively revoke presented token (ADR-101 / R6.7).",
         "operationId": "logout_v1_auth_logout_post",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Token"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": {
-                    "type": "string"
-                  },
                   "type": "object",
+                  "additionalProperties": true,
                   "title": "Response Logout V1 Auth Logout Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -718,13 +760,20 @@
           {
             "name": "location",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string",
-              "description": "Location P-code (e.g. MDG11)",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Location P-code (default: MDG11)",
               "title": "Location"
             },
-            "description": "Location P-code (e.g. MDG11)"
+            "description": "Location P-code (default: MDG11)"
           },
           {
             "name": "actor_level",
@@ -842,6 +891,249 @@
                     "$ref": "#/components/schemas/StockItem"
                   },
                   "title": "Response Get Stocks V1 Stocks Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/supply/peak-forecast": {
+      "get": {
+        "tags": [
+          "supply"
+        ],
+        "summary": "Get Supply Peak Forecast",
+        "description": "Abstain until a verified calendar and independent validation are received.",
+        "operationId": "get_supply_peak_forecast_v1_supply_peak_forecast_get",
+        "parameters": [
+          {
+            "name": "campaign",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Explicit campaign year YYYY",
+              "title": "Campaign"
+            },
+            "description": "Explicit campaign year YYYY"
+          },
+          {
+            "name": "crop",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "RICE_PADDY",
+              "title": "Crop"
+            }
+          },
+          {
+            "name": "zone_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "ZONE_ALAOTRA",
+              "title": "Zone Code"
+            }
+          },
+          {
+            "name": "market_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "MDG_ANOSIBE",
+              "title": "Market Code"
+            }
+          },
+          {
+            "name": "logistics_lag_dekads",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 6,
+              "minimum": 0,
+              "default": 1,
+              "title": "Logistics Lag Dekads"
+            }
+          },
+          {
+            "name": "as_of_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "As Of Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplyWindowPrediction"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/supply/sufficiency": {
+      "get": {
+        "tags": [
+          "supply"
+        ],
+        "summary": "Get Data Sufficiency",
+        "description": "Inspect one product and market using real columns; database errors propagate.",
+        "operationId": "get_data_sufficiency_v1_supply_sufficiency_get",
+        "parameters": [
+          {
+            "name": "market_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "MDG_ANOSIBE",
+              "title": "Market Code"
+            }
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "RICE_PADDY",
+              "title": "Product"
+            }
+          },
+          {
+            "name": "as_of_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "As Of Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CycleSufficiencyReport"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/supply/scenarios/templates": {
+      "get": {
+        "tags": [
+          "supply"
+        ],
+        "summary": "Get Scenario Templates",
+        "description": "Return editable hypotheses, not observed market facts.",
+        "operationId": "get_scenario_templates_v1_supply_scenarios_templates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/DecisionScenarioDefinition"
+                  },
+                  "type": "object",
+                  "title": "Response Get Scenario Templates V1 Supply Scenarios Templates Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/supply/scenarios/run": {
+      "post": {
+        "tags": [
+          "supply"
+        ],
+        "summary": "Run Decision Scenario",
+        "description": "Reject unproven operational inputs instead of inserting demonstration facts.",
+        "operationId": "run_decision_scenario_v1_supply_scenarios_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionScenarioDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecisionPilotReport"
                 }
               }
             }
@@ -1355,7 +1647,8 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "string"
+                  "type": "string",
+                  "format": "date"
                 },
                 {
                   "type": "null"
@@ -1373,7 +1666,8 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "string"
+                  "type": "string",
+                  "format": "date"
                 },
                 {
                   "type": "null"
@@ -1441,7 +1735,8 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "string"
+                  "type": "string",
+                  "format": "date"
                 },
                 {
                   "type": "null"
@@ -1511,16 +1806,15 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "string"
+                  "type": "string",
+                  "format": "date"
                 },
                 {
                   "type": "null"
                 }
               ],
-              "description": "Start month (YYYY-MM-01)",
               "title": "From"
-            },
-            "description": "Start month (YYYY-MM-01)"
+            }
           },
           {
             "name": "to",
@@ -1529,28 +1823,29 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "string"
+                  "type": "string",
+                  "format": "date"
                 },
                 {
                   "type": "null"
                 }
               ],
-              "description": "End month (YYYY-MM-01)",
               "title": "To"
-            },
-            "description": "End month (YYYY-MM-01)"
+            }
           },
           {
             "name": "variable",
             "in": "query",
             "required": false,
             "schema": {
+              "enum": [
+                "precip_mm",
+                "t2m_c"
+              ],
               "type": "string",
-              "description": "Climate variable (precip_mm | t2m_c)",
               "default": "precip_mm",
               "title": "Variable"
-            },
-            "description": "Climate variable (precip_mm | t2m_c)"
+            }
           }
         ],
         "responses": {
@@ -2885,6 +3180,518 @@
         }
       }
     },
+    "/v1/sources/runs": {
+      "get": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "List Recent Runs",
+        "description": "Retrieve recent data sync and ingestion runs for user-friendly monitoring.",
+        "operationId": "list_recent_runs_v1_sources_runs_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SourceRunItem"
+                  },
+                  "title": "Response List Recent Runs V1 Sources Runs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sources/collection-options": {
+      "get": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Collection Options",
+        "operationId": "collection_options_v1_sources_collection_options_get",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Response Collection Options V1 Sources Collection Options Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sources/collections": {
+      "get": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Collection History",
+        "operationId": "collection_history_v1_sources_collections_get",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response Collection History V1 Sources Collections Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sources/collections/{request_id}": {
+      "get": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Collection Receipt",
+        "operationId": "collection_receipt_v1_sources_collections__request_id__get",
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Collection Receipt V1 Sources Collections  Request Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sources/collect": {
+      "post": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Collect Sources",
+        "operationId": "collect_sources_v1_sources_collect_post",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollectionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Collect Sources V1 Sources Collect Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sources/refresh": {
+      "post": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Refresh All Market Data",
+        "operationId": "refresh_all_market_data_v1_sources_refresh_post",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceRefreshResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sources/{source_id}/refresh": {
+      "post": {
+        "tags": [
+          "sources"
+        ],
+        "summary": "Refresh Single Source",
+        "operationId": "refresh_single_source_v1_sources__source_id__refresh_post",
+        "parameters": [
+          {
+            "name": "source_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Source Id"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "name": "session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceRefreshResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/admin/review": {
       "get": {
         "tags": [
@@ -3528,9 +4335,15 @@
             "title": "Standardized Zscore"
           },
           "risk_level": {
-            "type": "string",
-            "title": "Risk Level",
-            "default": "low"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Level"
           },
           "status": {
             "type": "string",
@@ -3560,6 +4373,7 @@
               "observed",
               "imputed",
               "forecast",
+              "projected",
               "composite"
             ],
             "title": "Value Kind",
@@ -3748,6 +4562,7 @@
               "observed",
               "imputed",
               "forecast",
+              "projected",
               "composite"
             ],
             "title": "Value Kind",
@@ -3834,9 +4649,15 @@
             "default": false
           },
           "observed_source": {
-            "type": "string",
-            "title": "Observed Source",
-            "default": "chirps"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed Source"
           },
           "temperature_mean_c": {
             "anyOf": [
@@ -3910,6 +4731,7 @@
               "observed",
               "imputed",
               "forecast",
+              "projected",
               "composite"
             ],
             "title": "Forecast Value Kind",
@@ -3945,6 +4767,32 @@
         ],
         "title": "ClimateSummaryResponse",
         "description": "Consolidated agroclimate summary for decision-support (ADR-087, R4.11)."
+      },
+      "CollectionInput": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Request Id"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]{0,99}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id"
+        ],
+        "title": "CollectionInput"
       },
       "CopilotAskRequest": {
         "properties": {
@@ -3992,6 +4840,17 @@
             },
             "type": "array",
             "title": "Value Kinds"
+          },
+          "provenance_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provenance Summary"
           }
         },
         "type": "object",
@@ -4146,6 +5005,277 @@
         ],
         "title": "CropCalendarItem",
         "description": "Crop calendar phenological cycle and trade corridors (ADR-086, ADR-087)."
+      },
+      "CycleSufficiencyReport": {
+        "properties": {
+          "total_cycles_observed": {
+            "type": "number",
+            "title": "Total Cycles Observed"
+          },
+          "min_cycles_required": {
+            "type": "integer",
+            "title": "Min Cycles Required",
+            "default": 2
+          },
+          "is_sufficient": {
+            "type": "boolean",
+            "title": "Is Sufficient"
+          },
+          "total_observations": {
+            "type": "integer",
+            "title": "Total Observations"
+          },
+          "earliest_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Earliest Date"
+          },
+          "latest_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Date"
+          },
+          "assessment_note": {
+            "type": "string",
+            "title": "Assessment Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_cycles_observed",
+          "is_sufficient",
+          "total_observations",
+          "assessment_note"
+        ],
+        "title": "CycleSufficiencyReport",
+        "description": "Assessment of historical arrival data sufficiency for empirical seasonal fitting."
+      },
+      "DecisionImpactMetric": {
+        "properties": {
+          "metric_name": {
+            "type": "string",
+            "title": "Metric Name"
+          },
+          "baseline_value": {
+            "type": "number",
+            "title": "Baseline Value"
+          },
+          "scenario_value": {
+            "type": "number",
+            "title": "Scenario Value"
+          },
+          "absolute_change": {
+            "type": "number",
+            "title": "Absolute Change"
+          },
+          "relative_change_pct": {
+            "type": "number",
+            "title": "Relative Change Pct"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "interpretation": {
+            "type": "string",
+            "title": "Interpretation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "metric_name",
+          "baseline_value",
+          "scenario_value",
+          "absolute_change",
+          "relative_change_pct",
+          "unit",
+          "interpretation"
+        ],
+        "title": "DecisionImpactMetric",
+        "description": "Quantified mathematical impact of the simulated scenario against baseline."
+      },
+      "DecisionPersona": {
+        "type": "string",
+        "enum": [
+          "public_regulator",
+          "commercial_buyer",
+          "agricultural_planner"
+        ],
+        "title": "DecisionPersona",
+        "description": "Target stakeholder persona for the decision pilot."
+      },
+      "DecisionPilotReport": {
+        "properties": {
+          "report_id": {
+            "type": "string",
+            "title": "Report Id"
+          },
+          "persona": {
+            "$ref": "#/components/schemas/DecisionPersona"
+          },
+          "scenario_id": {
+            "type": "string",
+            "title": "Scenario Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "market_code": {
+            "type": "string",
+            "title": "Market Code"
+          },
+          "product_code": {
+            "type": "string",
+            "title": "Product Code"
+          },
+          "campaign": {
+            "type": "string",
+            "title": "Campaign"
+          },
+          "impacts": {
+            "items": {
+              "$ref": "#/components/schemas/DecisionImpactMetric"
+            },
+            "type": "array",
+            "title": "Impacts"
+          },
+          "decision_recommendation": {
+            "type": "string",
+            "title": "Decision Recommendation"
+          },
+          "risk_assessment": {
+            "type": "string",
+            "title": "Risk Assessment"
+          },
+          "order_generation_prohibited": {
+            "type": "boolean",
+            "title": "Order Generation Prohibited",
+            "default": true
+          },
+          "missing_parameters": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing Parameters"
+          },
+          "human_reviewed": {
+            "type": "boolean",
+            "title": "Human Reviewed",
+            "default": false
+          },
+          "evaluation_status": {
+            "type": "string",
+            "title": "Evaluation Status",
+            "default": "NOT_EVALUATED"
+          },
+          "provenance_note": {
+            "type": "string",
+            "title": "Provenance Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "report_id",
+          "persona",
+          "scenario_id",
+          "title",
+          "market_code",
+          "product_code",
+          "campaign",
+          "impacts",
+          "decision_recommendation",
+          "risk_assessment",
+          "provenance_note"
+        ],
+        "title": "DecisionPilotReport",
+        "description": "Actionable decision support report for human decision makers."
+      },
+      "DecisionScenarioDefinition": {
+        "properties": {
+          "scenario_id": {
+            "type": "string",
+            "title": "Scenario Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "persona": {
+            "$ref": "#/components/schemas/DecisionPersona"
+          },
+          "market_code": {
+            "type": "string",
+            "title": "Market Code"
+          },
+          "product_code": {
+            "type": "string",
+            "title": "Product Code"
+          },
+          "campaign": {
+            "type": "string",
+            "title": "Campaign"
+          },
+          "parameters": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ScenarioParameter"
+            },
+            "type": "object",
+            "title": "Parameters"
+          },
+          "author_id": {
+            "type": "string",
+            "title": "Author Id",
+            "default": "internal_analyst"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "default": "v1.0"
+          },
+          "human_reviewed": {
+            "type": "boolean",
+            "title": "Human Reviewed",
+            "default": false
+          },
+          "evaluation_status": {
+            "type": "string",
+            "title": "Evaluation Status",
+            "default": "NOT_EVALUATED"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scenario_id",
+          "title",
+          "persona",
+          "market_code",
+          "product_code",
+          "campaign",
+          "parameters"
+        ],
+        "title": "DecisionScenarioDefinition",
+        "description": "Specification of an actionable market supply scenario."
       },
       "DimensionSummaryOut": {
         "properties": {
@@ -4763,6 +5893,7 @@
               "observed",
               "imputed",
               "forecast",
+              "projected",
               "composite"
             ],
             "title": "Value Kind",
@@ -5387,6 +6518,7 @@
               "observed",
               "imputed",
               "forecast",
+              "projected",
               "composite"
             ],
             "title": "Value Kind",
@@ -5583,6 +6715,7 @@
               "observed",
               "imputed",
               "forecast",
+              "projected",
               "composite"
             ],
             "title": "Value Kind",
@@ -5995,6 +7128,7 @@
               "observed",
               "imputed",
               "forecast",
+              "projected",
               "composite"
             ],
             "title": "Value Kind",
@@ -6187,6 +7321,45 @@
         ],
         "title": "ReviewResolveRequest",
         "description": "Review item resolution request."
+      },
+      "ScenarioParameter": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "source_justification": {
+            "type": "string",
+            "title": "Source Justification"
+          },
+          "default_value": {
+            "type": "number",
+            "title": "Default Value"
+          },
+          "is_user_override": {
+            "type": "boolean",
+            "title": "Is User Override",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "value",
+          "unit",
+          "source_justification",
+          "default_value"
+        ],
+        "title": "ScenarioParameter",
+        "description": "A typed parameter for decision scenario simulations."
       },
       "SeriesCoverageSummaryItem": {
         "properties": {
@@ -6475,6 +7648,153 @@
         "title": "SourceItem",
         "description": "Data source registry item with DataOps health indicators."
       },
+      "SourceRefreshResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "action": {
+            "type": "string",
+            "const": "recompute",
+            "title": "Action",
+            "default": "recompute"
+          },
+          "collection_performed": {
+            "type": "boolean",
+            "const": false,
+            "title": "Collection Performed",
+            "default": false
+          },
+          "new_records_count": {
+            "type": "integer",
+            "const": 0,
+            "title": "New Records Count",
+            "default": 0
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "views_refreshed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Views Refreshed"
+          },
+          "refreshed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Refreshed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success",
+          "message",
+          "refreshed_at"
+        ],
+        "title": "SourceRefreshResponse",
+        "description": "A guarded cache recalculation never claims new collection or freshness."
+      },
+      "SourceRunItem": {
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "source_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Name"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "duration_seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Seconds"
+          },
+          "n_records": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "N Records"
+          },
+          "n_fetched": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "N Fetched"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_id",
+          "source_id",
+          "status",
+          "started_at"
+        ],
+        "title": "SourceRunItem",
+        "description": "Actual ingestion history, not a cache-recalculation receipt."
+      },
       "StockItem": {
         "properties": {
           "product_code": {
@@ -6528,6 +7848,7 @@
               "observed",
               "imputed",
               "forecast",
+              "projected",
               "composite"
             ],
             "title": "Value Kind",
@@ -6549,6 +7870,177 @@
         ],
         "title": "StockItem",
         "description": "Latest stock status item."
+      },
+      "SupplyPeakQualification": {
+        "type": "string",
+        "enum": [
+          "baseline_logistics",
+          "empirical_seasonal",
+          "experimental_baseline",
+          "abstained_insufficient_history"
+        ],
+        "title": "SupplyPeakQualification",
+        "description": "Scientific qualification level of the supply peak and window prediction."
+      },
+      "SupplyWindowPrediction": {
+        "properties": {
+          "market_code": {
+            "type": "string",
+            "title": "Market Code"
+          },
+          "market_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Market Name"
+          },
+          "supply_zone_code": {
+            "type": "string",
+            "title": "Supply Zone Code"
+          },
+          "crop": {
+            "type": "string",
+            "title": "Crop"
+          },
+          "product_code": {
+            "type": "string",
+            "title": "Product Code"
+          },
+          "campaign": {
+            "type": "string",
+            "title": "Campaign"
+          },
+          "as_of_date": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of Date"
+          },
+          "harvest_window_start_dekad": {
+            "type": "string",
+            "title": "Harvest Window Start Dekad"
+          },
+          "harvest_window_end_dekad": {
+            "type": "string",
+            "title": "Harvest Window End Dekad"
+          },
+          "harvest_peak_dekad": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Harvest Peak Dekad"
+          },
+          "logistics_lag_dekads": {
+            "type": "integer",
+            "title": "Logistics Lag Dekads",
+            "default": 1
+          },
+          "supply_window_start_dekad": {
+            "type": "string",
+            "title": "Supply Window Start Dekad"
+          },
+          "supply_window_end_dekad": {
+            "type": "string",
+            "title": "Supply Window End Dekad"
+          },
+          "predicted_peak_dekad": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Peak Dekad"
+          },
+          "supply_window_start_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Supply Window Start Date"
+          },
+          "supply_window_end_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Supply Window End Date"
+          },
+          "predicted_peak_start_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Peak Start Date"
+          },
+          "predicted_peak_end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Peak End Date"
+          },
+          "qualification": {
+            "$ref": "#/components/schemas/SupplyPeakQualification"
+          },
+          "confidence_score": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence Score"
+          },
+          "source_harvest_reference": {
+            "type": "string",
+            "title": "Source Harvest Reference"
+          },
+          "uncertainty_note": {
+            "type": "string",
+            "title": "Uncertainty Note"
+          },
+          "historical_cycles_evaluated": {
+            "type": "number",
+            "title": "Historical Cycles Evaluated",
+            "default": 0.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "market_code",
+          "supply_zone_code",
+          "crop",
+          "product_code",
+          "campaign",
+          "as_of_date",
+          "harvest_window_start_dekad",
+          "harvest_window_end_dekad",
+          "supply_window_start_dekad",
+          "supply_window_end_dekad",
+          "supply_window_start_date",
+          "supply_window_end_date",
+          "qualification",
+          "confidence_score",
+          "source_harvest_reference",
+          "uncertainty_note"
+        ],
+        "title": "SupplyWindowPrediction",
+        "description": "Projected market supply window and arrival peak with complete provenance."
       },
       "TradeItem": {
         "properties": {
@@ -6596,6 +8088,7 @@
               "observed",
               "imputed",
               "forecast",
+              "projected",
               "composite"
             ],
             "title": "Value Kind",
@@ -6704,7 +8197,14 @@
             "title": "Month"
           },
           "precip_total_mm": {
-            "type": "number",
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Precip Total Mm"
           },
           "precip_anomaly_pct": {
@@ -6735,6 +8235,7 @@
               "observed",
               "imputed",
               "forecast",
+              "projected",
               "composite"
             ],
             "title": "Value Kind",

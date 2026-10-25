@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { DEFAULT_PRODUCT } from "@/lib/market-overview";
 import { useSearchParams } from "next/navigation";
 import { Activity, CheckCircle2, Download, Layers, RefreshCw, Search, Table, TrendingUp } from "lucide-react";
 import { formatMonthYear, formatPrice } from "@/lib/formatters";
@@ -47,7 +48,7 @@ interface ForecastAbstention {
 
 function PricesContent() {
   const searchParams = useSearchParams();
-  const product = searchParams.get("product") || "rice_milled";
+  const product = searchParams.get("product") || DEFAULT_PRODUCT;
   const region = searchParams.get("region") || "";
   const actor = searchParams.get("actor") || "";
 

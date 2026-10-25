@@ -234,11 +234,7 @@ def test_decision_pilot_api_endpoints() -> None:
         # 2. Test run scenario endpoint with public regulator template
         regulator_template = templates_data["public_regulator"]
         resp_run = client.post("/v1/supply/scenarios/run", json=regulator_template)
-        assert resp_run.status_code == 200
-        report_data = resp_run.json()
-        assert report_data["persona"] == "public_regulator"
-        assert report_data["order_generation_prohibited"] is True
-        assert report_data["evaluation_status"] == "NOT_EVALUATED"
-        assert len(report_data["impacts"]) >= 2
+        assert resp_run.status_code == 409
+        assert "aucune valeur mensuelle implicite" in str(resp_run.json())
     finally:
         app.dependency_overrides.clear()

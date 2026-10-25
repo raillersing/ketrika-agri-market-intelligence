@@ -42,8 +42,8 @@ export function ChoroplethMap({
   const validPrices = Object.values(regionPrices)
     .map((r) => r.price)
     .filter((p): p is number => p !== null && p !== undefined);
-  const minPrice = validPrices.length ? Math.min(...validPrices) : 2000;
-  const maxPrice = validPrices.length ? Math.max(...validPrices) : 4000;
+  const minPrice = validPrices.length ? Math.min(...validPrices) : 0;
+  const maxPrice = validPrices.length ? Math.max(...validPrices) : 0;
   const spreadPercent = minPrice > 0 ? Math.round(((maxPrice - minPrice) / minPrice) * 100) : 0;
 
   return (
@@ -54,26 +54,26 @@ export function ChoroplethMap({
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
               <Compass className="w-4 h-4 text-emerald-400" />
-              Carte spatiale & Disparités régionales
+              Répartition des points disponibles
             </h3>
             <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              Écart: +{spreadPercent}%
+              {validPrices.length > 1 ? `Écart: ${spreadPercent}%` : "Écart non évalué"}
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            Écarts territoriaux de prix à travers les 23 régions de Madagascar
+            Points de la sélection ; la couverture géographique reste à qualifier
           </p>
         </div>
 
         {/* Legend */}
         <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400">
-          <span className="text-emerald-400">{formatPrice(minPrice, "kg")}</span>
+          <span className="text-emerald-400">{validPrices.length ? formatPrice(minPrice, "kg") : "—"}</span>
           <div className="flex h-2 w-20 rounded-full overflow-hidden bg-slate-800 border border-white/[0.05]">
             <div className="flex-1 bg-emerald-500" />
             <div className="flex-1 bg-amber-500" />
             <div className="flex-1 bg-rose-500" />
           </div>
-          <span className="text-rose-400">{formatPrice(maxPrice, "kg")}</span>
+          <span className="text-rose-400">{validPrices.length ? formatPrice(maxPrice, "kg") : "—"}</span>
         </div>
       </div>
 
@@ -139,8 +139,8 @@ export function ChoroplethMap({
 
       {/* Disparity summary footer */}
       <div className="px-4 py-2 border-t border-white/[0.06] bg-slate-950/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
-        <span>Tension territoriale : <strong className="text-amber-400">Sud-Ouest & Nord</strong></span>
-        <span>Approvisionnement : <strong className="text-emerald-400">Alaotra-Mangoro</strong></span>
+        <span>Aucun diagnostic territorial déduit de cette vue</span>
+        <span>{validPrices.length} points disponibles</span>
       </div>
     </div>
   );

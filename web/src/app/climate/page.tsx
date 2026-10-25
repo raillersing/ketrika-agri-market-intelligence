@@ -88,7 +88,7 @@ interface ClimateSummary {
   precipitation_risk_level?: string | null;
   aggregation_method: string;
   cropland_mask_applied: boolean;
-  observed_source: string;
+  observed_source: string | null;
   temperature_mean_c?: number | null;
   forecast_next_72h_precip_mm?: number | null;
   forecast_p10_mm?: number | null;
@@ -101,28 +101,33 @@ interface ClimateSummary {
   facultative_sources: FacultativeSource[];
 }
 
-const REGION_OPTIONS = [
-  { pcode: "MDG11", label: "Analamanga (Antananarivo / Hauts Plateaux)" },
-  { pcode: "MDG32", label: "Alaotra-Mangoro (Grenier à riz d'Ambatondrazaka)" },
-  { pcode: "MDG41", label: "Boeny (Plaine rizicole de Marovoay / Mahajanga)" },
-  { pcode: "MDG31", label: "Atsinanana (Côte Est / Toamasina)" },
-  { pcode: "MDG53", label: "Androy (Grand Sud / Ambovombe)" },
-];
-
 export default function ClimatePage() {
+  const [regions, setRegions] = useState<{ pcode: string; name: string }[]>([]);
   const [selectedPcode, setSelectedPcode] = useState("MDG11");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<ClimateSummary | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/v1/locations?level=1", { signal: controller.signal })
+      .then(async (response) => { if (!response.ok) throw new Error("Référentiel indisponible"); return response.json(); })
+      .then((data) => { if (!controller.signal.aborted) setRegions(data.filter((r: { pcode: string | null }) => r.pcode)); })
+      .catch(() => { /* Keep the selected code visible; do not invent its name. */ });
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
     async function fetchClimateData() {
       setLoading(true);
       setError(null);
+      setSummary(null);
       try {
         const apiUrl = "/api";
         const res = await fetch(`${apiUrl}/v1/climate/summary?location=${selectedPcode}`, {
           credentials: "include",
+          signal: controller.signal,
         });
 
         if (!res.ok) {
@@ -130,15 +135,16 @@ export default function ClimatePage() {
         }
 
         const data: ClimateSummary = await res.json();
-        setSummary(data);
+        if (!controller.signal.aborted) setSummary(data);
       } catch (err: any) {
-        setError(err.message || "Erreur de chargement des données agroclimatiques");
+        if (!controller.signal.aborted) setError(err.message || "Erreur de chargement des données agroclimatiques");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     }
 
     fetchClimateData();
+    return () => controller.abort();
   }, [selectedPcode]);
 
   const getRiskBadge = (level?: string | null) => {
@@ -149,8 +155,10 @@ export default function ClimatePage() {
         return <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">Déficit Pluviométrique Élevé</span>;
       case "medium":
         return <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-500/15 text-yellow-300 border border-yellow-500/30">Anomalie Modérée</span>;
-      default:
+      case "low":
         return <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Conditions Hydriques Normales</span>;
+      default:
+        return <span className="px-2.5 py-1 rounded-full text-xs text-slate-300 bg-slate-800">Risque non évalué</span>;
     }
   };
 
@@ -180,11 +188,11 @@ export default function ClimatePage() {
               Observatoire Agroclimatique & Calendriers Culturaux
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-sky-500/10 text-sky-300 border border-sky-500/20">
-              CHIRPS v2.0 & ECMWF Open Data
+              Données disponibles et limites
             </span>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Veille météorologique explicable, anomalies par rapport à la normale 1991–2020, prévisions numériques étanches et suivi phénologique des PPN à Madagascar (ADR-084, ADR-085, ADR-086, ADR-087).
+            Observations et projections disponibles, avec leurs dates et limites. Les références saisonnières ne constituent pas des prévisions de récolte validées.
           </p>
         </div>
 
@@ -195,14 +203,15 @@ export default function ClimatePage() {
               onChange={(e) => setSelectedPcode(e.target.value)}
               className="bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
-              {REGION_OPTIONS.map((opt) => (
+              {!regions.some((r) => r.pcode === selectedPcode) && <option value={selectedPcode}>{selectedPcode}</option>}
+              {regions.map((opt) => (
                 <option key={opt.pcode} value={opt.pcode}>
-                  {opt.label}
+                  {opt.name} ({opt.pcode})
                 </option>
               ))}
             </select>
           </div>
-          <SourceBadge sourceId="chirps" />
+          {summary?.observed_source && <span className="text-xs text-slate-400">Sources observées : {summary.observed_source}</span>}
         </div>
       </div>
 
@@ -213,12 +222,12 @@ export default function ClimatePage() {
         </div>
       )}
 
-      {loading || !summary ? (
+      {loading ? (
         <div className="glass-card rounded-2xl p-16 text-center text-xs text-slate-400 flex items-center justify-center gap-2 font-mono">
           <RefreshCw className="w-4 h-4 animate-spin text-sky-400" />
           Chargement de l&apos;observatoire agroclimatique explicable...
         </div>
-      ) : (
+      ) : !summary || error ? <p className="text-slate-400">Synthèse indisponible pour cette zone.</p> : (
         <>
           {/* Top KPI Cards: Observed vs Forecast */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -240,12 +249,12 @@ export default function ClimatePage() {
                 <span className="text-sm font-semibold text-slate-400">mm / mois</span>
               </div>
               <div className="mt-3 flex items-center justify-between text-xs border-t border-white/[0.06] pt-3">
-                <span className="text-slate-400">Écart à la normale :</span>
+                <span className="text-slate-400">Écart à l’historique disponible :</span>
                 <span
                   className={`font-mono font-bold ${
-                    (summary.precipitation_anomaly_pct ?? 100) < 75
+                    (summary.precipitation_anomaly_pct ?? 0) < 0
                       ? "text-rose-400"
-                      : (summary.precipitation_anomaly_pct ?? 100) > 125
+                      : (summary.precipitation_anomaly_pct ?? 0) > 0
                       ? "text-sky-400"
                       : "text-emerald-400"
                   }`}
@@ -266,7 +275,7 @@ export default function ClimatePage() {
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-sky-300 uppercase tracking-wider flex items-center gap-1.5">
                   <Droplets className="w-4 h-4 text-sky-400" />
-                  Météo Prévue (Prochaines 72h)
+                  Météo prévue (fenêtre du modèle : 72h)
                 </span>
                 <ValueKindBadge kind="projected" />
               </div>
@@ -281,12 +290,12 @@ export default function ClimatePage() {
               <div className="mt-3 flex items-center justify-between text-xs border-t border-sky-500/15 pt-3">
                 <span className="text-slate-400">Incertitude p10 – p90 :</span>
                 <span className="font-mono text-sky-300 font-semibold">
-                  [{formatNumber(summary.forecast_p10_mm ?? 0, 1)} – {formatNumber(summary.forecast_p90_mm ?? 0, 1)}] mm
+                  {summary.forecast_p10_mm != null && summary.forecast_p90_mm != null ? `[${formatNumber(summary.forecast_p10_mm, 1)} – ${formatNumber(summary.forecast_p90_mm, 1)}] mm` : "Indisponible"}
                 </span>
               </div>
               <div className="mt-2 text-[11px] text-slate-400 flex items-center justify-between font-mono">
-                <span>Modèle : {summary.forecast_model || "ecmwf_ifs"}</span>
-                <span>Émis le : {summary.forecast_issued_at ? summary.forecast_issued_at.slice(0, 10) : "récent"}</span>
+                <span>Modèle : {summary.forecast_model || "Indisponible"}</span>
+                <span>Émis le : {summary.forecast_issued_at ? summary.forecast_issued_at.slice(0, 10) : "Indisponible"}</span>
               </div>
             </div>
 
@@ -303,10 +312,10 @@ export default function ClimatePage() {
                 {getRiskBadge(summary.precipitation_risk_level)}
               </div>
               <p className="mt-3 text-xs text-slate-400 leading-relaxed">
-                Calculé à partir des cumuls pluviométriques par rapport à la climatologie de référence 1991–2020 ($N \ge 10$ ans).
+                Comparaison à l’historique disponible ; la référence climatologique et son effectif restent à qualifier.
               </p>
               <div className="mt-2 text-[11px] text-slate-500 font-mono">
-                Température moyenne observée : {summary.temperature_mean_c ? `${formatNumber(summary.temperature_mean_c, 1)} °C` : "—"}
+                Température moyenne observée : {summary.temperature_mean_c != null ? `${formatNumber(summary.temperature_mean_c, 1)} °C` : "—"}
               </div>
             </div>
           </div>
@@ -384,7 +393,7 @@ export default function ClimatePage() {
                               ))}
                             </div>
                           ) : (
-                            <span className="text-slate-500 font-mono text-[11px]">Autoconsommation locale</span>
+                            <span className="text-slate-500 font-mono text-[11px]">Aucun corridor renseigné</span>
                           )}
                         </td>
                       </tr>

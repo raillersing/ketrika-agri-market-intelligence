@@ -1,0 +1,3 @@
+BEGIN
+{"scope" : "synthetic qualification database", "rows" : 16, "latest_month" : "2024-06-01", "minimum" : 2500.00, "maximum" : 999999.00}
+COMMIT

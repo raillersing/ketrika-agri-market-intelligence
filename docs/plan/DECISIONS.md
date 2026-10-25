@@ -1,4 +1,21 @@
 # DECISIONS (Architecture Decision Records - ADR)
+## ADR-122 | 2026-10-25 | Accepté avant code | H3 fermé à la frontière des transports
+
+- Contexte : IA-07/AU-05 ; SMTP alertes/échecs et aperçu bulletin acceptent un serveur arbitraire ; Telegram assimile une variable à une autorisation humaine.
+- Décision : seule capture SMTP locale autorisée : APP_ENV dev/test, hôte exact mailpit, port1025. Contrôle central avant construction de smtplib.SMTP, y compris aperçu bulletin dont les paramètres ne contournent pas la politique. Aucun SMTP en production ni relais externe. EXTERNAL_SEND_ENABLED, même1, ne constitue pas une autorisation humaine : Telegram reste brouillon/refus local sans client HTTP ni requête tant qu'un contrat d'approbation humaine explicite n'est pas reçu.
+- Reçus : booléen true seulement après transport Mailpit accepté ; refus false et raison non sensible ; logs sans destinataire/token ni texte d'erreur transport susceptible de les contenir. Les brouillons/calculs restent disponibles, aucune fonctionnalité d'envoi réel n'est revendiquée.
+- Alternatives : accepter le nom « preview » comme garantie, ou laisser une variable ouvrir H3 (rejetés) ; ajouter un nouveau booléen d'approbation tout aussi contournable (rejeté). Une future autorisation humaine exige un contrat et une réception séparés, pas une modification de variable dans ce lot.
+- Conséquences : tests négatifs interceptent toute construction réseau, y compris gate1 ; positif réel dans Mailpit interne de développement distinct du check en cours. Aucun tiers contacté, pas de nouveau runtime dependency, contrat bool existant conservé. Réception groupée de sécurité avant main.
+
+## ADR-121 | 2026-10-25 | Accepté avant code | Faits indisponibles et abstention explicite
+
+- Contexte : IA-01/02/05 ; accueil constant, climat avec nombres de secours et scénarios alimentés par des observations inventées.
+- Décision : accueil lit les endpoints filtrés existants ; il expose chaque série avec zone, acteur, unité et nature, sans moyenne nationale implicite. Les référentiels servis fournissent les codes de filtres ; défaut RICE_WHITE_LOCAL. Aucun KPI sans observation liée ne porte une certification automatique.
+- Climat : month est une date ISO au premier jour du mois (422 sinon) ; zone inconnue404. Le mois explicite borne la requête ; sans mois, dernière observation disponible, sinon mois UTC courant avec valeurs NULL. observed_source devient nullable et provient de la lignée réelle ; aucune météo de secours. Une prévision « prochaines72h » exige précipitations en mm, horizon72h, émission passée, fenêtre courante valide et mois courant ; toute absence reste NULL. Baseline non prouvée et risque non calculable restent NULL, jamais30ans ou low par défaut. L'anomalie t2m utilise la température, sans transformer une anomalie pluie en température. Dates from/to validées et CAST lié, intervalle inversé422 ; erreur SQL propagée.
+- Offre : campagne explicite année valide, calendrier exact produit/bassin actif non supersédé ; marché exact, aucun repli sur première ligne. Stocks et arrivages ne sont pas interchangeables : seules mesures market_arrivals acceptées et unités normalisées en kg. Aucune observation mensuelle par défaut pour les scénarios publics : absence de corpus complet entraîne abstention409 ; pas de chiffre observé dérivé d'une hypothèse. Les modèles restent expérimentaux tant que leurs gates ne passent pas.
+- Alternatives : conserver les démonstrations sur les pages métier (rejeté) ; fabriquer des estimations silencieuses (interdit) ; reconstruire les données actives (hors lot).
+- Conséquences : contrats d'erreur et champs nullables explicités dans SPECS avant implémentation. Aucune migration, dépendance ni collecte nouvelle. Réception groupée obligatoire ; les AU ne clôturent pas les tâches R aval.
+
 
 ## ADR-120 | 2026-10-25 | Accepté (gouvernance documentaire) | Réception de l'audit indépendant et plan de reprise
 

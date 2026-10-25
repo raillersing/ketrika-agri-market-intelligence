@@ -446,10 +446,10 @@ def test_gate_r5_criterion_10_fastapi_supply_endpoints() -> None:
     try:
         # Peak forecast
         resp_peak = client.get(
-            "/v1/supply/peak-forecast?crop=RICE&zone_code=ZONE_ALAOTRA&market_code=MDG_ANOSIBE"
+            "/v1/supply/peak-forecast?crop=RICE&zone_code=ZONE_ALAOTRA&market_code=MDG_ANOSIBE&campaign=2026"
         )
-        assert resp_peak.status_code == 200
-        assert "predicted_peak_dekad" in resp_peak.json()
+        assert resp_peak.status_code == 404
+        assert "calendrier" in str(resp_peak.json())
 
         # Sufficiency
         resp_suff = client.get("/v1/supply/sufficiency?market_code=MDG_ANOSIBE")

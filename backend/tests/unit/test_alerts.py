@@ -74,8 +74,8 @@ def test_telegram_send_neutralized_when_external_send_disabled() -> None:
         mock_post.assert_not_called()
 
 
-def test_telegram_send_executed_when_external_send_enabled() -> None:
-    """When EXTERNAL_SEND_ENABLED=1 and credentials provided, Telegram API POST is made."""
+def test_telegram_flag_does_not_replace_human_approval() -> None:
+    """ADR-122: an environment variable does not open the human gate."""
     settings = Settings(
         external_send_enabled=1,
         telegram_bot_token="valid_token",
@@ -99,11 +99,8 @@ def test_telegram_send_executed_when_external_send_enabled() -> None:
         mock_post.return_value = mock_resp
 
         res = send_telegram_alert(alert, settings=settings)
-        assert res is True
-        mock_post.assert_called_once()
-        args, kwargs = mock_post.call_args
-        assert "https://api.telegram.org/botvalid_token/sendMessage" in args[0]
-        assert kwargs["json"]["chat_id"] == "99999"
+        assert res is False
+        mock_post.assert_not_called()
 
 
 def test_dispatch_alert_notifications() -> None:

@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any
+from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import or_, text
 from sqlalchemy.orm import Session
 
+from ketrika.api.gold_availability import require_gold_view
 from ketrika.api.schemas import (
     ClimateAnomalyDetailItem,
     ClimateEventItem,
@@ -19,7 +20,6 @@ from ketrika.api.schemas import (
 )
 from ketrika.core.db import get_db
 from ketrika.core.models.db import Location, WeatherForecast
-from ketrika.geo.anomalies import classify_rainfall_anomaly
 from ketrika.geo.calendar import detect_phenological_stage
 from ketrika.geo.contracts import CropCalendarRecord, load_crop_calendar
 from ketrika.gold.compatibility import is_gold_view_populated
@@ -71,10 +71,27 @@ def _get_facultative_sources() -> list[FacultativeSourceStatus]:
     return list(FACULTATIVE_SOURCES)
 
 
+def _observed_sources(session: Session, location: Location, month: str) -> str | None:
+    """Resolve actual monthly observation parents, without inferring a provider."""
+    rows = session.execute(
+        text("""
+            SELECT DISTINCT sr.source_id
+            FROM obs.weather_observation wo
+            JOIN meta.source_record sr USING (source_record_id)
+            WHERE wo.location_id = :location_id
+              AND date_trunc('month', wo.date)::date = CAST(:month AS date)
+              AND wo.superseded_by IS NULL
+            ORDER BY sr.source_id
+        """),
+        {"location_id": location.location_id, "month": month},
+    ).fetchall()
+    return ", ".join(str(row[0]) for row in rows) or None
+
+
 @router.get("/summary", response_model=ClimateSummaryResponse)
 def get_climate_summary(
     location: str = Query("MDG11", description="District or Region P-code (e.g. MDG11)"),
-    month: str | None = Query(
+    month: datetime.date | None = Query(
         None, description="Reference month (YYYY-MM-01), defaults to latest available"
     ),
     session: Session = Depends(get_db),
@@ -86,13 +103,16 @@ def get_climate_summary(
         .filter(or_(Location.pcode == location, Location.name == location))
         .first()
     )
-    loc_name = (
-        loc_record.name if (loc_record and loc_record.name) else f"Région/District {location}"
-    )
-    loc_pcode = loc_record.pcode if (loc_record and loc_record.pcode) else location
+    if loc_record is None:
+        raise HTTPException(404, "Zone inconnue : aucune substitution géographique.")
+    loc_name = loc_record.name
+    loc_pcode = loc_record.pcode or location
 
     # 2. Reference Month
-    ref_month_str = month or datetime.date.today().strftime("%Y-%m-01")
+    if month is not None and month.day != 1:
+        raise HTTPException(422, "month doit être le premier jour du mois.")
+    now = datetime.datetime.now(datetime.UTC)
+    ref_month_str = (month or now.date().replace(day=1)).isoformat()
     ref_month_int = int(ref_month_str.split("-")[1])
 
     # 3. Query Observed Weather & Anomaly
@@ -106,28 +126,26 @@ def get_climate_summary(
                 ((t2m_max_avg_c + t2m_min_avg_c) / 2.0)::float AS t2m_mean
             FROM gold.weather_monthly
             WHERE (location_pcode = :loc OR location_id::text = :loc)
+              AND (CAST(:requested_month AS date) IS NULL OR month = CAST(:requested_month AS date))
             ORDER BY month DESC
             LIMIT 1;
         """
-        obs_row = session.execute(text(obs_sql), {"loc": loc_pcode}).fetchone()
+        obs_row = session.execute(
+            text(obs_sql), {"loc": loc_pcode, "requested_month": month}
+        ).fetchone()
 
     obs_precip: float | None = None
     precip_anom_pct: float | None = None
-    risk_level: str = "low"
+    risk_level: str | None = None
     t2m_mean: float | None = None
 
     if obs_row:
+        ref_month_str = str(obs_row[0])
+        ref_month_int = int(ref_month_str.split("-")[1])
         obs_precip = float(obs_row[1]) if obs_row[1] is not None else None
         precip_anom_pct = float(obs_row[2]) if obs_row[2] is not None else None
         t2m_mean = float(obs_row[3]) if obs_row[3] is not None else None
-        if precip_anom_pct is not None:
-            risk_level = str(classify_rainfall_anomaly(precip_anom_pct, None))
-    else:
-        # Fallback to realistic Madagascar climatology observation
-        obs_precip = 115.0
-        precip_anom_pct = 95.0
-        risk_level = "low"
-        t2m_mean = 21.5
+        # Available-history anomalies are not a qualified hydrological risk baseline.
 
     # 4. Query Weather Forecast (obs.weather_forecast)
     fc_sql = """
@@ -142,10 +160,16 @@ def get_climate_summary(
         FROM obs.weather_forecast wf
         JOIN ref.location loc ON wf.location_id = loc.location_id
         WHERE (loc.pcode = :loc OR loc.name = :loc)
+          AND wf.variable = 'precip_mm' AND wf.unit = 'mm'
+          AND wf.horizon_hours = 72 AND wf.issued_at <= :now
+          AND wf.superseded_by IS NULL
+          AND wf.valid_from <= :now AND wf.valid_to > :now
         ORDER BY wf.issued_at DESC, wf.horizon_hours ASC
         LIMIT 1;
     """
-    fc_row = session.execute(text(fc_sql), {"loc": loc_pcode}).fetchone()
+    fc_row = None
+    if ref_month_str == now.date().replace(day=1).isoformat():
+        fc_row = session.execute(text(fc_sql), {"loc": loc_pcode, "now": now}).fetchone()
 
     fc_val: float | None = None
     fc_p10: float | None = None
@@ -159,21 +183,14 @@ def get_climate_summary(
         fc_val = float(fc_row[3]) if fc_row[3] is not None else None
         fc_p10 = float(fc_row[4]) if fc_row[4] is not None else None
         fc_p90 = float(fc_row[5]) if fc_row[5] is not None else None
-    else:
-        # Default projection metadata from ECMWF Open Data
-        fc_model = "ecmwf_ifs"
-        fc_issued = f"{ref_month_str}T00:00:00Z"
-        fc_val = 14.2
-        fc_p10 = 6.0
-        fc_p90 = 28.5
 
     # 5. Active Crop Calendars for this Basin
-    target_basin = PCODE_TO_BASIN.get(loc_pcode, "ZONE_CENTRE")
+    target_basin = PCODE_TO_BASIN.get(loc_pcode)
     all_calendars = load_crop_calendar()
     active_basin_cycles: list[CropCalendarItem] = []
 
     for r in all_calendars:
-        if r.zone_code == target_basin and r.is_active:
+        if r.zone_code == target_basin and r.is_active and r.superseded_by is None:
             stage = detect_phenological_stage(r, ref_month_int)
             active_basin_cycles.append(
                 CropCalendarItem(
@@ -252,7 +269,7 @@ def get_climate_summary(
         precipitation_risk_level=risk_level,
         aggregation_method="zonal_mean (administratif sans masque agricole vérifié)",
         cropland_mask_applied=False,
-        observed_source="chirps",
+        observed_source=_observed_sources(session, loc_record, ref_month_str) if obs_row else None,
         temperature_mean_c=t2m_mean,
         forecast_next_72h_precip_mm=fc_val,
         forecast_p10_mm=fc_p10,
@@ -269,12 +286,15 @@ def get_climate_summary(
 @router.get("/anomalies", response_model=list[ClimateAnomalyDetailItem])
 def get_climate_anomalies(
     location: str | None = Query(None, description="District or Region P-code"),
-    from_date: str | None = Query(None, alias="from", description="Start month (YYYY-MM-01)"),
-    to_date: str | None = Query(None, alias="to", description="End month (YYYY-MM-01)"),
-    variable: str = Query("precip_mm", description="Climate variable (precip_mm | t2m_c)"),
+    from_date: datetime.date | None = Query(None, alias="from"),
+    to_date: datetime.date | None = Query(None, alias="to"),
+    variable: Literal["precip_mm", "t2m_c"] = Query("precip_mm"),
     session: Session = Depends(get_db),
 ) -> list[ClimateAnomalyDetailItem]:
     """Retrieve detailed climate anomalies with baseline reference and categorical risk."""
+    if from_date and to_date and from_date > to_date:
+        raise HTTPException(422, "La date de début dépasse la date de fin.")
+    require_gold_view(session, "weather_monthly")
     sql = """
         SELECT
             location_pcode,
@@ -282,7 +302,14 @@ def get_climate_anomalies(
             month::text AS month,
             precip_total_mm::float,
             (rain_anom_pct * 100.0)::float AS precip_anomaly_pct,
-            ((t2m_max_avg_c + t2m_min_avg_c) / 2.0)::float AS t2m_mean
+                ((t2m_max_avg_c + t2m_min_avg_c) / 2.0)::float AS t2m_mean,
+                baseline_precip_mm::float,
+                (SELECT array_agg(DISTINCT sr.source_id)
+                 FROM obs.weather_observation wo
+                 JOIN meta.source_record sr USING (source_record_id)
+                 WHERE wo.location_id = weather_monthly.location_id
+                   AND date_trunc('month', wo.date)::date = weather_monthly.month
+                   AND wo.superseded_by IS NULL) AS observed_sources
         FROM gold.weather_monthly
         WHERE 1=1
     """
@@ -291,10 +318,10 @@ def get_climate_anomalies(
         sql += " AND (location_pcode = :loc OR location_id::text = :loc)"
         params["loc"] = location
     if from_date:
-        sql += " AND month >= :from_date::date"
+        sql += " AND month >= CAST(:from_date AS date)"
         params["from_date"] = from_date
     if to_date:
-        sql += " AND month <= :to_date::date"
+        sql += " AND month <= CAST(:to_date AS date)"
         params["to_date"] = to_date
 
     sql += " ORDER BY month ASC, location_pcode;"
@@ -305,9 +332,10 @@ def get_climate_anomalies(
         loc_code = str(r[0])
         loc_label = str(r[1])
         m = str(r[2])
-        rain_val = float(r[3])
-        anom_pct = float(r[4]) if r[4] is not None else None
-        risk = str(classify_rainfall_anomaly(anom_pct, None)) if anom_pct is not None else "low"
+        observed = r[3] if variable == "precip_mm" else r[5]
+        if observed is None:
+            continue
+        anom_pct = float(r[4]) if variable == "precip_mm" and r[4] is not None else None
 
         results.append(
             ClimateAnomalyDetailItem(
@@ -315,17 +343,17 @@ def get_climate_anomalies(
                 location_name=loc_label,
                 month=m,
                 variable=variable,
-                observed_value=rain_val,
-                baseline_mean=rain_val / (anom_pct / 100.0)
-                if (anom_pct and anom_pct > 0)
-                else None,
-                baseline_years=30,  # Climatology 1991-2020
+                observed_value=float(observed),
+                baseline_mean=float(r[6]) if variable == "precip_mm" and r[6] is not None else None,
+                baseline_years=None,
                 anomaly_pct=anom_pct,
-                risk_level=risk,
-                status="computed",
+                risk_level=None,
+                status="available_history_reference"
+                if variable == "precip_mm"
+                else "baseline_unavailable",
                 aggregation_method="zonal_mean",
                 cropland_mask_applied=False,
-                sources=["chirps"],
+                sources=list(r[7] or []),
                 value_kind="observed",
             )
         )
