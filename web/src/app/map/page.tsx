@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { DEFAULT_PRODUCT } from "@/lib/market-overview";
 import { useSearchParams } from "next/navigation";
 import { Compass, Layers, Map, RefreshCw, Route, ShieldCheck } from "lucide-react";
 import { ChoroplethMap, type RegionPriceData } from "@/components/maps/ChoroplethMap";
@@ -8,7 +9,7 @@ import { formatPrice } from "@/lib/formatters";
 
 function MapContent() {
   const searchParams = useSearchParams();
-  const product = searchParams.get("product") || "rice_milled";
+  const product = searchParams.get("product") || DEFAULT_PRODUCT;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [regionPrices, setRegionPrices] = useState<Record<string, RegionPriceData>>({});

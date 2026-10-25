@@ -186,7 +186,7 @@ class WeatherAnomalyItem(BaseModel):
     district_pcode: str
     district_name: str
     month: str
-    precip_total_mm: float
+    precip_total_mm: float | None
     precip_anomaly_pct: float | None = None
     t2m_mean: float | None = None
     value_kind: ValueKind = "observed"
@@ -280,7 +280,7 @@ class ClimateAnomalyDetailItem(BaseModel):
     anomaly_delta: float | None = None
     anomaly_pct: float | None = None
     standardized_zscore: float | None = None
-    risk_level: str = "low"
+    risk_level: str | None = None
     status: str = "computed"
     aggregation_method: str = "zonal_mean"
     cropland_mask_applied: bool = False
@@ -299,7 +299,7 @@ class ClimateSummaryResponse(BaseModel):
     precipitation_risk_level: str | None = None
     aggregation_method: str = "zonal_mean"
     cropland_mask_applied: bool = False
-    observed_source: str = "chirps"
+    observed_source: str | None = None
     temperature_mean_c: float | None = None
     forecast_next_72h_precip_mm: float | None = None
     forecast_p10_mm: float | None = None

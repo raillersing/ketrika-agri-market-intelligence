@@ -21,7 +21,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-01 — Accueil et filtres réellement alimentés
 
-- **Statut :** TODO · P0 · rôle Frontend/Backend · parent R0.8, réception ultérieure R2.10 · dépendance : aucune correction préalable.
+- **Statut :** IN_PROGRESS · P0 · rôle Frontend/Backend · parent R0.8, réception ultérieure R2.10 · dépendance : aucune correction préalable.
 - **Fichiers :** `web/src/app/page.tsx`, `web/src/components/ui/KpiCard.tsx`, `GlobalFilters.tsx`, `web/src/app/{prices,map,trade}/page.tsx`, `web/src/lib/api/*`, tests web et parcours navigateur. Constats IA-01/13.
 - **Étapes :** inventorier chaque chiffre/statut/source actuellement constant ; remplacer les tableaux inline par lectures réelles des endpoints existants ; partager les codes canoniques des produits et lieux ; supprimer stock21j, score74, trois alertes et mention100% quand aucune mesure ne les justifie ; montrer NULL, données imputées et date de source ; rendre export et provenance cohérents avec les mêmes filtres.
 - **Réception :** accueil et prix concordent avec API/SQL après reload ; choisir un produit vide ne fabrique ni carte ni courbe ; une erreur API est visible ; un compteur d'alertes suit la requête réelle. Aucun chiffre d'exemple dans le bundle de la page réelle ; si une démonstration est conservée, route/contexte explicitement séparé et non servi par défaut.
@@ -29,14 +29,14 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-02 — Agroclimat sans fausses observations ni prévisions
 
-- **Statut :** TODO · P0 · rôle Backend/Geo · parents R0.8/R4.11 · dépendance : aucune ; même livraison de sécurité qu'AU-01 possible.
+- **Statut :** IN_PROGRESS · P0 · rôle Backend/Geo · parents R0.8/R4.11 · dépendance : aucune ; même livraison de sécurité qu'AU-01 possible.
 - **Fichiers :** `api/routers/climate.py`, `weather.py`, `api/schemas.py`, `web/src/app/climate/page.tsx`, tests SQL/API. IA-02/10/15.
 - **Étapes :** supprimer toutes les constantes de repli115/95/21,5/14,2/6/28,5 et fausse émission ECMWF ; définir dans ADR/SPECS NULL+availability/reason si DTO étendu ; utiliser réellement le mois demandé et la variable/unité demandée ; ne pas remplacer une zone inconnue par ZONE_CENTRE ; distinguer observations/prévisions et absence/référence insuffisante ; corriger formule de baseline et source effective des anomalies.
 - **Réception :** base sans WeatherForecast→aucune prévision numérique ; zone/période inconnue→état prévu par contrat, pas substitution ; le calcul pluie/température est vérifié à la main ; absence ne devient pas risque low ; JSON, UI et DB identiques après reload. Tests réels PostgreSQL, y compris from/to et erreur de schéma.
 
 ### AU-03 — Scénarios et offre : arrêter les fausses entrées
 
-- **Statut :** TODO · P0 · rôle Backend/Data · parents R0.8/R5.7/R5.8 · dépendance : contrat précis avant changement de DTO.
+- **Statut :** IN_PROGRESS · P0 · rôle Backend/Data · parents R0.8/R5.7/R5.8 · dépendance : contrat précis avant changement de DTO.
 - **Fichiers :** `api/routers/supply.py`, `supply/{decision_pilot,peak_forecast,harvest_window}.py`, modèles stock réels. IA-05/16.
 - **Étapes :** retirer24500tonnes et année2024 implicites ; valider produit/bassin/marché/campagne/lag ; interdire le premier calendrier de repli ; traduire les colonnes stock réellement persistées dans l'adaptateur ; supprimer le catch-all transformant SQL en liste vide ; séparer absence de mesure et hypothèse explicitement fournie ; ne publier ni confiance scientifique ni pic mesuré sans données.
 - **Réception :** UNKNOWN/bad donne404/422 ou abstention documentée ; un défaut SQL donne erreur explicite ; aucune arrivée→aucun chiffre étiqueté observed ; scénario recomputable depuis paramètres versionnés et preuves. Tests sur PostgreSQL et campagne distincte de2024, marché sans correspondance, corps incomplet.

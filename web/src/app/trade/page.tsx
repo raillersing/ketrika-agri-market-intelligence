@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { DEFAULT_PRODUCT } from "@/lib/market-overview";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeftRight, Download, Globe, RefreshCw, Ship, TrendingUp } from "lucide-react";
 import { formatNumber, formatPercent, formatPrice } from "@/lib/formatters";
@@ -20,7 +21,7 @@ interface TradeItem {
 
 function TradeContent() {
   const searchParams = useSearchParams();
-  const product = searchParams.get("product") || "rice_milled";
+  const product = searchParams.get("product") || DEFAULT_PRODUCT;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tradeData, setTradeData] = useState<TradeItem[]>([]);

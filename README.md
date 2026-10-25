@@ -41,3 +41,5 @@ Réutiliser les modules existants ; corriger/raccorder avant de réécrire. Dév
 Les tâches R gardent leur état canonique :7 DONE historiques,52 IN_PROGRESS,15 TODO. Le programme finit selon R6.11, pas selon l'ancien rapport MVP. Les documents historiques et leurs captures sont conservés ; ils ne prouvent pas les chiffres actuels.
 
 Dépôt : [raillersing/ketrika-agri-market-intelligence](https://github.com/raillersing/ketrika-agri-market-intelligence). Les accès GitHub dépendent des permissions du dépôt privé.
+
+Travail correctif en cours (ADR121) : [plan avant implémentation AU-01–03](docs/audits/2026-10-25/SAFE_FACTS_IMPLEMENTATION_PLAN.md). L'accueil réel, les valeurs météo absentes et l'abstention des scénarios sont corrigés sur branche isolée ; leur réception complète et leur activation restent à prouver dans PROGRESS. Les constats de la base auditée ci-dessus restent des preuves historiques, pas l'état supposé du nouveau contenu.

@@ -35,9 +35,26 @@ def mock_db_session():
         if "gold.weather_monthly" in sql_str and "LIMIT 1" in sql_str:
             mock_res.fetchone.return_value = ("2026-10-01", 120.5, 98.0, 22.1)
         elif "gold.weather_monthly" in sql_str:
-            mock_res.fetchall.return_value = [
-                ("MDG11", "Analamanga", "2026-10-01", 120.5, 98.0, 22.1),
-            ]
+            mock_res.fetchall.return_value = (
+                [
+                    (
+                        "MDG11",
+                        "Analamanga",
+                        "2026-10-01",
+                        120.5,
+                        98.0,
+                        22.1,
+                        60.8586,
+                        ["nasa_power"],
+                    ),
+                ]
+                if "baseline_precip_mm" in sql_str
+                else [
+                    ("MDG11", "Analamanga", "2026-10-01", 120.5, 98.0, 22.1, ["nasa_power"]),
+                ]
+            )
+        elif "obs.weather_observation" in sql_str:
+            mock_res.fetchall.return_value = [("nasa_power",)]
         elif "obs.weather_forecast" in sql_str and "LIMIT 1" in sql_str:
             mock_res.fetchone.return_value = (
                 "00000000-0000-0000-0000-000000000002",
@@ -117,13 +134,13 @@ def test_climate_summary_endpoint(client: TestClient):
     assert data["current_month"] == "2026-10-01"
 
     # Layer 1: Observed Weather & Explanatory Aggregation Method
-    assert data["observed_source"] == "chirps"
+    assert data["observed_source"] == "nasa_power"
     assert "zonal_mean" in data["aggregation_method"]
     assert "sans masque agricole vérifié" in data["aggregation_method"]
     assert data["cropland_mask_applied"] is False
 
     # Layer 2: Climate Anomalies & Risk Level
-    assert data["precipitation_risk_level"] in ("low", "medium", "high", "critical")
+    assert data["precipitation_risk_level"] is None  # Reference not qualified.
 
     # Layer 3: Forecast Weather (ECMWF Open Data)
     assert data["forecast_value_kind"] == "projected"
@@ -159,7 +176,9 @@ def test_climate_anomalies_endpoint(client: TestClient):
     first = items[0]
     assert first["location_pcode"] == "MDG11"
     assert first["value_kind"] == "observed"
-    assert first["sources"] == ["chirps"]
+    assert first["sources"] == ["nasa_power"]
+    assert first["baseline_years"] is None
+    assert first["baseline_mean"] == 60.8586
     assert first["aggregation_method"] == "zonal_mean"
     assert first["cropland_mask_applied"] is False
 

@@ -170,6 +170,32 @@ def test_api_public_and_analytical_endpoints_200(db_session: Session, client: ht
     assert "precip_total_mm" in weather[0]
     assert weather[0]["value_kind"] == "observed"
 
+    # ADR-121: execute bound dates against PostgreSQL, not a SQL-string mock.
+    for path in ("weather", "climate"):
+        bounded = client.get(f"/v1/{path}/anomalies?from=2024-01-01&to=2024-01-01")
+        assert bounded.status_code == 200, bounded.text
+        assert bounded.json()
+        assert {row["month"] for row in bounded.json()} == {"2024-01-01"}
+    temperatures = client.get("/v1/climate/anomalies?variable=t2m_c&from=2024-01-01&to=2024-01-01")
+    assert temperatures.status_code == 200, temperatures.text
+    assert temperatures.json()[0]["observed_value"] == 23.25
+    assert temperatures.json()[0]["anomaly_pct"] is None
+    assert temperatures.json()[0]["baseline_years"] is None
+    summary = client.get("/v1/climate/summary?location=MG11&month=2024-01-01")
+    assert summary.status_code == 200, summary.text
+    assert summary.json()["observed_precipitation_mm"] == 120.0
+    assert summary.json()["observed_source"] == "nasa_power"
+    assert summary.json()["forecast_next_72h_precip_mm"] is None
+    absent = client.get("/v1/climate/summary?location=MG11&month=2020-01-01")
+    assert absent.status_code == 200, absent.text
+    assert absent.json()["observed_precipitation_mm"] is None
+    assert absent.json()["observed_source"] is None
+    assert absent.json()["precipitation_risk_level"] is None
+    sufficiency = client.get("/v1/supply/sufficiency?market_code=MG11&product=rice_milled")
+    assert sufficiency.status_code == 200, sufficiency.text
+    assert sufficiency.json()["total_observations"] == 0  # Inventory is not arrivals.
+    assert sufficiency.json()["is_sufficient"] is False
+
     # 10. GET /v1/kpis/market-health
     r_kpi = client.get("/v1/kpis/market-health?product=rice_milled")
     assert r_kpi.status_code == 200

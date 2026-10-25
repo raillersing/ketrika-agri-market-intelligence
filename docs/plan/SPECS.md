@@ -1865,3 +1865,19 @@ Réception ADR-112/113 : namespace final ketrika-qualification-main-final et res
 
 Compatibilité ADR-115 : core.geo.load_crop_calendar conserve son DTO strict MVP. Les entrées enrichies sont d'abord validées intégralement avec le contrat riche strict ; seules les baselines déclarées vérifiées/éligibles/actives/non supersédées sont projetées pour ce lecteur historique. Les campagnes et entrées non vérifiées ne sont pas supprimées du YAML ni du lecteur riche. BudgetGuard rétablit les dépenses directes et refuse montants/limites non finis ou négatifs ; réserve atomique et enregistrement direct sont deux chemins distincts, sans qualification d'un plafond distribué par ces tests.
 
+
+### Correction des faits indisponibles — ADR-121 (2026-10-25)
+
+L'accueil exploite les lectures prix/alertes existantes et leurs filtres. Aucune agrégation entre zones, acteurs, unités ou natures différentes ne devient un prix national implicite. Le défaut produit partagé est RICE_WHITE_LOCAL ; les sélecteurs utilisent les codes des référentiels API. Sans observation liée, un KPI ne prétend pas être certifié.
+
+`GET /v1/climate/summary` : `month` date ISO au premier jour (422 sinon), zone inconnue404. Mois absent : dernière observation disponible, sinon mois UTC courant avec valeurs nulles ; mois présent : observation de ce mois uniquement. `observed_source: string|null` représente la lignée effective, null sans observation. Aucun nombre météo/modèle/émission de secours. Prévision72h : variable precip_mm, unité mm, horizon72, émission non future et fenêtre encore valide au moment courant ; aucune prévision courante sur un mois historique. Risque non calculable reste null.
+
+Les anomalies climat/météo valident dates et ordre ; `from`/`to` sont des paramètres liés par CAST. Température et pluie ne sont pas interchangeables. Une baseline non documentée reste null (y compris années), `risk_level` devient nullable ; erreur SQL ne devient pas200/vide.
+
+Offre/scénarios : correspondance exacte produit/bassin/marché/campagne ; campagne année valide et obligatoire lorsqu'un calcul en dépend. Aucun premier calendrier ou année2024 de secours. Mesure stock_inventory ne prouve pas market_arrivals ; seuls arrivages normalisés kg et sous cutoff sont utilisables. Sans corpus complet justifiant une entrée observée, le scénario retourne409 avec raison explicite. Aucune observation24500tonnes implicite. Ces corrections ne qualifient ni calendrier ni modèle de marché.
+
+Précision ADR-121 : `gold.weather_monthly` conserve NULL sans mesure de pluie ; absence de précipitation n'est pas précipitation nulle. Sa référence est la moyenne des mois calendaires disponibles, pas une normale1991–2020 qualifiée ; une référence non positive ne produit pas d'anomalie numérique. Les routes exposent les sources effectivement présentes, sans attribuer automatiquement CHIRPS/NASA. L'offre opérationnelle s'abstient409 tant que preuves calendaires/cycles indépendants manquent ; les moteurs hors ligne et leurs tests scientifiques restent inchangés, disponibles pour poursuivre AU-18/20/21.
+
+Les diagnostics hydriques de la synthèse/anomalies restent `risk_level=null` tant que la référence climatologique n'est pas qualifiée ; l'écart numérique au seul historique disponible n'est pas une preuve de faible risque. `WeatherAnomalyItem.precip_total_mm` devient nullable pour une période ne contenant que d'autres variables. `sources` des anomalies vient des parents effectivement persistés.
+
+Le nom historique `forecast_next_72h_precip_mm` est conservé pour compatibilité ; le tableau de bord le décrit comme un cumul de la fenêtre72h du modèle encore valide, et non une mesure ni un nouveau cumul recalculé exactement à partir de l'heure de consultation.

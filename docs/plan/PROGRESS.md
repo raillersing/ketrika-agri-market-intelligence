@@ -1,5 +1,10 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-25T17:30:00Z] R0.8 — plan de correction avant code
+
+- Branche isolée fix/r08-safe-facts-20261025, base4b57562 ; plan concret SAFE_FACTS_IMPLEMENTATION_PLAN.md (neuf étapes), ADR121/SPECS avant code. AU-01 en cours ; AU-02/03 préparés dans le même lot fonctionnel, aucune réception anticipée. Aucun changement de statut des74 tâches :7 DONE historiques/52 IN_PROGRESS/15 TODO.
+- Ordre : accueil/référentiels/provenance, climat/null/dates SQL, puis scénarios/arrivages réels. Tests ciblés Docker pendant développement ; un check complet stabilisé et E2E isolés avant intégration. Aucun runtime actif, volume, donnée ni travail Antigravity modifié.
+
 ### [2026-10-25T12:02:48Z] Audit indépendant terminé — corrections applicatives non commencées
 
 - Base b7e63ee, branche audit/independent-20261025. Rapport20 groupes IA-01–20 et plan26 lots AU-01–26 ; matrice74 tâches/18 sources, statuts7 DONE historiques/52 IN_PROGRESS/15 TODO conservés et dépendances non modifiées. ADR120 encadre la mise à jour documentaire, sans nouveau gate ni tag.
@@ -1756,7 +1761,7 @@
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Historique : B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
 | R0.6 | MUST | DONE | 2026-10-10T19:32:37Z | 2026-10-14T08:38:21Z | 173c41a | A/B1/B2/C intégrés ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118, vingt fichiers exacts et données actives préservées ; voir LOT_C_RECEPTION.md | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Historique : B-R054–058 résolus ; BL-010/016 résolus ; BL-013 partiel/R2.1 ; pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | 2026-10-14T08:46:31Z | 2026-10-15T06:50:00Z | 442a20c | R0.7_FINAL_RECEPTION.md : Windows1538/35/build, E2E9, inclusion160, empreinte main exacte, gitleaks0 et préservation | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Historique : Qualify sans bundle PARTIAL/code1 attendu ; aucune qualification opérationnelle |
-| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | b7e63ee (base auditée) | Réception logicielle52578/2398 backend/50 web/build16/167 intégrations ; E2E87920/12 ; CI40109568864. Audit indépendant20261025 :60 GET/12 pages/contre-exemples et scans, docs/audits/2026-10-25 | IA-01–20/B-R073/084–089 ouverts ; AU-01–09 avant R0.9. Corpus/révisions authentiques, concordance inventaire et recalcul scientifique non qualifiés ; aucun rebuild actif |
+| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | b7e63ee (base auditée) | Réception logicielle52578/2398 backend/50 web/build16/167 intégrations ; E2E87920/12 ; CI40109568864. Audit indépendant20261025 :60 GET/12 pages/contre-exemples et scans, docs/audits/2026-10-25 | ADR121 : AU-01–03 en correction, non reçus ; IA-01–20/B-R073/084–089 ouverts ; AU-01–09 avant R0.9. Corpus/révisions authentiques, concordance inventaire et recalcul scientifique non qualifiés ; aucun rebuild actif |
 | R0.9 | MUST | TODO | — | — | — | — | Audit20261025 : Gate non reçu ; AU-09. Historique : — |
 | R1.1 | MUST | TODO | — | — | — | — | Audit20261025 : Code/référentiels présents, qualification actuelle à compléter ; AU-10. Historique : — |
 | R1.2 | MUST | TODO | — | — | — | — | Audit20261025 : Code/référentiels présents, qualification actuelle à compléter ; AU-10. Historique : — |
@@ -4147,3 +4152,10 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Fast-forward main 39e3b4b → 587566e (fast-forward uniquement, 14 fichiers/852 insertions, aucun commit écrasé, tags historiques intacts). Branches de travail conservées localement, non poussées.
 - Publication distante : push initial `origin/main` = 587566e sur github.com/raillersing/ketrika-agri-market-intelligence (dépôt préalablement vide, ls-remote confirmé après push). Scan gitleaks complet (320 commits) et incrémental (39e3b4b..dd5831f, 0 secret) préalables à la publication. Aucun tag poussé ; aucun statut R/promotion déduite de la publication.
 
+
+### [2026-10-25T17:48:00Z] R0.8 — corrections AU-01–03, vérifications ciblées
+
+- Plan neuf étapes et ADR121/SPECS écrits avant code. Accueil réel filtré, référentiels API/default RICE_WHITE_LOCAL, nature/source/date conservées ; suppression KPI/cotations et certification sans preuve. Climat sans nombres/modèle/émission par défaut, mois lié, inconnue404, température distincte, baseline réellement stockée sans30ans inventés, risque non qualifiéNULL, sources par lignée. Gold conserveNULL sans pluie mesurée.
+- Offre : exact produit/marché/calendrier/campagne, colonnes ORM actuelles et arrivages normaliséskg distincts des stocks ; erreurs SQL propagées. Publication opérationnelle des pics/scénarios s'abstient409 tant que références/corpus ne sont pas qualifiés (ADR121), moteurs scientifiques hors ligne conservés. Aucune mutation active, collecte ni notification.
+-48598 FINAL0 / conteneur c41ec0ea8f48 :42 tests ciblés/56,17s, quatre intégrations dont dates SQL climat/météo réellement exécutées et comparaison température23,25°C/pluie120mm. Original targeted.xml conservé ; ces chiffres sont synthétiques de test, jamais des faits Madagascar. Source de développement non figée : ce reçu ne réceptionne pas le lot final.
+- Frontend : première vérification type rouge TS2802 (itération Set avec target historique), correction Array.from ; reprise ciblée :lint/types verts,2 tests de grain/absence verts en4,57s. Backend lint/format neuf fichiers et Mypy cinq fichiers verts. Contrats OpenAPI et preuve navigateur préparés avant gel ; check complet/E2E restent obligatoires. Aucun AU DONE/R promu/tag.

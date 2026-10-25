@@ -1,4 +1,13 @@
 # DECISIONS (Architecture Decision Records - ADR)
+## ADR-121 | 2026-10-25 | Accepté avant code | Faits indisponibles et abstention explicite
+
+- Contexte : IA-01/02/05 ; accueil constant, climat avec nombres de secours et scénarios alimentés par des observations inventées.
+- Décision : accueil lit les endpoints filtrés existants ; il expose chaque série avec zone, acteur, unité et nature, sans moyenne nationale implicite. Les référentiels servis fournissent les codes de filtres ; défaut RICE_WHITE_LOCAL. Aucun KPI sans observation liée ne porte une certification automatique.
+- Climat : month est une date ISO au premier jour du mois (422 sinon) ; zone inconnue404. Le mois explicite borne la requête ; sans mois, dernière observation disponible, sinon mois UTC courant avec valeurs NULL. observed_source devient nullable et provient de la lignée réelle ; aucune météo de secours. Une prévision « prochaines72h » exige précipitations en mm, horizon72h, émission passée, fenêtre courante valide et mois courant ; toute absence reste NULL. Baseline non prouvée et risque non calculable restent NULL, jamais30ans ou low par défaut. L'anomalie t2m utilise la température, sans transformer une anomalie pluie en température. Dates from/to validées et CAST lié, intervalle inversé422 ; erreur SQL propagée.
+- Offre : campagne explicite année valide, calendrier exact produit/bassin actif non supersédé ; marché exact, aucun repli sur première ligne. Stocks et arrivages ne sont pas interchangeables : seules mesures market_arrivals acceptées et unités normalisées en kg. Aucune observation mensuelle par défaut pour les scénarios publics : absence de corpus complet entraîne abstention409 ; pas de chiffre observé dérivé d'une hypothèse. Les modèles restent expérimentaux tant que leurs gates ne passent pas.
+- Alternatives : conserver les démonstrations sur les pages métier (rejeté) ; fabriquer des estimations silencieuses (interdit) ; reconstruire les données actives (hors lot).
+- Conséquences : contrats d'erreur et champs nullables explicités dans SPECS avant implémentation. Aucune migration, dépendance ni collecte nouvelle. Réception groupée obligatoire ; les AU ne clôturent pas les tâches R aval.
+
 
 ## ADR-120 | 2026-10-25 | Accepté (gouvernance documentaire) | Réception de l'audit indépendant et plan de reprise
 

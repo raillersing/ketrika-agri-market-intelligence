@@ -32,3 +32,7 @@ API active montée readonly depuis r08-bronze-audit-20261025/backend ; override 
 Docker Desktop a été redémarré après arrêt, base existante conservée. Les réparations runtime ne qualifient pas un déploiement durable. Pas de suite mutante réservée par cet audit ; préserver les originaux main-final. Les mesures de latence sous imports/compilation ne sont pas un benchmark.
 
 Dernière réception applicative52578/87920 et CI40109568864 ; nouveaux contrôles d'audit en lecture seule, scans actuels et navigateur dans audits/2026-10-25/evidence. Les premiers essais de sonde invalidés sont exclus ; les scripts finaux et limites sont explicités.
+
+## Correction des faits affichés — en cours le25 octobre2026
+
+Branche `fix/r08-safe-facts-20261025`, base4b57562, [plan avant code](audits/2026-10-25/SAFE_FACTS_IMPLEMENTATION_PLAN.md), ADR121/SPECS. AU-01–03 IN_PROGRESS : accueil via API/référentiels, climatNULL et dates PostgreSQL, scénarios/pics409 sans preuve opérationnelle.42 tests ciblés verts ; la réception complète sur source figée et le navigateur restent requis avant main/runtime. Dernier canal lu A013 ; réservation C037. Les AU-04–26 et les blocages de données restent ouverts. Ne pas prendre l'abstention pour une qualification ni relancer un moteur dont les entrées ne sont pas prouvées.

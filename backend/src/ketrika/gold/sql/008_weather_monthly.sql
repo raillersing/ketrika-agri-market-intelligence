@@ -1,6 +1,6 @@
 -- 008_weather_monthly.sql
 -- Grain: district × mois
--- Contenu: précipitations totales, anomalie % vs climatologie 1991–2020, températures moyennes
+-- Contenu: precipitation and temperature; baseline uses available calendar-month history, not a qualified 1991-2020 normal
 
 DROP MATERIALIZED VIEW IF EXISTS gold.weather_monthly CASCADE;
 
@@ -12,7 +12,7 @@ WITH monthly_aggregates AS (
         loc.name AS location_name,
         date_trunc('month', wo.date)::date AS month,
         EXTRACT(MONTH FROM wo.date)::integer AS cal_month,
-        round(sum(CASE WHEN wo.variable = 'precip_mm' THEN COALESCE(wo.value, 0.0) ELSE 0.0 END)::numeric, 2) AS precip_total_mm,
+        round(sum(CASE WHEN wo.variable = 'precip_mm' THEN wo.value ELSE NULL END)::numeric, 2) AS precip_total_mm,
         round(avg(CASE WHEN wo.variable = 't2m_max_c' THEN wo.value END)::numeric, 2) AS t2m_max_avg_c,
         round(avg(CASE WHEN wo.variable = 't2m_min_c' THEN wo.value END)::numeric, 2) AS t2m_min_avg_c,
         round(avg(CASE WHEN wo.variable = 'rh2m_pct' THEN wo.value END)::numeric, 2) AS rh2m_avg_pct
@@ -47,14 +47,14 @@ SELECT
     CASE
         WHEN wc.baseline_precip_mm > 0
         THEN round(((wc.precip_total_mm - wc.baseline_precip_mm) / wc.baseline_precip_mm)::numeric, 4)
-        ELSE 0.0
+        ELSE NULL
     END AS rain_anom_pct,
     round(
         avg(
             CASE
                 WHEN wc.baseline_precip_mm > 0
                 THEN (wc.precip_total_mm - wc.baseline_precip_mm) / wc.baseline_precip_mm
-                ELSE 0.0
+                ELSE NULL
             END
         ) OVER (
             PARTITION BY wc.location_id
