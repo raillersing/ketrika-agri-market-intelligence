@@ -1,6 +1,6 @@
 # Passation du programme — PARTIAL, non clôturé
 
-Mise à jour2026-10-24 UTC. PROGRESS.md reste canonique :7 DONE,
+Mise à jour2026-10-25 UTC. PROGRESS.md reste canonique :7 DONE,
 52 IN_PROGRESS,15 TODO ;69 MUST et5 SHOULD. Aucun nouveau tag final.
 Les anciens tags et rapports ne prouvent pas la réception actuelle.
 
@@ -23,6 +23,14 @@ documents/quinze lignes sans différence mais sans candidat Gold ni
 prévision éligible : preuve bornée, pas qualification complète.
 
 ## Données nécessaires pour lever les limites de R0.8
+
+Inventaire original acquis le2026-10-25 :684 versions S3, toutes relues,
+tailles et adresses SHA cohérentes, inventaire stable. La concordance SQL
+échoue :164 clés absentes sur485 entrées. Les234 prix liés sont déjà
+auto-supersédés, aucun courant ; cela ne répare pas leur provenance.
+Originaux et impact : R0.8_BRONZE_ORIGINAL_AUDIT_20261025.json et
+R0.8_BRONZE_ORIGINAL_IMPACT_20261025.json. B-R085 requiert une réparation
+sur clone sous contrat ; ne jamais fabriquer les objets manquants.
 
 | Besoin | Format et droits | Réception attendue |
 |---|---|---|

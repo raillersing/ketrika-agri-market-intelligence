@@ -1,6 +1,6 @@
 # Ketrika Market Intelligence — bilan PARTIAL
 
-État2026-10-24 UTC, lot logiciel R0.8 reçu et fusionné par PR1. Ce document
+État2026-10-25 UTC, lot logiciel R0.8 reçu et fusionné par PR1. Ce document
 n'est pas le rapport de clôture R6.11. Aucune qualification globale, aucun
 déploiement ni essai humain n'est revendiqué.
 
@@ -12,6 +12,13 @@ PROGRESS et le miroir du plan R indiquent74 tâches :7 DONE,
 Les tags historiques ne sont ni déplacés ni utilisés comme preuve actuelle.
 
 ## Implémentation et limites
+
+Audit readonly du Bronze original le2026-10-25 :684 versions relues,
+tailles et empreintes cohérentes, aucune mutation pendant l'audit.
+La concordance du registre SQL échoue :164 clés absentes sur485 entrées,
+dont129 empreintes manifestement non SHA256. Les234 prix liés sont tous
+auto-supersédés, aucun courant. Ce résultat négatif est conservé (B-R085) ;
+il interdit de déclarer la provenance globale et le rebuild qualifiés.
 
 Le dépôt contient collecte conforme, Bronze immuable, normalisation,
 contrôles Gold, API et dashboard, prévisions, agroclimat, approvisionnement,
