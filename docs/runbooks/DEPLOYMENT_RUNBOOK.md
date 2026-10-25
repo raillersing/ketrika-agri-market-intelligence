@@ -1,5 +1,7 @@
 # Runbook de Déploiement & Préparation VPS (R6.10, SPECS §23, §24, Gate H2)
 
+> Mise à jour2026-10-25 : restore.sh non qualifié pour une restauration fiable (IA-17), configuration prod non reçue ; corriger AU-04/06/07 avant usage ; aucune destination active autorisée. Voir [audit indépendant](../audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 ## 1. Statut de Déploiement : LOCAL_READY (Gate H2)
 
 > **Important (AGENTS.md Gate H2) :** La plateforme Ketrika Agri Market Intelligence est entièrement configurée, testée et prête pour le déploiement (`LOCAL_READY`). Conformément à la matrice d'autorité d'AGENTS.md §5 (Gate H2), l'agent autonome n'achète aucun nom de domaine, ne provisionne aucun VPS et ne configure aucune clé Cloudflare R2 externe sans intervention humaine. Aucun statut fallacieux « déployé en production » ne peut être revendiqué sans fourniture des identifiants et validation humaine de Gate H2.

@@ -1,5 +1,7 @@
 # instat_tbe : INSTAT Madagascar – Tableau de Bord Économique (TBE)
 
+> Audit indépendant2026-10-25 : registre `active`, SQL `absent`. Pas de réception live actuelle déduite de la présence du code. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 - **Propriétaire / licence / attribution :** Institut National de la Statistique de Madagascar (INSTAT). Licence : Données publiques officielles gouvernementales. Attribution : "INSTAT Madagascar - Tableau de Bord Économique".
 - **Famille de source (`source_family`) :** `madagascar_gov` (famille officielle gouvernementale malgache).
 - **URL vérifiées (date, code HTTP) :**

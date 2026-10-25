@@ -1,59 +1,13 @@
-# Coordination active — Codex / Antigravity
+# Coordination active — audit indépendant du25 octobre2026
 
-Mise à jour 2026-10-17. Ce document ne qualifie aucune tâche produit.
+L'utilisateur demande un audit indépendant et un nouveau plan **avant de poursuivre l'implémentation**. Aucune correction applicative n'est incluse dans cette livraison documentaire.
 
-Réservation QA libérée :78513 FINAL0 sur9b63847 (1762 backend/43 frontend/build),
-45858 FINAL0 (12 contrôles navigateur) et83591 FINAL0 (inspection Silver synthétique).
-Aucun check final en cours. Les services QA et leurs données sont conservés.
-Le worktree agy-publication-audit-20261016 reste dédié aux corrections Codex,
-validées sur branche mais non fusionnées ; consulter la réception du17 octobre.
-Les anciens42382/76892/19008/78027 restent des résultats rouges historiques,
-pas des processus en cours ; leurs originaux sont conservés.
-Antigravity reste indépendant dans r1-sources-prep ; aucune fusion implicite.
+- Révision auditée : b7e63ee. Worktree d'audit : independent-audit-20261025, branche audit/independent-20261025. Ne pas modifier ses preuves pendant la clôture.
+- Source runtime API : r08-bronze-audit-20261025/backend readonly ; ne pas y développer. Source web : volume ketrika_runtime_web_ac11e47. Aucun reset/restore/rebuild actif.
+- Dernière réception applicative :52578/87920/CI40109568864. Audit actuel :60 lectures API,12 pages, contre-exemples sans réseau et scans de dépendances ; aucun nouveau check applicatif global.
+- Antigravity : dernier message relu A013 (coordination/antigravity/20261024-001.md), proposition de quarantaine non implémentée par cet audit. Les messages C034/C035 documentent réception main et inventaire Bronze. Vérifier le canal à la reprise ; ne pas supposer qu'un ancien worktree ou message signifie travail actuellement en cours.
+- Canal partagé : /home/raillersing/projects/ketrika-qa-worktrees/coordination/codex/ ; annonces de branche, fichiers, destination QA et preuves. Aucun message à un tiers institutionnel.
+- Aucun check SQL/S3 mutant réservé par cet audit. Préserver services/volumes/originaux main-final ; réserver avant la prochaine réception mutante.
+- Prochaine reprise : AU-01, puis lots correctifs AU-02–07 ; dépendances et réceptions dans [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md). Rien n'est automatiquement délégué ni démarré par ce tableau.
 
-Audit du 2026-10-16 : Antigravity HEAD6f11f5d/codebb62799 (R2.10), non reçu.
-Lire `docs/research/2026-10-16-antigravity-r1-r2-audit.md` : sept groupes
-d'écarts bloquent l'intégration, dont publication Gold sans provenance macro,
-fixtures générées étiquetées authentiques et preuve de qualification surestimée.
-Ne pas importer ses statuts/tags ni écraser ADR069–074 de main. Son worktree
-et ses travaux sont préservés. À la demande utilisateur, Codex corrige désormais
-ces écarts dans `agy-publication-audit-20261016`, branche
-`fix/agy-publication-audit-20261016`, base figée `3c8958f` (R3.7).
-Ce worktree est réservé aux corrections Codex ; ne pas intégrer ses statuts
-préparatoires à main. SQL macro vérifié sur PostgreSQL jetable séparé, aucun
-Bronze impliqué. La réception logicielle du lot stabilisé est terminée ; aucune
-qualification de source ou de modèle n'en découle. Antigravity conserve son worktree propre.
-Le check Codex78714 est terminé FINAL0/1725 backend/35 frontend/build ;
-plus de réservation de la destination QA pour cette exécution, aucune relance.
-
-Actualisation 2026-10-16 : Codex reçoit le correctif ADR-074 contexte partagé,
-worktree `r08-revision-context-20261016`, branche du même nom préfixée `work/`,
-commit `8de251f`, check Windows session `78714`. Source figée et destination
-`ketrika-qualification` réservée pendant ce processus ; ne pas y lancer de suite
-mutante concurrente. Livraison main précédente `bc0f947` reçue ; les travaux
-Antigravity dans son propre worktree restent indépendants et non importés.
-
-- Priorité utilisateur : finir les fonctionnalités prévues dans leur version
-  minimale utilisable ; reporter les raffinements hors critères de réception.
-  Pas de nouveaux composants alternatifs ni refonte sans blocage concret.
-- Codex : R0.8/rejeu, réception puis R0.9 ; branche
-  `work/r08-corpus-acquisition-20261015`, worktree Linux homonyme sous
-  `/home/raillersing/projects/ketrika-qa-worktrees/`.
-- Antigravity travaille simultanément. Worktree observé `r1-sources-prep`, branche
-  `work/r1-sources-prep`, HEAD observé `d6057fe`, modifications non committées
-  du dashboard sources et de ses tests. Son journal courant indique R1.12
-  (actualisation/reprise/santé des sources), après les commits R1.3–R1.11.
-  Codex ne modifie ni ne fusionne ce worktree en cours. Les statuts locaux
-  resteront à rapprocher des critères du plan lors de la réception commune.
-- Les préparations R1 peuvent être auditées sans développer une seconde version.
-  Commits et statuts locaux ne remplacent pas l'intégration et les gates partagés.
-- Préserver les modifications main préexistantes (huit `__init__.py`,
-  `web/src/lib/api/openapi.json`, prompt utilisateur non suivi).
-- Une seule réception mutante à la fois sur `ketrika-qualification`. Aucun agent
-  ne relance un check sur cette destination pendant le check d'un autre agent.
-  L'aperçu prix et le clone de rejeu utilisent chacun leurs propres DB/volumes.
-- Chaque livraison indique branche/commit, fichiers, tests ciblés et limites.
-  Le coordinateur synchronise PROGRESS et plan ; ne pas remplacer les journaux
-  concurrents ni déclarer DONE une capacité encore partielle.
-- Lecture ciblée d'intégration : voir ANTIGRAVITY_INTEGRATION_NOTES.md ; conserver
-  les fixtures INSTAT générées mais les qualifier synthetic, pas authentic.
+Les anciennes instructions de coordination sont conservées dans [history](../audits/2026-10-25/history/COORDINATION_ACTIVE.md). Statuts :7 DONE historiques/52 IN_PROGRESS/15 TODO ; aucun nouveau gate/tag.

@@ -1,5 +1,7 @@
 # nasa_power : NASA POWER Agroclimatology Daily Point API
 
+> Audit indépendant2026-10-25 : registre `disabled`, SQL `disabled`. Source arrêtée : aucune relance, archives autorisées seulement. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 > Requalification R1.11 (2026-10-15) : source déclarée `disabled` dans `registry/sources.yaml` en raison de la directive `Disallow: /api/` dans le `robots.txt` officiel de `power.larc.nasa.gov` (incident B-R010, AGENTS §8.1).
 > Tout accès réseau live non exempté lève immédiatement un `PolicyStop`.
 > Le connecteur `NasaPowerConnector` v1.1.0 est entièrement qualifié en mode offline rejouable sur le BronzeStore, avec contrôles stricts de cohérence physique, filtrage des sentinelles sans conversion en zéro, et non-imputation géographique aveugle.

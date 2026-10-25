@@ -1,0 +1,7 @@
+"/aiagent-api-1" "sha256:ccde47f5225b297c72045f09009006c7a7808e5f660afcd3f1fa8efc457fab1a" "running" 0
+"/aiagent-web-1" "sha256:94f7411a5d7cb19c4d45b3494625c84a85f51d81f53e44469277970f90c20393" "running" 0
+"/aiagent-db-1" "sha256:01a6a70e41e6c4467c8f55f6063555ed72db2d6662cd0d571040d42eadaeb6f6" "running" 0
+"/aiagent-minio-1" "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e" "running" 0
+"/ketrika-independent-browser-20261025" "sha256:2646169d3348b9d52388664d307e05e38b18e0a72869dcdae906cdece75f66cf" "exited" 0
+"/ketrika-independent-safety-final-20261025" "sha256:493523bfd299513b1287f6bf4a94cf2ae07ac14daa6da5c622735d8eb9e1d5a7" "exited" 0
+"/ketrika-independent-audit-quality-browser-20261025" "sha256:2646169d3348b9d52388664d307e05e38b18e0a72869dcdae906cdece75f66cf" "exited" 0

@@ -1,5 +1,7 @@
 # Fiche source : Office Malgache des Hydrocarbures (OMH Public)
 
+> Audit indépendant2026-10-25 : registre `active`, SQL `absent`. Pas de réception live actuelle déduite de la présence du code. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 ## 1. Identité et métadonnées
 
 | Champ | Valeur |

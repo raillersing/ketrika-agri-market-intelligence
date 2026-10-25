@@ -1,5 +1,7 @@
 # Guide de Démonstration 1 — Ketrika Agri Market Intelligence
 
+> Mise à jour2026-10-25 : scénario de démonstration historique, aucune preuve de marché ou de qualification actuelle. Voir [audit indépendant](audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan correctif](audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 > **Statut :** Livrable officiel de fin de Phase 7 (T7.3 / Démo 1).  
 > **Durée estimée :** 5 minutes.  
 > **Public cible :** Décideurs, analystes de marché, bailleurs de fonds, équipes Data & Métier.

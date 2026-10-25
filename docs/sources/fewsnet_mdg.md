@@ -1,5 +1,7 @@
 # fewsnet_mdg : FEWS NET Madagascar Food Security Outlook & Price Watch
 
+> Audit indépendant2026-10-25 : registre `active`, SQL `absent`. Pas de réception live actuelle déduite de la présence du code. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 - **Propriétaire / licence / attribution :** Famine Early Warning Systems Network (FEWS NET / USAID). Licence : Public Domain / US Government Work. Attribution : « FEWS NET / USAID ».
 - **Famille de source (`source_family`) :** `fews_net` (réseau international de surveillance de la sécurité alimentaire).
 - **URL vérifiées (date, code HTTP) :**

@@ -1,5 +1,7 @@
 # ocha_codab_mdg : OCHA Madagascar - Subnational Administrative Boundaries (COD-AB)
 
+> Audit indépendant2026-10-25 : registre `active`, SQL `active`. Pas de réception live actuelle déduite de la présence du code. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 - **Propriétaire / licence / attribution :** OCHA Madagascar / BNGRC / FTM. Licence : CC BY-IGO. Attribution obligatoire : "United Nations Office for the Coordination of Humanitarian Affairs (OCHA)".
 - **Famille de source (`source_family`) :** `un_ocha` (United Nations Office for the Coordination of Humanitarian Affairs).
 - **URL vérifiées (date, code HTTP) :**

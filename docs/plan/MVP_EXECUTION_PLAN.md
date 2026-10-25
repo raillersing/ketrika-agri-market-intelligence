@@ -1,5 +1,7 @@
 # MVP_EXECUTION_PLAN : plan d'exécution autonome
 
+> Mise à jour2026-10-25 : contrats et statuts T conservés ; aucune capacité actuelle requalifiée par leur historique. Voir [audit indépendant](../audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 > Normatif. À lire avec [`AGENTS.md`](../../AGENTS.md) (règles) et [`SPECS.md`](SPECS.md) (contrats).
 > Chaque tâche se lit ainsi : **ID · Priorité · Dépendances · Objectif · Étapes · Livrables · Acceptation**.
 > Un critère d'acceptation est soit une **commande** dont le résultat attendu est donné, soit une **assertion vérifiable** dans un fichier.

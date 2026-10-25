@@ -1,5 +1,7 @@
 # wb_rtfp_mdg : World Bank Real-Time Food Prices – Madagascar (RTFP)
 
+> Audit indépendant2026-10-25 : registre `active`, SQL `active`. WB :135 prix courants imputés ; périmètre partiel. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 > **Statut de qualification R1.8 (2026-10-15) :**
 > - Connecteur, découverte dynamique, règles de normalisation C3 et tests : **QUALIFIÉ & VALIDÉ (DONE)**.
 > - Traçabilité stricte de la dépendance primaire (`source_dependency: wfp_fao`) pour interdire toute double confirmation fallacieuse WFP + RTFP.

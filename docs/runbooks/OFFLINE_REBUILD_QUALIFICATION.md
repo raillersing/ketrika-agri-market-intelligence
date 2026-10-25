@@ -1,5 +1,7 @@
 # R0.8 — reconstruction hors ligne et comparaison de contenu
 
+> Mise à jour2026-10-25 : procédure à utiliser seulement dans son périmètre reçu ; programme PARTIAL. Voir [audit indépendant](../audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 Statut : **IN_PROGRESS**. Aucun rebuild actif, aucune réception R0.8 ou gate
 R0.9. Ce document distingue implémentation, tests logiciels et preuve réelle.
 

@@ -1,0 +1,1047 @@
+[
+  {
+    "task_id": "R0.1",
+    "title": "Intégrer le programme dans la gouvernance",
+    "priority": "MUST",
+    "historical_status": "DONE",
+    "dependencies": [],
+    "conditional_dependencies": "",
+    "audit_disposition": "Réception historique conservée, non recertifiée",
+    "corrective_lots": "AU-01 à AU-09 si impact"
+  },
+  {
+    "task_id": "R0.2",
+    "title": "Isoler l'environnement de qualification",
+    "priority": "MUST",
+    "historical_status": "DONE",
+    "dependencies": [
+      "R0.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Réception historique conservée, non recertifiée",
+    "corrective_lots": "AU-01 à AU-09 si impact"
+  },
+  {
+    "task_id": "R0.3",
+    "title": "Rendre les contrôles qualité complets et fiables",
+    "priority": "MUST",
+    "historical_status": "DONE",
+    "dependencies": [
+      "R0.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Réception historique conservée, non recertifiée",
+    "corrective_lots": "AU-01 à AU-09 si impact"
+  },
+  {
+    "task_id": "R0.4",
+    "title": "Étiqueter les fixtures et construire un jeu authentique",
+    "priority": "MUST",
+    "historical_status": "DONE",
+    "dependencies": [
+      "R0.3"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Réception historique conservée, non recertifiée",
+    "corrective_lots": "AU-01 à AU-09 si impact"
+  },
+  {
+    "task_id": "R0.5",
+    "title": "Vérifier la provenance de bout en bout",
+    "priority": "MUST",
+    "historical_status": "DONE",
+    "dependencies": [
+      "R0.3",
+      "R0.4"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Réception historique conservée, non recertifiée",
+    "corrective_lots": "AU-01 à AU-09 si impact"
+  },
+  {
+    "task_id": "R0.6",
+    "title": "Corriger la lignée Dagster et les erreurs silencieuses",
+    "priority": "MUST",
+    "historical_status": "DONE",
+    "dependencies": [
+      "R0.5"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Réception historique conservée, non recertifiée",
+    "corrective_lots": "AU-01 à AU-09 si impact"
+  },
+  {
+    "task_id": "R0.7",
+    "title": "Remplacer la certification déclarative",
+    "priority": "MUST",
+    "historical_status": "DONE",
+    "dependencies": [
+      "R0.3",
+      "R0.5",
+      "R0.6"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Réception historique conservée, non recertifiée",
+    "corrective_lots": "AU-01 à AU-09 si impact"
+  },
+  {
+    "task_id": "R0.8",
+    "title": "Prouver le rebuild hors ligne sur le contenu",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R0.2",
+      "R0.4",
+      "R0.6",
+      "R0.7"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Partiel : défauts bloquants / corpus incomplet",
+    "corrective_lots": "AU-01 à AU-09"
+  },
+  {
+    "task_id": "R0.9",
+    "title": "Gate de fiabilité",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R0.1",
+      "R0.2",
+      "R0.3",
+      "R0.4",
+      "R0.5",
+      "R0.6",
+      "R0.7",
+      "R0.8"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Gate non reçu",
+    "corrective_lots": "AU-09"
+  },
+  {
+    "task_id": "R1.1",
+    "title": "Requalifier le registre et les permissions",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R0.9"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Code/référentiels présents, qualification actuelle à compléter",
+    "corrective_lots": "AU-10"
+  },
+  {
+    "task_id": "R1.2",
+    "title": "Développer découverte et suivi des éditions",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Code/référentiels présents, qualification actuelle à compléter",
+    "corrective_lots": "AU-10"
+  },
+  {
+    "task_id": "R1.3",
+    "title": "Qualifier INSTAT NIPC",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Code présent ; politique de source arrêtée à respecter",
+    "corrective_lots": "AU-11"
+  },
+  {
+    "task_id": "R1.4",
+    "title": "Qualifier l'Observatoire du Riz",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R0.4",
+      "R1.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Code présent ; réception opérationnelle non prouvée ici",
+    "corrective_lots": "AU-11"
+  },
+  {
+    "task_id": "R1.5",
+    "title": "Qualifier les publications MinCC/PPN",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R0.4",
+      "R1.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Code présent ; réception opérationnelle non prouvée ici",
+    "corrective_lots": "AU-11"
+  },
+  {
+    "task_id": "R1.6",
+    "title": "Qualifier les statistiques douanières",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Code présent ; réception opérationnelle non prouvée ici",
+    "corrective_lots": "AU-11"
+  },
+  {
+    "task_id": "R1.7",
+    "title": "Qualifier WFP/HDX sous politique stricte",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.1",
+      "R1.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Code présent ; politique de source arrêtée à respecter",
+    "corrective_lots": "AU-11"
+  },
+  {
+    "task_id": "R1.8",
+    "title": "Qualifier Banque mondiale RTFP",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "WB partiellement live vérifiée, estimations imputées seulement",
+    "corrective_lots": "AU-11"
+  },
+  {
+    "task_id": "R1.9",
+    "title": "Qualifier FAOSTAT",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Code présent ; réception opérationnelle non prouvée ici",
+    "corrective_lots": "AU-11"
+  },
+  {
+    "task_id": "R1.10",
+    "title": "Requalifier géographie et résolution",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.1",
+      "R1.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Code/référentiels présents, qualification actuelle à compléter",
+    "corrective_lots": "AU-10"
+  },
+  {
+    "task_id": "R1.11",
+    "title": "Qualifier NASA POWER et ses révisions",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.10",
+      "R1.2",
+      "R2.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Code présent ; politique de source arrêtée à respecter",
+    "corrective_lots": "AU-11"
+  },
+  {
+    "task_id": "R1.12",
+    "title": "Qualifier actualisation, reprise et santé des sources",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R0.6",
+      "R1.2"
+    ],
+    "conditional_dependencies": "au moins un connecteur réel qualifié parmi R1.3–R1.9.",
+    "audit_disposition": "Code présent ; réception opérationnelle non prouvée ici",
+    "corrective_lots": "AU-11"
+  },
+  {
+    "task_id": "R1.13",
+    "title": "Gate de collecte réelle",
+    "priority": "MUST",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.1",
+      "R1.10",
+      "R1.11",
+      "R1.12",
+      "R1.2",
+      "R1.3",
+      "R1.4",
+      "R1.5",
+      "R1.6",
+      "R1.7",
+      "R1.8",
+      "R1.9"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Gate non reçu",
+    "corrective_lots": "AU-11"
+  },
+  {
+    "task_id": "R2.1",
+    "title": "Formaliser les contrats temps, origine et macroéconomie",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R0.1",
+      "R0.2",
+      "R1.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Contrats/helpers présents ; réception données et parcours incomplète",
+    "corrective_lots": "AU-12"
+  },
+  {
+    "task_id": "R2.2",
+    "title": "Auditer taxonomie, unités et grains",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R0.4",
+      "R2.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Contrats/helpers présents ; réception données et parcours incomplète",
+    "corrective_lots": "AU-12"
+  },
+  {
+    "task_id": "R2.3",
+    "title": "Qualifier DQ, agrégations et indépendance",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R0.5",
+      "R0.6",
+      "R2.1",
+      "R2.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Contrats/helpers présents ; réception données et parcours incomplète",
+    "corrective_lots": "AU-12"
+  },
+  {
+    "task_id": "R2.4",
+    "title": "Mesurer couverture et choisir le pilote",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.12",
+      "R2.3"
+    ],
+    "conditional_dependencies": "au moins une source authentique de prix qualifiée.",
+    "audit_disposition": "Contrats/helpers présents ; réception données et parcours incomplète",
+    "corrective_lots": "AU-12"
+  },
+  {
+    "task_id": "R2.5",
+    "title": "Intégrer INSTAT Tableau de bord économique",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.2",
+      "R1.3",
+      "R2.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Connecteur présent ; aucune ligne macro dans la base sondée",
+    "corrective_lots": "AU-12"
+  },
+  {
+    "task_id": "R2.6",
+    "title": "Intégrer change et contexte monétaire BFM",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.2",
+      "R2.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Connecteur présent ; aucune ligne macro dans la base sondée",
+    "corrective_lots": "AU-12"
+  },
+  {
+    "task_id": "R2.7",
+    "title": "Intégrer carburants OMH et événements réglementaires",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.2",
+      "R2.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Connecteur présent ; aucune ligne macro dans la base sondée",
+    "corrective_lots": "AU-12"
+  },
+  {
+    "task_id": "R2.8",
+    "title": "Construire le tableau économique interprétable",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.3",
+      "R1.6",
+      "R2.3",
+      "R2.5"
+    ],
+    "conditional_dependencies": "connecteurs BFM/OMH utilisables lorsqu'ils sont DONE.",
+    "audit_disposition": "Code présent ; publication retenue avec503, non qualifiée",
+    "corrective_lots": "AU-12"
+  },
+  {
+    "task_id": "R2.9",
+    "title": "Exposer les données et leurs limites dans l'API",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.3",
+      "R2.4",
+      "R2.8"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Contrats/helpers présents ; réception données et parcours incomplète",
+    "corrective_lots": "AU-12"
+  },
+  {
+    "task_id": "R2.10",
+    "title": "Livrer les vues marché et économie",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.9"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "UI partielle : faux accueil, carte et filtres à corriger",
+    "corrective_lots": "AU-01 / AU-13"
+  },
+  {
+    "task_id": "R2.11",
+    "title": "Gate observatoire décisionnel",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.1",
+      "R2.10",
+      "R2.2",
+      "R2.3",
+      "R2.4",
+      "R2.5",
+      "R2.6",
+      "R2.7",
+      "R2.8",
+      "R2.9"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Gate non reçu",
+    "corrective_lots": "AU-13"
+  },
+  {
+    "task_id": "R3.1",
+    "title": "Appliquer l'éligibilité et le calendrier des séries",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.1",
+      "R2.3",
+      "R2.4"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Éligibilité présente, cohorte réelle à recevoir",
+    "corrective_lots": "AU-14"
+  },
+  {
+    "task_id": "R3.2",
+    "title": "Construire les datasets historiques as-of",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R0.8",
+      "R2.1",
+      "R3.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Chemin SQL as-of en échec, helper non raccordé au pipeline",
+    "corrective_lots": "AU-14"
+  },
+  {
+    "task_id": "R3.3",
+    "title": "Implémenter références et modèles conformes",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R3.1"
+    ],
+    "conditional_dependencies": "R3.2 pour exécutions réelles.",
+    "audit_disposition": "Algorithmes présents ; raccordement protocole à recevoir",
+    "corrective_lots": "AU-15"
+  },
+  {
+    "task_id": "R3.4",
+    "title": "Séparer sélection, calibration et évaluation finale",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R3.2",
+      "R3.3"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Algorithmes présents ; raccordement protocole à recevoir",
+    "corrective_lots": "AU-15"
+  },
+  {
+    "task_id": "R3.5",
+    "title": "Calibrer les intervalles et surveiller leur couverture",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R3.4"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Algorithmes présents ; raccordement protocole à recevoir",
+    "corrective_lots": "AU-15"
+  },
+  {
+    "task_id": "R3.6",
+    "title": "Évaluer l'apport des variables économiques/agroclimatiques",
+    "priority": "SHOULD",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.8",
+      "R3.4"
+    ],
+    "conditional_dependencies": "enrichissements R4 seulement lorsqu'ils sont DONE.",
+    "audit_disposition": "Algorithmes présents ; raccordement protocole à recevoir",
+    "corrective_lots": "AU-15"
+  },
+  {
+    "task_id": "R3.7",
+    "title": "Publier prévisions, limites et abstentions",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.10",
+      "R2.9",
+      "R3.4",
+      "R3.5"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Publication héritée non qualifiée / évaluation réelle absente",
+    "corrective_lots": "AU-16"
+  },
+  {
+    "task_id": "R3.8",
+    "title": "Produire l'évaluation réelle et le suivi des erreurs maturées",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R3.2",
+      "R3.7"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Publication héritée non qualifiée / évaluation réelle absente",
+    "corrective_lots": "AU-16"
+  },
+  {
+    "task_id": "R3.9",
+    "title": "Gate de prévision des prix",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R3.1",
+      "R3.2",
+      "R3.3",
+      "R3.4",
+      "R3.5",
+      "R3.7",
+      "R3.8"
+    ],
+    "conditional_dependencies": "R3.6 facultatif.",
+    "audit_disposition": "Gate non reçu",
+    "corrective_lots": "AU-16"
+  },
+  {
+    "task_id": "R4.1",
+    "title": "Formaliser les contrats géospatiaux et agroclimatiques",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.10",
+      "R2.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Connecteur/contrat présent ; données réelles et versions à recevoir",
+    "corrective_lots": "AU-17"
+  },
+  {
+    "task_id": "R4.2",
+    "title": "Qualifier CHIRPS et ses versions",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.2",
+      "R4.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Connecteur/contrat présent ; données réelles et versions à recevoir",
+    "corrective_lots": "AU-17"
+  },
+  {
+    "task_id": "R4.3",
+    "title": "Qualifier les bulletins Météo Madagascar",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.2",
+      "R4.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Connecteur/contrat présent ; données réelles et versions à recevoir",
+    "corrective_lots": "AU-17"
+  },
+  {
+    "task_id": "R4.4",
+    "title": "Intégrer événements et perspectives FEWS NET/IPC",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.2",
+      "R2.1",
+      "R4.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Connecteur/contrat présent ; données réelles et versions à recevoir",
+    "corrective_lots": "AU-17"
+  },
+  {
+    "task_id": "R4.5",
+    "title": "Qualifier une météo prévue archivable",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.2",
+      "R4.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Connecteur/contrat présent ; données réelles et versions à recevoir",
+    "corrective_lots": "AU-17"
+  },
+  {
+    "task_id": "R4.6",
+    "title": "Calculer anomalies et agrégations zonales correctement",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.10",
+      "R4.1",
+      "R4.2"
+    ],
+    "conditional_dependencies": "POWER facultatif tant que R1.11 est bloqué.",
+    "audit_disposition": "Calcul/référentiel présent ; preuves réelles insuffisantes",
+    "corrective_lots": "AU-18"
+  },
+  {
+    "task_id": "R4.7",
+    "title": "Versionner les calendriers culturaux",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.2",
+      "R4.3",
+      "R4.4"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Calcul/référentiel présent ; preuves réelles insuffisantes",
+    "corrective_lots": "AU-18"
+  },
+  {
+    "task_id": "R4.8",
+    "title": "Évaluer l'état des cultures par télédétection",
+    "priority": "SHOULD",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R4.1",
+      "R4.6",
+      "R4.7"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Calcul NDVI/VCI présent ; acquisition/persistance absentes du parcours",
+    "corrective_lots": "AU-19"
+  },
+  {
+    "task_id": "R4.9",
+    "title": "Qualifier les signaux de feu FIRMS",
+    "priority": "SHOULD",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.2",
+      "R4.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Connecteur absent, statut unavailable explicite",
+    "corrective_lots": "AU-19"
+  },
+  {
+    "task_id": "R4.10",
+    "title": "Qualifier un indicateur d'inondation hydrologique",
+    "priority": "SHOULD",
+    "historical_status": "TODO",
+    "dependencies": [
+      "R1.2",
+      "R4.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Connecteur absent, statut unavailable explicite",
+    "corrective_lots": "AU-19"
+  },
+  {
+    "task_id": "R4.11",
+    "title": "Livrer la vue agroclimatique explicable",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.10",
+      "R2.9",
+      "R4.2",
+      "R4.3",
+      "R4.4",
+      "R4.5",
+      "R4.6",
+      "R4.7"
+    ],
+    "conditional_dependencies": "R4.8–R4.10 facultatifs.",
+    "audit_disposition": "API/UI présentes mais réponses de repli fabriquées",
+    "corrective_lots": "AU-02 / AU-18"
+  },
+  {
+    "task_id": "R4.12",
+    "title": "Gate agroclimat/météo",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R4.1",
+      "R4.11",
+      "R4.2",
+      "R4.3",
+      "R4.4",
+      "R4.5",
+      "R4.6",
+      "R4.7"
+    ],
+    "conditional_dependencies": "R4.8–R4.10 facultatifs.",
+    "audit_disposition": "Gate non reçu",
+    "corrective_lots": "AU-18"
+  },
+  {
+    "task_id": "R5.1",
+    "title": "Définir les cibles et le protocole de relevé",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.1",
+      "R2.4",
+      "R4.7"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Contrat/parseur/bilan présent ; corpus quantitatif recevable à acquérir",
+    "corrective_lots": "AU-20"
+  },
+  {
+    "task_id": "R5.2",
+    "title": "Importer les quantités légalement disponibles",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.2",
+      "R2.1",
+      "R5.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Contrat/parseur/bilan présent ; corpus quantitatif recevable à acquérir",
+    "corrective_lots": "AU-20"
+  },
+  {
+    "task_id": "R5.3",
+    "title": "Contrôler les quantités et leur couverture",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.2",
+      "R2.3",
+      "R5.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Contrat/parseur/bilan présent ; corpus quantitatif recevable à acquérir",
+    "corrective_lots": "AU-20"
+  },
+  {
+    "task_id": "R5.4",
+    "title": "Produire une fenêtre de récolte vérifiable",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R4.6",
+      "R4.7"
+    ],
+    "conditional_dependencies": "R4.5/R4.8 utilisables lorsqu'ils sont DONE.",
+    "audit_disposition": "Calcul présent ; références/validation et raccordements incomplets",
+    "corrective_lots": "AU-03 / AU-21"
+  },
+  {
+    "task_id": "R5.5",
+    "title": "Évaluer superficie et rendement prévisionnels",
+    "priority": "SHOULD",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.9",
+      "R4.6",
+      "R4.7"
+    ],
+    "conditional_dependencies": "R4.8 seulement si utilisé.",
+    "audit_disposition": "Calcul présent ; références/validation et raccordements incomplets",
+    "corrective_lots": "AU-03 / AU-21"
+  },
+  {
+    "task_id": "R5.6",
+    "title": "Construire un bilan d'offre sans double comptage",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.6",
+      "R1.9",
+      "R5.3",
+      "R5.4"
+    ],
+    "conditional_dependencies": "R5.5 facultatif.",
+    "audit_disposition": "Contrat/parseur/bilan présent ; corpus quantitatif recevable à acquérir",
+    "corrective_lots": "AU-20"
+  },
+  {
+    "task_id": "R5.7",
+    "title": "Prévoir les fenêtres d'approvisionnement et leurs pics",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R3.2",
+      "R3.3",
+      "R3.4",
+      "R3.5",
+      "R5.3",
+      "R5.6"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Calcul présent ; références/validation et raccordements incomplets",
+    "corrective_lots": "AU-03 / AU-21"
+  },
+  {
+    "task_id": "R5.8",
+    "title": "Préparer les scénarios et le pilote décisionnel",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.11",
+      "R5.4"
+    ],
+    "conditional_dependencies": "R5.6/R5.7 inclus seulement quand qualifiés.",
+    "audit_disposition": "Parcours préparés / gate non reçu, entrées fixes à retirer",
+    "corrective_lots": "AU-03 / AU-22"
+  },
+  {
+    "task_id": "R5.9",
+    "title": "Gate disponibilité et abondance",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R5.1",
+      "R5.2",
+      "R5.3",
+      "R5.4",
+      "R5.6",
+      "R5.7",
+      "R5.8"
+    ],
+    "conditional_dependencies": "R5.5 facultatif.",
+    "audit_disposition": "Parcours préparés / gate non reçu, entrées fixes à retirer",
+    "corrective_lots": "AU-03 / AU-22"
+  },
+  {
+    "task_id": "R6.1",
+    "title": "Sécuriser les outils de lecture",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R0.2",
+      "R2.9"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Parcours/helpers présents ; intégration opérationnelle non reçue",
+    "corrective_lots": "AU-22"
+  },
+  {
+    "task_id": "R6.2",
+    "title": "Borner les workflows IA et leurs reprises",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R0.3",
+      "R0.6",
+      "R6.1"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Parcours/helpers présents ; intégration opérationnelle non reçue",
+    "corrective_lots": "AU-22"
+  },
+  {
+    "task_id": "R6.3",
+    "title": "Répondre avec des résultats exécutés et référencés",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.9",
+      "R6.1",
+      "R6.2"
+    ],
+    "conditional_dependencies": "R3.7/R4.11/R5.8 facultatifs selon question.",
+    "audit_disposition": "Parcours/helpers présents ; intégration opérationnelle non reçue",
+    "corrective_lots": "AU-22"
+  },
+  {
+    "task_id": "R6.4",
+    "title": "Évaluer le copilote sur des questions métier indépendantes",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.4",
+      "R6.3"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Parcours/helpers présents ; intégration opérationnelle non reçue",
+    "corrective_lots": "AU-22"
+  },
+  {
+    "task_id": "R6.5",
+    "title": "Qualifier le bulletin sans hallucination numérique ou sémantique",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.8",
+      "R6.2",
+      "R6.3"
+    ],
+    "conditional_dependencies": "extensions prévisionnelles selon DONE.",
+    "audit_disposition": "Code présent ; contenus réels et notification sûre à recevoir",
+    "corrective_lots": "AU-05 / AU-23"
+  },
+  {
+    "task_id": "R6.6",
+    "title": "Évaluer les alertes et les scénarios de risque",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.3",
+      "R6.5"
+    ],
+    "conditional_dependencies": "R4.6/R4.7 pour alertes climat qualifiées.",
+    "audit_disposition": "Code présent ; contenus réels et notification sûre à recevoir",
+    "corrective_lots": "AU-05 / AU-23"
+  },
+  {
+    "task_id": "R6.7",
+    "title": "Durcir accès, audit et sécurité applicative",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.9",
+      "R6.1",
+      "R6.2"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Défauts sécurité confirmés, gate non reçu",
+    "corrective_lots": "AU-04 / AU-06 / AU-25"
+  },
+  {
+    "task_id": "R6.8",
+    "title": "Qualifier sauvegarde et restauration isolée",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R0.2",
+      "R0.8",
+      "R2.1",
+      "R6.7"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Helpers/scripts présents mais garde/erreurs insuffisants",
+    "corrective_lots": "AU-07 / AU-24"
+  },
+  {
+    "task_id": "R6.9",
+    "title": "Superviser fraîcheur, dérive, dépenses et incidents",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R1.12",
+      "R3.7",
+      "R6.2",
+      "R6.6"
+    ],
+    "conditional_dependencies": "modules R4/R5 selon disponibilité.",
+    "audit_disposition": "Supervision en mémoire, raccordement durable manquant",
+    "corrective_lots": "AU-24"
+  },
+  {
+    "task_id": "R6.10",
+    "title": "Mesurer performance et préparer le déploiement humain",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R2.10",
+      "R6.7",
+      "R6.8",
+      "R6.9"
+    ],
+    "conditional_dependencies": "",
+    "audit_disposition": "Paquet préparé ; performance et durcissement non reçus ici",
+    "corrective_lots": "AU-25"
+  },
+  {
+    "task_id": "R6.11",
+    "title": "Réception finale, rapport et passation",
+    "priority": "MUST",
+    "historical_status": "IN_PROGRESS",
+    "dependencies": [
+      "R0.9",
+      "R1.13",
+      "R2.11",
+      "R3.9",
+      "R4.12",
+      "R5.9",
+      "R6.1",
+      "R6.10",
+      "R6.2",
+      "R6.3",
+      "R6.4",
+      "R6.5",
+      "R6.6",
+      "R6.7",
+      "R6.8",
+      "R6.9"
+    ],
+    "conditional_dependencies": "cinq tâches SHOULD facultatives.",
+    "audit_disposition": "Réception finale non atteinte",
+    "corrective_lots": "AU-26"
+  }
+]

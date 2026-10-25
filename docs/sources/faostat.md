@@ -1,5 +1,7 @@
 # faostat : FAOSTAT – Food and Agriculture Organization Statistics (Madagascar)
 
+> Audit indépendant2026-10-25 : registre `active`, SQL `active`. Pas de réception live actuelle déduite de la présence du code. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 > **Statut de qualification R1.9 (2026-10-15) :**
 > - Connecteur, découverte dynamique, règles de normalisation C3 et validation de flags : **QUALIFIÉ & VALIDÉ (DONE)**.
 > - Distinction stricte entre riz paddy et riz blanchi/usiné : aucune conversion ni ratio implicite (ex: 0.67) appliqué sans justificatif officiel.

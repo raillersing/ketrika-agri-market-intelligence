@@ -1,0 +1,14 @@
+{
+  "scope": "read-only deterministic ask; no LLM provider call in inspected route",
+  "status": 200,
+  "body": {
+    "answer_markdown": "Aucun enregistrement ne correspond à vos critères dans les données officielles Gold.",
+    "sql": "SELECT product_name, location_name, month, median_price, chosen_source_id FROM gold.price_monthly_best WHERE product_code = 'rice_milled' ORDER BY month DESC LIMIT 6",
+    "rows_preview": [],
+    "citations": [],
+    "value_kinds": [
+      "observed"
+    ],
+    "provenance_summary": "Données officielles vérifiées issues du schéma Gold avec traçabilité Bronze SHA-256 intégrale. Zéro chiffre libre non audité."
+  }
+}

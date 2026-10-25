@@ -1,0 +1,4335 @@
+{
+  "commit": "b7e63ee4738edd02b29771dff46aeb8720d051a3",
+  "captured_at": "2026-10-25T11:34:07.704395+00:00",
+  "api": [
+    {
+      "path": "/v1/health",
+      "authenticated": false,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "status": "ok",
+        "version": "0.1.0",
+        "database": "connected",
+        "storage": "connected"
+      }
+    },
+    {
+      "path": "/v1/health",
+      "authenticated": true,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "status": "ok",
+        "version": "0.1.0",
+        "database": "connected",
+        "storage": "connected"
+      }
+    },
+    {
+      "path": "/v1/prices",
+      "authenticated": false,
+      "status": 200,
+      "length": 96,
+      "sample": [
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "location_pcode": "MDG12",
+          "location_name": "Vakinankaratra",
+          "actor_level": "unknown",
+          "month": "2010-05-01",
+          "median_price": 1082.69,
+          "min_price": 1082.69,
+          "max_price": 1082.69,
+          "currency": "MGA",
+          "unit": "kg",
+          "value_kind": "imputed",
+          "sources": [
+            "wb_rtfp_mdg"
+          ],
+          "n_obs": 1,
+          "imputed_share": 1.0
+        },
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "location_pcode": "MDG12",
+          "location_name": "Vakinankaratra",
+          "actor_level": "unknown",
+          "month": "2010-06-01",
+          "median_price": 1046.47,
+          "min_price": 1046.47,
+          "max_price": 1046.47,
+          "currency": "MGA",
+          "unit": "kg",
+          "value_kind": "imputed",
+          "sources": [
+            "wb_rtfp_mdg"
+          ],
+          "n_obs": 1,
+          "imputed_share": 1.0
+        }
+      ]
+    },
+    {
+      "path": "/v1/prices",
+      "authenticated": true,
+      "status": 200,
+      "length": 96,
+      "sample": [
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "location_pcode": "MDG12",
+          "location_name": "Vakinankaratra",
+          "actor_level": "unknown",
+          "month": "2010-05-01",
+          "median_price": 1082.69,
+          "min_price": 1082.69,
+          "max_price": 1082.69,
+          "currency": "MGA",
+          "unit": "kg",
+          "value_kind": "imputed",
+          "sources": [
+            "wb_rtfp_mdg"
+          ],
+          "n_obs": 1,
+          "imputed_share": 1.0
+        },
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "location_pcode": "MDG12",
+          "location_name": "Vakinankaratra",
+          "actor_level": "unknown",
+          "month": "2010-06-01",
+          "median_price": 1046.47,
+          "min_price": 1046.47,
+          "max_price": 1046.47,
+          "currency": "MGA",
+          "unit": "kg",
+          "value_kind": "imputed",
+          "sources": [
+            "wb_rtfp_mdg"
+          ],
+          "n_obs": 1,
+          "imputed_share": 1.0
+        }
+      ]
+    },
+    {
+      "path": "/v1/prices?source=wb_rtfp_mdg&from=2026-01-01&to=2026-10-01",
+      "authenticated": false,
+      "status": 200,
+      "length": 10,
+      "sample": [
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "location_pcode": "MDG12",
+          "location_name": "Vakinankaratra",
+          "actor_level": "unknown",
+          "month": "2026-01-01",
+          "median_price": 2836.66,
+          "min_price": 2836.66,
+          "max_price": 2836.66,
+          "currency": "MGA",
+          "unit": "kg",
+          "value_kind": "imputed",
+          "sources": [
+            "wb_rtfp_mdg"
+          ],
+          "n_obs": 1,
+          "imputed_share": 1.0
+        },
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "location_pcode": "MDG12",
+          "location_name": "Vakinankaratra",
+          "actor_level": "unknown",
+          "month": "2026-02-01",
+          "median_price": 2777.08,
+          "min_price": 2777.08,
+          "max_price": 2777.08,
+          "currency": "MGA",
+          "unit": "kg",
+          "value_kind": "imputed",
+          "sources": [
+            "wb_rtfp_mdg"
+          ],
+          "n_obs": 1,
+          "imputed_share": 1.0
+        }
+      ]
+    },
+    {
+      "path": "/v1/prices?source=wb_rtfp_mdg&from=2026-01-01&to=2026-10-01",
+      "authenticated": true,
+      "status": 200,
+      "length": 10,
+      "sample": [
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "location_pcode": "MDG12",
+          "location_name": "Vakinankaratra",
+          "actor_level": "unknown",
+          "month": "2026-01-01",
+          "median_price": 2836.66,
+          "min_price": 2836.66,
+          "max_price": 2836.66,
+          "currency": "MGA",
+          "unit": "kg",
+          "value_kind": "imputed",
+          "sources": [
+            "wb_rtfp_mdg"
+          ],
+          "n_obs": 1,
+          "imputed_share": 1.0
+        },
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "location_pcode": "MDG12",
+          "location_name": "Vakinankaratra",
+          "actor_level": "unknown",
+          "month": "2026-02-01",
+          "median_price": 2777.08,
+          "min_price": 2777.08,
+          "max_price": 2777.08,
+          "currency": "MGA",
+          "unit": "kg",
+          "value_kind": "imputed",
+          "sources": [
+            "wb_rtfp_mdg"
+          ],
+          "n_obs": 1,
+          "imputed_share": 1.0
+        }
+      ]
+    },
+    {
+      "path": "/v1/prices/latest?product=rice_milled&level=1",
+      "authenticated": false,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/prices/latest?product=rice_milled&level=1",
+      "authenticated": true,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/prices/latest?product=RICE_WHITE_LOCAL&level=1",
+      "authenticated": false,
+      "status": 200,
+      "length": 1,
+      "sample": [
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "location_pcode": "MDG12",
+          "location_name": "Vakinankaratra",
+          "month": "2026-10-01",
+          "median_price": 2649.96,
+          "currency": "MGA",
+          "unit": "kg",
+          "value_kind": "imputed",
+          "sources": [
+            "wb_rtfp_mdg"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/v1/prices/latest?product=RICE_WHITE_LOCAL&level=1",
+      "authenticated": true,
+      "status": 200,
+      "length": 1,
+      "sample": [
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "location_pcode": "MDG12",
+          "location_name": "Vakinankaratra",
+          "month": "2026-10-01",
+          "median_price": 2649.96,
+          "currency": "MGA",
+          "unit": "kg",
+          "value_kind": "imputed",
+          "sources": [
+            "wb_rtfp_mdg"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/v1/stocks",
+      "authenticated": false,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/stocks",
+      "authenticated": true,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/trade",
+      "authenticated": false,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/trade",
+      "authenticated": true,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/macro",
+      "authenticated": false,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/macro",
+      "authenticated": true,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/economic/dashboard",
+      "authenticated": false,
+      "status": 503,
+      "length": null,
+      "sample": {
+        "type": "https://api.ketrika.com/errors/503",
+        "title": "Error",
+        "status": 503,
+        "detail": "economic_data_not_qualified",
+        "instance": "/v1/economic/dashboard"
+      }
+    },
+    {
+      "path": "/v1/economic/dashboard",
+      "authenticated": true,
+      "status": 503,
+      "length": null,
+      "sample": {
+        "type": "https://api.ketrika.com/errors/503",
+        "title": "Error",
+        "status": 503,
+        "detail": "economic_data_not_qualified",
+        "instance": "/v1/economic/dashboard"
+      }
+    },
+    {
+      "path": "/v1/kpis/market-health",
+      "authenticated": false,
+      "status": 200,
+      "length": 96,
+      "sample": [
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "region_pcode": "MDG12",
+          "region_name": "Vakinankaratra",
+          "month": "2026-10-01",
+          "price_stability_score": 86.67,
+          "affordability_score": 100.0,
+          "availability_score": null,
+          "climate_risk_score": null,
+          "coverage": 0.55,
+          "composite_score": 92.73,
+          "value_kind": "composite",
+          "components_present": [
+            "price_stability",
+            "affordability"
+          ]
+        },
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "region_pcode": "MDG12",
+          "region_name": "Vakinankaratra",
+          "month": "2026-09-01",
+          "price_stability_score": 84.37,
+          "affordability_score": 100.0,
+          "availability_score": null,
+          "climate_risk_score": null,
+          "coverage": 0.55,
+          "composite_score": 91.47,
+          "value_kind": "composite",
+          "components_present": [
+            "price_stability",
+            "affordability"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/v1/kpis/market-health",
+      "authenticated": true,
+      "status": 200,
+      "length": 96,
+      "sample": [
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "region_pcode": "MDG12",
+          "region_name": "Vakinankaratra",
+          "month": "2026-10-01",
+          "price_stability_score": 86.67,
+          "affordability_score": 100.0,
+          "availability_score": null,
+          "climate_risk_score": null,
+          "coverage": 0.55,
+          "composite_score": 92.73,
+          "value_kind": "composite",
+          "components_present": [
+            "price_stability",
+            "affordability"
+          ]
+        },
+        {
+          "product_code": "RICE_WHITE_LOCAL",
+          "region_pcode": "MDG12",
+          "region_name": "Vakinankaratra",
+          "month": "2026-09-01",
+          "price_stability_score": 84.37,
+          "affordability_score": 100.0,
+          "availability_score": null,
+          "climate_risk_score": null,
+          "coverage": 0.55,
+          "composite_score": 91.47,
+          "value_kind": "composite",
+          "components_present": [
+            "price_stability",
+            "affordability"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/v1/forecasts",
+      "authenticated": false,
+      "status": 200,
+      "length": 39,
+      "sample": [
+        {
+          "forecast_id": "8654f5cb-5f93-4a98-b673-5840a5930a79",
+          "model_run_id": "81c6cf56-48dc-4f93-bcd9-cd705d590b45",
+          "series_key": "cassava_dry|MG51|retail",
+          "product_code": "cassava_dry",
+          "product_name": "Manioc sec (Cossettes)",
+          "location_pcode": "MG51",
+          "location_name": "Atsimo-Andrefana",
+          "actor_level": "retail",
+          "horizon": 1,
+          "target_period": "2024-04-01",
+          "p10": 1404.9548,
+          "p50": 1412.7273,
+          "p90": 1420.4998,
+          "model_requested": null,
+          "model_effective": "best_model_selection",
+          "model_name": "best_model_selection",
+          "is_baseline": false,
+          "is_calibrated": false,
+          "calibration_sample_size": 0,
+          "status": "nominal",
+          "fallback_reason": null,
+          "currency": "MGA",
+          "unit": "kg",
+          "interval_width": null,
+          "coverage_rate_80": null,
+          "data_cutoff": "2024-03-01",
+          "dataset_fingerprint": null,
+          "cohort": null,
+          "value_kind": "forecast"
+        },
+        {
+          "forecast_id": "756f9a73-af91-49be-8de2-7a6462574ab0",
+          "model_run_id": "81c6cf56-48dc-4f93-bcd9-cd705d590b45",
+          "series_key": "cassava_dry|MG51|retail",
+          "product_code": "cassava_dry",
+          "product_name": "Manioc sec (Cossettes)",
+          "location_pcode": "MG51",
+          "location_name": "Atsimo-Andrefana",
+          "actor_level": "retail",
+          "horizon": 2,
+          "target_period": "2024-05-01",
+          "p10": 1395.9504,
+          "p50": 1414.8476,
+          "p90": 1433.7447,
+          "model_requested": null,
+          "model_effective": "best_model_selection",
+          "model_name": "best_model_selection",
+          "is_baseline": false,
+          "is_calibrated": false,
+          "calibration_sample_size": 0,
+          "status": "nominal",
+          "fallback_reason": null,
+          "currency": "MGA",
+          "unit": "kg",
+          "interval_width": null,
+          "coverage_rate_80": null,
+          "data_cutoff": "2024-03-01",
+          "dataset_fingerprint": null,
+          "cohort": null,
+          "value_kind": "forecast"
+        }
+      ]
+    },
+    {
+      "path": "/v1/forecasts",
+      "authenticated": true,
+      "status": 200,
+      "length": 39,
+      "sample": [
+        {
+          "forecast_id": "8654f5cb-5f93-4a98-b673-5840a5930a79",
+          "model_run_id": "81c6cf56-48dc-4f93-bcd9-cd705d590b45",
+          "series_key": "cassava_dry|MG51|retail",
+          "product_code": "cassava_dry",
+          "product_name": "Manioc sec (Cossettes)",
+          "location_pcode": "MG51",
+          "location_name": "Atsimo-Andrefana",
+          "actor_level": "retail",
+          "horizon": 1,
+          "target_period": "2024-04-01",
+          "p10": 1404.9548,
+          "p50": 1412.7273,
+          "p90": 1420.4998,
+          "model_requested": null,
+          "model_effective": "best_model_selection",
+          "model_name": "best_model_selection",
+          "is_baseline": false,
+          "is_calibrated": false,
+          "calibration_sample_size": 0,
+          "status": "nominal",
+          "fallback_reason": null,
+          "currency": "MGA",
+          "unit": "kg",
+          "interval_width": null,
+          "coverage_rate_80": null,
+          "data_cutoff": "2024-03-01",
+          "dataset_fingerprint": null,
+          "cohort": null,
+          "value_kind": "forecast"
+        },
+        {
+          "forecast_id": "756f9a73-af91-49be-8de2-7a6462574ab0",
+          "model_run_id": "81c6cf56-48dc-4f93-bcd9-cd705d590b45",
+          "series_key": "cassava_dry|MG51|retail",
+          "product_code": "cassava_dry",
+          "product_name": "Manioc sec (Cossettes)",
+          "location_pcode": "MG51",
+          "location_name": "Atsimo-Andrefana",
+          "actor_level": "retail",
+          "horizon": 2,
+          "target_period": "2024-05-01",
+          "p10": 1395.9504,
+          "p50": 1414.8476,
+          "p90": 1433.7447,
+          "model_requested": null,
+          "model_effective": "best_model_selection",
+          "model_name": "best_model_selection",
+          "is_baseline": false,
+          "is_calibrated": false,
+          "calibration_sample_size": 0,
+          "status": "nominal",
+          "fallback_reason": null,
+          "currency": "MGA",
+          "unit": "kg",
+          "interval_width": null,
+          "coverage_rate_80": null,
+          "data_cutoff": "2024-03-01",
+          "dataset_fingerprint": null,
+          "cohort": null,
+          "value_kind": "forecast"
+        }
+      ]
+    },
+    {
+      "path": "/v1/forecasts/runs",
+      "authenticated": false,
+      "status": 200,
+      "length": 2,
+      "sample": [
+        {
+          "model_run_id": "81c6cf56-48dc-4f93-bcd9-cd705d590b45",
+          "task": "price_forecast",
+          "model_name": "best_model_selection",
+          "model_version": "1.0.0@local",
+          "data_cutoff": "2024-03-01",
+          "trained_at": "2026-10-07T19:17:28.712097Z",
+          "dataset_fingerprint": null,
+          "cohort": null,
+          "params": {
+            "horizon": 3,
+            "candidates": [
+              "SeasonalNaive",
+              "AutoETS",
+              "AutoARIMA"
+            ]
+          },
+          "metrics": {
+            "mae": 41.45,
+            "wape": 0.0122,
+            "smape": 0.0122,
+            "n_series": 13,
+            "by_series": {
+              "maize|MG11|retail": {
+                "metrics": {
+                  "mae": 25.11,
+                  "wape": 0.014,
+                  "smape": 0.0139,
+                  "n_windows": 6,
+                  "coverage_80": 0.7778
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 44.49,
+                    "wape": 0.0248,
+                    "smape": 0.0249,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 25.11,
+                    "wape": 0.014,
+                    "smape": 0.0139,
+                    "n_windows": 6,
+                    "coverage_80": 0.7778
+                  },
+                  "SeasonalNaive": {
+                    "mae": 128.0,
+                    "wape": 0.0713,
+                    "smape": 0.0738,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "maize",
+                "location_pcode": "MG11"
+              },
+              "sugar|MG11|retail": {
+                "metrics": {
+                  "mae": 49.65,
+                  "wape": 0.011,
+                  "smape": 0.0109,
+                  "n_windows": 6,
+                  "coverage_80": 0.8333
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 113.04,
+                    "wape": 0.025,
+                    "smape": 0.0251,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 49.65,
+                    "wape": 0.011,
+                    "smape": 0.0109,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 221.0,
+                    "wape": 0.0489,
+                    "smape": 0.0499,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "sugar",
+                "location_pcode": "MG11"
+              },
+              "maize|MG12|wholesale": {
+                "metrics": {
+                  "mae": 22.02,
+                  "wape": 0.0137,
+                  "smape": 0.0136,
+                  "n_windows": 6,
+                  "coverage_80": 0.7778
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "wholesale",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 39.81,
+                    "wape": 0.0248,
+                    "smape": 0.0249,
+                    "n_windows": 6,
+                    "coverage_80": 0.6111
+                  },
+                  "AutoARIMA": {
+                    "mae": 22.02,
+                    "wape": 0.0137,
+                    "smape": 0.0136,
+                    "n_windows": 6,
+                    "coverage_80": 0.7778
+                  },
+                  "SeasonalNaive": {
+                    "mae": 103.25,
+                    "wape": 0.0643,
+                    "smape": 0.0662,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "maize",
+                "location_pcode": "MG12"
+              },
+              "dry_beans|MG12|retail": {
+                "metrics": {
+                  "mae": 52.89,
+                  "wape": 0.0102,
+                  "smape": 0.0102,
+                  "n_windows": 6,
+                  "coverage_80": 0.9444
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 131.57,
+                    "wape": 0.0254,
+                    "smape": 0.0254,
+                    "n_windows": 6,
+                    "coverage_80": 0.4444
+                  },
+                  "AutoARIMA": {
+                    "mae": 52.89,
+                    "wape": 0.0102,
+                    "smape": 0.0102,
+                    "n_windows": 6,
+                    "coverage_80": 0.9444
+                  },
+                  "SeasonalNaive": {
+                    "mae": 264.0,
+                    "wape": 0.0509,
+                    "smape": 0.052,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "dry_beans",
+                "location_pcode": "MG12"
+              },
+              "oil_edible|MG11|retail": {
+                "metrics": {
+                  "mae": 86.05,
+                  "wape": 0.0107,
+                  "smape": 0.0107,
+                  "n_windows": 6,
+                  "coverage_80": 0.8333
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 194.13,
+                    "wape": 0.0242,
+                    "smape": 0.0243,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 86.05,
+                    "wape": 0.0107,
+                    "smape": 0.0107,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 357.5,
+                    "wape": 0.0447,
+                    "smape": 0.0454,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "oil_edible",
+                "location_pcode": "MG11"
+              },
+              "oil_edible|MG31|retail": {
+                "metrics": {
+                  "mae": 84.79,
+                  "wape": 0.0111,
+                  "smape": 0.0111,
+                  "n_windows": 6,
+                  "coverage_80": 0.8333
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 180.69,
+                    "wape": 0.0237,
+                    "smape": 0.0237,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 84.79,
+                    "wape": 0.0111,
+                    "smape": 0.0111,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 316.0,
+                    "wape": 0.0414,
+                    "smape": 0.042,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "oil_edible",
+                "location_pcode": "MG31"
+              },
+              "cassava_dry|MG51|retail": {
+                "metrics": {
+                  "mae": 18.32,
+                  "wape": 0.0138,
+                  "smape": 0.0137,
+                  "n_windows": 6,
+                  "coverage_80": 0.7778
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 33.06,
+                    "wape": 0.0249,
+                    "smape": 0.025,
+                    "n_windows": 6,
+                    "coverage_80": 0.6111
+                  },
+                  "AutoARIMA": {
+                    "mae": 18.32,
+                    "wape": 0.0138,
+                    "smape": 0.0137,
+                    "n_windows": 6,
+                    "coverage_80": 0.7778
+                  },
+                  "SeasonalNaive": {
+                    "mae": 86.0,
+                    "wape": 0.0647,
+                    "smape": 0.0666,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "cassava_dry",
+                "location_pcode": "MG51"
+              },
+              "flour_wheat|MG11|retail": {
+                "metrics": {
+                  "mae": 43.72,
+                  "wape": 0.0108,
+                  "smape": 0.0108,
+                  "n_windows": 6,
+                  "coverage_80": 0.8333
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 97.91,
+                    "wape": 0.0242,
+                    "smape": 0.0242,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 43.72,
+                    "wape": 0.0108,
+                    "smape": 0.0108,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 179.0,
+                    "wape": 0.0442,
+                    "smape": 0.0449,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "flour_wheat",
+                "location_pcode": "MG11"
+              },
+              "rice_milled|MG11|retail": {
+                "metrics": {
+                  "mae": 58.79,
+                  "wape": 0.0198,
+                  "smape": 0.0196,
+                  "n_windows": 6,
+                  "coverage_80": 0.3333
+                },
+                "best_model": "AutoETS",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 58.79,
+                    "wape": 0.0198,
+                    "smape": 0.0196,
+                    "n_windows": 6,
+                    "coverage_80": 0.3333
+                  },
+                  "AutoARIMA": {
+                    "mae": 49.62,
+                    "wape": 0.0167,
+                    "smape": 0.0164,
+                    "n_windows": 6,
+                    "coverage_80": 0.3333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 186.11,
+                    "wape": 0.0628,
+                    "smape": 0.065,
+                    "n_windows": 6,
+                    "coverage_80": 0.7778
+                  }
+                },
+                "product_code": "rice_milled",
+                "location_pcode": "MG11"
+              },
+              "cassava_fresh|MG11|retail": {
+                "metrics": {
+                  "mae": 10.59,
+                  "wape": 0.0105,
+                  "smape": 0.0105,
+                  "n_windows": 6,
+                  "coverage_80": 0.8333
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 24.85,
+                    "wape": 0.0248,
+                    "smape": 0.0249,
+                    "n_windows": 6,
+                    "coverage_80": 0.5556
+                  },
+                  "AutoARIMA": {
+                    "mae": 10.59,
+                    "wape": 0.0105,
+                    "smape": 0.0105,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 68.5,
+                    "wape": 0.0682,
+                    "smape": 0.0705,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "cassava_fresh",
+                "location_pcode": "MG11"
+              },
+              "cassava_fresh|MG51|retail": {
+                "metrics": {
+                  "mae": 9.77,
+                  "wape": 0.0104,
+                  "smape": 0.0103,
+                  "n_windows": 6,
+                  "coverage_80": 0.9444
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 23.28,
+                    "wape": 0.0248,
+                    "smape": 0.0249,
+                    "n_windows": 6,
+                    "coverage_80": 0.6111
+                  },
+                  "AutoARIMA": {
+                    "mae": 9.77,
+                    "wape": 0.0104,
+                    "smape": 0.0103,
+                    "n_windows": 6,
+                    "coverage_80": 0.9444
+                  },
+                  "SeasonalNaive": {
+                    "mae": 60.25,
+                    "wape": 0.0641,
+                    "smape": 0.066,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "cassava_fresh",
+                "location_pcode": "MG51"
+              },
+              "rice_imported|MG11|retail": {
+                "metrics": {
+                  "mae": 35.59,
+                  "wape": 0.0103,
+                  "smape": 0.0103,
+                  "n_windows": 6,
+                  "coverage_80": 0.9444
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 87.72,
+                    "wape": 0.0254,
+                    "smape": 0.0254,
+                    "n_windows": 6,
+                    "coverage_80": 0.4444
+                  },
+                  "AutoARIMA": {
+                    "mae": 35.59,
+                    "wape": 0.0103,
+                    "smape": 0.0103,
+                    "n_windows": 6,
+                    "coverage_80": 0.9444
+                  },
+                  "SeasonalNaive": {
+                    "mae": 176.0,
+                    "wape": 0.0509,
+                    "smape": 0.052,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "rice_imported",
+                "location_pcode": "MG11"
+              },
+              "rice_imported|MG31|retail": {
+                "metrics": {
+                  "mae": 41.58,
+                  "wape": 0.0125,
+                  "smape": 0.0125,
+                  "n_windows": 6,
+                  "coverage_80": 0.7222
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 82.68,
+                    "wape": 0.0248,
+                    "smape": 0.0249,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 41.58,
+                    "wape": 0.0125,
+                    "smape": 0.0125,
+                    "n_windows": 6,
+                    "coverage_80": 0.7222
+                  },
+                  "SeasonalNaive": {
+                    "mae": 159.5,
+                    "wape": 0.0479,
+                    "smape": 0.0488,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "rice_imported",
+                "location_pcode": "MG31"
+              }
+            },
+            "coverage_80": 0.7991
+          }
+        },
+        {
+          "model_run_id": "f63af728-feec-5273-a682-f3652dd98c4a",
+          "task": "price_forecast",
+          "model_name": "AutoARIMA",
+          "model_version": "1.0.0",
+          "data_cutoff": "2024-03-01",
+          "trained_at": "2024-03-15T12:00:00Z",
+          "dataset_fingerprint": null,
+          "cohort": null,
+          "params": {
+            "seasonal": true
+          },
+          "metrics": {
+            "wape": 0.045
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/forecasts/runs",
+      "authenticated": true,
+      "status": 200,
+      "length": 2,
+      "sample": [
+        {
+          "model_run_id": "81c6cf56-48dc-4f93-bcd9-cd705d590b45",
+          "task": "price_forecast",
+          "model_name": "best_model_selection",
+          "model_version": "1.0.0@local",
+          "data_cutoff": "2024-03-01",
+          "trained_at": "2026-10-07T19:17:28.712097Z",
+          "dataset_fingerprint": null,
+          "cohort": null,
+          "params": {
+            "horizon": 3,
+            "candidates": [
+              "SeasonalNaive",
+              "AutoETS",
+              "AutoARIMA"
+            ]
+          },
+          "metrics": {
+            "mae": 41.45,
+            "wape": 0.0122,
+            "smape": 0.0122,
+            "n_series": 13,
+            "by_series": {
+              "maize|MG11|retail": {
+                "metrics": {
+                  "mae": 25.11,
+                  "wape": 0.014,
+                  "smape": 0.0139,
+                  "n_windows": 6,
+                  "coverage_80": 0.7778
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 44.49,
+                    "wape": 0.0248,
+                    "smape": 0.0249,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 25.11,
+                    "wape": 0.014,
+                    "smape": 0.0139,
+                    "n_windows": 6,
+                    "coverage_80": 0.7778
+                  },
+                  "SeasonalNaive": {
+                    "mae": 128.0,
+                    "wape": 0.0713,
+                    "smape": 0.0738,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "maize",
+                "location_pcode": "MG11"
+              },
+              "sugar|MG11|retail": {
+                "metrics": {
+                  "mae": 49.65,
+                  "wape": 0.011,
+                  "smape": 0.0109,
+                  "n_windows": 6,
+                  "coverage_80": 0.8333
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 113.04,
+                    "wape": 0.025,
+                    "smape": 0.0251,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 49.65,
+                    "wape": 0.011,
+                    "smape": 0.0109,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 221.0,
+                    "wape": 0.0489,
+                    "smape": 0.0499,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "sugar",
+                "location_pcode": "MG11"
+              },
+              "maize|MG12|wholesale": {
+                "metrics": {
+                  "mae": 22.02,
+                  "wape": 0.0137,
+                  "smape": 0.0136,
+                  "n_windows": 6,
+                  "coverage_80": 0.7778
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "wholesale",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 39.81,
+                    "wape": 0.0248,
+                    "smape": 0.0249,
+                    "n_windows": 6,
+                    "coverage_80": 0.6111
+                  },
+                  "AutoARIMA": {
+                    "mae": 22.02,
+                    "wape": 0.0137,
+                    "smape": 0.0136,
+                    "n_windows": 6,
+                    "coverage_80": 0.7778
+                  },
+                  "SeasonalNaive": {
+                    "mae": 103.25,
+                    "wape": 0.0643,
+                    "smape": 0.0662,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "maize",
+                "location_pcode": "MG12"
+              },
+              "dry_beans|MG12|retail": {
+                "metrics": {
+                  "mae": 52.89,
+                  "wape": 0.0102,
+                  "smape": 0.0102,
+                  "n_windows": 6,
+                  "coverage_80": 0.9444
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 131.57,
+                    "wape": 0.0254,
+                    "smape": 0.0254,
+                    "n_windows": 6,
+                    "coverage_80": 0.4444
+                  },
+                  "AutoARIMA": {
+                    "mae": 52.89,
+                    "wape": 0.0102,
+                    "smape": 0.0102,
+                    "n_windows": 6,
+                    "coverage_80": 0.9444
+                  },
+                  "SeasonalNaive": {
+                    "mae": 264.0,
+                    "wape": 0.0509,
+                    "smape": 0.052,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "dry_beans",
+                "location_pcode": "MG12"
+              },
+              "oil_edible|MG11|retail": {
+                "metrics": {
+                  "mae": 86.05,
+                  "wape": 0.0107,
+                  "smape": 0.0107,
+                  "n_windows": 6,
+                  "coverage_80": 0.8333
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 194.13,
+                    "wape": 0.0242,
+                    "smape": 0.0243,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 86.05,
+                    "wape": 0.0107,
+                    "smape": 0.0107,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 357.5,
+                    "wape": 0.0447,
+                    "smape": 0.0454,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "oil_edible",
+                "location_pcode": "MG11"
+              },
+              "oil_edible|MG31|retail": {
+                "metrics": {
+                  "mae": 84.79,
+                  "wape": 0.0111,
+                  "smape": 0.0111,
+                  "n_windows": 6,
+                  "coverage_80": 0.8333
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 180.69,
+                    "wape": 0.0237,
+                    "smape": 0.0237,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 84.79,
+                    "wape": 0.0111,
+                    "smape": 0.0111,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 316.0,
+                    "wape": 0.0414,
+                    "smape": 0.042,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "oil_edible",
+                "location_pcode": "MG31"
+              },
+              "cassava_dry|MG51|retail": {
+                "metrics": {
+                  "mae": 18.32,
+                  "wape": 0.0138,
+                  "smape": 0.0137,
+                  "n_windows": 6,
+                  "coverage_80": 0.7778
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 33.06,
+                    "wape": 0.0249,
+                    "smape": 0.025,
+                    "n_windows": 6,
+                    "coverage_80": 0.6111
+                  },
+                  "AutoARIMA": {
+                    "mae": 18.32,
+                    "wape": 0.0138,
+                    "smape": 0.0137,
+                    "n_windows": 6,
+                    "coverage_80": 0.7778
+                  },
+                  "SeasonalNaive": {
+                    "mae": 86.0,
+                    "wape": 0.0647,
+                    "smape": 0.0666,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "cassava_dry",
+                "location_pcode": "MG51"
+              },
+              "flour_wheat|MG11|retail": {
+                "metrics": {
+                  "mae": 43.72,
+                  "wape": 0.0108,
+                  "smape": 0.0108,
+                  "n_windows": 6,
+                  "coverage_80": 0.8333
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 97.91,
+                    "wape": 0.0242,
+                    "smape": 0.0242,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 43.72,
+                    "wape": 0.0108,
+                    "smape": 0.0108,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 179.0,
+                    "wape": 0.0442,
+                    "smape": 0.0449,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "flour_wheat",
+                "location_pcode": "MG11"
+              },
+              "rice_milled|MG11|retail": {
+                "metrics": {
+                  "mae": 58.79,
+                  "wape": 0.0198,
+                  "smape": 0.0196,
+                  "n_windows": 6,
+                  "coverage_80": 0.3333
+                },
+                "best_model": "AutoETS",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 58.79,
+                    "wape": 0.0198,
+                    "smape": 0.0196,
+                    "n_windows": 6,
+                    "coverage_80": 0.3333
+                  },
+                  "AutoARIMA": {
+                    "mae": 49.62,
+                    "wape": 0.0167,
+                    "smape": 0.0164,
+                    "n_windows": 6,
+                    "coverage_80": 0.3333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 186.11,
+                    "wape": 0.0628,
+                    "smape": 0.065,
+                    "n_windows": 6,
+                    "coverage_80": 0.7778
+                  }
+                },
+                "product_code": "rice_milled",
+                "location_pcode": "MG11"
+              },
+              "cassava_fresh|MG11|retail": {
+                "metrics": {
+                  "mae": 10.59,
+                  "wape": 0.0105,
+                  "smape": 0.0105,
+                  "n_windows": 6,
+                  "coverage_80": 0.8333
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 24.85,
+                    "wape": 0.0248,
+                    "smape": 0.0249,
+                    "n_windows": 6,
+                    "coverage_80": 0.5556
+                  },
+                  "AutoARIMA": {
+                    "mae": 10.59,
+                    "wape": 0.0105,
+                    "smape": 0.0105,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  },
+                  "SeasonalNaive": {
+                    "mae": 68.5,
+                    "wape": 0.0682,
+                    "smape": 0.0705,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "cassava_fresh",
+                "location_pcode": "MG11"
+              },
+              "cassava_fresh|MG51|retail": {
+                "metrics": {
+                  "mae": 9.77,
+                  "wape": 0.0104,
+                  "smape": 0.0103,
+                  "n_windows": 6,
+                  "coverage_80": 0.9444
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 23.28,
+                    "wape": 0.0248,
+                    "smape": 0.0249,
+                    "n_windows": 6,
+                    "coverage_80": 0.6111
+                  },
+                  "AutoARIMA": {
+                    "mae": 9.77,
+                    "wape": 0.0104,
+                    "smape": 0.0103,
+                    "n_windows": 6,
+                    "coverage_80": 0.9444
+                  },
+                  "SeasonalNaive": {
+                    "mae": 60.25,
+                    "wape": 0.0641,
+                    "smape": 0.066,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "cassava_fresh",
+                "location_pcode": "MG51"
+              },
+              "rice_imported|MG11|retail": {
+                "metrics": {
+                  "mae": 35.59,
+                  "wape": 0.0103,
+                  "smape": 0.0103,
+                  "n_windows": 6,
+                  "coverage_80": 0.9444
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 87.72,
+                    "wape": 0.0254,
+                    "smape": 0.0254,
+                    "n_windows": 6,
+                    "coverage_80": 0.4444
+                  },
+                  "AutoARIMA": {
+                    "mae": 35.59,
+                    "wape": 0.0103,
+                    "smape": 0.0103,
+                    "n_windows": 6,
+                    "coverage_80": 0.9444
+                  },
+                  "SeasonalNaive": {
+                    "mae": 176.0,
+                    "wape": 0.0509,
+                    "smape": 0.052,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "rice_imported",
+                "location_pcode": "MG11"
+              },
+              "rice_imported|MG31|retail": {
+                "metrics": {
+                  "mae": 41.58,
+                  "wape": 0.0125,
+                  "smape": 0.0125,
+                  "n_windows": 6,
+                  "coverage_80": 0.7222
+                },
+                "best_model": "AutoARIMA",
+                "actor_level": "retail",
+                "evaluations": {
+                  "AutoETS": {
+                    "mae": 82.68,
+                    "wape": 0.0248,
+                    "smape": 0.0249,
+                    "n_windows": 6,
+                    "coverage_80": 0.5
+                  },
+                  "AutoARIMA": {
+                    "mae": 41.58,
+                    "wape": 0.0125,
+                    "smape": 0.0125,
+                    "n_windows": 6,
+                    "coverage_80": 0.7222
+                  },
+                  "SeasonalNaive": {
+                    "mae": 159.5,
+                    "wape": 0.0479,
+                    "smape": 0.0488,
+                    "n_windows": 6,
+                    "coverage_80": 0.8333
+                  }
+                },
+                "product_code": "rice_imported",
+                "location_pcode": "MG31"
+              }
+            },
+            "coverage_80": 0.7991
+          }
+        },
+        {
+          "model_run_id": "f63af728-feec-5273-a682-f3652dd98c4a",
+          "task": "price_forecast",
+          "model_name": "AutoARIMA",
+          "model_version": "1.0.0",
+          "data_cutoff": "2024-03-01",
+          "trained_at": "2024-03-15T12:00:00Z",
+          "dataset_fingerprint": null,
+          "cohort": null,
+          "params": {
+            "seasonal": true
+          },
+          "metrics": {
+            "wape": 0.045
+          }
+        }
+      ]
+    },
+    {
+      "path": "/v1/forecasts/performance",
+      "authenticated": false,
+      "status": 500,
+      "length": null,
+      "sample": "Internal Server Error"
+    },
+    {
+      "path": "/v1/forecasts/performance",
+      "authenticated": true,
+      "error": "ReadError"
+    },
+    {
+      "path": "/v1/forecasts/abstentions",
+      "authenticated": false,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/forecasts/abstentions",
+      "authenticated": true,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/weather/anomalies?from=2026-01-01",
+      "authenticated": false,
+      "status": 500,
+      "length": null,
+      "sample": "Internal Server Error"
+    },
+    {
+      "path": "/v1/weather/anomalies?from=2026-01-01",
+      "authenticated": true,
+      "error": "ReadError"
+    },
+    {
+      "path": "/v1/climate/summary",
+      "authenticated": false,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "location_pcode": "MDG11",
+        "location_name": "Analamanga",
+        "current_month": "2026-10-01",
+        "observed_precipitation_mm": 115.0,
+        "precipitation_anomaly_pct": 95.0,
+        "precipitation_risk_level": "low",
+        "aggregation_method": "zonal_mean (administratif sans masque agricole vérifié)",
+        "cropland_mask_applied": false,
+        "observed_source": "chirps",
+        "temperature_mean_c": 21.5,
+        "forecast_next_72h_precip_mm": 14.2,
+        "forecast_p10_mm": 6.0,
+        "forecast_p90_mm": 28.5,
+        "forecast_model": "ecmwf_ifs",
+        "forecast_issued_at": "2026-10-01T00:00:00Z",
+        "forecast_value_kind": "projected",
+        "active_crop_cycles": [
+          {
+            "zone_code": "ZONE_CENTRE",
+            "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+            "crop": "RICE",
+            "product_code": "RICE_PADDY",
+            "crop_cycle": "vakiambiaty",
+            "season_name": "vakiambiaty",
+            "crop_regime": "irrigated",
+            "calendar_version": "v1.0",
+            "calendar_type": "traditional_baseline",
+            "campaign": "baseline_permanent",
+            "variety": "Variétés locales de saison (Makalioka, Sebota)",
+            "current_phenological_stage": "planting",
+            "planting_months": [
+              10,
+              11,
+              12
+            ],
+            "harvest_months": [
+              4,
+              5,
+              6
+            ],
+            "peak_harvest_month": 5,
+            "water_sensitivity_profile": {
+              "tillering": "high",
+              "flowering": "critical",
+              "grain_filling": "medium"
+            },
+            "market_links": [
+              {
+                "location_code": "MDG11",
+                "location_name": "Antananarivo",
+                "flow_role": "primary_supply",
+                "proof_status": "official_supply_basin",
+                "source_evidence": "ODR Bulletin de suivi des flux Hauts Plateaux vers Analamanga"
+              },
+              {
+                "location_code": "MDG12",
+                "location_name": "Antsirabe",
+                "flow_role": "primary_supply",
+                "proof_status": "official_supply_basin",
+                "source_evidence": "MinAE DRDA Vakinankaratra Bilan Vivrier"
+              }
+            ],
+            "source_reference": "MinAE / FAO GIEWS Madagascar 2021",
+            "verified": true,
+            "eligible_for_alerts": true
+          },
+          {
+            "zone_code": "ZONE_CENTRE",
+            "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+            "crop": "RICE",
+            "product_code": "RICE_PADDY",
+            "crop_cycle": "hosy",
+            "season_name": "hosy",
+            "crop_regime": "irrigated",
+            "calendar_version": "v1.0",
+            "calendar_type": "traditional_baseline",
+            "campaign": "baseline_permanent",
+            "variety": "Riz précoce (Mailaka)",
+            "current_phenological_stage": "growing",
+            "planting_months": [
+              6,
+              7
+            ],
+            "harvest_months": [
+              11,
+              12,
+              1
+            ],
+            "peak_harvest_month": 12,
+            "water_sensitivity_profile": {
+              "tillering": "high",
+              "flowering": "critical",
+              "grain_filling": "medium"
+            },
+            "market_links": [
+              {
+                "location_code": "MDG11",
+                "location_name": "Antananarivo",
+                "flow_role": "primary_supply",
+                "proof_status": "official_supply_basin",
+                "source_evidence": "ODR Suivi des arrivages hosy sur les marchés urbains d'Antananarivo"
+              }
+            ],
+            "source_reference": "ODR Bulletin de suivi des riz précoces",
+            "verified": true,
+            "eligible_for_alerts": true
+          },
+          {
+            "zone_code": "ZONE_CENTRE",
+            "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+            "crop": "MAIZE",
+            "product_code": "MAIZE_GRAIN",
+            "crop_cycle": "principale",
+            "season_name": "principale",
+            "crop_regime": "rainfed",
+            "calendar_version": "v1.0",
+            "calendar_type": "traditional_baseline",
+            "campaign": "baseline_permanent",
+            "variety": "Maïs jaune et blanc local",
+            "current_phenological_stage": "planting",
+            "planting_months": [
+              10,
+              11,
+              12
+            ],
+            "harvest_months": [
+              3,
+              4,
+              5
+            ],
+            "peak_harvest_month": 4,
+            "water_sensitivity_profile": {
+              "vegetative": "medium",
+              "flowering": "critical",
+              "grain_filling": "medium"
+            },
+            "market_links": [
+              {
+                "location_code": "MDG12",
+                "location_name": "Antsirabe",
+                "flow_role": "primary_supply",
+                "proof_status": "official_supply_basin",
+                "source_evidence": "FEWS NET Livelihood Zone MG07 Central Highlands Maize"
+              }
+            ],
+            "source_reference": "FEWS NET Madagascar Seasonal Calendar",
+            "verified": true,
+            "eligible_for_alerts": true
+          },
+          {
+            "zone_code": "ZONE_CENTRE",
+            "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+            "crop": "RICE",
+            "product_code": "RICE_PADDY",
+            "crop_cycle": "vakiambiaty_recommandation_2023_2024",
+            "season_name": "vakiambiaty_2023_2024",
+            "crop_regime": "irrigated",
+            "calendar_version": "v1.1",
+            "calendar_type": "seasonal_recommendation",
+            "campaign": "2023/2024",
+            "variety": "Variété semi-tardive résistante au froid",
+            "current_phenological_stage": null,
+            "planting_months": [
+              11,
+              12
+            ],
+            "harvest_months": [
+              5,
+              6
+            ],
+            "peak_harvest_month": 5,
+            "water_sensitivity_profile": {
+              "tillering": "high",
+              "flowering": "critical",
+              "grain_filling": "medium"
+            },
+            "market_links": [
+              {
+                "location_code": "MDG11",
+                "location_name": "Antananarivo",
+                "flow_role": "primary_supply",
+                "proof_status": "official_supply_basin",
+                "source_evidence": "Avis MinAE 2023/2024"
+              }
+            ],
+            "source_reference": "MinAE / DGM Avis Décadaire Novembre 2023",
+            "verified": true,
+            "eligible_for_alerts": true
+          }
+        ],
+        "events_and_outlooks": [],
+        "facultative_sources": [
+          {
+            "source_id": "firms_mdg",
+            "source_name": "NASA FIRMS (Détection thermique & feux)",
+            "status": "unavailable",
+            "reason": "Source facultative non intégrée (clé d'accès NASA LANCE optionnelle). Aucun faux zéro fabriqué.",
+            "data_available": false
+          },
+          {
+            "source_id": "glofas_mdg",
+            "source_name": "Copernicus GloFAS (Débit & inondations)",
+            "status": "unavailable",
+            "reason": "Source facultative non configurée (modélisation hydrologique globale optionnelle).",
+            "data_available": false
+          },
+          {
+            "source_id": "copernicus_ndvi",
+            "source_name": "Copernicus Sentinel-2 NDVI (Biomasse)",
+            "status": "unavailable",
+            "reason": "Source facultative non configurée (télédétection haute résolution optionnelle).",
+            "data_available": false
+          }
+        ]
+      }
+    },
+    {
+      "path": "/v1/climate/summary",
+      "authenticated": true,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "location_pcode": "MDG11",
+        "location_name": "Analamanga",
+        "current_month": "2026-10-01",
+        "observed_precipitation_mm": 115.0,
+        "precipitation_anomaly_pct": 95.0,
+        "precipitation_risk_level": "low",
+        "aggregation_method": "zonal_mean (administratif sans masque agricole vérifié)",
+        "cropland_mask_applied": false,
+        "observed_source": "chirps",
+        "temperature_mean_c": 21.5,
+        "forecast_next_72h_precip_mm": 14.2,
+        "forecast_p10_mm": 6.0,
+        "forecast_p90_mm": 28.5,
+        "forecast_model": "ecmwf_ifs",
+        "forecast_issued_at": "2026-10-01T00:00:00Z",
+        "forecast_value_kind": "projected",
+        "active_crop_cycles": [
+          {
+            "zone_code": "ZONE_CENTRE",
+            "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+            "crop": "RICE",
+            "product_code": "RICE_PADDY",
+            "crop_cycle": "vakiambiaty",
+            "season_name": "vakiambiaty",
+            "crop_regime": "irrigated",
+            "calendar_version": "v1.0",
+            "calendar_type": "traditional_baseline",
+            "campaign": "baseline_permanent",
+            "variety": "Variétés locales de saison (Makalioka, Sebota)",
+            "current_phenological_stage": "planting",
+            "planting_months": [
+              10,
+              11,
+              12
+            ],
+            "harvest_months": [
+              4,
+              5,
+              6
+            ],
+            "peak_harvest_month": 5,
+            "water_sensitivity_profile": {
+              "tillering": "high",
+              "flowering": "critical",
+              "grain_filling": "medium"
+            },
+            "market_links": [
+              {
+                "location_code": "MDG11",
+                "location_name": "Antananarivo",
+                "flow_role": "primary_supply",
+                "proof_status": "official_supply_basin",
+                "source_evidence": "ODR Bulletin de suivi des flux Hauts Plateaux vers Analamanga"
+              },
+              {
+                "location_code": "MDG12",
+                "location_name": "Antsirabe",
+                "flow_role": "primary_supply",
+                "proof_status": "official_supply_basin",
+                "source_evidence": "MinAE DRDA Vakinankaratra Bilan Vivrier"
+              }
+            ],
+            "source_reference": "MinAE / FAO GIEWS Madagascar 2021",
+            "verified": true,
+            "eligible_for_alerts": true
+          },
+          {
+            "zone_code": "ZONE_CENTRE",
+            "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+            "crop": "RICE",
+            "product_code": "RICE_PADDY",
+            "crop_cycle": "hosy",
+            "season_name": "hosy",
+            "crop_regime": "irrigated",
+            "calendar_version": "v1.0",
+            "calendar_type": "traditional_baseline",
+            "campaign": "baseline_permanent",
+            "variety": "Riz précoce (Mailaka)",
+            "current_phenological_stage": "growing",
+            "planting_months": [
+              6,
+              7
+            ],
+            "harvest_months": [
+              11,
+              12,
+              1
+            ],
+            "peak_harvest_month": 12,
+            "water_sensitivity_profile": {
+              "tillering": "high",
+              "flowering": "critical",
+              "grain_filling": "medium"
+            },
+            "market_links": [
+              {
+                "location_code": "MDG11",
+                "location_name": "Antananarivo",
+                "flow_role": "primary_supply",
+                "proof_status": "official_supply_basin",
+                "source_evidence": "ODR Suivi des arrivages hosy sur les marchés urbains d'Antananarivo"
+              }
+            ],
+            "source_reference": "ODR Bulletin de suivi des riz précoces",
+            "verified": true,
+            "eligible_for_alerts": true
+          },
+          {
+            "zone_code": "ZONE_CENTRE",
+            "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+            "crop": "MAIZE",
+            "product_code": "MAIZE_GRAIN",
+            "crop_cycle": "principale",
+            "season_name": "principale",
+            "crop_regime": "rainfed",
+            "calendar_version": "v1.0",
+            "calendar_type": "traditional_baseline",
+            "campaign": "baseline_permanent",
+            "variety": "Maïs jaune et blanc local",
+            "current_phenological_stage": "planting",
+            "planting_months": [
+              10,
+              11,
+              12
+            ],
+            "harvest_months": [
+              3,
+              4,
+              5
+            ],
+            "peak_harvest_month": 4,
+            "water_sensitivity_profile": {
+              "vegetative": "medium",
+              "flowering": "critical",
+              "grain_filling": "medium"
+            },
+            "market_links": [
+              {
+                "location_code": "MDG12",
+                "location_name": "Antsirabe",
+                "flow_role": "primary_supply",
+                "proof_status": "official_supply_basin",
+                "source_evidence": "FEWS NET Livelihood Zone MG07 Central Highlands Maize"
+              }
+            ],
+            "source_reference": "FEWS NET Madagascar Seasonal Calendar",
+            "verified": true,
+            "eligible_for_alerts": true
+          },
+          {
+            "zone_code": "ZONE_CENTRE",
+            "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+            "crop": "RICE",
+            "product_code": "RICE_PADDY",
+            "crop_cycle": "vakiambiaty_recommandation_2023_2024",
+            "season_name": "vakiambiaty_2023_2024",
+            "crop_regime": "irrigated",
+            "calendar_version": "v1.1",
+            "calendar_type": "seasonal_recommendation",
+            "campaign": "2023/2024",
+            "variety": "Variété semi-tardive résistante au froid",
+            "current_phenological_stage": null,
+            "planting_months": [
+              11,
+              12
+            ],
+            "harvest_months": [
+              5,
+              6
+            ],
+            "peak_harvest_month": 5,
+            "water_sensitivity_profile": {
+              "tillering": "high",
+              "flowering": "critical",
+              "grain_filling": "medium"
+            },
+            "market_links": [
+              {
+                "location_code": "MDG11",
+                "location_name": "Antananarivo",
+                "flow_role": "primary_supply",
+                "proof_status": "official_supply_basin",
+                "source_evidence": "Avis MinAE 2023/2024"
+              }
+            ],
+            "source_reference": "MinAE / DGM Avis Décadaire Novembre 2023",
+            "verified": true,
+            "eligible_for_alerts": true
+          }
+        ],
+        "events_and_outlooks": [],
+        "facultative_sources": [
+          {
+            "source_id": "firms_mdg",
+            "source_name": "NASA FIRMS (Détection thermique & feux)",
+            "status": "unavailable",
+            "reason": "Source facultative non intégrée (clé d'accès NASA LANCE optionnelle). Aucun faux zéro fabriqué.",
+            "data_available": false
+          },
+          {
+            "source_id": "glofas_mdg",
+            "source_name": "Copernicus GloFAS (Débit & inondations)",
+            "status": "unavailable",
+            "reason": "Source facultative non configurée (modélisation hydrologique globale optionnelle).",
+            "data_available": false
+          },
+          {
+            "source_id": "copernicus_ndvi",
+            "source_name": "Copernicus Sentinel-2 NDVI (Biomasse)",
+            "status": "unavailable",
+            "reason": "Source facultative non configurée (télédétection haute résolution optionnelle).",
+            "data_available": false
+          }
+        ]
+      }
+    },
+    {
+      "path": "/v1/climate/anomalies?from=2026-01-01",
+      "authenticated": false,
+      "status": 500,
+      "length": null,
+      "sample": "Internal Server Error"
+    },
+    {
+      "path": "/v1/climate/anomalies?from=2026-01-01",
+      "authenticated": true,
+      "error": "RemoteProtocolError"
+    },
+    {
+      "path": "/v1/climate/forecasts",
+      "authenticated": false,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/climate/forecasts",
+      "authenticated": true,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/climate/calendars",
+      "authenticated": false,
+      "status": 200,
+      "length": 11,
+      "sample": [
+        {
+          "zone_code": "ZONE_CENTRE",
+          "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+          "crop": "RICE",
+          "product_code": "RICE_PADDY",
+          "crop_cycle": "vakiambiaty",
+          "season_name": "vakiambiaty",
+          "crop_regime": "irrigated",
+          "calendar_version": "v1.0",
+          "calendar_type": "traditional_baseline",
+          "campaign": "baseline_permanent",
+          "variety": "Variétés locales de saison (Makalioka, Sebota)",
+          "current_phenological_stage": "planting",
+          "planting_months": [
+            10,
+            11,
+            12
+          ],
+          "harvest_months": [
+            4,
+            5,
+            6
+          ],
+          "peak_harvest_month": 5,
+          "water_sensitivity_profile": {
+            "tillering": "high",
+            "flowering": "critical",
+            "grain_filling": "medium"
+          },
+          "market_links": [
+            {
+              "location_code": "MDG11",
+              "location_name": "Antananarivo",
+              "flow_role": "primary_supply",
+              "proof_status": "official_supply_basin",
+              "source_evidence": "ODR Bulletin de suivi des flux Hauts Plateaux vers Analamanga"
+            },
+            {
+              "location_code": "MDG12",
+              "location_name": "Antsirabe",
+              "flow_role": "primary_supply",
+              "proof_status": "official_supply_basin",
+              "source_evidence": "MinAE DRDA Vakinankaratra Bilan Vivrier"
+            }
+          ],
+          "source_reference": "MinAE / FAO GIEWS Madagascar 2021",
+          "verified": true,
+          "eligible_for_alerts": true
+        },
+        {
+          "zone_code": "ZONE_CENTRE",
+          "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+          "crop": "RICE",
+          "product_code": "RICE_PADDY",
+          "crop_cycle": "hosy",
+          "season_name": "hosy",
+          "crop_regime": "irrigated",
+          "calendar_version": "v1.0",
+          "calendar_type": "traditional_baseline",
+          "campaign": "baseline_permanent",
+          "variety": "Riz précoce (Mailaka)",
+          "current_phenological_stage": "growing",
+          "planting_months": [
+            6,
+            7
+          ],
+          "harvest_months": [
+            11,
+            12,
+            1
+          ],
+          "peak_harvest_month": 12,
+          "water_sensitivity_profile": {
+            "tillering": "high",
+            "flowering": "critical",
+            "grain_filling": "medium"
+          },
+          "market_links": [
+            {
+              "location_code": "MDG11",
+              "location_name": "Antananarivo",
+              "flow_role": "primary_supply",
+              "proof_status": "official_supply_basin",
+              "source_evidence": "ODR Suivi des arrivages hosy sur les marchés urbains d'Antananarivo"
+            }
+          ],
+          "source_reference": "ODR Bulletin de suivi des riz précoces",
+          "verified": true,
+          "eligible_for_alerts": true
+        }
+      ]
+    },
+    {
+      "path": "/v1/climate/calendars",
+      "authenticated": true,
+      "status": 200,
+      "length": 11,
+      "sample": [
+        {
+          "zone_code": "ZONE_CENTRE",
+          "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+          "crop": "RICE",
+          "product_code": "RICE_PADDY",
+          "crop_cycle": "vakiambiaty",
+          "season_name": "vakiambiaty",
+          "crop_regime": "irrigated",
+          "calendar_version": "v1.0",
+          "calendar_type": "traditional_baseline",
+          "campaign": "baseline_permanent",
+          "variety": "Variétés locales de saison (Makalioka, Sebota)",
+          "current_phenological_stage": "planting",
+          "planting_months": [
+            10,
+            11,
+            12
+          ],
+          "harvest_months": [
+            4,
+            5,
+            6
+          ],
+          "peak_harvest_month": 5,
+          "water_sensitivity_profile": {
+            "tillering": "high",
+            "flowering": "critical",
+            "grain_filling": "medium"
+          },
+          "market_links": [
+            {
+              "location_code": "MDG11",
+              "location_name": "Antananarivo",
+              "flow_role": "primary_supply",
+              "proof_status": "official_supply_basin",
+              "source_evidence": "ODR Bulletin de suivi des flux Hauts Plateaux vers Analamanga"
+            },
+            {
+              "location_code": "MDG12",
+              "location_name": "Antsirabe",
+              "flow_role": "primary_supply",
+              "proof_status": "official_supply_basin",
+              "source_evidence": "MinAE DRDA Vakinankaratra Bilan Vivrier"
+            }
+          ],
+          "source_reference": "MinAE / FAO GIEWS Madagascar 2021",
+          "verified": true,
+          "eligible_for_alerts": true
+        },
+        {
+          "zone_code": "ZONE_CENTRE",
+          "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+          "crop": "RICE",
+          "product_code": "RICE_PADDY",
+          "crop_cycle": "hosy",
+          "season_name": "hosy",
+          "crop_regime": "irrigated",
+          "calendar_version": "v1.0",
+          "calendar_type": "traditional_baseline",
+          "campaign": "baseline_permanent",
+          "variety": "Riz précoce (Mailaka)",
+          "current_phenological_stage": "growing",
+          "planting_months": [
+            6,
+            7
+          ],
+          "harvest_months": [
+            11,
+            12,
+            1
+          ],
+          "peak_harvest_month": 12,
+          "water_sensitivity_profile": {
+            "tillering": "high",
+            "flowering": "critical",
+            "grain_filling": "medium"
+          },
+          "market_links": [
+            {
+              "location_code": "MDG11",
+              "location_name": "Antananarivo",
+              "flow_role": "primary_supply",
+              "proof_status": "official_supply_basin",
+              "source_evidence": "ODR Suivi des arrivages hosy sur les marchés urbains d'Antananarivo"
+            }
+          ],
+          "source_reference": "ODR Bulletin de suivi des riz précoces",
+          "verified": true,
+          "eligible_for_alerts": true
+        }
+      ]
+    },
+    {
+      "path": "/v1/climate/events",
+      "authenticated": false,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/climate/events",
+      "authenticated": true,
+      "status": 200,
+      "length": 0,
+      "sample": []
+    },
+    {
+      "path": "/v1/climate/facultative-status",
+      "authenticated": false,
+      "status": 200,
+      "length": 3,
+      "sample": [
+        {
+          "source_id": "firms_mdg",
+          "source_name": "NASA FIRMS (Détection thermique & feux)",
+          "status": "unavailable",
+          "reason": "Source facultative non intégrée (clé d'accès NASA LANCE optionnelle). Aucun faux zéro fabriqué.",
+          "data_available": false
+        },
+        {
+          "source_id": "glofas_mdg",
+          "source_name": "Copernicus GloFAS (Débit & inondations)",
+          "status": "unavailable",
+          "reason": "Source facultative non configurée (modélisation hydrologique globale optionnelle).",
+          "data_available": false
+        }
+      ]
+    },
+    {
+      "path": "/v1/climate/facultative-status",
+      "authenticated": true,
+      "status": 200,
+      "length": 3,
+      "sample": [
+        {
+          "source_id": "firms_mdg",
+          "source_name": "NASA FIRMS (Détection thermique & feux)",
+          "status": "unavailable",
+          "reason": "Source facultative non intégrée (clé d'accès NASA LANCE optionnelle). Aucun faux zéro fabriqué.",
+          "data_available": false
+        },
+        {
+          "source_id": "glofas_mdg",
+          "source_name": "Copernicus GloFAS (Débit & inondations)",
+          "status": "unavailable",
+          "reason": "Source facultative non configurée (modélisation hydrologique globale optionnelle).",
+          "data_available": false
+        }
+      ]
+    },
+    {
+      "path": "/v1/supply/peak-forecast",
+      "authenticated": false,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "market_code": "MDG_ANOSIBE",
+        "market_name": null,
+        "supply_zone_code": "ZONE_CENTRE",
+        "crop": "RICE",
+        "product_code": "RICE_PADDY",
+        "campaign": "campaign_2023_2024",
+        "as_of_date": "2026-10-25",
+        "harvest_window_start_dekad": "2024-04-D1",
+        "harvest_window_end_dekad": "2024-06-D3",
+        "harvest_peak_dekad": "2024-05-D2",
+        "logistics_lag_dekads": 1,
+        "supply_window_start_dekad": "2024-04-D2",
+        "supply_window_end_dekad": "2024-07-D1",
+        "predicted_peak_dekad": "2024-05-D3",
+        "supply_window_start_date": "2024-04-11",
+        "supply_window_end_date": "2024-07-10",
+        "predicted_peak_start_date": "2024-05-21",
+        "predicted_peak_end_date": "2024-05-31",
+        "qualification": "baseline_logistics",
+        "confidence_score": 0.81,
+        "source_harvest_reference": "MinAE / FAO GIEWS Madagascar 2021",
+        "uncertainty_note": "Nominal harvest window shifted by 1 dekads logistics lag. No prior arrival records provided for market MDG_ANOSIBE. Baseline projection.",
+        "historical_cycles_evaluated": 0.0
+      }
+    },
+    {
+      "path": "/v1/supply/peak-forecast",
+      "authenticated": true,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "market_code": "MDG_ANOSIBE",
+        "market_name": null,
+        "supply_zone_code": "ZONE_CENTRE",
+        "crop": "RICE",
+        "product_code": "RICE_PADDY",
+        "campaign": "campaign_2023_2024",
+        "as_of_date": "2026-10-25",
+        "harvest_window_start_dekad": "2024-04-D1",
+        "harvest_window_end_dekad": "2024-06-D3",
+        "harvest_peak_dekad": "2024-05-D2",
+        "logistics_lag_dekads": 1,
+        "supply_window_start_dekad": "2024-04-D2",
+        "supply_window_end_dekad": "2024-07-D1",
+        "predicted_peak_dekad": "2024-05-D3",
+        "supply_window_start_date": "2024-04-11",
+        "supply_window_end_date": "2024-07-10",
+        "predicted_peak_start_date": "2024-05-21",
+        "predicted_peak_end_date": "2024-05-31",
+        "qualification": "baseline_logistics",
+        "confidence_score": 0.81,
+        "source_harvest_reference": "MinAE / FAO GIEWS Madagascar 2021",
+        "uncertainty_note": "Nominal harvest window shifted by 1 dekads logistics lag. No prior arrival records provided for market MDG_ANOSIBE. Baseline projection.",
+        "historical_cycles_evaluated": 0.0
+      }
+    },
+    {
+      "path": "/v1/supply/peak-forecast?crop=UNKNOWN&zone_code=UNKNOWN&campaign=bad",
+      "authenticated": false,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "market_code": "MDG_ANOSIBE",
+        "market_name": null,
+        "supply_zone_code": "ZONE_CENTRE",
+        "crop": "RICE",
+        "product_code": "RICE_PADDY",
+        "campaign": "campaign_2025_2026",
+        "as_of_date": "2026-10-25",
+        "harvest_window_start_dekad": "2026-04-D1",
+        "harvest_window_end_dekad": "2026-06-D3",
+        "harvest_peak_dekad": "2026-05-D2",
+        "logistics_lag_dekads": 1,
+        "supply_window_start_dekad": "2026-04-D2",
+        "supply_window_end_dekad": "2026-07-D1",
+        "predicted_peak_dekad": "2026-05-D3",
+        "supply_window_start_date": "2026-04-11",
+        "supply_window_end_date": "2026-07-10",
+        "predicted_peak_start_date": "2026-05-21",
+        "predicted_peak_end_date": "2026-05-31",
+        "qualification": "baseline_logistics",
+        "confidence_score": 0.81,
+        "source_harvest_reference": "MinAE / FAO GIEWS Madagascar 2021",
+        "uncertainty_note": "Nominal harvest window shifted by 1 dekads logistics lag. No prior arrival records provided for market MDG_ANOSIBE. Baseline projection.",
+        "historical_cycles_evaluated": 0.0
+      }
+    },
+    {
+      "path": "/v1/supply/peak-forecast?crop=UNKNOWN&zone_code=UNKNOWN&campaign=bad",
+      "authenticated": true,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "market_code": "MDG_ANOSIBE",
+        "market_name": null,
+        "supply_zone_code": "ZONE_CENTRE",
+        "crop": "RICE",
+        "product_code": "RICE_PADDY",
+        "campaign": "campaign_2025_2026",
+        "as_of_date": "2026-10-25",
+        "harvest_window_start_dekad": "2026-04-D1",
+        "harvest_window_end_dekad": "2026-06-D3",
+        "harvest_peak_dekad": "2026-05-D2",
+        "logistics_lag_dekads": 1,
+        "supply_window_start_dekad": "2026-04-D2",
+        "supply_window_end_dekad": "2026-07-D1",
+        "predicted_peak_dekad": "2026-05-D3",
+        "supply_window_start_date": "2026-04-11",
+        "supply_window_end_date": "2026-07-10",
+        "predicted_peak_start_date": "2026-05-21",
+        "predicted_peak_end_date": "2026-05-31",
+        "qualification": "baseline_logistics",
+        "confidence_score": 0.81,
+        "source_harvest_reference": "MinAE / FAO GIEWS Madagascar 2021",
+        "uncertainty_note": "Nominal harvest window shifted by 1 dekads logistics lag. No prior arrival records provided for market MDG_ANOSIBE. Baseline projection.",
+        "historical_cycles_evaluated": 0.0
+      }
+    },
+    {
+      "path": "/v1/supply/sufficiency",
+      "authenticated": false,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "total_cycles_observed": 0.0,
+        "min_cycles_required": 2,
+        "is_sufficient": false,
+        "total_observations": 0,
+        "earliest_date": null,
+        "latest_date": null,
+        "assessment_note": "No valid arrival dates found. History insufficient."
+      }
+    },
+    {
+      "path": "/v1/supply/sufficiency",
+      "authenticated": true,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "total_cycles_observed": 0.0,
+        "min_cycles_required": 2,
+        "is_sufficient": false,
+        "total_observations": 0,
+        "earliest_date": null,
+        "latest_date": null,
+        "assessment_note": "No valid arrival dates found. History insufficient."
+      }
+    },
+    {
+      "path": "/v1/supply/scenarios/templates",
+      "authenticated": false,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "public_regulator": {
+          "scenario_id": "SCENARIO_REGULATOR_BASELINE",
+          "title": "Surveillance des Tensions d'Approvisionnement Urbain (Antananarivo)",
+          "persona": "public_regulator",
+          "market_code": "MDG_ANOSIBE",
+          "product_code": "RICE_WHITE",
+          "campaign": "2024",
+          "parameters": {
+            "urban_population_served": {
+              "name": "urban_population_served",
+              "value": 2500000.0,
+              "unit": "capita",
+              "source_justification": "INSTAT RGPH-3 Agglomération d'Antananarivo 2024",
+              "default_value": 2500000.0,
+              "is_user_override": false
+            },
+            "daily_consumption_g_per_capita": {
+              "name": "daily_consumption_g_per_capita",
+              "value": 350.0,
+              "unit": "g/day/capita",
+              "source_justification": "INSTAT / EPM Enquête auprès des ménages, moyenne riz urbain",
+              "default_value": 350.0,
+              "is_user_override": false
+            },
+            "reserve_target_days": {
+              "name": "reserve_target_days",
+              "value": 30.0,
+              "unit": "days",
+              "source_justification": "SPM / Ministère du Commerce norme stock de sécurité PPN",
+              "default_value": 30.0,
+              "is_user_override": false
+            },
+            "import_arrival_share_pct": {
+              "name": "import_arrival_share_pct",
+              "value": 35.0,
+              "unit": "percent",
+              "source_justification": "ODR / Douanes part du riz importé dans la consommation de la capitale",
+              "default_value": 35.0,
+              "is_user_override": false
+            }
+          },
+          "author_id": "internal_analyst",
+          "created_at": "2026-10-25T11:34:22.138292Z",
+          "version": "v1.0",
+          "human_reviewed": false,
+          "evaluation_status": "NOT_EVALUATED"
+        },
+        "commercial_buyer": {
+          "scenario_id": "SCENARIO_BUYER_BASELINE",
+          "title": "Planification des Achats de Campagne et Optimisation d'Entrepôt",
+          "persona": "commercial_buyer",
+          "market_code": "MDG_ANOSIBE",
+          "product_code": "RICE_WHITE",
+          "campaign": "2024",
+          "parameters": {
+            "target_procurement_volume_tonnes": {
+              "name": "target_procurement_volume_tonnes",
+              "value": 5000.0,
+              "unit": "tonnes",
+              "source_justification": "Volume cible de collecte campagne principale grossiste",
+              "default_value": 5000.0,
+              "is_user_override": false
+            },
+            "peak_discount_target_pct": {
+              "name": "peak_discount_target_pct",
+              "value": 12.0,
+              "unit": "percent",
+              "source_justification": "Décote historique moyenne des prix de collecte en pic d'arrivage ODR",
+              "default_value": 12.0,
+              "is_user_override": false
+            },
+            "warehouse_capacity_tonnes": {
+              "name": "warehouse_capacity_tonnes",
+              "value": 8000.0,
+              "unit": "tonnes",
+              "source_justification": "Capacité nominale de stockage sécurisé",
+              "default_value": 8000.0,
+              "is_user_override": false
+            },
+            "holding_cost_mga_per_kg_month": {
+              "name": "holding_cost_mga_per_kg_month",
+              "value": 45.0,
+              "unit": "MGA/kg/month",
+              "source_justification": "Coût d'entreposage, gardiennage et pertes post-récolte estimé",
+              "default_value": 45.0,
+              "is_user_override": false
+            }
+          },
+          "author_id": "internal_analyst",
+          "created_at": "2026-10-25T11:34:22.138292Z",
+          "version": "v1.0",
+          "human_reviewed": false,
+          "evaluation_status": "NOT_EVALUATED"
+        },
+        "agricultural_planner": {
+          "scenario_id": "SCENARIO_AGRI_BASELINE",
+          "title": "Évaluation d'Impact Sécheresse et Élongation de la Soudure",
+          "persona": "agricultural_planner",
+          "market_code": "MDG_ANOSIBE",
+          "product_code": "RICE_PADDY",
+          "campaign": "2024",
+          "parameters": {
+            "rainfall_early_anomaly_pct": {
+              "name": "rainfall_early_anomaly_pct",
+              "value": -35.0,
+              "unit": "percent",
+              "source_justification": "CHIRPS anomalie pluviométrique précoce début de saison",
+              "default_value": -35.0,
+              "is_user_override": false
+            },
+            "harvest_shift_dekads": {
+              "name": "harvest_shift_dekads",
+              "value": 2.0,
+              "unit": "dekads",
+              "source_justification": "Règle agronomique MinAE/FOFIFA décalage semis-repiquage pluvial",
+              "default_value": 2.0,
+              "is_user_override": false
+            },
+            "yield_reduction_pct": {
+              "name": "yield_reduction_pct",
+              "value": 18.0,
+              "unit": "percent",
+              "source_justification": "Modèle d'impact hydrique FAO stress phénologique",
+              "default_value": 18.0,
+              "is_user_override": false
+            },
+            "baseline_lean_season_weeks": {
+              "name": "baseline_lean_season_weeks",
+              "value": 12.0,
+              "unit": "weeks",
+              "source_justification": "Durée moyenne nominale de la période de soudure",
+              "default_value": 12.0,
+              "is_user_override": false
+            }
+          },
+          "author_id": "internal_analyst",
+          "created_at": "2026-10-25T11:34:22.138292Z",
+          "version": "v1.0",
+          "human_reviewed": false,
+          "evaluation_status": "NOT_EVALUATED"
+        }
+      }
+    },
+    {
+      "path": "/v1/supply/scenarios/templates",
+      "authenticated": true,
+      "status": 200,
+      "length": null,
+      "sample": {
+        "public_regulator": {
+          "scenario_id": "SCENARIO_REGULATOR_BASELINE",
+          "title": "Surveillance des Tensions d'Approvisionnement Urbain (Antananarivo)",
+          "persona": "public_regulator",
+          "market_code": "MDG_ANOSIBE",
+          "product_code": "RICE_WHITE",
+          "campaign": "2024",
+          "parameters": {
+            "urban_population_served": {
+              "name": "urban_population_served",
+              "value": 2500000.0,
+              "unit": "capita",
+              "source_justification": "INSTAT RGPH-3 Agglomération d'Antananarivo 2024",
+              "default_value": 2500000.0,
+              "is_user_override": false
+            },
+            "daily_consumption_g_per_capita": {
+              "name": "daily_consumption_g_per_capita",
+              "value": 350.0,
+              "unit": "g/day/capita",
+              "source_justification": "INSTAT / EPM Enquête auprès des ménages, moyenne riz urbain",
+              "default_value": 350.0,
+              "is_user_override": false
+            },
+            "reserve_target_days": {
+              "name": "reserve_target_days",
+              "value": 30.0,
+              "unit": "days",
+              "source_justification": "SPM / Ministère du Commerce norme stock de sécurité PPN",
+              "default_value": 30.0,
+              "is_user_override": false
+            },
+            "import_arrival_share_pct": {
+              "name": "import_arrival_share_pct",
+              "value": 35.0,
+              "unit": "percent",
+              "source_justification": "ODR / Douanes part du riz importé dans la consommation de la capitale",
+              "default_value": 35.0,
+              "is_user_override": false
+            }
+          },
+          "author_id": "internal_analyst",
+          "created_at": "2026-10-25T11:34:22.196347Z",
+          "version": "v1.0",
+          "human_reviewed": false,
+          "evaluation_status": "NOT_EVALUATED"
+        },
+        "commercial_buyer": {
+          "scenario_id": "SCENARIO_BUYER_BASELINE",
+          "title": "Planification des Achats de Campagne et Optimisation d'Entrepôt",
+          "persona": "commercial_buyer",
+          "market_code": "MDG_ANOSIBE",
+          "product_code": "RICE_WHITE",
+          "campaign": "2024",
+          "parameters": {
+            "target_procurement_volume_tonnes": {
+              "name": "target_procurement_volume_tonnes",
+              "value": 5000.0,
+              "unit": "tonnes",
+              "source_justification": "Volume cible de collecte campagne principale grossiste",
+              "default_value": 5000.0,
+              "is_user_override": false
+            },
+            "peak_discount_target_pct": {
+              "name": "peak_discount_target_pct",
+              "value": 12.0,
+              "unit": "percent",
+              "source_justification": "Décote historique moyenne des prix de collecte en pic d'arrivage ODR",
+              "default_value": 12.0,
+              "is_user_override": false
+            },
+            "warehouse_capacity_tonnes": {
+              "name": "warehouse_capacity_tonnes",
+              "value": 8000.0,
+              "unit": "tonnes",
+              "source_justification": "Capacité nominale de stockage sécurisé",
+              "default_value": 8000.0,
+              "is_user_override": false
+            },
+            "holding_cost_mga_per_kg_month": {
+              "name": "holding_cost_mga_per_kg_month",
+              "value": 45.0,
+              "unit": "MGA/kg/month",
+              "source_justification": "Coût d'entreposage, gardiennage et pertes post-récolte estimé",
+              "default_value": 45.0,
+              "is_user_override": false
+            }
+          },
+          "author_id": "internal_analyst",
+          "created_at": "2026-10-25T11:34:22.196347Z",
+          "version": "v1.0",
+          "human_reviewed": false,
+          "evaluation_status": "NOT_EVALUATED"
+        },
+        "agricultural_planner": {
+          "scenario_id": "SCENARIO_AGRI_BASELINE",
+          "title": "Évaluation d'Impact Sécheresse et Élongation de la Soudure",
+          "persona": "agricultural_planner",
+          "market_code": "MDG_ANOSIBE",
+          "product_code": "RICE_PADDY",
+          "campaign": "2024",
+          "parameters": {
+            "rainfall_early_anomaly_pct": {
+              "name": "rainfall_early_anomaly_pct",
+              "value": -35.0,
+              "unit": "percent",
+              "source_justification": "CHIRPS anomalie pluviométrique précoce début de saison",
+              "default_value": -35.0,
+              "is_user_override": false
+            },
+            "harvest_shift_dekads": {
+              "name": "harvest_shift_dekads",
+              "value": 2.0,
+              "unit": "dekads",
+              "source_justification": "Règle agronomique MinAE/FOFIFA décalage semis-repiquage pluvial",
+              "default_value": 2.0,
+              "is_user_override": false
+            },
+            "yield_reduction_pct": {
+              "name": "yield_reduction_pct",
+              "value": 18.0,
+              "unit": "percent",
+              "source_justification": "Modèle d'impact hydrique FAO stress phénologique",
+              "default_value": 18.0,
+              "is_user_override": false
+            },
+            "baseline_lean_season_weeks": {
+              "name": "baseline_lean_season_weeks",
+              "value": 12.0,
+              "unit": "weeks",
+              "source_justification": "Durée moyenne nominale de la période de soudure",
+              "default_value": 12.0,
+              "is_user_override": false
+            }
+          },
+          "author_id": "internal_analyst",
+          "created_at": "2026-10-25T11:34:22.196347Z",
+          "version": "v1.0",
+          "human_reviewed": false,
+          "evaluation_status": "NOT_EVALUATED"
+        }
+      }
+    },
+    {
+      "path": "/v1/alerts",
+      "authenticated": false,
+      "status": 200,
+      "length": 5,
+      "sample": [
+        {
+          "alert_id": "b2821267-f529-4921-8047-dd1154c6dfc2",
+          "rule_code": "PRICE_SPIKE",
+          "dedupe_key": "PRICE_SPIKE|rice_milled|MG11|2024-03",
+          "severity": "high",
+          "product_code": "rice_milled",
+          "location_pcode": "MG11",
+          "title": "Flambée des prix : Riz blanc à Analamanga (+79.0% sur 1 mois, z=18.04)",
+          "evidence": {
+            "rule": "PRICE_SPIKE",
+            "month": "2024-03-01",
+            "chg_1m": 0.7903,
+            "sources": [
+              "dummy_12a90a",
+              "wb_rtfp_mdg",
+              "wfp_hdx_mdg"
+            ],
+            "z_score": 18.04,
+            "n_sources": 3,
+            "miss_count": 0,
+            "anomaly_type": "PRICE_SPIKE",
+            "median_price": 5550.0,
+            "product_code": "rice_milled",
+            "product_name": "Riz blanc",
+            "location_name": "Analamanga",
+            "location_pcode": "MG11",
+            "z_score_robust": 18.04,
+            "chosen_source_id": "dummy_12a90a"
+          },
+          "state": "open",
+          "first_seen_at": "2026-10-07T16:59:49.053565Z",
+          "last_seen_at": "2026-10-07T16:59:49.053565Z"
+        },
+        {
+          "alert_id": "7b9565f8-069a-46ac-9bb5-dea5b926cc34",
+          "rule_code": "PRICE_DROP",
+          "dedupe_key": "PRICE_DROP|maize|MG11|2024-01",
+          "severity": "medium",
+          "product_code": "maize",
+          "location_pcode": "MG11",
+          "title": "Chute anormale des prix : Maïs grain à Analamanga (-55.6% sur 1 mois, z=-44.97)",
+          "evidence": {
+            "rule": "PRICE_DROP",
+            "month": "2024-01-01",
+            "chg_1m": -0.5556,
+            "sources": [
+              "dummy_12a90a",
+              "mincc_ppn"
+            ],
+            "z_score": -44.97,
+            "n_sources": 2,
+            "miss_count": 0,
+            "anomaly_type": "PRICE_DROP",
+            "median_price": 800.0,
+            "product_code": "maize",
+            "product_name": "Maïs grain",
+            "location_name": "Analamanga",
+            "location_pcode": "MG11",
+            "z_score_robust": -44.97,
+            "chosen_source_id": "dummy_12a90a"
+          },
+          "state": "open",
+          "first_seen_at": "2026-10-07T16:59:49.053565Z",
+          "last_seen_at": "2026-10-07T16:59:49.053565Z"
+        }
+      ]
+    },
+    {
+      "path": "/v1/alerts",
+      "authenticated": true,
+      "status": 200,
+      "length": 5,
+      "sample": [
+        {
+          "alert_id": "b2821267-f529-4921-8047-dd1154c6dfc2",
+          "rule_code": "PRICE_SPIKE",
+          "dedupe_key": "PRICE_SPIKE|rice_milled|MG11|2024-03",
+          "severity": "high",
+          "product_code": "rice_milled",
+          "location_pcode": "MG11",
+          "title": "Flambée des prix : Riz blanc à Analamanga (+79.0% sur 1 mois, z=18.04)",
+          "evidence": {
+            "rule": "PRICE_SPIKE",
+            "month": "2024-03-01",
+            "chg_1m": 0.7903,
+            "sources": [
+              "dummy_12a90a",
+              "wb_rtfp_mdg",
+              "wfp_hdx_mdg"
+            ],
+            "z_score": 18.04,
+            "n_sources": 3,
+            "miss_count": 0,
+            "anomaly_type": "PRICE_SPIKE",
+            "median_price": 5550.0,
+            "product_code": "rice_milled",
+            "product_name": "Riz blanc",
+            "location_name": "Analamanga",
+            "location_pcode": "MG11",
+            "z_score_robust": 18.04,
+            "chosen_source_id": "dummy_12a90a"
+          },
+          "state": "open",
+          "first_seen_at": "2026-10-07T16:59:49.053565Z",
+          "last_seen_at": "2026-10-07T16:59:49.053565Z"
+        },
+        {
+          "alert_id": "7b9565f8-069a-46ac-9bb5-dea5b926cc34",
+          "rule_code": "PRICE_DROP",
+          "dedupe_key": "PRICE_DROP|maize|MG11|2024-01",
+          "severity": "medium",
+          "product_code": "maize",
+          "location_pcode": "MG11",
+          "title": "Chute anormale des prix : Maïs grain à Analamanga (-55.6% sur 1 mois, z=-44.97)",
+          "evidence": {
+            "rule": "PRICE_DROP",
+            "month": "2024-01-01",
+            "chg_1m": -0.5556,
+            "sources": [
+              "dummy_12a90a",
+              "mincc_ppn"
+            ],
+            "z_score": -44.97,
+            "n_sources": 2,
+            "miss_count": 0,
+            "anomaly_type": "PRICE_DROP",
+            "median_price": 800.0,
+            "product_code": "maize",
+            "product_name": "Maïs grain",
+            "location_name": "Analamanga",
+            "location_pcode": "MG11",
+            "z_score_robust": -44.97,
+            "chosen_source_id": "dummy_12a90a"
+          },
+          "state": "open",
+          "first_seen_at": "2026-10-07T16:59:49.053565Z",
+          "last_seen_at": "2026-10-07T16:59:49.053565Z"
+        }
+      ]
+    },
+    {
+      "path": "/v1/bulletins",
+      "authenticated": false,
+      "status": 200,
+      "length": 33,
+      "sample": [
+        {
+          "bulletin_id": "63bbea65-9e52-44f9-bc59-dc8e6c76d8f3",
+          "period_start": "2026-10-07",
+          "period_end": "2026-10-07",
+          "status": "draft",
+          "facts": {
+            "f1": {
+              "val": 3000,
+              "label": "Prix"
+            }
+          },
+          "created_at": "2026-10-07T04:01:06.684545Z",
+          "approved_at": null,
+          "approved_by": null
+        },
+        {
+          "bulletin_id": "e040855a-6e7c-4967-9856-2c325e9eaaac",
+          "period_start": "2026-10-07",
+          "period_end": "2026-10-07",
+          "status": "draft",
+          "facts": {
+            "f1": {
+              "val": 3000,
+              "label": "Prix"
+            }
+          },
+          "created_at": "2026-10-07T10:31:41.197943Z",
+          "approved_at": null,
+          "approved_by": null
+        }
+      ]
+    },
+    {
+      "path": "/v1/bulletins",
+      "authenticated": true,
+      "status": 200,
+      "length": 33,
+      "sample": [
+        {
+          "bulletin_id": "63bbea65-9e52-44f9-bc59-dc8e6c76d8f3",
+          "period_start": "2026-10-07",
+          "period_end": "2026-10-07",
+          "status": "draft",
+          "facts": {
+            "f1": {
+              "val": 3000,
+              "label": "Prix"
+            }
+          },
+          "created_at": "2026-10-07T04:01:06.684545Z",
+          "approved_at": null,
+          "approved_by": null
+        },
+        {
+          "bulletin_id": "e040855a-6e7c-4967-9856-2c325e9eaaac",
+          "period_start": "2026-10-07",
+          "period_end": "2026-10-07",
+          "status": "draft",
+          "facts": {
+            "f1": {
+              "val": 3000,
+              "label": "Prix"
+            }
+          },
+          "created_at": "2026-10-07T10:31:41.197943Z",
+          "approved_at": null,
+          "approved_by": null
+        }
+      ]
+    },
+    {
+      "path": "/v1/sources",
+      "authenticated": false,
+      "status": 200,
+      "length": 190,
+      "sample": [
+        {
+          "source_id": "chirps",
+          "name": "CHIRPS – Climate Hazards Center InfraRed Precipitation with Station Data",
+          "priority": "P2",
+          "status": "planned",
+          "freshness_sla_days": 62,
+          "freshness_days": null,
+          "is_stale": null,
+          "latest_run_status": null,
+          "last_run_started_at": null
+        },
+        {
+          "source_id": "douanes_stats",
+          "name": "Douanes Malagasy – Statistiques du Commerce Extérieur",
+          "priority": "P1",
+          "status": "active",
+          "freshness_sla_days": 62,
+          "freshness_days": 17,
+          "is_stale": false,
+          "latest_run_status": "success",
+          "last_run_started_at": "2026-10-21T10:20:38.152021Z"
+        }
+      ]
+    },
+    {
+      "path": "/v1/sources",
+      "authenticated": true,
+      "status": 200,
+      "length": 190,
+      "sample": [
+        {
+          "source_id": "chirps",
+          "name": "CHIRPS – Climate Hazards Center InfraRed Precipitation with Station Data",
+          "priority": "P2",
+          "status": "planned",
+          "freshness_sla_days": 62,
+          "freshness_days": null,
+          "is_stale": null,
+          "latest_run_status": null,
+          "last_run_started_at": null
+        },
+        {
+          "source_id": "douanes_stats",
+          "name": "Douanes Malagasy – Statistiques du Commerce Extérieur",
+          "priority": "P1",
+          "status": "active",
+          "freshness_sla_days": 62,
+          "freshness_days": 17,
+          "is_stale": false,
+          "latest_run_status": "success",
+          "last_run_started_at": "2026-10-21T10:20:38.152021Z"
+        }
+      ]
+    },
+    {
+      "path": "/v1/sources/collection-options",
+      "authenticated": false,
+      "status": 401,
+      "length": null,
+      "sample": {
+        "type": "https://api.ketrika.com/errors/unauthorized",
+        "title": "Unauthorized",
+        "status": 401,
+        "detail": "Authentication required",
+        "instance": "/v1/sources/collection-options"
+      }
+    },
+    {
+      "path": "/v1/sources/collection-options",
+      "authenticated": true,
+      "status": 200,
+      "length": 5,
+      "sample": [
+        "douanes_stats",
+        "faostat"
+      ]
+    },
+    {
+      "path": "/v1/admin/review",
+      "authenticated": false,
+      "status": 401,
+      "length": null,
+      "sample": {
+        "type": "https://api.ketrika.com/errors/unauthorized",
+        "title": "Unauthorized",
+        "status": 401,
+        "detail": "Authentication required",
+        "instance": "/v1/admin/review"
+      }
+    },
+    {
+      "path": "/v1/admin/review",
+      "authenticated": true,
+      "status": 200,
+      "length": 55,
+      "sample": [
+        {
+          "review_id": "d1c111c4-76a5-45ca-bf01-0492b43da004",
+          "kind": "unknown_location",
+          "source_record_id": "6c422b34-6897-4761-a43e-5aeaa4778dae",
+          "payload": {
+            "reason": "unresolved_or_ambiguous_location",
+            "source_id": "wb_rtfp_mdg",
+            "observation_id": "961cb497-d562-402c-ac77-2daad368d1e8",
+            "normalization_version": 2
+          },
+          "status": "open",
+          "created_at": "2026-10-24T13:13:12.852817Z",
+          "resolved_at": null,
+          "resolved_by": null
+        },
+        {
+          "review_id": "e6d2521f-95ed-4845-bce4-a1a8b095f5dd",
+          "kind": "unknown_location",
+          "source_record_id": "6c422b34-6897-4761-a43e-5aeaa4778dae",
+          "payload": {
+            "reason": "unresolved_or_ambiguous_location",
+            "source_id": "wb_rtfp_mdg",
+            "observation_id": "55355124-9bfa-4337-94cd-98cc00ddd428",
+            "normalization_version": 2
+          },
+          "status": "open",
+          "created_at": "2026-10-24T13:13:12.852817Z",
+          "resolved_at": null,
+          "resolved_by": null
+        }
+      ]
+    }
+  ],
+  "sql": {
+    "price_by_source_kind": [
+      {
+        "source_id": "dummy_002298",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_004e71",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_03a821",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_04b348",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_073111",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_097a16",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_09fb87",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_0d67fb",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_11f13d",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_12a90a",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_1a113d",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_1aafcd",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_21c27c",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_241ec3",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_320601",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_35ffed",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_396cee",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_3ba4a4",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_3dc122",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_410f63",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_414afb",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_4a4261",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_4a9348",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_4ac12c",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_4b09ed",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_515a63",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_533332",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_574ac9",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_58a229",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_5907df",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_63d56c",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_680a99",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_68281d",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_685f73",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_6a95fb",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_6c8446",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_6ca9d1",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_6cf39e",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_724ff3",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_7f0d00",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_82a117",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_869411",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_8c5c16",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_8ea4dc",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_9294fd",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_92fd5a",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_93045e",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_9eecdb",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_a3bfb9",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_a54ea4",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_a7a863",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_a814b3",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_acd267",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_b102ad",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_b1c73e",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_b3c07f",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_b501ab",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_bf7d9c",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_c2e6b7",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_ca9390",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_cfc5fc",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_d380d1",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_dd906e",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_de11df",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_df98d9",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_e1fd1f",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_e9ed9f",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_eef748",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_f219dd",
+        "observed_or_imputed": "observed",
+        "total": 4,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "dummy_f59632",
+        "observed_or_imputed": "observed",
+        "total": 3,
+        "current": 0,
+        "self_linked": 3,
+        "earliest": "2025-01-01",
+        "latest": "2025-01-01"
+      },
+      {
+        "source_id": "miasa_odr",
+        "observed_or_imputed": "observed",
+        "total": 194,
+        "current": 0,
+        "self_linked": 194,
+        "earliest": "2018-05-01",
+        "latest": "2024-02-01"
+      },
+      {
+        "source_id": "mincc_ppn",
+        "observed_or_imputed": "observed",
+        "total": 248,
+        "current": 0,
+        "self_linked": 248,
+        "earliest": "2022-10-01",
+        "latest": "2024-03-01"
+      },
+      {
+        "source_id": "wb_rtfp_mdg",
+        "observed_or_imputed": "imputed",
+        "total": 164,
+        "current": 135,
+        "self_linked": 14,
+        "earliest": "2010-05-01",
+        "latest": "2026-10-01"
+      },
+      {
+        "source_id": "wb_rtfp_mdg",
+        "observed_or_imputed": "observed",
+        "total": 24,
+        "current": 0,
+        "self_linked": 24,
+        "earliest": "2024-01-01",
+        "latest": "2024-03-01"
+      },
+      {
+        "source_id": "wfp_hdx_mdg",
+        "observed_or_imputed": "observed",
+        "total": 38,
+        "current": 0,
+        "self_linked": 38,
+        "earliest": "2024-01-15",
+        "latest": "2024-03-01"
+      }
+    ],
+    "gold_state": [
+      {
+        "matviewname": "cpi_food",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "economic_dashboard",
+        "ispopulated": false
+      },
+      {
+        "matviewname": "forecast_latest",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "import_dependency",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "market_coverage",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "market_health",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "price_changes",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "price_monthly",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "price_monthly_best",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "price_obs_current",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "source_health",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "stock_latest",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "trade_monthly",
+        "ispopulated": true
+      },
+      {
+        "matviewname": "weather_monthly",
+        "ispopulated": true
+      }
+    ],
+    "stock_columns": [
+      {
+        "column_name": "observation_id"
+      },
+      {
+        "column_name": "source_record_id"
+      },
+      {
+        "column_name": "natural_key"
+      },
+      {
+        "column_name": "product_raw"
+      },
+      {
+        "column_name": "product_id"
+      },
+      {
+        "column_name": "location_raw"
+      },
+      {
+        "column_name": "location_id"
+      },
+      {
+        "column_name": "period_start"
+      },
+      {
+        "column_name": "period_end"
+      },
+      {
+        "column_name": "published_at"
+      },
+      {
+        "column_name": "ingested_at"
+      },
+      {
+        "column_name": "quantity_raw"
+      },
+      {
+        "column_name": "quantity_value"
+      },
+      {
+        "column_name": "unit_raw"
+      },
+      {
+        "column_name": "quantity_base"
+      },
+      {
+        "column_name": "base_unit"
+      },
+      {
+        "column_name": "stock_status"
+      },
+      {
+        "column_name": "coverage_days"
+      },
+      {
+        "column_name": "extraction_method"
+      },
+      {
+        "column_name": "evidence"
+      },
+      {
+        "column_name": "confidence"
+      },
+      {
+        "column_name": "review_status"
+      },
+      {
+        "column_name": "superseded_by"
+      },
+      {
+        "column_name": "target"
+      },
+      {
+        "column_name": "measurement_mode"
+      },
+      {
+        "column_name": "market_type"
+      },
+      {
+        "column_name": "market_code"
+      }
+    ],
+    "price_columns": [
+      {
+        "column_name": "observation_id"
+      },
+      {
+        "column_name": "source_record_id"
+      },
+      {
+        "column_name": "natural_key"
+      },
+      {
+        "column_name": "product_raw"
+      },
+      {
+        "column_name": "product_id"
+      },
+      {
+        "column_name": "variety"
+      },
+      {
+        "column_name": "quality_grade"
+      },
+      {
+        "column_name": "location_raw"
+      },
+      {
+        "column_name": "location_id"
+      },
+      {
+        "column_name": "market_name"
+      },
+      {
+        "column_name": "actor_level"
+      },
+      {
+        "column_name": "period_start"
+      },
+      {
+        "column_name": "period_end"
+      },
+      {
+        "column_name": "published_at"
+      },
+      {
+        "column_name": "ingested_at"
+      },
+      {
+        "column_name": "price_raw"
+      },
+      {
+        "column_name": "price_value"
+      },
+      {
+        "column_name": "currency_raw"
+      },
+      {
+        "column_name": "unit_raw"
+      },
+      {
+        "column_name": "package_quantity"
+      },
+      {
+        "column_name": "package_unit"
+      },
+      {
+        "column_name": "price_mga_per_base"
+      },
+      {
+        "column_name": "base_unit"
+      },
+      {
+        "column_name": "conversion_status"
+      },
+      {
+        "column_name": "observed_or_imputed"
+      },
+      {
+        "column_name": "missing_code"
+      },
+      {
+        "column_name": "extraction_method"
+      },
+      {
+        "column_name": "evidence"
+      },
+      {
+        "column_name": "confidence"
+      },
+      {
+        "column_name": "review_status"
+      },
+      {
+        "column_name": "superseded_by"
+      }
+    ],
+    "record_columns": [
+      {
+        "column_name": "source_record_id"
+      },
+      {
+        "column_name": "source_id"
+      },
+      {
+        "column_name": "source_url"
+      },
+      {
+        "column_name": "retrieved_via"
+      },
+      {
+        "column_name": "object_key"
+      },
+      {
+        "column_name": "content_sha256"
+      },
+      {
+        "column_name": "mime_type"
+      },
+      {
+        "column_name": "http_status"
+      },
+      {
+        "column_name": "http_etag"
+      },
+      {
+        "column_name": "http_last_modified"
+      },
+      {
+        "column_name": "published_at"
+      },
+      {
+        "column_name": "fetched_at"
+      },
+      {
+        "column_name": "parser_version"
+      },
+      {
+        "column_name": "extraction_status"
+      }
+    ],
+    "source_status": [
+      {
+        "source_id": "chirps",
+        "status": "planned"
+      },
+      {
+        "source_id": "douanes_stats",
+        "status": "active"
+      },
+      {
+        "source_id": "failing_src_2098c6",
+        "status": "active"
+      },
+      {
+        "source_id": "failing_src_3a72bc",
+        "status": "active"
+      },
+      {
+        "source_id": "failing_src_3d807d",
+        "status": "active"
+      },
+      {
+        "source_id": "failing_src_6d4f11",
+        "status": "active"
+      },
+      {
+        "source_id": "failing_src_85cf75",
+        "status": "active"
+      },
+      {
+        "source_id": "failing_src_eb4d67",
+        "status": "active"
+      },
+      {
+        "source_id": "faostat",
+        "status": "active"
+      },
+      {
+        "source_id": "instat_nipc",
+        "status": "active"
+      },
+      {
+        "source_id": "miasa_odr",
+        "status": "active"
+      },
+      {
+        "source_id": "mincc_ppn",
+        "status": "active"
+      },
+      {
+        "source_id": "nasa_power",
+        "status": "disabled"
+      },
+      {
+        "source_id": "ocha_codab_mdg",
+        "status": "active"
+      },
+      {
+        "source_id": "wb_rtfp_mdg",
+        "status": "active"
+      },
+      {
+        "source_id": "wfp_hdx_mdg",
+        "status": "disabled"
+      }
+    ],
+    "current_price_duplicates": [],
+    "table_inventory": [
+      {
+        "table_schema": "meta",
+        "table_name": "collection_request"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "document_partition"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "http_daily_budget"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "http_domain_pacing"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "http_policy_stop"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "ingestion_batch"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "ingestion_batch_member"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "ingestion_run"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "llm_call"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "silver_attempt"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "silver_attempt_member"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "silver_attempt_result"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "source"
+      },
+      {
+        "table_schema": "meta",
+        "table_name": "source_record"
+      },
+      {
+        "table_schema": "ml",
+        "table_name": "forecast"
+      },
+      {
+        "table_schema": "ml",
+        "table_name": "forecast_evaluation"
+      },
+      {
+        "table_schema": "ml",
+        "table_name": "model_run"
+      },
+      {
+        "table_schema": "obs",
+        "table_name": "cpi_observation"
+      },
+      {
+        "table_schema": "obs",
+        "table_name": "event"
+      },
+      {
+        "table_schema": "obs",
+        "table_name": "macro_observation"
+      },
+      {
+        "table_schema": "obs",
+        "table_name": "price_observation"
+      },
+      {
+        "table_schema": "obs",
+        "table_name": "production_observation"
+      },
+      {
+        "table_schema": "obs",
+        "table_name": "stock_observation"
+      },
+      {
+        "table_schema": "obs",
+        "table_name": "trade_flow"
+      },
+      {
+        "table_schema": "obs",
+        "table_name": "weather_forecast"
+      },
+      {
+        "table_schema": "obs",
+        "table_name": "weather_observation"
+      },
+      {
+        "table_schema": "ops",
+        "table_name": "alert"
+      },
+      {
+        "table_schema": "ops",
+        "table_name": "bulletin"
+      },
+      {
+        "table_schema": "ops",
+        "table_name": "dq_result"
+      },
+      {
+        "table_schema": "ops",
+        "table_name": "review_item"
+      }
+    ],
+    "ref_aliases": [
+      {
+        "origin": "seed",
+        "count": 38
+      },
+      {
+        "origin": "wb_microdata_provenance",
+        "count": 1
+      }
+    ],
+    "obs.stock_observation": 35,
+    "obs.trade_flow": 51,
+    "obs.weather_observation": 116,
+    "obs.macro_observation": 0,
+    "obs.weather_forecast": 0,
+    "obs.event": 0,
+    "ml.forecast": 41,
+    "ml.model_run": 2,
+    "ml.forecast_evaluation": 0,
+    "ops.alert": 5,
+    "ops.bulletin": 33
+  },
+  "as_of_dataset": {
+    "error": "ProgrammingError",
+    "detail": "(psycopg.errors.UndefinedColumn) column sr.storage_key does not exist\nLINE 5:                 sr.storage_key AS bronze_object_key,\n                        ^\n"
+  }
+}

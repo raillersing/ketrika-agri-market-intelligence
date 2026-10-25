@@ -1,5 +1,9 @@
 # SPECS : spécifications techniques normatives du MVP
 
+## Note de réception documentaire — audit2026-10-25 / ADR-120
+
+Ces contrats restent obligatoires ; ils ne décrivent pas tous un comportement déjà conforme. L'[audit indépendant](../audits/2026-10-25/INDEPENDENT_AUDIT.md) constate notamment des valeurs fabriquées en accueil/climat/offre, une auth incomplète, des défauts H3/restore et des raccordements ML absents. Les spécifications existantes ne sont pas assouplies pour recevoir ces défauts. La matrice74 tâches distingue code présent et qualification ; le plan26 lots précise les corrections avant poursuite. Toute extension de contrat proposée par ces lots exige encore ADR et modification de la section concernée avant code ; aucun nouveau schéma/endpoint n'est adopté par cette seule note. L'état courant est PARTIAL.
+
 ADR-119 / CI éphémère : après qa-build et avant check, relever l'espace disque, purger uniquement le cache du constructeur Docker puis relever le disque de nouveau. Les images finales, conteneurs et volumes sont conservés ; aucune purge locale ni changement de sélection/seuil de tests. Cette variation de l'environnement est reçue par un check CI complet.
 
 ADR-119 : qa-build construit également ketrika-minio:qa-r0 depuis les commits officiels serveur07c3a429bfed433e49018cb0f78a52145d4bedeb/client7394ce0dd2a80935aded936b09fa12cbb3cb8096 avec Go1.24.6 en stage Docker figé. Le profil QA utilise cette image pour le serveur et minio-init ; les profils actifs restent inchangés. Les licences et la recette documentent l'origine. Une réception complète avec cette nouvelle image est obligatoire.

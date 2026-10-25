@@ -1,5 +1,7 @@
 # market_supply : Enquêtes d'Approvisionnement et Stocks des Marchés Vivriers
 
+> Audit indépendant2026-10-25 : registre `active`, SQL `absent`. Pas de réception live actuelle déduite de la présence du code. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 - **Propriétaire / licence / attribution :** Observatoire du Riz (ODR) / Direction Régionale du Commerce et de la Consommation (DRCC). Licence : Protocole d'enquête partenariale et relevés officiels (R5.1, ADR-088). Attribution obligatoire : « Observatoire du Riz (ODR) / Direction Régionale du Commerce, Madagascar ».
 - **Famille de source (`source_family`) :** `madagascar_gov` (famille institutionnelle malgache, données de flux physiques et stocks).
 - **URL vérifiées (date, code HTTP) :**

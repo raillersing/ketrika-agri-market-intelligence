@@ -1,5 +1,7 @@
 # chirps : CHIRPS – Climate Hazards Center InfraRed Precipitation with Station Data
 
+> Audit indépendant2026-10-25 : registre `planned`, SQL `planned`. Pas de réception live actuelle déduite de la présence du code. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 - **Propriétaire / licence / attribution :** Climate Hazards Center, University of California, Santa Barbara (UCSB). Licence : Public Domain / CC0. Attribution : "Climate Hazards Center, UC Santa Barbara".
 - **Famille de source (`source_family`) :** `chc_ucsb` (Climate Hazards Center, University of California Santa Barbara).
 - **URL vérifiées (date, code HTTP) :**

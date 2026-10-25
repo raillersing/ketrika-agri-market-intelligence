@@ -1,5 +1,7 @@
 # MVP_REPORT : Rapport final d'acceptation et de livraison du MVP
 
+> Mise à jour2026-10-25 : rapport T historique conservé ; ses mentions100%/terminé ne certifient pas l'état courant R0–R6. Voir [audit indépendant](audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan correctif](audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 > **Date de livraison :** 2026-10-07  
 > **Version livrée :** `v0.1.0` (tag git `mvp-v0.1.0`)  
 > **Projet :** Ketrika Agri Market Intelligence  

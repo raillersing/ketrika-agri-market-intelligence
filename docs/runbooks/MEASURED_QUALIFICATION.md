@@ -1,5 +1,7 @@
 # Qualification mesurée (R0.7 / ADR-064)
 
+> Mise à jour2026-10-25 : procédure à utiliser seulement dans son périmètre reçu ; programme PARTIAL. Voir [audit indépendant](../audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 Statut : réception finale source 971702e ; voir docs/evidence/R0.7_FINAL_RECEPTION.md.
 Pas de qualification opérationnelle ni gate R0 déduit de cette réception.
 

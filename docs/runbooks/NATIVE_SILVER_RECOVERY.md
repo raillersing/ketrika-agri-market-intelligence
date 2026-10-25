@@ -1,5 +1,7 @@
 # Reprise Silver native — lot A en développement
 
+> Mise à jour2026-10-25 : procédure à utiliser seulement dans son périmètre reçu ; programme PARTIAL. Voir [audit indépendant](../audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 Statut : préparation sur `work/r06-resilience-20261013`, pas livré sur main.
 Les partitions sont implémentées ; la réception globale reste à réaliser. Ne pas
 appliquer cette migration à la base active pour essayer ce runbook.

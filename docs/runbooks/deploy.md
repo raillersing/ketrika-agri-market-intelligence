@@ -1,5 +1,7 @@
 # Runbook : Déploiement en production (VPS Ubuntu 24.04)
 
+> Mise à jour2026-10-25 : restore.sh non qualifié pour une restauration fiable (IA-17), configuration prod non reçue ; corriger AU-04/06/07 avant usage ; aucune destination active autorisée. Voir [audit indépendant](../audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 > **Statut :** Document opérationnel normatif (T11.4).
 > Ce guide décrit la mise en production intégrale de la plateforme Ketrika Agri Market Intelligence sur un serveur VPS autonome.
 

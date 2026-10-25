@@ -1,5 +1,7 @@
 # Runbook : Procédures de sauvegarde et de restauration (SPECS §25 · T11.3)
 
+> Mise à jour2026-10-25 : restore.sh non qualifié pour une restauration fiable (IA-17), configuration prod non reçue ; corriger AU-04/06/07 avant usage ; aucune destination active autorisée. Voir [audit indépendant](../audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 > **Système :** Ketrika Agri Market Intelligence Madagascar  
 > **Cible :** Base de données PostgreSQL (PostGIS) et métadonnées Bronze  
 > **Objectif RPO / RTO :** RPO < 24 h (sauvegarde quotidienne chiffrée), RTO < 15 min.

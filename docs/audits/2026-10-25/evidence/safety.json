@@ -1,0 +1,8 @@
+{
+  "scope": "isolated Python process; no actual SMTP, database or restore",
+  "smtp_alert_transport_attempted_with_gate_off": true,
+  "smtp_failure_transport_attempted_with_gate_off": true,
+  "invalid_dump_without_manifest_or_tool_accepted": true,
+  "revoked_token_accepted_same_process": false,
+  "revoked_token_accepted_other_process": true
+}

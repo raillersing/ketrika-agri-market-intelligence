@@ -1,5 +1,7 @@
 # mincc_ppn : MinCC – Relevés Prix & Stocks PPN
 
+> Audit indépendant2026-10-25 : registre `active`, SQL `active`. Pas de réception live actuelle déduite de la présence du code. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 - **Propriétaire / licence / attribution :** Ministère de l'Industrialisation et du Commerce (MinCC) / Direction de la Régulation du Commerce et de la Consommation (DRCC). Licence : Données publiques officielles gouvernementales. Attribution : "Ministère de l'Industrialisation et du Commerce, Madagascar".
 - **Famille de source (`source_family`) :** `madagascar_gov` (famille gouvernementale malgache officielle, isolée des sources d'aide internationale).
 - **URL vérifiées (date, code HTTP) :**

@@ -1,5 +1,7 @@
 # instat_nipc : INSTAT Madagascar – Indice des Prix à la Consommation (NIPC)
 
+> Audit indépendant2026-10-25 : registre `disabled`, SQL `active`. Source arrêtée : aucune relance, archives autorisées seulement. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 - **Propriétaire / licence / attribution :** Institut National de la Statistique de Madagascar (INSTAT). Licence : Données publiques officielles gouvernementales. Attribution : "INSTAT Madagascar".
 - **Famille de source (`source_family`) :** `madagascar_gov` (famille gouvernementale malgache officielle, isolée des sources d'aide internationale).
 - **URL vérifiées (date, code HTTP) :**

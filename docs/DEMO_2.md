@@ -1,5 +1,7 @@
 # Guide de Démonstration 2 — Ketrika Agri Market Intelligence
 
+> Mise à jour2026-10-25 : scénario de démonstration historique, aucune preuve de marché ou de qualification actuelle. Voir [audit indépendant](audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan correctif](audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 > **Statut :** Livrable officiel du Gate de Phase 10 (T10.1 / Démo 2).  
 > **Durée estimée :** 7 minutes.  
 > **Public cible :** Investisseurs agro-industriels, bailleurs de fonds (Banque Mondiale, PAM, FAO), ministères (MiASA, MinCC), négociants PPN.

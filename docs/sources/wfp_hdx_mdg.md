@@ -1,5 +1,7 @@
 # wfp_hdx_mdg : WFP Food Prices – Madagascar (HDX)
 
+> Audit indépendant2026-10-25 : registre `disabled`, SQL `disabled`. Source arrêtée : aucune relance, archives autorisées seulement. Les dates/HTTP/droits/annotations ci-dessous sont des descriptions historiques, non revérifiées par cet audit. Réception à suivre dans [la matrice](../audits/2026-10-25/TASK_CAPABILITY_MATRIX.md) et le [plan correctif](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md).
+
 > **Statut de qualification R1.7 (2026-10-15) :**
 > - Code du connecteur et règles de parsing : **QUALIFIÉ & VALIDÉ** (règles strictes de politique, HXL parsing, distinction `observed`/`imputed`, refus d'imputation géographique aveugle).
 > - Collecte réseau live : **BLOCKED** conformément à B-R009 (403 Cloudflare persistant sur le catalogue/direct download HDX).
