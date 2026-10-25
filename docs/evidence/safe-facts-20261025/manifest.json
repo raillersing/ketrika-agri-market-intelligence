@@ -1,0 +1,102 @@
+{
+  "RECEPTION.md": {
+    "sha256": "63128145e9935692a22da26631f9ae467199976073be6acbca27e98962daf32c",
+    "size": 3520
+  },
+  "browser/climate-mobile.png": {
+    "sha256": "3cee0b8571537eb80586bfacfe6afc0aa3589fa8edb0cfa81a769ef0148a26c5",
+    "size": 204188
+  },
+  "browser/overview-desktop.png": {
+    "sha256": "83fd5381b4c79821c54886639298bb7dee29c858359ee840f796e4575f6eb890",
+    "size": 252847
+  },
+  "browser/overview-mobile.png": {
+    "sha256": "ae3acd12857073f975f2aeb6d6e9f66c86e5c094102ff876ef12ba690b49466c",
+    "size": 91883
+  },
+  "browser/receipt.json": {
+    "sha256": "6578a20d8c0d6b91d1063ecae8d8284223288d93abf1c5d054190040811c8025",
+    "size": 14431
+  },
+  "check-18572-coverage.json": {
+    "sha256": "b985c3232198fc3ad3b85a9902cb649b23e1c043bbdfd8cfae777746cde0ddbc",
+    "size": 309247
+  },
+  "check-18572-inventory.json": {
+    "sha256": "3b521e3e7571af020a54872b1bb28ba84c243bc94024722fb171ccc35e66f8e6",
+    "size": 350861
+  },
+  "check-18572.xml": {
+    "sha256": "f83cecc3734410aefd958b8d2c685e0d787224505ac803c1bfc3f7598506a568",
+    "size": 368392
+  },
+  "check-4405-red-coverage.json.gz": {
+    "sha256": "51f90f1db8fd8d740c2d6bd80f72ec0972f214e6e63be0d1b4bc36e206d3eef4",
+    "size": 25173
+  },
+  "check-4405-red-inventory.json.gz": {
+    "sha256": "2918acf3cf6db1f4d9e637c56e9896a61c90af6b68ffb65beb6c763ec2693cd2",
+    "size": 37394
+  },
+  "check-4405-red.xml.gz": {
+    "sha256": "8802f78a4a8ad9036ecd4e38ff08e5584955ee3df6d50938de65adbe2a67a799",
+    "size": 46656
+  },
+  "consolidated.json": {
+    "sha256": "0120af36a6c41f83076d19cda1916d85dedc9c397e59b9d6b1c9b94784e9f811",
+    "size": 557
+  },
+  "e2e/economy.png": {
+    "sha256": "17bb6d883a2721f22019869f850456da30ce364e3bd3370dcc91960bcf8d9ff8",
+    "size": 140858
+  },
+  "e2e/economy_mobile_390px.png": {
+    "sha256": "7e5d4577124c47a94f7b3980b7f22186267edfa3d740c675a945b5c4ecb274b9",
+    "size": 65490
+  },
+  "e2e/prices.png": {
+    "sha256": "062f4e5968fe839ba631625be4591463daa430ad7e4a1ed7c5a31e706ec99ff8",
+    "size": 138890
+  },
+  "e2e/receipt.json": {
+    "sha256": "ade5ee70d178536582ef20396fcab9a15114d8fc3cb2b4e90ab343b1967a092c",
+    "size": 2333
+  },
+  "e2e/trace.zip": {
+    "sha256": "8b93ed05653954079913fe6ac928833a8143e6cba3b0320d9dda634bbc1bc0cf",
+    "size": 6626976
+  },
+  "frontend/receipt.json": {
+    "sha256": "633d282d6533b3aa031251e69e073f312bcc315fe8cc9554f45530b197e1932f",
+    "size": 2017
+  },
+  "frontend/vitest.json": {
+    "sha256": "b6111d0e1e55127d0ff515695244676274b82872ed012edbb4fbf93113518530",
+    "size": 16709
+  },
+  "notification-capture.log": {
+    "sha256": "65783df1d3a6f71f40e30cea50de0fa50f73ed6a6806c351a93c392ae6080fdc",
+    "size": 978
+  },
+  "notification-network.txt": {
+    "sha256": "95f5dabe43e3f67eaa5aca88f6d4c17eacd58895143eb83def91464c97127108",
+    "size": 44
+  },
+  "notification-targeted.xml": {
+    "sha256": "2b2f7c07af72b02e75c173cf37ec54e3efc98ba7eadf95f620d13ddb217296d4",
+    "size": 4812
+  },
+  "overview-independent-sql.txt": {
+    "sha256": "f41bb886d5835a0144b06d58d0a19eaab17eee8daee48728bc957a6220084f6c",
+    "size": 148
+  },
+  "supply-route-corrected.xml": {
+    "sha256": "2beee20d744bc71f54a38292bcafada8f9d89870356ece4582f143dea862ddff",
+    "size": 357
+  },
+  "targeted.xml": {
+    "sha256": "b6675cd41c8c0f0781c19fe163830395fe600896362a09053f2cdc4b1f8efabf",
+    "size": 5999
+  }
+}
