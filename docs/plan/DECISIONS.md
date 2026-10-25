@@ -1,4 +1,12 @@
 # DECISIONS (Architecture Decision Records - ADR)
+## ADR-122 | 2026-10-25 | Accepté avant code | H3 fermé à la frontière des transports
+
+- Contexte : IA-07/AU-05 ; SMTP alertes/échecs et aperçu bulletin acceptent un serveur arbitraire ; Telegram assimile une variable à une autorisation humaine.
+- Décision : seule capture SMTP locale autorisée : APP_ENV dev/test, hôte exact mailpit, port1025. Contrôle central avant construction de smtplib.SMTP, y compris aperçu bulletin dont les paramètres ne contournent pas la politique. Aucun SMTP en production ni relais externe. EXTERNAL_SEND_ENABLED, même1, ne constitue pas une autorisation humaine : Telegram reste brouillon/refus local sans client HTTP ni requête tant qu'un contrat d'approbation humaine explicite n'est pas reçu.
+- Reçus : booléen true seulement après transport Mailpit accepté ; refus false et raison non sensible ; logs sans destinataire/token ni texte d'erreur transport susceptible de les contenir. Les brouillons/calculs restent disponibles, aucune fonctionnalité d'envoi réel n'est revendiquée.
+- Alternatives : accepter le nom « preview » comme garantie, ou laisser une variable ouvrir H3 (rejetés) ; ajouter un nouveau booléen d'approbation tout aussi contournable (rejeté). Une future autorisation humaine exige un contrat et une réception séparés, pas une modification de variable dans ce lot.
+- Conséquences : tests négatifs interceptent toute construction réseau, y compris gate1 ; positif réel dans Mailpit interne de développement distinct du check en cours. Aucun tiers contacté, pas de nouveau runtime dependency, contrat bool existant conservé. Réception groupée de sécurité avant main.
+
 ## ADR-121 | 2026-10-25 | Accepté avant code | Faits indisponibles et abstention explicite
 
 - Contexte : IA-01/02/05 ; accueil constant, climat avec nombres de secours et scénarios alimentés par des observations inventées.

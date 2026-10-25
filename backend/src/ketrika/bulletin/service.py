@@ -8,6 +8,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
+from ketrika.alerts.transport_policy import permits_local_smtp_capture
 from ketrika.bulletin.facts import build_bulletin_facts
 from ketrika.bulletin.render import (
     render_html,
@@ -18,6 +19,7 @@ from ketrika.bulletin.render import (
 from ketrika.bulletin.writer import generate_bulletin_prose
 from ketrika.core.logging import get_logger
 from ketrika.core.models.db import Bulletin
+from ketrika.core.settings import get_settings
 
 logger = get_logger(__name__)
 
@@ -145,6 +147,10 @@ def send_bulletin_preview_to_mailpit(
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
 
+    if not permits_local_smtp_capture(get_settings(), smtp_host, smtp_port):
+        logger.info("bulletin_preview_refused_h3", bulletin_id=str(bulletin.bulletin_id))
+        return False
+
     msg = MIMEMultipart("alternative")
     msg["Subject"] = (
         f"[KETRIKA PREVIEW] Bulletin Vivrier PPN - Semaine du {bulletin.period_start} au {bulletin.period_end}"
@@ -163,5 +169,5 @@ def send_bulletin_preview_to_mailpit(
         logger.info("bulletin_preview_sent_to_mailpit", bulletin_id=str(bulletin.bulletin_id))
         return True
     except Exception as e:
-        logger.warning("bulletin_mailpit_preview_skipped", error=str(e))
+        logger.warning("bulletin_mailpit_preview_skipped", error_class=type(e).__name__)
         return False

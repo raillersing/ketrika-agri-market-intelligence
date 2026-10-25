@@ -1,0 +1,8 @@
+All checks passed!
+1 file reformatted
+pyproject.toml: note: unused section(s): module = ['dagster.*', 'geopandas.*', 'ketrika.extraction.*', 'ketrika.normalize.*', 'lightgbm.*', 'mlforecast.*', 'pandera.*', 'pdfplumber.*', 'pypdfium2.*', 'selectolax.*', 'shapely.*', 'statsforecast.*']
+Success: no issues found in 1 source file
+2026-10-25 18:07:02 [info     ] alert_email_sent               alert_id=ac4e5e9a-db13-4047-bccc-c24af6103e89 host=mailpit port=1025 rule=SYNTHETIC_AU05
+2026-10-25 18:07:02 [info     ] pipeline_failure_email_sent    host=mailpit job_name=SYNTHETIC_AU05 port=1025 run_id=test-run
+2026-10-25 18:07:02 [info     ] bulletin_preview_sent_to_mailpit bulletin_id=459b165d-d9b1-4219-a40c-4eee4423e299
+{"passed": true, "scope": "dedicated internal SMTP capture, synthetic messages", "results": {"alert": true, "incident": true, "preview": true}, "new_captures": 3, "message_ids": ["0ZKOdmzniLMDgZiKpBdNmV", "4GYpZfg8Qho0e6re27HUDm", "2yp72J6i4epi9yxo3T2OYd"]}

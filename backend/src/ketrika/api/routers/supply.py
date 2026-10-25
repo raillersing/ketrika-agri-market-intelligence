@@ -116,8 +116,8 @@ def get_data_sufficiency(
     return report.model_copy(
         update={
             "is_sufficient": False,
-            "assessment_note": report.assessment_note
-            + " Étendue temporelle seulement ; complétude des cycles et validation indépendante non qualifiées.",
+            "total_cycles_observed": 0.0,
+            "assessment_note": "Cycles complets non établis. Dates et effectifs disponibles seulement ; complétude et validation indépendante non qualifiées.",
         }
     )
 

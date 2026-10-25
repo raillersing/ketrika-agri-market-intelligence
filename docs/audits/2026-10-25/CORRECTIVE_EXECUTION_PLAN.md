@@ -50,7 +50,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-05 — H3 effectif à la frontière des transports
 
-- **Statut :** TODO · P0 · rôle Backend/Sécurité · parents R0.8/R6.6/R6.7 · dépendance : inventaire de tous transports.
+- **Statut :** IN_PROGRESS · P0 · rôle Backend/Sécurité · parents R0.8/R6.6/R6.7 · dépendance : inventaire de tous transports.
 - **Fichiers :** `alerts/notifier.py`, appels depuis `pipelines/definitions.py`, bulletin et configuration SMTP/Telegram. IA-07.
 - **Étapes :** centraliser la politique de sortie ; garder Mailpit local explicitement autorisé ; refuser SMTP externe et Telegram sans autorisation humaine documentée, même si une variable est positionnée ; journaliser refus/brouillon/reçu local sans adresse/token dans logs ; ne marquer envoyé qu'après preuve transport conforme.
 - **Réception :** SMTP externe+gate off→zéro construction/connexion transport ; gate on sans autorisation→zéro envoi ; Mailpit local fonctionne et reçu relisible ; aucune notification vers un tiers pendant tests. Doubles interceptés uniquement pour cas négatifs ; vrai Mailpit pour cas positif.

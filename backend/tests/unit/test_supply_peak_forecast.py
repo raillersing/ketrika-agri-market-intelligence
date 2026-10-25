@@ -404,12 +404,10 @@ def test_supply_api_endpoints() -> None:
                 "logistics_lag_dekads": 1,
             },
         )
-        assert resp.status_code == 200
-        data = resp.json()
-        assert data["market_code"] == "MDG_ANOSIBE"
-        assert data["supply_window_start_dekad"] == "2024-05-D2"
-        assert data["predicted_peak_dekad"] == "2024-05-D3"
-        assert data["qualification"] in ("baseline_logistics", "experimental_baseline")
+        assert resp.status_code == 404
+        assert "calendrier" in str(resp.json())
+        assert "predicted_peak_dekad" not in resp.json()
+        assert client.get("/v1/supply/peak-forecast").status_code == 422
 
         # Test sufficiency endpoint
         resp_suff = client.get("/v1/supply/sufficiency", params={"market_code": "MDG_ANOSIBE"})
