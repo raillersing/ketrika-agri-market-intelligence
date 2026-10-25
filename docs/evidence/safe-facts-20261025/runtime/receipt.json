@@ -1,0 +1,234 @@
+{
+  "scope": "actual local runtime; not market/model qualification",
+  "passed": true,
+  "price_points": 96,
+  "value_kinds": [
+    "imputed"
+  ],
+  "latest": {
+    "month": "2026-10-01",
+    "price": 2649.96,
+    "location": "Vakinankaratra",
+    "actor": "unknown",
+    "sources": [
+      "wb_rtfp_mdg"
+    ]
+  },
+  "climate": {
+    "location_pcode": "MDG11",
+    "location_name": "Analamanga",
+    "current_month": "2026-10-01",
+    "observed_precipitation_mm": null,
+    "precipitation_anomaly_pct": null,
+    "precipitation_risk_level": null,
+    "aggregation_method": "zonal_mean (administratif sans masque agricole vérifié)",
+    "cropland_mask_applied": false,
+    "observed_source": null,
+    "temperature_mean_c": null,
+    "forecast_next_72h_precip_mm": null,
+    "forecast_p10_mm": null,
+    "forecast_p90_mm": null,
+    "forecast_model": null,
+    "forecast_issued_at": null,
+    "forecast_value_kind": "projected",
+    "active_crop_cycles": [
+      {
+        "zone_code": "ZONE_CENTRE",
+        "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+        "crop": "RICE",
+        "product_code": "RICE_PADDY",
+        "crop_cycle": "vakiambiaty",
+        "season_name": "vakiambiaty",
+        "crop_regime": "irrigated",
+        "calendar_version": "v1.0",
+        "calendar_type": "traditional_baseline",
+        "campaign": "baseline_permanent",
+        "variety": "Variétés locales de saison (Makalioka, Sebota)",
+        "current_phenological_stage": "planting",
+        "planting_months": [
+          10,
+          11,
+          12
+        ],
+        "harvest_months": [
+          4,
+          5,
+          6
+        ],
+        "peak_harvest_month": 5,
+        "water_sensitivity_profile": {
+          "tillering": "high",
+          "flowering": "critical",
+          "grain_filling": "medium"
+        },
+        "market_links": [
+          {
+            "location_code": "MDG11",
+            "location_name": "Antananarivo",
+            "flow_role": "primary_supply",
+            "proof_status": "official_supply_basin",
+            "source_evidence": "ODR Bulletin de suivi des flux Hauts Plateaux vers Analamanga"
+          },
+          {
+            "location_code": "MDG12",
+            "location_name": "Antsirabe",
+            "flow_role": "primary_supply",
+            "proof_status": "official_supply_basin",
+            "source_evidence": "MinAE DRDA Vakinankaratra Bilan Vivrier"
+          }
+        ],
+        "source_reference": "MinAE / FAO GIEWS Madagascar 2021",
+        "verified": true,
+        "eligible_for_alerts": true
+      },
+      {
+        "zone_code": "ZONE_CENTRE",
+        "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+        "crop": "RICE",
+        "product_code": "RICE_PADDY",
+        "crop_cycle": "hosy",
+        "season_name": "hosy",
+        "crop_regime": "irrigated",
+        "calendar_version": "v1.0",
+        "calendar_type": "traditional_baseline",
+        "campaign": "baseline_permanent",
+        "variety": "Riz précoce (Mailaka)",
+        "current_phenological_stage": "growing",
+        "planting_months": [
+          6,
+          7
+        ],
+        "harvest_months": [
+          11,
+          12,
+          1
+        ],
+        "peak_harvest_month": 12,
+        "water_sensitivity_profile": {
+          "tillering": "high",
+          "flowering": "critical",
+          "grain_filling": "medium"
+        },
+        "market_links": [
+          {
+            "location_code": "MDG11",
+            "location_name": "Antananarivo",
+            "flow_role": "primary_supply",
+            "proof_status": "official_supply_basin",
+            "source_evidence": "ODR Suivi des arrivages hosy sur les marchés urbains d'Antananarivo"
+          }
+        ],
+        "source_reference": "ODR Bulletin de suivi des riz précoces",
+        "verified": true,
+        "eligible_for_alerts": true
+      },
+      {
+        "zone_code": "ZONE_CENTRE",
+        "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+        "crop": "MAIZE",
+        "product_code": "MAIZE_GRAIN",
+        "crop_cycle": "principale",
+        "season_name": "principale",
+        "crop_regime": "rainfed",
+        "calendar_version": "v1.0",
+        "calendar_type": "traditional_baseline",
+        "campaign": "baseline_permanent",
+        "variety": "Maïs jaune et blanc local",
+        "current_phenological_stage": "planting",
+        "planting_months": [
+          10,
+          11,
+          12
+        ],
+        "harvest_months": [
+          3,
+          4,
+          5
+        ],
+        "peak_harvest_month": 4,
+        "water_sensitivity_profile": {
+          "vegetative": "medium",
+          "flowering": "critical",
+          "grain_filling": "medium"
+        },
+        "market_links": [
+          {
+            "location_code": "MDG12",
+            "location_name": "Antsirabe",
+            "flow_role": "primary_supply",
+            "proof_status": "official_supply_basin",
+            "source_evidence": "FEWS NET Livelihood Zone MG07 Central Highlands Maize"
+          }
+        ],
+        "source_reference": "FEWS NET Madagascar Seasonal Calendar",
+        "verified": true,
+        "eligible_for_alerts": true
+      },
+      {
+        "zone_code": "ZONE_CENTRE",
+        "zone_name": "Hauts Plateaux (Analamanga, Vakinankaratra, Itasy)",
+        "crop": "RICE",
+        "product_code": "RICE_PADDY",
+        "crop_cycle": "vakiambiaty_recommandation_2023_2024",
+        "season_name": "vakiambiaty_2023_2024",
+        "crop_regime": "irrigated",
+        "calendar_version": "v1.1",
+        "calendar_type": "seasonal_recommendation",
+        "campaign": "2023/2024",
+        "variety": "Variété semi-tardive résistante au froid",
+        "current_phenological_stage": null,
+        "planting_months": [
+          11,
+          12
+        ],
+        "harvest_months": [
+          5,
+          6
+        ],
+        "peak_harvest_month": 5,
+        "water_sensitivity_profile": {
+          "tillering": "high",
+          "flowering": "critical",
+          "grain_filling": "medium"
+        },
+        "market_links": [
+          {
+            "location_code": "MDG11",
+            "location_name": "Antananarivo",
+            "flow_role": "primary_supply",
+            "proof_status": "official_supply_basin",
+            "source_evidence": "Avis MinAE 2023/2024"
+          }
+        ],
+        "source_reference": "MinAE / DGM Avis Décadaire Novembre 2023",
+        "verified": true,
+        "eligible_for_alerts": true
+      }
+    ],
+    "events_and_outlooks": [],
+    "facultative_sources": [
+      {
+        "source_id": "firms_mdg",
+        "source_name": "NASA FIRMS (Détection thermique & feux)",
+        "status": "unavailable",
+        "reason": "Source facultative non intégrée (clé d'accès NASA LANCE optionnelle). Aucun faux zéro fabriqué.",
+        "data_available": false
+      },
+      {
+        "source_id": "glofas_mdg",
+        "source_name": "Copernicus GloFAS (Débit & inondations)",
+        "status": "unavailable",
+        "reason": "Source facultative non configurée (modélisation hydrologique globale optionnelle).",
+        "data_available": false
+      },
+      {
+        "source_id": "copernicus_ndvi",
+        "source_name": "Copernicus Sentinel-2 NDVI (Biomasse)",
+        "status": "unavailable",
+        "reason": "Source facultative non configurée (télédétection haute résolution optionnelle).",
+        "data_available": false
+      }
+    ]
+  },
+  "browser_errors": []
+}
