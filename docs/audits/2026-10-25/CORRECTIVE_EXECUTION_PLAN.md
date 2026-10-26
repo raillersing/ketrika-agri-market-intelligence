@@ -64,7 +64,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-07 — Restauration qui échoue réellement en cas d'erreur
 
-- **Statut :** TODO · P0 · rôle Backend/Ops · parents R0.8/R6.8 · dépendance : contrat de destination explicite.
+- **Statut :** IN_PROGRESS (worktree restauration isolé ; non reçu) · P0 · rôle Backend/Ops · parents R0.8/R6.8 · dépendance : contrat de destination explicite.
 - **Fichiers :** `deploy/{backup,restore}.sh`, `ops/backup_restore.py`, scripts dev, runbooks restore/déploiement. IA-17.
 - **Étapes :** exiger identité/consentement de clone neuf autorisé et refuser actif indépendamment du nom ; supprimer le contournement de sécurité non reçu ; manifeste/hash obligatoires, outil absent→erreur ; tout code pg_restore non-zéro propagé ; ne pas cacher erreur SQL par zéro ; comparer manifestes métier, droits et objets, pas seulement comptes.
 - **Réception :** commande simulée pg_restore=1→sortie non-zéro sans succès ; fichiers absent/corrompu, outil manquant et cible active refusés avant opération ; une sauvegarde réelle se restaure dans un clone neuf identifié et donne mêmes empreintes/privilèges. Aucune reprise de ce script ancien contre l'actif.

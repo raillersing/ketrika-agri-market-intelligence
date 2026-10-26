@@ -4201,3 +4201,20 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Commit de développement4d706e6 ; reprise de main7924600 dans le seul worktree sécurité. Résolution explicite : documents/réception du lot5400f39 conservés, ADR123/SPECS et deux adaptations de fixtures conservés ; contrats OpenAPI régénérés depuis la vraie application. Aucun main ni service actif modifié par cette fusion de travail.
 - Mypy global ciblé révèle une seconde annotation TestClient distincte du Client httpx ; helper accepte explicitement les deux types.93439 FINAL0 :helper typé sans ignore, lint421 et diagnostic navigateur verts. Aucun nouveau défaut applicatif déduit de ces erreurs de tests. Un check complet sur source figée reste obligatoire.
 - E2E : trois scénarios supplémentaires déclarés et exécutables pour cookie arbitraire, réutilisation du token après logout et cookie révoqué réinjecté. Les douze scénarios précédents restent présents ; manifestes alignés, pas de remplacement par mock.
+
+### [2026-10-26T07:07:00Z] R0.8 — AU-07 planifié pendant réception AU-04
+
+- Worktree fix/r08-restore-20261026 basé sur2a6ec4e ; RESTORE_IMPLEMENTATION_PLAN puis ADR124/SPECS écrits avant modification. AU-07 IN_PROGRESS ; aucun changement des74 statuts R. Priorité indépendante sans reconstruction des images utilisées par le check AU-04.
+- Développement autorisé uniquement sans mutation SQL/S3 de main-final ni de l'actif. Positif PostgreSQL sur instance différente et réception complète réservés après libération ; aucune restauration exécutée.
+
+### [2026-10-26T07:13:00Z] R0.8 — AU-07 négatifs et raccordement des entrées
+
+-42428 FINAL0 :35 tests/9,12s sans réseau ; processus shell réels et faux outils locaux pour cible existante/invalide, catalogue refusé, pg_restore1 et SQL1. Aucun faux succès, nettoyage ou terminaison de connexion exécuté. Bash syntaxe/lint ciblés verts ; aucune preuve de restauration PostgreSQL réelle déduite.
+- Extension d'inventaire : dev.sh/dev.ps1 contenaient une restauration active directe avec nettoyage, indépendante de deploy/restore.sh. ADR124/SPECS précisés avant raccordement ; deux entrées délèguent désormais au garde sur réseau de qualification explicitement identifié, et backup exporte les compagnons cohérents. Ces nouvelles modifications restent à vérifier, aucun DONE.
+- Check AU-04 source2a6ec4e continue indépendamment sur main-final ; aucun code ni environnement de ce check modifié.
+
+### [2026-10-26T07:19:00Z] R0.8 — AU-07 raccordements ciblés
+
+-98030 FINAL0 :deux tests additionnels/3,31s exécutent le vrai point d'entrée Linux avec Docker simulé : absence de confirmation→aucun appel, réseau identifié→conteneur readonly et code17 propagé. Mypy du helper corrigé vert ; bash -n des trois scripts vert, aucun seuil retiré.
+- PowerShell natif : analyse syntaxique du fichier réussie. Essai avec Docker simulé refusé avant exécution par la politique Windows de signature du script UNC ; aucun Docker ni SQL exécuté. Ce n'est pas une réussite fonctionnelle Windows ; limitation conservée, aucune politique système modifiée.
+- Runbook restore réécrit selon ADR124 : suppression des anciennes instructions de nettoyage de l'actif/recalcul automatique. Prochaines preuves : vraie archive sur PostgreSQL distinct, puis check du lot consolidé ; AU-07 reste IN_PROGRESS.

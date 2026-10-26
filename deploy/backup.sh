@@ -45,9 +45,9 @@ echo "[SUCCESS] Dump archive catalog verified readable."
 
 # Generate SHA-256 checksum
 if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum "${BACKUP_PATH}" > "${BACKUP_PATH}.sha256"
+    (cd "${BACKUP_DIR}" && sha256sum "${BACKUP_FILE}") > "${BACKUP_PATH}.sha256"
 elif command -v shasum >/dev/null 2>&1; then
-    shasum -a 256 "${BACKUP_PATH}" > "${BACKUP_PATH}.sha256"
+    (cd "${BACKUP_DIR}" && shasum -a 256 "${BACKUP_FILE}") > "${BACKUP_PATH}.sha256"
 else
     echo "[ERROR] Neither sha256sum nor shasum is available!" >&2
     exit 1
@@ -57,24 +57,22 @@ SHA256_HASH=$(awk '{print $1}' "${BACKUP_PATH}.sha256")
 DUMP_SIZE_BYTES=$(stat -c %s "${BACKUP_PATH}" 2>/dev/null || wc -c < "${BACKUP_PATH}" | tr -d ' ')
 GIT_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
 
-# Generate certified JSON manifest (ADR-102)
-cat <<EOF > "${MANIFEST_PATH}"
-{
-  "backup_id": "${BACKUP_FILE%.dump}",
-  "timestamp_utc": "${TIMESTAMP_ISO}",
-  "git_commit": "${GIT_COMMIT}",
-  "dump_filename": "${BACKUP_FILE}",
-  "dump_sha256": "${SHA256_HASH}",
-  "dump_size_bytes": ${DUMP_SIZE_BYTES},
-  "database_name": "${PGDATABASE}",
-  "verified_readable": true
+# Bind values through psql so source names and paths cannot corrupt JSON.
+write_manifest() {
+    psql -X -v ON_ERROR_STOP=1 -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" -At \
+        -v "filename=$1" -v "timestamp=$TIMESTAMP_ISO" -v "commit=$GIT_COMMIT" \
+        -v "sha=$SHA256_HASH" -v "bytes=$DUMP_SIZE_BYTES" -v "source=$PGDATABASE" <<'SQL'
+SELECT json_build_object('backup_id', :'filename', 'timestamp_utc', :'timestamp',
+ 'git_commit', :'commit', 'dump_filename', :'filename', 'dump_sha256', :'sha',
+ 'dump_size_bytes', :'bytes'::bigint, 'database_name', :'source', 'verified_readable', true);
+SQL
 }
-EOF
+write_manifest "$BACKUP_FILE" > "$MANIFEST_PATH"
 
 # Copy / symlink as latest
 cp -f "${BACKUP_PATH}" "${LATEST_PATH}"
-cp -f "${BACKUP_PATH}.sha256" "${LATEST_PATH}.sha256"
-cp -f "${MANIFEST_PATH}" "${LATEST_MANIFEST_PATH}"
+printf '%s  %s\n' "$SHA256_HASH" "$LATEST_FILE" > "$LATEST_PATH.sha256"
+write_manifest "$LATEST_FILE" > "$LATEST_MANIFEST_PATH"
 
 END_EPOCH=$(date +%s)
 DURATION_SECONDS=$((END_EPOCH - START_EPOCH))

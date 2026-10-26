@@ -278,21 +278,16 @@ switch ($Command) {
         exit $LASTEXITCODE
     }
     "backup" {
-        Write-Host "Creating database backup..." -ForegroundColor Cyan
         $backupDir = Join-Path $PSScriptRoot "..\backups"
         if (!(Test-Path $backupDir)) { New-Item -ItemType Directory -Path $backupDir | Out-Null }
-        $timestamp = (Get-Date).ToUniversalTime().ToString("yyyyMMdd_HHmmss")
-        $backupFile = "ketrika_backup_$timestamp.dump"
-        $latestFile = "ketrika_backup_latest.dump"
-        $backupPath = Join-Path $backupDir $backupFile
-        $latestPath = Join-Path $backupDir $latestFile
-
-        docker compose exec -T db pg_dump -U ketrika -d ketrika -Fc -f /tmp/backup.dump
-        docker compose cp db:/tmp/backup.dump $backupPath
-        docker compose exec -T db rm -f /tmp/backup.dump
-        Copy-Item -Force $backupPath $latestPath
-        $size = (Get-Item $backupPath).Length
-        Write-Host "Database backup successfully created: $backupPath ($size bytes)" -ForegroundColor Green
+        $backupJob = "ketrika_backup_" + [guid]::NewGuid().ToString("N")
+        docker compose cp (Join-Path $RepoRoot "deploy/backup.sh") "db:/tmp/$backupJob.sh"
+        if ($LASTEXITCODE -ne 0) { throw "Backup tooling copy failed" }
+        docker compose exec -T -e "BACKUP_DIR=/tmp/$backupJob" -e RESTIC_REPOSITORY= db bash -ec 'export PGHOST=localhost PGUSER="$POSTGRES_USER" PGDATABASE="$POSTGRES_DB"; exec bash "$1"' -- "/tmp/$backupJob.sh"
+        if ($LASTEXITCODE -ne 0) { throw "Backup or integrity verification failed" }
+        docker compose cp "db:/tmp/$backupJob/." $backupDir
+        if ($LASTEXITCODE -ne 0) { throw "Backup evidence export failed" }
+        Write-Host "Backup archive, SHA256 and manifest exported to $backupDir" -ForegroundColor Green
         exit 0
     }
     "restore" {
@@ -301,17 +296,21 @@ switch ($Command) {
             Write-Error "Backup file not found: $backupPath"
             exit 1
         }
-        Write-Host "Restoring database from $backupPath..." -ForegroundColor Cyan
-        docker compose cp $backupPath db:/tmp/restore.dump
-        docker compose exec -T db pg_restore -U ketrika -d ketrika --clean --if-exists --no-owner --no-privileges /tmp/restore.dump
-        docker compose exec -T db rm -f /tmp/restore.dump
-        Write-Host "Refreshing Gold analytical views post-restore..." -ForegroundColor Cyan
-        docker compose exec -T api python -c "from ketrika.core.db import get_session; from ketrika.gold.refresh import refresh_gold_views;
-with get_session() as s:
-    refresh_gold_views(s)
-    s.commit()
-"
-        Write-Host "Restoration complete." -ForegroundColor Green
+        if (!$env:PGHOST -or !$env:PGUSER -or !$env:PGDATABASE -or !$env:KETRIKA_RESTORE_NETWORK -or $env:RESTORE_CONFIRM_DATABASE -ne $env:PGDATABASE) {
+            throw "Explicit clone connection, confirmation and isolated network are required"
+        }
+        $restoreScope = & docker network inspect --format '{{.Internal}}|{{index .Labels "ketrika.scope"}}' $env:KETRIKA_RESTORE_NETWORK
+        if ($LASTEXITCODE -ne 0 -or $restoreScope -ne 'true|restore-qualification') { throw "Foreign restore network refused" }
+        $backupPath = (Resolve-Path $backupPath).Path
+        $backupParent = Split-Path -Parent $backupPath
+        $backupName = Split-Path -Leaf $backupPath
+        docker run --rm --pull never --network $env:KETRIKA_RESTORE_NETWORK `
+            --mount "type=bind,source=$backupParent,target=/backup,readonly" `
+            --mount "type=bind,source=$RepoRoot,target=/workspace,readonly" `
+            -e PGHOST -e PGPORT -e PGUSER -e PGDATABASE -e PGPASSWORD -e POSTGRES_PASSWORD `
+            -e RESTORE_CONFIRM_DATABASE -e ALLOW_ACTIVE_DB_OVERWRITE `
+            --entrypoint bash postgis/postgis:17-3.5 /workspace/deploy/restore.sh "/backup/$backupName"
+        if ($LASTEXITCODE -ne 0) { throw "Isolated restore failed (exit $LASTEXITCODE)" }
         exit 0
     }
     "logs" {

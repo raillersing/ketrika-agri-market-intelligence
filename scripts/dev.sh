@@ -223,30 +223,28 @@ case "$COMMAND" in
     docker compose exec -T api python -m ketrika.demo
     ;;
   backup)
-    mkdir -p ./backups
-    docker compose exec -T db pg_dump -U ketrika -d ketrika -Fc -f /tmp/backup.dump
-    TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
-    docker compose cp db:/tmp/backup.dump "./backups/ketrika_backup_${TIMESTAMP}.dump"
-    cp -f "./backups/ketrika_backup_${TIMESTAMP}.dump" "./backups/ketrika_backup_latest.dump"
-    docker compose exec -T db rm -f /tmp/backup.dump
-    echo "Backup created at ./backups/ketrika_backup_${TIMESTAMP}.dump"
+    mkdir -p "$REPO_ROOT/backups"
+    backup_job="ketrika_backup_$(date -u +%Y%m%d_%H%M%S)_$$"
+    docker compose cp "$REPO_ROOT/deploy/backup.sh" "db:/tmp/$backup_job.sh"
+    docker compose exec -T -e "BACKUP_DIR=/tmp/$backup_job" -e RESTIC_REPOSITORY= db \
+      bash -ec 'export PGHOST=localhost PGUSER="$POSTGRES_USER" PGDATABASE="$POSTGRES_DB"; exec bash "$1"' -- "/tmp/$backup_job.sh"
+    docker compose cp "db:/tmp/$backup_job/." "$REPO_ROOT/backups"
+    echo "Backup archive, SHA256 and manifest exported to $REPO_ROOT/backups"
     ;;
   restore)
-    BACKUP_FILE="${1:-./backups/ketrika_backup_latest.dump}"
-    if [ ! -f "$BACKUP_FILE" ]; then
-      echo "Error: Backup file not found: $BACKUP_FILE" >&2
-      exit 1
-    fi
-    docker compose cp "$BACKUP_FILE" db:/tmp/restore.dump
-    docker compose exec -T db pg_restore -U ketrika -d ketrika --clean --if-exists --no-owner --no-privileges /tmp/restore.dump || true
-    docker compose exec -T db rm -f /tmp/restore.dump
-    docker compose exec -T api python -c "from ketrika.core.db import get_session; from ketrika.gold.refresh import refresh_gold_views;
-with get_session() as s:
-    refresh_gold_views(s)
-    s.commit()
-"
-    echo "Restoration complete."
-
+    BACKUP_FILE="${1:-$REPO_ROOT/backups/ketrika_backup_latest.dump}"
+    [ -f "$BACKUP_FILE" ] || { echo 'Backup file required' >&2; exit 2; }
+    [ -n "${PGHOST:-}" ] && [ -n "${PGUSER:-}" ] && [ -n "${PGDATABASE:-}" ] &&
+      [ "${RESTORE_CONFIRM_DATABASE:-}" = "$PGDATABASE" ] && [ -n "${KETRIKA_RESTORE_NETWORK:-}" ] || { echo 'Explicit clone connection, confirmation and isolated network are required' >&2; exit 2; }
+    restore_scope="$(docker network inspect --format '{{.Internal}}|{{index .Labels "ketrika.scope"}}' "$KETRIKA_RESTORE_NETWORK")"
+    [ "$restore_scope" = 'true|restore-qualification' ] || { echo 'Foreign restore network refused' >&2; exit 2; }
+    backup_parent="$(cd "$(dirname "$BACKUP_FILE")" && pwd)"
+    docker run --rm --pull never --network "$KETRIKA_RESTORE_NETWORK" \
+      --mount "type=bind,source=$backup_parent,target=/backup,readonly" \
+      --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" \
+      -e PGHOST -e PGPORT -e PGUSER -e PGDATABASE -e PGPASSWORD -e POSTGRES_PASSWORD \
+      -e RESTORE_CONFIRM_DATABASE -e ALLOW_ACTIVE_DB_OVERWRITE \
+      --entrypoint bash postgis/postgis:17-3.5 /workspace/deploy/restore.sh "/backup/$(basename "$BACKUP_FILE")"
     ;;
   logs)
     docker compose logs -f "${1:-}"

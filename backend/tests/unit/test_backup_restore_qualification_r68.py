@@ -45,7 +45,7 @@ def test_backup_manifest_creation_and_serialization(tmp_path: Path) -> None:
 
     # Mock DB session for table counts
     mock_session = MagicMock()
-    mock_session.execute.return_value.scalar.side_effect = [142, 5420, 12, 4, 3]
+    mock_session.execute.return_value.scalar_one.side_effect = [142, 5420, 12, 4, 3]
 
     manifest = generate_backup_manifest(
         dump_path=fake_dump,
@@ -53,6 +53,7 @@ def test_backup_manifest_creation_and_serialization(tmp_path: Path) -> None:
         git_commit="43935eb",
         database_name="ketrika",
         bronze_count=142,
+        verify_archive=False,
     )
 
     assert manifest.dump_filename == fake_dump.name
@@ -60,7 +61,7 @@ def test_backup_manifest_creation_and_serialization(tmp_path: Path) -> None:
     assert manifest.dump_size_bytes == len(dump_content)
     assert manifest.database_name == "ketrika"
     assert manifest.git_commit == "43935eb"
-    assert manifest.verified_readable is True
+    assert manifest.verified_readable is False  # Synthetic bytes have not passed pg_restore.
     assert manifest.bronze_manifest_count == 142
     assert manifest.table_counts["meta.source_record"] == 142
     assert manifest.table_counts["obs.price_observation"] == 5420
@@ -100,22 +101,22 @@ def test_active_target_guard_blocks_production_overwrites() -> None:
 def test_active_target_guard_allows_named_qualification_clones() -> None:
     """R6.8 Acceptance: Guard accepts named qualification clones without failure."""
     valid_clones = [
-        "ketrika_clone",
         "ketrika_restore_clone",
-        "ketrika_qa_test",
-        "ketrika_dr_drill",
-        "clone_evaluation_db",
+        "ketrika_restore_qa_test",
+        "ketrika_restore_dr_drill",
     ]
 
     for clone_name in valid_clones:
         # Should not raise any exception
-        enforce_active_target_guard(target_database=clone_name, allow_overwrite=False)
+        enforce_active_target_guard(
+            target_database=clone_name, confirmed_database=clone_name, allow_overwrite=False
+        )
 
 
-def test_active_target_guard_allows_overwrite_only_when_explicitly_forced() -> None:
-    """R6.8 Acceptance: Force flag allow_overwrite bypasses guard for disaster recovery drills."""
-    # Should not raise when allow_overwrite=True
-    enforce_active_target_guard(target_database="ketrika", allow_overwrite=True)
+def test_active_target_guard_never_allows_forced_overwrite() -> None:
+    """ADR-124 removes the destructive bypass, including explicit force flags."""
+    with pytest.raises(ActiveDatabaseOverwriteBlockedError):
+        enforce_active_target_guard(target_database="ketrika", allow_overwrite=True)
 
 
 # =========================================================================
@@ -134,7 +135,7 @@ def test_verify_backup_integrity_nominal(tmp_path: Path) -> None:
     sha_file.write_text(f"{expected_hash}  valid_backup.dump\n", encoding="utf-8")
 
     # Generate companion manifest
-    generate_backup_manifest(dump_file, git_commit="test_commit")
+    generate_backup_manifest(dump_file, git_commit="test_commit", verify_archive=False)
 
     # Verification must succeed (skip pg_restore binary call on synthetic test bytes)
     valid, msg = verify_backup_integrity(dump_file, check_pg_restore=False)
@@ -169,10 +170,13 @@ def test_verify_backup_integrity_manifest_hash_mismatch(tmp_path: Path) -> None:
     dump_file.write_bytes(b"State_Before_Tampering")
 
     # Generate genuine manifest
-    generate_backup_manifest(dump_file, git_commit="43935eb")
+    generate_backup_manifest(dump_file, git_commit="43935eb", verify_archive=False)
 
     # Tamper dump content
     dump_file.write_bytes(b"State_AFTER_UNAUTHORIZED_MUTATION")
+    dump_file.with_name(dump_file.name + ".sha256").write_text(
+        f"{hashlib.sha256(dump_file.read_bytes()).hexdigest()}  {dump_file.name}\n"
+    )
 
     with pytest.raises(CorruptedBackupError, match="Manifest SHA-256 mismatch"):
         verify_backup_integrity(
@@ -268,8 +272,8 @@ def test_deploy_restore_script_contract() -> None:
     assert "set -euo pipefail" in content
 
     # 2. Must contain active database guard
-    assert "PROTECTED_ACTIVE_DATABASES" in content
-    assert "ALLOW_ACTIVE_DB_OVERWRITE" in content
+    assert "RESTORE_CONFIRM_DATABASE" in content
+    assert "--single-transaction --exit-on-error" in content
     assert "exit 2" in content, "Guard must return exit code 2 on active database attempt"
 
     # 3. Target default must be clone, never production ketrika
