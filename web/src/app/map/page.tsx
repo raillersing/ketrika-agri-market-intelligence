@@ -60,35 +60,35 @@ function MapContent() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
-              <Compass className="w-6 h-6 text-emerald-400" />
+            <h1 className="text-2xl font-extrabold tracking-tight text-foreground flex items-center gap-2.5">
+              <Compass className="w-6 h-6 text-primary-readable" />
               Cartographie des marchés vivriers
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-sky-500/10 text-sky-300 border border-sky-500/20">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-500/20">
               23 Régions COD-AB
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Analyse spatiale des disparités territoriales et des corridors d&apos;acheminement à Madagascar.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono px-3.5 py-1.5 glass-panel rounded-xl text-slate-300">
-          <Layers className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="flex items-center gap-2 text-xs font-mono px-3.5 py-1.5 glass-panel rounded-xl text-muted-foreground">
+          <Layers className="w-3.5 h-3.5 text-primary-readable" />
           <span>Niveau administratif : Région (Admin-1)</span>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-700 dark:text-rose-300 text-xs">
           {error}
         </div>
       )}
 
       {/* Main Map Card */}
       {loading ? (
-        <div className="h-96 flex items-center justify-center glass-panel rounded-2xl text-xs text-slate-400 font-mono gap-2">
-          <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
+        <div className="h-96 flex items-center justify-center glass-panel rounded-2xl text-xs text-muted-foreground font-mono gap-2">
+          <RefreshCw className="w-4 h-4 animate-spin text-primary-readable" />
           Chargement de la géométrie et des cotations régionales...
         </div>
       ) : (
@@ -103,31 +103,31 @@ function MapContent() {
       {/* Corridor Intelligence Ribbon */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="glass-card p-4 rounded-xl space-y-1.5">
-          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-300">
-            <Route className="w-4 h-4 text-emerald-400" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-primary-readable">
+            <Route className="w-4 h-4 text-primary-readable" />
             <span>Corridor RN2 (Toamasina - Tana)</span>
           </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Axe logistique principal d&apos;importation (riz blanc, huile, farine). Transmission rapide des cours portuaires vers la capitale.
           </p>
         </div>
 
         <div className="glass-card p-4 rounded-xl space-y-1.5">
-          <div className="flex items-center gap-2 text-xs font-semibold text-amber-300">
-            <Route className="w-4 h-4 text-amber-400" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-amber-700 dark:text-amber-300">
+            <Route className="w-4 h-4 text-amber-700 dark:text-amber-400" />
             <span>Corridor RN7 (Tana - Fianar - Toliara)</span>
           </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Gradient de prix croissant vers le Sud. Surcoût de transport estimé à +25% à l&apos;arrivée à Toliara.
           </p>
         </div>
 
         <div className="glass-card p-4 rounded-xl space-y-1.5">
-          <div className="flex items-center gap-2 text-xs font-semibold text-sky-300">
-            <Route className="w-4 h-4 text-sky-400" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-sky-700 dark:text-sky-300">
+            <Route className="w-4 h-4 text-sky-700 dark:text-sky-400" />
             <span>Corridor RN44 (Alaotra-Mangoro)</span>
           </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Bassin de production excédentaire (Grenier de Madagascar). Prix au producteur les plus bas du territoire national.
           </p>
         </div>
@@ -140,8 +140,8 @@ export default function MapPage() {
   return (
     <React.Suspense
       fallback={
-        <div className="h-96 flex items-center justify-center glass-panel rounded-2xl text-xs text-slate-400 font-mono gap-2">
-          <RefreshCw className="w-4 h-4 animate-spin text-emerald-400" />
+        <div className="h-96 flex items-center justify-center glass-panel rounded-2xl text-xs text-muted-foreground font-mono gap-2">
+          <RefreshCw className="w-4 h-4 animate-spin text-primary-readable" />
           Chargement de la carte...
         </div>
       }

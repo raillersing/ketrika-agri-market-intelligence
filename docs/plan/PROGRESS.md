@@ -1,5 +1,30 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-26T19:35:00Z] Irooa — thèmes et contre-épreuves de développement
+
+- Demandes utilisateur : modes clair/sombre et inspiration d'irooa.com. ADR129/SPECS avant code ; palette publique relevée200, seuls les jetons de couleur sont repris. Préférence système par défaut, choix explicite mémorisé, synchronisation des onglets et repli sans stockage. Graphiques et pages migrés vers des couleurs sémantiques ; aucun chiffre/calcul modifié.
+- Frontend développement18544 code0 :lint/types/68 tests dans11 suites. Sonde navigateur34345 code0 :couleurs réelles, persistance, recherche/focus, gestion repliable, menu320/390 et About texte200%, zéro erreur JavaScript. Première sonde rouge sur grille About à200% : grille minmax corrigée, origine rouge conservée. Inspection visuelle corrige aussi le contraste du badge source clair ; réception globale du gel encore requise.
+- ADR130 : uv --compile-bytecode, nouveaux environnements r05, anciennes images/volumes conservés. Imports mesurés29,281→10,172s ; contre-épreuve révocation inter-processus code0/1 test/18,93s avec limite30s inchangée. Premier diagnostic mal configuré échoue avant collecte (plugins non déclarés), commande corrigée sans changer de dépendance. B-R090 reste ouvert jusqu'au check complet et aux19 E2E.
+- Aperçu isolé3006/À propos accessible ; support investisseurs renommé Irooa/Ketrikay avec capture réelle. Backend actif historique et données imputées inchangés. Aucun déploiement de sécurité, migration active, collecte, envoi externe ou qualification marché revendiqué. Scan incrémental0 :2,64Mo, aucun secret. AU-06/AU-07/R0.8 restent IN_PROGRESS ; miroir74 inchangé.
+
+
+### [2026-10-26T18:28:00Z] Réception bace9c0 rouge — deux contraintes temporelles
+
+- Check87462 terminé1 :2462 succès/deux échecs/zéro skip en4680,02s. Lint/format/Mypy/cohérence74 verts. Le frontend n'a pas été exécuté pour cette source ; son reçu7d178a1 reste distinct, jamais réétiqueté. Originaux JUnit/inventaire/couverture conservés dans restore-acl-20261026/reception-red.
+- test_revocation_survives_new_connection_and_process : processus fils non terminé dans30s, donc résultat inter-processus inconnu, pas une révocation acceptée. test_concurrent_authenticated_http_latency_p95 : /v1/products1122,81ms pour seuil1000ms ; aucun seuil ou scénario réduit. B-R090 INVESTIGATING.
+- Contentions de compilation/typage parallèles sur machine partagée suspectées, non isolées. Source auth/performance inchangée entre le premier check7d178a1 vert et ce gel ; le correctif applicatif retirait les options de perte d'ACL. Terminer les compilations propres, diagnostiquer ces deux cas à seuils constants puis recevoir le nouveau gel consolidé Irooa/navigation/About, jamais un simple sous-ensemble vert.
+- AU-06/AU-07 et R0.8 restent IN_PROGRESS. Aucun main/runtime actif ou image de réception modifié ; pas de publication, déploiement ou tag. L'aperçu UI appartient à un conteneur/volumes distincts et ne qualifie pas la sécurité du backend actif.
+
+### [2026-10-26T18:05:00Z] Identité Irooa et Ketrikay — extension demandée
+
+- Demande explicite : Irooa Market intelligence ; page À propos ; Ketrikay entreprise mère, ancien nom Ketrikai. ADR128/SPECS avant code. Description précisée par l'utilisateur : numérique, collecte de données, ERP et logiciels augmentés par IA ; rédaction commerciale intégrée sans preuve de clients/revenus ni résultats inventés.
+- Page publique statique /about, identité frontend centralisée, connexion sobre et lien À propos, navigation secondaire et recherche cohérentes. Authentification métier inchangée hors exemption exacte About, contre-exemples de préfixes/sous-routes à vérifier. Aucun identifiant technique, historique ou donnée active renommé.
+- Menus : Explorer/Analyser/Suivre et gestion repliable ; fausses identités et garanties retirées des textes de navigation. Première sonde ciblée lint/types/quatre tests verte, scénario navigateur17 étendu pour la page About et l'identité. La nouvelle source exige sa propre réception après le check bace9c0 en cours ; aucun DONE supplémentaire.
+
+### [2026-10-26T17:40:00Z] R0.8 — navigation demandée, développement isolé
+
+- Demande explicite : réorganiser les menus avec une direction UI/UX plus sobre. Branche feat/r08-navigation-20261026, basebace9c0 ; le check87462 sur le worktree restauration reste intact et se poursuit. Aucun code/image/SQL/S3 de cette réception ni service actif modifié.
+- Mini-plan : ADR127/SPECS avant code ; référentiel commun des pages ; menu par tâches et gestion secondaire ; en-tête et recherche cohérents sans identités/promesses fictives ; focus/clavier/menu mobile ; tests ciblés, aperçu indépendant ; gel et réception complète de ce nouveau contenu après libération, puis E2E. Aucun statut R ou lot sécurité promu par l'apparence.
 
 ### [2026-10-26T16:58:00Z] AU-06/AU-07 — premier check vert, gel de la fidélité SQL
 

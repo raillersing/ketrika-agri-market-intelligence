@@ -22,7 +22,7 @@ export function ProvenanceLink({
   return (
     <Link
       href={`/observations/${observationId}`}
-      className={`inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-900 hover:underline dark:text-emerald-400 dark:hover:text-emerald-300 ${className}`}
+      className={`inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-900 hover:underline dark:text-primary-readable dark:hover:text-primary-readable ${className}`}
       title="Consulter la traçabilité complète et la preuve d'extraction"
     >
       <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />

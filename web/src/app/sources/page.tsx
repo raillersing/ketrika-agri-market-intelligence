@@ -334,15 +334,15 @@ export default function SourcesPage() {
           }`}
         >
           {toast.type === "success" ? (
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-primary-readable shrink-0" />
           ) : (
-            <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+            <AlertCircle className="w-5 h-5 text-rose-700 dark:text-rose-400 shrink-0" />
           )}
           <span className="text-xs font-medium">{toast.message}</span>
           <button
             aria-label="Fermer la notification"
             onClick={() => setToast(null)}
-            className="ml-2 text-slate-400 hover:text-white transition-colors"
+            className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -350,25 +350,25 @@ export default function SourcesPage() {
       )}
 
       {/* Hero Header Awwwards-inspired */}
-      <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-slate-900/90 via-slate-950/95 to-slate-900/80 border border-white/10 shadow-2xl overflow-hidden">
+      <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-slate-900/90 via-slate-950/95 to-slate-900/80 border border-border shadow-2xl overflow-hidden">
         {/* Glow atmosphérique en arrière-plan */}
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-10 left-10 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-mono font-medium">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-primary-readable text-xs font-mono font-medium">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               Catalogue des sources • Qualification à vérifier
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
               Sources & indicateurs
             </h1>
 
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               Collectez les publications publiques autorisées et recalculez leurs indicateurs en{" "}
-              <strong className="text-white font-semibold">1 clic</strong>, sans aucune
+              <strong className="text-foreground font-semibold">1 clic</strong>, sans aucune
               manipulation technique ni code complexe.
             </p>
           </div>
@@ -378,26 +378,26 @@ export default function SourcesPage() {
             <button
               onClick={handleRefreshAll}
               disabled={isRefreshingAll || refreshingSourceId !== null || collection.busy || !canRefresh}
-              className="relative group inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-xl shadow-emerald-950/60 hover:shadow-emerald-900/80 border border-emerald-400/40 active:scale-98 transition-all disabled:opacity-60 disabled:pointer-events-none"
+              className="relative group inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-foreground font-bold text-sm shadow-xl shadow-emerald-950/60 hover:shadow-emerald-900/80 border border-primary/40 active:scale-98 transition-all disabled:opacity-60 disabled:pointer-events-none"
             >
-              <RefreshCw className={`w-4 h-4 ${isRefreshingAll ? "animate-spin text-white" : "group-hover:rotate-180 transition-transform duration-500"}`} />
+              <RefreshCw className={`w-4 h-4 ${isRefreshingAll ? "animate-spin text-foreground" : "group-hover:rotate-180 transition-transform duration-500"}`} />
               <span>{isRefreshingAll ? "Recalcul en cours..." : "Recalculer les indicateurs"}</span>
-              <Sparkles className="w-4 h-4 text-emerald-200 group-hover:scale-110 transition-transform" />
+              <Sparkles className="w-4 h-4 text-primary-readable group-hover:scale-110 transition-transform" />
             </button>
-            {!canRefresh && <p className="text-xs text-slate-300">Collecte et recalcul réservés aux administrateurs.</p>}
+            {!canRefresh && <p className="text-xs text-muted-foreground">Collecte et recalcul réservés aux administrateurs.</p>}
             <button
               onClick={() => collection.start()}
               disabled={!canRefresh || collection.busy || isRefreshingAll || collection.eligible.length === 0}
-              className="rounded-2xl bg-cyan-500 px-5 py-4 font-bold text-slate-950 disabled:opacity-50"
+              className="rounded-2xl bg-cyan-500 px-5 py-4 font-bold text-primary-foreground disabled:opacity-50"
             >{collection.busy ? "Collecte en cours…" : "Collecter les nouvelles données"}</button>
 
             <button
               aria-expanded={guideOpen}
               aria-controls="sources-guide"
               onClick={() => setGuideOpen(!guideOpen)}
-              className="inline-flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-white/[0.05] hover:bg-white/[0.08] text-slate-200 hover:text-white border border-white/10 text-xs font-medium transition-all"
+              className="inline-flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-foreground/[0.05] hover:bg-foreground/[0.08] text-foreground hover:text-foreground border border-border text-xs font-medium transition-all"
             >
-              <BookOpen className="w-4 h-4 text-emerald-400" />
+              <BookOpen className="w-4 h-4 text-primary-readable" />
               <span>{guideOpen ? "Masquer le guide" : "Guide utilisateur"}</span>
               {guideOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
@@ -406,15 +406,15 @@ export default function SourcesPage() {
 
         {/* Indicateur de progression temps réel lors de l'actualisation globale */}
         {isRefreshingAll && (
-          <div role="status" aria-live="polite" className="mt-6 pt-5 border-t border-white/10 animate-in fade-in duration-200">
+          <div role="status" aria-live="polite" className="mt-6 pt-5 border-t border-border animate-in fade-in duration-200">
             <div className="flex items-center justify-between text-xs font-mono mb-2">
-              <span className="text-emerald-300 font-semibold flex items-center gap-2">
+              <span className="text-primary-readable font-semibold flex items-center gap-2">
                 <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                 {refreshStep || "Traitement des données..."}
               </span>
-              <span className="text-slate-400">Durée non estimée</span>
+              <span className="text-muted-foreground">Durée non estimée</span>
             </div>
-            <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 animate-pulse rounded-full w-full transition-all duration-500" />
             </div>
           </div>
@@ -427,64 +427,64 @@ export default function SourcesPage() {
         <div id="sources-guide" className="glass-panel rounded-3xl p-6 sm:p-7 border border-emerald-500/20 bg-emerald-950/10 space-y-5 animate-in slide-in-from-top-3 duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-300">
+              <div className="p-2 rounded-xl bg-emerald-500/20 text-primary-readable">
                 <HelpCircle className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-base font-bold text-white">
+                <h2 className="text-base font-bold text-foreground">
                   Guide d&apos;utilisation : Collecter ou recalculer ?
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-muted-foreground">
                   Comprendre le fonctionnement sans jargon informatique.
                 </p>
               </div>
             </div>
-            <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-white/[0.06] text-slate-300">
+            <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-foreground/[0.06] text-muted-foreground">
               3 étapes claires
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/5 space-y-2">
-              <div className="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center justify-center">
+            <div className="p-4 rounded-2xl bg-card/60 border border-border space-y-2">
+              <div className="w-7 h-7 rounded-xl bg-emerald-500/20 text-primary-readable font-bold text-xs flex items-center justify-center">
                 1
               </div>
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
                 Choisissez votre action
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Cliquez sur <strong className="text-emerald-300">« Collecter les nouvelles données »</strong> pour les sources autorisées, ou « Collecter » sur une carte. « Recalculer les indicateurs » utilise seulement les données déjà présentes.
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Cliquez sur <strong className="text-primary-readable">« Collecter les nouvelles données »</strong> pour les sources autorisées, ou « Collecter » sur une carte. « Recalculer les indicateurs » utilise seulement les données déjà présentes.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/5 space-y-2">
+            <div className="p-4 rounded-2xl bg-card/60 border border-border space-y-2">
               <div className="w-7 h-7 rounded-xl bg-teal-500/20 text-teal-300 font-bold text-xs flex items-center justify-center">
                 2
               </div>
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
                 Vérification avant publication
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 La collecte télécharge les documents publics, les archive puis contrôle et intègre leurs données. La publication des indicateurs peut être refusée si les preuves sont insuffisantes.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-white/5 space-y-2">
+            <div className="p-4 rounded-2xl bg-card/60 border border-border space-y-2">
               <div className="w-7 h-7 rounded-xl bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center justify-center">
                 3
               </div>
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
                 Consultez le résultat
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Suivez les étapes réelles et le résultat par source. Le suivi reste disponible après rechargement. Aucun nombre ne garantit une fraîcheur universelle ; les bulletins ne sont pas régénérés.
               </p>
             </div>
           </div>
 
-          <div className="pt-2 text-xs text-slate-400 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-white/5">
+          <div className="pt-2 text-xs text-muted-foreground flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-border">
             <p className="flex items-center gap-1.5">
-              <Zap className="w-4 h-4 text-amber-400 shrink-0" />
+              <Zap className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0" />
               <span>
                 <strong>Bon à savoir :</strong> Une source peut ne publier aucun nouveau document ou refuser l’accès. Une collecte interrompue n’est jamais relancée automatiquement.
               </span>
@@ -496,13 +496,13 @@ export default function SourcesPage() {
       {/* Cartes de métriques de santé des données */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="glass-card rounded-2xl p-4 sm:p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-primary-readable shrink-0">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-400 font-medium">Sources enregistrées</p>
-            <p className="text-xl sm:text-2xl font-extrabold text-white">{totalCount}</p>
-            <p className="text-[11px] text-emerald-400 mt-0.5">Qualification selon les preuves disponibles</p>
+            <p className="text-xs text-muted-foreground font-medium">Sources enregistrées</p>
+            <p className="text-xl sm:text-2xl font-extrabold text-foreground">{totalCount}</p>
+            <p className="text-[11px] text-primary-readable mt-0.5">Qualification selon les preuves disponibles</p>
           </div>
         </div>
 
@@ -511,8 +511,8 @@ export default function SourcesPage() {
             <CheckCircle2 className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-400 font-medium">Conformité aux délais</p>
-            <p className="text-xl sm:text-2xl font-extrabold text-white">
+            <p className="text-xs text-muted-foreground font-medium">Conformité aux délais</p>
+            <p className="text-xl sm:text-2xl font-extrabold text-foreground">
               {summary.percent === null ? "Non mesuré" : `${summary.percent}%`}
             </p>
             <p className="text-[11px] text-teal-400 mt-0.5">{compliantCount} dans le délai sur {summary.measured} mesurées</p>
@@ -524,20 +524,20 @@ export default function SourcesPage() {
             <Database className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-400 font-medium">Stockage immuable</p>
-            <p className="text-xl sm:text-2xl font-extrabold text-white">Bronze S3</p>
+            <p className="text-xs text-muted-foreground font-medium">Stockage immuable</p>
+            <p className="text-xl sm:text-2xl font-extrabold text-foreground">Bronze S3</p>
             <p className="text-[11px] text-cyan-400 mt-0.5">Empreintes SHA-256</p>
           </div>
         </div>
 
         <div className="glass-card rounded-2xl p-4 sm:p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
+          <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-700 dark:text-purple-400 shrink-0">
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs text-slate-400 font-medium">Mode de collecte</p>
-            <p className="text-xl sm:text-2xl font-extrabold text-white">Selon configuration</p>
-            <p className="text-[11px] text-purple-300 mt-0.5">Exécution à vérifier</p>
+            <p className="text-xs text-muted-foreground font-medium">Mode de collecte</p>
+            <p className="text-xl sm:text-2xl font-extrabold text-foreground">Selon configuration</p>
+            <p className="text-[11px] text-purple-700 dark:text-purple-300 mt-0.5">Exécution à vérifier</p>
           </div>
         </div>
       </div>
@@ -547,20 +547,20 @@ export default function SourcesPage() {
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
           {/* Recherche intuitive */}
           <div className="relative flex-1 max-w-lg">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label="Rechercher une source, une institution ou un produit"
               placeholder="Rechercher un produit, une institution ou une source…"
-              className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-slate-900/80 border border-white/10 text-white placeholder-slate-400 text-xs focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all shadow-inner"
+              className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-card/80 border border-border text-foreground placeholder-slate-400 text-xs focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all shadow-inner"
             />
             {searchQuery && (
               <button
                 aria-label="Effacer la recherche"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -569,13 +569,13 @@ export default function SourcesPage() {
 
           {/* Sélecteur de vue : Cartes vs Tableau */}
           <div className="flex items-center gap-2 self-end sm:self-auto">
-            <div className="flex items-center p-1 rounded-xl bg-slate-900/80 border border-white/10 text-xs">
+            <div className="flex items-center p-1 rounded-xl bg-card/80 border border-border text-xs">
               <button
                 onClick={() => setViewMode("cards")}
                 className={`p-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
                   viewMode === "cards"
-                    ? "bg-emerald-500/20 text-emerald-300 font-semibold"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-emerald-500/20 text-primary-readable font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
                 aria-label="Vue grille de cartes"
                 aria-pressed={viewMode === "cards"}
@@ -588,8 +588,8 @@ export default function SourcesPage() {
                 onClick={() => setViewMode("table")}
                 className={`p-1.5 rounded-lg flex items-center gap-1.5 transition-all ${
                   viewMode === "table"
-                    ? "bg-emerald-500/20 text-emerald-300 font-semibold"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-emerald-500/20 text-primary-readable font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
                 aria-label="Vue liste détaillée"
                 aria-pressed={viewMode === "table"}
@@ -613,8 +613,8 @@ export default function SourcesPage() {
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs whitespace-nowrap transition-all border ${
                   isSelected
-                    ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-lg shadow-emerald-950/40 font-semibold"
-                    : "bg-slate-900/60 text-slate-400 border-white/5 hover:bg-slate-900 hover:text-slate-200"
+                    ? "bg-emerald-500/20 text-primary-readable border-emerald-500/40 shadow-lg shadow-emerald-950/40 font-semibold"
+                    : "bg-card/60 text-muted-foreground border-border hover:bg-card hover:text-foreground"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -627,15 +627,15 @@ export default function SourcesPage() {
 
       {/* Affichage des sources : Cartes ou Tableau */}
       {loading ? (
-        <div className="p-16 text-center text-xs text-slate-400 flex flex-col items-center justify-center gap-3 glass-card rounded-3xl font-mono">
-          <RefreshCw className="w-6 h-6 animate-spin text-emerald-400" />
+        <div className="p-16 text-center text-xs text-muted-foreground flex flex-col items-center justify-center gap-3 glass-card rounded-3xl font-mono">
+          <RefreshCw className="w-6 h-6 animate-spin text-primary-readable" />
           <span>Chargement du catalogue des données officielles...</span>
         </div>
       ) : filteredSources.length === 0 ? (
         <div className="p-12 text-center glass-card rounded-3xl space-y-3">
-          <Search className="w-8 h-8 text-slate-500 mx-auto" />
-          <h3 className="text-sm font-bold text-white">Aucune source ne correspond à votre recherche</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+          <Search className="w-8 h-8 text-muted-foreground mx-auto" />
+          <h3 className="text-sm font-bold text-foreground">Aucune source ne correspond à votre recherche</h3>
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
             Essayez de modifier votre recherche (« riz », « devises », « climat ») ou réinitialisez les filtres.
           </p>
           <button
@@ -644,7 +644,7 @@ export default function SourcesPage() {
               setSelectedCategory("all");
               setStatusFilter("all");
             }}
-            className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-white font-medium transition-all"
+            className="px-4 py-2 rounded-xl bg-foreground/10 hover:bg-foreground/15 text-xs text-foreground font-medium transition-all"
           >
             Réinitialiser les filtres
           </button>
@@ -672,14 +672,14 @@ export default function SourcesPage() {
                   {/* Top Bar de la Carte */}
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex min-w-0 max-w-full items-center gap-3">
-                      <span className="text-2xl p-2.5 rounded-2xl bg-white/[0.04] border border-white/5">
+                      <span className="text-2xl p-2.5 rounded-2xl bg-foreground/[0.04] border border-border">
                         {meta.icon}
                       </span>
                       <div>
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400/90 font-bold block">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-primary-readable/90 font-bold block">
                           {source.priority} • {source.sourceId}
                         </span>
-                        <h3 className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors line-clamp-1">
+                        <h3 className="text-sm font-bold text-foreground group-hover:text-primary-readable transition-colors line-clamp-1">
                           {source.name}
                         </h3>
                       </div>
@@ -688,8 +688,8 @@ export default function SourcesPage() {
                     <span
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-medium border shrink-0 ${
                         (source.status !== "active" || source.isStale !== false)
-                          ? "bg-amber-500/15 text-amber-300 border-amber-500/25"
-                          : "bg-emerald-500/15 text-emerald-300 border-emerald-500/25"
+                          ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/25"
+                          : "bg-emerald-500/15 text-primary-readable border-emerald-500/25"
                       }`}
                     >
                       <span
@@ -700,29 +700,29 @@ export default function SourcesPage() {
                   </div>
 
                   {/* Institution */}
-                  <p className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
-                    <span className="text-slate-500">Source :</span> {meta.institution}
+                  <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                    <span className="text-muted-foreground">Source :</span> {meta.institution}
                   </p>
 
                   {/* Description vulgarisée */}
-                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                     {meta.description}
                   </p>
 
                   {/* Produits suivis */}
                   <div className="space-y-1.5 pt-1">
-                    <span className="text-[11px] font-mono text-slate-400 block">Produits & Données :</span>
+                    <span className="text-[11px] font-mono text-muted-foreground block">Produits & Données :</span>
                     <div className="flex flex-wrap gap-1.5">
                       {meta.products.slice(0, 3).map((prod, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-0.5 rounded-lg text-[10px] font-medium bg-white/[0.04] text-slate-300 border border-white/5"
+                          className="px-2 py-0.5 rounded-lg text-[10px] font-medium bg-foreground/[0.04] text-muted-foreground border border-border"
                         >
                           {prod}
                         </span>
                       ))}
                       {meta.products.length > 3 && (
-                        <span className="px-2 py-0.5 rounded-lg text-[10px] font-medium bg-white/[0.02] text-slate-500">
+                        <span className="px-2 py-0.5 rounded-lg text-[10px] font-medium bg-foreground/[0.02] text-muted-foreground">
                           +{meta.products.length - 3} autres
                         </span>
                       )}
@@ -731,15 +731,15 @@ export default function SourcesPage() {
                 </div>
 
                 {/* Footer de la carte avec bouton d'actualisation 1 clic */}
-                <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-2">
-                  <div className="text-[11px] font-mono text-slate-400">
-                    <span className="text-slate-500">Fréquence :</span> {meta.cadenceHuman}
+                <div className="pt-3 border-t border-border flex items-center justify-between gap-2">
+                  <div className="text-[11px] font-mono text-muted-foreground">
+                    <span className="text-muted-foreground">Fréquence :</span> {meta.cadenceHuman}
                   </div>
 
                   <button
                     onClick={() => handleRefreshSource(source.sourceId)}
                     disabled={refreshingSourceId !== null || isRefreshingAll || collection.busy || !canRefresh || !collection.eligible.includes(source.sourceId)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-primary-hover/25 text-primary-readable border border-emerald-500/30 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50"
                   >
                     <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
                     <span>{isRefreshing ? "Collecte..." : "Collecter"}</span>
@@ -751,10 +751,10 @@ export default function SourcesPage() {
         </div>
       ) : (
         /* VUE TABLEAU STRUCTURÉ */
-        <div className="glass-card rounded-3xl overflow-hidden border border-white/10">
+        <div className="glass-card rounded-3xl overflow-hidden border border-border">
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-slate-950/80 text-slate-400 border-b border-white/[0.08] uppercase font-mono text-[10px] tracking-wider">
+              <thead className="bg-background/80 text-muted-foreground border-b border-border uppercase font-mono text-[10px] tracking-wider">
                 <tr>
                   <th className="px-5 py-4">Source & Émetteur</th>
                   <th className="px-5 py-4">Produits couverts</th>
@@ -763,7 +763,7 @@ export default function SourcesPage() {
                   <th className="px-5 py-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04]">
+              <tbody className="divide-y divide-border">
                 {filteredSources.map((source) => {
                   const meta = SOURCES_METADATA[source.sourceId] || {
                     institution: "Organisme officiel",
@@ -773,32 +773,32 @@ export default function SourcesPage() {
                   const isRefreshing = refreshingSourceId === source.sourceId;
 
                   return (
-                    <tr key={source.sourceId} className="hover:bg-white/[0.02] transition-colors">
+                    <tr key={source.sourceId} className="hover:bg-foreground/[0.02] transition-colors">
                       <td className="px-5 py-4">
-                        <div className="font-bold text-white text-xs">{source.name}</div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">{meta.institution}</div>
+                        <div className="font-bold text-foreground text-xs">{source.name}</div>
+                        <div className="text-[11px] text-muted-foreground mt-0.5">{meta.institution}</div>
                       </td>
                       <td className="px-5 py-4">
                         <div className="flex flex-wrap gap-1 max-w-xs">
                           {meta.products.slice(0, 2).map((p, i) => (
                             <span
                               key={i}
-                              className="px-2 py-0.5 rounded bg-white/[0.04] text-[10px] text-slate-300"
+                              className="px-2 py-0.5 rounded bg-foreground/[0.04] text-[10px] text-muted-foreground"
                             >
                               {p}
                             </span>
                           ))}
                         </div>
                       </td>
-                      <td className="px-5 py-4 font-mono text-slate-300 text-[11px]">
+                      <td className="px-5 py-4 font-mono text-muted-foreground text-[11px]">
                         {meta.cadenceHuman}
                       </td>
                       <td className="px-5 py-4">
                         <span
                           className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium border ${
                             (source.status !== "active" || source.isStale !== false)
-                              ? "bg-amber-500/15 text-amber-300 border-amber-500/25"
-                              : "bg-emerald-500/15 text-emerald-300 border-emerald-500/25"
+                              ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/25"
+                              : "bg-emerald-500/15 text-primary-readable border-emerald-500/25"
                           }`}
                         >
                           <span
@@ -811,7 +811,7 @@ export default function SourcesPage() {
                         <button
                           onClick={() => handleRefreshSource(source.sourceId)}
                           disabled={refreshingSourceId !== null || isRefreshingAll || collection.busy || !canRefresh || !collection.eligible.includes(source.sourceId)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-primary-hover/25 text-primary-readable border border-emerald-500/30 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50"
                         >
                           <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
                           <span>{isRefreshing ? "Collecte..." : "Collecter"}</span>
@@ -827,22 +827,22 @@ export default function SourcesPage() {
       )}
 
       {/* Historique des Dernières Synchronisations (Timeline lisible) */}
-      <div className="glass-card rounded-3xl p-6 sm:p-7 border border-white/10 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-4">
+      <div className="glass-card rounded-3xl p-6 sm:p-7 border border-border space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-4">
           <div className="flex items-center gap-2.5">
-            <Activity className="w-5 h-5 text-emerald-400" />
+            <Activity className="w-5 h-5 text-primary-readable" />
             <div>
-              <h2 className="text-sm font-bold text-white">
+              <h2 className="text-sm font-bold text-foreground">
                 Historique des traitements enregistrés
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 Traitements déclarés et volumes enregistrés ; cet historique ne certifie pas une collecte.
               </p>
             </div>
           </div>
           <button
             onClick={loadData}
-            className="self-start sm:self-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-xs font-mono transition-all"
+            className="self-start sm:self-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-foreground/[0.04] hover:bg-foreground/[0.08] text-muted-foreground text-xs font-mono transition-all"
           >
             <RefreshCw className="w-3 h-3" />
             <span>Rafraîchir le journal</span>
@@ -850,7 +850,7 @@ export default function SourcesPage() {
         </div>
 
         {runs.length === 0 ? (
-          <div className="p-8 text-center text-xs text-slate-400 font-mono">
+          <div className="p-8 text-center text-xs text-muted-foreground font-mono">
             Aucun historique d&apos;actualisation récent enregistré.
           </div>
         ) : (
@@ -858,7 +858,7 @@ export default function SourcesPage() {
             {runs.slice(0, 6).map((run) => (
               <div
                 key={run.run_id}
-                className="p-3.5 rounded-2xl bg-slate-900/50 border border-white/5 flex items-center justify-between gap-3 text-xs"
+                className="p-3.5 rounded-2xl bg-card/50 border border-border flex items-center justify-between gap-3 text-xs"
               >
                 <div className="flex items-center gap-3">
                   <div
@@ -867,10 +867,10 @@ export default function SourcesPage() {
                     }`}
                   />
                   <div>
-                    <span className="font-bold text-white block">
+                    <span className="font-bold text-foreground block">
                       {run.source_name || run.source_id} — {({ success: "Terminé", running: "En cours", failed: "Échec", partial: "Partiel" } as Record<string, string>)[run.status] || "État inconnu"}
                     </span>
-                    <span className="text-[11px] text-slate-400 font-mono">
+                    <span className="text-[11px] text-muted-foreground font-mono">
                       {new Date(run.started_at).toLocaleString("fr-FR", {
                         day: "2-digit",
                         month: "short",
@@ -883,11 +883,11 @@ export default function SourcesPage() {
                 </div>
 
                 <div className="text-right">
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-medium">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-primary-readable border border-emerald-500/20 font-medium">
                     {run.n_records === null ? "Volume non mesuré" : `${run.n_records} enregistrements`}
                   </span>
                   {run.duration_seconds !== null && run.duration_seconds !== undefined && (
-                    <span className="text-[10px] text-slate-500 font-mono block mt-0.5">
+                    <span className="text-[10px] text-muted-foreground font-mono block mt-0.5">
                       {run.duration_seconds}s
                     </span>
                   )}
@@ -901,14 +901,14 @@ export default function SourcesPage() {
       {/* Section Mode Expert / Dagster (Discret et bien séparé) */}
       <div className="p-5 rounded-2xl bg-purple-950/20 border border-purple-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 shrink-0">
+          <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-700 dark:text-purple-300 shrink-0">
             <Server className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            <h3 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
               Dagster Cockpit (Mode Ingénieur & DataOps)
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Outil technique avancé réservé aux administrateurs pour inspecter le graphe de calcul et les pipelines bruts.
             </p>
           </div>
@@ -918,7 +918,7 @@ export default function SourcesPage() {
           href={process.env.NEXT_PUBLIC_DAGSTER_URL || "http://localhost:3010"}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-purple-600/30 hover:bg-purple-600/40 text-purple-200 border border-purple-500/30 rounded-xl text-xs font-semibold shadow-lg shadow-purple-950/40 transition-all shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-purple-600/30 hover:bg-purple-600/40 text-purple-700 dark:text-purple-200 border border-purple-500/30 rounded-xl text-xs font-semibold shadow-lg shadow-purple-950/40 transition-all shrink-0 self-start sm:self-auto"
         >
           <span>Ouvrir Dagster</span>
           <ExternalLink className="w-3.5 h-3.5" />

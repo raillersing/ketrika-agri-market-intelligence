@@ -26,7 +26,7 @@ export function SourceBadge({ sourceId, className = "" }: SourceBadgeProps) {
   return (
     <span
       title={`Source de données : ${sourceId}`}
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 ${className}`}
+      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-mono bg-muted text-muted-foreground border border-border ${className}`}
     >
       {label}
     </span>

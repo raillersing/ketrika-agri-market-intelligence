@@ -1,0 +1,10 @@
+{
+  "source": "https://irooa.com/",
+  "stylesheet": "https://irooa.com/assets/index-UEdqJ1dv.css",
+  "retrieved_at": "2026-10-26T18:42:37Z",
+  "homepage_http_status": 200,
+  "stylesheet_http_status": 200,
+  "scope": "selected published color variables only; no site code or business data copied",
+  "light": {"primary":"#1e7a34","background":"#fafafa","card":"#ffffff","foreground":"#111111","mutedForeground":"#5f6673","border":"#e5e7eb"},
+  "dark": {"primary":"#059669","background":"#0f172a","card":"#1e293b","foreground":"#e2e8f0","mutedForeground":"#94a3b8","focus":"#34d399"}
+}

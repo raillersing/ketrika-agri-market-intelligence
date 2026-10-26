@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 /** The server owns session validity; a cookie value alone never grants access. */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (pathname.startsWith("/_next/") || pathname.startsWith("/api/") || pathname === "/favicon.ico") {
+  if (pathname.startsWith("/_next/") || pathname.startsWith("/api/") || pathname === "/favicon.ico" || pathname === "/about" || pathname === "/about/") {
     return NextResponse.next();
   }
   const token = request.cookies.get("session_token")?.value;

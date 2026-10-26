@@ -121,24 +121,24 @@ export default function AlertsPage() {
   const getSeverityBadge = (sev: string) => {
     switch (sev) {
       case "high":
-        return "bg-rose-500/10 text-rose-400 border-rose-500/20";
+        return "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20";
       case "medium":
-        return "bg-amber-500/10 text-amber-400 border-amber-500/20";
+        return "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20";
       default:
-        return "bg-slate-800 text-slate-300 border-white/10";
+        return "bg-muted text-muted-foreground border-border";
     }
   };
 
   const getStateBadge = (st: string) => {
     switch (st) {
       case "open":
-        return "bg-rose-500/15 text-rose-300 border-rose-500/30";
+        return "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30";
       case "acknowledged":
-        return "bg-sky-500/15 text-sky-300 border-sky-500/30";
+        return "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30";
       case "resolved":
-        return "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
+        return "bg-emerald-500/15 text-primary-readable border-emerald-500/30";
       default:
-        return "bg-slate-800 text-slate-400 border-white/10";
+        return "bg-muted text-muted-foreground border-border";
     }
   };
 
@@ -148,26 +148,26 @@ export default function AlertsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
-              <AlertTriangle className="w-6 h-6 text-amber-400" />
+            <h1 className="text-2xl font-extrabold tracking-tight text-foreground flex items-center gap-2.5">
+              <AlertTriangle className="w-6 h-6 text-amber-700 dark:text-amber-400" />
               Centre d&apos;alertes & Détection de tensions
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-rose-500/10 text-rose-300 border border-rose-500/20">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/20">
               {alerts.length} signaux
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Détection algorithmique idempotente des pics de prix, ruptures d&apos;approvisionnement et anomalies spatiales.
           </p>
         </div>
 
         {/* State filters */}
         <div className="flex items-center gap-2">
-          <Filter className="w-3.5 h-3.5 text-slate-400" />
+          <Filter className="w-3.5 h-3.5 text-muted-foreground" />
           <select
             value={stateFilter}
             onChange={(e) => setStateFilter(e.target.value)}
-            className="text-xs bg-slate-900 border border-white/[0.1] rounded-xl px-3 py-1.5 text-white shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+            className="text-xs bg-card border border-border rounded-xl px-3 py-1.5 text-foreground shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
           >
             <option value="">Tous les états</option>
             <option value="open">Ouvertes (Open)</option>
@@ -179,26 +179,26 @@ export default function AlertsPage() {
 
       {/* KPI Severity Ribbon */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="glass-panel p-3.5 rounded-xl border border-white/[0.08]">
-          <span className="text-[10px] font-mono uppercase text-slate-400">Total Alertes</span>
-          <div className="text-xl font-bold font-mono text-white mt-0.5">{alerts.length}</div>
+        <div className="glass-panel p-3.5 rounded-xl border border-border">
+          <span className="text-[10px] font-mono uppercase text-muted-foreground">Total Alertes</span>
+          <div className="text-xl font-bold font-mono text-foreground mt-0.5">{alerts.length}</div>
         </div>
         <div className="glass-panel p-3.5 rounded-xl border border-rose-500/20 bg-rose-500/5">
-          <span className="text-[10px] font-mono uppercase text-rose-400">Sévérité Haute</span>
-          <div className="text-xl font-bold font-mono text-rose-300 mt-0.5">{highCount}</div>
+          <span className="text-[10px] font-mono uppercase text-rose-700 dark:text-rose-400">Sévérité Haute</span>
+          <div className="text-xl font-bold font-mono text-rose-700 dark:text-rose-300 mt-0.5">{highCount}</div>
         </div>
         <div className="glass-panel p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/5">
-          <span className="text-[10px] font-mono uppercase text-amber-400">Sévérité Moyenne</span>
-          <div className="text-xl font-bold font-mono text-amber-300 mt-0.5">{mediumCount}</div>
+          <span className="text-[10px] font-mono uppercase text-amber-700 dark:text-amber-400">Sévérité Moyenne</span>
+          <div className="text-xl font-bold font-mono text-amber-700 dark:text-amber-300 mt-0.5">{mediumCount}</div>
         </div>
         <div className="glass-panel p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
-          <span className="text-[10px] font-mono uppercase text-emerald-400">Résolues</span>
-          <div className="text-xl font-bold font-mono text-emerald-300 mt-0.5">{resolvedCount}</div>
+          <span className="text-[10px] font-mono uppercase text-primary-readable">Résolues</span>
+          <div className="text-xl font-bold font-mono text-primary-readable mt-0.5">{resolvedCount}</div>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-300 text-xs">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-700 dark:text-rose-300 text-xs">
           {error}
         </div>
       )}
@@ -207,30 +207,30 @@ export default function AlertsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* List of alerts */}
         <div className="lg:col-span-2 glass-card rounded-2xl overflow-hidden flex flex-col justify-between">
-          <div className="p-4 border-b border-white/[0.07] flex items-center justify-between">
-            <h2 className="text-sm font-bold text-white flex items-center gap-2">
-              <AlertOctagon className="w-4 h-4 text-emerald-400" />
+          <div className="p-4 border-b border-border flex items-center justify-between">
+            <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <AlertOctagon className="w-4 h-4 text-primary-readable" />
               Signaux de marché en cours ({alerts.length})
             </h2>
             <button
               onClick={fetchAlerts}
-              className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 transition-colors font-mono"
+              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors font-mono"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-emerald-400" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-primary-readable" : ""}`} />
               Actualiser
             </button>
           </div>
 
           {loading ? (
-            <div className="p-16 text-center text-xs text-slate-400 font-mono">
+            <div className="p-16 text-center text-xs text-muted-foreground font-mono">
               Chargement des alertes de marché...
             </div>
           ) : alerts.length === 0 ? (
-            <div className="p-16 text-center text-xs text-slate-400 font-mono">
+            <div className="p-16 text-center text-xs text-muted-foreground font-mono">
               Aucune alerte active ne correspond à ce filtre.
             </div>
           ) : (
-            <div className="divide-y divide-white/[0.04] max-h-[500px] overflow-y-auto">
+            <div className="divide-y divide-border max-h-[500px] overflow-y-auto">
               {alerts.map((al) => {
                 const isSelected = selectedAlert?.alertId === al.alertId;
                 return (
@@ -240,7 +240,7 @@ export default function AlertsPage() {
                     className={`w-full p-4 text-left transition-all flex items-start justify-between gap-4 ${
                       isSelected
                         ? "bg-emerald-500/10 border-l-4 border-l-emerald-400"
-                        : "hover:bg-white/[0.02]"
+                        : "hover:bg-foreground/[0.02]"
                     }`}
                   >
                     <div className="space-y-1.5 min-w-0">
@@ -252,12 +252,12 @@ export default function AlertsPage() {
                         >
                           {al.severity}
                         </span>
-                        <span className="font-semibold text-sm text-white truncate">
+                        <span className="font-semibold text-sm text-foreground truncate">
                           {al.title}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-slate-400 font-mono">
-                        <span className="text-emerald-400">{al.ruleCode}</span>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground font-mono">
+                        <span className="text-primary-readable">{al.ruleCode}</span>
                         <span>•</span>
                         <span>Vu le {formatMonthYear(al.lastSeenAt)}</span>
                       </div>
@@ -280,13 +280,13 @@ export default function AlertsPage() {
         {/* Alert Detail Panel */}
         <div className="glass-card rounded-2xl p-5 space-y-4 flex flex-col justify-between">
           <div>
-            <h2 className="text-sm font-bold text-white border-b border-white/[0.07] pb-3 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-foreground border-b border-border pb-3 flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 text-emerald-400" />
+                <ShieldAlert className="w-4 h-4 text-primary-readable" />
                 Dossier d&apos;alerte
               </span>
               {selectedAlert && (
-                <span className="text-[10px] font-mono text-slate-400">
+                <span className="text-[10px] font-mono text-muted-foreground">
                   {selectedAlert.alertId.slice(0, 8)}...
                 </span>
               )}
@@ -295,24 +295,24 @@ export default function AlertsPage() {
             {selectedAlert ? (
               <div className="space-y-4 text-xs mt-3">
                 <div>
-                  <span className="text-[11px] font-mono text-slate-400 block mb-1">
+                  <span className="text-[11px] font-mono text-muted-foreground block mb-1">
                     Événement détecté :
                   </span>
-                  <span className="font-bold text-sm text-white">
+                  <span className="font-bold text-sm text-foreground">
                     {selectedAlert.title}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 py-2.5 border-y border-white/[0.06] font-mono text-[11px]">
+                <div className="grid grid-cols-2 gap-2 py-2.5 border-y border-border font-mono text-[11px]">
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Règle SPECS §18 :</span>
-                    <span className="font-semibold text-emerald-400">
+                    <span className="text-muted-foreground block text-[10px]">Règle SPECS §18 :</span>
+                    <span className="font-semibold text-primary-readable">
                       {selectedAlert.ruleCode}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block text-[10px]">Statut :</span>
-                    <span className="font-semibold uppercase text-white">
+                    <span className="text-muted-foreground block text-[10px]">Statut :</span>
+                    <span className="font-semibold uppercase text-foreground">
                       {selectedAlert.state}
                     </span>
                   </div>
@@ -320,24 +320,24 @@ export default function AlertsPage() {
 
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[11px] font-mono text-slate-400">
+                    <span className="text-[11px] font-mono text-muted-foreground">
                       Preuves & métriques déclenchantes :
                     </span>
                     <button
                       onClick={copyEvidence}
-                      className="text-[10px] text-slate-400 hover:text-white flex items-center gap-1 font-mono"
+                      className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 font-mono"
                     >
                       <Copy className="w-3 h-3" />
                       {copied ? "Copié !" : "Copier JSON"}
                     </button>
                   </div>
-                  <pre className="p-3 bg-slate-950/80 border border-white/[0.06] rounded-xl font-mono text-[10px] overflow-x-auto text-emerald-300 max-h-48">
+                  <pre className="p-3 bg-background/80 border border-border rounded-xl font-mono text-[10px] overflow-x-auto text-primary-readable max-h-48">
                     {JSON.stringify(selectedAlert.evidence, null, 2)}
                   </pre>
                 </div>
               </div>
             ) : (
-              <p className="text-xs text-slate-400 py-8 text-center font-mono">
+              <p className="text-xs text-muted-foreground py-8 text-center font-mono">
                 Sélectionnez une alerte pour afficher ses détails et preuves.
               </p>
             )}
@@ -345,12 +345,12 @@ export default function AlertsPage() {
 
           {/* Action buttons (admin) */}
           {selectedAlert && (
-            <div className="pt-3 border-t border-white/[0.07] flex gap-2">
+            <div className="pt-3 border-t border-border flex gap-2">
               {selectedAlert.state === "open" && (
                 <button
                   disabled={actionLoading}
                   onClick={() => handleUpdateState(selectedAlert.alertId, "acknowledged")}
-                  className="flex-1 py-2 px-3 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-semibold transition-all hover:scale-102"
+                  className="flex-1 py-2 px-3 bg-sky-600 hover:bg-sky-500 text-foreground rounded-xl text-xs font-semibold transition-all hover:scale-102"
                 >
                   Acquitter l&apos;alerte
                 </button>
@@ -359,7 +359,7 @@ export default function AlertsPage() {
                 <button
                   disabled={actionLoading}
                   onClick={() => handleUpdateState(selectedAlert.alertId, "resolved")}
-                  className="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition-all hover:scale-102"
+                  className="flex-1 py-2 px-3 bg-primary-action hover:bg-primary-hover text-primary-foreground rounded-xl text-xs font-semibold transition-all hover:scale-102"
                 >
                   Marquer résolue
                 </button>

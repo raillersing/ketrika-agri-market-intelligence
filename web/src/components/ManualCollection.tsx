@@ -80,20 +80,20 @@ export function ManualCollectionStatus({ receipt, error }: {
   receipt: CollectionReceipt | null; error: string | null;
 }) {
   const counts = receipt && collectionCounts(receipt);
-  return <section aria-label="Suivi de la collecte" className="rounded-2xl border border-emerald-500/20 bg-slate-950/60 p-5 space-y-3">
-    <h2 className="font-bold text-white">Collecte des sources publiques</h2>
-    <p className="text-sm text-slate-300">Seules les sources autorisées disposant d’un connecteur sont sollicitées. Les contrôles et quotas restent obligatoires. La collecte peut prendre plusieurs minutes.</p>
-    <p className="text-xs text-slate-400">Banque mondiale : jusqu’à 120 estimations de riz sur une fenêtre récente avec contexte officiel. Couverture partielle, sans garantie de fraîcheur ; ce sont des valeurs imputées.</p>
-    {error && <p role="alert" className="text-sm text-amber-300">{error}</p>}
+  return <section aria-label="Suivi de la collecte" className="rounded-2xl border border-emerald-500/20 bg-background/60 p-5 space-y-3">
+    <h2 className="font-bold text-foreground">Collecte des sources publiques</h2>
+    <p className="text-sm text-muted-foreground">Seules les sources autorisées disposant d’un connecteur sont sollicitées. Les contrôles et quotas restent obligatoires. La collecte peut prendre plusieurs minutes.</p>
+    <p className="text-xs text-muted-foreground">Banque mondiale : jusqu’à 120 estimations de riz sur une fenêtre récente avec contexte officiel. Couverture partielle, sans garantie de fraîcheur ; ce sont des valeurs imputées.</p>
+    {error && <p role="alert" className="text-sm text-amber-700 dark:text-amber-300">{error}</p>}
     {receipt && counts ? <>
-      <p role="status" aria-live="polite" className="text-sm text-emerald-200">{collectionStage(receipt)}</p>
-      <p className="text-xs text-slate-300">{counts.sources} / {receipt.source_ids.length} sources abouties · {counts.documents} documents récupérés, dont {counts.newDocuments} nouveaux · {counts.records} enregistrements intégrés/révisés</p>
-      <ul className="text-xs space-y-2 text-slate-300">{receipt.outcomes.map(item => <li key={item.source_id}>
+      <p role="status" aria-live="polite" className="text-sm text-primary-readable">{collectionStage(receipt)}</p>
+      <p className="text-xs text-muted-foreground">{counts.sources} / {receipt.source_ids.length} sources abouties · {counts.documents} documents récupérés, dont {counts.newDocuments} nouveaux · {counts.records} enregistrements intégrés/révisés</p>
+      <ul className="text-xs space-y-2 text-muted-foreground">{receipt.outcomes.map(item => <li key={item.source_id}>
         {item.source_id} : {item.status === "success" ? "collecte aboutie" : item.status === "running" ? "en traitement" : item.status === "blocked" ? "non autorisée" : "échec"}
-        {item.run_id && <span className="block break-all text-slate-500">Référence : {item.run_id}</span>}
+        {item.run_id && <span className="block break-all text-muted-foreground">Référence : {item.run_id}</span>}
       </li>)}</ul>
-      <p className="text-xs text-slate-400">Publication des indicateurs : {receipt.publication === "succeeded" ? "réussie" : receipt.publication === "failed" ? "refusée — données collectées non publiées" : receipt.publication === "running" ? "en cours" : "non réalisée"}. Les bulletins ne sont pas régénérés.</p>
-      <p className="text-[10px] text-slate-500 break-all">Reçu persistant : {receipt.request_id}</p>
-    </> : <p className="text-xs text-slate-400">Aucune collecte manuelle enregistrée.</p>}
+      <p className="text-xs text-muted-foreground">Publication des indicateurs : {receipt.publication === "succeeded" ? "réussie" : receipt.publication === "failed" ? "refusée — données collectées non publiées" : receipt.publication === "running" ? "en cours" : "non réalisée"}. Les bulletins ne sont pas régénérés.</p>
+      <p className="text-[10px] text-muted-foreground break-all">Reçu persistant : {receipt.request_id}</p>
+    </> : <p className="text-xs text-muted-foreground">Aucune collecte manuelle enregistrée.</p>}
   </section>;
 }

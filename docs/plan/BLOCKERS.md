@@ -1,5 +1,7 @@
 # BLOCKERS : registre des blocages et incidents
 
+
+| B-R090 | R0.8 / réception AU-06/AU-07 | 2026-10-26 | Check bace9c0 :2462 succès/2 échecs/0 skip ; fils révocation dépasse30s, HTTP concurrent /v1/products P95=1122,81ms contre1000ms | Contention de compilation/typage parallèle suspectée, non isolée ; aucune perte de révocation démontrée faute de résultat du fils |1 : originaux conservés, diagnostic sans modification de seuil ; compilations propres à terminer avant les contre-épreuves | Diagnostiquer à environnement calme puis check complet du nouveau contenu Irooa/UI ; pas de suppression de tests ni de promotion depuis les ciblés | INVESTIGATING |
 > Audit indépendant2026-10-25 sur b7e63ee : [IA-01–20](../audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan AU-01–26](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md). Les anciennes mentions de réception/branches ci-dessous sont historiques. Aucun défaut nouvellement détecté n'est corrigé par ce journal.
 
 | B-R086 | R0.8 / vérité des réponses existantes | 2026-10-25 | Accueil avec KPI/cotations/constants déclarés observed/vérifiés ; climat115mm et ECMWF14,2mm alors que météo prévue=0 ; scénario24500tonnes sans source | Fallbacks de démonstration dans chemins réels | Audit source+60 GET+12 pages ; zéro correction applicative tentée | AU-01/02/03 : lectures réelles ou indisponibilité, pas de fausse donnée ni de confiance scientifique | INVESTIGATING |

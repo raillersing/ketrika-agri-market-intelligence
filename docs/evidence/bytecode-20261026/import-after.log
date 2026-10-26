@@ -1,0 +1,5 @@
+{"phase": "process_started"}
+{"module": "sqlalchemy", "seconds": 4.179, "elapsed_seconds": 4.179}
+{"module": "sqlalchemy.orm", "seconds": 0.888, "elapsed_seconds": 5.068}
+{"module": "ketrika.api.auth", "seconds": 5.104, "elapsed_seconds": 10.172}
+{"module": "ketrika.api.errors", "seconds": 0.0, "elapsed_seconds": 10.172}

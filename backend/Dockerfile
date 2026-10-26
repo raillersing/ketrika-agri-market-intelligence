@@ -33,7 +33,7 @@ USER app
 # Install project dependencies
 COPY --chown=app:app pyproject.toml uv.lock README.md ./
 COPY --chown=app:app src/ ./src/
-RUN uv sync --locked --extra dev --extra geo --extra ml
+RUN uv sync --locked --compile-bytecode --extra dev --extra geo --extra ml
 
 # Copy tests and other files
 COPY --chown=app:app tests/ ./tests/
@@ -45,7 +45,7 @@ CMD ["uvicorn", "ketrika.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
 # Browser tooling is opt-in and never added to the application runtime stage.
 FROM base AS backend-browser
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/ketrika-browsers
-RUN uv sync --locked --extra dev --extra geo --extra ml --extra browser
+RUN uv sync --locked --compile-bytecode --extra dev --extra geo --extra ml --extra browser
 USER root
 RUN python -m playwright install-deps chromium \
     && mkdir /opt/ketrika-browsers && chown app:app /opt/ketrika-browsers

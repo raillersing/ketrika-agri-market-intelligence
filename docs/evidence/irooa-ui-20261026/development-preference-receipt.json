@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "scope": "public theme preference behavior in separate development preview",
+  "checks": [
+    "system preference followed without explicit choice, changes synchronized between tabs",
+    "blocked localStorage has no runtime error and explicit session choice survives system changes"
+  ]
+}

@@ -49,38 +49,38 @@ export function ChoroplethMap({
   return (
     <div className={`glass-card rounded-2xl overflow-hidden flex flex-col justify-between ${className}`}>
       {/* Header */}
-      <div className="p-4 border-b border-white/[0.07] flex flex-wrap items-center justify-between gap-3">
+      <div className="p-4 border-b border-border flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-              <Compass className="w-4 h-4 text-emerald-400" />
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+              <Compass className="w-4 h-4 text-primary-readable" />
               Répartition des points disponibles
             </h3>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-primary-readable border border-emerald-500/20">
               {validPrices.length > 1 ? `Écart: ${spreadPercent}%` : "Écart non évalué"}
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             Points de la sélection ; la couverture géographique reste à qualifier
           </p>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400">
-          <span className="text-emerald-400">{validPrices.length ? formatPrice(minPrice, "kg") : "—"}</span>
-          <div className="flex h-2 w-20 rounded-full overflow-hidden bg-slate-800 border border-white/[0.05]">
+        <div className="flex items-center gap-2 text-[11px] font-mono text-muted-foreground">
+          <span className="text-primary-readable">{validPrices.length ? formatPrice(minPrice, "kg") : "—"}</span>
+          <div className="flex h-2 w-20 rounded-full overflow-hidden bg-muted border border-border">
             <div className="flex-1 bg-emerald-500" />
             <div className="flex-1 bg-amber-500" />
             <div className="flex-1 bg-rose-500" />
           </div>
-          <span className="text-rose-400">{validPrices.length ? formatPrice(maxPrice, "kg") : "—"}</span>
+          <span className="text-rose-700 dark:text-rose-400">{validPrices.length ? formatPrice(maxPrice, "kg") : "—"}</span>
         </div>
       </div>
 
       {/* Grid Display */}
       <div
         ref={mapContainer}
-        className="h-88 w-full relative bg-slate-950/40 p-4 flex flex-col justify-between"
+        className="h-88 w-full relative bg-background/40 p-4 flex flex-col justify-between"
       >
         <div className="w-full max-h-76 overflow-y-auto pr-1 flex flex-wrap gap-2 content-start">
           {Object.entries(regionPrices).map(([pcode, item]) => {
@@ -97,11 +97,11 @@ export function ChoroplethMap({
                 className={`flex-1 min-w-[135px] p-2.5 rounded-xl border text-left transition-all ${
                   isSelected
                     ? "bg-emerald-500/20 border-emerald-500 shadow-md shadow-emerald-950/40"
-                    : "bg-slate-900/60 border-white/[0.06] hover:border-emerald-500/40 hover:bg-slate-900/90"
+                    : "bg-card/60 border-border hover:border-emerald-500/40 hover:bg-card/90"
                 }`}
               >
                 <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="text-xs font-semibold truncate text-slate-200">
+                  <span className="text-xs font-semibold truncate text-foreground">
                     {item.name}
                   </span>
                   <span
@@ -109,9 +109,9 @@ export function ChoroplethMap({
                     style={{ backgroundColor: color }}
                   />
                 </div>
-                <div className="text-xs font-mono font-bold text-white flex items-center justify-between">
+                <div className="text-xs font-mono font-bold text-foreground flex items-center justify-between">
                   <span>{formatPrice(item.price, item.unit || "kg")}</span>
-                  <span className="text-[9px] text-slate-400 font-normal">{pcode}</span>
+                  <span className="text-[9px] text-muted-foreground font-normal">{pcode}</span>
                 </div>
               </button>
             );
@@ -120,16 +120,16 @@ export function ChoroplethMap({
 
         {/* Floating tooltip */}
         {hoveredRegion && (
-          <div className="absolute bottom-4 left-4 bg-slate-900/95 text-white p-3 rounded-xl border border-emerald-500/30 shadow-2xl backdrop-blur-xl text-xs pointer-events-none z-20 animate-in fade-in duration-150">
-            <div className="font-bold flex items-center gap-1.5 text-emerald-400">
+          <div className="absolute bottom-4 left-4 bg-card/95 text-foreground p-3 rounded-xl border border-emerald-500/30 shadow-2xl backdrop-blur-xl text-xs pointer-events-none z-20 animate-in fade-in duration-150">
+            <div className="font-bold flex items-center gap-1.5 text-primary-readable">
               <MapPin className="w-3.5 h-3.5" />
               {hoveredRegion.name} ({hoveredRegion.pcode})
             </div>
-            <div className="text-slate-300 mt-1 font-mono">
-              Prix médian : <strong className="text-white">{formatPrice(hoveredRegion.price, hoveredRegion.unit || "kg")}</strong>
+            <div className="text-muted-foreground mt-1 font-mono">
+              Prix médian : <strong className="text-foreground">{formatPrice(hoveredRegion.price, hoveredRegion.unit || "kg")}</strong>
             </div>
             {hoveredRegion.sourceId && (
-              <div className="text-[10px] text-slate-400 mt-1 font-mono">
+              <div className="text-[10px] text-muted-foreground mt-1 font-mono">
                 Source : {hoveredRegion.sourceId}
               </div>
             )}
@@ -138,7 +138,7 @@ export function ChoroplethMap({
       </div>
 
       {/* Disparity summary footer */}
-      <div className="px-4 py-2 border-t border-white/[0.06] bg-slate-950/60 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+      <div className="px-4 py-2 border-t border-border bg-background/60 flex items-center justify-between text-[11px] text-muted-foreground font-mono">
         <span>Aucun diagnostic territorial déduit de cette vue</span>
         <span>{validPrices.length} points disponibles</span>
       </div>

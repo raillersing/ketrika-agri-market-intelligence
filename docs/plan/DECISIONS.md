@@ -1,4 +1,31 @@
 # DECISIONS (Architecture Decision Records - ADR)
+## ADR-129 | 2026-10-26 | Accepté avant code | Thèmes Irooa clair/sombre et palette de référence
+
+- Demande utilisateur : modes clair/sombre, inspirés des couleurs d'irooa.com. Le site et son CSS index-UEdqJ1dv.css ont répondu200 le26 octobre : clair primaire#1e7a34/fond#fafafa/carte#fff/texte#111 ; sombre primaire#059669/fond#0f172a/carte#1e293b/texte#e2e8f0. Référence de palette, aucune copie du code ou des données du site.
+- Décision : jetons de couleur sémantiques pour surfaces, textes, bordures et commandes ; migration des couleurs neutres figées des pages, menus et formulaires. Les couleurs d'état gardent leur sens, avec variantes lisibles sur fond clair. Graphiques adaptés au thème sans modifier les chiffres. Commandes pleines légèrement plus foncées si nécessaire pour le contraste du texte.
+- Contrôle de thème accessible dans l'en-tête, la connexion et À propos. Préférence explicite light/dark dans localStorage irooa.theme ; défaut système, évolution système suivie seulement sans choix explicite, synchronisation entre onglets. Stockage bloqué : fonctionnement dans la session sans erreur. Initialisation statique avant affichage, aucune valeur stockée exécutée ; root suppressHydrationWarning borné aux attributs du thème.
+- Réception : préférences/stockage et initialisation testés, deux thèmes et persistance réelle après navigation/reload, menu mobile/clavier et pages représentatives ; réception complète du nouveau contenu, aucune qualification des données déduite de l'apparence.
+
+## ADR-130 | 2026-10-26 | Accepté avant code | Bytecode des dépendances préparé à la construction
+
+- B-R090 : deux processus de révocation dépassent30s. Le profil readonly, sans application construite ni SQL, mesure SQLAlchemy12,639s + ORM4,200s + auth12,439s =29,281s ; faulthandler situe l'attente dans la compilation des modules Python tiers. Le benchmark concurrent repasse dans le diagnostic calme, la preuve de révocation reste rouge. Pas de conclusion de révocation acceptée.
+- Décision : uv sync --compile-bytecode dans les deux cibles Python, versions/lock/seuils inchangés. Préparer le bytecode des distributions à la construction au lieu de le recompilier dans chaque processus sous PYTHONDONTWRITEBYTECODE=1. Nouveaux tags/volumes r05, anciens r04 et leurs originaux conservés. Mesurer avant/après, puis contre-épreuve30s et réception complète ; ne pas allonger le timeout ni réduire le benchmark.
+- Réception : construction verrouillée, timings de démarrage et cas réel inter-processus, jeu complet et UI/E2E19 sur sources/images exactes. Les tâches compilantes propres se terminent avant les mesures de réception. Ceci n'est ni une amélioration de précision ML ni une mesure de production.
+
+## ADR-128 | 2026-10-26 | Accepté avant code | Identité Irooa et présentation publique de Ketrikay
+
+- Demande explicite de l'utilisateur : nom affiché « Irooa Market intelligence », page À propos décrivant Irooa et son entreprise mère Ketrikay (nom remplaçant Ketrikai). Ces informations viennent de l'utilisateur ; aucune immatriculation, date de fondation, adresse, réalisation, client ou activité additionnelle n'est inventé.
+- Décision : identité produit commune aux titres, navigation, connexion et textes d'interface concernés. Page éditoriale `/about`, sans données métier ni appel API, accessible sans connexion depuis la connexion et le menu. Seuls `/about` et sa barre finale sont ajoutés aux routes publiques ; les préfixes, sous-routes et lectures métier restent protégés. Pas de renommage de base, fichiers historiques, artefacts publiés, packages ou identifiants techniques.
+- Une description de l'activité de Ketrikay est demandée sans bloquer les faits déjà confirmés. En attendant, décrire seulement son rôle d'entreprise mère portant Irooa. Les formulations de statut produit restent honnêtes ; aucune qualification, officialité ou garantie de modèle n'est ajoutée à l'identité.
+- Réception : tests négatifs de frontière publique, rendu About sans session, identité produit et société, accès depuis connexion/menu, contrôles mobile/clavier et réception complète du nouveau contenu. L'aperçu et les captures investisseurs ne valent pas validation marché ou déploiement de production.
+
+## ADR-127 | 2026-10-26 | Accepté avant code | Navigation par tâches et recherche de pages cohérente
+
+- Demande utilisateur : menus plus sobres et naturels. Conserver toutes les destinations et contrôles serveur ; organiser Explorer, Analyser et Suivre autour d'une vue d'ensemble, avec Gestion des données en accès secondaire repliable. Référentiel unique pour menu, en-tête et recherche, correspondance des routes par segment et état actif accessible.
+- Recherche explicitement limitée aux pages réelles : retirer les raccourcis produits/régions codés avec d'anciens identifiants. Les filtres métier restent ceux du référentiel API existant. Aucune promesse de recherche globale ni d'IA vérifiée. Ne pas inventer nom, rôle ou identité de session dans les menus ; une seule commande de déconnexion, fermée sur erreur.
+- Interaction : cibles44px, focus visible, dialogue de recherche nommé, focus retenu et restitué ; tiroir mobile fermé par lien, bouton ou Échap, sans arrière-plan défilant ni perte de focus. Réduire dégradés, halos, badges et jargon dans la navigation ; conserver le contexte sombre des pages.
+- Réception : tests de routes/recherche, lint/types/frontend, clavier/mobile390px et320px, même jeu backend complet et nouvelle réception source figée. Le check sécurité déjà en cours reste intact. Aucun statut de donnée/modèle ni qualification marché n'est déduit de l'interface ; l'aperçu de développement reste séparé du runtime actif.
+
 ## ADR-126 | 2026-10-26 | Accepté avant code | Restauration fidèle des propriétaires et droits
 
 - Contexte : le contrôle SQL réel AU-07 trouve des données intactes mais des ACL perdues : `--no-owner --no-privileges` masquait les droits de `ketrika_app` et `copilot_ro`. Ce positif limité ne reçoit pas AU-07.

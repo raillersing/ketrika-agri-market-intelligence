@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { useTheme } from "@/components/theme/ThemeProvider";
+import { CHART_PALETTES } from "@/lib/theme";
 import { formatMonthYear, formatPrice, getValueKindInfo, type ValueKind } from "@/lib/formatters";
 
 // Dynamically import ReactECharts to prevent SSR window reference errors
@@ -45,6 +47,8 @@ export function PriceChart({
   onPointClick,
   className = "",
 }: PriceChartProps) {
+  const { theme } = useTheme();
+  const palette = CHART_PALETTES[theme];
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -53,7 +57,7 @@ export function PriceChart({
 
   if (!mounted) {
     return (
-      <div className={`h-88 flex items-center justify-center glass-panel rounded-2xl text-slate-400 text-xs font-mono ${className}`}>
+      <div className={`h-88 flex items-center justify-center glass-panel rounded-2xl text-muted-foreground text-xs font-mono ${className}`}>
         Initialisation du visualiseur analytique...
       </div>
     );
@@ -61,7 +65,7 @@ export function PriceChart({
 
   if (!data || data.length === 0) {
     return (
-      <div className={`h-88 flex items-center justify-center glass-panel rounded-2xl text-slate-400 text-xs font-mono ${className}`}>
+      <div className={`h-88 flex items-center justify-center glass-panel rounded-2xl text-muted-foreground text-xs font-mono ${className}`}>
         Aucune donnée de prix disponible pour la sélection actuelle.
       </div>
     );
@@ -86,16 +90,16 @@ export function PriceChart({
       subtext: `${productName} • En Ariary (Ar/${unit})`,
       left: "16",
       top: "16",
-      textStyle: { fontSize: 13, fontWeight: "700", color: "#f8fafc", fontFamily: "inherit" },
-      subtextStyle: { fontSize: 11, color: "#94a3b8", fontFamily: "inherit" },
+      textStyle: { fontSize: 13, fontWeight: "700", color: palette.text, fontFamily: "inherit" },
+      subtextStyle: { fontSize: 11, color: palette.muted, fontFamily: "inherit" },
     },
     tooltip: {
       trigger: "axis",
-      backgroundColor: "rgba(15, 23, 42, 0.95)",
-      borderColor: "rgba(255, 255, 255, 0.1)",
+      backgroundColor: palette.tooltip,
+      borderColor: palette.border,
       borderWidth: 1,
       padding: [12, 14],
-      textStyle: { color: "#f8fafc", fontSize: 12 },
+      textStyle: { color: palette.text, fontSize: 12 },
       extraCssText: "box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); backdrop-filter: blur(12px); border-radius: 12px;",
       formatter: (params: any) => {
         const idx = params[0]?.dataIndex;
@@ -107,33 +111,33 @@ export function PriceChart({
 
         return `
           <div style="font-family: inherit; font-size: 11px;">
-            <div style="font-weight: 700; margin-bottom: 6px; color: ${isForecast ? '#a855f7' : '#34d399'}; font-size: 12px;">
+            <div style="font-weight: 700; margin-bottom: 6px; color: ${isForecast ? palette.forecast : palette.primary}; font-size: 12px;">
               ${formatMonthYear(item.month)} ${isForecast && item.horizon ? `(Horizon h=${item.horizon})` : ''}
             </div>
             <div style="margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
-              <span style="color: #94a3b8;">${isForecast ? 'Prévision (p50) :' : 'Prix médian :'}</span>
-              <strong style="color: #ffffff; font-family: monospace;">${formatPrice(item.medianPrice, unit)}</strong>
+              <span style="color: ${palette.muted};">${isForecast ? 'Prévision (p50) :' : 'Prix médian :'}</span>
+              <strong style="color: ${palette.text}; font-family: monospace;">${formatPrice(item.medianPrice, unit)}</strong>
             </div>
             ${item.p10Price !== undefined && item.p90Price !== undefined && item.p10Price !== null && item.p90Price !== null ? `
-            <div style="color: #cbd5e1; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
-              <span style="color: #94a3b8;">Intervalle [p10, p90] :</span>
+            <div style="color: ${palette.text}; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
+              <span style="color: ${palette.muted};">Intervalle [p10, p90] :</span>
               <span style="font-family: monospace;">${formatPrice(item.p10Price, unit)} – ${formatPrice(item.p90Price, unit)}</span>
             </div>` : item.minPrice && item.maxPrice ? `
-            <div style="color: #64748b; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
+            <div style="color: ${palette.muted}; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
               <span>Fourchette (Min - Max) :</span>
               <span style="font-family: monospace;">${formatPrice(item.minPrice, unit)} – ${formatPrice(item.maxPrice, unit)}</span>
             </div>` : ""}
             ${isForecast && item.modelEffective ? `
-            <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 10px; color: #cbd5e1;">
-              <div>Modèle : <strong style="color: #f8fafc;">${item.modelEffective}${item.isBaseline ? ' (Baseline)' : ''}</strong></div>
-              ${item.fallbackReason ? `<div style="color: #f59e0b;">Repli : ${item.fallbackReason}</div>` : ''}
-              <div style="color: ${item.isCalibrated ? '#34d399' : '#f59e0b'};">
+            <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid ${palette.border}; font-size: 10px; color: ${palette.text};">
+              <div>Modèle : <strong style="color: ${palette.text};">${item.modelEffective}${item.isBaseline ? ' (Baseline)' : ''}</strong></div>
+              ${item.fallbackReason ? `<div style="color: ${palette.warning};">Repli : ${item.fallbackReason}</div>` : ''}
+              <div style="color: ${item.isCalibrated ? palette.primary : palette.warning};">
                 ${item.isCalibrated ? `● Conforme calibré (N=${item.calibrationSampleSize})` : '▲ Non calibré (échantillon résidus insuffisant)'}
               </div>
             </div>` : ''}
-            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-              <span style="color: ${isForecast ? '#c084fc' : '#38bdf8'}; font-size: 10px;">● ${kindInfo.label}</span>
-              ${sourceLabel ? `<span style="color: #94a3b8; font-size: 10px; font-family: monospace;">${sourceLabel}</span>` : ""}
+            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid ${palette.border}; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+              <span style="color: ${isForecast ? palette.forecast : palette.imputed}; font-size: 10px;">● ${kindInfo.label}</span>
+              ${sourceLabel ? `<span style="color: ${palette.muted}; font-size: 10px; font-family: monospace;">${sourceLabel}</span>` : ""}
             </div>
           </div>
         `;
@@ -150,17 +154,17 @@ export function PriceChart({
       type: "category",
       data: categories,
       boundaryGap: false,
-      axisLine: { lineStyle: { color: "rgba(255, 255, 255, 0.1)" } },
+      axisLine: { lineStyle: { color: palette.border } },
       axisTick: { show: false },
-      axisLabel: { color: "#94a3b8", fontSize: 11, fontFamily: "inherit" },
+      axisLabel: { color: palette.muted, fontSize: 11, fontFamily: "inherit" },
     },
     yAxis: {
       type: "value",
       scale: true,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "rgba(255, 255, 255, 0.05)", type: "dashed" } },
+      splitLine: { lineStyle: { color: palette.border, type: "dashed" } },
       axisLabel: {
-        color: "#94a3b8",
+        color: palette.muted,
         fontSize: 10,
         fontFamily: "monospace",
         formatter: (val: number) => `${val.toLocaleString("fr-FR")}`,
@@ -182,7 +186,7 @@ export function PriceChart({
               type: "line",
               data: bandRange,
               lineStyle: { opacity: 0 },
-              areaStyle: { color: "rgba(16, 185, 129, 0.08)" },
+              areaStyle: { color: palette.band },
               stack: "confidence-band",
               symbol: "none",
             },
@@ -196,15 +200,15 @@ export function PriceChart({
         symbol: "circle",
         symbolSize: 6,
         itemStyle: {
-          color: "#10b981",
-          borderColor: "#064e3b",
+          color: palette.primary,
+          borderColor: palette.primary,
           borderWidth: 2,
         },
         lineStyle: {
           width: 3,
-          color: "#10b981",
-          shadowColor: "rgba(16, 185, 129, 0.4)",
-          shadowBlur: 10,
+          color: palette.primary,
+          shadowColor: "transparent",
+          shadowBlur: 0,
         },
         areaStyle: {
           color: {
@@ -214,8 +218,8 @@ export function PriceChart({
             x2: 0,
             y2: 1,
             colorStops: [
-              { offset: 0, color: "rgba(16, 185, 129, 0.3)" },
-              { offset: 1, color: "rgba(16, 185, 129, 0.0)" },
+              { offset: 0, color: palette.area },
+              { offset: 1, color: "transparent" },
             ],
           },
         },

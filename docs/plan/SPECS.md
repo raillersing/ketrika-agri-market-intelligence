@@ -1908,3 +1908,21 @@ Précision ADR126 : les propriétaires et ACL de l'archive sont restaurés sans 
 
 Restauration exclusivement vers une base neuve nommée ketrika_restore_[a-z0-9_]+ (63 caractères maximum) avec RESTORE_CONFIRM_DATABASE égal au nom exact. Aucun allow_overwrite ne contourne le garde. Manifeste JSON compagnon et SHA256 obligatoires, métadonnées nom/taille/hash/base source/date UTC/readability vérifiées, catalogue pg_restore --list lisible et outils présents avant CREATE. Source et cible distinctes, toute cible existante refusée. pg_restore --single-transaction --exit-on-error sans nettoyage ni terminaison de connexions ; tout statut non zéro fatal. Pas de recalcul Gold automatique ni suppression du clone échoué. Les compteurs SQL ne masquent aucune erreur ; leur concordance ne prouve pas les valeurs ni l'authenticité du corpus. Un checksum sans contrôle structurel reste explicitement une vérification limitée.
 Les commandes restore des deux points d'entrée requièrent KETRIKA_RESTORE_NETWORK interne, étiqueté ketrika.scope=restore-qualification, PGHOST/PGUSER/PGDATABASE et confirmation explicites ; elles montent archive/code readonly dans le client PostgreSQL local et délèguent au même garde. Aucun chemin direct de nettoyage de la DB active ne subsiste. Le backup local exporte les trois fichiers de preuve et un alias latest cohérent, sans envoi externe.
+
+### Navigation par tâches — ADR127
+
+Les destinations, titres et mots de recherche viennent d'un référentiel commun. Vue d'ensemble, Explorer, Analyser, Suivre ; Gestion des données repliable et ouverte à l'arrivée sur une de ses pages. La recherche trouve les pages, pas des produits/régions à identifiants inventés. Le lien actif correspond à une route exacte ou un sous-chemin délimité par `/` ; aria-current=page. Aucun nom, rôle ou indicateur de qualification n'est simulé dans les menus. Une déconnexion non confirmée ne ferme ni ne prétend fermer la session.
+
+Navigation mobile et recherche : cibles44px, focus visible, nom accessible, focus retenu/restauré, Échap et navigation par lien ; défilement de fond désactivé pendant un dialogue. Les contrastes et le reflow sont vérifiés à390px et320px. Ces comportements n'exposent pas de nouvelle route ni de permission et restent distincts des gates de qualification des capacités métier.
+
+### Identité et page À propos — ADR128
+
+Nom affiché : Irooa Market intelligence. Entreprise mère : Ketrikay, nom remplaçant Ketrikai selon l'instruction de l'utilisateur. Le nom de produit est centralisé dans le frontend. La page `/about` est publique et statique : produit, périmètre, limites, entreprise mère ; aucune statistique commerciale ou identité légale supposée. Connexion et navigation donnent accès à cette page. L'exemption middleware est exacte (`/about`, `/about/`) ; `/about.csv`, `/about/private` et toutes les routes métier gardent leur authentification. Les identifiants techniques et preuves historiques ne sont pas réécrits.
+
+Précision utilisateur pour Ketrikay : solutions numériques intelligentes pour les entreprises, collecte de données, ERP et logiciels augmentés par l'IA. La présentation peut valoriser ces domaines et leur utilité visée ; aucun client acquis, gain chiffré, chiffre d'affaires, certification ou résultat non fourni n'est ajouté.
+
+### Thèmes et démarrage Python — ADR129/130
+
+Deux thèmes Irooa, clair et sombre, sur jetons sémantiques. Préférence light/dark persistée sous irooa.theme, défaut système et synchronisation ; stockage refusé non bloquant. Initialisation avant affichage et contrôle accessible dans application/connexion/About. Surfaces et textes des pages, formulaires et graphiques suivent le choix ; aucune image ni donnée n'est inversée ou modifiée. Palette de référence irooa.com relevée le26 octobre2026 : vert clair#1e7a34, fond#fafafa ; sombre#059669, fonds#0f172a/#1e293b. Les couleurs des commandes peuvent être renforcées pour préserver le contraste.
+
+Les images Python construisent le bytecode des dépendances par uv sync --locked --compile-bytecode. Locks et délais de tests conservés. Réception sur nouveaux tags/volumes de source/dépendances r05 ; tous les volumes précédents sont conservés, DB/bucket dédiés inchangés. Toute réutilisation de preuve doit tenir compte de cette préparation et des nouvelles identités d'images.

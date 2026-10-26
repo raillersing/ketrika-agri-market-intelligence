@@ -163,7 +163,7 @@ export default function SystemPage() {
       {/* 1. Emplacement Local du Projet */}
       <section className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-4">
         <div className="flex items-center gap-3 border-b border-border pb-4">
-          <div className="w-10 h-10 rounded-lg bg-emerald-600/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold">
+          <div className="w-10 h-10 rounded-lg bg-primary-action/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold">
             <Folder className="w-5 h-5" />
           </div>
           <div>
@@ -180,7 +180,7 @@ export default function SystemPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-muted/60 border border-border rounded-lg font-mono text-xs">
             <div className="flex items-center gap-2 overflow-x-auto text-foreground font-semibold">
               <span className="text-muted-foreground font-normal">Chemin absolu :</span>
-              <span className="text-emerald-600 dark:text-emerald-400 select-all">{projectPath}</span>
+              <span className="text-emerald-600 dark:text-primary-readable select-all">{projectPath}</span>
             </div>
             <button
               onClick={() => copyToClipboard(projectPath, "path")}
@@ -269,7 +269,7 @@ export default function SystemPage() {
                   href={svc.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-between gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline pt-2 border-t border-border/50"
+                  className="inline-flex items-center justify-between gap-1 text-xs font-semibold text-emerald-600 dark:text-primary-readable hover:underline pt-2 border-t border-border/50"
                 >
                   <span>Ouvrir l&apos;interface</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -300,7 +300,7 @@ export default function SystemPage() {
             href="http://localhost:3010/schedules"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-600 text-white text-xs font-medium hover:bg-purple-700 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-600 text-primary-foreground text-xs font-medium hover:bg-purple-700 transition-colors"
           >
             <span>Gérer les Schedules dans Dagster</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -377,7 +377,7 @@ export default function SystemPage() {
           {/* Silver Card */}
           <div className="bg-muted/40 border border-border rounded-xl p-5 relative overflow-hidden flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="w-8 h-8 rounded-lg bg-slate-500/10 text-slate-700 dark:text-slate-300 font-bold flex items-center justify-center text-xs">
+              <div className="w-8 h-8 rounded-lg bg-muted/10 text-muted-foreground dark:text-muted-foreground font-bold flex items-center justify-center text-xs">
                 2
               </div>
               <h3 className="font-bold text-base text-foreground">Couche Silver (Auditée)</h3>
@@ -411,7 +411,7 @@ export default function SystemPage() {
       {/* 5. Commandes de Pilotage Manuel */}
       <section className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-4">
         <div className="flex items-center gap-3 border-b border-border pb-4">
-          <div className="w-10 h-10 rounded-lg bg-emerald-600/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold">
+          <div className="w-10 h-10 rounded-lg bg-primary-action/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold">
             <Terminal className="w-5 h-5" />
           </div>
           <div>
@@ -431,7 +431,7 @@ export default function SystemPage() {
               className="p-3 bg-muted/40 border border-border rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
             >
               <div className="space-y-1">
-                <code className="font-mono font-semibold text-emerald-600 dark:text-emerald-400 select-all">
+                <code className="font-mono font-semibold text-emerald-600 dark:text-primary-readable select-all">
                   {cmdItem.cmd}
                 </code>
                 <p className="text-muted-foreground text-[11px]">{cmdItem.desc}</p>
@@ -476,7 +476,7 @@ export default function SystemPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
           <div className="p-4 bg-muted/30 border border-border rounded-lg space-y-2">
             <h3 className="font-semibold text-foreground flex items-center gap-1.5">
-              <Activity className="w-4 h-4 text-emerald-500" />
+              <Activity className="w-4 h-4 text-primary-readable" />
               Politique HTTP Polie & Retries
             </h3>
             <p className="text-muted-foreground text-[11px] leading-relaxed">

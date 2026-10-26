@@ -30,12 +30,16 @@ ENVIRONMENT_IDENTITY = {
 
 
 E2E_SCENARIOS = (
+    "theme choice persists across reload and public pages",
+    "public About identifies Irooa and Ketrikay without exposing business pages",
     "protected UI redirects without a session",
     "UI rejects and clears an arbitrary session cookie",
     "form login establishes HttpOnly session",
     "reload retains authentication",
     "protected profile authenticates the browser session",
     "authenticated same-origin prices API",
+    "desktop navigation groups management links and marks the current page",
+    "page search navigates real destinations and restores keyboard focus",
     "price explorer renders",
     "economy explicitly reports unqualified data after reload",
     "mobile navigation opens, closes with Escape and with its link",

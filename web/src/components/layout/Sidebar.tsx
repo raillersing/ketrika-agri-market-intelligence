@@ -1,195 +1,83 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Activity,
-  AlertTriangle,
-  ArrowLeftRight,
-  BarChart3,
-  CheckSquare,
-  CloudSun,
-  Cpu,
-  FileText,
-  LayoutDashboard,
-  LogOut,
-  Map,
-  Server,
-  Sparkles,
-  TrendingUp,
-} from "lucide-react";
-
-interface NavItem {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  badge?: string;
-  badgeColor?: string;
-}
-
-interface NavSection {
-  title: string;
-  items: NavItem[];
-}
-
-const NAV_SECTIONS: NavSection[] = [
-  {
-    title: "Marché & Cours",
-    items: [
-      { label: "Vue d'ensemble", href: "/", icon: LayoutDashboard },
-      { label: "Prix vivriers", href: "/prices", icon: TrendingUp },
-      { label: "Économie & Conjoncture", href: "/economy", icon: BarChart3 },
-      { label: "Carte des marchés", href: "/map", icon: Map },
-      { label: "Commerce extérieur", href: "/trade", icon: ArrowLeftRight },
-    ],
-  },
-  {
-    title: "Intelligence & Risques",
-    items: [
-      { label: "Climat & Cultures", href: "/climate", icon: CloudSun },
-      { label: "Centre d'alertes", href: "/alerts", icon: AlertTriangle },
-      { label: "Bulletins officiels", href: "/bulletins", icon: FileText },
-      { label: "Copilote analyste", href: "/copilot", icon: Sparkles, badge: "IA", badgeColor: "bg-purple-500/20 text-purple-300 border-purple-500/30" },
-    ],
-  },
-  {
-    title: "Data Platform",
-    items: [
-      { label: "Sources & DataOps", href: "/sources", icon: Activity },
-      { label: "File de revue", href: "/admin/review", icon: CheckSquare },
-      { label: "Architecture Système", href: "/system", icon: Cpu },
-    ],
-  },
-];
+import { ChevronDown, LogOut } from "lucide-react";
+import { NAVIGATION_PAGES, PRIMARY_NAVIGATION_GROUPS, findNavigationPage, isNavigationPageActive, type NavigationPage } from "@/lib/navigation";
+import { NAVIGATION_ICONS } from "./navigation-icons";
+import { BRAND } from "@/lib/brand";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const isManagementPage = findNavigationPage(pathname)?.group === "Gestion des données";
+  const [managementOpen, setManagementOpen] = useState(isManagementPage);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
+
+  useEffect(() => {
+    if (isManagementPage) setManagementOpen(true);
+  }, [pathname, isManagementPage]);
 
   const handleLogout = async () => {
+    setLoggingOut(true);
+    setLogoutError("");
     try {
       const response = await fetch("/api/v1/auth/logout", { method: "POST", credentials: "include" });
       if (!response.ok) throw new Error("Déconnexion refusée");
+      window.location.href = "/login";
     } catch {
-      window.alert("La déconnexion a échoué. Votre session reste ouverte.");
-      return;
+      setLogoutError("Déconnexion impossible. Votre session reste ouverte.");
+      setLoggingOut(false);
     }
-    window.location.href = "/login";
+  };
+
+  const renderPage = (page: NavigationPage) => {
+    const Icon = NAVIGATION_ICONS[page.icon];
+    const active = isNavigationPageActive(pathname, page.href);
+    return (
+      <li key={page.href}>
+        <Link href={page.href} prefetch={false} aria-current={active ? "page" : undefined}
+          className={`flex min-h-[44px] items-center gap-[12px] rounded-lg border-l-2 px-[12px] py-2 text-sm leading-5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none ${active ? "border-primary bg-foreground/[0.07] font-semibold text-foreground" : "border-transparent text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground"}`}>
+          <Icon aria-hidden="true" strokeWidth={1.7} className={`h-[18px] w-[18px] shrink-0 ${active ? "text-primary-readable" : "text-muted-foreground"}`} />
+          <span className="min-w-0 break-words">{page.label}</span>
+        </Link>
+      </li>
+    );
   };
 
   return (
-    <aside className="w-64 bg-slate-950/95 text-slate-200 border-r border-white/[0.08] flex flex-col justify-between shrink-0 h-screen sticky top-0 select-none z-30">
-      <div className="flex flex-col h-[calc(100vh-80px)] overflow-y-auto">
-        {/* Brand Header */}
-        <div className="p-5 border-b border-white/[0.08]">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center font-bold text-white text-lg shadow-lg shadow-emerald-950/60 border border-emerald-400/30 group-hover:scale-105 transition-transform">
-              <span className="drop-shadow-sm">K</span>
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-950 animate-pulse" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-base font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors flex items-center gap-1.5">
-                Ketrika
-                <span className="text-[10px] font-mono px-1 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  Agri
-                </span>
-              </span>
-              <span className="text-[10px] font-medium tracking-wider uppercase text-slate-400">
-                Market Intelligence
-              </span>
-            </div>
-          </Link>
-        </div>
-
-        {/* Navigation Sections */}
-        <nav aria-label="Navigation principale" className="p-3 space-y-5 flex-1">
-          {NAV_SECTIONS.map((section) => (
-            <div key={section.title} className="space-y-1">
-              <div className="px-3 text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold mb-1.5">
-                {section.title}
-              </div>
-              <div className="space-y-0.5">
-                {section.items.map((item) => {
-                  const Icon = item.icon;
-                  const isActive =
-                    item.href === "/"
-                      ? pathname === "/"
-                      : pathname.startsWith(item.href);
-
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`group relative flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                        isActive
-                          ? "bg-emerald-500/15 text-emerald-300 font-semibold shadow-sm border border-emerald-500/25"
-                          : "text-slate-400 hover:text-slate-100 hover:bg-white/[0.04] border border-transparent"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <Icon
-                          className={`w-4 h-4 transition-colors ${
-                            isActive
-                              ? "text-emerald-400"
-                              : "text-slate-400 group-hover:text-slate-200"
-                          }`}
-                        />
-                        <span>{item.label}</span>
-                      </div>
-
-                      {item.badge && (
-                        <span
-                          className={`text-[10px] font-mono px-1.5 py-0.2 rounded border ${
-                            item.badgeColor || "bg-slate-800 text-slate-300 border-white/10"
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-
-                      {/* Active indicator bar */}
-                      {isActive && (
-                        <span className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-emerald-500" />
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </nav>
+    <aside aria-labelledby="navigation-title" className="sticky top-0 flex h-dvh w-[256px] max-w-[calc(100vw-64px)] shrink-0 flex-col border-r border-border bg-sidebar text-foreground">
+      <div className="px-[20px] pb-5 pt-6">
+        <Link href="/" prefetch={false} aria-label={`${BRAND.product}, vue d'ensemble`} className="inline-flex max-w-full items-center gap-[12px] rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
+          <span aria-hidden="true" className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-lg border border-border bg-foreground/[0.05] text-lg font-semibold text-foreground">I</span>
+          <span className="min-w-0"><span className="block text-lg font-semibold tracking-tight text-foreground">{BRAND.product}</span><span className="block text-xs text-muted-foreground">{BRAND.descriptor}</span></span>
+        </Link>
       </div>
-
-      {/* Infrastructure Heartbeat & User Footer */}
-      <div className="p-3 border-t border-white/[0.08] bg-slate-950/80 space-y-2.5">
-        {/* Micro System Ticker */}
-        <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-slate-900/90 border border-white/[0.06] text-[10px] text-slate-400 font-mono">
-          <div className="flex items-center gap-1.5">
-            <span className="text-slate-300">État de la plateforme</span>
-          </div>
-          <Link href="/system" className="hover:text-emerald-400 text-slate-400 transition-colors">
-            Consulter
-          </Link>
-        </div>
-
-        {/* User Card */}
-        <div className="flex items-center justify-between px-2 py-1">
-          <div className="flex flex-col min-w-0">
-            <span className="text-xs font-semibold text-slate-200 truncate">
-              Analyste Marché
-            </span>
-            <span className="text-[10px] text-slate-400 font-mono truncate">
-              admin@ketrika.local
-            </span>
-          </div>
-          <button
-            onClick={handleLogout}
-            title="Se déconnecter"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
+      <p id="navigation-title" className="sr-only">Navigation {BRAND.product}</p>
+      <nav aria-label="Navigation principale" className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[12px] pb-4">
+        <ul className="mb-6 space-y-1">{renderPage(NAVIGATION_PAGES[0])}</ul>
+        {PRIMARY_NAVIGATION_GROUPS.map(group => (
+          <section key={group} aria-label={group} className="mb-5">
+            <h2 className="mb-1 px-3 text-xs font-medium text-muted-foreground">{group}</h2>
+            <ul className="space-y-1">{NAVIGATION_PAGES.filter(page => page.group === group).map(renderPage)}</ul>
+          </section>
+        ))}
+        <div className="mt-2 border-t border-border pt-3">
+          <button type="button" aria-expanded={managementOpen} aria-controls="management-navigation" onClick={() => setManagementOpen(open => !open)}
+            className="flex min-h-[44px] w-full items-center justify-between gap-2 rounded-lg px-[12px] py-2 text-left text-xs font-medium text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+            Gestion des données<ChevronDown aria-hidden="true" className={`h-4 w-4 shrink-0 transition-transform motion-reduce:transition-none ${managementOpen ? "rotate-180" : ""}`} />
           </button>
+          <ul id="management-navigation" hidden={!managementOpen} className="mt-1 space-y-1">{NAVIGATION_PAGES.filter(page => page.group === "Gestion des données").map(renderPage)}</ul>
         </div>
+      </nav>
+      <div className="border-t border-border p-[12px]">
+        <nav aria-label="Informations"><ul>{NAVIGATION_PAGES.filter(page => page.group === "Informations").map(renderPage)}</ul></nav>
+        {logoutError && <p role="alert" className="mb-2 px-3 text-xs leading-5 text-rose-700 dark:text-rose-300">{logoutError}</p>}
+        <button type="button" title="Se déconnecter" onClick={handleLogout} disabled={loggingOut} aria-busy={loggingOut}
+          className="flex min-h-[44px] w-full items-center gap-[12px] rounded-lg px-[12px] py-2 text-left text-sm text-muted-foreground hover:bg-foreground/[0.04] hover:text-foreground disabled:cursor-wait disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+          <LogOut aria-hidden="true" strokeWidth={1.7} className="h-[18px] w-[18px] shrink-0 text-muted-foreground" /><span className="min-w-0 break-words">{loggingOut ? "Déconnexion…" : "Se déconnecter"}</span>
+        </button>
       </div>
     </aside>
   );

@@ -1,4 +1,6 @@
-# Ketrika Agri Market Intelligence
+# Irooa Market intelligence
+
+Un produit de **Ketrikay**, nom remplaçant Ketrikai. La nouvelle identité et la page À propos (`/about`) sont en réception sur la branche de navigation ; l'état du runtime actif est consigné séparément dans PROGRESS.
 
 Plateforme locale d'intelligence de marché sur les PPN vivriers à Madagascar : collecte publique autorisée, provenance Bronze/Silver, API, dashboard, prévisions, agroclimat et aide à la décision.
 

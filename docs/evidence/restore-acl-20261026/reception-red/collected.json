@@ -1,0 +1,16 @@
+{
+  "scope": "software only; isolated mixed/synthetic QA",
+  "backend": {
+    "tests": 2464,
+    "failures": 2,
+    "errors": 0,
+    "skips": 0
+  },
+  "restore_cases_in_full_junit": 37,
+  "commit": "bace9c0041946e47cdf8c6a05475b2c935eea7a0",
+  "source_fingerprint": "21314f59bb1f36d681ea9d9a70a4ba534646326fa5c36fe776356c1e9e2a570a",
+  "frontend": {
+    "executed_for_this_commit": false,
+    "available_receipt_commit": "7d178a111a7aad554dd706b808836e687e0e88a6"
+  }
+}

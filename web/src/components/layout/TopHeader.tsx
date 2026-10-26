@@ -1,122 +1,36 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  AlertTriangle,
-  Bell,
-  Command,
-  Database,
-  ExternalLink,
-  Layers,
-  Menu,
-  Search,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { ChevronRight, Menu, Search } from "lucide-react";
+import { findNavigationPage } from "@/lib/navigation";
+import { BRAND } from "@/lib/brand";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
-const ROUTE_TITLES: Record<string, { title: string; subtitle: string }> = {
-  "/": { title: "Vue d'ensemble", subtitle: "Tableau de bord exécutif des marchés vivriers" },
-  "/prices": { title: "Prix vivriers", subtitle: "Séries temporelles, dispersion et relevés" },
-  "/economy": { title: "Économie & Conjoncture", subtitle: "Indicateurs économiques et qualification des données" },
-  "/map": { title: "Carte des marchés", subtitle: "Disparités territoriales & corridors" },
-  "/trade": { title: "Commerce extérieur", subtitle: "Flux d'importation & prix parité import" },
-  "/climate": { title: "Climat & Cultures", subtitle: "Anomalies agroclimatiques & stress hydrique" },
-  "/alerts": { title: "Centre d'alertes", subtitle: "Détection des tensions et ruptures de marché" },
-  "/bulletins": { title: "Bulletins hebdomadaires", subtitle: "Publications officielles chiffrées & certifiées" },
-  "/copilot": { title: "Copilote analyste", subtitle: "Assistant de veille économique sans hallucination" },
-  "/sources": { title: "Sources & DataOps", subtitle: "Qualité des données & monitoring des flux" },
-  "/admin/review": { title: "File de revue", subtitle: "Arbitrage des anomalies & validation humaine" },
-  "/system": { title: "Architecture Système", subtitle: "Infrastructure conteneurisée & cadences Dagster" },
-};
-
-export function TopHeader({
-  onOpenCommand,
-  onToggleNavigation,
-  navigationOpen,
-}: {
+export function TopHeader({ onOpenCommand, onToggleNavigation, navigationOpen }: {
   onOpenCommand: () => void;
   onToggleNavigation: () => void;
   navigationOpen: boolean;
 }) {
-  const pathname = usePathname();
-  const currentRoute = ROUTE_TITLES[pathname] || {
-    title: "Ketrika Agri",
-    subtitle: "Système de veille de marché vivrier à Madagascar",
-  };
-
+  const page = findNavigationPage(usePathname());
   return (
-    <header className="h-16 px-3 md:px-6 border-b border-white/[0.07] bg-slate-950/70 backdrop-blur-xl flex items-center justify-between gap-2 md:gap-4 sticky top-0 z-20">
-      <button aria-label="Ouvrir la navigation" aria-expanded={navigationOpen} aria-controls="primary-navigation" onClick={onToggleNavigation} className="md:hidden shrink-0 p-2 rounded-lg border border-white/10"><Menu className="w-5 h-5" /></button>
-      {/* Left: Route Title & Context */}
+    <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-[12px] border-b border-border bg-header px-[12px] py-2 md:px-8">
       <div className="flex min-w-0 items-center gap-3">
+        <button type="button" aria-label="Ouvrir la navigation" aria-expanded={navigationOpen} aria-controls="primary-navigation" onClick={onToggleNavigation}
+          className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-foreground/[0.05] focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring md:hidden"><Menu aria-hidden="true" className="h-[20px] w-[20px]" /></button>
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h1 className="text-sm font-bold tracking-tight text-white truncate">
-              {currentRoute.title}
-            </h1>
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              UTC+3
-            </span>
+          <div className="flex min-w-0 items-center gap-2 text-sm">
+            {page && page.href !== "/" && <><span className="hidden shrink-0 text-muted-foreground lg:inline">{page.group}</span><ChevronRight aria-hidden="true" className="hidden h-3 w-3 shrink-0 text-muted-foreground lg:block" /></>}
+            <p title={page?.label} className="truncate font-semibold text-foreground">{page?.label || BRAND.product}</p>
           </div>
-          <p className="text-[11px] text-slate-400 hidden md:block">
-            {currentRoute.subtitle}
-          </p>
+          <p className="mt-0.5 hidden text-xs text-muted-foreground md:block">{page?.description || "Veille des marchés vivriers"}</p>
         </div>
       </div>
-
-      {/* Center: Command Palette Trigger Button */}
-      <div className="hidden md:flex flex-1 min-w-0 max-w-md mx-2">
-        <button
-          onClick={onOpenCommand}
-          className="w-full flex items-center justify-between px-3.5 py-1.5 rounded-xl bg-slate-900/80 border border-white/[0.08] hover:border-emerald-500/40 text-xs text-slate-400 hover:text-slate-200 transition-all shadow-inner group"
-        >
-          <span className="flex items-center gap-2">
-            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-400 transition-colors" />
-            <span className="truncate">Rechercher une analyse, un produit, un lieu...</span>
-          </span>
-          <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400 border border-white/[0.08]">
-            <Command className="w-2.5 h-2.5" /> K
-          </kbd>
+      <div className="flex shrink-0 items-center gap-[8px]"><ThemeToggle />
+        <button type="button" onClick={onOpenCommand} aria-label="Rechercher une page" aria-haspopup="dialog" aria-keyshortcuts="Control+k Meta+k"
+          className="flex h-[44px] w-[44px] shrink-0 items-center justify-center gap-3 rounded-lg border border-border text-sm text-muted-foreground hover:border-border hover:bg-foreground/[0.03] hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring md:w-auto md:px-3">
+          <Search aria-hidden="true" className="h-[16px] w-[16px]" /><span className="hidden md:inline">Aller à une page…</span><kbd aria-hidden="true" className="ml-3 hidden rounded border border-border px-1.5 py-0.5 text-[11px] text-muted-foreground lg:inline">Ctrl K</kbd>
         </button>
-      </div>
-
-      {/* Right: Status Pills & User Profile */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        {/* Alerts Pill */}
-        <Link
-          href="/alerts"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-400 text-xs font-medium transition-colors"
-          title="Consulter les alertes"
-        >
-          <AlertTriangle className="w-3.5 h-3.5" />
-          <span className="hidden lg:inline text-[11px]">Alertes</span>
-        </Link>
-
-        {/* Provenance badge */}
-        <div
-          className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px] font-medium"
-          title="La qualification se vérifie observation par observation"
-        >
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          <Link href="/sources">Provenance & qualité</Link>
-        </div>
-
-        {/* User Chip */}
-        <div className="flex items-center gap-2 pl-2 border-l border-white/[0.08]">
-          <div className="w-7 h-7 rounded-lg bg-emerald-600/30 border border-emerald-500/40 flex items-center justify-center text-xs font-bold text-emerald-300">
-            A
-          </div>
-          <div className="hidden md:flex flex-col text-left">
-            <span className="text-[11px] font-semibold text-slate-200 leading-tight">
-              Analyste Marché
-            </span>
-            <span className="text-[9px] uppercase tracking-wider text-emerald-400 font-mono">
-              Admin
-            </span>
-          </div>
-        </div>
       </div>
     </header>
   );

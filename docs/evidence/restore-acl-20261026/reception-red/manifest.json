@@ -1,0 +1,18 @@
+{
+  "collected.json": {
+    "sha256": "0a28a9a61869f20a50a7c6259fb0e69636118e7bc9185eaa5a55713d87e80a0f",
+    "bytes": 470
+  },
+  "qa-coverage.json.gz": {
+    "sha256": "abc90179a1cd97dbc363f2e67698b408bc4f2a0dec6d48e20564d98fd79758e0",
+    "bytes": 23611
+  },
+  "qa-inventory.json.gz": {
+    "sha256": "c73a6e016f3d53468b29beb98977a99d83ab209eedf6c12daa709be799d342be",
+    "bytes": 37134
+  },
+  "qa-tests.xml.gz": {
+    "sha256": "bb98d68006e8652d51388864fd81a9feb3730a83ac76a2a332481fb02a3fdca0",
+    "bytes": 51218
+  }
+}

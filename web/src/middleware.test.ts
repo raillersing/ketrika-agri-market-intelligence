@@ -5,6 +5,24 @@ import { middleware } from "./middleware";
 const request = (path: string, token?: string) => new NextRequest(`http://web:3000${path}`, { headers: token ? { Cookie: `session_token=${token}` } : {} });
 afterEach(() => vi.unstubAllGlobals());
 describe("server-validated web sessions", () => {
+  it("serves only the exact public About paths without checking a session", async () => {
+    const fetcher = vi.fn(); vi.stubGlobal("fetch", fetcher);
+    for (const path of ["/about", "/about/"]) {
+      for (const token of [undefined, "arbitrary"]) {
+        expect((await middleware(request(path, token))).headers.get("x-middleware-next")).toBe("1");
+      }
+    }
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+  it("does not make About prefixes, subroutes or business data public", async () => {
+    const fetcher = vi.fn(); vi.stubGlobal("fetch", fetcher);
+    for (const path of ["/about.csv", "/about/private", "/about-other", "/prices"]) {
+      const response = await middleware(request(path));
+      expect(response.status).toBe(307);
+      expect(response.headers.get("location")).toContain("/login");
+    }
+    expect(fetcher).not.toHaveBeenCalled();
+  });
   it("redirects anonymous business pages, including a path containing a dot", async () => {
     const fetcher = vi.fn(); vi.stubGlobal("fetch", fetcher);
     const response = await middleware(request("/prices.csv"));

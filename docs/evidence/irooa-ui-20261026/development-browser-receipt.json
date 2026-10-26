@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "scope": "development UI preview on separate frontend; active legacy backend, not security reception",
+  "checks": [
+    "reference colors, explicit preference, reload and cross-page persistence",
+    "public pages at 320 and 390 pixels without horizontal overflow",
+    "desktop menu groups, active page, real search and focus restoration",
+    "mobile drawer, current link focus and Escape restoration at 320 and 390 pixels",
+    "public About at 200 percent text without horizontal overflow"
+  ],
+  "browser_errors": []
+}

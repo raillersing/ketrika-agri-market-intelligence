@@ -46,7 +46,7 @@ export function KpiCard({
       <div>
         {/* Header: Title & ValueKind */}
         <div className="flex items-start justify-between gap-2 mb-2">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-medium">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-medium">
             {title}
           </span>
           {valueKind && <ValueKindBadge kind={valueKind} />}
@@ -54,11 +54,11 @@ export function KpiCard({
 
         {/* Main Value Display */}
         <div className="flex items-baseline gap-2 my-1.5">
-          <span className="text-3xl font-extrabold tracking-tight text-white group-hover:text-emerald-300 transition-colors">
+          <span className="text-3xl font-extrabold tracking-tight text-foreground group-hover:text-primary-readable transition-colors">
             {value ?? "—"}
           </span>
           {unit && (
-            <span className="text-xs font-mono text-slate-400 font-medium">
+            <span className="text-xs font-mono text-muted-foreground font-medium">
               {unit}
             </span>
           )}
@@ -70,10 +70,10 @@ export function KpiCard({
             <span
               className={`inline-flex items-center text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full border ${
                 isPositive
-                  ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                  ? "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20"
                   : isNegative
-                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                  : "bg-slate-800 text-slate-300 border-white/10"
+                  ? "bg-emerald-500/10 text-primary-readable border-emerald-500/20"
+                  : "bg-muted text-muted-foreground border-border"
               }`}
             >
               {isPositive && <ArrowUpRight className="w-3 h-3 mr-0.5" />}
@@ -81,7 +81,7 @@ export function KpiCard({
               {!isPositive && !isNegative && <Minus className="w-3 h-3 mr-0.5" />}
               {formatPercent(variation)}
             </span>
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-muted-foreground">
               vs ({variationPeriod})
             </span>
           </div>
@@ -89,20 +89,20 @@ export function KpiCard({
 
         {/* Subtitle / Contextual note */}
         {subtitle && (
-          <p className="text-xs text-slate-400 mt-2.5 leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-2.5 leading-relaxed">
             {subtitle}
           </p>
         )}
       </div>
 
       {/* Footer: Sources & Provenance */}
-      <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between gap-2 text-xs">
+      <div className="mt-4 pt-3 border-t border-border flex items-center justify-between gap-2 text-xs">
         <div className="flex flex-wrap items-center gap-1.5">
           {sources.slice(0, 2).map((s) => (
             <SourceBadge key={s} sourceId={s} />
           ))}
           {sources.length > 2 && (
-            <span className="text-[10px] font-mono text-slate-400">
+            <span className="text-[10px] font-mono text-muted-foreground">
               +{sources.length - 2}
             </span>
           )}
@@ -110,7 +110,7 @@ export function KpiCard({
         {observationId ? (
           <ProvenanceLink observationId={observationId} />
         ) : (
-          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400/80 font-mono">
+          <span className="inline-flex items-center gap-1 text-[10px] text-primary-readable/80 font-mono">
             Provenance non liée
           </span>
         )}
