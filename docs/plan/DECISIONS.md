@@ -1,4 +1,11 @@
 # DECISIONS (Architecture Decision Records - ADR)
+## ADR-126 | 2026-10-26 | Accepté avant code | Restauration fidèle des propriétaires et droits
+
+- Contexte : le contrôle SQL réel AU-07 trouve des données intactes mais des ACL perdues : `--no-owner --no-privileges` masquait les droits de `ketrika_app` et `copilot_ro`. Ce positif limité ne reçoit pas AU-07.
+- Décision : conserver les instructions de propriétaires et de privilèges de l'archive ; aucun remappage implicite, aucune création de rôle globale. Les rôles référencés doivent déjà exister dans le cluster de qualification autorisé. Toute erreur de rôle ou de GRANT fait échouer la transaction entière, sans dégradation silencieuse. Le clone reste neuf et isolé ; aucune modification des rôles, de la source ou d'une cible existante.
+- Réception : comparer les valeurs de toutes les tables archivées, propriétaires, ACL et droits effectifs du rôle applicatif et du copilote ; constater le refus réel d'une archive référençant un rôle absent. Conserver les premières différences comme preuve négative. Check complet sur le nouveau contenu figé avant réception. Aucun rôle de production ni donnée Bronze n'est importé.
+- Alternative rejetée : annoncer une restauration fidèle en omettant les droits ou réappliquer arbitrairement les permissions actuelles après la transaction.
+
 ## ADR-125 | 2026-10-26 | Accepté avant code | Dépendances corrigées et migration frontend bornée
 
 - Contexte : AU-06, audit IA-09. Registres npm relus dans Docker : Next15.5.28 maintenance, React19.3.1, MapLibre6.16.0, ECharts6.1.0/echarts-for-react3.0.6, Vitest5.0.5 et PostCSS8.5.31 ; Node de l'image existante22.23.3 satisfait Vitest>=22.12. Avis mainteneurs Next du14 octobre, MapLibre et Pillow13 relus ; versions des registres et conditions de compatibilité conservées hors source figée AU-04.

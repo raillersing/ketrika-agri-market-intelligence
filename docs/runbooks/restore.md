@@ -1,5 +1,7 @@
 # Sauvegarde et restauration sur clone neuf
 
+ADR126 : l'archive conserve ses propriétaires et droits SQL. Les rôles référencés doivent déjà exister sur le cluster isolé, avec leurs permissions autorisées ; le script ne crée aucun rôle et ne remplace pas les ACL. Un rôle absent fait échouer et annuler la transaction. Comparer les droits effectifs du compte applicatif et du copilote ainsi que les valeurs avant de recevoir le clone.
+
 AU-07 en développement : les tests négatifs ne réceptionnent pas encore le lot complet. Aucun déploiement ni corpus historique n'est qualifié. Voir [plan préalable](../audits/2026-10-25/RESTORE_IMPLEMENTATION_PLAN.md) et ADR124.
 
 Une sauvegarde utilisable comprend l'archive PostgreSQL personnalisée, son `.dump.sha256` et son manifeste `.dump.meta.json` (ou `.meta.json`). Les trois doivent désigner les mêmes octets, taille, nom d'archive et base source. L'alias `latest` possède ses propres compagnons cohérents. `backup` passe par le script vérifiant réellement `pg_restore --list`, sans activer Restic depuis le point d'entrée local. Les anciennes archives sans compagnons restent conservées ; elles ne sont pas déclarées vérifiées automatiquement.

@@ -1,5 +1,11 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-26T13:55:00Z] AU-07 — défaut réel de fidélité des ACL, correction isolée
+
+- Réception complète du contenu7d178a1 en cours sur main-final ; ce worktree séparé ne touche ni sa source, ni ses images, ni SQL/S3 QA. Comparaison readonly du clone privé : tables fidèles mais ACL perdues sous les options no-owner/no-privileges. AU-07 reste IN_PROGRESS, premier positif limité non promu.
+- Mini-plan : ADR126/SPECS avant code ; conserver propriétaires/ACL ; tests négatifs et archive réelle avec privilèges et rôle absent ; figer, puis nouveau check complet après libération de main-final ; E2E et preuve consolidée avant réception. Aucun rôle/source/volume actif modifié, aucun contournement des protections.
+- Développement :37 tests/26,74s, lint/format verts ; restauration shell et PowerShell0, erreur réelle rôle absent1 avec rollback. Toutes tables archivées et droits/propriétaires comparés, empreinte identique1ce39e12... dans trois rapports. Preuves docs/evidence/restore-acl-20261026 ; réception complète et E2E restent requis.
+
 ### [2026-10-26T13:41:42Z] AU-06/AU-07 — développement consolidé avant gel
 
 - Locks corrigés : Next15.5.28/React19.3.1, MapLibre6.16/ECharts6.1, Vitest5.0.5/Vite8.3.5 ; minimatch9.0.7/PostCSS8.5.31/parser7.1.6. Audit npm complet0 avis connus ; Python runtime+geo+ML0 connus, export tous extras et pip-audit2.10.1 figé également verts, code0. Aucune exclusion d'avis ; pas de certification de sécurité générale.

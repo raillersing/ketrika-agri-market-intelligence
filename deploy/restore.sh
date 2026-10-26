@@ -57,7 +57,7 @@ SQL
 createdb -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" --maintenance-db=postgres --owner "$PGUSER" "$PGDATABASE"
 echo "[INFO] Restoring to new clone $PGDATABASE."
 pg_restore -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" \
-    --single-transaction --exit-on-error --no-owner --no-privileges "$BACKUP_FILE"
+    --single-transaction --exit-on-error "$BACKUP_FILE"
 # No --clean, connection termination, DROP, or automatic Gold recalculation.
 identity="$(psql -X -v ON_ERROR_STOP=1 -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" -At -v "target=$PGDATABASE" <<'SQL'
 SELECT current_database()=:'target';

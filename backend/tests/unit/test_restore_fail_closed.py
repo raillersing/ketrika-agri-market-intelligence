@@ -170,6 +170,8 @@ def test_shell_never_accepts_exit_one_as_success(shell_fixture, mode):
     )
     assert "--single-transaction" in restore["args"] and "--exit-on-error" in restore["args"]
     assert "--clean" not in restore["args"]
+    assert "--no-owner" not in restore["args"]
+    assert "--no-privileges" not in restore["args"]
     assert all("pg_terminate_backend" not in call["sql"] for call in calls)
 
 
