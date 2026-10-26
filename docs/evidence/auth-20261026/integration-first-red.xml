@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="11" time="132.374" timestamp="2026-10-26T06:50:17.138416+00:00" hostname="80238b503a0b"><testcase classname="tests.integration.test_api_perf" name="test_rate_limiter_strict_60_req_per_minute" time="20.642"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_api_perf" name="test_aggregated_endpoints_latency_p95" time="50.935"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_api_v1" name="test_api_public_and_analytical_endpoints_200" time="16.774"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_api_v1" name="test_observation_provenance_and_presigned_bronze_url" time="0.389"><properties><property name="ketrika.integration" value="true" /></properties><failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">db_session = &lt;sqlalchemy.orm.session.Session object at 0x7d4585d82900&gt;
+client = &lt;starlette.testclient.TestClient object at 0x7d4585d2f650&gt;
+
+    @pytest.mark.integration
+    def test_observation_provenance_and_presigned_bronze_url(db_session: Session, client: httpx.Client):
+        """Verify /v1/observations/{id} returns evidence, source_url, parser_version and a valid presigned Bronze link."""
+        # Setup test source record in Bronze storage
+        bronze = BronzeStore()
+        now = datetime.now(UTC)
+        unique_key = f"obs_test_{uuid.uuid4().hex[:8]}"
+        content_bytes = f"date,product,price\n2024-01-15,vary,{unique_key}\n".encode()
+    
+        artifact = bronze.put(
+            source_id="miasa_odr",
+            url=f"https://example.com/bulletin_prov_{unique_key}.pdf",
+            content=content_bytes,
+            mime_type="application/pdf",
+        )
+    
+        srec = SourceRecord(
+            source_record_id=uuid.uuid4(),
+            source_id="miasa_odr",
+            source_url="https://example.com/bulletin_prov_test.pdf",
+            retrieved_via="direct",
+            object_key=artifact.object_key,
+            content_sha256=artifact.content_sha256,
+            mime_type="application/pdf",
+            fetched_at=now,
+            parser_version="1.2.0",
+            extraction_status="parsed",
+        )
+        db_session.add(srec)
+    
+        obs_id = uuid.uuid4()
+        p_obs = PriceObservation(
+            observation_id=obs_id,
+            source_record_id=srec.source_record_id,
+            natural_key=f"nat_{unique_key}",
+            product_raw="Riz makalioka",
+            actor_level="retail",
+            period_start=now.date(),
+            period_end=now.date(),
+            price_raw="3 200 Ar",
+            price_value=3200.0,
+            currency_raw="MGA",
+            unit_raw="kg",
+            price_mga_per_base=3200.0,
+            base_unit="kg",
+            conversion_status="converted",
+            observed_or_imputed="observed",
+            extraction_method="deterministic",
+            confidence=1.0,
+            evidence={"page": 3, "table_row": 5, "raw_text": "Riz blanc 3 200 Ar/kg"},
+            review_status="accepted",
+        )
+        db_session.add(p_obs)
+        db_session.commit()
+    
+        # Query /v1/observations/{id}
+        res = client.get(f"/v1/observations/{obs_id}")
+&gt;       assert res.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code
+
+tests/integration/test_api_v1.py:287: AssertionError</failure></testcase><testcase classname="tests.integration.test_api_v1" name="test_api_auth_roles_and_status_codes" time="2.342"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_api_v1" name="test_api_security_headers" time="0.041"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_sources_no_cache" name="test_source_api_uses_meta_runs_without_publishing_prices[unpublished]" time="1.143"><properties><property name="ketrika.integration" value="true" /><property name="ketrika.sources.no_cache" value="{&quot;source_id&quot;: &quot;dummy_source_api_b141aea434f043329ed3ad98b70baa46&quot;, &quot;cache_populated&quot;: false, &quot;meta_latest_run&quot;: &quot;failed&quot;, &quot;price_signature_unchanged&quot;: true, &quot;numerical_gold_not_refreshed&quot;: true, &quot;scope&quot;: &quot;synthetic metadata SQL/API only; no source, market or DQ metric qualification&quot;}" /></properties></testcase><testcase classname="tests.integration.test_sources_no_cache" name="test_source_api_uses_meta_runs_without_publishing_prices[stale-cache]" time="0.707"><properties><property name="ketrika.integration" value="true" /><property name="ketrika.sources.no_cache" value="{&quot;source_id&quot;: &quot;dummy_source_api_0d4317476440473abd102f08fbc90fb9&quot;, &quot;cache_populated&quot;: true, &quot;meta_latest_run&quot;: &quot;failed&quot;, &quot;price_signature_unchanged&quot;: true, &quot;numerical_gold_not_refreshed&quot;: true, &quot;scope&quot;: &quot;synthetic metadata SQL/API only; no source, market or DQ metric qualification&quot;}" /></properties></testcase><testcase classname="tests.integration.test_observability" name="test_send_pipeline_failure_email_direct" time="0.526"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_observability" name="test_forced_connector_failure_records_failed_and_dispatches_email" time="1.139"><properties><property name="ketrika.integration" value="true" /></properties></testcase><testcase classname="tests.integration.test_observability" name="test_dagster_failure_sensor_execution" time="0.144"><properties><property name="ketrika.integration" value="true" /></properties></testcase></testsuite></testsuites>

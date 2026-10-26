@@ -91,3 +91,26 @@ def pytest_collection_finish(session: pytest.Session) -> None:
     if not path.is_relative_to(Path("/app/.venv")):
         raise pytest.UsageError("Inventory destination is not the dedicated report volume")
     path.write_text(json.dumps(inventory, indent=2) + "\n")
+
+
+@pytest.fixture
+def authenticated_unit_reader():
+    """Explicit opt-in for business unit cases; security tests use real authentication."""
+    from ketrika.api.auth import get_current_user
+    from ketrika.api.main import app
+    from ketrika.core.models.db import UserAccount
+
+    def reader() -> UserAccount:
+        return UserAccount(
+            user_id=uuid4(), email="unit-reader@ketrika.local", role="client", disabled=False
+        )
+
+    previous = app.dependency_overrides.get(get_current_user)
+    app.dependency_overrides[get_current_user] = reader
+    try:
+        yield
+    finally:
+        if previous is None:
+            app.dependency_overrides.pop(get_current_user, None)
+        else:
+            app.dependency_overrides[get_current_user] = previous

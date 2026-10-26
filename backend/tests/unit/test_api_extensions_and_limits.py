@@ -16,6 +16,7 @@ import datetime as dt
 import io
 from unittest.mock import MagicMock
 
+import pytest
 from fastapi.testclient import TestClient
 
 from ketrika.api.main import app
@@ -27,6 +28,7 @@ from ketrika.gold.coverage import MarketCoverageRow
 # =========================================================================
 
 
+@pytest.mark.usefixtures("authenticated_unit_reader")
 def test_api_macro_json_metadata_and_pagination():
     """Verify /v1/macro pagination and exhaustive metadata exposure."""
     mock_session = MagicMock()
@@ -108,6 +110,7 @@ def test_api_macro_json_metadata_and_pagination():
         app.dependency_overrides.pop(get_db, None)
 
 
+@pytest.mark.usefixtures("authenticated_unit_reader")
 def test_api_macro_csv_export():
     """Verify /v1/macro format=csv returns valid text/csv with correct headers."""
     mock_session = MagicMock()
@@ -159,6 +162,7 @@ def test_api_macro_csv_export():
 # =========================================================================
 
 
+@pytest.mark.usefixtures("authenticated_unit_reader")
 def test_api_market_coverage_pagination_and_csv():
     """Verify /v1/market/coverage pagination and CSV export."""
     mock_cell = MarketCoverageRow(
@@ -185,8 +189,11 @@ def test_api_market_coverage_pagination_and_csv():
 
     from unittest.mock import patch
 
-    with patch(
-        "ketrika.api.routers.coverage.query_market_coverage_matrix", return_value=[mock_cell]
+    with (
+        patch(
+            "ketrika.api.routers.coverage.query_market_coverage_matrix", return_value=[mock_cell]
+        ),
+        patch("ketrika.api.routers.coverage.require_gold_view"),
     ):
         client = TestClient(app)
 
@@ -217,6 +224,7 @@ def test_api_market_coverage_pagination_and_csv():
 # =========================================================================
 
 
+@pytest.mark.usefixtures("authenticated_unit_reader")
 def test_api_economic_indicators_pagination_and_csv():
     """Verify /v1/economic/indicators pagination and CSV export."""
     client = TestClient(app)
@@ -252,6 +260,7 @@ def test_api_economic_indicators_pagination_and_csv():
 # =========================================================================
 
 
+@pytest.mark.usefixtures("authenticated_unit_reader")
 def test_api_pagination_limit_out_of_bounds_validation():
     """Verify invalid limit values (< 1 or > 1000) return 422 with validation errors."""
     client = TestClient(app)

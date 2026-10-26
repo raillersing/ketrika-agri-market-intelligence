@@ -1,7 +1,9 @@
 """Application configuration loaded from environment variables."""
 
 from functools import lru_cache
+from urllib.parse import urlsplit
 
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,10 +14,12 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        hide_input_in_errors=True,
     )
 
     # General
     app_env: str = "dev"
+    bootstrap_demo_admin: bool = True
     tz_business: str = "Indian/Antananarivo"
     log_level: str = "INFO"
     log_format: str = "console"
@@ -53,7 +57,7 @@ class Settings(BaseSettings):
 
     # API / Auth
     jwt_secret: str = "change-me-long-random-secret-key-32chars"
-    jwt_ttl_minutes: int = 720
+    jwt_ttl_minutes: int = Field(default=720, ge=1)
     demo_admin_email: str = "admin@ketrika.local"
     demo_admin_password: str = "change-me"
     cors_origins: str = "http://localhost:3000,http://localhost:3005"
@@ -70,6 +74,30 @@ class Settings(BaseSettings):
     next_public_api_base_url: str = "http://localhost:8000"
     api_internal_url: str = "http://api:8000"
     map_style_url: str = ""
+
+    @model_validator(mode="after")
+    def enforce_production_configuration(self) -> "Settings":
+        """Reject demo credentials without echoing configuration inputs (ADR-123)."""
+        if self.app_env not in {"dev", "test", "prod"}:
+            raise ValueError("APP_ENV must be dev, test or prod")
+        if self.app_env == "prod":
+            if self.bootstrap_demo_admin:
+                raise ValueError("BOOTSTRAP_DEMO_ADMIN must be false in production")
+            if (
+                len(self.jwt_secret) < 32
+                or self.jwt_secret == "change-me-long-random-secret-key-32chars"
+            ):
+                raise ValueError("A non-default JWT signing secret is required")
+            if (
+                self.postgres_password in {"", "change-me"}
+                or urlsplit(self.database_url).password in {None, "", "change-me"}
+                or self.copilot_db_password in {"", "change-me-ro"}
+                or self.s3_secret_key in {"", "minioadmin"}
+            ):
+                raise ValueError(
+                    "Non-default SQL, readonly and object-store credentials are required"
+                )
+        return self
 
 
 @lru_cache

@@ -21,6 +21,8 @@ from ketrika.ml.evaluation import (
     wilson_score_interval_95,
 )
 
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
+
 
 def test_wilson_score_interval_95() -> None:
     """Check Wilson score confidence intervals for coverage."""

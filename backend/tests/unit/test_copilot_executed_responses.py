@@ -28,6 +28,8 @@ from ketrika.copilot.writer import (
 from ketrika.core.db import get_db
 from ketrika.core.models.db import UserAccount
 
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
+
 
 def test_copilot_honest_abstention_on_out_of_scope_query() -> None:
     """Verify out-of-scope questions trigger honest abstention without querying default rice prices."""

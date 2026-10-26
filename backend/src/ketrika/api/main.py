@@ -5,12 +5,12 @@ from __future__ import annotations
 from collections.abc import AsyncGenerator, Awaitable, Callable
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from ketrika.api.auth import ensure_demo_admin
+from ketrika.api.auth import ensure_demo_admin, ensure_no_demo_credentials, get_current_user
 from ketrika.api.errors import (
     ProblemDetailException,
     http_exception_handler,
@@ -47,9 +47,16 @@ from ketrika.core.settings import get_settings
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan: seed initial demo admin user if missing."""
-    if check_db_connection():
+    if (
+        get_settings().bootstrap_demo_admin
+        and get_settings().app_env != "prod"
+        and check_db_connection()
+    ):
         with get_session() as session:
             ensure_demo_admin(session)
+    if get_settings().app_env == "prod":
+        with get_session() as session:
+            ensure_no_demo_credentials(session)
     yield
 
 
@@ -61,6 +68,8 @@ app = FastAPI(
     version="0.1.0",
     docs_url="/v1/docs",
     openapi_url="/v1/openapi.json",
+    redoc_url=None,
+    swagger_ui_oauth2_redirect_url=None,
     lifespan=lifespan,
 )
 
@@ -124,21 +133,21 @@ def health_check() -> JSONResponse:
 
 # Include all v1 feature routers
 app.include_router(auth.router)
-app.include_router(products.router)
-app.include_router(locations.router)
-app.include_router(prices.router)
-app.include_router(coverage.router)
-app.include_router(stocks.router)
-app.include_router(supply.router)
-app.include_router(trade.router)
-app.include_router(macro.router)
-app.include_router(economic.router)
-app.include_router(weather.router)
-app.include_router(climate.router)
-app.include_router(kpis.router)
-app.include_router(forecasts.router)
-app.include_router(alerts.router)
-app.include_router(bulletins.router)
-app.include_router(sources.router)
-app.include_router(admin.router)
-app.include_router(copilot.router)
+app.include_router(products.router, dependencies=[Depends(get_current_user)])
+app.include_router(locations.router, dependencies=[Depends(get_current_user)])
+app.include_router(prices.router, dependencies=[Depends(get_current_user)])
+app.include_router(coverage.router, dependencies=[Depends(get_current_user)])
+app.include_router(stocks.router, dependencies=[Depends(get_current_user)])
+app.include_router(supply.router, dependencies=[Depends(get_current_user)])
+app.include_router(trade.router, dependencies=[Depends(get_current_user)])
+app.include_router(macro.router, dependencies=[Depends(get_current_user)])
+app.include_router(economic.router, dependencies=[Depends(get_current_user)])
+app.include_router(weather.router, dependencies=[Depends(get_current_user)])
+app.include_router(climate.router, dependencies=[Depends(get_current_user)])
+app.include_router(kpis.router, dependencies=[Depends(get_current_user)])
+app.include_router(forecasts.router, dependencies=[Depends(get_current_user)])
+app.include_router(alerts.router, dependencies=[Depends(get_current_user)])
+app.include_router(bulletins.router, dependencies=[Depends(get_current_user)])
+app.include_router(sources.router, dependencies=[Depends(get_current_user)])
+app.include_router(admin.router, dependencies=[Depends(get_current_user)])
+app.include_router(copilot.router, dependencies=[Depends(get_current_user)])

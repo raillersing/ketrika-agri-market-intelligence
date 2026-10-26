@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import threading
 import time
 from collections import defaultdict
@@ -83,24 +84,26 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
     def _extract_client_key(self, request: Request) -> str:
         """Extract rate limiting key from X-API-Key, Bearer token, or IP."""
+        client_host = request.client.host if request.client else "unknown"
+        if request.url.path == "/v1/auth/login":
+            return f"ip:{client_host}"
         # 1. X-API-Key header
         api_key = request.headers.get("x-api-key")
         if api_key:
-            return f"key:{api_key.strip()}"
+            return f"key:{hashlib.sha256(api_key.strip().encode()).hexdigest()}"
 
         # 2. Authorization header
         auth_header = request.headers.get("authorization")
         if auth_header and auth_header.lower().startswith("bearer "):
             token = auth_header[7:].strip()
-            return f"bearer:{token}"
+            return f"bearer:{hashlib.sha256(token.encode()).hexdigest()}"
 
         # 3. Client cookie
-        cookie_token = request.cookies.get("ketrika_token")
+        cookie_token = request.cookies.get("session_token")
         if cookie_token:
-            return f"cookie:{cookie_token}"
+            return f"cookie:{hashlib.sha256(cookie_token.encode()).hexdigest()}"
 
         # 4. Fallback to client IP
-        client_host = request.client.host if request.client else "unknown"
         return f"ip:{client_host}"
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:

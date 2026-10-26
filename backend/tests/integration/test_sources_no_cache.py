@@ -13,6 +13,7 @@ from ketrika.core.db import get_session
 from ketrika.core.models.db import IngestionRun, Source
 from ketrika.core.qualification import require_synthetic_test_database
 from ketrika.gold.refresh import refresh_gold_views
+from tests.api_fixtures import login_test_admin
 
 
 def price_signature(session):
@@ -78,6 +79,7 @@ def test_source_api_uses_meta_runs_without_publishing_prices(request, populated)
         )
     try:
         with TestClient(app) as client:
+            login_test_admin(client)
             response = client.get("/v1/sources")
             assert response.status_code == 200
             item = next(row for row in response.json() if row["source_id"] == source_id)

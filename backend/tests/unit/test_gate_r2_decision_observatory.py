@@ -14,6 +14,7 @@ from __future__ import annotations
 import datetime as dt
 from unittest.mock import MagicMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 
 from ketrika.api.main import app
@@ -24,6 +25,8 @@ from ketrika.gold.economic import (
     calculate_import_dependency_ratio,
     calculate_import_unit_cost,
 )
+
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
 
 # =========================================================================
 # QUESTION Q1: RICE RETAIL PRICE & REGIONAL DISPERSION (R2.4, SPECS §19)
@@ -54,8 +57,9 @@ def test_gate_q1_rice_retail_price_analamanga():
         age_days=30,
     )
 
-    with patch(
-        "ketrika.api.routers.coverage.query_market_coverage_matrix", return_value=[mock_row]
+    with (
+        patch("ketrika.api.routers.coverage.query_market_coverage_matrix", return_value=[mock_row]),
+        patch("ketrika.api.routers.coverage.require_gold_view"),
     ):
         client = TestClient(app)
         resp = client.get(
@@ -101,9 +105,12 @@ def test_gate_q2_series_continuity_and_gap_audit():
         is_pilot_candidate=True,
     )
 
-    with patch(
-        "ketrika.api.routers.coverage.compute_series_gaps_independent_sql",
-        return_value=mock_summary,
+    with (
+        patch(
+            "ketrika.api.routers.coverage.compute_series_gaps_independent_sql",
+            return_value=mock_summary,
+        ),
+        patch("ketrika.api.routers.coverage.require_gold_view"),
     ):
         client = TestClient(app)
         resp = client.get(

@@ -12,6 +12,8 @@ from ketrika.api.main import app
 from ketrika.core.db import get_db
 from ketrika.core.models.db import Location
 
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
+
 
 @pytest.fixture
 def safe_client() -> Iterator[tuple[TestClient, MagicMock]]:

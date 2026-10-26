@@ -4159,3 +4159,28 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Offre : exact produit/marché/calendrier/campagne, colonnes ORM actuelles et arrivages normaliséskg distincts des stocks ; erreurs SQL propagées. Publication opérationnelle des pics/scénarios s'abstient409 tant que références/corpus ne sont pas qualifiés (ADR121), moteurs scientifiques hors ligne conservés. Aucune mutation active, collecte ni notification.
 -48598 FINAL0 / conteneur c41ec0ea8f48 :42 tests ciblés/56,17s, quatre intégrations dont dates SQL climat/météo réellement exécutées et comparaison température23,25°C/pluie120mm. Original targeted.xml conservé ; ces chiffres sont synthétiques de test, jamais des faits Madagascar. Source de développement non figée : ce reçu ne réceptionne pas le lot final.
 - Frontend : première vérification type rouge TS2802 (itération Set avec target historique), correction Array.from ; reprise ciblée :lint/types verts,2 tests de grain/absence verts en4,57s. Backend lint/format neuf fichiers et Mypy cinq fichiers verts. Contrats OpenAPI et preuve navigateur préparés avant gel ; check complet/E2E restent obligatoires. Aucun AU DONE/R promu/tag.
+
+### [2026-10-25T18:00:00Z] R0.8 — préparation sécurité pendant réception indépendante
+
+- Nouveau worktree r08-security-20261025 / base7c42f24, plan SECURITY_IMPLEMENTATION_PLAN.md avant code. Le check4405 sur r08-safe-facts-20261025 continue sur ses sources/destinations intactes. Aucun statut R changé.
+- AU-05 IN_PROGRESS : trois chemins SMTP inventoriés (alertes, échec pipeline, aperçu bulletin), Telegram gate1 insuffisant. ADR122/SPECS définissent capture Mailpit dev/test seulement et refus de tout autre transport ; négatifs sans réseau et positif Mailpit dédié distinct, aucune suite SQL/S3 concurrente.
+- AU-04/06/07 en préparation documentaire ; matrice d'accès, contrat de révocation et restauration à spécifier avant code. Avis mainteneur Next14Octobre relu HTTP200, aucune dépendance changée. Aucun envoi externe ni nouveau gate levé.
+
+### [2026-10-25T18:05:00Z] R0.8 — contrat AU-04 précisé avant code
+
+- ADR123/SPECS : matrice de routes, table additive de révocation SHA seule, helpers SQL explicites, cookie sécurisé/prod sans bootstrap démo, middleware vérifie /me sans secret frontend. AU-04 IN_PROGRESS, migration0019 réservée ; aucune exécution SQL tant que4405 utilise main-final. Les comptes/clefs et données actives seront conservés.
+- AU-05 :32 tests unitaires sans réseau verts/20,56s sur worktree distinct ; positif Mailpit interne dédié en cours. Source/QA du check4405 inchangées ; aucune réception complète de sécurité ni notification externe revendiquée.
+
+### [2026-10-26T06:54:00Z] R0.8 — reprise AU-04, réception SQL en cours
+
+- CI distante du main7924600 confirmée : run40227263014, job121271166295 completed/success, check isolé et navigateur inclus. Ce résultat concerne le lot AU-01/02/03/05 déjà livré, pas le chantier AU-04.
+- Préparation PostgreSQL isolée terminée0 : migration additive0019_token_revocation et seed ; aucun changement de schéma actif, aucun reset ni objet Bronze modifié. Suite ciblée SQL en cours, résultat non encore reçu.
+- Web : conteneur ebbe45747e405a598972e63f70085d54e67305fb7543a9959fa3c44c440bfa08 terminé0, TypeScript et cinq tests middleware verts (3,95s). Pas de réception applicative globale ni de promotion DONE.
+- Refus des secrets vides/démo et BOOTSTRAP_DEMO_ADMIN=false étendus aux deux services Dagster prod ; tests négatifs et preuve de déconnexion multi-processus PostgreSQL ajoutés avant réception. AU-04 reste IN_PROGRESS, miroir R inchangé.
+
+### [2026-10-26T06:56:00Z] R0.8 — AU-04 scénarios ciblés reçus, réception globale à venir
+
+-55982 FINAL1 :10 succès/un échec/133,16s ; un test de lecture provenance oublié demandait encore l'accès anonyme. Connexion réelle ajoutée, aucun contrôle serveur retiré. Les scénarios débit60/61 et200 requêtes par endpoint passent avec clés/JWT réels, seuil p95<1000ms inchangé.
+-61085 FINAL0 :deux tests SQL/41,40s, provenance authentifiée et révocation PostgreSQL partagée entre clients puis processus neuf. Doublon logout idempotent, un seul digest stocké ; originaux dans docs/evidence/auth-20261026.
+-5085 FINAL0 :12 tests négatifs/52,88s, secrets prod vides/démo refusés, cookie arbitraire refusé, matrice métier anonyme, SQLite inter-processus, pannes SQL fermées. Web cinq cas/TypeScript déjà verts ; aucune preuve d'essai humain ou déploiement.
+- Lint421 fichiers vert ; premier mypy global signale uniquement l'annotation du helper login_test_admin trop étroite (corrigée Client parent). Second ciblé lancé sans MYPYPATH :25 import-untyped de configuration diagnostique, exclu des preuves. Réception globale sur source figée corrigée obligatoire, pas d'ignore de types ajouté. AU-04 IN_PROGRESS.

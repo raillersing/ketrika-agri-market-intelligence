@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import secrets
 import uuid
 from datetime import UTC, datetime, timedelta
@@ -11,12 +12,13 @@ import jwt
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from fastapi import Cookie, Depends, Header, Request
-from sqlalchemy import select
+from sqlalchemy import select, text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from ketrika.api.errors import ForbiddenException, UnauthorizedException
+from ketrika.api.errors import ForbiddenException, ProblemDetailException, UnauthorizedException
 from ketrika.core.db import get_db
-from ketrika.core.models.db import ApiKey, UserAccount
+from ketrika.core.models.db import ApiKey, TokenRevocation, UserAccount
 from ketrika.core.settings import get_settings
 
 password_hasher = PasswordHasher()
@@ -38,7 +40,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_access_token(user: UserAccount, expires_delta: timedelta | None = None) -> str:
     """Create signed JWT access token."""
     settings = get_settings()
-    ttl = expires_delta or timedelta(minutes=settings.jwt_ttl_minutes)
+    ttl = (
+        expires_delta if expires_delta is not None else timedelta(minutes=settings.jwt_ttl_minutes)
+    )
     expire = datetime.now(UTC) + ttl
     payload: dict[str, Any] = {
         "sub": str(user.user_id),
@@ -46,41 +50,74 @@ def create_access_token(user: UserAccount, expires_delta: timedelta | None = Non
         "role": user.role,
         "exp": int(expire.timestamp()),
         "iat": int(datetime.now(UTC).timestamp()),
+        "jti": str(uuid.uuid4()),
+        "token_use": "access",
     }
     token = jwt.encode(payload, settings.jwt_secret, algorithm="HS256")
     return token
 
 
-# In-memory revocation registry for active logout and invalidation (ADR-101 / R6.7)
-REVOKED_TOKENS: set[str] = set()
+def _session_storage_error() -> ProblemDetailException:
+    return ProblemDetailException(
+        503, "Session indisponible", "Le registre de sessions est indisponible."
+    )
 
 
-def revoke_token(token: str) -> None:
-    """Revoke an active JWT access token upon explicit logout (ADR-101)."""
-    clean = token.strip()
-    if clean:
-        REVOKED_TOKENS.add(clean)
+def revoke_token(token: str, session: Session) -> None:
+    """Commit the invalidation before acknowledging logout; do not store the JWT."""
+    payload = _decode_access_claims(token)
+    digest = hashlib.sha256(token.strip().encode()).hexdigest()
+    try:
+        session.execute(
+            text(
+                "INSERT INTO auth.token_revocation (token_sha256, expires_at, revoked_at) "
+                "VALUES (:digest, :expires, :revoked) ON CONFLICT (token_sha256) DO NOTHING"
+            ),
+            {
+                "digest": digest,
+                "expires": datetime.fromtimestamp(payload["exp"], UTC),
+                "revoked": datetime.now(UTC),
+            },
+        )
+        session.commit()
+    except SQLAlchemyError as exc:
+        session.rollback()
+        raise _session_storage_error() from exc
 
 
-def is_token_revoked(token: str) -> bool:
-    """Check if token has been revoked."""
-    return token.strip() in REVOKED_TOKENS
+def is_token_revoked(token: str, session: Session) -> bool:
+    """Read the shared registry on every request; no per-worker fallback."""
+    digest = hashlib.sha256(token.strip().encode()).hexdigest()
+    try:
+        return session.get(TokenRevocation, digest) is not None
+    except SQLAlchemyError as exc:
+        raise _session_storage_error() from exc
 
 
-def decode_access_token(token: str) -> dict[str, Any]:
-    """Decode and validate JWT access token."""
-    clean_token = token.strip()
-    if is_token_revoked(clean_token):
-        raise UnauthorizedException("Session has been terminated (logged out)")
-
+def _decode_access_claims(token: str) -> dict[str, Any]:
     settings = get_settings()
     try:
-        payload = jwt.decode(clean_token, settings.jwt_secret, algorithms=["HS256"])
+        payload = jwt.decode(
+            token.strip(),
+            settings.jwt_secret,
+            algorithms=["HS256"],
+            options={"require": ["sub", "exp", "iat", "jti", "token_use"]},
+        )
+        if payload["token_use"] != "access":
+            raise UnauthorizedException("Invalid authentication token type")
         return payload
     except jwt.ExpiredSignatureError as e:
         raise UnauthorizedException("Session has expired") from e
     except jwt.InvalidTokenError as e:
         raise UnauthorizedException("Invalid authentication token") from e
+
+
+def decode_access_token(token: str, session: Session) -> dict[str, Any]:
+    """Signature and expiry first, then shared durable invalidation."""
+    payload = _decode_access_claims(token)
+    if is_token_revoked(token, session):
+        raise UnauthorizedException("Session has been terminated (logged out)")
+    return payload
 
 
 def create_signed_action_token(
@@ -205,7 +242,7 @@ def get_current_user(
     if not token:
         raise UnauthorizedException("Authentication required")
 
-    payload = decode_access_token(token)
+    payload = decode_access_token(token, session)
     user_id_str = payload.get("sub")
     if not user_id_str:
         raise UnauthorizedException("Invalid token payload")
@@ -236,9 +273,30 @@ def require_client(user: UserAccount = Depends(get_current_user)) -> UserAccount
     return user
 
 
+def ensure_no_demo_credentials(session: Session) -> None:
+    """Refuse production startup with still-active published demo credentials."""
+    credentials = {
+        "admin@ketrika.local": "change-me",
+        "admin@ketrika.mg": "AdminKetrika2026!",
+        "demo@ketrika.mg": "DemoKetrika2026!",
+    }
+    accounts = (
+        session.execute(select(UserAccount).where(UserAccount.email.in_(credentials)))
+        .scalars()
+        .all()
+    )
+    if any(
+        not account.disabled and verify_password(credentials[account.email], account.password_hash)
+        for account in accounts
+    ):
+        raise RuntimeError("Production refused: rotate or disable demo credentials before startup")
+
+
 def ensure_demo_admin(session: Session) -> UserAccount:
     """Ensure default demo administrator exists in auth.user_account."""
     settings = get_settings()
+    if settings.app_env == "prod" or not settings.bootstrap_demo_admin:
+        raise RuntimeError("Demo administrator bootstrap is disabled")
     stmt = select(UserAccount).where(UserAccount.email == settings.demo_admin_email)
     admin = session.execute(stmt).scalar_one_or_none()
 

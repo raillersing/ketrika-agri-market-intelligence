@@ -22,6 +22,7 @@ from ketrika.core.models.db import IngestionRun, Source
 from ketrika.core.settings import get_settings
 from ketrika.gold.refresh import refresh_gold_views
 from ketrika.pipelines.definitions import handle_pipeline_failure
+from tests.api_fixtures import login_test_admin
 
 
 @pytest.fixture
@@ -157,6 +158,7 @@ def test_forced_connector_failure_records_failed_and_dispatches_email(
     assert metadata["source_cell_rate"] is None
     db_session.commit()
     client = TestClient(app)
+    login_test_admin(client)
     resp = client.get("/v1/sources")
     assert resp.status_code == 200
     sources_data = resp.json()

@@ -25,6 +25,7 @@ from ketrika.core.models.db import (
     UserAccount,
 )
 from ketrika.core.registry import sync_sources_to_db
+from ketrika.core.settings import get_settings
 from ketrika.core.taxonomy import (
     load_aliases,
     load_products,
@@ -230,8 +231,11 @@ def seed_locations(session: Session) -> dict[str, uuid.UUID]:
     return location_map
 
 
-def seed_demo_users(session: Session) -> None:
+def seed_demo_users(session: Session) -> int:
     """Seed demo accounts admin@ketrika.mg and demo@ketrika.mg with Argon2."""
+    settings = get_settings()
+    if settings.app_env == "prod" or not settings.bootstrap_demo_admin:
+        return 0
     ph = PasswordHasher()
 
     users_to_seed = [
@@ -256,6 +260,7 @@ def seed_demo_users(session: Session) -> None:
             session.add(user)
 
     session.flush()
+    return len(users_to_seed)
 
 
 def seed_database(session: Session) -> dict[str, int]:
@@ -273,13 +278,13 @@ def seed_database(session: Session) -> dict[str, int]:
     loc_map = seed_locations(session)
 
     # 5. Demo users
-    seed_demo_users(session)
+    n_users = seed_demo_users(session)
 
     return {
         "sources": n_sources,
         "products": len(prod_map),
         "locations": len(loc_map),
-        "users": 2,
+        "users": n_users,
     }
 
 

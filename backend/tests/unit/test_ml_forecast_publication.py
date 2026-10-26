@@ -15,6 +15,8 @@ from ketrika.core.models.db import Forecast, ModelRun
 from ketrika.ml.forecast import compute_series_fingerprint, run_price_forecasting_pipeline
 from ketrika.ml.series import EligibleSeries, PricePoint, SeriesEligibilityReport
 
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
+
 
 @pytest.fixture
 def dummy_price_series() -> list[EligibleSeries]:

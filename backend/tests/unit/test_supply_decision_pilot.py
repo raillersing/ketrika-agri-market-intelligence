@@ -19,6 +19,8 @@ from ketrika.supply.decision_pilot import (
 from ketrika.supply.harvest_window import HarvestWindowModel, HarvestWindowProjection
 from ketrika.supply.peak_forecast import SupplyPeakForecastEngine, SupplyWindowPrediction
 
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
+
 
 @pytest.fixture
 def alaotra_harvest_window() -> HarvestWindowProjection:

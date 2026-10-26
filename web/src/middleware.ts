@@ -1,49 +1,40 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+/** The server owns session validity; a cookie value alone never grants access. */
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  // Static assets and Next.js internal paths are always public
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
-    pathname.includes(".") ||
-    pathname === "/favicon.ico"
-  ) {
+  if (pathname.startsWith("/_next/") || pathname.startsWith("/api/") || pathname === "/favicon.ico") {
     return NextResponse.next();
   }
+  const token = request.cookies.get("session_token")?.value;
+  const isLogin = pathname === "/login";
+  const login = () => {
+    const url = new URL("/login", request.url);
+    if (!isLogin) url.searchParams.set("from", pathname + request.nextUrl.search);
+    const response = isLogin ? NextResponse.next() : NextResponse.redirect(url);
+    response.cookies.delete("session_token");
+    response.cookies.delete("ketrika_token");
+    return response;
+  };
+  if (!token) return isLogin ? NextResponse.next() : login();
 
-  const token =
-    request.cookies.get("session_token")?.value ||
-    request.cookies.get("ketrika_token")?.value;
-
-  // If visiting /login with existing token, redirect to home
-  if (pathname === "/login") {
-    if (token) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-    return NextResponse.next();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  try {
+    const upstream = await fetch(new URL("/v1/auth/me", process.env.API_INTERNAL_URL || "http://api:8000"), {
+      headers: { Cookie: `session_token=${token}` },
+      cache: "no-store", redirect: "error", signal: controller.signal,
+    });
+    if (upstream.status === 401 || upstream.status === 403) return login();
+    if (!upstream.ok) throw new Error("Session service unavailable");
+    return isLogin ? NextResponse.redirect(new URL("/", request.url)) : NextResponse.next();
+  } catch {
+    // Keep the login form usable; fail closed on business pages during an outage.
+    return isLogin ? NextResponse.next() : NextResponse.json({ detail: "Vérification de session indisponible. Réessayez dans un instant." }, { status: 503 });
+  } finally {
+    clearTimeout(timeout);
   }
-
-  // Protected application routes require auth token
-  if (!token) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("from", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  return NextResponse.next();
 }
 
-export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
-};
+export const config = { matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"] };

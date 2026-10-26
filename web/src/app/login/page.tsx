@@ -6,8 +6,8 @@ import { ArrowRight, CheckCircle2, Lock, Mail, ShieldCheck, Sparkles } from "luc
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@ketrika.local");
-  const [password, setPassword] = useState("change-me");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 

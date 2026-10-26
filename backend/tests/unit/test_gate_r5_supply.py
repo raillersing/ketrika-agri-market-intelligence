@@ -60,6 +60,8 @@ from ketrika.supply.quality import (
 )
 from tests.supply_fixtures import SyntheticStockRecord as StockRecord
 
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
+
 
 @pytest.fixture
 def alaotra_calendar() -> CropCalendarRecord:

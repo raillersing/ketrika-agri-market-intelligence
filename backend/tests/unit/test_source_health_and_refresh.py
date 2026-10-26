@@ -27,6 +27,8 @@ from ketrika.core.db import get_db
 from ketrika.core.models.db import IngestionRun, SourceRecord
 from ketrika.core.policy import PolicyStop
 
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
+
 
 def test_r1_12_catalog_edition_detected_on_subsequent_cycle() -> None:
     """Criterion 1: Simulated catalog edition detected in subsequent ingestion cycle."""

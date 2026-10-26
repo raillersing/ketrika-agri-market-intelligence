@@ -18,6 +18,7 @@ import datetime as dt
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
 from fastapi.testclient import TestClient
 
 from ketrika.api.main import app
@@ -37,6 +38,8 @@ from ketrika.gold.economic import (
 )
 from ketrika.gold.provenance_gate import VIEW_TABLES
 from ketrika.gold.refresh import ORDERED_GOLD_VIEWS
+
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
 
 # =========================================================================
 # 1. CATALOG AND METRIC CARDS CONFORMANCE

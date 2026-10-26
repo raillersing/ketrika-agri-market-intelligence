@@ -23,6 +23,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import Session
 
 from ketrika.api.auth import (
     create_access_token,
@@ -36,6 +37,7 @@ from ketrika.api.errors import ForbiddenException, UnauthorizedException
 from ketrika.api.main import app
 from ketrika.core.db import get_db
 from ketrika.core.models.db import UserAccount
+from tests.session_fixtures import session_store_engine
 
 
 @pytest.fixture
@@ -232,37 +234,32 @@ def test_tampered_or_mismatched_signed_action_token_rejected() -> None:
 
 def test_logout_actively_revokes_token_and_blocks_subsequent_access(
     admin_user: UserAccount,
+    tmp_path: Path,
 ) -> None:
-    """R6.7 Acceptance: Logout actively invalidates token, rejecting further use."""
-    token = create_access_token(admin_user)
-    assert not is_token_revoked(token)
-
-    # Token is initially valid
-    decoded = decode_access_token(token)
-    assert decoded["sub"] == str(admin_user.user_id)
-
-    # Perform logout
-    client = TestClient(app)
-    resp_logout = client.post(
-        "/v1/auth/logout",
-        headers={"Authorization": f"Bearer {token}"},
-    )
-    assert resp_logout.status_code == 200
-    assert resp_logout.json()["status"] == "logged_out"
-    assert resp_logout.json()["revoked"] is True
-
-    # Token is now recorded as revoked
-    assert is_token_revoked(token)
-
-    # Direct revocation test
-    direct_tok = "direct_revocation_sample_token"
-    assert not is_token_revoked(direct_tok)
-    revoke_token(direct_tok)
-    assert is_token_revoked(direct_tok)
-
-    # Attempting to decode or use token now strictly fails
-    with pytest.raises(UnauthorizedException, match="Session has been terminated"):
-        decode_access_token(token)
+    """Logout commits a real private ledger, then /me refuses the old session."""
+    engine = session_store_engine(tmp_path / "logout.db")
+    try:
+        with Session(engine) as session:
+            app.dependency_overrides[get_db] = lambda: session
+            token = create_access_token(admin_user)
+            assert not is_token_revoked(token, session)
+            assert decode_access_token(token, session)["sub"] == str(admin_user.user_id)
+            client = TestClient(app)
+            response = client.post("/v1/auth/logout", headers={"Authorization": f"Bearer {token}"})
+            assert response.status_code == 200
+            assert response.json()["revoked"] is True
+            assert is_token_revoked(token, session)
+            assert (
+                client.get("/v1/auth/me", headers={"Authorization": f"Bearer {token}"}).status_code
+                == 401
+            )
+            direct_token = create_access_token(admin_user)
+            revoke_token(direct_token, session)
+            assert is_token_revoked(direct_token, session)
+            with pytest.raises(UnauthorizedException, match="Session has been terminated"):
+                decode_access_token(token, session)
+    finally:
+        engine.dispose()
 
 
 # =========================================================================

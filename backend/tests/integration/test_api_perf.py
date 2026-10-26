@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
 import time
-import uuid
 
 import numpy as np
 import pytest
@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from ketrika.api.auth import ensure_demo_admin
+from ketrika.api.auth import create_access_token, create_api_key_for_user, ensure_demo_admin
 from ketrika.api.main import app
 from ketrika.api.rate_limit import rate_limiter
 from ketrika.core.db import check_db_connection
@@ -48,13 +48,15 @@ def client():
 
 
 @pytest.mark.integration
-def test_rate_limiter_strict_60_req_per_minute(client: TestClient):
+def test_rate_limiter_strict_60_req_per_minute(db_session: Session, client: TestClient):
     """Verify rate limit: 60 requests succeed, 61st returns 429 (SPECS §23)."""
-    test_key = f"ketrika_live_perf_{uuid.uuid4().hex[:16]}"
+    admin = ensure_demo_admin(db_session)
+    test_key, _ = create_api_key_for_user(db_session, admin)
+    db_session.commit()
     headers = {"X-API-Key": test_key}
 
     # Reset any records for this key
-    rate_limiter.reset(f"key:{test_key}")
+    rate_limiter.reset(f"key:{hashlib.sha256(test_key.encode()).hexdigest()}")
 
     # Fire 60 requests - all must succeed (200 OK)
     for i in range(60):
@@ -75,7 +77,8 @@ def test_rate_limiter_strict_60_req_per_minute(client: TestClient):
     assert "Rate limit" in data_429["detail"]
 
     # Another client key must still be allowed
-    other_key = f"ketrika_live_other_{uuid.uuid4().hex[:16]}"
+    other_key, _ = create_api_key_for_user(db_session, admin)
+    db_session.commit()
     res_other = client.get("/v1/products", headers={"X-API-Key": other_key})
     assert res_other.status_code == 200
 
@@ -104,6 +107,7 @@ def test_aggregated_endpoints_latency_p95(db_session: Session, client: TestClien
         "/v1/weather/anomalies",
     ]
 
+    admin = ensure_demo_admin(db_session)
     n_requests = 200
     perf_results: dict[str, dict[str, float]] = {}
 
@@ -113,10 +117,10 @@ def test_aggregated_endpoints_latency_p95(db_session: Session, client: TestClien
         # Reset rate limiter before benchmarking this endpoint to avoid throttling
         rate_limiter.reset()
 
+        tokens = [create_access_token(admin) for _ in range(4)]
         for req_idx in range(n_requests):
             # Rotate client key every 50 requests so rate limit does not interfere
-            client_key = f"perf_bench_{req_idx // 50}_{endpoint[:10]}"
-            headers = {"X-API-Key": client_key}
+            headers = {"Authorization": f"Bearer {tokens[req_idx // 50]}"}
 
             t0 = time.perf_counter()
             resp = client.get(endpoint, headers=headers)

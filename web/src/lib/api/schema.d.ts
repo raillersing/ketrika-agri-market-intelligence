@@ -2898,9 +2898,13 @@ export interface operations {
     list_products_v1_products_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -2913,6 +2917,15 @@ export interface operations {
                     "application/json": components["schemas"]["ProductItem"][];
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
     list_locations_v1_locations_get: {
@@ -2923,9 +2936,13 @@ export interface operations {
                 /** @description Return GeoJSON FeatureCollection if true */
                 geometry?: boolean;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -2969,9 +2986,13 @@ export interface operations {
                 /** @description Output format (json or csv) */
                 format?: string;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3003,9 +3024,13 @@ export interface operations {
                 /** @description Admin level (1=Region, 2=District) */
                 level?: number;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3032,11 +3057,15 @@ export interface operations {
     get_observation_detail_v1_observations__observation_id__get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path: {
                 observation_id: string;
             };
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3080,9 +3109,13 @@ export interface operations {
                 /** @description Output format (json or csv) */
                 format?: string;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3116,9 +3149,13 @@ export interface operations {
                 /** @description Actor level (default: retail) */
                 actor_level?: string;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3145,9 +3182,13 @@ export interface operations {
     get_pilot_configuration_v1_market_pilot_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3160,6 +3201,15 @@ export interface operations {
                     "application/json": components["schemas"]["PilotConfigResponse"];
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
     get_stocks_v1_stocks_get: {
@@ -3170,9 +3220,13 @@ export interface operations {
                 /** @description Location P-code or UUID */
                 location?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3207,9 +3261,13 @@ export interface operations {
                 logistics_lag_dekads?: number;
                 as_of_date?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3240,9 +3298,13 @@ export interface operations {
                 product?: string;
                 as_of_date?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3269,9 +3331,13 @@ export interface operations {
     get_scenario_templates_v1_supply_scenarios_templates_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3286,14 +3352,27 @@ export interface operations {
                     };
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
     run_decision_scenario_v1_supply_scenarios_run_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody: {
             content: {
@@ -3333,9 +3412,13 @@ export interface operations {
                 /** @description End month (YYYY-MM-01) */
                 to?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3379,9 +3462,13 @@ export interface operations {
                 /** @description Output format (json or csv) */
                 format?: string;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3415,9 +3502,13 @@ export interface operations {
                 /** @description Output format (json or csv) */
                 format?: string;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3447,9 +3538,13 @@ export interface operations {
                 /** @description Target calendar month (YYYY-MM-DD) */
                 month?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3479,9 +3574,13 @@ export interface operations {
                 /** @description Month of analysis */
                 target_month?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3515,9 +3614,13 @@ export interface operations {
                 /** @description End month (YYYY-MM-01) */
                 to?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3549,9 +3652,13 @@ export interface operations {
                 /** @description Reference month (YYYY-MM-01), defaults to latest available */
                 month?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3584,9 +3691,13 @@ export interface operations {
                 to?: string | null;
                 variable?: "precip_mm" | "t2m_c";
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3622,9 +3733,13 @@ export interface operations {
                 limit?: number;
                 offset?: number;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3658,9 +3773,13 @@ export interface operations {
                 /** @description Month for active stage detection (1-12) */
                 month?: number | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3691,9 +3810,13 @@ export interface operations {
                 location?: string | null;
                 limit?: number;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3720,9 +3843,13 @@ export interface operations {
     get_facultative_sources_status_v1_climate_facultative_status_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3733,6 +3860,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FacultativeSourceStatus"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -3747,9 +3883,13 @@ export interface operations {
                 /** @description Month (YYYY-MM-01) */
                 month?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3791,9 +3931,13 @@ export interface operations {
                 /** @description Output format (json or csv) */
                 format?: string;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3827,9 +3971,13 @@ export interface operations {
                 /** @description Output format (json or csv) */
                 format?: string;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3856,11 +4004,15 @@ export interface operations {
     get_forecast_run_detail_v1_forecasts_runs__model_run_id__get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path: {
                 model_run_id: string;
             };
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3898,9 +4050,13 @@ export interface operations {
                 /** @description Output format (json or csv) */
                 format?: string;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3942,9 +4098,13 @@ export interface operations {
                 /** @description Output format (json or csv) */
                 format?: string;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -3976,9 +4136,13 @@ export interface operations {
                 /** @description Filter by state (open, acknowledged, resolved) */
                 state?: string | null;
             };
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -4044,9 +4208,13 @@ export interface operations {
     list_bulletins_v1_bulletins_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -4059,16 +4227,29 @@ export interface operations {
                     "application/json": components["schemas"]["BulletinItem"][];
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
     get_bulletin_v1_bulletins__bulletin_id__get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path: {
                 bulletin_id: string;
             };
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -4130,9 +4311,13 @@ export interface operations {
     list_sources_v1_sources_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path?: never;
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -4145,16 +4330,29 @@ export interface operations {
                     "application/json": components["schemas"]["SourceItem"][];
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
     get_source_health_v1_sources__source_id__health_get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "X-API-Key"?: string | null;
+            };
             path: {
                 source_id: string;
             };
-            cookie?: never;
+            cookie?: {
+                session_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {

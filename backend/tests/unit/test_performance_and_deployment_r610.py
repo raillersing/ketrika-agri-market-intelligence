@@ -24,6 +24,8 @@ from ketrika.api.main import app
 from ketrika.core.db import get_db
 from ketrika.core.models.db import UserAccount
 
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
+
 
 @pytest.fixture
 def mock_db_session():

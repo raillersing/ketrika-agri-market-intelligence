@@ -12,8 +12,11 @@ from sqlalchemy import (
     NUMERIC,
     SMALLINT,
     TEXT,
+    CheckConstraint,
+    DateTime,
     ForeignKey,
     Index,
+    String,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -918,3 +921,20 @@ class ApiKey(Base):
     last_used_at: Mapped[datetime | None] = mapped_column(nullable=True)
 
     user: Mapped[UserAccount] = relationship(back_populates="api_keys")
+
+
+class TokenRevocation(Base):
+    """Shared access-token invalidations; only digests are persisted (ADR-123)."""
+
+    __tablename__ = "token_revocation"
+    __table_args__ = (
+        CheckConstraint("length(token_sha256) = 64"),
+        Index("token_revocation_expiry_idx", "expires_at"),
+        {"schema": "auth"},
+    )
+
+    token_sha256: Mapped[str] = mapped_column(String(64), primary_key=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    revoked_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )

@@ -31,6 +31,7 @@ ENVIRONMENT_IDENTITY = {
 
 E2E_SCENARIOS = (
     "protected UI redirects without a session",
+    "UI rejects and clears an arbitrary session cookie",
     "form login establishes HttpOnly session",
     "reload retains authentication",
     "protected profile authenticates the browser session",
@@ -41,6 +42,8 @@ E2E_SCENARIOS = (
     "economy uses full content width at 390px without clipped message",
     "UI logout removes session",
     "API rejects access after logout",
+    "API rejects reuse of the logged-out token",
+    "UI rejects and clears a restored revoked cookie",
     "UI remains protected after logout",
 )
 

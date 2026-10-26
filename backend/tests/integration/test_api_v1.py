@@ -26,6 +26,7 @@ from ketrika.core.models.db import (
 from ketrika.core.settings import get_settings
 from ketrika.gold.refresh import init_gold_views, refresh_gold_views
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
+from tests.api_fixtures import login_test_admin
 from tests.e2e_data.synthetic_gold_dataset import (
     seed_synthetic_gold_data,
 )
@@ -80,6 +81,7 @@ def client_user(db_session: Session) -> UserAccount:
 @pytest.mark.integration
 def test_api_public_and_analytical_endpoints_200(db_session: Session, client: httpx.Client):
     """Verify all public analytical endpoints return 200 OK and valid schemas."""
+    login_test_admin(client)
     # Seed synthetic gold data and refresh views
     wipe_silver_gold_tables(db_session)
     db_session.commit()
@@ -228,6 +230,7 @@ def test_api_public_and_analytical_endpoints_200(db_session: Session, client: ht
 @pytest.mark.integration
 def test_observation_provenance_and_presigned_bronze_url(db_session: Session, client: httpx.Client):
     """Verify /v1/observations/{id} returns evidence, source_url, parser_version and a valid presigned Bronze link."""
+    login_test_admin(client)
     # Setup test source record in Bronze storage
     bronze = BronzeStore()
     now = datetime.now(UTC)

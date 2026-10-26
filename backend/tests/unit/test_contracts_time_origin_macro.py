@@ -14,6 +14,7 @@ import uuid
 from datetime import UTC, date, datetime
 from unittest.mock import MagicMock
 
+import pytest
 from fastapi.testclient import TestClient
 
 from ketrika.api.main import app
@@ -27,6 +28,8 @@ from ketrika.core.models.db import (
     MacroObservation,
     SourceRecord,
 )
+
+pytestmark = pytest.mark.usefixtures("authenticated_unit_reader")
 
 
 def test_macro_record_natural_key_determinism() -> None:

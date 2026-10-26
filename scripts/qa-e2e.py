@@ -49,6 +49,13 @@ def main() -> int:
             page.goto("/prices")
             expect(page).to_have_url(re.compile(r"http://web:3000/login(?:\?.*)?"))
             completed.append("protected UI redirects without a session")
+            context.add_cookies(
+                [{"name": "session_token", "value": "arbitrary", "url": "http://web:3000"}]
+            )
+            page.goto("/prices")
+            expect(page).to_have_url(re.compile(r"http://web:3000/login(?:\?.*)?"))
+            assert not any(cookie["name"] == "session_token" for cookie in context.cookies())
+            completed.append("UI rejects and clears an arbitrary session cookie")
             page.locator('input[type="email"]').fill("admin@ketrika.local")
             page.locator('input[type="password"]').fill("change-me")
             page.locator('form button[type="submit"]').click()
@@ -58,6 +65,7 @@ def main() -> int:
                 cookie["name"] == "session_token" and cookie["httpOnly"] for cookie in cookies
             )
             assert not any(cookie["name"] == "ketrika_token" for cookie in cookies)
+            session_cookie = next(cookie for cookie in cookies if cookie["name"] == "session_token")
             completed.append("form login establishes HttpOnly session")
             page.reload()
             expect(page).to_have_url("http://web:3000/")
@@ -134,8 +142,17 @@ def main() -> int:
             unauthenticated = context.request.get("/api/v1/auth/me")
             assert unauthenticated.status in (401, 403)
             completed.append("API rejects access after logout")
+            revoked = context.request.get(
+                "/api/v1/prices",
+                headers={"Authorization": f"Bearer {session_cookie['value']}"},
+            )
+            assert revoked.status == 401
+            completed.append("API rejects reuse of the logged-out token")
+            context.add_cookies([session_cookie])
             page.goto("/prices")
             expect(page).to_have_url(re.compile(r"http://web:3000/login(?:\?.*)?"))
+            assert not any(cookie["name"] == "session_token" for cookie in context.cookies())
+            completed.append("UI rejects and clears a restored revoked cookie")
             completed.append("UI remains protected after logout")
             assert not errors, f"Browser runtime errors: {errors}"
             context.tracing.stop(path=str(directory / "trace.zip"))

@@ -1,0 +1,9 @@
+# Sessions et accès (ADR-123)
+
+Tous les endpoints métier exigent une session valide ou une clé API active ; les droits administrateur et le rôle du compte restent contrôlés en base. Seuls santé, documentation OpenAPI et connexion/déconnexion sont publics. Une valeur de cookie seule n'autorise rien : le serveur web interroge `/v1/auth/me` sans cache avant d'ouvrir une page métier.
+
+La migration additive `0019_token_revocation` crée le registre SQL partagé. Une déconnexion écrit et valide le SHA256 du jeton avant de confirmer ; aucun jeton brut n'est stocké. Toutes les instances relisent ce registre. Une panne du registre refuse l'accès (503) et ne confirme pas une révocation non écrite. Les anciens JWT sans `jti`/`token_use` nécessitent une reconnexion. Les clés API ont leur cycle de révocation distinct.
+
+En dev/test, le bootstrap public de démonstration reste disponible. En production, API et services Dagster utilisent `APP_ENV=prod` et `BOOTSTRAP_DEMO_ADMIN=false` ; fournir des secrets JWT, SQL, readonly et S3 privés non vides. Le démarrage refuse les valeurs de démonstration et les comptes actifs utilisant encore les mots de passe publics du seed. L'opérateur doit préparer ses comptes et secrets par le processus d'administration autorisé avant activation ; aucun compte existant n'est supprimé ou modifié automatiquement. Les cookies sont HttpOnly, SameSite=Lax et Secure en production HTTPS.
+
+Avant activation : recevoir le check complet et les E2E du même contenu, sauvegarder la base puis appliquer la migration additive par le processus de déploiement existant. Ne pas appliquer une migration en cours de développement à la base active. Vérifier une connexion, une lecture métier, puis une déconnexion refusée depuis une seconde instance. Conserver le registre lors des redémarrages ; le downgrade refuse sa suppression. Aucune qualification de déploiement distant n'est déduite des tests locaux.
