@@ -1,10 +1,22 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-26T13:41:42Z] AU-06/AU-07 — développement consolidé avant gel
+
+- Locks corrigés : Next15.5.28/React19.3.1, MapLibre6.16/ECharts6.1, Vitest5.0.5/Vite8.3.5 ; minimatch9.0.7/PostCSS8.5.31/parser7.1.6. Audit npm complet0 avis connus ; Python runtime+geo+ML0 connus, export tous extras et pip-audit2.10.1 figé également verts, code0. Aucune exclusion d'avis ; pas de certification de sécurité générale.
+- Adaptation proxy params Promise ; lint/typecheck et24 tests ciblés sur nouvelle pile verts. Target ES2017 explicite et télémétrie Next désactivée dans l'image. Images et copies source/dépendances r04 distinctes, r03 et leurs originaux conservés. Compilation Next15 complète verte ; export final de l’image navigateur en cours, check global non lancé avant son achèvement.
+- Restauration :37 tests ciblés verts ; clone PostgreSQL privé avec deux valeurs réelles synthétiques identiques, cible existante refusée2, échec COPY propagé1 et transaction annulée. Premier pg_isready temporaire corrigé par attente TCP/reprise du checkpoint, sans effacer sa trace. PowerShell local natif a révélé un défaut de guillemets Go-template ; inspection JSON corrigée, vrai clone restauré puis cible existante refusée (processus1), deux lignes relues intactes. Aucune politique Windows modifiée.
+- Source AU-04 reçue intégrée localement dans maina0fac30, runtime et DB/Bronze actifs inchangés. Programme PARTIAL, AU-06/AU-07 IN_PROGRESS et74 statuts R conservés jusqu'à la réception complète du nouveau contenu.
+
 ### [2026-10-26T13:02:12Z] AU-04 — réception logicielle complète sur source2a6ec4e
 
 - Reprise des originaux verts après interruption :2439 backend/168 intégrations, zéro skip ; inventaire exact et couvertures92,4205/87,7660/88,2151% relus avec commit/empreinte/images. Frontend47aba285 vert57 tests/neuf suites et quatre étapes ; pas de répétition des suites déjà vertes.
 - E2E repris à la première preuve manquante :15 scénarios/310,806s, aucune exception JS. Cookie arbitraire/révoqué, formulaire HttpOnly, reload/profil/proxy, logout/rejeu et mobile reçus sur profil dédié. Source figée inchangée ; simple rétablissement du proxy WSL, aucun moteur/service actif redémarré.
 - AU-04 DONE logiciel sur branche seulement ; origine et limites dans docs/evidence/auth-20261026/RECEPTION.md. Aucun déploiement/migration active ni gate R0.8 final ;74 statuts R conservés. AU-06/AU-07 restent ouverts pour leurs propres réceptions.
+
+### [2026-10-26T13:00:00Z] AU-06 — reprise autorisée et contrat avant code
+
+- Branche fix/r08-dependencies-20261026, base4976374 ; ADR125/SPECS avant modification des versions. AU-04 source2a6ec4e et destination main-final figées pendant leurs15 E2E ; AU-07 testé sur PostgreSQL privé distinct. Aucun changement des74 statuts R.
+- Mini-plan : verrouiller versions corrigées et compatibilités ; adapter proxy/types frontend ; tests ciblés/audits dans Docker ; construire nouveaux tags ; geler puis recevoir check complet et E2E ; documenter effectifs, avis résiduels et limites avant intégration. Pas de baisse de seuil ni collecte, envoi ou restauration active.
 
 ### [2026-10-25T17:30:00Z] R0.8 — plan de correction avant code
 

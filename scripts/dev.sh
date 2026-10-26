@@ -16,14 +16,14 @@ qa_proof_args() {
   qa_commit="$(git -C "$REPO_ROOT" rev-parse HEAD)"
   qa_dirty="$(git -C "$REPO_ROOT" status --porcelain --untracked-files=normal -- backend web scripts registry taxonomy geo docker docker-compose.qualification.yml .gitattributes)"
   [ -z "$qa_dirty" ] || { echo "Source changes must be committed before qualification" >&2; exit 1; }
-  qa_fingerprint="$(docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r03 python -m ketrika.core.qualification_reports fingerprint /workspace)"
+  qa_fingerprint="$(docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r04 python -m ketrika.core.qualification_reports fingerprint /workspace)"
   [[ "$qa_commit" =~ ^[0-9a-f]{40}$ && "$qa_fingerprint" =~ ^[0-9a-f]{64}$ ]] || { echo "Cannot bind source proof" >&2; exit 1; }
   QA_PROOF_ARGS=(-e "KETRIKA_SOURCE_COMMIT=$qa_commit" -e "KETRIKA_SOURCE_FINGERPRINT=$qa_fingerprint")
   for qa_role in BACKEND WEB BROWSER; do
     case "$qa_role" in
-      BACKEND) qa_image=ketrika-backend:qa-codex-r03 ;;
-      WEB) qa_image=ketrika-web:qa-codex-r03 ;;
-      BROWSER) qa_image=ketrika-backend:qa-codex-browser-r03 ;;
+      BACKEND) qa_image=ketrika-backend:qa-codex-r04 ;;
+      WEB) qa_image=ketrika-web:qa-codex-r04 ;;
+      BROWSER) qa_image=ketrika-backend:qa-codex-browser-r04 ;;
     esac
     qa_image_id="$(docker image inspect --format '{{.Id}}' "$qa_image")"
     [[ "$qa_image_id" =~ ^sha256:[0-9a-f]{64}$ ]] || { echo "Cannot bind runtime image" >&2; exit 1; }
@@ -45,9 +45,9 @@ qa_owned_resource() {
 }
 
 qa_prepare() {
-  docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r03 python -m ketrika.core.qualification compose /workspace/docker-compose.qualification.yml
+  docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r04 python -m ketrika.core.qualification compose /workspace/docker-compose.qualification.yml
   qa_owned_resource network ketrika_qualification_main_final_network
-  for qa_volume in pgdata bronze backend_venv_r03 backend_source_r03 web_source_r03 web_node_modules_r03 web_next_r03 browser_venv_r03; do
+  for qa_volume in pgdata bronze backend_venv_r04 backend_source_r04 web_source_r04 web_node_modules_r04 web_next_r04 browser_venv_r04; do
     qa_owned_resource volume "ketrika_qualification_main_final_$qa_volume"
   done
   qa_compose config --quiet
@@ -72,7 +72,7 @@ qa_isolated() {
   esac
   if [ "$qa_action" = qa ]; then
     [ "$#" -eq 1 ] || { echo "QA requires exactly one configured task ID" >&2; exit 1; }
-    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r03 python -m ketrika.core.qa_manifest "$1" --validate-only
+    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r04 python -m ketrika.core.qa_manifest "$1" --validate-only
   fi
   qa_prepare "$qa_action"
   case "$qa_action" in
@@ -80,7 +80,7 @@ qa_isolated() {
       qa_proof_args
       qa_compose run --rm --no-deps "${QA_PROOF_ARGS[@]}" api sh /workspace/scripts/qa-backend.sh check
       qa_compose run --rm --no-deps "${QA_PROOF_ARGS[@]}" web sh /workspace/scripts/qa-web.sh check
-      docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" --mount type=volume,source=ketrika_qualification_main_final_web_node_modules_r03,target=/frontend,readonly -e PYTHONPATH=/workspace/backend/src "${QA_PROOF_ARGS[@]}" ketrika-backend:qa-codex-r03 python -m ketrika.core.qualification_reports check-frontend /frontend/.qa-results --commit "$qa_commit"
+      docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" --mount type=volume,source=ketrika_qualification_main_final_web_node_modules_r04,target=/frontend,readonly -e PYTHONPATH=/workspace/backend/src "${QA_PROOF_ARGS[@]}" ketrika-backend:qa-codex-r04 python -m ketrika.core.qualification_reports check-frontend /frontend/.qa-results --commit "$qa_commit"
       ;;
     test) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh test "$@" ;;
     governance) qa_compose run --rm --no-deps api sh /workspace/scripts/qa-backend.sh governance ;;
@@ -168,23 +168,23 @@ case "$COMMAND" in
     ;;
   qa-build)
     docker build -t ketrika-minio:qa-r0 "$REPO_ROOT/docker/minio"
-    docker build --target base -t ketrika-backend:qa-codex-r03 "$REPO_ROOT/backend"
-    docker build -t ketrika-web:qa-codex-r03 "$REPO_ROOT/web"
-    docker build --target backend-browser -t ketrika-backend:qa-codex-browser-r03 "$REPO_ROOT/backend"
+    docker build --target base -t ketrika-backend:qa-codex-r04 "$REPO_ROOT/backend"
+    docker build -t ketrika-web:qa-codex-r04 "$REPO_ROOT/web"
+    docker build --target backend-browser -t ketrika-backend:qa-codex-browser-r04 "$REPO_ROOT/backend"
     ;;
   qa)
     qa_isolated qa "$@"
     ;;
   qa-profile)
     [ "$#" -eq 1 ] || { echo "QA profile requires one relative XML report path" >&2; exit 1; }
-    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r03 python -m ketrika.core.qa_profile "$1"
+    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r04 python -m ketrika.core.qa_profile "$1"
     ;;
   qualify)
     [ "$#" -ge 1 ] && [ "$#" -le 2 ] || { echo "qualify requires R0|all and optional relative evidence directory" >&2; exit 1; }
     case "$1" in R0|all) ;; *) echo "Unavailable qualification phase" >&2; exit 1 ;; esac
-    qa_owned_resource volume ketrika_qualification_main_final_backend_venv_r03
+    qa_owned_resource volume ketrika_qualification_main_final_backend_venv_r04
     qa_proof_args
-    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" --mount type=volume,source=ketrika_qualification_main_final_backend_venv_r03,target=/reports -e PYTHONPATH=/workspace/backend/src "${QA_PROOF_ARGS[@]}" ketrika-backend:qa-codex-r03 python -m ketrika.core.qualify "$1" --commit "$qa_commit" --evidence "${2:-docs/evidence/qualification}"
+    docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" --mount type=volume,source=ketrika_qualification_main_final_backend_venv_r04,target=/reports -e PYTHONPATH=/workspace/backend/src "${QA_PROOF_ARGS[@]}" ketrika-backend:qa-codex-r04 python -m ketrika.core.qualify "$1" --commit "$qa_commit" --evidence "${2:-docs/evidence/qualification}"
     ;;
   test-network)
     docker compose exec -T api pytest -m "network"
@@ -195,7 +195,7 @@ case "$COMMAND" in
     ;;
   rebuild-smoke)
     [ "$#" -eq 1 ] && { [ "$1" = prepare ] || [ "$1" = replay ]; } || { echo "rebuild-smoke requires prepare|replay" >&2; exit 1; }
-    qa_owned_resource volume ketrika_qualification_main_final_backend_venv_r03
+    qa_owned_resource volume ketrika_qualification_main_final_backend_venv_r04
     for rebuild_suffix in pgdata socket copy reports; do
       rebuild_name="ketrika_rebuild_qualification_$rebuild_suffix"
       if docker volume inspect "$rebuild_name" >/dev/null 2>&1; then

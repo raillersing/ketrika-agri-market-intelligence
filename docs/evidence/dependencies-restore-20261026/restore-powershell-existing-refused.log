@@ -1,0 +1,8 @@
+[ERROR] Target already exists or its absence could not be verified.
+Isolated restore failed (exit 2)
+At C:\Users\raillersing\AppData\Local\Temp\ketrika-restore-qualified-20261026\scripts\dev.ps1:317 char:36
++ ... TCODE -ne 0) { throw "Isolated restore failed (exit $LASTEXITCODE)" }
++                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Isolated restore failed (exit 2):String) [], RuntimeException
+    + FullyQualifiedErrorId : Isolated restore failed (exit 2)
+ 

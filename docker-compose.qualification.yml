@@ -82,7 +82,7 @@ services:
     networks: [qualification]
 
   api:
-    image: ketrika-backend:qa-codex-r03
+    image: ketrika-backend:qa-codex-r04
     environment: *test-environment
     working_dir: /app
     volumes:
@@ -98,7 +98,7 @@ services:
     command: [sh, /workspace/scripts/qa-backend.sh, serve]
 
   web:
-    image: ketrika-web:qa-codex-r03
+    image: ketrika-web:qa-codex-r04
     working_dir: /app
     environment:
       APP_ENV: test
@@ -114,7 +114,7 @@ services:
     command: [sh, /workspace/scripts/qa-web.sh, dev]
 
   browser:
-    image: ketrika-backend:qa-codex-browser-r03
+    image: ketrika-backend:qa-codex-browser-r04
     environment:
       <<: *test-environment
       PLAYWRIGHT_BROWSERS_PATH: /opt/ketrika-browsers
@@ -143,20 +143,20 @@ volumes:
     name: ketrika_qualification_main_final_bronze
     labels: {ketrika.scope: qualification}
   qa_backend_venv:
-    name: ketrika_qualification_main_final_backend_venv_r03
+    name: ketrika_qualification_main_final_backend_venv_r04
     labels: {ketrika.scope: qualification}
   qa_backend_source:
-    name: ketrika_qualification_main_final_backend_source_r03
+    name: ketrika_qualification_main_final_backend_source_r04
     labels: {ketrika.scope: qualification}
   qa_web_source:
-    name: ketrika_qualification_main_final_web_source_r03
+    name: ketrika_qualification_main_final_web_source_r04
     labels: {ketrika.scope: qualification}
   qa_web_node_modules:
-    name: ketrika_qualification_main_final_web_node_modules_r03
+    name: ketrika_qualification_main_final_web_node_modules_r04
     labels: {ketrika.scope: qualification}
   qa_web_next:
-    name: ketrika_qualification_main_final_web_next_r03
+    name: ketrika_qualification_main_final_web_next_r04
     labels: {ketrika.scope: qualification}
   qa_browser_venv:
-    name: ketrika_qualification_main_final_browser_venv_r03
+    name: ketrika_qualification_main_final_browser_venv_r04
     labels: {ketrika.scope: qualification}

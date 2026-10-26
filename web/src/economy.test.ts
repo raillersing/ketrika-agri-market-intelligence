@@ -16,7 +16,7 @@ describe("Observatoire Economique & Marches (R2.10, ADR-070, ADR-072)", () => {
     const request = new NextRequest("http://web:3000/api/v1/economic/dashboard", {
       headers: { cookie: "session_token=test", accept: "application/json" },
     });
-    const response = await GET(request, { params: { path: ["v1", "economic", "dashboard"] } });
+    const response = await GET(request, { params: Promise.resolve({ path: ["v1", "economic", "dashboard"] }) });
 
     expect(fetchMock).toHaveBeenCalled();
     const [target, options] = fetchMock.mock.calls[0];
@@ -40,7 +40,7 @@ describe("Observatoire Economique & Marches (R2.10, ADR-070, ADR-072)", () => {
     const request = new NextRequest(
       "http://web:3000/api/v1/market/coverage/gaps?product=RICE_WHITE_LOCAL&location=MDG11&actor_level=retail"
     );
-    const response = await GET(request, { params: { path: ["v1", "market", "coverage", "gaps"] } });
+    const response = await GET(request, { params: Promise.resolve({ path: ["v1", "market", "coverage", "gaps"] }) });
 
     expect(fetchMock).toHaveBeenCalled();
     const [target] = fetchMock.mock.calls[0];

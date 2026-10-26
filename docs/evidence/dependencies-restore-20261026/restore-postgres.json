@@ -1,0 +1,1 @@
+{"passed":true,"scope":"isolated synthetic PostgreSQL software only; no Bronze","matching_probe_rows":2,"existing_clone_exit":2,"real_pg_restore_failure_exit":1,"failed_transaction_rolled_back":true,"positive_clone_preserved":true}

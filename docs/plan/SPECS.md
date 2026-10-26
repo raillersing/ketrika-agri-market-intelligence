@@ -1,5 +1,9 @@
 # SPECS : spécifications techniques normatives du MVP
 
+## Migration de sécurité des dépendances — ADR-125
+
+AU-06 migre Next15.5.28/React19.3.1 (App Router et paramètres asynchrones), MapLibre6.16.0, ECharts6.1.0/wrapper3.0.6 et Vitest5.0.5, sans changer les contrats métier ni les scénarios scientifiques. Node22.23.3 existant satisfait les prérequis. Les transitoires Python restent contraints et verrouillés sur des versions corrigées avec Python3.12. Les nouveaux locks, images distinctes, audits, check complet et E2E sont requis avant réception ; les preuves AU-04 sur anciennes images ne qualifient pas cette migration.
+
 ## Note de réception documentaire — audit2026-10-25 / ADR-120
 
 Ces contrats restent obligatoires ; ils ne décrivent pas tous un comportement déjà conforme. L'[audit indépendant](../audits/2026-10-25/INDEPENDENT_AUDIT.md) constate notamment des valeurs fabriquées en accueil/climat/offre, une auth incomplète, des défauts H3/restore et des raccordements ML absents. Les spécifications existantes ne sont pas assouplies pour recevoir ces défauts. La matrice74 tâches distingue code présent et qualification ; le plan26 lots précise les corrections avant poursuite. Toute extension de contrat proposée par ces lots exige encore ADR et modification de la section concernée avant code ; aucun nouveau schéma/endpoint n'est adopté par cette seule note. L'état courant est PARTIAL.

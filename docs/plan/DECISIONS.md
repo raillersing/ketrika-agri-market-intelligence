@@ -1,4 +1,13 @@
 # DECISIONS (Architecture Decision Records - ADR)
+## ADR-125 | 2026-10-26 | Accepté avant code | Dépendances corrigées et migration frontend bornée
+
+- Contexte : AU-06, audit IA-09. Registres npm relus dans Docker : Next15.5.28 maintenance, React19.3.1, MapLibre6.16.0, ECharts6.1.0/echarts-for-react3.0.6, Vitest5.0.5 et PostCSS8.5.31 ; Node de l'image existante22.23.3 satisfait Vitest>=22.12. Avis mainteneurs Next du14 octobre, MapLibre et Pillow13 relus ; versions des registres et conditions de compatibilité conservées hors source figée AU-04.
+- Décision : Next15.5.28 et eslint-config-next correspondant ; React/DOM19.3.1 et types19.3.0 pour App Router ; MapLibre6.16.0, ECharts6.1.0 et wrapper3.0.6 ; Vitest5.0.5. Conserver ESLint8 supporté par ce config Next et le parcours pnpm lint ; corriger les avis résiduels selon le nouveau lock, sans forcer des transitoires incompatibles. Proxy Next await params ; contrat HTTP/cookies inchangé. Aucun redesign ni remplacement des calculs scientifiques.
+- Python3.12 inchangé. Contraintes de sécurité sur les transitoires Pillow>=13.0.0, Brotli>=1.2.1, certifi>=2026.10.19, filelock>=4.2.1 et opentelemetry-api>=1.45.1, puis résolution uv et scan des versions réellement verrouillées. Ces bornes ne constituent pas une assertion d'absence de vulnérabilité.
+- Isolation : nouveaux tags d'images et copie de dépendances propres ; ne retoucher ni les tags ni les volumes de l'E2E AU-04 en cours. Aucun service ou stockage actif modifié. Un check complet stabilisé et E2E SQL/S3 requis après gel, plus scans exacts ; aucun DONE avant leurs preuves.
+- Résolution : Vite8.3.5 explicite, requis par Vitest5 ; overrides bornés pour minimatch9.0.7 et PostCSS8.5.31, et passage du parseur de sélecteurs6 vers7.1.6 pour GHSA-rj75-hqrm-r3gf. Compatibilité réelle des outils Tailwind/ESLint et du rendu obligatoire avant réception ; aucune exception du scan ni suppression de fonction en guise de correction. Nouvelles images et copies source/dépendances r04, anciens r03 conservés.
+- Références : https://nextjs.org/blog/nextjs-security-update-october-14-2026 ; https://nextjs.org/docs/app/guides/upgrading/version-15 ; https://vitest.dev/guide/migration/ ; https://github.com/maplibre/maplibre-gl-js/releases/tag/v6.4.1 ; https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html .
+
 ## ADR-123 | 2026-10-25 | Accepté avant code | Authentification serveur et révocation partagée
 
 - Contexte : IA-06/08/AU-04 ; les lectures métier sont anonymes, le web ne vérifie que la présence d'un cookie et logout mémorise le JWT dans un set propre à un processus.

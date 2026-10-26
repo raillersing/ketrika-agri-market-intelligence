@@ -1,0 +1,22 @@
+{
+  "tool": "pip-audit",
+  "pinned_version": "2.10.1",
+  "exit_code": 0,
+  "uv_lock_sha256": "d8df1fb58eb7e44c25dac54d09edae3e855c7998d57bacad5926aac6eeca7bde",
+  "requirements_sha256": "4d9abd75c1897312bbded228596b24f10c5bb9a06352d03a24af3f43aad959f5",
+  "scope": "all project extras, Linux Python3.12, markers evaluated by audit tool",
+  "command": [
+    "uvx",
+    "--from",
+    "pip-audit==2.10.1",
+    "pip-audit",
+    "--disable-pip",
+    "--no-deps",
+    "-r",
+    "/out/python-r04-all-extras.txt",
+    "--format",
+    "json",
+    "--output",
+    "/out/python-r04-all-extras-audit.json"
+  ]
+}

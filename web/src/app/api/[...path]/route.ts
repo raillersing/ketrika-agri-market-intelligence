@@ -2,8 +2,8 @@ import { NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-async function proxy(request: NextRequest, context: { params: { path: string[] } }) {
-  const parts = context.params.path;
+async function proxy(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
+  const parts = (await context.params).path;
   if (parts[0] !== "v1" || parts.some((part) => part === "." || part === "..")) {
     return Response.json({ detail: "Unknown API path" }, { status: 404 });
   }
