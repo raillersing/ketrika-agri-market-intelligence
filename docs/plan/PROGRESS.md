@@ -1,5 +1,12 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T01:40:00Z] AU-06/AU-07 — réception logicielle complète sur source cd77a26
+
+- Check complet et 19 E2E stabilisés : 2464 backend/168 intégrations, zéro échec/erreur/skip en 2349,61s ; inventaire exact et couvertures 92,4205/87,7660/88,2151 % (toutes ≥ 80 %). Frontend 68 tests/11 suites, lint/typecheck/build code 0. Suite navigateur Playwright : 19 scénarios/443,711s, zéro exception JS. Thème clair/sombre persistant après reload, identité Irooa et Ketrikay (/about publique sans exposition métier), navigation de bureau groupée, recherche de pages / palette de commande au clavier (Ctrl+K), explorateur de prix, économie indisponible explicite, mobile 390px accessible sans troncature, déconnexion avec suppression du cookie HttpOnly et révocation immédiate du jeton, refus de réutilisation du jeton révoqué.
+- Résolution B-R090 RESOLVED_FIXED : compilation bytecode (ADR-130) et conteneurs r05 ont réduit la latence d'importation de 29,28s à 10,17s. La contre-épreuve de révocation de session inter-processus passe en 18,93s (seuil 30s) et le P95 /v1/products reste sous 1000ms à seuils stricts constants.
+- Restauration de base de données AU-07 : rejet de toute cible active ou existante sans clone consenti, tout code pg_restore non-zéro propagé et fatal avec annulation de transaction, préservation intégrale des propriétaires et privilèges SQL sans options destructives (--no-owner et --no-privileges retirés). Démonstration sur cluster isolé avec 78 tables, 17542 lignes et comparaison des empreintes SHA-256 et droits effectifs.
+- AU-06 et AU-07 DONE logiciel sur cette branche ; originaux archivés dans docs/evidence/irooa-reception-20261026/ (manifeste 9 entrées). Programme PARTIAL, 7 DONE historiques / 52 IN_PROGRESS / 15 TODO conservés. Prochain lot éligible : AU-08 (quarantaine et réparation historique auditable).
+
 ### [2026-10-26T19:35:00Z] Irooa — thèmes et contre-épreuves de développement
 
 - Demandes utilisateur : modes clair/sombre et inspiration d'irooa.com. ADR129/SPECS avant code ; palette publique relevée200, seuls les jetons de couleur sont repris. Préférence système par défaut, choix explicite mémorisé, synchronisation des onglets et repli sans stockage. Graphiques et pages migrés vers des couleurs sémantiques ; aucun chiffre/calcul modifié.

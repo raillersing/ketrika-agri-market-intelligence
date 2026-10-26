@@ -1,0 +1,38 @@
+{
+  "backend-coverage.json.gz": {
+    "sha256": "c9e166fdaba2e05176ea38d900905fbc8145af81a3a47aaaff5196647546b509",
+    "bytes": 23627
+  },
+  "backend-inventory.json.gz": {
+    "sha256": "4b5f591afde2e4a9289c2ba64932955ef0cc7950ef2fd1deed3912fa900c5212",
+    "bytes": 37097
+  },
+  "backend-tests.xml.gz": {
+    "sha256": "76a1a36886234c8447dadcb1205908661e44dcf6921e453464ae39fea355d982",
+    "bytes": 47129
+  },
+  "browser-receipt.json": {
+    "sha256": "565e2de7c3ee046512e6bd85464cc1d508afc228792111a68bae6a2e4bc9b6cd",
+    "bytes": 3244
+  },
+  "economy.png": {
+    "sha256": "81a95292e205d732bf03a30793916ec09bba33a7e29e1c97f08cc5734ce69d5d",
+    "bytes": 90228
+  },
+  "economy_mobile_390px.png": {
+    "sha256": "6a1dbcf0f8e00eec34dd476da587a65d9067ac93273557404279d38ecdf07df2",
+    "bytes": 49245
+  },
+  "frontend-receipt.json": {
+    "sha256": "4f58b16ed91103fda230a66d1504e4a2b753c562a873a2d76ab74e5a6f27902c",
+    "bytes": 2020
+  },
+  "frontend-tests.json.gz": {
+    "sha256": "c249f8345996fd7a1f2fd9ba317244320fffe7b6350485cb17a38685ccc7099d",
+    "bytes": 3674
+  },
+  "prices.png": {
+    "sha256": "25c34700a6d2a2086f0d1284e1a8682073c496fc3d4e1dbeb3f748b3bdc43a2a",
+    "bytes": 78646
+  }
+}

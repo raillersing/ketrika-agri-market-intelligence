@@ -57,14 +57,14 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-06 — Mise à jour des dépendances et preuve de sécurité
 
-- **Statut :** IN_PROGRESS (ADR125, branche dépendances isolée ; non reçu) · P0 · rôle Backend/Frontend/Sécurité · parents R0.8/R6.7 · dépendance : IA-09 et inventaires des locks.
+- **Statut :** DONE (logiciel cd77a26, 2464 backend / 68 web / 19 E2E ; [reçu](../../evidence/irooa-reception-20261026/RECEPTION.md)) · P0 · rôle Backend/Frontend/Sécurité · parents R0.8/R6.7 · dépendance : IA-09 et inventaires des locks.
 - **Fichiers :** `web/package.json`, `pnpm-lock.yaml`, `backend/pyproject.toml`, `uv.lock`, Dockerfiles si nécessaires, SECURITY_REVIEW.
 - **Étapes :** dédupliquer les avis par alias, classer runtime/dev et conditions réellement présentes ; corriger les versions affectées, dont Next14.2.10 et dépendances Python signalées ; vérifier les avis mainteneurs à la date de correction ; ADR/SPECS avant toute majeure nécessaire ; reconstruire et tester la stack réellement retenue ; éviter une simple suppression d'outil pour faire disparaître le scan.
 - **Réception :** scans ne signalent aucune critique applicable non traitée ; réserve résiduelle précise avec preuve, pas phrase générique « non exploitable » ; locks régénérés dans Docker ; build et parcours auth/proxy/graphiques reçus. Ne pas considérer14.2.25 comme cible finale universelle : c'est le patch d'un seul avis historique.
 
 ### AU-07 — Restauration qui échoue réellement en cas d'erreur
 
-- **Statut :** IN_PROGRESS (4976374 et correctif PowerShell natif, 37 tests/clone privé verts ; réception globale requise) · P0 · rôle Backend/Ops · parents R0.8/R6.8 · dépendance : contrat de destination explicite.
+- **Statut :** DONE (logiciel cd77a26, fidélité ACL et clone privé vérifiés, 2464 backend / 19 E2E ; [reçu](../../evidence/irooa-reception-20261026/RECEPTION.md)) · P0 · rôle Backend/Ops · parents R0.8/R6.8 · dépendance : contrat de destination explicite.
 - **Fichiers :** `deploy/{backup,restore}.sh`, `ops/backup_restore.py`, scripts dev, runbooks restore/déploiement. IA-17.
 - **Étapes :** exiger identité/consentement de clone neuf autorisé et refuser actif indépendamment du nom ; supprimer le contournement de sécurité non reçu ; manifeste/hash obligatoires, outil absent→erreur ; tout code pg_restore non-zéro propagé ; ne pas cacher erreur SQL par zéro ; comparer manifestes métier, droits et objets, pas seulement comptes.
 - **Réception :** commande simulée pg_restore=1→sortie non-zéro sans succès ; fichiers absent/corrompu, outil manquant et cible active refusés avant opération ; une sauvegarde réelle se restaure dans un clone neuf identifié et donne mêmes empreintes/privilèges. Aucune reprise de ce script ancien contre l'actif.
