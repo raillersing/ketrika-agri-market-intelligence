@@ -1,0 +1,62 @@
+{
+  "scope": "Docker browser software, synthetic QA environment",
+  "passed": true,
+  "version": 1,
+  "commit": "2a6ec4e0d72c28afc007accfec50269c4627ddf0",
+  "source_fingerprint": "1adbd671c8bfbe1300b570902bb94d0201952ddefb2bf8e15f7ca5790b643493",
+  "environment": {
+    "project": "ketrika-qualification-main-final",
+    "database": "ketrika_qualification",
+    "bronze_bucket": "ketrika-qa-bronze",
+    "network": "ketrika_qualification_main_final_network",
+    "dataset_mode": "test",
+    "backend_image_id": "sha256:493523bfd299513b1287f6bf4a94cf2ae07ac14daa6da5c622735d8eb9e1d5a7",
+    "web_image_id": "sha256:c45a054e8c6299b89b47979a87d4f4d0f4e3fd62dcf71fd03e23bafee5159a91",
+    "browser_image_id": "sha256:2646169d3348b9d52388664d307e05e38b18e0a72869dcdae906cdece75f66cf"
+  },
+  "dataset": "mixed",
+  "captured_at": "2026-10-26T12:52:04.322698+00:00",
+  "expected_checks": [
+    "protected UI redirects without a session",
+    "UI rejects and clears an arbitrary session cookie",
+    "form login establishes HttpOnly session",
+    "reload retains authentication",
+    "protected profile authenticates the browser session",
+    "authenticated same-origin prices API",
+    "price explorer renders",
+    "economy explicitly reports unqualified data after reload",
+    "mobile navigation opens, closes with Escape and with its link",
+    "economy uses full content width at 390px without clipped message",
+    "UI logout removes session",
+    "API rejects access after logout",
+    "API rejects reuse of the logged-out token",
+    "UI rejects and clears a restored revoked cookie",
+    "UI remains protected after logout"
+  ],
+  "prices_status": 200,
+  "unauthenticated_status": 401,
+  "duration_seconds": 310.806,
+  "browser_errors": [],
+  "completed_checks": [
+    "protected UI redirects without a session",
+    "UI rejects and clears an arbitrary session cookie",
+    "form login establishes HttpOnly session",
+    "reload retains authentication",
+    "protected profile authenticates the browser session",
+    "authenticated same-origin prices API",
+    "price explorer renders",
+    "economy explicitly reports unqualified data after reload",
+    "mobile navigation opens, closes with Escape and with its link",
+    "economy uses full content width at 390px without clipped message",
+    "UI logout removes session",
+    "API rejects access after logout",
+    "API rejects reuse of the logged-out token",
+    "UI rejects and clears a restored revoked cookie",
+    "UI remains protected after logout"
+  ],
+  "checks": 15,
+  "trace": {
+    "path": "trace.zip",
+    "sha256": "eb22d8e21febdd5f7cb680a85d42922f0d3a178678b97909daa0ea3d1f8da92b"
+  }
+}

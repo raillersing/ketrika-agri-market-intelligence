@@ -1,0 +1,3 @@
+{"tests": 2439, "failures": 0, "errors": 0, "skipped": 0, "integration_by_layout": 164, "integration_by_marker": 164, "integration_tests": 168}
+{"core": 92.42053789731051, "extraction": 87.76595744680851, "normalize": 88.21510297482837}
+{"tests": 57, "suites": 9}
