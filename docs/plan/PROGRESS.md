@@ -1,5 +1,11 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-26T13:02:12Z] AU-04 — réception logicielle complète sur source2a6ec4e
+
+- Reprise des originaux verts après interruption :2439 backend/168 intégrations, zéro skip ; inventaire exact et couvertures92,4205/87,7660/88,2151% relus avec commit/empreinte/images. Frontend47aba285 vert57 tests/neuf suites et quatre étapes ; pas de répétition des suites déjà vertes.
+- E2E repris à la première preuve manquante :15 scénarios/310,806s, aucune exception JS. Cookie arbitraire/révoqué, formulaire HttpOnly, reload/profil/proxy, logout/rejeu et mobile reçus sur profil dédié. Source figée inchangée ; simple rétablissement du proxy WSL, aucun moteur/service actif redémarré.
+- AU-04 DONE logiciel sur branche seulement ; origine et limites dans docs/evidence/auth-20261026/RECEPTION.md. Aucun déploiement/migration active ni gate R0.8 final ;74 statuts R conservés. AU-06/AU-07 restent ouverts pour leurs propres réceptions.
+
 ### [2026-10-25T17:30:00Z] R0.8 — plan de correction avant code
 
 - Branche isolée fix/r08-safe-facts-20261025, base4b57562 ; plan concret SAFE_FACTS_IMPLEMENTATION_PLAN.md (neuf étapes), ADR121/SPECS avant code. AU-01 en cours ; AU-02/03 préparés dans le même lot fonctionnel, aucune réception anticipée. Aucun changement de statut des74 tâches :7 DONE historiques/52 IN_PROGRESS/15 TODO.

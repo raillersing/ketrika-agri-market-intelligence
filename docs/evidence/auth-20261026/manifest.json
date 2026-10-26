@@ -1,0 +1,46 @@
+{
+  "negative-unit.xml": {
+    "sha256": "0bd26e964dfe3c76c8cdf9188ffd4395ef6638399498e82d30296da7f656ce51",
+    "bytes": 2134
+  },
+  "browser-receipt.json": {
+    "sha256": "c3387a095c2be43cfadebe68ef4dab9d02b31708efd559cbbacc9e17ce16c8ca",
+    "bytes": 2656
+  },
+  "validated-original-receipts.jsonl": {
+    "sha256": "132203841f742084c06cc857a96eb055b33ffd4bbc22f5b5b0f25d596ddc35e0",
+    "bytes": 264
+  },
+  "integration-first-red.xml": {
+    "sha256": "6845ae8be27edcac009b1e14617cdf1ba7cd1b23b0db0d9199bb3f3b1e577f1e",
+    "bytes": 6131
+  },
+  "backend-coverage.json.gz": {
+    "sha256": "4c2f99013709d36166d5172adddcbf155c2f71bbde93a363371d0731bd1d1bd9",
+    "bytes": 25384
+  },
+  "RECEPTION.md": {
+    "sha256": "6ff75cc7111d69372899c1975fdfcd91b86be3abc44e71f65d843a9d46c6ae25",
+    "bytes": 2157
+  },
+  "frontend-tests.json.gz": {
+    "sha256": "32bb3a2b21a82524d7d2825908c212691950b587d76f05f5a8507d3e27e96683",
+    "bytes": 3064
+  },
+  "backend-tests.xml.gz": {
+    "sha256": "d9bec8ebc04129ae82079cd74ca6d86d37f6347a15bb55da178b0bc473c0d600",
+    "bytes": 47306
+  },
+  "postgres.xml": {
+    "sha256": "7781f7a56580459c1ca2480256ac0945d88e883e78c47da09a9ef024efd84fbb",
+    "bytes": 682
+  },
+  "frontend-receipt.json": {
+    "sha256": "a5956d53e901c0b98d5f72662301304e5a3f5f0caf98815e043575fa340f9e5a",
+    "bytes": 2019
+  },
+  "backend-inventory.json.gz": {
+    "sha256": "a3621e46b0b09e27b4f3b72350668d7d4a9150a3d6467383f166d29035a577e2",
+    "bytes": 37860
+  }
+}

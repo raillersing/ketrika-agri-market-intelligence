@@ -43,7 +43,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-04 — Authentification et configuration sûres
 
-- **Statut :** IN_PROGRESS (worktree sécurité séparé ; non reçu) · P0/P1 · rôle Backend/Sécurité · parents R0.8/R6.7 · dépendance : matrice d'accès contractuelle avant patch.
+- **Statut :** DONE (logiciel2a6ec4e, 2439 backend/57 web/15 E2E ; branche reçue, activation distincte) · P0/P1 · rôle Backend/Sécurité · parents R0.8/R6.7 · dépendance : matrice d'accès contractuelle avant patch.
 - **Fichiers :** `api/auth.py`, `api/routers/*.py`, `api/main.py`, `core/settings.py`, middleware/proxy Next, Compose prod, tests d'accès. IA-06/08.
 - **Étapes :** recenser toutes méthodes/routes et rôles ; appliquer l'auth serveur aux lectures métier conformément SPECS, toute exception publique exige décision explicite ; vérifier signature/session côté web plutôt que présence du cookie ; rendre révocation/logout durable partagée et expirable ; cookie Secure en HTTPS prod, HttpOnly/SameSite/CSRF selon mutations ; refuser defaults secrets/admin démo en prod et préserver le bootstrap local explicite.
 - **Réception :** anonyme401 sur chaque route protégée, client403 sur mutations admin, cookie invalide/expiré refusé, logout rejeté par un second worker et après restart ; défaut de configuration prod refuse le démarrage sans imprimer de secret. Tests multi-processus/DB, pas uniquement set en mémoire ; aucune suppression d'utilisateur existant.
