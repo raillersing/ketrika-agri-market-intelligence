@@ -1,5 +1,7 @@
 # Plan détaillé après audit indépendant — 25 octobre 2026
 
+**Complément utilisateur du27 octobre2026 :** le [plan données et parcours DP-0–7](../../plan/DATA_PRODUCT_IMPROVEMENT_PLAN.md) détaille les corrections de filtres/produits, collecte, économie, carte, alertes/bulletins et prévisions après recherche primaire. Il ne crée pas de nouveau lot AU ni de tâche R et ne change aucun statut/gate. DP-1 est un correctif de présentation borné à R0.8 ; les nouvelles collectes et capacités aval conservent leurs dépendances ci-dessous. DP-0 exige de réconcilier la portée des reçus natifs avant réutilisation.
+
 **Exécutable par agents ; corrections autorisées après restitution le25 octobre2026.** Base auditée b7e63ee. [Audit](INDEPENDENT_AUDIT.md), [matrice des74 tâches](TASK_CAPABILITY_MATRIX.md), [plan R normatif](../../plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md). Les lots AU sont des sous-livrables de correction/réception, pas74 nouveaux MUST ni une substitution des dépendances R.
 
 ## Ordre, responsabilités et règles communes

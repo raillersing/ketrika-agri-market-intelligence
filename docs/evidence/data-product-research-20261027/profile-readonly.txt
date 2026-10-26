@@ -1,0 +1,71 @@
+BEGIN
+SET
+    product_code     |      canonical_name_fr       | verified | current_price_rows | first_period | last_period 
+---------------------+------------------------------+----------+--------------------+--------------+-------------
+ BAMBARA_GROUNDNUT   | Pois de bambara (voanjobory) | t        |                  0 |              | 
+ BEANS_DRY           | Haricot sec                  | t        |                  0 |              | 
+ CASSAVA_DRIED       | Manioc sec                   | t        |                  0 |              | 
+ cassava_dry         | Manioc sec (Cossettes)       | t        |                  0 |              | 
+ cassava_fresh       | Manioc frais                 | t        |                  0 |              | 
+ CASSAVA_FRESH       | Manioc frais                 | t        |                  0 |              | 
+ dry_beans           | Haricots secs                | t        |                  0 |              | 
+ flour_wheat         | Farine de blé                | t        |                  0 |              | 
+ GROUNDNUT           | Arachide                     | t        |                  0 |              | 
+ LENTILS             | Lentilles                    | t        |                  0 |              | 
+ LIMA_BEANS          | Pois du Cap (kabaro)         | t        |                  0 |              | 
+ maize               | Maïs grain                   | t        |                  0 |              | 
+ MAIZE_GRAIN         | Maïs grain                   | t        |                  0 |              | 
+ oil_edible          | Huile alimentaire            | t        |                  0 |              | 
+ rice_dq_116994      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_24280c      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_2563c9      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_290ecc      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_2a0441      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_2c5609      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_3f7e39      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_502781      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_6b2ea9      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_6c90e2      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_85a4f6      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_96230a      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_b53bb8      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_c5076c      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_c6cd0e      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_dq_c763be      | Riz Test DQ                  | t        |                  0 |              | 
+ rice_imported       | Riz importé                  | t        |                  0 |              | 
+ rice_milled         | Riz blanc                    | t        |                  0 |              | 
+ RICE_PADDY          | Riz paddy                    | t        |                  0 |              | 
+ RICE_WHITE_IMPORTED | Riz blanc importé            | t        |                  0 |              | 
+ RICE_WHITE_LOCAL    | Riz blanc local              | t        |                135 | 2010-05-01   | 2026-10-31
+ sugar               | Sucre roux                   | t        |                  0 |              | 
+ SUGAR               | Sucre                        | t        |                  0 |              | 
+ SWEET_POTATO        | Patate douce                 | t        |                  0 |              | 
+ VEG_OIL             | Huile alimentaire (végétale) | t        |                  0 |              | 
+ WHEAT_FLOUR         | Farine de blé                | t        |                  0 |              | 
+(40 rows)
+
+ actor_level | observed_or_imputed | current_price_rows |    min     |    max     
+-------------+---------------------+--------------------+------------+------------
+ unknown     | imputed             |                135 | 2010-05-01 | 2026-10-31
+(1 row)
+
+ kind  | current_rows | min | max 
+-------+--------------+-----+-----
+ cpi   |            0 |     | 
+ macro |            0 |     | 
+(2 rows)
+
+ indicator_code | review_status | observed_or_imputed | count 
+----------------+---------------+---------------------+-------
+(0 rows)
+
+ schemaname |    matviewname     | ispopulated 
+------------+--------------------+-------------
+ gold       | economic_dashboard | f
+ gold       | price_changes      | t
+ gold       | price_monthly      | t
+ gold       | price_monthly_best | t
+ gold       | price_obs_current  | t
+(5 rows)
+
+COMMIT

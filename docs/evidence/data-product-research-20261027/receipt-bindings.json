@@ -1,0 +1,22 @@
+{
+  "scope": "readonly receipt identity comparison; no new acceptance or status promotion",
+  "documented_candidate": "cd77a26194cef60c1dbb456a94ba38bf68d38461",
+  "receipts": {
+    "browser-receipt.json": {
+      "passed": true,
+      "commit": "cd77a26194cef60c1dbb456a94ba38bf68d38461",
+      "source_fingerprint": "79205eca5139574880ed60f765a9e47fd8c80812b6c675e6198b555348a39680",
+      "checks": 19
+    },
+    "frontend-receipt.json": {
+      "execution_id": "c6a7d771-7845-4542-a77c-3d93d24e3479",
+      "passed": true,
+      "commit": "4e455edbd166af6f24ac4b3fad6e570343b331cd",
+      "source_fingerprint": "cf7cf73dad71a496ca11306704066db7c1d6fe09319279d4be99643c2572e624"
+    },
+    "backend-inventory.json.gz": {
+      "commit": "4e455edbd166af6f24ac4b3fad6e570343b331cd",
+      "source_fingerprint": "cf7cf73dad71a496ca11306704066db7c1d6fe09319279d4be99643c2572e624"
+    }
+  }
+}

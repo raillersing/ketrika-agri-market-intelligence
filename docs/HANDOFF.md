@@ -1,5 +1,13 @@
 # Passation courante — audit indépendant terminé, programme PARTIAL
 
+## Priorité utilisateur du27 octobre2026 — plan de correction des données et des parcours
+
+Lire le [plan DP-0–7](plan/DATA_PRODUCT_IMPROVEMENT_PLAN.md), préparé depuis f947f33 et la recherche primaire du27 octobre. Il précise les lots AU existants et conserve leurs dépendances, les74 statuts et les gates humains. Ce document ne livre ni nouvelle collecte, ni carte, ni prévision.
+
+La prochaine livraison de présentation est DP-1, correctif borné R0.8, après DP-0 : filtres sans références DQ, stade de vente explicite, retrait des filtres sans effet et des affirmations non calculées, états vides/non qualifiés/erreurs lisibles. Le prochain travail de réparation du socle reste AU-08 puis AU-09 ; ne pas lancer AU-10 avant R0.9. Collectes/macro/carte/alertes-bulletins/prévisions suivent les dépendances exactes des lots correspondants.
+
+Avant réutilisation des reçus, réconcilier le regroupement documentaire f947f33 : originaux backend/frontend rattachés à4e455ed, navigateur rattaché àcd77a26. Aucune requalification de données ou activation ne découle de ce regroupement. Recevoir le prochain contenu applicatif stabilisé plutôt que refaire un check de base juste avant son développement. Les sections plus anciennes ci-dessous restent historiques lorsque leur état de réception diffère.
+
 Date2026-10-25, base auditée b7e63ee. [Rapport indépendant](audits/2026-10-25/INDEPENDENT_AUDIT.md), [plan détaillé26 lots](audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md), [matrice74 tâches/18 sources](audits/2026-10-25/TASK_CAPABILITY_MATRIX.md).
 
 ## Prochain travail autorisé
