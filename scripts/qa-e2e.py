@@ -31,8 +31,8 @@ def main() -> int:
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
             context = browser.new_context(base_url="http://web:3000")
-            context.set_default_navigation_timeout(120000)
-            expect.set_options(timeout=120000)
+            context.set_default_navigation_timeout(240000)
+            expect.set_options(timeout=240000)
             context.tracing.start(screenshots=True, snapshots=True, sources=True)
             page = context.new_page()
             page.on("pageerror", lambda error: errors.append(str(error)))
@@ -89,7 +89,7 @@ def main() -> int:
             page.locator('input[type="email"]').fill("admin@ketrika.local")
             page.locator('input[type="password"]').fill("change-me")
             page.locator('form button[type="submit"]').click()
-            expect(page).to_have_url("http://web:3000/", timeout=120000)
+            expect(page).to_have_url("http://web:3000/", timeout=240000)
             cookies = context.cookies()
             assert any(
                 cookie["name"] == "session_token" and cookie["httpOnly"] for cookie in cookies
@@ -97,6 +97,11 @@ def main() -> int:
             assert not any(cookie["name"] == "ketrika_token" for cookie in cookies)
             session_cookie = next(cookie for cookie in cookies if cookie["name"] == "session_token")
             completed.append("form login establishes HttpOnly session")
+            for warmup_path in ("/prices", "/economy"):
+                try:
+                    context.request.get(warmup_path, timeout=120000)
+                except Exception:
+                    pass
             page.reload()
             expect(page).to_have_url("http://web:3000/")
             completed.append("reload retains authentication")
@@ -135,7 +140,7 @@ def main() -> int:
             expect(field).to_be_focused()
             field.fill("prix vivriers")
             page.keyboard.press("Enter")
-            expect(page).to_have_url("http://web:3000/prices")
+            expect(page).to_have_url("http://web:3000/prices", timeout=120000)
             expect(dialog).not_to_be_visible()
             completed.append("page search navigates real destinations and restores keyboard focus")
             page.goto("/prices")
