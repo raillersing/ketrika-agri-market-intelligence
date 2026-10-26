@@ -55,6 +55,11 @@ def main() -> None:
         expect(page.get_by_text("Prix médian national", exact=True)).not_to_be_visible()
         page.reload()
         expect(card).to_contain_text(expected_value)
+        chart = page.locator("canvas").first
+        expect(chart).to_be_visible()
+        chart_bounds = chart.bounding_box()
+        assert chart_bounds and chart_bounds["height"] >= 200 and chart_bounds["width"] >= 200
+        receipt["chart_bounds"] = chart_bounds
         page.screenshot(path=str(directory / "overview-desktop.png"), full_page=True)
         receipt["reload_matches_api"] = True
         page.set_viewport_size({"width": 390, "height": 844})

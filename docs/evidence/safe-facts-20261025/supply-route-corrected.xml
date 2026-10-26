@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="21.701" timestamp="2026-10-25T18:11:35.841795+00:00" hostname="36cac36c7d34"><testcase classname="tests.unit.test_supply_peak_forecast" name="test_supply_api_endpoints" time="16.001" /></testsuite></testsuites>

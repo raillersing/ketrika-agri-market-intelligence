@@ -23,3 +23,7 @@ Dernière réception logicielle globale :52578/2398 backend/50 frontend/build16,
 D'abord AU-01–07 : retirer les faits fabriqués et corriger la sécurité. Puis AU-08/09 : quarantaine, vraie révision et rejeu sur clone ; gate R0.9 avant la suite R1–R6. Réutiliser les modules existants, compléter les raccordements et qualifications. Aucun nouveau développement applicatif réalisé pendant la restitution de cet audit.
 
 Historique précédent conservé dans audits/2026-10-25/history. Aucun tag final créé ou déplacé.
+
+### Premier lot correctif reçu —25 octobre2026
+
+AU-01/02/03/05 :5400f39, check18572 (2426 backend/52 frontend/build16), E2E44716 (12/12), preuve navigateur API/reload/vide/erreur/mobile/canvas942×340. Réception logicielle dédiée, pas de données de marché ni de modèle validés. Notifications externes fermées, offre opérationnelle en abstention documentée. AU-04 en développement isolé ; autres lots et blocages de lignée/corpus ouverts. Les anciens constats décrivent leurs bases auditées ; voir la réception datée pour les corrections, sans modifier les preuves historiques.

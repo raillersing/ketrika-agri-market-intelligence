@@ -1,6 +1,6 @@
 # Plan détaillé après audit indépendant — 25 octobre 2026
 
-**Exécutable par agents, sans commencer les corrections pendant la restitution.** Base auditée b7e63ee. [Audit](INDEPENDENT_AUDIT.md), [matrice des74 tâches](TASK_CAPABILITY_MATRIX.md), [plan R normatif](../../plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md). Les lots AU sont des sous-livrables de correction/réception, pas74 nouveaux MUST ni une substitution des dépendances R.
+**Exécutable par agents ; corrections autorisées après restitution le25 octobre2026.** Base auditée b7e63ee. [Audit](INDEPENDENT_AUDIT.md), [matrice des74 tâches](TASK_CAPABILITY_MATRIX.md), [plan R normatif](../../plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md). Les lots AU sont des sous-livrables de correction/réception, pas74 nouveaux MUST ni une substitution des dépendances R.
 
 ## Ordre, responsabilités et règles communes
 
@@ -21,7 +21,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-01 — Accueil et filtres réellement alimentés
 
-- **Statut :** IN_PROGRESS · P0 · rôle Frontend/Backend · parent R0.8, réception ultérieure R2.10 · dépendance : aucune correction préalable.
+- **Statut :** DONE (logiciel5400f39, réception18572/44716 ; sources et modèles non qualifiés) · P0 · rôle Frontend/Backend · parent R0.8, réception ultérieure R2.10 · dépendance : aucune correction préalable.
 - **Fichiers :** `web/src/app/page.tsx`, `web/src/components/ui/KpiCard.tsx`, `GlobalFilters.tsx`, `web/src/app/{prices,map,trade}/page.tsx`, `web/src/lib/api/*`, tests web et parcours navigateur. Constats IA-01/13.
 - **Étapes :** inventorier chaque chiffre/statut/source actuellement constant ; remplacer les tableaux inline par lectures réelles des endpoints existants ; partager les codes canoniques des produits et lieux ; supprimer stock21j, score74, trois alertes et mention100% quand aucune mesure ne les justifie ; montrer NULL, données imputées et date de source ; rendre export et provenance cohérents avec les mêmes filtres.
 - **Réception :** accueil et prix concordent avec API/SQL après reload ; choisir un produit vide ne fabrique ni carte ni courbe ; une erreur API est visible ; un compteur d'alertes suit la requête réelle. Aucun chiffre d'exemple dans le bundle de la page réelle ; si une démonstration est conservée, route/contexte explicitement séparé et non servi par défaut.
@@ -29,28 +29,28 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-02 — Agroclimat sans fausses observations ni prévisions
 
-- **Statut :** IN_PROGRESS · P0 · rôle Backend/Geo · parents R0.8/R4.11 · dépendance : aucune ; même livraison de sécurité qu'AU-01 possible.
+- **Statut :** DONE (logiciel5400f39, réception18572/44716 ; sources et modèles non qualifiés) · P0 · rôle Backend/Geo · parents R0.8/R4.11 · dépendance : aucune ; même livraison de sécurité qu'AU-01 possible.
 - **Fichiers :** `api/routers/climate.py`, `weather.py`, `api/schemas.py`, `web/src/app/climate/page.tsx`, tests SQL/API. IA-02/10/15.
 - **Étapes :** supprimer toutes les constantes de repli115/95/21,5/14,2/6/28,5 et fausse émission ECMWF ; définir dans ADR/SPECS NULL+availability/reason si DTO étendu ; utiliser réellement le mois demandé et la variable/unité demandée ; ne pas remplacer une zone inconnue par ZONE_CENTRE ; distinguer observations/prévisions et absence/référence insuffisante ; corriger formule de baseline et source effective des anomalies.
 - **Réception :** base sans WeatherForecast→aucune prévision numérique ; zone/période inconnue→état prévu par contrat, pas substitution ; le calcul pluie/température est vérifié à la main ; absence ne devient pas risque low ; JSON, UI et DB identiques après reload. Tests réels PostgreSQL, y compris from/to et erreur de schéma.
 
 ### AU-03 — Scénarios et offre : arrêter les fausses entrées
 
-- **Statut :** IN_PROGRESS · P0 · rôle Backend/Data · parents R0.8/R5.7/R5.8 · dépendance : contrat précis avant changement de DTO.
+- **Statut :** DONE (logiciel5400f39, réception18572/44716 ; sources et modèles non qualifiés) · P0 · rôle Backend/Data · parents R0.8/R5.7/R5.8 · dépendance : contrat précis avant changement de DTO.
 - **Fichiers :** `api/routers/supply.py`, `supply/{decision_pilot,peak_forecast,harvest_window}.py`, modèles stock réels. IA-05/16.
 - **Étapes :** retirer24500tonnes et année2024 implicites ; valider produit/bassin/marché/campagne/lag ; interdire le premier calendrier de repli ; traduire les colonnes stock réellement persistées dans l'adaptateur ; supprimer le catch-all transformant SQL en liste vide ; séparer absence de mesure et hypothèse explicitement fournie ; ne publier ni confiance scientifique ni pic mesuré sans données.
 - **Réception :** UNKNOWN/bad donne404/422 ou abstention documentée ; un défaut SQL donne erreur explicite ; aucune arrivée→aucun chiffre étiqueté observed ; scénario recomputable depuis paramètres versionnés et preuves. Tests sur PostgreSQL et campagne distincte de2024, marché sans correspondance, corps incomplet.
 
 ### AU-04 — Authentification et configuration sûres
 
-- **Statut :** IN_PROGRESS · P0/P1 · rôle Backend/Sécurité · parents R0.8/R6.7 · dépendance : matrice d'accès contractuelle avant patch.
+- **Statut :** IN_PROGRESS (worktree sécurité séparé ; non reçu) · P0/P1 · rôle Backend/Sécurité · parents R0.8/R6.7 · dépendance : matrice d'accès contractuelle avant patch.
 - **Fichiers :** `api/auth.py`, `api/routers/*.py`, `api/main.py`, `core/settings.py`, middleware/proxy Next, Compose prod, tests d'accès. IA-06/08.
 - **Étapes :** recenser toutes méthodes/routes et rôles ; appliquer l'auth serveur aux lectures métier conformément SPECS, toute exception publique exige décision explicite ; vérifier signature/session côté web plutôt que présence du cookie ; rendre révocation/logout durable partagée et expirable ; cookie Secure en HTTPS prod, HttpOnly/SameSite/CSRF selon mutations ; refuser defaults secrets/admin démo en prod et préserver le bootstrap local explicite.
 - **Réception :** anonyme401 sur chaque route protégée, client403 sur mutations admin, cookie invalide/expiré refusé, logout rejeté par un second worker et après restart ; défaut de configuration prod refuse le démarrage sans imprimer de secret. Tests multi-processus/DB, pas uniquement set en mémoire ; aucune suppression d'utilisateur existant.
 
 ### AU-05 — H3 effectif à la frontière des transports
 
-- **Statut :** IN_PROGRESS · P0 · rôle Backend/Sécurité · parents R0.8/R6.6/R6.7 · dépendance : inventaire de tous transports.
+- **Statut :** DONE (logiciel5400f39, capture locale reçue ; H3 externe fermé) · P0 · rôle Backend/Sécurité · parents R0.8/R6.6/R6.7 · dépendance : inventaire de tous transports.
 - **Fichiers :** `alerts/notifier.py`, appels depuis `pipelines/definitions.py`, bulletin et configuration SMTP/Telegram. IA-07.
 - **Étapes :** centraliser la politique de sortie ; garder Mailpit local explicitement autorisé ; refuser SMTP externe et Telegram sans autorisation humaine documentée, même si une variable est positionnée ; journaliser refus/brouillon/reçu local sans adresse/token dans logs ; ne marquer envoyé qu'après preuve transport conforme.
 - **Réception :** SMTP externe+gate off→zéro construction/connexion transport ; gate on sans autorisation→zéro envoi ; Mailpit local fonctionne et reçu relisible ; aucune notification vers un tiers pendant tests. Doubles interceptés uniquement pour cas négatifs ; vrai Mailpit pour cas positif.
@@ -226,3 +226,5 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 Pour chaque lot : ID, parent R, état, SHA avant/après, chemins modifiés, environnement/destination, commandes et codes, effectifs et dénominateurs, JUnit/reçus natifs, empreinte, limites et action suivante. Toute affirmation non mesurée reste NOT_EVALUATED. Les tests d'un helper ne suffisent pas à recevoir sa route SQL ni son parcours utilisateur.
 
 **Prochain travail éligible après restitution : AU-01**, préparé avec AU-02/AU-03 pour supprimer les fausses données sur les surfaces principales. Les corrections de sécurité AU-04–07 font partie de la même première livraison sûre si le périmètre peut être stabilisé ; sinon livraisons fonctionnelles distinctes avec leur propre réception. Ne pas commencer AU-10 ni une nouvelle fonctionnalité dépendante avant R0.9.
+
+Mise à jour de réception : AU-01/02/03/05 corrigés et reçus logiciellement sur5400f39 ; [preuves complètes](../../evidence/safe-facts-20261025/RECEPTION.md). La suppression des faux faits et l'abstention ne qualifient pas les sources/modèles ni les fonctionnalités R aval. Prochain correctif AU-04, en développement séparé ; AU-06/07 restent ouverts avant réparation/requalification du socle. Les instructions « après restitution » ci-dessus décrivent l'ordre initial, pas une demande de recommencer AU-01.

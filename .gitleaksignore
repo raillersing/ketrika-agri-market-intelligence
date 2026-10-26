@@ -1,0 +1,5 @@
+# Confirmed false positive: deterministic synthetic Alert.dedupe_key, not a credential.
+# Scope is this exact historical commit/path/rule/line; future changes remain scanned.
+5400f3932d4c5c7e612d3e97c8ba1f13c9e328ae:docs/audits/2026-10-25/probe_notification_capture.py:generic-api-key:33
+# Same synthetic deduplication tag, introduced by the received squash on main.
+03ea267ed3b65627cd1ea23c62ea4bd693b68157:docs/audits/2026-10-25/probe_notification_capture.py:generic-api-key:33
