@@ -1,0 +1,78 @@
+{
+  "execution_id": "98d1c2a7-dfa0-42ce-96b1-cf43eeb01bc8",
+  "scope": "frontend software only",
+  "passed": true,
+  "steps": [
+    {
+      "command": [
+        "pnpm",
+        "lint"
+      ],
+      "exit_code": 0,
+      "error_code": null,
+      "signal": null,
+      "timed_out": false,
+      "successful": true,
+      "duration_ms": 42345
+    },
+    {
+      "command": [
+        "pnpm",
+        "typecheck"
+      ],
+      "exit_code": 0,
+      "error_code": null,
+      "signal": null,
+      "timed_out": false,
+      "successful": true,
+      "duration_ms": 48915
+    },
+    {
+      "command": [
+        "pnpm",
+        "run",
+        "test",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=/app/node_modules/.qa-results/98d1c2a7-dfa0-42ce-96b1-cf43eeb01bc8/vitest.json"
+      ],
+      "exit_code": 0,
+      "error_code": null,
+      "signal": null,
+      "timed_out": false,
+      "successful": true,
+      "duration_ms": 15296
+    },
+    {
+      "command": [
+        "pnpm",
+        "build"
+      ],
+      "exit_code": 0,
+      "error_code": null,
+      "signal": null,
+      "timed_out": false,
+      "successful": true,
+      "duration_ms": 403580
+    }
+  ],
+  "version": 1,
+  "commit": "7d178a111a7aad554dd706b808836e687e0e88a6",
+  "source_fingerprint": "535b5faedd7586772bcaf57ddcc65993464c2d5ce73df2fbed8b92c7c0102e42",
+  "dataset": "mixed",
+  "captured_at": "2026-10-26T14:55:46.330Z",
+  "environment": {
+    "project": "ketrika-qualification-main-final",
+    "database": "ketrika_qualification",
+    "bronze_bucket": "ketrika-qa-bronze",
+    "network": "ketrika_qualification_main_final_network",
+    "dataset_mode": "test",
+    "backend_image_id": "sha256:1f89c0fb2b09251f4a0faeda63ff4958968eca0dce04755935c2fae517877b4d",
+    "web_image_id": "sha256:e381c388a2e443ed21976c8e7d9ee6325d892164f6d164d5a4145059e6c9e979",
+    "browser_image_id": "sha256:42bb706fd711222c5b56367a244d61621105f61d92bb9f0a23e0bef795b427ba"
+  },
+  "counts": {
+    "tests": 57,
+    "suites": 9
+  }
+}

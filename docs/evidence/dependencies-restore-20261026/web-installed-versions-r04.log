@@ -1,0 +1,33 @@
+v22.23.3
+9.15.4
+Legend: production dependency, optional only, dev only
+
+ketrika-web@0.1.0 /app (PRIVATE)
+
+dependencies:
+clsx 2.1.1
+echarts 6.1.0
+echarts-for-react 3.0.6
+lucide-react 0.439.0
+maplibre-gl 6.16.0
+next 15.5.28
+openapi-fetch 0.11.3
+react 19.3.1
+react-dom 19.3.1
+tailwind-merge 2.6.1
+tailwindcss-animate 1.0.7
+
+devDependencies:
+@playwright/test 1.63.0
+@types/node 22.20.5
+@types/react 19.3.0
+@types/react-dom 19.3.0
+autoprefixer 10.6.1
+eslint 8.57.1
+eslint-config-next 15.5.28
+openapi-typescript 7.13.0
+postcss 8.5.31
+tailwindcss 3.4.19
+typescript 5.9.3
+vite 8.3.5
+vitest 5.0.5

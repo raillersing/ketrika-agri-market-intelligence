@@ -1,5 +1,12 @@
 # PROGRESS : registre d'exécution du MVP
 
+
+### [2026-10-26T16:58:00Z] AU-06/AU-07 — premier check vert, gel de la fidélité SQL
+
+- Check complet7d178a1 terminé0 :2464 backend/168 intégrations, zéro échec/erreur/skip ;57 frontend/neuf suites, lint/types/build Next15 verts. Originaux backend/inventaire/couverture et frontend conservés dans dependencies-restore-20261026/pre-acl-reception ;37 cas restauration vérifiés dans le global. Empreinte535b5fae... ; ce check précède le correctif ACL et ne le réceptionne pas.
+- Restauration corrigée7b29333 : deux positifs shell/PowerShell, mêmes SHA-256 de78 tables/17542 lignes et droits, erreurs réelles rôle absent et COPY code1 avec rollback. Revue de sécurité mise à jour et originaux conservés. AU-07 reste IN_PROGRESS ; aucun check interrompu ou résultat rouge réétiqueté.
+- Temps backend3077,49s contre1231,978s précédemment ; comparaison par cas conservée, cause non isolée sur machine partagée. Seuils de latence réellement verts ; aucune optimisation/seuil modifié ni attribution causale aux dépendances.
+- Nouveau gel consolidé et check complet obligatoire, puis15 E2E et contrôle du canvas réel. Aucun changement actif, publication, statut R ni tag ; clôture AU-06/AU-07 seulement après réception exacte de ce contenu.
 ### [2026-10-26T13:55:00Z] AU-07 — défaut réel de fidélité des ACL, correction isolée
 
 - Réception complète du contenu7d178a1 en cours sur main-final ; ce worktree séparé ne touche ni sa source, ni ses images, ni SQL/S3 QA. Comparaison readonly du clone privé : tables fidèles mais ACL perdues sous les options no-owner/no-privileges. AU-07 reste IN_PROGRESS, premier positif limité non promu.

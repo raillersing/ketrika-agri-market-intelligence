@@ -1,0 +1,77 @@
+[
+  {
+    "case": "tests.integration.test_miasa_odr.test_miasa_odr_backfill_dq_and_rebuild_lifecycle",
+    "now_s": 313.861,
+    "previous_s": 251.562
+  },
+  {
+    "case": "tests.integration.test_api_perf.test_aggregated_endpoints_latency_p95",
+    "now_s": 207.592,
+    "previous_s": 54.117
+  },
+  {
+    "case": "tests.unit.test_ml_forecast.test_forecasting_pipeline_e2e_and_anti_leakage",
+    "now_s": 84.375,
+    "previous_s": 41.649
+  },
+  {
+    "case": "tests.integration.test_gold_publication_provenance.test_real_publication_rejects_bad_provenance_and_rolls_back_partial_sql",
+    "now_s": 80.135,
+    "previous_s": 35.38
+  },
+  {
+    "case": "tests.integration.test_alerts_engine.test_multi_source_severity_rule",
+    "now_s": 79.24,
+    "previous_s": 20.555
+  },
+  {
+    "case": "tests.integration.test_api_v1.test_api_public_and_analytical_endpoints_200",
+    "now_s": 71.704,
+    "previous_s": 20.134
+  },
+  {
+    "case": "tests.integration.test_wfp_hdx_mdg.test_wfp_hdx_backfill_dq_and_rebuild_lifecycle",
+    "now_s": 63.022,
+    "previous_s": 17.064
+  },
+  {
+    "case": "tests.integration.test_connector_pipeline.test_dummy_csv_pipeline_lifecycle_and_supersession",
+    "now_s": 58.196,
+    "previous_s": 16.393
+  },
+  {
+    "case": "tests.integration.test_bulletin_service.test_generate_weekly_bulletin_integration",
+    "now_s": 54.316,
+    "previous_s": 18.932
+  },
+  {
+    "case": "tests.integration.test_api_perf.test_rate_limiter_strict_60_req_per_minute",
+    "now_s": 52.026,
+    "previous_s": 17.968
+  },
+  {
+    "case": "tests.integration.test_wb_rtfp_mdg.test_wb_rtfp_backfill_dq_and_rebuild_lifecycle",
+    "now_s": 51.72,
+    "previous_s": 10.936
+  },
+  {
+    "case": "tests.integration.test_gold_views.test_gold_views_sql_e2e_synthetic",
+    "now_s": 47.168,
+    "previous_s": 13.243
+  },
+  {
+    "case": "tests.unit.test_units.test_product_specific_kapoaka_inverse_consistency",
+    "now_s": 43.144,
+    "previous_s": 15.55
+  },
+  {
+    "case": "tests.integration.test_nasa_power.test_nasa_power_backfill_dq_and_rebuild_lifecycle",
+    "now_s": 41.773,
+    "previous_s": 32.483
+  },
+  {
+    "case": "tests.integration.test_price_anomalies.test_price_anomaly_spike_and_drop_pipeline",
+    "now_s": 41.462,
+    "previous_s": 17.095
+  }
+]
