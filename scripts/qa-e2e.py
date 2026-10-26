@@ -32,6 +32,7 @@ def main() -> int:
             browser = playwright.chromium.launch(headless=True)
             context = browser.new_context(base_url="http://web:3000")
             context.set_default_navigation_timeout(120000)
+            expect.set_options(timeout=120000)
             context.tracing.start(screenshots=True, snapshots=True, sources=True)
             page = context.new_page()
             page.on("pageerror", lambda error: errors.append(str(error)))
@@ -46,6 +47,11 @@ def main() -> int:
                 time.sleep(1)
             else:
                 raise RuntimeError("Dedicated frontend and API never became ready")
+            for warmup_path in ("/", "/prices", "/economy", "/api/v1/auth/me"):
+                try:
+                    context.request.get(warmup_path, timeout=120000)
+                except Exception:
+                    pass
             page.emulate_media(color_scheme="light")
             page.goto("/about")
             expect(page.locator("html")).to_have_attribute("data-theme", "light")
