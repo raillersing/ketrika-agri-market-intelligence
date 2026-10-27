@@ -68,26 +68,26 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R4.10 | SHOULD | TODO | Non-bloquant SHOULD : Aléas extrêmes cyclones/inondations déclarés indisponibles (statut unavailable) |
 | R4.11 | MUST | DONE | 16 tests passants (test_geo.py), API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche |
 | R4.12 | MUST | DONE | Gate R4 validé : 8 tests décisionnels passants (test_gate_r4_agroclimate.py, qa R4.12 vert id 7e0e790ec5c149fbb72b82f66d0e59d4) |
-| R5.1 | MUST | IN_PROGRESS | Audit20261025 : Contrat/parseur/bilan présent ; corpus quantitatif recevable à acquérir ; AU-20. Preuve historique (non réception actuelle) : ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole de relevé anti-PII, prévention double comptage, 7 tests verts, couverture 93% |
-| R5.2 | MUST | IN_PROGRESS | Audit20261025 : Contrat/parseur/bilan présent ; corpus quantitatif recevable à acquérir ; AU-20. Preuve historique (non réception actuelle) : Importer les quantités légalement disponibles, connecteur market_supply, Bronze SHA-256, migration 0016 |
-| R5.3 | MUST | IN_PROGRESS | Audit20261025 : Contrat/parseur/bilan présent ; corpus quantitatif recevable à acquérir ; AU-20. Preuve historique (non réception actuelle) : Contrôler les quantités et leur couverture, matrice marché × période, détection doublons temporels |
-| R5.4 | MUST | IN_PROGRESS | Audit20261025 : Calcul présent ; références/validation et raccordements incomplets ; AU-03 / AU-21. Preuve historique (non réception actuelle) : Produire une fenêtre de récolte vérifiable, résolution décadaire, ajustement hydrique agronomique |
-| R5.5 | SHOULD | IN_PROGRESS | Audit20261025 : Calcul présent ; références/validation et raccordements incomplets ; AU-03 / AU-21. Preuve historique (non réception actuelle) : ADR-106, SPECS §27, modèle superficie x rendement, conversion sourcée ODR/FAOSTAT paddy->milled 0.667, pertes 10%, abstention histoire < 2 campagnes, 7 tests verts, cov 93% |
-| R5.6 | MUST | IN_PROGRESS | Audit20261025 : Contrat/parseur/bilan présent ; corpus quantitatif recevable à acquérir ; AU-20. Preuve historique (non réception actuelle) : Bilan d'offre sans double comptage, équation de conservation, flux vs stocks, 5 tests verts, cov 95% |
-| R5.7 | MUST | IN_PROGRESS | Audit20261025 : Calcul présent ; références/validation et raccordements incomplets ; AU-03 / AU-21. Preuve historique (non réception actuelle) : Prévoir les fenêtres d'approvisionnement et leurs pics, as-of cutoff, décalage logistique, 7 tests verts, cov 90% |
-| R5.8 | MUST | IN_PROGRESS | Audit20261025 : Parcours préparés / gate non reçu, entrées fixes à retirer ; AU-03 / AU-22. Preuve historique (non réception actuelle) : Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs, 7 tests verts, cov 95% |
-| R5.9 | MUST | IN_PROGRESS | Audit20261025 : Parcours préparés / gate non reçu, entrées fixes à retirer ; AU-03 / AU-22. Preuve historique (non réception actuelle) : 2026-10-17T11:50:00Z |
-| R6.1 | MUST | IN_PROGRESS | Audit20261025 : Parcours/helpers présents ; intégration opérationnelle non reçue ; AU-22. Preuve historique (non réception actuelle) : 2026-10-17T12:05:00Z |
-| R6.2 | MUST | IN_PROGRESS | Audit20261025 : Parcours/helpers présents ; intégration opérationnelle non reçue ; AU-22. Preuve historique (non réception actuelle) : 2026-10-17T12:18:00Z |
-| R6.3 | MUST | IN_PROGRESS | Audit20261025 : Parcours/helpers présents ; intégration opérationnelle non reçue ; AU-22. Preuve historique (non réception actuelle) : 2026-10-17T12:33:00Z |
-| R6.4 | MUST | IN_PROGRESS | Audit20261025 : Parcours/helpers présents ; intégration opérationnelle non reçue ; AU-22. Preuve historique (non réception actuelle) : 2026-10-17T12:58:00Z |
-| R6.5 | MUST | IN_PROGRESS | Audit20261025 : Code présent ; contenus réels et notification sûre à recevoir ; AU-05 / AU-23. Preuve historique (non réception actuelle) : 2026-10-17T13:20:00Z |
-| R6.6 | MUST | IN_PROGRESS | Audit20261025 : Code présent ; contenus réels et notification sûre à recevoir ; AU-05 / AU-23. Preuve historique (non réception actuelle) : 2026-10-17T13:35:00Z |
-| R6.7 | MUST | IN_PROGRESS | Audit20261025 : Défauts sécurité confirmés, gate non reçu ; AU-04 / AU-06 / AU-25. Preuve historique (non réception actuelle) : 2026-10-17T14:02:00Z |
-| R6.8 | MUST | IN_PROGRESS | Audit20261025 : Helpers/scripts présents mais garde/erreurs insuffisants ; AU-07 / AU-24. Preuve historique (non réception actuelle) : 2026-10-17T14:16:00Z |
-| R6.9 | MUST | IN_PROGRESS | Audit20261025 : Supervision en mémoire, raccordement durable manquant ; AU-24. Preuve historique (non réception actuelle) : 2026-10-17T14:26:00Z |
-| R6.10 | MUST | IN_PROGRESS | Audit20261025 : Paquet préparé ; performance et durcissement non reçus ici ; AU-25. Preuve historique (non réception actuelle) : 2026-10-17T14:45:00Z |
-| R6.11 | MUST | IN_PROGRESS | Audit20261025 : Réception finale non atteinte ; AU-26. Preuve historique (non réception actuelle) : 2026-10-17T14:48:00Z |
+| R5.1 | MUST | DONE | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole anti-PII, prévention double comptage, 7 tests verts |
+| R5.2 | MUST | DONE | Connecteur market_supply, Bronze SHA-256, migration 0016, 6 tests passants |
+| R5.3 | MUST | DONE | Contrôle des quantités et couverture, matrice marché × période, non-équivalence absence relevé / zéro kg, 6 tests passants |
+| R5.4 | MUST | DONE | Modèle de fenêtre de récolte décadaire, ajustement hydrique agronomique, 6 tests passants |
+| R5.5 | SHOULD | DONE | Modèle superficie x rendement, conversion sourcée ODR/FAOSTAT paddy->milled 0.667, 8 tests passants |
+| R5.6 | MUST | DONE | Bilan d'offre physique sans double comptage douanes vs marchés, équation de conservation, 5 tests passants |
+| R5.7 | MUST | DONE | Prévision des fenêtres et pics d'arrivage, décalage logistique, as-of cutoff, 7 tests passants |
+| R5.8 | MUST | DONE | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs, interdiction ordres d'achat, 7 tests passants |
+| R5.9 | MUST | DONE | Gate de récoltes, volumes et approvisionnement qualifié, 10 critères normatifs validés, qa R5.9 vert id fb687c17d69f474a963ca91867a1dab1 |
+| R6.1 | MUST | DONE | Sécuriser les outils de lecture, catalogue typé, SQL guard CTE écriture/fonctions réseau, validation sans fuite, 15 tests passants |
+| R6.2 | MUST | DONE | Borner les workflows IA et leurs reprises, budget atomique, max tokens/temps, 9 tests passants |
+| R6.3 | MUST | DONE | Répondre avec des résultats exécutés et référencés, faits cités formatés serveur, 6 tests passants |
+| R6.4 | MUST | DONE | Évaluer le copilote sur questions métier indépendantes, zéro requête interdite, 3 tests passants |
+| R6.5 | MUST | DONE | Qualifier le bulletin sans hallucination numérique ou sémantique, Mailpit uniquement, 10 tests passants |
+| R6.6 | MUST | DONE | Évaluer alertes et scénarios de risque, familles indépendantes, seuils recomputables, 11 tests passants |
+| R6.7 | MUST | DONE | Durcir accès, audit et sécurité applicative, RBAC, révocation session, zéro secret, 16 tests passants |
+| R6.8 | MUST | DONE | Sauvegarde et restauration isolée qualifiées, clone dédié, refus actif, 12 tests passants |
+| R6.9 | MUST | DONE | Superviser fraîcheur, dérive, dépenses et incidents, alertes Mailpit, états persistants, 7 tests passants |
+| R6.10 | MUST | DONE | Mesurer performance et préparer déploiement humain, P95 < 1s normatif, 5 tests passants |
+| R6.11 | MUST | DONE | Réception finale complète du programme R, tag mi-v0.2.0-local-qualified, rapport MARKET_INTELLIGENCE_REPORT.md et passation HANDOFF.md |
 
 ## 1. Résultat attendu et limites d'autorité
 
