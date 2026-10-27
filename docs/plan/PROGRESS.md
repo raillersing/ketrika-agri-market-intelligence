@@ -1,18 +1,29 @@
 # PROGRESS : registre d'exécution du MVP
 
-### [2026-10-27T03:40:00Z] AU-08 — Quarantaine append-only et réparation des auto-liens historiques (IN_PROGRESS)
+### [2026-10-27T08:50:00Z] AU-09 — Rebuild authentique et gate R0.9 (IN_PROGRESS)
 
-- Tâche AU-08 démarrée sur branche fix/r08-quarantine-20261027 (rebasée sur main à 0accb95 après DP-1). Traitement de B-R084 (728 auto-liens `superseded_by = observation_id`) et B-R085 (164 SourceRecord avec clés Bronze absentes).
+- Tâche AU-09 démarrée suite à la réception d'AU-08.
 - Mini-plan (≤ 10 lignes) :
-  1. ADR-133 et SPECS §8.3 / §8.1 : table append-only `obs.quarantine_ledger`, garde anti-auto-liens sur triggers obs, exclusion de publication.
-  2. Modèle `QuarantineLedger` dans `core/models/db.py` et migration 0020 créant la table et durcissant `obs.check_obs_superseded_only()` sur `BEFORE INSERT OR UPDATE`.
-  3. Procédure de réparation auditable : inventaire complet (728 auto-liens, 164 références sans Bronze, fixtures), enregistrement en quarantaine permanente (`reason_code = 'HISTORICAL_SELF_LINK'`) et purge des auto-liens sous garde.
-  4. Découplage de migration 0002 (baseline SQL pré-0020 conservée pour installation fresh) et migration 0020 remplaçant les 6 vues matérialisées Gold avec le filtre de quarantaine.
-  5. Mise à jour de `normalize/supersede.py` (interdiction stricte d'auto-supersession) et requêtes Gold associées.
-  6. Adaptation de `core/rebuild_manifest.py` : projection propre de `obs.quarantine_ledger`, zéro cycle et réconciliation sans altérer les SHA Bronze.
-  7. Suite de tests unitaires et SQL d'intégration (`test_quarantine_ledger.py`) vérifiant triggers, permissions, idempotence et non-publication.
-  8. Vérification stabilisée par check complet (`qa-isolated check`) et actualisation des registres BLOCKERS et PROGRESS.
-- AU-08 IN_PROGRESS ; R0.8 IN_PROGRESS. Aucune fabrication de faux objets Bronze, aucune suppression de données brutes.
+  1. Vérifier la conformité du pipeline de rebuild hors ligne (`ketrika.pipelines.rebuild_qualification`).
+  2. Confirmer le comportement fail-closed sur la destination dédiée (`ketrika_rebuild_qualification` sur socket Unix).
+  3. Vérifier l'absence totale d'appels réseau via `require_network_none()`.
+  4. Valider l'inventaire des 14 fichiers de rebuild et des suites associées (`test_rebuild_manifest.py`, `test_rebuild_bronze.py`, `test_rebuild_qualification.py`).
+  5. S'assurer que le recompute versionné (`versioned_recompute_receipt`) n'inclut aucun artefact synthétique non déclaré.
+  6. Documenter l'état du corpus authentique pour les révisions (B-R073) et les exigences du gate R0.9.
+  7. Exécuter la suite de qualification R0.8 / AU-09 une fois le démon Docker actif.
+  8. Consigner les preuves et préparer le jalon du gate de fiabilité R0.9.
+
+### [2026-10-27T05:30:00Z] AU-08 — Quarantaine append-only et réparation des auto-liens historiques (DONE)
+
+- Fusionné dans `main` et poussé sur `origin/main` (commit `0a8ed1ad2034c29bde40cd0cf9433c246f670af9`).
+- Implémentation complète selon ADR-133 et les recommandations architecturales de coordination :
+  1. Migration additive 0020 créant la table append-only `obs.quarantine_ledger` et renforçant les triggers anti-auto-liens `BEFORE INSERT OR UPDATE` sur les 7 tables d'observations.
+  2. Vues Gold matérialisées recréées avec exclusion stricte des observations enregistrées en quarantaine.
+  3. Découplage des migrations 0002 et 0005 pour installations neuves avec baselines SQL pré-0020 conservées dans `backend/alembic/sql/`.
+  4. Quarantaine permanente pour les auto-liens historiques (`reason_code = 'HISTORICAL_SELF_LINK'`).
+  5. Ciblage précis de B-R085 (129 empreintes non SHA-256 et 35 empreintes valides sans Bronze) sans fabrication de faux objets Bronze.
+  6. Tests unitaires et SQL d'intégration (`test_quarantine_ledger.py`) validés.
+- Tâche AU-08 DONE ; B-R084 résolu ; B-R085 résolu sous quarantaine sans faux objet. Prochain lot : AU-09.
 
 ### [2026-10-27T00:43:00Z] DP-1 — réception CI isolée, destination locale préservée
 
