@@ -111,15 +111,26 @@ def validate_compose(document: str) -> None:
             raise QualificationSafetyError(f"Unsafe network/environment privileges: {name}")
         if service.get("networks") != ["qualification"]:
             raise QualificationSafetyError(f"Non-isolated service network: {name}")
+        source_mount = {
+            "api": "qa_backend_source:/app/src",
+            "browser": "qa_backend_source:/app/src",
+            "web": "qa_web_source:/app/src",
+        }.get(name)
+        if source_mount and source_mount not in service.get("volumes", []):
+            raise QualificationSafetyError("Qualification source must mount only /app/src")
         for mount in service.get("volumes", []):
             if not isinstance(mount, str):
                 raise QualificationSafetyError("Unsupported qualification mount format")
             source, _, _ = mount.partition(":")
+            if source in {"qa_backend_source", "qa_web_source"} and mount != source_mount:
+                raise QualificationSafetyError("Qualification source mount overlaps dependencies")
             if source.startswith("."):
                 if not mount.endswith(":ro"):
                     raise QualificationSafetyError("Host source must be mounted read-only")
             elif source not in volumes:
                 raise QualificationSafetyError("Mount references a foreign volume")
+    if services["web"].get("command") != ["sh", "/workspace/scripts/qa-web.sh", "serve"]:
+        raise QualificationSafetyError("Browser qualification must serve the completed web build")
     environment = services["api"].get("environment", {})
     if not isinstance(environment, dict):
         raise QualificationSafetyError("Qualification environment must be explicit")

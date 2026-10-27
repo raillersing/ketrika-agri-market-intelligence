@@ -101,7 +101,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-11 — Qualifier les sources du socle et l'actualisation
 
-- **Statut :** DONE · P1 · rôle Data/Collecte/QA · parents R1.3–R1.9/R1.11/R1.12/R1.13 · dépendances : AU-10 DONE.
+- **Statut :** IN_PROGRESS · P1 · rôle Data/Collecte/QA · parents R1.3–R1.9/R1.11/R1.12/R1.13 · dépendances : AU-10 DONE.
 - **Preuve de réception :** 93 tests unitaires et intégration validés en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1`, 0 échec, 0 erreur, 0 skipped.
   - R1.3 INSTAT NIPC : 10 tests (9 unitaires, 1 intégration, 15.65s, `qa R1.3` vert id `cdec70295dd04b2c9b70f69c2e72a8fe`).
   - R1.4 MiASA ODR : 12 tests (11 unitaires, 1 intégration, 236.88s, extraction PDF multi-éditions et 0 ND/NA converti en 0).
@@ -119,7 +119,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-12 — Contrats, normalisation, macro et couverture fiables
 
-- **Statut :** DONE · P1 · rôle Data/Backend · parents R2.1–R2.9 · dépendance : AU-11 DONE.
+- **Statut :** IN_PROGRESS · P1 · rôle Data/Backend · parents R2.1–R2.9 · dépendance : AU-11 DONE.
 - **Preuve de réception :** 225 tests unitaires et intégration validés en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1`, 0 échec, 0 erreur, 0 skipped.
   - R2.1 Contrats temps, origine et macro : 6 tests passants (`test_contracts_time_origin_macro.py`, `qa R2.1` vert id `b3aa1d9179c7482095a0da8c5019a19c`).
   - R2.2 Taxonomie, unités et grains : 38 tests passants (`test_taxonomy.py` 19, `test_taxonomy_units_audit.py` 19, gardes physiques massique/volumique, alias <0.90 en revue).
@@ -133,7 +133,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-13 — Marché/économie, vraie carte et réception R2
 
-- **Statut :** DONE · P1 · rôle Frontend/Geo/QA · parents R2.10/R2.11 · dépendances : AU-12 et R2.9 DONE.
+- **Statut :** IN_PROGRESS · P1 · rôle Frontend/Geo/QA · parents R2.10/R2.11 · dépendances : AU-12 et R2.9 DONE.
 - **Preuve de réception :**
   - R2.10 Vues marché et économie : 80 tests vitest passants (13 suites, 3.51s), TypeScript check 0 erreur (`tsc --noEmit`), ESLint 0 warning/erreur (`next lint`), Next.js build de production validé (17 routes statiques/dynamiques compilées sans erreur).
   - R2.11 Gate observatoire décisionnel : 6 tests décisionnels Q1–Q5 passants (`test_gate_r2_decision_observatory.py`, `qa R2.11` vert id `dec203303fb54f8c8ae46a2f57ebf483`) et suite Playwright e2e exécutée en conteneur Chromium (`scripts/qa-e2e.py`) validée 100% (26 vérifications conformes : authentification, thèmes light/dark, navigation mobile 390px, formatage, absence d'inventions, déconnexion/révocation inter-processus).
@@ -143,14 +143,14 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-14 — Dataset SQL as-of et éligibilité réelle
 
-- **Statut :** DONE · P1 · rôle ML/Data · parents R3.1/R3.2 · dépendances : AU-12/AU-13 DONE.
+- **Statut :** IN_PROGRESS · P1 · rôle ML/Data · parents R3.1/R3.2 · dépendances : AU-12/AU-13 DONE.
 - **Preuve de réception :** 24 tests passants en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1` :
   - R3.1 Éligibilité des séries et cohortes : 16 tests passants (`test_ml_series_eligibility.py`, clé 5 composantes, 36m min, 12m récents, cohortes observée/imputée séparées).
   - R3.2 Datasets historiques as-of : 8 tests passants (`test_ml_as_of_dataset.py`, traçabilité C2/C4 point-in-time, empreinte SHA-256 canonique, partitionnement sans fuite temporelle).
 
 ### AU-15 — Sélection, calibration et holdout branchés
 
-- **Statut :** DONE · P1 · rôle ML · parents R3.3–R3.6 (R3.6 SHOULD) · dépendance : AU-14 DONE.
+- **Statut :** IN_PROGRESS · P1 · rôle ML · parents R3.3–R3.6 (R3.6 SHOULD) · dépendance : AU-14 DONE.
 - **Preuve de réception :** 31 tests passants en conteneur Docker isolé avec `HTTP_OFFLINE=1` :
   - R3.3 Modèles et baselines : 9 tests passants (`test_ml_models_conformance.py`, NaiveLast, SeasonalNaive annuel, AutoETS, AutoARIMA, anti-triche A09).
   - R3.4 Protocole de sélection et holdout : 6 tests passants (`test_ml_backtest_protocol.py`, étanchéité de sélection, 6 origines, holdout test indépendant).
@@ -159,7 +159,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-16 — Publication ML, évaluations et gate R3
 
-- **Statut :** DONE · P1 · rôle ML/Backend/QA · parents R3.7–R3.9 · dépendances : AU-15/R2.9/R2.10 DONE.
+- **Statut :** IN_PROGRESS · P1 · rôle ML/Backend/QA · parents R3.7–R3.9 · dépendances : AU-15/R2.9/R2.10 DONE.
 - **Preuve de réception :** 17 tests passants en conteneur Docker isolé avec `HTTP_OFFLINE=1` :
   - R3.7 Publication et abstention normatives : 4 tests passants (`test_ml_forecast_publication.py`, seuils MAPE <= 15% et Directional >= 60%, refus si abstention > 40%).
   - R3.8 Évaluations échues et explicabilité : 7 tests passants (`test_ml_matured_evaluation.py`, suivi des échéances, comparaison aux observations réelles).
@@ -170,7 +170,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-17 — Acquérir et archiver les produits agroclimatiques
 
-- **Statut :** DONE · P1 · rôle Geo/Data · parents R4.1–R4.5 · dépendances : AU-14–AU-16 DONE.
+- **Statut :** IN_PROGRESS · P1 · rôle Geo/Data · parents R4.1–R4.5 · dépendances : AU-14–AU-16 DONE.
 - **Preuve de réception :** 36 tests passants en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1` :
   - R4.1 Contrats agroclimatiques : 8 tests passants (`test_geo_agroclimate_contracts.py`, modèle météo observée vs prévue, calendriers culturaux).
   - R4.2 CHIRPS v2.0 : 7 tests passants (`test_chirps.py`, double cycle préliminaire/final, nodata vs 0 mm, découpage Madagascar).
@@ -180,7 +180,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-18 — Anomalies, calendriers, carte climat et gate R4
 
-- **Statut :** DONE · P1 · rôle Geo/Frontend · parents R4.6/R4.7/R4.11/R4.12 · dépendances : AU-17 DONE.
+- **Statut :** IN_PROGRESS · P1 · rôle Geo/Frontend · parents R4.6/R4.7/R4.11/R4.12 · dépendances : AU-17 DONE.
 - **Preuve de réception :** 32 tests passants en conteneur Docker isolé avec `HTTP_OFFLINE=1` :
   - R4.6 Anomalies agroclimatiques : 7 tests passants (`test_geo_anomalies.py`, baseline N>=10 ans, abstention si insuffisant, agrégation zonale).
   - R4.7 Calendriers culturaux & corridors : 8 tests passants (`test_crop_calendar_versioning.py`, versioning des calendriers, corridors commerciaux étayés).

@@ -1,5 +1,13 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR139 : un429 de vérification de session reste429 avec Retry-After sur page protégée ; le cookie est conservé, accès refusé. Proxy expose X-RateLimit-Limit/Remaining existants. Le parcours QA respecte60/min par sondes authentifiées :200 et quota valides obligatoires, sous20 restantes une pause60s consignée puis une seule vérification. Aucun retry d'erreur ni modification du limiteur ;26 scénarios inchangés, nouvelle réception complète.
+
+ADR138 : le service web QA navigateur exécute qa-web.sh serve : artefact standalone du build complet et statiques reçus, BUILD_ID/server.js obligatoires, aucun build ni repli dev implicite. Garde Compose et négatifs ; middleware et26 scénarios inchangés. Nouveau check complet nécessaire après ce changement d'environnement.
+
+ADR137 : CI sur ubuntu-24.04 explicite. Avant qa-build, le seul job GitHub-hosted éphémère vérifie son identité puis libère les quatre SDK inutilisés /usr/local/lib/android, /usr/share/dotnet, /opt/ghc et /usr/local/.ghcup avec mesures avant/après. Aucun nettoyage local, de volume, d'image ou du cache d'outils Actions. Images verrouillées et réception complète inchangées.
+
+ADR136 : sources QA backend_source_r06/web_source_r06 montées exclusivement sur/app/src pour éviter la copie implicite des dépendances dans le volume parent/app. Dépendances et.next en volumes dédiés r05 inchangés ; tests/configurations copiés dans chaque couche éphémère depuis le snapshot readonly. Utilisateurs non-root et gardes d'isolation conservés. Aucun ancien volume modifié/supprimé ; réception complète et mesure de stockage obligatoires.
+
 ADR135 : le scénario navigateur de première lecture bulletin autorise une seule relecture après le503 exact de vérification de session, uniquement après /api/v1/auth/me200 réel ; incident et reprise inscrits au reçu. Autres503/panne persistante restent rouges. Middleware5s et P95 API inchangés. Les routes d'approbation bulletin et de suivi alerte valident leur transaction avant de confirmer la réussite, sans émission externe.
 
 ADR-134 : les migrations antérieures à0020 utilisent leurs définitions SQL historiques sans dépendance sur obs.quarantine_ledger. Le contrôle de compatibilité0018 reçoit un répertoire SQL historique explicite ; les appels runtime gardent les définitions courantes.0020 élargit alembic_version.version_num avant enregistrement de son identifiant publié. La réparation fusionnée exige encore son check complet et26 E2E avant réception ; aucun DONE déduit des seuls ciblés.

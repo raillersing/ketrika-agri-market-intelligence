@@ -8,6 +8,17 @@ afterEach(() => {
 });
 
 describe("same-origin API proxy", () => {
+  it("preserves the public quota headers and refusal without forwarding other upstream headers", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 429, headers: {
+      "Retry-After": "59", "X-RateLimit-Limit": "60", "X-RateLimit-Remaining": "0", "x-internal-diagnostic": "private",
+    } })));
+    const response = await GET(new NextRequest("http://web:3000/api/v1/auth/me"), { params: Promise.resolve({ path: ["v1", "auth", "me"] }) });
+    expect(response.status).toBe(429);
+    expect(response.headers.get("retry-after")).toBe("59");
+    expect(response.headers.get("x-ratelimit-limit")).toBe("60");
+    expect(response.headers.get("x-ratelimit-remaining")).toBe("0");
+    expect(response.headers.get("x-internal-diagnostic")).toBeNull();
+  });
   it("forwards bounded credentials, query and HttpOnly cookies", async () => {
     vi.stubEnv("API_INTERNAL_URL", "http://api:8000");
     const fetchMock = vi.fn().mockResolvedValue(new Response("{\"token\":\"fixture\"}", {

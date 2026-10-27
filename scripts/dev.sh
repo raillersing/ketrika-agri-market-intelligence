@@ -47,7 +47,7 @@ qa_owned_resource() {
 qa_prepare() {
   docker run --rm --network none --mount "type=bind,source=$REPO_ROOT,target=/workspace,readonly" -e PYTHONPATH=/workspace/backend/src ketrika-backend:qa-codex-r05 python -m ketrika.core.qualification compose /workspace/docker-compose.qualification.yml
   qa_owned_resource network ketrika_qualification_main_final_network
-  for qa_volume in pgdata bronze backend_venv_r05 backend_source_r05 web_source_r05 web_node_modules_r05 web_next_r05 browser_venv_r05; do
+  for qa_volume in pgdata bronze backend_venv_r05 backend_source_r06 web_source_r06 web_node_modules_r05 web_next_r05 browser_venv_r05; do
     qa_owned_resource volume "ketrika_qualification_main_final_$qa_volume"
   done
   qa_compose config --quiet

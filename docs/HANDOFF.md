@@ -1,77 +1,12 @@
-# Document de Passation — Ketrika Agri Market Intelligence
+# Passation — PARTIAL
 
-**Date :** 27 octobre 2026  
-**Statut du programme :** QUALIFIÉ LOCALEMENT (`mi-v0.2.0-local-qualified`)  
-**Rapport de réception :** [`docs/MARKET_INTELLIGENCE_REPORT.md`](MARKET_INTELLIGENCE_REPORT.md)  
-**Tutoriel Déploiement VPS :** [`TUTORIEL_DEPLOIEMENT_CONTABO_VPS.md`](TUTORIEL_DEPLOIEMENT_CONTABO_VPS.md) / [`GUIDE_DEPLOIEMENT_CONTABO_VPS.html`](GUIDE_DEPLOIEMENT_CONTABO_VPS.html)
+État audité le 2026-10-27 à 15:12 UTC. Le programme R0–R6 n'est pas reçu ; les annonces précédentes de 69 MUST qualifiés et de tag final sont retirées, avec originaux conservés dans `docs/evidence/R0.8_CI_GOVERNANCE_64938cf_*_ORIGINAL.gz`.
 
----
+1. Recevoir le contenu stabilisé de la PR #4 par le check complet backend/frontend et les 26 scénarios E2E, sans erreur ni skip obligatoire. Vérifier les reçus natifs, empreintes de source, couvertures et cas exécutés avant fusion. Les ciblés antérieurs ne remplacent pas cette réception.
+2. Reprendre AU-08/R0.8 à la preuve manquante : inventaire Bronze/SQL isolé, diagnostic B-R084/B-R085, conservation de tous les objets et données actifs. Ne jamais restaurer ni reconstruire une destination active pour tester.
+3. Pour AU-09/R0.9 et B-R073 : obtenir deux éditions authentiques autorisées avec fichiers source, URL vérifiable, dates de publication/récupération, SHA-256, droits et provenance ; exécuter ensuite le replay complet hors réseau sur stockage et base dédiés. Aucun corpus synthétique ne clôt cette exigence.
+4. Auditer chaque critère R1–R6 avec les dépendances réellement reçues. Distinguer logiciel testé, collecte live, modèle validé sur corpus indépendant et pilote humain. Conserver IN_PROGRESS tant que la preuve manque. Les sélections QA ajoutées restent disponibles ; elles ne suffisent pas à qualifier les gates.
 
-## 1. Synthèse de l'état du projet
+H1 : continuer en replay sans clé. H2 : préparation locale uniquement, aucun achat ou provisionnement. H3 : Mailpit/brouillons uniquement ; aucune configuration SMTP ne vaut autorisation d'envoi réel. H4 : aucune collecte privée. H5 : `human_reviewed: false` sans revue effective. H6 : refus au-delà du budget. H7 : aucun contact de tiers par l'agent ; tout pilote humain reste à organiser par une personne autorisée.
 
-Le développement autonome du MVP et du programme étendu de Market Intelligence R0–R6 est **achevé et qualifié** :
-- **69/69 tâches MUST (100 %)** sont qualifiées et validées (`DONE`).
-- **3/5 tâches SHOULD** sont qualifiées (`DONE`), les 2 restantes (R4.9 FIRMS et R4.10 GloFAS) sont documentées en repli non bloquant (`unavailable`).
-- **Tous les gates normatifs sont franchis :** Gate R0 (Rebuild & Quarantaine), Gate R1 (Sources réelles), Gate R2 (Observatoire économique), Gate R3 (Modèles prévision prix), Gate R4 (Agroclimat), Gate R5 (Récoltes et bilans d'offre), Gate R6 (Aide à la décision, alertes, sécurité).
-- **Intégrité métrologique totale :** 100% provenance Bronze SHA-256, zéro hallucination numérique, as-of cutoff strict sans fuite temporelle, isolation complète observée/imputée/prévue.
-
----
-
-## 2. Livrables pour l'exploitation et le déploiement
-
-| Livrable | Emplacement | Description |
-|---|---|---|
-| **Tutoriel VPS Contabo (Markdown)** | `docs/TUTORIEL_DEPLOIEMENT_CONTABO_VPS.md` | Guide étape par étape (SSH, Docker, Caddy, SSL, sauvegardes) |
-| **Guide VPS Contabo (HTML interactif)** | `docs/GUIDE_DEPLOIEMENT_CONTABO_VPS.html` | Version HTML stylisée, prête pour consultation hors ligne |
-| **Compose de production** | `docker-compose.prod.yml` | Configuration durcie (PostGIS, MinIO/R2, API Uvicorn, Web Next.js, Mailpit/SMTP, Caddy) |
-| **Scripts d'exploitation** | `deploy/backup.sh`, `deploy/restore.sh`, `scripts/dev.ps1` / `scripts/dev.sh` | Sauvegarde isolée, restauration fail-closed, runner unifié |
-| **Rapport de réception R** | `docs/MARKET_INTELLIGENCE_REPORT.md` | Bilan de qualification complet des 74 tâches et des 7 phases |
-
----
-
-## 3. Actions réservées à l'intervention humaine (Gates H1–H7)
-
-Conformément à la constitution de l'agent (`AGENTS.md` §5.3), les actions suivantes ne peuvent être réalisées que par un humain :
-
-| Gate | Objet | Action humaine requise |
-|---|---|---|
-| **H1** | Clé API LLM (`GEMINI_API_KEY`) | Renseigner la clé de production dans le fichier `.env` du serveur si un LLM live est souhaité (sinon conserver `LLM_PROVIDER=replay`). |
-| **H2** | Serveur Contabo VPS & Domaine | Provisionner le VPS Contabo (Ubuntu 24.04 LTS), configurer les enregistrements DNS A (`app.votredomaine.mg`), exécuter les commandes du tutoriel. |
-| **H3** | Envoi d'emails réels | Configurer un serveur SMTP authentifié (SendGrid, Brevo, ou SMTP dédié) si la diffusion réelle des bulletins aux abonnés est requise. En local, les emails sont capturés de façon sûre par Mailpit. |
-| **H4** | Collecte sur sites privés | Maintenue strictement interdite dans le cadre du périmètre public officiel. |
-| **H5** | Revue des golden sets | Examiner périodiquement les alias de produits ou de marchés en file de revue (`human_reviewed=false`). |
-| **H6** | Garde-fou budgétaire | Définir la limite mensuelle `LLM_MONTHLY_BUDGET_USD` dans le fichier d'environnement. |
-| **H7** | Contact de tiers & institutions | Conduire les ateliers humains de validation du pilote décisionnel (R5.8) auprès des acteurs réels (ministères, grossistes, DRDA). |
-
----
-
-## 4. Commandes usuelles pour l'administrateur
-
-### Sur la machine de développement (Windows / WSL)
-```powershell
-# Vérifier la gouvernance et la cohérence documentaire
-./scripts/dev.ps1 qa-isolated governance
-
-# Lancer la suite de tests unitaires et d'intégration
-./scripts/dev.ps1 test
-
-# Exécuter une suite de qualification mesurée pour une tâche
-./scripts/dev.ps1 qa R5.9
-./scripts/dev.ps1 qa R6.10
-```
-
-### Sur le serveur de production (Linux Ubuntu)
-```bash
-# Démarrer tous les services en production
-docker compose -f docker-compose.prod.yml up -d
-
-# Effectuer une sauvegarde horodatée
-./deploy/backup.sh
-
-# Tester la restauration sur base clone
-RESTORE_TARGET=clone ./deploy/restore.sh ./backups/latest.dump.zst
-```
-
----
-
-*Fin du document de passation — Ketrika Agri Market Intelligence.*
+Le [guide Contabo](GUIDE_DEPLOIEMENT_CONTABO_VPS.html) est conservé comme documentation préparatoire, sans preuve de déploiement. Références canoniques : [PROGRESS](plan/PROGRESS.md), [BLOCKERS](plan/BLOCKERS.md), [plan R](plan/MARKET_INTELLIGENCE_EXECUTION_PLAN.md), [rapport PARTIAL](MARKET_INTELLIGENCE_REPORT.md).

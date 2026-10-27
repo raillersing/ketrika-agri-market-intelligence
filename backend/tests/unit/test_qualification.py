@@ -32,6 +32,37 @@ def test_actual_profile_and_environment():
 
 
 @pytest.mark.parametrize(
+    "command", [None, ["pnpm", "dev"], ["sh", "/workspace/scripts/qa-web.sh", "dev"]]
+)
+def test_browser_cannot_use_a_development_server(command):
+    spec = compose_spec()
+    spec["services"]["web"]["command"] = command
+    with pytest.raises(QualificationSafetyError, match="completed web build"):
+        validate_compose(yaml.safe_dump(spec))
+
+
+@pytest.mark.parametrize("service", ["api", "web", "browser"])
+@pytest.mark.parametrize("target", ["/app", "/app/.venv", "/app/node_modules", "/workspace"])
+def test_source_volume_cannot_shadow_dependencies_or_repository(service, target):
+    spec = compose_spec()
+    mounts = spec["services"][service]["volumes"]
+    for index, mount in enumerate(mounts):
+        if mount.startswith(("qa_backend_source:", "qa_web_source:")):
+            mounts[index] = mount.split(":")[0] + ":" + target
+    with pytest.raises(QualificationSafetyError, match="source"):
+        validate_compose(yaml.safe_dump(spec))
+
+
+@pytest.mark.parametrize("service", ["api", "web", "browser"])
+def test_extra_parent_source_mount_is_rejected(service):
+    spec = compose_spec()
+    source = "qa_web_source" if service == "web" else "qa_backend_source"
+    spec["services"][service]["volumes"].append(source + ":/app")
+    with pytest.raises(QualificationSafetyError, match="overlaps"):
+        validate_compose(yaml.safe_dump(spec))
+
+
+@pytest.mark.parametrize(
     "key",
     [
         "APP_ENV",

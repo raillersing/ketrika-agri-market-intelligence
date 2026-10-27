@@ -1,5 +1,33 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-139 | 2026-10-27 | Accepté avant code | Respect du quota pendant les parcours navigateur
+
+- CI40537966236 :2501 backend/590,07s et80 frontend verts,26Go libres ; E2E14/26 sur même503 carte. Le standalone ne supprime pas la cause. Reproduction privée réelle :60 lectures /auth/me passent,61e429/Retry-After59 ; même cookie sur/map donne503 générique. Le middleware masque le refus de débit, le parcours automatisé épuise le plafond60/min.
+- Préserver le429 et Retry-After sur page protégée, sans effacer le cookie ni autoriser la page. Proxy : exposer aussi les deux en-têtes quota publics existants. Login public reste utilisable ;401/403, révocation, délai5s et quotas inchangés.
+- Parcours : avant les navigations fonctionnelles authentifiées, sonder /api/v1/auth/me et vérifier200 + limite60 + restant valide. Sous20 requêtes restantes, attendre une fenêtre contractuelle complète60s, consigner la pause puis vérifier une fois le budget récupéré. Aucun retry d'un429/503, aucun changement d'identité, exemption, augmentation ou reset du limiteur. Tous scénarios et assertions conservés ; contrôles après logout sans sonde autorisante.
+- Vérifier les contre-exemples de quota/pause et la reproduction privée, puis check complet sur gel final. Les anciens rouges restent archivés. Les pauses ne prouvent ni latence ni capacité de marché.
+
+## ADR-138 | 2026-10-27 | Accepté avant code | Navigateur sur le build frontend reçu
+
+- CI40531231419 : 2498 backend/567,78s,80 frontend/13 suites et build verts ; R0.3 58 verts, négatif build vert.24Go libres avant E2E. Navigateur14/26, navigation carte refusée503 par vérification de session, sans exception JS. Aucune réception globale acquise.
+- Le profil sert next dev après avoir reçu next build. La compilation à la demande est une cause possible de contention, non démontrée par les journaux disponibles. Servir le standalone issu du build reçu avec ses statiques en QA navigateur ; refuser si BUILD_ID/server.js manquent, sans repli dev ni reconstruction implicite. Garde Compose imposant cette commande ; usages dev conservés.
+- Middleware, délai5s, révocation, assertions navigateur et seuils de performance inchangés. Réception complète sur nouveau gel et26 scénarios obligatoires ; un503 persistant restera un échec. Qualification logicielle seulement.
+
+## ADR-137 | 2026-10-27 | Accepté avant code | Espace de construction du runner CI éphémère
+
+- CI40529189214/86fdc2c : disque plein pendant qa-build, avant toute suite ; annotation122276979354 et journaux finaux indisponibles. Les nouveaux volumes source ne sont pas encore initialisés à ce stade ; ADR136 ne résout pas ce pic de construction.
+- Décision : fixer ubuntu-24.04 plutôt que le label mobile ubuntu-latest et, uniquement dans le job GitHub-hosted éphémère, retirer les SDK Android, .NET et Haskell préinstallés et inutilisés avant construction. Vérifier RUNNER_ENVIRONMENT=github-hosted, mesurer df et tailles avant/après ; ne retirer aucun volume Docker, image, dépôt ou cache d'outils Actions. Aucun nettoyage sur l'hôte partagé ni dans les points d'entrée locaux.
+- Source : https://github.com/actions/runner-images (version d'OS explicite pour éviter la migration implicite) et annotation GitHub signalant la migration ubuntu-latest vers26. Les quatre chemins sont fixes et ne contiennent aucune interpolation.
+- Les images verrouillées, commandes, sélections, assertions et seuils restent identiques. Réception complète sur le nouveau contenu obligatoire ; aucun gain disque revendiqué avant les mesures natives. Une relance identique sans correction ou un passage des tests en option sont rejetés.
+
+## ADR-136 | 2026-10-27 | Accepté avant code | Volumes QA de sources sans duplication de dépendances
+
+- CI40484252459/85acbca : check backend/frontend réussi, runner perdu durant navigateur ; annotation122121953659 System.IO.IOException No space left on device, aucun rapport final disponible. Ne pas attribuer ce résultat à un défaut applicatif ni le recevoir.
+- Mesure readonly des anciens volumes QA : backend_source_r05/.venv1893564Kio, web_source_r05/node_modules849944Kio, alors que ces dépendances ont aussi des volumes dédiés. Monter le volume de sources sur/app duplique implicitement ces répertoires au premier démarrage Docker.
+- Décision : nouveaux volumes backend_source_r06 et web_source_r06 montés seulement sur/app/src. Les dépendances r05 et.next restent dans leurs volumes dédiés ; tests/configurations restent copiés depuis le snapshot readonly dans la couche éphémère de chaque conteneur. Images et utilisateurs non-root inchangés. Gardes de profil imposant les deux destinations exactes ; aucun volume ancien supprimé ou nettoyé, aucun changement de DB/S3/réseau/points d'entrée.
+- Mesurer l'initialisation de volumes neufs et l'accès non-root aux sources/dépendances ; conserver df/docker system df avant navigateur dans CI. Tous scénarios, seuils, couvertures et commandes de réception conservés ; nouveau check complet obligatoire après ce changement d'environnement.
+- Alternative volume-nocopy avec/app entier écartée : volume neuf root-owned, écriture app refusée ; ne pas ajouter de conteneur applicatif root pour contourner ce défaut. Suppression de volumes ou d'images de réception rejetée.
+
 ## ADR-135 | 2026-10-27 | Accepté avant code | Relecture navigateur bornée après refus de session au démarrage
 
 - CI40476674632/50d322d : backend2483 et frontend80 verts ; navigateur15/26, arrivée au bulletin sur503 explicite « Vérification de session indisponible ». Contrôle privé distinct :15/26, approbation200 puis relecture draft ; commits manquants des routes bulletin/alerte corrigés conformément aux contrats existants.

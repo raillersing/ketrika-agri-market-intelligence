@@ -21,73 +21,73 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R0.5 | MUST | DONE | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Preuve historique (non réception actuelle) : 9559e75 : source-cell ; QA 327/20, Windows 718/35/build code 0, DB/Bronze préservés ; pas source live/modèle qualifiés |
 | R0.6 | MUST | DONE | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Preuve historique (non réception actuelle) : A/B1/B2/C intégrés main 173c41a ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118/snapshot exact/actif préservé ; logiciel reçu, pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Preuve historique (non réception actuelle) : main442a20c, source971702e : Windows1538/35/build, E2E9, inclusion160, empreinte exacte, préservation et gitleaks0 ; aucun KPI marché qualifié |
-| R0.8 | MUST | DONE | Rebuild hors ligne sur contenu figé, smoke prepare/replay sur socket Unix dédié, hash manifestes DB et Bronze identiques, recalage prévisions déterministe ; AU-09 (2f38abe, 71e87f5) |
-| R0.9 | MUST | DONE | Gate R0 franchi : suite QA R0.8 87/87 tests passants, replay 0 external routes, isolation réseau et preuve machine ; AU-09 (2f38abe) |
-| R1.1 | MUST | DONE | Requalification du registre sources.yaml (18 sources conformes au schéma Pydantic, séparation active/disabled/planned) ; AU-10 (6ccf36d) |
-| R1.2 | MUST | DONE | Moteur CatalogDiscoveryEngine, détection de dérive fail-closed et découverte d'éditions ; AU-10 (6ccf36d) |
-| R1.3 | MUST | DONE | Qualification INSTAT NIPC, découverte dynamique, multi-feuilles, conservation base 2011/2016 (10 tests verts, qa R1.3 vert) ; AU-11 |
-| R1.4 | MUST | DONE | Qualification MiASA ODR, CC-R authentique (12 tests verts, extraction 3 éditions PDF, 0 ND/NA converti en 0) ; AU-11 |
-| R1.5 | MUST | DONE | Qualification MinCC PPN, séparation prix plafond vs constaté, anti-PII, silence stock respecté (13 tests verts) ; AU-11 |
-| R1.6 | MUST | DONE | Qualification Douanes Stats, distinction flux mensuels vs totaux annuels, nomenclature SH (11 tests verts) ; AU-11 |
-| R1.7 | MUST | DONE | Qualification WFP HDX, politique disabled respectée sans bypass, gestion HXL et marchés non résolus (7 tests verts) ; AU-11 |
-| R1.8 | MUST | DONE | Qualification Banque mondiale RTFP, schéma C3 (wfp_fao), drapeaux d'imputation préservés (11 tests verts) ; AU-11 |
-| R1.9 | MUST | DONE | Qualification FAOSTAT, distinction paddy/blanchi, drapeaux d'estimation visibles (8 tests verts) ; AU-11 |
-| R1.10 | MUST | DONE | Requalification géographique, 23 régions Loi 2021-010 et 119 districts, géométries valides (24 tests géographiques verts) ; AU-10 (6ccf36d) |
-| R1.11 | MUST | DONE | Qualification NASA POWER, cohérence physique Tmin<=Tmax, sentinelles -999, politique disabled respectée (11 tests verts) ; AU-11 |
-| R1.12 | MUST | DONE | Actualisation, reprise idempotente, santé des sources et outbox API (20 tests verts) ; AU-11 |
-| R1.13 | MUST | DONE | Gate de collecte réelle R1 validé : l'ensemble des sources socles R1.3–R1.12 qualifiées unitairement et en intégration (93 tests verts, zéro réseau, 100% conformes CC-R) ; AU-11 |
-| R2.1 | MUST | DONE | 6 tests passants (test_contracts_time_origin_macro.py), C1-C4, métriques macro avec vintage/first_available_at, qa R2.1 vert id b3aa1d9179c7482095a0da8c5019a19c |
-| R2.2 | MUST | DONE | 38 tests passants (test_taxonomy.py, test_taxonomy_units_audit.py), conversions massiques/volumiques étayées, alias <0.90 en revue |
-| R2.3 | MUST | DONE | 43 tests passants (test_gold_dq_aggregation_audit.py 36, test_gold_dq.py 7 intégration), alignement calendaire, étanchéité de familles |
-| R2.4 | MUST | DONE | 16 tests passants (test_market_coverage_and_pilot.py), matrice SQL gold.market_coverage, pilote riz local/importé (Analamanga MDG11, Alaotra-Mangoro MDG31, Atsinanana MDG33 + National) |
-| R2.5 | MUST | DONE | 15 tests passants (test_instat_tbe.py), connecteur instat_tbe, ingestion Excel multi-éditions, fréquences réelles sans interpolation |
-| R2.6 | MUST | DONE | 17 tests passants (test_bfm_public.py), connecteur bfm_public, cours USD/EUR, jours ouvrés stricts |
-| R2.7 | MUST | DONE | 14 tests passants (test_omh_public.py), connecteur omh_public, gazole/super/pétrole, date d'effet vs date de publication |
-| R2.8 | MUST | DONE | 19 tests passants (test_economic_dashboard.py), tableau économique interprétable, dimensions étanches, fiches métriques, gestion stricte nullité |
-| R2.9 | MUST | DONE | 57 tests passants (test_api_extensions_and_limits.py 6, test_gold_availability_api.py 51), pagination [1, 1000], exports CSV/JSON alignés |
-| R2.10 | MUST | DONE | 80 tests vitest passants (13 suites, 3.51s), TypeScript 0 erreur, Next lint 0 erreur, build 17 routes compilées sans erreur |
-| R2.11 | MUST | DONE | Gate R2 validé : 6 tests décisionnels Q1-Q5 passants (test_gate_r2_decision_observatory.py, qa R2.11 vert id dec203303fb54f8c8ae46a2f57ebf483), suite Playwright e2e 26/26 conformes |
-| R3.1 | MUST | DONE | 16 tests passants (test_ml_series_eligibility.py), clé 5 composantes, grille sans compression, 36m min, 12m récents, cohortes |
-| R3.2 | MUST | DONE | 8 tests passants (test_ml_as_of_dataset.py), datasets historiques as-of C2/C4, traçabilité temporelle, empreinte SHA-256 canonique |
-| R3.3 | MUST | DONE | 9 tests passants (test_ml_models_conformance.py), références et baselines conformes, NaiveLast, SeasonalNaive, AutoETS, AutoARIMA |
-| R3.4 | MUST | DONE | 6 tests passants (test_ml_backtest_protocol.py), protocole trois phases, étanchéité de sélection, 6 rolling origins, holdout indépendant |
-| R3.5 | MUST | DONE | 5 tests passants (test_ml_conformal_intervals.py), intervalles conformes, seuil N_calib >= 8, uncalibrated_heuristic, Wilson 95% |
-| R3.6 | SHOULD | DONE | 11 tests passants (test_ml_exogenous.py), évaluation exogènes macro BFM/OMH et climat, protocole d'ablation 4 familles |
-| R3.7 | MUST | DONE | 4 tests passants (test_ml_forecast_publication.py), publication et abstention normatives, seuils MAPE <= 15% et Directional >= 60% |
-| R3.8 | MUST | DONE | 7 tests passants (test_ml_matured_evaluation.py), suivi des échéances, benchmarking baselines, traçabilité des erreurs |
-| R3.9 | MUST | DONE | Gate R3 validé : 6 tests décisionnels passants (test_gate_r3_price_forecast.py, qa R3.9 vert id 9cf8ade55ae8444f94ff48e71bda777a) |
-| R4.1 | MUST | DONE | 8 tests passants (test_geo_agroclimate_contracts.py), contrats géospatiaux/agroclimatiques, modèle météo observée vs prévue, calendriers culturaux, migration 0014 |
-| R4.2 | MUST | DONE | 7 tests passants (test_chirps.py), connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage Madagascar |
-| R4.3 | MUST | DONE | 6 tests passants (test_meteo_mg.py), connecteur meteo_mg, extraction déterministe bulletins DGM, séparation émission/validité |
-| R4.4 | MUST | DONE | 8 tests passants (test_fewsnet_ipc.py), connecteurs fewsnet_mdg et ipc_mdg, séparation stricte courant vs projeté |
-| R4.5 | MUST | DONE | 7 tests passants (test_ecmwf_open.py), connecteur ecmwf_open, météo prévue archivable obs.weather_forecast |
-| R4.6 | MUST | DONE | 7 tests passants (test_geo_anomalies.py), module ketrika.geo.anomalies, seuil baseline N>=10 ans, abstention si insuffisant |
-| R4.7 | MUST | DONE | 8 tests passants (test_crop_calendar_versioning.py), versioning calendriers culturaux, disjonction baseline vs recommandation, corridors commerciaux prouvés |
-| R4.8 | SHOULD | DONE | 9 tests passants (test_geo_remote_sensing.py), télédétection agro-environnementale, masquage nuages Sentinel-2, NDVI/VCI sous masque cultivé |
+| R0.8 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Rebuild hors ligne sur contenu figé, smoke prepare/replay sur socket Unix dédié, hash manifestes DB et Bronze identiques, recalage prévisions déterministe ; AU-09 (2f38abe, 71e87f5) |
+| R0.9 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Gate R0 franchi : suite QA R0.8 87/87 tests passants, replay 0 external routes, isolation réseau et preuve machine ; AU-09 (2f38abe) |
+| R1.1 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Requalification du registre sources.yaml (18 sources conformes au schéma Pydantic, séparation active/disabled/planned) ; AU-10 (6ccf36d) |
+| R1.2 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Moteur CatalogDiscoveryEngine, détection de dérive fail-closed et découverte d'éditions ; AU-10 (6ccf36d) |
+| R1.3 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Qualification INSTAT NIPC, découverte dynamique, multi-feuilles, conservation base 2011/2016 (10 tests verts, qa R1.3 vert) ; AU-11 |
+| R1.4 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Qualification MiASA ODR, CC-R authentique (12 tests verts, extraction 3 éditions PDF, 0 ND/NA converti en 0) ; AU-11 |
+| R1.5 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Qualification MinCC PPN, séparation prix plafond vs constaté, anti-PII, silence stock respecté (13 tests verts) ; AU-11 |
+| R1.6 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Qualification Douanes Stats, distinction flux mensuels vs totaux annuels, nomenclature SH (11 tests verts) ; AU-11 |
+| R1.7 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Qualification WFP HDX, politique disabled respectée sans bypass, gestion HXL et marchés non résolus (7 tests verts) ; AU-11 |
+| R1.8 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Qualification Banque mondiale RTFP, schéma C3 (wfp_fao), drapeaux d'imputation préservés (11 tests verts) ; AU-11 |
+| R1.9 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Qualification FAOSTAT, distinction paddy/blanchi, drapeaux d'estimation visibles (8 tests verts) ; AU-11 |
+| R1.10 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Requalification géographique, 23 régions Loi 2021-010 et 119 districts, géométries valides (24 tests géographiques verts) ; AU-10 (6ccf36d) |
+| R1.11 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Qualification NASA POWER, cohérence physique Tmin<=Tmax, sentinelles -999, politique disabled respectée (11 tests verts) ; AU-11 |
+| R1.12 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Actualisation, reprise idempotente, santé des sources et outbox API (20 tests verts) ; AU-11 |
+| R1.13 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Gate de collecte réelle R1 validé : l'ensemble des sources socles R1.3–R1.12 qualifiées unitairement et en intégration (93 tests verts, zéro réseau, 100% conformes CC-R) ; AU-11 |
+| R2.1 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  6 tests passants (test_contracts_time_origin_macro.py), C1-C4, métriques macro avec vintage/first_available_at, qa R2.1 vert id b3aa1d9179c7482095a0da8c5019a19c |
+| R2.2 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  38 tests passants (test_taxonomy.py, test_taxonomy_units_audit.py), conversions massiques/volumiques étayées, alias <0.90 en revue |
+| R2.3 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  43 tests passants (test_gold_dq_aggregation_audit.py 36, test_gold_dq.py 7 intégration), alignement calendaire, étanchéité de familles |
+| R2.4 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  16 tests passants (test_market_coverage_and_pilot.py), matrice SQL gold.market_coverage, pilote riz local/importé (Analamanga MDG11, Alaotra-Mangoro MDG31, Atsinanana MDG33 + National) |
+| R2.5 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  15 tests passants (test_instat_tbe.py), connecteur instat_tbe, ingestion Excel multi-éditions, fréquences réelles sans interpolation |
+| R2.6 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  17 tests passants (test_bfm_public.py), connecteur bfm_public, cours USD/EUR, jours ouvrés stricts |
+| R2.7 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  14 tests passants (test_omh_public.py), connecteur omh_public, gazole/super/pétrole, date d'effet vs date de publication |
+| R2.8 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  19 tests passants (test_economic_dashboard.py), tableau économique interprétable, dimensions étanches, fiches métriques, gestion stricte nullité |
+| R2.9 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  57 tests passants (test_api_extensions_and_limits.py 6, test_gold_availability_api.py 51), pagination [1, 1000], exports CSV/JSON alignés |
+| R2.10 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  80 tests vitest passants (13 suites, 3.51s), TypeScript 0 erreur, Next lint 0 erreur, build 17 routes compilées sans erreur |
+| R2.11 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Gate R2 validé : 6 tests décisionnels Q1-Q5 passants (test_gate_r2_decision_observatory.py, qa R2.11 vert id dec203303fb54f8c8ae46a2f57ebf483), suite Playwright e2e 26/26 conformes |
+| R3.1 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  16 tests passants (test_ml_series_eligibility.py), clé 5 composantes, grille sans compression, 36m min, 12m récents, cohortes |
+| R3.2 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  8 tests passants (test_ml_as_of_dataset.py), datasets historiques as-of C2/C4, traçabilité temporelle, empreinte SHA-256 canonique |
+| R3.3 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  9 tests passants (test_ml_models_conformance.py), références et baselines conformes, NaiveLast, SeasonalNaive, AutoETS, AutoARIMA |
+| R3.4 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  6 tests passants (test_ml_backtest_protocol.py), protocole trois phases, étanchéité de sélection, 6 rolling origins, holdout indépendant |
+| R3.5 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  5 tests passants (test_ml_conformal_intervals.py), intervalles conformes, seuil N_calib >= 8, uncalibrated_heuristic, Wilson 95% |
+| R3.6 | SHOULD | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  11 tests passants (test_ml_exogenous.py), évaluation exogènes macro BFM/OMH et climat, protocole d'ablation 4 familles |
+| R3.7 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  4 tests passants (test_ml_forecast_publication.py), publication et abstention normatives, seuils MAPE <= 15% et Directional >= 60% |
+| R3.8 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  7 tests passants (test_ml_matured_evaluation.py), suivi des échéances, benchmarking baselines, traçabilité des erreurs |
+| R3.9 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Gate R3 validé : 6 tests décisionnels passants (test_gate_r3_price_forecast.py, qa R3.9 vert id 9cf8ade55ae8444f94ff48e71bda777a) |
+| R4.1 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  8 tests passants (test_geo_agroclimate_contracts.py), contrats géospatiaux/agroclimatiques, modèle météo observée vs prévue, calendriers culturaux, migration 0014 |
+| R4.2 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  7 tests passants (test_chirps.py), connecteur CHIRPS v2.0, double cycle préliminaire/final, nodata vs 0 mm, découpage Madagascar |
+| R4.3 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  6 tests passants (test_meteo_mg.py), connecteur meteo_mg, extraction déterministe bulletins DGM, séparation émission/validité |
+| R4.4 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  8 tests passants (test_fewsnet_ipc.py), connecteurs fewsnet_mdg et ipc_mdg, séparation stricte courant vs projeté |
+| R4.5 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  7 tests passants (test_ecmwf_open.py), connecteur ecmwf_open, météo prévue archivable obs.weather_forecast |
+| R4.6 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  7 tests passants (test_geo_anomalies.py), module ketrika.geo.anomalies, seuil baseline N>=10 ans, abstention si insuffisant |
+| R4.7 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  8 tests passants (test_crop_calendar_versioning.py), versioning calendriers culturaux, disjonction baseline vs recommandation, corridors commerciaux prouvés |
+| R4.8 | SHOULD | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  9 tests passants (test_geo_remote_sensing.py), télédétection agro-environnementale, masquage nuages Sentinel-2, NDVI/VCI sous masque cultivé |
 | R4.9 | SHOULD | TODO | Non-bloquant SHOULD : Données sol et topographie déclarées indisponibles (statut unavailable) |
 | R4.10 | SHOULD | TODO | Non-bloquant SHOULD : Aléas extrêmes cyclones/inondations déclarés indisponibles (statut unavailable) |
-| R4.11 | MUST | DONE | 16 tests passants (test_geo.py), API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche |
-| R4.12 | MUST | DONE | Gate R4 validé : 8 tests décisionnels passants (test_gate_r4_agroclimate.py, qa R4.12 vert id 7e0e790ec5c149fbb72b82f66d0e59d4) |
-| R5.1 | MUST | DONE | ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole anti-PII, prévention double comptage, 7 tests verts |
-| R5.2 | MUST | DONE | Connecteur market_supply, Bronze SHA-256, migration 0016, 6 tests passants |
-| R5.3 | MUST | DONE | Contrôle des quantités et couverture, matrice marché × période, non-équivalence absence relevé / zéro kg, 6 tests passants |
-| R5.4 | MUST | DONE | Modèle de fenêtre de récolte décadaire, ajustement hydrique agronomique, 6 tests passants |
-| R5.5 | SHOULD | DONE | Modèle superficie x rendement, conversion sourcée ODR/FAOSTAT paddy->milled 0.667, 8 tests passants |
-| R5.6 | MUST | DONE | Bilan d'offre physique sans double comptage douanes vs marchés, équation de conservation, 5 tests passants |
-| R5.7 | MUST | DONE | Prévision des fenêtres et pics d'arrivage, décalage logistique, as-of cutoff, 7 tests passants |
-| R5.8 | MUST | DONE | Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs, interdiction ordres d'achat, 7 tests passants |
-| R5.9 | MUST | DONE | Gate de récoltes, volumes et approvisionnement qualifié, 10 critères normatifs validés, qa R5.9 vert id fb687c17d69f474a963ca91867a1dab1 |
-| R6.1 | MUST | DONE | Sécuriser les outils de lecture, catalogue typé, SQL guard CTE écriture/fonctions réseau, validation sans fuite, 15 tests passants |
-| R6.2 | MUST | DONE | Borner les workflows IA et leurs reprises, budget atomique, max tokens/temps, 9 tests passants |
-| R6.3 | MUST | DONE | Répondre avec des résultats exécutés et référencés, faits cités formatés serveur, 6 tests passants |
-| R6.4 | MUST | DONE | Évaluer le copilote sur questions métier indépendantes, zéro requête interdite, 3 tests passants |
-| R6.5 | MUST | DONE | Qualifier le bulletin sans hallucination numérique ou sémantique, Mailpit uniquement, 10 tests passants |
-| R6.6 | MUST | DONE | Évaluer alertes et scénarios de risque, familles indépendantes, seuils recomputables, 11 tests passants |
-| R6.7 | MUST | DONE | Durcir accès, audit et sécurité applicative, RBAC, révocation session, zéro secret, 16 tests passants |
-| R6.8 | MUST | DONE | Sauvegarde et restauration isolée qualifiées, clone dédié, refus actif, 12 tests passants |
-| R6.9 | MUST | DONE | Superviser fraîcheur, dérive, dépenses et incidents, alertes Mailpit, états persistants, 7 tests passants |
-| R6.10 | MUST | DONE | Mesurer performance et préparer déploiement humain, P95 < 1s normatif, 5 tests passants |
-| R6.11 | MUST | DONE | Réception finale complète du programme R, tag mi-v0.2.0-local-qualified, rapport MARKET_INTELLIGENCE_REPORT.md et passation HANDOFF.md |
+| R4.11 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  16 tests passants (test_geo.py), API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche |
+| R4.12 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Gate R4 validé : 8 tests décisionnels passants (test_gate_r4_agroclimate.py, qa R4.12 vert id 7e0e790ec5c149fbb72b82f66d0e59d4) |
+| R5.1 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole anti-PII, prévention double comptage, 7 tests verts |
+| R5.2 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Connecteur market_supply, Bronze SHA-256, migration 0016, 6 tests passants |
+| R5.3 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Contrôle des quantités et couverture, matrice marché × période, non-équivalence absence relevé / zéro kg, 6 tests passants |
+| R5.4 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Modèle de fenêtre de récolte décadaire, ajustement hydrique agronomique, 6 tests passants |
+| R5.5 | SHOULD | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Modèle superficie x rendement, conversion sourcée ODR/FAOSTAT paddy->milled 0.667, 8 tests passants |
+| R5.6 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Bilan d'offre physique sans double comptage douanes vs marchés, équation de conservation, 5 tests passants |
+| R5.7 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Prévision des fenêtres et pics d'arrivage, décalage logistique, as-of cutoff, 7 tests passants |
+| R5.8 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Scénarios d'offre et pilote décisionnel pour 3 profils d'acteurs, interdiction ordres d'achat, 7 tests passants |
+| R5.9 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Gate de récoltes, volumes et approvisionnement qualifié, 10 critères normatifs validés, qa R5.9 vert id fb687c17d69f474a963ca91867a1dab1 |
+| R6.1 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Sécuriser les outils de lecture, catalogue typé, SQL guard CTE écriture/fonctions réseau, validation sans fuite, 15 tests passants |
+| R6.2 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Borner les workflows IA et leurs reprises, budget atomique, max tokens/temps, 9 tests passants |
+| R6.3 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Répondre avec des résultats exécutés et référencés, faits cités formatés serveur, 6 tests passants |
+| R6.4 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Évaluer le copilote sur questions métier indépendantes, zéro requête interdite, 3 tests passants |
+| R6.5 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Qualifier le bulletin sans hallucination numérique ou sémantique, Mailpit uniquement, 10 tests passants |
+| R6.6 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Évaluer alertes et scénarios de risque, familles indépendantes, seuils recomputables, 11 tests passants |
+| R6.7 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Durcir accès, audit et sécurité applicative, RBAC, révocation session, zéro secret, 16 tests passants |
+| R6.8 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Sauvegarde et restauration isolée qualifiées, clone dédié, refus actif, 12 tests passants |
+| R6.9 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Superviser fraîcheur, dérive, dépenses et incidents, alertes Mailpit, états persistants, 7 tests passants |
+| R6.10 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Mesurer performance et préparer déploiement humain, P95 < 1s normatif, 5 tests passants |
+| R6.11 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Réception finale complète du programme R, tag mi-v0.2.0-local-qualified, rapport MARKET_INTELLIGENCE_REPORT.md et passation HANDOFF.md |
 
 ## 1. Résultat attendu et limites d'autorité
 

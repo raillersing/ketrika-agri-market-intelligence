@@ -27,6 +27,14 @@ export async function middleware(request: NextRequest) {
       cache: "no-store", redirect: "error", signal: controller.signal,
     });
     if (upstream.status === 401 || upstream.status === 403) return login();
+    if (upstream.status === 429) {
+      if (isLogin) return NextResponse.next();
+      const retryAfter = upstream.headers.get("retry-after");
+      return NextResponse.json(
+        { detail: "Trop de requêtes. Réessayez après le délai indiqué." },
+        { status: 429, headers: retryAfter ? { "Retry-After": retryAfter } : {} },
+      );
+    }
     if (!upstream.ok) throw new Error("Session service unavailable");
     return isLogin ? NextResponse.redirect(new URL("/", request.url)) : NextResponse.next();
   } catch {
