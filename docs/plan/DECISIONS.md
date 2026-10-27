@@ -1,5 +1,12 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-137 | 2026-10-27 | Accepté avant code | Espace de construction du runner CI éphémère
+
+- CI40529189214/86fdc2c : disque plein pendant qa-build, avant toute suite ; annotation122276979354 et journaux finaux indisponibles. Les nouveaux volumes source ne sont pas encore initialisés à ce stade ; ADR136 ne résout pas ce pic de construction.
+- Décision : fixer ubuntu-24.04 plutôt que le label mobile ubuntu-latest et, uniquement dans le job GitHub-hosted éphémère, retirer les SDK Android, .NET et Haskell préinstallés et inutilisés avant construction. Vérifier RUNNER_ENVIRONMENT=github-hosted, mesurer df et tailles avant/après ; ne retirer aucun volume Docker, image, dépôt ou cache d'outils Actions. Aucun nettoyage sur l'hôte partagé ni dans les points d'entrée locaux.
+- Source : https://github.com/actions/runner-images (version d'OS explicite pour éviter la migration implicite) et annotation GitHub signalant la migration ubuntu-latest vers26. Les quatre chemins sont fixes et ne contiennent aucune interpolation.
+- Les images verrouillées, commandes, sélections, assertions et seuils restent identiques. Réception complète sur le nouveau contenu obligatoire ; aucun gain disque revendiqué avant les mesures natives. Une relance identique sans correction ou un passage des tests en option sont rejetés.
+
 ## ADR-136 | 2026-10-27 | Accepté avant code | Volumes QA de sources sans duplication de dépendances
 
 - CI40484252459/85acbca : check backend/frontend réussi, runner perdu durant navigateur ; annotation122121953659 System.IO.IOException No space left on device, aucun rapport final disponible. Ne pas attribuer ce résultat à un défaut applicatif ni le recevoir.

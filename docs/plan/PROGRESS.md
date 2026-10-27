@@ -4529,3 +4529,8 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Les annonces R5/R6 et R6.11 ci-dessus sont un historique rapporté, non une réception acquise. Les originaux du plan, journal, passation, rapport et plan correctif sont archivés sous `R0.8_CI_GOVERNANCE_64938cf_*_ORIGINAL.gz`.
 - Guide VPS et sélections QA R5/R6 conservés. Les tableaux courants retirent les DONE non reçus : 7 DONE historiques, 65 IN_PROGRESS, 2 TODO ; aucune qualification finale ni nouveau tag.
 - HANDOFF et rapport rétablis en PARTIAL : CI globale, provenance B-R084/B-R085, corpus authentique B-R073 et qualifications live/modèles/humaines restent des preuves distinctes. Gates H1–H7 inchangés.
+
+### [2026-10-27T15:28:00Z] CI40529189214 — disque plein avant tests, reprise ADR137
+
+- Candidat86fdc2c, job122276979354 : échec pendant construction des images, aucun test exécuté ni reçu final disponible. Annotation native conservée `R0.8_CI_40529189214_BUILD_DISK_FAILURE.json` ; troisième incident disque, dont le premier avant initialisation des volumes source r06.
+- Correction bornée ADR137/SPECS avant code : ubuntu-24.04 explicite et retrait de quatre SDK hôte inutilisés uniquement sur runner GitHub-hosted éphémère, avec mesure avant/après. Aucun nettoyage des ressources locales partagées ; point d'entrée, images, suites et seuils inchangés. Nouvelle réception complète nécessaire, R0.8 et programme restent IN_PROGRESS/PARTIAL.

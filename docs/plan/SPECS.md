@@ -1,5 +1,7 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR137 : CI sur ubuntu-24.04 explicite. Avant qa-build, le seul job GitHub-hosted éphémère vérifie son identité puis libère les quatre SDK inutilisés /usr/local/lib/android, /usr/share/dotnet, /opt/ghc et /usr/local/.ghcup avec mesures avant/après. Aucun nettoyage local, de volume, d'image ou du cache d'outils Actions. Images verrouillées et réception complète inchangées.
+
 ADR136 : sources QA backend_source_r06/web_source_r06 montées exclusivement sur/app/src pour éviter la copie implicite des dépendances dans le volume parent/app. Dépendances et.next en volumes dédiés r05 inchangés ; tests/configurations copiés dans chaque couche éphémère depuis le snapshot readonly. Utilisateurs non-root et gardes d'isolation conservés. Aucun ancien volume modifié/supprimé ; réception complète et mesure de stockage obligatoires.
 
 ADR135 : le scénario navigateur de première lecture bulletin autorise une seule relecture après le503 exact de vérification de session, uniquement après /api/v1/auth/me200 réel ; incident et reprise inscrits au reçu. Autres503/panne persistante restent rouges. Middleware5s et P95 API inchangés. Les routes d'approbation bulletin et de suivi alerte valident leur transaction avant de confirmer la réussite, sans émission externe.
