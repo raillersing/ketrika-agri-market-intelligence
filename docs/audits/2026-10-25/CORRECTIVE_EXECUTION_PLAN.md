@@ -85,7 +85,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-09 — Rebuild authentique et gate R0.9
 
-- **Statut :** TODO · P1 · rôle Data/QA · parents R0.8/R0.9 · dépendances : AU-08, R0.1–R0.7 reçus historiquement et non invalidés par le lot.
+- **Statut :** DONE (logiciel qualifié sur dedicated socket/network-none ; B-R073 documenté statut PARTIAL maintenu sans fabrication de faux artefacts) · P1 · rôle Data/QA · parents R0.8/R0.9 · dépendances : AU-08, R0.1–R0.7 reçus historiquement et non invalidés par le lot.
 - **Fichiers :** `pipelines/rebuild*.py`, `core/rebuild_*`, runbook OFFLINE_REBUILD_QUALIFICATION, corpus/reçus.
 - **Étapes :** réunir deux éditions authentiques du même produit/lieu/période avec une correction réelle ; vérifier droits/octets et annotations ; cloner destination explicitement dédiée ; exporter inventaire original avec versions et octets ; couper réellement le réseau du worker ; comparer valeurs, périodes, unités, provenance, révisions et Gold ; étape séparée de recalcul des modèles versionnés, avec abstention s'il manque les données.
 - **Réception :** aucune requête réseau, ancienne/nouvelle révision correctement rejouées, diff métier nul et inventaire original inchangé ; faux parseur modifiant une valeur détecté même à effectif égal. Puis réception R0 et tag nouveau uniquement si tous critères passent. Si les deux éditions restent absentes, documenter B-R073 et le format attendu ; ne pas modifier les sources disabled pour les acquérir.

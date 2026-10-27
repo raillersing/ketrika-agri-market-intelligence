@@ -32,9 +32,15 @@ def upgrade() -> None:
           BEFORE UPDATE OR DELETE ON obs.weather_observation
           FOR EACH ROW EXECUTE FUNCTION obs.check_obs_superseded_only();
     """)
+    alembic_sql = Path(__file__).resolve().parents[1] / "sql"
     sql_dir = Path(__file__).resolve().parents[2] / "src/ketrika/gold/sql"
-    for filename in ("008_weather_monthly.sql", "010_market_health.sql"):
-        op.execute((sql_dir / filename).read_text(encoding="utf-8"))
+    weather_file = (
+        alembic_sql / "008_weather_monthly_pre_0020.sql"
+        if (alembic_sql / "008_weather_monthly_pre_0020.sql").is_file()
+        else sql_dir / "008_weather_monthly.sql"
+    )
+    op.execute(weather_file.read_text(encoding="utf-8"))
+    op.execute((sql_dir / "010_market_health.sql").read_text(encoding="utf-8"))
     op.execute(
         "GRANT SELECT ON gold.weather_monthly, gold.market_health TO ketrika_app, copilot_ro"
     )

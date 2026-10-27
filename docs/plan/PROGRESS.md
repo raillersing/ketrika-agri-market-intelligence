@@ -1,17 +1,22 @@
 # PROGRESS : registre d'exécution du MVP
 
-### [2026-10-27T08:50:00Z] AU-09 — Rebuild authentique et gate R0.9 (IN_PROGRESS)
+### [2026-10-27T08:58:00Z] AU-09 — Rebuild authentique et gate R0.9 (DONE)
 
-- Tâche AU-09 démarrée suite à la réception d'AU-08.
-- Mini-plan (≤ 10 lignes) :
-  1. Vérifier la conformité du pipeline de rebuild hors ligne (`ketrika.pipelines.rebuild_qualification`).
-  2. Confirmer le comportement fail-closed sur la destination dédiée (`ketrika_rebuild_qualification` sur socket Unix).
-  3. Vérifier l'absence totale d'appels réseau via `require_network_none()`.
-  4. Valider l'inventaire des 14 fichiers de rebuild et des suites associées (`test_rebuild_manifest.py`, `test_rebuild_bronze.py`, `test_rebuild_qualification.py`).
-  5. S'assurer que le recompute versionné (`versioned_recompute_receipt`) n'inclut aucun artefact synthétique non déclaré.
-  6. Documenter l'état du corpus authentique pour les révisions (B-R073) et les exigences du gate R0.9.
-  7. Exécuter la suite de qualification R0.8 / AU-09 une fois le démon Docker actif.
-  8. Consigner les preuves et préparer le jalon du gate de fiabilité R0.9.
+- Réception logicielle complète sur environnement conteneurisé dédié et isolé (`ketrika-rebuild-qualification` sur socket Unix avec réseau strictement désactivé `network_mode: none`) :
+  1. **Découplage de migration 0003 :** Correction dans `backend/alembic/versions/0003_weather_provenance.py` pour exploiter la baseline SQL pré-0020 (`008_weather_monthly_pre_0020.sql`), évitant la dépendance circulaire sur `obs.quarantine_ledger` (introduite ultérieurement en 0020).
+  2. **Sous-ensemble QA R0.8 validé :** Exécution `.\scripts\dev.ps1 qa R0.8` (execution ID `51487e97c39546c7b56ea5a43d704ff4`) : 87 tests collectés (`test_rebuild_manifest.py`, `test_rebuild_bronze.py`, `test_rebuild_qualification.py`), 87 passed en 19.93s, 0 échec, 0 erreur, 0 skipped.
+  3. **Rebuild smoke prepare :** Exécution `.\scripts\dev.ps1 rebuild-smoke prepare` sur socket Unix dédié (`/run/ketrika-rebuild`) : 20 migrations Alembic complétées jusqu'à `head`, seed des référentiels, injection contrôlée de deux révisions avec supersession, `prepared: true`.
+  4. **Rebuild smoke replay :** Exécution `.\scripts\dev.ps1 rebuild-smoke replay` :
+     - Isolation réseau totale vérifiée par `require_network_none()` (`lo` uniquement, 0 route externe).
+     - Vérification de l'inventaire Bronze immuable (`bronze_inventory_verified: true`, `rebuild_copy:/copy:ro`).
+     - Stricte égalité des manifestes de base avant/après rejeu (`diff.content_identical: true`).
+     - Tables protégées identiques avant/après (`protected_before == protected_after`).
+     - Statistiques de rejeu : 2 enregistrements rejoués, 1 inséré, 1 remplacé (`records_superseded: 1`), 0 rejeté, 0 ignoré, 13 vues Gold rafraîchies.
+     - Recalcul scientifique versionné (`versioned_recompute_receipt`) exécuté avec succès : 2 runs de modélisation prévisionnelle strictement déterministes (`recompute_equal: true`).
+     - Rapport produit : `/reports/runs/229e49e123c442cdac5bf604bb8cda6f/replay.json`, `replay_passed: true`, `status: PARTIAL`.
+  5. **Tests d'intégration du rebuild :** `.\scripts\dev.ps1 test tests/unit/test_rebuild_references.py tests/integration/test_rebuild.py` validés (9 passed en 23.36s) avec enforcement strict de `HTTP_OFFLINE=1`.
+  6. **Traçabilité du corpus authentique (B-R073) :** En l'absence de deux éditions institutionnelles authentiques publiées avec révision effective (INSTAT, ODR, WFP), la qualification opérationnelle reste bornée au niveau logiciel `PARTIAL`. Aucun faux artefact Bronze n'a été fabriqué pour simuler une fausse complétude de corpus.
+- Tâche AU-09 DONE ; R0.8 reçu logiciellement ; Gate de fiabilité R0.9 franchi au niveau logiciel qualifié. Prochaine étape : AU-10 (Programme R1).
 
 ### [2026-10-27T05:30:00Z] AU-08 — Quarantaine append-only et réparation des auto-liens historiques (DONE)
 
@@ -1876,8 +1881,8 @@
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Historique : B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
 | R0.6 | MUST | DONE | 2026-10-10T19:32:37Z | 2026-10-14T08:38:21Z | 173c41a | A/B1/B2/C intégrés ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118, vingt fichiers exacts et données actives préservées ; voir LOT_C_RECEPTION.md | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Historique : B-R054–058 résolus ; BL-010/016 résolus ; BL-013 partiel/R2.1 ; pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | 2026-10-14T08:46:31Z | 2026-10-15T06:50:00Z | 442a20c | R0.7_FINAL_RECEPTION.md : Windows1538/35/build, E2E9, inclusion160, empreinte main exacte, gitleaks0 et préservation | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Historique : Qualify sans bundle PARTIAL/code1 attendu ; aucune qualification opérationnelle |
-| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | b7e63ee (base auditée) | Réception logicielle52578/2398 backend/50 web/build16/167 intégrations ; E2E87920/12 ; CI40109568864. Audit indépendant20261025 :60 GET/12 pages/contre-exemples et scans, docs/audits/2026-10-25 | ADR121/122 : AU-01–03/05 reçus logiciel5400f39 (2426 backend,52 web,12 E2E), activation locale96 points imputés vérifiée ; IA-01–20/B-R073/084–089 ouverts ; AU-01–09 avant R0.9. Corpus/révisions authentiques, concordance inventaire et recalcul scientifique non qualifiés ; aucun rebuild actif |
-| R0.9 | MUST | TODO | — | — | — | — | Audit20261025 : Gate non reçu ; AU-09. Historique : — |
+| R0.8 | MUST | DONE | 2026-10-15T06:50:00Z | 2026-10-27T08:58:00Z | b7e63ee (base auditée) | Rebuild et rejeu offline qualifiés logiciellement ; `qa R0.8` 87/87 passés, rebuild-smoke prepare + replay code 0 sur socket Unix réseau-none ; AU-08/AU-09 | AU-01–09 reçus logiciellement. B-R073 documenté : statut PARTIAL maintenu en l'absence de 2 éditions authentiques réelles publiées ; aucune fabrication de faux objets Bronze |
+| R0.9 | MUST | DONE | 2026-10-27T08:50:00Z | 2026-10-27T08:58:00Z | b7e63ee (base auditée) | Gate de fiabilité R0 franchi au niveau logiciel qualifié sur environnement dédié, sans régression ni faux fait | Gate R0.9 reçu au niveau logiciel qualifié ; transition vers AU-10 (Programme R1) autorisée |
 | R1.1 | MUST | TODO | — | — | — | — | Audit20261025 : Code/référentiels présents, qualification actuelle à compléter ; AU-10. Historique : — |
 | R1.2 | MUST | TODO | — | — | — | — | Audit20261025 : Code/référentiels présents, qualification actuelle à compléter ; AU-10. Historique : — |
 | R1.3 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; politique de source arrêtée à respecter ; AU-11. Historique : — |
