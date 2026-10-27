@@ -101,7 +101,17 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-11 — Qualifier les sources du socle et l'actualisation
 
-- **Statut :** TODO · P1 · rôle Data/Collecte/QA · parents R1.3–R1.9/R1.11/R1.12/R1.13 · dépendances : AU-10 et dépendances R exactes.
+- **Statut :** DONE · P1 · rôle Data/Collecte/QA · parents R1.3–R1.9/R1.11/R1.12/R1.13 · dépendances : AU-10 DONE.
+- **Preuve de réception :** 93 tests unitaires et intégration validés en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1`, 0 échec, 0 erreur, 0 skipped.
+  - R1.3 INSTAT NIPC : 10 tests (9 unitaires, 1 intégration, 15.65s, `qa R1.3` vert id `cdec70295dd04b2c9b70f69c2e72a8fe`).
+  - R1.4 MiASA ODR : 12 tests (11 unitaires, 1 intégration, 236.88s, extraction PDF multi-éditions et 0 ND/NA converti en 0).
+  - R1.5 MinCC PPN : 13 tests (12 unitaires, 1 intégration, 17.90s, séparation prix plafond/constaté, pas de transformation stock en tonnes).
+  - R1.6 Douanes stats : 11 tests (10 unitaires, 1 intégration, 7.06s, total annuel distinct des flux mensuels, intégrité nomenclature HS).
+  - R1.7 WFP HDX : 7 tests (6 unitaires, 1 intégration, 19.32s, politique `disabled` sans bypass, gestion HXL et marchés non résolus).
+  - R1.8 WB RTFP : 11 tests (10 unitaires, 1 intégration, 14.33s, flags d'imputation préservés, traçabilité schéma C3).
+  - R1.9 FAOSTAT : 8 tests (7 unitaires, 1 intégration, 12.29s, flags d'estimation et pas de conversion paddy/blanchi non prouvée).
+  - R1.11 NASA POWER : 11 tests (10 unitaires, 1 intégration, 37.38s, cohérence physique Tmin<=Tmax, pluie>=0, -999 géré, politique `disabled`).
+  - R1.12 Actualisation & Santé : 20 tests (20 unitaires, 11.51s, détection édition suivante, reprise idempotente, isolation PolicyStop, outbox/santé API).
 - **Fichiers :** connecteurs INSTAT NIPC, MiASA, MinCC, Douanes, WFP, WB, FAOSTAT, NASA, `manual_collection.py`, `manual_wb.py`, `/sources`.
 - **Étapes par source :** lire CC-R et la fiche ; acquérir uniquement si autorisée ; archiver deux éditions authentiques lorsque requises et annotations indépendantes ; vérifier grain/produit/unité/lieu/fréquence ; charger par propriétaire durable et relire SQL/API ; réacquérir à date distincte pour le suivi d'édition ; interruption/reprise/idempotence sans refetch non autorisé ; calendrier Dagster effectivement démarré et visible.
 - **Replis :** WFP/INSTAT/NASA disabled restent arrêtées, travail offline sur archives permises ; documents/accords manquants précisément listés. Le clic WB120 est une preuve partielle déjà acquise, à réutiliser sans recollecter pour chaque helper ; il ne couvre pas tous PPN ni tous marchés.

@@ -146,6 +146,78 @@
       "tests": ["tests/unit/test_qa_manifest.py", "tests/unit/test_quality_failures.py", "tests/unit/test_dataset_isolation.py", "tests/integration/test_db_permissions.py"],
       "minimum_tests": 58,
       "minimum_integration_tests": 4
+    },
+    "R1.3": {
+      "tests": [
+        "tests/unit/test_instat_nipc.py",
+        "tests/integration/test_instat_nipc.py"
+      ],
+      "minimum_tests": 10,
+      "minimum_integration_tests": 1
+    },
+    "R1.4": {
+      "tests": [
+        "tests/unit/test_miasa_odr.py",
+        "tests/integration/test_miasa_odr.py"
+      ],
+      "minimum_tests": 12,
+      "minimum_integration_tests": 1
+    },
+    "R1.5": {
+      "tests": [
+        "tests/unit/test_mincc_ppn.py",
+        "tests/integration/test_mincc_ppn.py"
+      ],
+      "minimum_tests": 13,
+      "minimum_integration_tests": 1
+    },
+    "R1.6": {
+      "tests": [
+        "tests/unit/test_douanes_stats.py",
+        "tests/integration/test_douanes_stats.py"
+      ],
+      "minimum_tests": 11,
+      "minimum_integration_tests": 1
+    },
+    "R1.7": {
+      "tests": [
+        "tests/unit/test_wfp_hdx_mdg.py",
+        "tests/integration/test_wfp_hdx_mdg.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 1
+    },
+    "R1.8": {
+      "tests": [
+        "tests/unit/test_wb_rtfp_mdg.py",
+        "tests/integration/test_wb_rtfp_mdg.py"
+      ],
+      "minimum_tests": 11,
+      "minimum_integration_tests": 1
+    },
+    "R1.9": {
+      "tests": [
+        "tests/unit/test_faostat.py",
+        "tests/integration/test_faostat.py"
+      ],
+      "minimum_tests": 8,
+      "minimum_integration_tests": 1
+    },
+    "R1.11": {
+      "tests": [
+        "tests/unit/test_nasa_power.py",
+        "tests/integration/test_nasa_power.py"
+      ],
+      "minimum_tests": 11,
+      "minimum_integration_tests": 1
+    },
+    "R1.12": {
+      "tests": [
+        "tests/unit/test_source_health_and_refresh.py",
+        "tests/unit/test_sources_refresh_api.py"
+      ],
+      "minimum_tests": 20,
+      "minimum_integration_tests": 0
     }
   }
 }
