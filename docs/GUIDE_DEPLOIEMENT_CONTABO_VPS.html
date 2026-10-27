@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutoriel de Déploiement VPS Contabo - Ketrika Agri Market Intelligence</title>
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-light: #ecfdf5;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --code-bg: #090d16;
+      --accent: #38bdf8;
+      --warning-bg: #451a03;
+      --warning-border: #b45309;
+      --warning-text: #fde68a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background-color: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+    }
+
+    header {
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      background-color: var(--primary-dark);
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 0.4rem;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p, ul, ol {
+      margin-bottom: 1rem;
+    }
+
+    ul, ol {
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    strong {
+      color: #fff;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9em;
+      background-color: var(--code-bg);
+      color: #38bdf8;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    pre {
+      background-color: var(--code-bg);
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1.25rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border: none;
+      color: inherit;
+    }
+
+    .callout {
+      background-color: rgba(16, 185, 129, 0.08);
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    .callout-warning {
+      background-color: var(--warning-bg);
+      border-left: 4px solid var(--warning-border);
+      color: var(--warning-text);
+      padding: 1rem;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      border: 1px solid var(--surface-border);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: rgba(255, 255, 255, 0.04);
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.015);
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--surface-border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    @media print {
+      body {
+        background-color: #fff;
+        color: #000;
+      }
+      .container {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        background-color: #fff;
+      }
+      pre {
+        background-color: #f8fafc;
+        border: 1px solid #cbd5e1;
+        color: #000;
+      }
+      code {
+        color: #0f172a;
+        background-color: #f1f5f9;
+      }
+      h2 {
+        color: #0284c7;
+        border-bottom: 1px solid #cbd5e1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <span class="badge">Production &middot; Guide Officiel</span>
+    <h1>Déploiement VPS Contabo</h1>
+    <p class="subtitle">Plateforme Ketrika Agri Market Intelligence &mdash; Ubuntu 24.04 / 22.04 LTS</p>
+  </header>
+
+  <h2><span class="step-number">0</span> Pré-requis nécessaires</h2>
+  <p>Avant d'entamer l'installation sur votre VPS Contabo, rassemblez les informations suivantes :</p>
+  <ul>
+    <li><strong>Adresse IPv4 publique Contabo :</strong> Reçue par email (ex: <code>161.97.xxx.xxx</code>).</li>
+    <li><strong>Accès SSH root :</strong> Mot de passe ou clé SSH configuré lors de la commande.</li>
+    <li><strong>Nom de domaine / Sous-domaine :</strong> Par exemple <code>market.votre-domaine.com</code> avec un enregistrement DNS de <strong>type A</strong> pointant vers l'IP du VPS.</li>
+    <li><strong>Terminal :</strong> PowerShell sur Windows, ou Terminal sur macOS/Linux.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Note :</strong> Si vous n'avez pas encore configuré de nom de domaine, la <a href="#section-ip-direct" style="color: var(--accent); text-decoration: underline;">section 7</a> vous explique comment tester immédiatement avec l'adresse IP brute.
+  </div>
+
+  <h2><span class="step-number">1</span> Connexion SSH et Amorçage du VPS</h2>
+  <p>Ouvrez votre terminal et connectez-vous au serveur en tant que <code>root</code> :</p>
+  <pre><code>ssh root@&lt;IP_DE_VOTRE_VPS_CONTABO&gt;</code></pre>
+  
+  <p>Une fois connecté, exécutez le script d'amorçage conçu pour automatiser la sécurisation du serveur et l'installation de Docker :</p>
+  <pre><code>curl -fsSL https://raw.githubusercontent.com/ketrika/ai-agent/main/deploy/bootstrap-vps.sh -o bootstrap.sh
+chmod +x bootstrap.sh
+./bootstrap.sh</code></pre>
+
+  <p><strong>Ce que fait ce script automatiquement :</strong></p>
+  <ul>
+    <li>Mise à jour complète du système (<code>apt upgrade</code>).</li>
+    <li>Création d'un utilisateur sécurisé nommé <code>deploy</code>.</li>
+    <li>Installation de Docker Engine et du plugin Docker Compose officiel.</li>
+    <li>Activation du pare-feu <strong>UFW</strong> (seuls les ports 22, 80 et 443 sont ouverts).</li>
+    <li>Protection anti-bruteforce <strong>Fail2ban</strong> et mises à jour de sécurité automatiques.</li>
+    <li>Préparation du répertoire applicatif <code>/opt/ketrika</code>.</li>
+  </ul>
+
+  <h2><span class="step-number">2</span> Bascule sur l'utilisateur <code>deploy</code></h2>
+  <p>Pour des raisons strictes de sécurité, nous n'exécutons jamais l'application sous <code>root</code> :</p>
+  <pre><code>su - deploy
+cd /opt/ketrika</code></pre>
+
+  <h2><span class="step-number">3</span> Récupération du code source</h2>
+  <p>Clonez le dépôt dans le répertoire de travail :</p>
+  <pre><code>git clone https://github.com/ketrika/ai-agent.git .</code></pre>
+
+  <h2><span class="step-number">4</span> Configuration des variables d'environnement (<code>.env</code>)</h2>
+  <p>Créez le fichier <code>.env</code> à partir du modèle de configuration :</p>
+  <pre><code>cp .env.example .env
+chmod 600 .env</code></pre>
+
+  <p>Générez des mots de passe aléatoires et robustes directement dans la console :</p>
+  <pre><code># Mot de passe sécurisé pour PostgreSQL :
+openssl rand -hex 24
+
+# Clé secrète pour les tokens JWT d'authentification :
+openssl rand -hex 32</code></pre>
+
+  <p>Ouvrez ensuite le fichier pour l'éditer avec <code>nano</code> :</p>
+  <pre><code>nano .env</code></pre>
+
+  <p>Remplissez les variables clés :</p>
+  <pre><code># Configuration générale
+APP_ENV=prod
+DOMAIN=market.votre-domaine.com
+ACME_EMAIL=votre-email@domaine.com
+
+# Base de données PostgreSQL + PostGIS
+POSTGRES_USER=ketrika
+POSTGRES_PASSWORD=&lt;COLLEZ_LE_MOT_DE_PASSE_POSTGRES_GENERE&gt;
+POSTGRES_DB=ketrika
+DATABASE_URL=postgresql+psycopg://ketrika:&lt;COLLEZ_LE_MOT_DE_PASSE_POSTGRES_GENERE&gt;@db:5432/ketrika
+COPILOT_DB_PASSWORD=&lt;MOT_DE_PASSE_LECTURE_SEULE&gt;
+
+# Stockage Bronze S3 (MinIO autonome sur le VPS)
+S3_ENDPOINT_URL=http://minio:9000
+S3_ACCESS_KEY=minioadmin
+S3_SECRET_KEY=minioadmin
+S3_BUCKET_BRONZE=bronze
+S3_REGION=auto
+
+# Sécurité des sessions
+JWT_SECRET=&lt;COLLEZ_LA_CLE_JWT_GENEREE&gt;
+CORS_ORIGINS=https://market.votre-domaine.com
+
+# Intelligence Artificielle (Mode Replay pour tests)
+LLM_PROVIDER=replay
+EXTERNAL_SEND_ENABLED=0</code></pre>
+  <p>Sauvegardez avec <code>Ctrl + O</code>, confirmez avec <code>Entrée</code>, puis quittez avec <code>Ctrl + X</code>.</p>
+
+  <h2><span class="step-number">5</span> Lancement et Initialisation des Données</h2>
+  
+  <h3>1. Construction des conteneurs de production</h3>
+  <pre><code>docker compose -f docker-compose.prod.yml build</code></pre>
+
+  <h3>2. Démarrage de la base de données PostGIS</h3>
+  <pre><code>docker compose -f docker-compose.prod.yml up -d db</code></pre>
+  <p>Attendez quelques secondes et vérifiez que la base est prête (état <code>healthy</code>) :</p>
+  <pre><code>docker compose -f docker-compose.prod.yml ps db</code></pre>
+
+  <h3>3. Application des migrations de schéma Alembic</h3>
+  <pre><code>docker compose -f docker-compose.prod.yml run --rm api alembic upgrade head</code></pre>
+
+  <h3>4. Chargement initial des référentiels vivriers (Seed)</h3>
+  <p>Cette commande peuple les régions/districts de Madagascar, les produits vivriers PPN (riz, maïs, manioc, huile, etc.) et les sources déclarées :</p>
+  <pre><code>docker compose -f docker-compose.prod.yml run --rm api python -m ketrika.normalize.loader seed</code></pre>
+
+  <h3>5. Démarrage complet de tous les services</h3>
+  <pre><code>docker compose -f docker-compose.prod.yml up -d</code></pre>
+
+  <p>Vérifiez que tous les services sont en ligne :</p>
+  <pre><code>docker compose -f docker-compose.prod.yml ps</code></pre>
+  <p>Vous devez observer les conteneurs : <code>caddy</code>, <code>web</code>, <code>api</code>, <code>db</code>, <code>dagster-webserver</code> et <code>dagster-daemon</code> en cours d'exécution.</p>
+
+  <h2><span class="step-number">6</span> Accès et Vérifications</h2>
+
+  <h3>1. Tester l'API en ligne</h3>
+  <pre><code>curl -I https://market.votre-domaine.com/v1/health</code></pre>
+  <p>Vous recevez un statut <code>200 OK</code> avec <code>"database": "connected"</code>.</p>
+
+  <h3>2. Documentation Swagger interactive</h3>
+  <p>Rendez-vous dans votre navigateur sur :<br>
+  <code>https://market.votre-domaine.com/docs</code></p>
+
+  <h3>3. Tableau de bord Web</h3>
+  <p>Ouvrez votre domaine principal :<br>
+  <code>https://market.votre-domaine.com</code></p>
+
+  <h3>4. Accéder à l'orchestrateur Dagster via tunnel SSH sécurisé</h3>
+  <p>L'interface de gestion des pipelines n'est pas exposée publiquement par sécurité. Pour y accéder depuis votre machine personnelle :</p>
+  <pre><code>ssh -L 3001:localhost:3001 deploy@&lt;IP_DE_VOTRE_VPS_CONTABO&gt;</code></pre>
+  <p>Puis ouvrez dans votre navigateur local : <code>http://localhost:3001</code>.</p>
+
+  <h2 id="section-ip-direct"><span class="step-number">7</span> Variante : Tester immédiatement sans nom de domaine</h2>
+  <div class="callout-warning">
+    Si vous n'avez pas de domaine disponible tout de suite, vous pouvez configurer Caddy pour écouter directement sur le port 80 de l'IP publique.
+  </div>
+  <p>1. Éditez <code>deploy/Caddyfile</code> et remplacez la ligne <code>{$DOMAIN:localhost} {</code> par :</p>
+  <pre><code>:80 {
+	encode zstd gzip
+
+	handle /v1/* {
+		reverse_proxy api:8000
+	}
+	handle /docs* {
+		reverse_proxy api:8000
+	}
+	handle /openapi.json {
+		reverse_proxy api:8000
+	}
+	handle {
+		reverse_proxy web:3000
+	}
+}</code></pre>
+  <p>2. Dans <code>.env</code>, indiquez <code>DOMAIN=http://&lt;IP_DE_VOTRE_VPS&gt;</code>.</p>
+  <p>3. Redémarrez le reverse-proxy :</p>
+  <pre><code>docker compose -f docker-compose.prod.yml restart caddy</code></pre>
+  <p>Accédez ensuite directement à <code>http://&lt;IP_DE_VOTRE_VPS&gt;</code>.</p>
+
+  <h2><span class="step-number">8</span> Commandes de Maintenance Essentielles</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Commande (depuis <code>/opt/ketrika</code>)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Voir les logs en direct</strong></td>
+        <td><code>docker compose -f docker-compose.prod.yml logs -f</code></td>
+      </tr>
+      <tr>
+        <td><strong>Voir les logs de l'API</strong></td>
+        <td><code>docker compose -f docker-compose.prod.yml logs -f api</code></td>
+      </tr>
+      <tr>
+        <td><strong>Redémarrer les services</strong></td>
+        <td><code>docker compose -f docker-compose.prod.yml restart</code></td>
+      </tr>
+      <tr>
+        <td><strong>Arrêter proprement la stack</strong></td>
+        <td><code>docker compose -f docker-compose.prod.yml down</code></td>
+      </tr>
+      <tr>
+        <td><strong>Sauvegarder la base de données</strong></td>
+        <td><code>./deploy/backup.sh</code></td>
+      </tr>
+      <tr>
+        <td><strong>Mettre à jour le code</strong></td>
+        <td><code>git pull &amp;&amp; docker compose -f docker-compose.prod.yml build &amp;&amp; docker compose -f docker-compose.prod.yml up -d</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Ketrika Agri Market Intelligence &middot; Architecture Auditable et Immuable &middot; 2026
+  </footer>
+</div>
+
+</body>
+</html>
