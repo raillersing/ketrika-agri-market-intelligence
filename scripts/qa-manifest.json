@@ -424,6 +424,139 @@
       ],
       "minimum_tests": 8,
       "minimum_integration_tests": 0
+    },
+    "R5.1": {
+      "tests": [
+        "tests/unit/test_supply_survey_contracts.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 0
+    },
+    "R5.2": {
+      "tests": [
+        "tests/unit/test_connector_market_supply.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R5.3": {
+      "tests": [
+        "tests/unit/test_supply_quality_and_coverage.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R5.4": {
+      "tests": [
+        "tests/unit/test_harvest_window_model.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R5.5": {
+      "tests": [
+        "tests/unit/test_supply_production_model.py"
+      ],
+      "minimum_tests": 8,
+      "minimum_integration_tests": 0
+    },
+    "R5.6": {
+      "tests": [
+        "tests/unit/test_supply_balance_engine.py"
+      ],
+      "minimum_tests": 5,
+      "minimum_integration_tests": 0
+    },
+    "R5.7": {
+      "tests": [
+        "tests/unit/test_supply_peak_forecast.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 0
+    },
+    "R5.8": {
+      "tests": [
+        "tests/unit/test_supply_decision_pilot.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 0
+    },
+    "R5.9": {
+      "tests": [
+        "tests/unit/test_gate_r5_supply.py"
+      ],
+      "minimum_tests": 10,
+      "minimum_integration_tests": 0
+    },
+    "R6.1": {
+      "tests": [
+        "tests/unit/test_copilot_tools_and_security.py"
+      ],
+      "minimum_tests": 15,
+      "minimum_integration_tests": 0
+    },
+    "R6.2": {
+      "tests": [
+        "tests/unit/test_copilot_workflow_and_limits.py"
+      ],
+      "minimum_tests": 9,
+      "minimum_integration_tests": 0
+    },
+    "R6.3": {
+      "tests": [
+        "tests/unit/test_copilot_executed_responses.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R6.4": {
+      "tests": [
+        "tests/unit/test_copilot_evaluation_benchmark.py"
+      ],
+      "minimum_tests": 3,
+      "minimum_integration_tests": 0
+    },
+    "R6.5": {
+      "tests": [
+        "tests/unit/test_bulletin_semantic_and_qualification.py"
+      ],
+      "minimum_tests": 10,
+      "minimum_integration_tests": 0
+    },
+    "R6.6": {
+      "tests": [
+        "tests/unit/test_alerts_qualification_r66.py"
+      ],
+      "minimum_tests": 11,
+      "minimum_integration_tests": 0
+    },
+    "R6.7": {
+      "tests": [
+        "tests/unit/test_security_rbac_and_audit_r67.py"
+      ],
+      "minimum_tests": 16,
+      "minimum_integration_tests": 0
+    },
+    "R6.8": {
+      "tests": [
+        "tests/unit/test_backup_restore_qualification_r68.py"
+      ],
+      "minimum_tests": 12,
+      "minimum_integration_tests": 0
+    },
+    "R6.9": {
+      "tests": [
+        "tests/unit/test_supervision_and_incident_r69.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 0
+    },
+    "R6.10": {
+      "tests": [
+        "tests/unit/test_performance_and_deployment_r610.py"
+      ],
+      "minimum_tests": 5,
+      "minimum_integration_tests": 0
     }
   }
 }
