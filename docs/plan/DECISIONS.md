@@ -1,5 +1,20 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-135 | 2026-10-27 | Accepté avant code | Relecture navigateur bornée après refus de session au démarrage
+
+- CI40476674632/50d322d : backend2483 et frontend80 verts ; navigateur15/26, arrivée au bulletin sur503 explicite « Vérification de session indisponible ». Contrôle privé distinct :15/26, approbation200 puis relecture draft ; commits manquants des routes bulletin/alerte corrigés conformément aux contrats existants.
+- Décision : conserver le refus middleware503 et son délai5s. À la seule première navigation du scénario bulletin, si et seulement si réponse503 au détail exact connu, une requête authentifiée /api/v1/auth/me doit réussir200, puis un seul reload explicite est permis et inscrit dans session_readiness_recoveries. Toute panne persistante, autre erreur ou second503 reste rouge ; aucune boucle générale ni assertion retirée. La trace conserve le refus et la reprise. Ce repli de préparation n'est pas une qualification de latence ni une réussite initiale sans incident.
+- Réception : ciblés persistés via nouvelle connexion SQL/HTTP, navigateur privé complet puis nouveau gel/check complet et26 E2E CI. Aucun changement du produit concernant les refus de session, de P95<1000ms, des seuils scientifiques ou des gates H3/H7.
+
+## ADR-134 | 2026-10-27 | Accepté avant code | Réception corrective après fusion et migrations Gold historiques
+
+- Constat : PR2 fusionnée à distance, main4a014be ; CI40454773585 et40461024207 rouges avant tests. La migration0003 lit désormais une vue dépendant de la table de0020. Le DONE AU-08 déclaré sur des ciblés n'est pas une réception complète ; ne pas réutiliser cette déclaration pour AU-09.
+- Décision : figer les définitions Gold pré-0020 dans les SQL Alembic et les employer dans0003 et le contrôle de compatibilité de0018. Les vues courantes continuent à exclure la quarantaine après0020. Conserver les identifiants des migrations publiées ; agrandir explicitement la colonne de version avant l'enregistrement de0020, y compris sur installation neuve.
+- Réception : branche corrective distincte, tests Docker ciblés puis check complet et26 E2E sur runner CI éphémère. Aucune mutation active, downgrade ou nouveau tag ; conserver les deux CI rouges. AU-08 reste IN_PROGRESS jusqu'aux preuves complètes ; AU-09 ne peut être reçu sur cette dépendance non qualifiée.
+- Alternatives : créer une fausse table prématurée, raccourcir une révision publiée ou ignorer la CI rejetés. Aucun seuil ni scénario retiré.
+
+Précision avant correction indépendante : installation SQL neuve d178fbb réussie mais12 vues au lieu de14 ;0020 crée market_health avant stock_latest (DROP CASCADE la supprime) et omet market_coverage. Ajouter0021_gold_graph avec snapshot SQL complet des14 définitions en ordre topologique et WITH NO DATA ; installations déjà0020 et neuves convergent sans modifier observations ni Bronze. Conserver la CI d178fbb en cours et ses sources figées ; développement indépendant dans un autre worktree et sur le seul cluster smoke privé.
+
 ## ADR-133 | 2026-10-27 | Accepté avant code | Quarantaine append-only, interdiction des auto-liens et réparation B-R084 / B-R085 (AU-08)
 
 - Contexte : AU-08, B-R084 (728 auto-liens `superseded_by = observation_id` dans `obs.price_observation` et autres tables obs), B-R085 (164 SourceRecord référençant des clés Bronze absentes), IA-04 et Attention A013. Le trigger PostgreSQL `obs.check_obs_superseded_only()` refusait tout UPDATE si `OLD.superseded_by IS NOT NULL` et si `NEW.superseded_by IS NULL`. Une remise à NULL brute échoue closed par le trigger. Désactiver globalement les protections violerait la règle d'immuabilité et publierait soudain 728 observations historiques non vérifiées ou issues de tests (`review_status = 'accepted'`) dans `gold.price_obs_current`. Créer de faux objets Bronze pour combler les 164 clés absentes violerait formellement l'interdit AGENTS.md §8.10.

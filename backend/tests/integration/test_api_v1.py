@@ -457,6 +457,14 @@ def test_api_auth_roles_and_status_codes(
     r_app_bul = client.post(f"/v1/bulletins/{bul_id}/approve", headers=admin_headers)
     assert r_app_bul.status_code == 200
     assert r_app_bul.json()["status"] == "approved"
+    with Session(db_session.get_bind()) as persisted:
+        approved = persisted.get(Bulletin, bul_id)
+        assert approved is not None and approved.status == "approved"
+        assert approved.approved_at is not None
+        assert approved.approved_by == "admin@ketrika.local"
+    assert (
+        client.get(f"/v1/bulletins/{bul_id}", headers=admin_headers).json()["status"] == "approved"
+    )
 
     # Alert update
     alert_id = uuid.uuid4()
@@ -481,6 +489,12 @@ def test_api_auth_roles_and_status_codes(
     )
     assert r_patch_al.status_code == 200
     assert r_patch_al.json()["state"] == "acknowledged"
+    with Session(db_session.get_bind()) as persisted:
+        acknowledged = persisted.get(Alert, alert_id)
+        assert acknowledged is not None and acknowledged.state == "acknowledged"
+    reread = client.get("/v1/alerts?state=acknowledged", headers=admin_headers)
+    assert reread.status_code == 200
+    assert any(item["alert_id"] == str(alert_id) for item in reread.json())
 
 
 @pytest.mark.integration

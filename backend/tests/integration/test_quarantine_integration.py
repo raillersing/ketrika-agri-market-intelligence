@@ -23,7 +23,7 @@ def _ensure_test_source_and_record(session) -> tuple[str, str]:
     session.execute(
         text(
             "INSERT INTO meta.source (source_id, spec, status) "
-            "VALUES (:sid, '{\"priority\": \"P1\", \"source_family\": \"test\"}', 'active') "
+            'VALUES (:sid, \'{"priority": "P1", "source_family": "test"}\', \'active\') '
             "ON CONFLICT (source_id) DO NOTHING"
         ),
         {"sid": source_id},
@@ -122,9 +122,8 @@ def test_quarantine_ledger_update_restrictions():
                 {"qid": qid},
             )
             session.flush()
-        assert (
-            "Quarantine ledger only permits updating revoked_at and revocation_reason"
-            in str(exc_info.value)
+        assert "Quarantine ledger only permits updating revoked_at and revocation_reason" in str(
+            exc_info.value
         )
         session.rollback()
 
@@ -272,6 +271,8 @@ def test_anti_self_link_repair_requires_quarantine_record():
             ),
             {"oid": obs_id, "srid": srid},
         )
+        # Resolve the deferred self-reference before changing trigger metadata.
+        session.execute(text("SET CONSTRAINTS ALL IMMEDIATE"))
         session.execute(
             text("ALTER TABLE obs.price_observation ENABLE TRIGGER trg_price_obs_superseded_only")
         )
@@ -310,6 +311,7 @@ def test_anti_self_link_repair_requires_quarantine_record():
             ),
             {"oid": obs_id, "srid": srid},
         )
+        session.execute(text("SET CONSTRAINTS ALL IMMEDIATE"))
         session.execute(
             text("ALTER TABLE obs.price_observation ENABLE TRIGGER trg_price_obs_superseded_only")
         )
@@ -392,21 +394,7 @@ def test_quarantined_observation_excluded_from_gold():
         session.commit()
 
         # Refresh gold views: quarantined observation is skipped by provenance gate AND excluded from gold views
-        try:
-            refresh_gold_views(session)
-        except Exception as exc:
-            if hasattr(exc, "receipts") and exc.receipts:
-                for rcpt in exc.receipts:
-                    if not rcpt.report.passed:
-                        print(f"FAILED RECEIPT passed={rcpt.report.passed} total={rcpt.report.total_artifacts} valid={rcpt.report.valid_artifacts}")
-                        for r in rcpt.report.results:
-                            if r.get("state") != "verified":
-                                print(f"  FAILED SCHEMA ROW: srid={r.get('source_record_id')} reasons={r.get('reasons')}")
-            if hasattr(exc, "receipt") and exc.receipt:
-                failed = [r for r in exc.receipt.report.results if not r.passed]
-                for f in failed[:10]:
-                    print(f"FAILED ROW: oid={f.observation_id} srid={f.source_record_id} key={f.object_key} reason={f.reason}")
-            raise
+        refresh_gold_views(session)
 
         # Quarantined observation MUST NOT be published in gold.price_obs_current
         in_gold = session.execute(

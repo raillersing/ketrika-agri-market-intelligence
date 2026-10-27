@@ -49,6 +49,8 @@ VALID_FORM_MISSING_HASHES = (
 
 
 def upgrade() -> None:
+    # Fresh Alembic installations start with VARCHAR(32); retain this published ID.
+    op.execute("ALTER TABLE alembic_version ALTER COLUMN version_num TYPE VARCHAR(128)")
     # 1. Create obs.quarantine_ledger
     op.execute("""
         CREATE TABLE IF NOT EXISTS obs.quarantine_ledger (

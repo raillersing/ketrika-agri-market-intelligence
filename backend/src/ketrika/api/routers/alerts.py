@@ -71,6 +71,7 @@ def update_alert_state(
 
     alert.state = payload.state
     session.flush()
+    session.commit()
 
     prod = session.get(Product, alert.product_id) if alert.product_id else None
     prod_code = prod.product_code if prod else None
