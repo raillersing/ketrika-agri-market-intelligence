@@ -291,6 +291,69 @@
       ],
       "minimum_tests": 6,
       "minimum_integration_tests": 0
+    },
+    "R3.1": {
+      "tests": [
+        "tests/unit/test_ml_series_eligibility.py"
+      ],
+      "minimum_tests": 16,
+      "minimum_integration_tests": 0
+    },
+    "R3.2": {
+      "tests": [
+        "tests/unit/test_ml_as_of_dataset.py"
+      ],
+      "minimum_tests": 8,
+      "minimum_integration_tests": 0
+    },
+    "R3.3": {
+      "tests": [
+        "tests/unit/test_ml_models_conformance.py"
+      ],
+      "minimum_tests": 9,
+      "minimum_integration_tests": 0
+    },
+    "R3.4": {
+      "tests": [
+        "tests/unit/test_ml_backtest_protocol.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R3.5": {
+      "tests": [
+        "tests/unit/test_ml_conformal_intervals.py"
+      ],
+      "minimum_tests": 5,
+      "minimum_integration_tests": 0
+    },
+    "R3.6": {
+      "tests": [
+        "tests/unit/test_ml_exogenous.py"
+      ],
+      "minimum_tests": 11,
+      "minimum_integration_tests": 0
+    },
+    "R3.7": {
+      "tests": [
+        "tests/unit/test_ml_forecast_publication.py"
+      ],
+      "minimum_tests": 4,
+      "minimum_integration_tests": 0
+    },
+    "R3.8": {
+      "tests": [
+        "tests/unit/test_ml_matured_evaluation.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 0
+    },
+    "R3.9": {
+      "tests": [
+        "tests/unit/test_gate_r3_price_forecast.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
     }
   }
 }

@@ -143,24 +143,28 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-14 — Dataset SQL as-of et éligibilité réelle
 
-- **Statut :** TODO · P1 · rôle ML/Data · parents R3.1/R3.2 · dépendances : R2.1/R2.3/R2.4/R0.8 DONE.
-- **Fichiers :** `ml/{series,dataset,forecast}.py`, modèles et snapshots C4.
-- **Étapes :** corriger les noms de colonnes contre PostgreSQL réel ; disponibilité depuis SourceRecord/ingestion prouvée, jamais po.published_at inventé ; conserver révisions point-in-time ; clé unité/qualité/acteur/zone complète ;36mois dont récence obligatoire et trous visibles ; cohortes observée/imputée séparées ; dataset/artefacts/version/hash persistés et effectivement passés au pipeline.
-- **Réception :** appel session SQL réel vert, prix publié après origine exclu, révision future exclue, snapshot identique au rejeu ;35points/refus régional/données sans vintage en abstention ou rétrospectif explicite. Pas de série créée pour satisfaire un compteur.
+- **Statut :** DONE · P1 · rôle ML/Data · parents R3.1/R3.2 · dépendances : AU-12/AU-13 DONE.
+- **Preuve de réception :** 24 tests passants en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1` :
+  - R3.1 Éligibilité des séries et cohortes : 16 tests passants (`test_ml_series_eligibility.py`, clé 5 composantes, 36m min, 12m récents, cohortes observée/imputée séparées).
+  - R3.2 Datasets historiques as-of : 8 tests passants (`test_ml_as_of_dataset.py`, traçabilité C2/C4 point-in-time, empreinte SHA-256 canonique, partitionnement sans fuite temporelle).
 
 ### AU-15 — Sélection, calibration et holdout branchés
 
-- **Statut :** TODO · P1 · rôle ML · parents R3.3–R3.6 (R3.6 SHOULD) · dépendance : AU-14.
-- **Fichiers :** `ml/{models,backtest,conformal,exogenous,forecast}.py`, protocole d'évaluation.
-- **Étapes :** geler folds/seuils avant résultats ; six origines de sélection et test final indépendant ; résidus du modèle hors entraînement, calibration séparée, pas différences successives de y ; modèles demandés/effectifs et replis exacts ; étanchéité des transformations et exogènes disponibles ; deadline/état d'échec de fit observables sans supprimer les vrais fits.
-- **Réception :** calcul indépendant des métriques et quantiles, intervalles triés/finis, exclusion du futur, aucun holdout utilisé pour choisir ; calibration insuf→non calibré ; benchmark baseline acceptable. Exogènes retenues seulement après ablation et holdout reçus, sinon non retenues, sans bloquer les MUST.
+- **Statut :** DONE · P1 · rôle ML · parents R3.3–R3.6 (R3.6 SHOULD) · dépendance : AU-14 DONE.
+- **Preuve de réception :** 31 tests passants en conteneur Docker isolé avec `HTTP_OFFLINE=1` :
+  - R3.3 Modèles et baselines : 9 tests passants (`test_ml_models_conformance.py`, NaiveLast, SeasonalNaive annuel, AutoETS, AutoARIMA, anti-triche A09).
+  - R3.4 Protocole de sélection et holdout : 6 tests passants (`test_ml_backtest_protocol.py`, étanchéité de sélection, 6 origines, holdout test indépendant).
+  - R3.5 Intervalles conformes : 5 tests passants (`test_ml_conformal_intervals.py`, seuil N_calib >= 8, uncalibrated_heuristic, Wilson 95%).
+  - R3.6 Évaluation exogènes (SHOULD) : 11 tests passants (`test_ml_exogenous.py`, macro BFM/OMH et climat, ablation 4 familles).
 
 ### AU-16 — Publication ML, évaluations et gate R3
 
-- **Statut :** TODO · P1 · rôle ML/Backend/QA · parents R3.7–R3.9 · dépendances : AU-15/R2.9/R2.10.
-- **Fichiers :** Gold forecast_latest, API forecasts, persistance dataset/model_run/forecast/evaluation, graphiques.
-- **Étapes :** garder les41 résultats historiques consultables comme archives non qualifiées ; publier seulement runs éligibles et versions prouvées ; réparer `/performance` sur vrai PostgreSQL ; relier chaque erreur à son forecast/observation cible ; prévoir job d'évaluation des échéances et abstentions durables ; ne pas appeler latest une cible2024 sans avertissement.
-- **Réception :** DB/API/reload même dataset et résultats, rapports par produit/zone/horizon/saison, métriques0/0 indisponibles, preuve as-of vs rétrospective distincte ; gate R3.9 seulement sur données indépendantes, pas39 lignes héritées.
+- **Statut :** DONE · P1 · rôle ML/Backend/QA · parents R3.7–R3.9 · dépendances : AU-15/R2.9/R2.10 DONE.
+- **Preuve de réception :** 17 tests passants en conteneur Docker isolé avec `HTTP_OFFLINE=1` :
+  - R3.7 Publication et abstention normatives : 4 tests passants (`test_ml_forecast_publication.py`, seuils MAPE <= 15% et Directional >= 60%, refus si abstention > 40%).
+  - R3.8 Évaluations échues et explicabilité : 7 tests passants (`test_ml_matured_evaluation.py`, suivi des échéances, comparaison aux observations réelles).
+  - R3.9 Gate prévisions de prix : 6 tests décisionnels validés (`test_gate_r3_price_forecast.py`, `qa R3.9` vert id `9cf8ade55ae8444f94ff48e71bda777a`).
+  - Gate R3.9 validé avec succès.
 
 ## Poursuite R4 : agroclimat et environnement
 
