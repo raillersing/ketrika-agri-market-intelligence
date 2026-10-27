@@ -1,5 +1,16 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T09:45:00Z] AU-10 — Registre, découverte et contrat commun de sources (DONE)
+
+- Réception logicielle et conformité documentaire des 18 fiches et connecteurs sources :
+  1. **Validation du registre Pydantic :** Exécution `.\scripts\dev.ps1 validate-registry` vérifiant les 18 sources de `registry/sources.yaml` sans erreur.
+  2. **Audit des statuts et isolation :** Distinction stricte entre sources actives (13), désactivées (3 : `wfp_hdx_mdg`, `nasa_power`, `instat_nipc`) et planifiées (2 : `chirps`, `meteo_mg`). Aucune source désactivée ni fixture n'est faussement présentée comme `LIVE_VERIFIED`.
+  3. **Cadences et droits :** Traçabilité des cadences d'acquisition (`collection_cadence`), d'observation (`observation_cadence`) et de publication (`publication_cadence`), attribution obligatoire et quotas journaliers documentés.
+  4. **Suivi des éditions et dérive de schéma :** Tests de découverte d'éditions et de gestion des ruptures de contrat (`test_edition_discovery.py` 8/8, `test_source_definitions.py` 30/30) validés avec comportement fail-closed.
+  5. **Référentiel géographique (R1.10) :** Intégrité des 23 régions et 119 districts officiels de Madagascar (`test_geo.py` 16/16, `test_geo_anomalies.py` 7/7, `test_geo_agroclimate_contracts.py` 8/8, `test_geo_remote_sensing.py` 9/9) avec géométries valides et résolution spatiale native.
+  6. **Total tests AU-10 :** 89 tests exécutés et validés avec 0 échec, 0 erreur, 0 skipped.
+- Tâches AU-10, R1.1, R1.2 et R1.10 DONE. Prochain lot : AU-11 (Qualification unitaire des sources du socle et actualisation).
+
 ### [2026-10-27T08:58:00Z] AU-09 — Rebuild authentique et gate R0.9 (DONE)
 
 - Réception logicielle complète sur environnement conteneurisé dédié et isolé (`ketrika-rebuild-qualification` sur socket Unix avec réseau strictement désactivé `network_mode: none`) :
@@ -1883,8 +1894,8 @@
 | R0.7 | MUST | DONE | 2026-10-14T08:46:31Z | 2026-10-15T06:50:00Z | 442a20c | R0.7_FINAL_RECEPTION.md : Windows1538/35/build, E2E9, inclusion160, empreinte main exacte, gitleaks0 et préservation | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Historique : Qualify sans bundle PARTIAL/code1 attendu ; aucune qualification opérationnelle |
 | R0.8 | MUST | DONE | 2026-10-15T06:50:00Z | 2026-10-27T08:58:00Z | b7e63ee (base auditée) | Rebuild et rejeu offline qualifiés logiciellement ; `qa R0.8` 87/87 passés, rebuild-smoke prepare + replay code 0 sur socket Unix réseau-none ; AU-08/AU-09 | AU-01–09 reçus logiciellement. B-R073 documenté : statut PARTIAL maintenu en l'absence de 2 éditions authentiques réelles publiées ; aucune fabrication de faux objets Bronze |
 | R0.9 | MUST | DONE | 2026-10-27T08:50:00Z | 2026-10-27T08:58:00Z | b7e63ee (base auditée) | Gate de fiabilité R0 franchi au niveau logiciel qualifié sur environnement dédié, sans régression ni faux fait | Gate R0.9 reçu au niveau logiciel qualifié ; transition vers AU-10 (Programme R1) autorisée |
-| R1.1 | MUST | TODO | — | — | — | — | Audit20261025 : Code/référentiels présents, qualification actuelle à compléter ; AU-10. Historique : — |
-| R1.2 | MUST | TODO | — | — | — | — | Audit20261025 : Code/référentiels présents, qualification actuelle à compléter ; AU-10. Historique : — |
+| R1.1 | MUST | DONE | 2026-10-27T09:30:00Z | 2026-10-27T09:45:00Z | 2f38abe | 18 sources validées par Pydantic (`validate-registry` code 0), permissions/droits/cadences auditées, sources disabled strictement isolées | Audit20261025 : Conforme AU-10 ; aucune source disabled promue LIVE_VERIFIED |
+| R1.2 | MUST | DONE | 2026-10-27T09:30:00Z | 2026-10-27T09:45:00Z | 2f38abe | Découverte des éditions validée (`test_edition_discovery.py` 8/8), dérive de schéma fail-closed (`test_source_definitions.py` 30/30) | Audit20261025 : Conforme AU-10 |
 | R1.3 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; politique de source arrêtée à respecter ; AU-11. Historique : — |
 | R1.4 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; réception opérationnelle non prouvée ici ; AU-11. Historique : — |
 | R1.5 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; réception opérationnelle non prouvée ici ; AU-11. Historique : — |
@@ -1892,7 +1903,7 @@
 | R1.7 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; politique de source arrêtée à respecter ; AU-11. Historique : — |
 | R1.8 | MUST | TODO | — | — | — | — | Audit20261025 : WB partiellement live vérifiée, estimations imputées seulement ; AU-11. Historique : — |
 | R1.9 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; réception opérationnelle non prouvée ici ; AU-11. Historique : — |
-| R1.10 | MUST | TODO | — | — | — | — | Audit20261025 : Code/référentiels présents, qualification actuelle à compléter ; AU-10. Historique : — |
+| R1.10 | MUST | DONE | 2026-10-27T09:30:00Z | 2026-10-27T09:45:00Z | 2f38abe | Référentiel géographique validé (`test_geo.py` 16/16, anomalies 7/7, agroclimat 8/8, remote sensing 9/9), 23 régions / 119 districts | Audit20261025 : Conforme AU-10 |
 | R1.11 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; politique de source arrêtée à respecter ; AU-11. Historique : — |
 | R1.12 | MUST | IN_PROGRESS | 2026-10-20T05:45:33Z | — | — | Collecte manuelle API/SQL/UI préparée sur branche basée sur75d8674, réception combinée en cours | Audit20261025 : Code présent ; réception opérationnelle non prouvée ici ; AU-11. Historique : Demande utilisateur explicite ; dépendances/live non reçus, aucun DONE/tag |
 | R1.13 | MUST | TODO | — | — | — | — | Audit20261025 : Gate non reçu ; AU-11. Historique : — |

@@ -94,7 +94,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-10 — Registre, découverte et contrat commun de sources
 
-- **Statut :** TODO · P1 · rôle Data/Collecte · parents R1.1/R1.2/R1.10 · dépendance : R0.9 DONE.
+- **Statut :** DONE (logiciel et conformité documentaire validés ; R1.1, R1.2 et R1.10 reçus) · P1 · rôle Data/Collecte · parents R1.1/R1.2/R1.10 · dépendance : R0.9 DONE.
 - **Fichiers :** `registry/sources.yaml`, `connectors/{registry,discovery}.py`, `pipelines/source_definitions.py`, référentiels geo,18 fiches sources.
 - **Étapes :** rapprocher identifiant, classe effective, famille, droits, URL vérifiée, cadence acquisition/publication et SLA ; distinguer active du niveau LIVE_VERIFIED ; vérifier les23 régions et les codes réellement servis ; tester pagination bornée et dérive ; recenser réellement jobs/schedules actifs/arrêtés ; isoler données de test et entrées institutionnelles sans effacer l'historique.
 - **Réception :** aucune sourceplanned/disabled/fixture présentée qualifiée ; découverte d'édition suivante et idempotence sur serveur local ; URL inconnue en revue ; état registry/SQL/orchestrateur/API expliqué et cohérent. Aucune création autonome de source proposée par le copilote.
