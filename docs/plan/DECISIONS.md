@@ -1,5 +1,11 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-135 | 2026-10-27 | Accepté avant code | Relecture navigateur bornée après refus de session au démarrage
+
+- CI40476674632/50d322d : backend2483 et frontend80 verts ; navigateur15/26, arrivée au bulletin sur503 explicite « Vérification de session indisponible ». Contrôle privé distinct :15/26, approbation200 puis relecture draft ; commits manquants des routes bulletin/alerte corrigés conformément aux contrats existants.
+- Décision : conserver le refus middleware503 et son délai5s. À la seule première navigation du scénario bulletin, si et seulement si réponse503 au détail exact connu, une requête authentifiée /api/v1/auth/me doit réussir200, puis un seul reload explicite est permis et inscrit dans session_readiness_recoveries. Toute panne persistante, autre erreur ou second503 reste rouge ; aucune boucle générale ni assertion retirée. La trace conserve le refus et la reprise. Ce repli de préparation n'est pas une qualification de latence ni une réussite initiale sans incident.
+- Réception : ciblés persistés via nouvelle connexion SQL/HTTP, navigateur privé complet puis nouveau gel/check complet et26 E2E CI. Aucun changement du produit concernant les refus de session, de P95<1000ms, des seuils scientifiques ou des gates H3/H7.
+
 ## ADR-134 | 2026-10-27 | Accepté avant code | Réception corrective après fusion et migrations Gold historiques
 
 - Constat : PR2 fusionnée à distance, main4a014be ; CI40454773585 et40461024207 rouges avant tests. La migration0003 lit désormais une vue dépendant de la table de0020. Le DONE AU-08 déclaré sur des ciblés n'est pas une réception complète ; ne pas réutiliser cette déclaration pour AU-09.

@@ -1,5 +1,13 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T09:28:26Z] DP-1 — persistance des actions bulletin/alerte IN_PROGRESS
+
+- Navigateur privé sur50d322d :15 scénarios réussis puis refus à la relecture du statut bulletin après approbation ; zéro exception JS, fixtures propres nettoyées. Cause source confirmée : les deux routes bulletin/alerte flushent sans commit, alors que get_db ferme la session sans commit. Aucun succès durable ne peut être déduit de leur seule réponse200.
+- Mini-plan : commit explicite des seules actions concernées avant réponse ; assertions SQL via nouvelle connexion et relecture HTTP ; ciblés Docker sur cluster privé ; navigateur complet de développement pour regrouper les défauts ; nouveau gel/check CI complet et26 E2E avant fusion. H3 et toutes protections conservés.
+- Développement dans fix/r08-durable-reading-actions-20261027 séparé de la source50d322d/CI40476674632 figée. Aucun changement global de get_db, aucun service ou contenu actif muté.
+- CI40476674632 terminée :2483 backend/80 frontend verts, navigateur15/26 sur503 de vérification de session avant bulletin ; originaux exportés PARTIAL avec leurs SHA natifs, non réutilisables pour ce correctif applicatif. ADR135 avant reprise bornée du seul503 connu, sans modifier middleware5s ni P95.
+- Docker privé : lint/format/types routes et test verts ; test HTTP+nouvelle connexion SQL code0/15,26s prouve approbation et état alerte persistés. Types du runner navigateur code0. Essai suivant arrêté sur prix503 après init_gold_views du test API (vues non peuplées) ; entretien normal du seul cache privé,13 vues numériques rafraîchies/aucune observation, macro retenue, puis reprise navigateur sur source identique. Aucune preuve de marché déduite.
+
 ### [2026-10-27T08:50:00Z] Réception corrective — contre-épreuve SQL historique corrigée
 
 - CI40473333968/d178fbb terminée rouge :2481 succès/un échec/584,45s ; originaux backend/inventaire/couverture récupérés, aucun frontend/navigateur exécuté. Cause distincte : fixture historique active un trigger avec événements FK différés en attente (ObjectInUse), avant toute assertion de réparation.

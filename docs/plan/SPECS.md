@@ -1,5 +1,7 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR135 : le scénario navigateur de première lecture bulletin autorise une seule relecture après le503 exact de vérification de session, uniquement après /api/v1/auth/me200 réel ; incident et reprise inscrits au reçu. Autres503/panne persistante restent rouges. Middleware5s et P95 API inchangés. Les routes d'approbation bulletin et de suivi alerte valident leur transaction avant de confirmer la réussite, sans émission externe.
+
 ADR-134 : les migrations antérieures à0020 utilisent leurs définitions SQL historiques sans dépendance sur obs.quarantine_ledger. Le contrôle de compatibilité0018 reçoit un répertoire SQL historique explicite ; les appels runtime gardent les définitions courantes.0020 élargit alembic_version.version_num avant enregistrement de son identifiant publié. La réparation fusionnée exige encore son check complet et26 E2E avant réception ; aucun DONE déduit des seuls ciblés.
 
 Complément ADR134 :0021_gold_graph applique un snapshot des14 vues Gold dans leur ordre topologique, WITH NO DATA exclusivement, afin de réparer aussi les destinations ayant déjà appliqué0020. Aucun recalcul/publication ni mutation d'observation/Bronze. Les filtres de quarantaine, les droits Gold et le refus de publication macro sont conservés.

@@ -76,6 +76,7 @@ def approve_bulletin(
     b.approved_at = datetime.now(UTC)
     b.approved_by = admin_user.email
     session.flush()
+    session.commit()
 
     return BulletinItem(
         bulletin_id=b.bulletin_id,

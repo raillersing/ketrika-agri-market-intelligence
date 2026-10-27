@@ -328,7 +328,21 @@ def main() -> int:
             expect(page.get_by_text(re.compile(r"Surcoût de transport estimé"))).to_have_count(0)
             completed.append("territory view is tabular and states missing geography")
 
-            page.goto(f"/bulletins/{fixture_ids['bulletin']}")
+            bulletin_response = page.goto(f"/bulletins/{fixture_ids['bulletin']}")
+            if bulletin_response is not None and bulletin_response.status == 503:
+                assert bulletin_response.json() == {
+                    "detail": "Vérification de session indisponible. Réessayez dans un instant."
+                }, "Unexpected bulletin navigation error"
+                assert context.request.get("/api/v1/auth/me").status == 200, (
+                    "Session verification remains unavailable"
+                )
+                receipt["session_readiness_recoveries"] = [
+                    {"scenario": "first bulletin navigation", "initial_status": 503, "reloads": 1}
+                ]
+                retry_response = page.reload()
+                assert retry_response is not None and retry_response.status == 200, (
+                    "Bulletin navigation failed after its single readiness reload"
+                )
             expect(page.get_by_text("0 Ar/kg", exact=True)).to_be_visible()
             expect(page.get_by_text("Valeur non renseignée", exact=True)).to_be_visible()
             expect(page.get_by_text("<img src=x onerror=alert(1)>", exact=True)).to_be_visible()
@@ -348,10 +362,9 @@ def main() -> int:
                     exact=True,
                 )
             ).to_be_visible()
-            assert (
-                context.request.get(f"/api/v1/bulletins/{fixture_ids['bulletin']}").json()["status"]
-                == "approved"
-            )
+            approval = context.request.get(f"/api/v1/bulletins/{fixture_ids['bulletin']}")
+            assert approval.status == 200, f"Approval reread HTTP {approval.status}"
+            assert approval.json()["status"] == "approved", "Bulletin approval was not persisted"
             completed.append(
                 "recorded bulletin facts preserve zero missingness and approval without invented narrative"
             )
