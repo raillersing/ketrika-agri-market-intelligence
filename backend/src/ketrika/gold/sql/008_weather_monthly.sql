@@ -19,6 +19,14 @@ WITH monthly_aggregates AS (
     FROM obs.weather_observation wo
     LEFT JOIN ref.location loc ON wo.location_id = loc.location_id
     WHERE to_jsonb(wo)->>'superseded_by' IS NULL
+      AND NOT EXISTS (
+          SELECT 1 FROM obs.quarantine_ledger ql 
+          WHERE (
+              (ql.table_name = 'obs.weather_observation' AND ql.observation_id = wo.observation_id)
+              OR (ql.table_name = 'meta.source_record' AND ql.source_record_id = wo.source_record_id)
+          )
+          AND ql.revoked_at IS NULL
+      )
     GROUP BY
         wo.location_id,
         loc.pcode,

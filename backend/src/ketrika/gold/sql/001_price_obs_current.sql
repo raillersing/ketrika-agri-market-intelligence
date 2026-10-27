@@ -50,6 +50,14 @@ LEFT JOIN ref.location loc ON po.location_id = loc.location_id
 WHERE po.superseded_by IS NULL
   AND po.review_status = 'accepted'
   AND po.price_mga_per_base IS NOT NULL
+  AND NOT EXISTS (
+      SELECT 1 FROM obs.quarantine_ledger ql 
+      WHERE (
+          (ql.table_name = 'obs.price_observation' AND ql.observation_id = po.observation_id)
+          OR (ql.table_name = 'meta.source_record' AND ql.source_record_id = po.source_record_id)
+      )
+      AND ql.revoked_at IS NULL
+  )
 WITH NO DATA;
 
 CREATE INDEX idx_gold_price_obs_current_lookup

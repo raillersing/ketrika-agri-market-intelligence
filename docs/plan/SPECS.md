@@ -921,6 +921,36 @@ Pour chaque enregistrement normalisé, on calcule `natural_key`, puis :
 - aucune ligne courante (`superseded_by IS NULL`) ne porte cette clé : `INSERT` ;
 - une ligne courante existe avec des **valeurs identiques** : ignorer (idempotence) ;
 - une ligne courante existe avec des **valeurs différentes** : dans une seule transaction, `INSERT` de la nouvelle ligne, puis `UPDATE ancienne SET superseded_by = nouvelle`. C'est le seul `UPDATE` autorisé sur les tables `obs`.
+- **Règle anti-auto-liens (ADR-131) :** `superseded_by` ne doit jamais être égal à l'identifiant de la ligne elle-même (`superseded_by <> observation_id`). Tout auto-lien est formellement interdit et rejeté par trigger (`Self-supersession is forbidden`).
+
+### 8.2 Registre de quarantaine immuable `obs.quarantine_ledger` (normative, ADR-131)
+
+Toute observation ou donnée historique dont la provenance ne peut être établie à 100 % (ex. B-R085, références sans objet Bronze), dont le lien de révision est corrompu (ex. B-R084, auto-liens historiques), ou issue de fixtures de tests isolées, est enregistrée dans le registre de quarantaine `obs.quarantine_ledger`.
+
+```sql
+CREATE TABLE obs.quarantine_ledger (
+    quarantine_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    table_name VARCHAR(64) NOT NULL,
+    observation_id UUID NOT NULL,
+    source_record_id UUID,
+    reason_code VARCHAR(64) NOT NULL,
+    details JSONB NOT NULL DEFAULT '{}'::jsonb,
+    operator VARCHAR(128) NOT NULL DEFAULT CURRENT_USER,
+    quarantined_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+    revoked_at TIMESTAMPTZ,
+    revocation_reason TEXT
+);
+
+CREATE UNIQUE INDEX uq_quarantine_active_entity 
+ON obs.quarantine_ledger (table_name, observation_id) 
+WHERE revoked_at IS NULL;
+```
+
+**Règles d'intégrité et de publication :**
+1. **Append-only :** aucun `DELETE` n'est autorisé sur `obs.quarantine_ledger`. Seul l'enregistrement de `revoked_at` et `revocation_reason` est autorisé par `UPDATE` lorsque `OLD.revoked_at IS NULL`.
+2. **Garde de réparation d'auto-lien :** le trigger `obs.check_obs_superseded_only()` autorise la levée d'un auto-lien historique (`OLD.superseded_by = OLD.observation_id` vers `NEW.superseded_by = NULL`) uniquement si une entrée active existe dans `obs.quarantine_ledger` pour cette observation.
+3. **Exclusion Gold absolue :** aucune observation sous quarantaine active (`revoked_at IS NULL`) ne peut être publiée ou sélectionnée dans `gold.price_obs_current` ou les vues Gold dérivées.
+4. **Projection canonique :** `core/rebuild_manifest.py` intègre `obs.quarantine_ledger` avec clé primaire `quarantine_id` et garantit l'absence de cycles de révision.
 
 ---
 

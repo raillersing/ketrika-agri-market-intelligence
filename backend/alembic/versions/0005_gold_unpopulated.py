@@ -28,7 +28,18 @@ VIEWS = (
 def upgrade() -> None:
     directory = Path(__file__).resolve().parents[2] / "src" / "ketrika" / "gold" / "sql"
     files = [directory / f"{index:03d}_{view}.sql" for index, view in enumerate(VIEWS, 1)]
-    files[-1] = Path(__file__).resolve().parents[1] / "sql" / "012_forecast_latest_pre_0012.sql"
+    alembic_sql = Path(__file__).resolve().parents[1] / "sql"
+    pre_overrides = {
+        0: "001_price_obs_current_pre_0020.sql",
+        4: "005_stock_latest_pre_0020.sql",
+        5: "006_trade_monthly_pre_0020.sql",
+        6: "007_import_dependency_pre_0020.sql",
+        7: "008_weather_monthly_pre_0020.sql",
+        8: "009_cpi_food_pre_0020.sql",
+        11: "012_forecast_latest_pre_0012.sql",
+    }
+    for idx, override in pre_overrides.items():
+        files[idx] = alembic_sql / override
     if not all(file.is_file() for file in files):
         raise RuntimeError("gold_schema_definition_missing")
     definitions = [file.read_text(encoding="utf-8") for file in files]

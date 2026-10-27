@@ -682,6 +682,37 @@ class MacroObservation(Base):
     )
 
 
+class QuarantineLedger(Base):
+    """Immutable audit ledger of quarantined observations and unverified records (SPECS §8.2, ADR-131)."""
+
+    __tablename__ = "quarantine_ledger"
+    __table_args__ = (
+        Index("idx_quarantine_reason", "reason_code"),
+        Index("idx_quarantine_source_record", "source_record_id"),
+        Index("idx_quarantine_entity", "table_name", "observation_id"),
+        {"schema": "obs"},
+    )
+
+    quarantine_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    table_name: Mapped[str] = mapped_column(TEXT, nullable=False)
+    observation_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    source_record_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("meta.source_record.source_record_id"),
+        nullable=True,
+    )
+    reason_code: Mapped[str] = mapped_column(TEXT, nullable=False)
+    details: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, nullable=False)
+    operator: Mapped[str] = mapped_column(TEXT, nullable=False, default="system")
+    quarantined_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    revocation_reason: Mapped[str | None] = mapped_column(TEXT, nullable=True)
+
+
 # ===================== ML SCHEMA =====================
 
 

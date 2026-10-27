@@ -120,13 +120,17 @@ def canonical_manifest(
     identities: dict[tuple[str, UUID], str] = {}
     business_ids: set[tuple[str, str]] = set()
     for table in sorted(OBS_COLUMNS):
-        primary = "event_id" if table == "obs.event" else "observation_id"
+        primary = (
+            "event_id"
+            if table == "obs.event"
+            else ("quarantine_id" if table == "obs.quarantine_ledger" else "observation_id")
+        )
         for row in tables[table]:
             identity = (table, _identifier(row[primary]))
             business = {
                 key: _value(value)
                 for key, value in row.items()
-                if key not in {primary, "ingested_at", "superseded_by"}
+                if key not in {primary, "ingested_at", "superseded_by", "quarantined_at"}
             }
             stable = _digest(business)
             if identity in identities or (table, stable) in business_ids:
@@ -137,6 +141,8 @@ def canonical_manifest(
     # A supersession must terminate. Self-links and longer cycles are not revisions.
     targets = {}
     for table in sorted(OBS_COLUMNS):
+        if table == "obs.quarantine_ledger":
+            continue
         for row in tables[table]:
             if row.get("superseded_by") is not None:
                 targets[(table, _identifier(row["observation_id"]))] = (
@@ -168,11 +174,17 @@ def canonical_manifest(
         for row in tables[table]:
             fields = {}
             for name, value in row.items():
-                if name == "ingested_at" and (
+                if name in {"ingested_at", "quarantined_at"} and (
                     table in OBS_COLUMNS or table == "gold.price_obs_current"
                 ):
                     continue
-                if table in OBS_COLUMNS and name in {"event_id", "observation_id", "superseded_by"}:
+                if table == "obs.quarantine_ledger":
+                    fields[name] = _value(value)
+                elif table in OBS_COLUMNS and name in {
+                    "event_id",
+                    "observation_id",
+                    "superseded_by",
+                }:
                     fields[name] = link(table, value)
                 elif table == "gold.price_obs_current" and name == "observation_id":
                     fields[name] = link("obs.price_observation", value)

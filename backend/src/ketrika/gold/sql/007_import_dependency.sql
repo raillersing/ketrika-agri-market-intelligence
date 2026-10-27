@@ -16,6 +16,14 @@ WITH yearly_production AS (
     LEFT JOIN ref.product p ON po.product_id = p.product_id
     WHERE po.superseded_by IS NULL
       AND po.element = 'production_t'
+      AND NOT EXISTS (
+          SELECT 1 FROM obs.quarantine_ledger ql 
+          WHERE (
+              (ql.table_name = 'obs.production_observation' AND ql.observation_id = po.observation_id)
+              OR (ql.table_name = 'meta.source_record' AND ql.source_record_id = po.source_record_id)
+          )
+          AND ql.revoked_at IS NULL
+      )
     GROUP BY po.product_id, p.product_code, p.canonical_name_fr, EXTRACT(YEAR FROM po.period_start)
 ),
 yearly_trade AS (
@@ -29,6 +37,14 @@ yearly_trade AS (
     FROM obs.trade_flow tf
     LEFT JOIN ref.product p ON tf.product_id = p.product_id
     WHERE tf.superseded_by IS NULL
+      AND NOT EXISTS (
+          SELECT 1 FROM obs.quarantine_ledger ql 
+          WHERE (
+              (ql.table_name = 'obs.trade_flow' AND ql.observation_id = tf.observation_id)
+              OR (ql.table_name = 'meta.source_record' AND ql.source_record_id = tf.source_record_id)
+          )
+          AND ql.revoked_at IS NULL
+      )
     GROUP BY tf.product_id, p.product_code, p.canonical_name_fr, EXTRACT(YEAR FROM tf.period_start)
 ),
 combined_keys AS (

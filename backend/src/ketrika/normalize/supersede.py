@@ -98,6 +98,10 @@ def load_observation_with_supersession[T: Base](
     # Supersede existing observation
     new_id = uuid.uuid4()
     current_pk: uuid.UUID = obs_any.observation_id
+    if new_id == current_pk:
+        raise ValueError(
+            "Self-supersession is forbidden: superseded_by cannot reference observation itself"
+        )
     upd_stmt = (
         update(model_cls).where(model_any.observation_id == current_pk).values(superseded_by=new_id)
     )

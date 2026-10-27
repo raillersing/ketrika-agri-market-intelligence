@@ -1,5 +1,19 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T03:40:00Z] AU-08 — Quarantaine append-only et réparation des auto-liens historiques (IN_PROGRESS)
+
+- Tâche AU-08 démarrée sur branche fix/r08-quarantine-20261027 (rebasée sur main à 0accb95 après DP-1). Traitement de B-R084 (728 auto-liens `superseded_by = observation_id`) et B-R085 (164 SourceRecord avec clés Bronze absentes).
+- Mini-plan (≤ 10 lignes) :
+  1. ADR-133 et SPECS §8.3 / §8.1 : table append-only `obs.quarantine_ledger`, garde anti-auto-liens sur triggers obs, exclusion de publication.
+  2. Modèle `QuarantineLedger` dans `core/models/db.py` et migration 0020 créant la table et durcissant `obs.check_obs_superseded_only()` sur `BEFORE INSERT OR UPDATE`.
+  3. Procédure de réparation auditable : inventaire complet (728 auto-liens, 164 références sans Bronze, fixtures), enregistrement en quarantaine permanente (`reason_code = 'HISTORICAL_SELF_LINK'`) et purge des auto-liens sous garde.
+  4. Découplage de migration 0002 (baseline SQL pré-0020 conservée pour installation fresh) et migration 0020 remplaçant les 6 vues matérialisées Gold avec le filtre de quarantaine.
+  5. Mise à jour de `normalize/supersede.py` (interdiction stricte d'auto-supersession) et requêtes Gold associées.
+  6. Adaptation de `core/rebuild_manifest.py` : projection propre de `obs.quarantine_ledger`, zéro cycle et réconciliation sans altérer les SHA Bronze.
+  7. Suite de tests unitaires et SQL d'intégration (`test_quarantine_ledger.py`) vérifiant triggers, permissions, idempotence et non-publication.
+  8. Vérification stabilisée par check complet (`qa-isolated check`) et actualisation des registres BLOCKERS et PROGRESS.
+- AU-08 IN_PROGRESS ; R0.8 IN_PROGRESS. Aucune fabrication de faux objets Bronze, aucune suppression de données brutes.
+
 ### [2026-10-27T00:43:00Z] DP-1 — réception CI isolée, destination locale préservée
 
 - Avant tout check complet local, constat readonly : main-final porte0020_quarantine_ledger_and_anti_self_links et un runner depuis r08-quarantine-20261027 y exécute des intégrations. Aucun arrêt, downgrade, snapshot ou mutation de cette destination par DP-1 ; demande de coordination C053 déposée, pas d'accord présumé. AU-08 déjà engagé sera préservé, pas réimplémenté en concurrence.

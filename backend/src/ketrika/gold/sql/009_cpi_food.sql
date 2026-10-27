@@ -16,6 +16,14 @@ WITH current_cpi AS (
         co.base_period
     FROM obs.cpi_observation co
     WHERE co.superseded_by IS NULL
+      AND NOT EXISTS (
+          SELECT 1 FROM obs.quarantine_ledger ql 
+          WHERE (
+              (ql.table_name = 'obs.cpi_observation' AND ql.observation_id = co.observation_id)
+              OR (ql.table_name = 'meta.source_record' AND ql.source_record_id = co.source_record_id)
+          )
+          AND ql.revoked_at IS NULL
+      )
 )
 SELECT
     c.series_code,

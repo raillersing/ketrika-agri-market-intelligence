@@ -75,11 +75,25 @@ def require_gold_provenance(
     identifiers = ["meta.source_record", *("obs." + table for table in tables)]
     session.execute(text("SET LOCAL lock_timeout = '5s'"))
     session.execute(text("LOCK TABLE " + ", ".join(identifiers) + " IN SHARE MODE"))
+    from ketrika.core.models.db import QuarantineLedger
+
     targets: list[ObservationTarget] = []
     candidate_ids: set[UUID] = set()
+    quarantined_source_record_ids = select(QuarantineLedger.source_record_id).where(
+        QuarantineLedger.table_name == "meta.source_record",
+        QuarantineLedger.revoked_at.is_(None),
+    )
     for table in tables:
         model = POLICIES[table].model
-        query = select(model).where(model.superseded_by.is_(None))
+        quarantined_ids = select(QuarantineLedger.observation_id).where(
+            QuarantineLedger.table_name == f"obs.{table}",
+            QuarantineLedger.revoked_at.is_(None),
+        )
+        query = select(model).where(
+            model.superseded_by.is_(None),
+            model.observation_id.not_in(quarantined_ids),
+            model.source_record_id.not_in(quarantined_source_record_ids),
+        )
         if table == "price_observation":
             query = query.where(
                 model.review_status == "accepted", model.price_mga_per_base.is_not(None)

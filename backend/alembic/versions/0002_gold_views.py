@@ -52,7 +52,18 @@ def upgrade() -> None:
         "forecast_latest",
     )
     sql_files = [base_dir / f"{index:03d}_{view}.sql" for index, view in enumerate(views, 1)]
-    sql_files[-1] = Path(__file__).resolve().parents[1] / "sql" / "012_forecast_latest_pre_0012.sql"
+    alembic_sql = Path(__file__).resolve().parents[1] / "sql"
+    pre_overrides = {
+        0: "001_price_obs_current_pre_0020.sql",
+        4: "005_stock_latest_pre_0020.sql",
+        5: "006_trade_monthly_pre_0020.sql",
+        6: "007_import_dependency_pre_0020.sql",
+        7: "008_weather_monthly_pre_0020.sql",
+        8: "009_cpi_food_pre_0020.sql",
+        11: "012_forecast_latest_pre_0012.sql",
+    }
+    for idx, override in pre_overrides.items():
+        sql_files[idx] = alembic_sql / override
     if not all(file.is_file() for file in sql_files):
         raise RuntimeError(f"No Gold view SQL files found in {base_dir}")
 

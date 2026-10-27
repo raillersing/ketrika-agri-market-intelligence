@@ -1,4 +1,28 @@
 # DECISIONS (Architecture Decision Records - ADR)
+
+## ADR-133 | 2026-10-27 | Accepté avant code | Quarantaine append-only, interdiction des auto-liens et réparation B-R084 / B-R085 (AU-08)
+
+- Contexte : AU-08, B-R084 (728 auto-liens `superseded_by = observation_id` dans `obs.price_observation` et autres tables obs), B-R085 (164 SourceRecord référençant des clés Bronze absentes), IA-04 et Attention A013. Le trigger PostgreSQL `obs.check_obs_superseded_only()` refusait tout UPDATE si `OLD.superseded_by IS NOT NULL` et si `NEW.superseded_by IS NULL`. Une remise à NULL brute échoue closed par le trigger. Désactiver globalement les protections violerait la règle d'immuabilité et publierait soudain 728 observations historiques non vérifiées ou issues de tests (`review_status = 'accepted'`) dans `gold.price_obs_current`. Créer de faux objets Bronze pour combler les 164 clés absentes violerait formellement l'interdit AGENTS.md §8.10.
+- Décision :
+  1. Registre de quarantaine immuable `obs.quarantine_ledger` : append-only (`quarantine_id`, `table_name`, `observation_id`, `source_record_id`, `reason_code`, `details`, `operator`, `quarantined_at`, `revoked_at`, `revocation_reason`). Trigger `trg_quarantine_ledger_append_only` interdisant tout DELETE et restreignant l'UPDATE au seul enregistrement de `revoked_at` / `revocation_reason`. Pour `reason_code = 'HISTORICAL_SELF_LINK'`, la mise en quarantaine est permanente et ne peut être révoquée (`RAISE EXCEPTION 'Quarantine for historical self-links is permanent'`), garantissant que des lignes obsolètes ou de test ne soient jamais réactivées en Gold.
+  2. Durcissement du trigger d'immuabilité `obs.check_obs_superseded_only()` sur `BEFORE INSERT OR UPDATE` :
+     - Interdiction stricte de toute auto-supersession : lever une exception si `NEW.superseded_by = NEW.observation_id` (aussi bien à l'INSERT qu'à l'UPDATE).
+     - Préservation absolue des données brutes : aucune colonne métier ne peut être modifiée lors d'un UPDATE.
+     - Réparation auditable sous garde : autoriser la mise à NULL de `superseded_by` sur un enregistrement historique auto-lié (`OLD.superseded_by = OLD.observation_id`) uniquement si une entrée active existe dans `obs.quarantine_ledger` pour cette observation. Toute tentative de modification d'une révision légitime (`OLD.superseded_by <> OLD.observation_id`) reste strictement refusée.
+  3. Découplage des migrations baseline et vues Gold :
+     - Les définitions initiales (pré-0020) restent chargées par `0002_gold_views.py` sans dépendance vers `obs.quarantine_ledger` pour qu'un déploiement fresh `alembic upgrade head` s'exécute de zéro sans erreur.
+     - La migration `0020_quarantine_ledger_and_anti_self_links.py` crée `obs.quarantine_ledger`, les triggers, effectue la réparation B-R084/B-R085 et recrée les 6 vues matérialisées Gold avec le filtre `WHERE NOT EXISTS (SELECT 1 FROM obs.quarantine_ledger ql WHERE ql.observation_id = ... AND ql.revoked_at IS NULL)`.
+  4. Ciblage précis de B-R085 :
+     - Utilisation de la condition exacte sur les 164 enregistrements documentés dans `R0.8_BRONZE_ORIGINAL_IMPACT_20261025.json` : les 129 enregistrements sans format sha256 valide (`content_sha256 !~ '^[0-9a-f]{64}$'`) et les 35 clés de format valide absentes de Bronze.
+  5. Projection de reconstruction déterministe (`core/rebuild_manifest.py`) : intégration de `obs.quarantine_ledger` avec clé primaire explicite `quarantine_id`, exclusion des auto-liens du graphe de révision, garantissant l'absence de cycles (`manifest_revision_cycle`) et l'intégrité de la provenance.
+  6. Réparation et conservation : inventaire exact des 728 auto-liens et 164 clés absentes historisé en quarantaine. Aucune fabrication de faux objets Bronze.
+- Alternatives rejetées :
+  - Désactiver temporairement les triggers et mettre `superseded_by = NULL` sans quarantaine (rejeté : publication immédiate de faux faits et violation d'immuabilité).
+  - Créer des objets Bronze synthétiques pour satisfaire les clés absentes (rejeté : fabrication de données interdite par AGENTS §8.10).
+  - Laisser les auto-liens en base (rejeté : corrompt le graphe de révision, bloque le rebuild manifest par cycle).
+  - Modifier `0002_gold_views.py` pour dépendre d'une table non encore existante (rejeté : casse la migration fresh database).
+- Réception : tests unitaires et SQL sur PostgreSQL vérifiant l'interdiction d'auto-supersession à l'INSERT et à l'UPDATE, l'interdiction de DELETE/UPDATE illégal sur la quarantaine, l'interdiction de révocation des auto-liens historiques, l'obligation d'entrée de quarantaine avant levée d'auto-lien, la non-publication des lignes quarantainées dans Gold, et la conformité du manifest.
+
 ## ADR-132 | 2026-10-27 | Accepté avant code | Réception éphémère CI et conservation des rapports natifs
 
 - La destination locale main-final est utilisée par r08-quarantine-20261027 et porte sa migration0020. Aucun downgrade, remplacement de source, arrêt de runner ou partage de cette destination pour DP-1. Demande utilisateur : commit/push/merge puis poursuite ; C053 demande coordination sans présumer un accord.
@@ -9,14 +33,6 @@
 - Alternatives rejetées : reprendre la QA d'autrui, effacer sa migration, fabriquer une qualification à partir des seuls ciblés ou ajouter une pile de test parallèle avec identité trompeuse. Le prochain gel inclut ce changement de conservation et reçoit le workflow complet.
 
 ## ADR-131 | 2026-10-27 | Accepté avant code | DP-1, lecture des écrans et filtres sans faux faits
-
-- Demande utilisateur : commencer le plan DP-0–7 reçu en7b85e7f. DP-0 constate les identités distinctes4e455ed backend/frontend etcd77a26 navigateur, conservées sans réétiquetage. Le prochain contenu DP-1 sera gelé et reçu entièrement ; aucun check de base redondant avant son développement. R0.8 reste IN_PROGRESS et les74 statuts inchangés.
-- DP-1 n'étend ni API, ni schéma SQL, ni collecte. Les choix métier excluent uniquement les16 identifiants DQ recensés dans l'annexe ; une sélection DQ explicite est refusée visiblement, jamais remplacée silencieusement. Les autres produits/variétés et alias restent inchangés ; classification durable et fusion appartiennent à DP-2.
-- Filtres globaux uniquement là où consommés : accueil/prix produit+zone+stade ; vue territoriale/commerce produit seulement ; aucun filtre global dans économie/climat/assistant/alertes/bulletins/gestion. Les filtres locaux légitimes restent présents. Les paramètres hors filtre sont conservés lors d'une mise à jour/réinitialisation ; unknown est affiché Non renseigné, jamais retail. Aucune disponibilité globale inventée avant DP-4.
-- La route /map conserve son URL mais annonce une vue tabulaire en attendant une carte qualifiée. Utiliser les réponses existantes avec période/nature/unité/source et absence/erreur distinctes, sans faux contours, diagnostics de corridor ou comparaison de mois différents.
-- Alertes : traductions françaises, périmètre/dates réels, preuves accessibles en détail secondaire, absence d'alerte distincte de marché stable. Bulletins : suppression des narrations constantes, des certifications/officialité et PDF supposés ; afficher seulement les faits reçus et leur statut non requalifié. Approbation reste une mutation admin existante, distincte d'un envoi ; pas de nouvelle notification.
-- Adaptations de rendu prix bornées : ne pas attribuer observed/retail à une valeur manquante, préserver les périodes et erreurs ; aucun changement de modèle, seuil ou donnée. Graphiques multi-séries restent explicitement délimités et toute extension de contrat reste DP-4/7.
-- Alternatives rejetées : supprimer les lignes DQ, masquer toutes les références sans données, activer une source pour remplir les écrans, afficher les rectangles locaux comme géographie, inventer une synthèse depuis le seul statut approuvé. Réception : tests des choix/grains/paramètres et faits atypiques, vrai navigateur sur QA synthétique, erreurs/vide/DQ/unknown/reload/mobile/thèmes, check complet exact. Versions/images de dépendances r05 conservées, source snapshotée par les runners existants ; aucune image reçue reconstruite ou retaguée.
 
 ## ADR-129 | 2026-10-26 | Accepté avant code | Thèmes Irooa clair/sombre et palette de référence
 

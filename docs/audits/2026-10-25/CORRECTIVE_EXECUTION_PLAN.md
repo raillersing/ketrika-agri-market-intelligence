@@ -77,7 +77,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-08 — Quarantaine et réparation historique auditable
 
-- **Statut :** TODO · P1 · rôle Data/SQL · parent R0.8 · dépendances : AU-07 avant toute restauration ; arbitrage ADR/SPECS de B-R084/B-R085.
+- **Statut :** IN_PROGRESS (2026-10-27T02:05:00Z) · P1 · rôle Data/SQL · parent R0.8 · dépendances : AU-07 avant toute restauration ; arbitrage ADR/SPECS de B-R084/B-R085.
 - **Fichiers :** migrations additives, modèles, `normalize/*`, `gold/sql/*`, `core/rebuild_manifest.py`, provenance/guards et runbook de réparation.
 - **Étapes :** faire un inventaire exact des728 auto-liens,164 références absentes et autres données de test héritées ; capturer états avant et identités ; choisir une table de quarantaine append-only plutôt que fausse révision ; spécifier la réparation exceptionnelle des liens et ses permissions ; clone SQL/S3 séparé ; anti-auto-liens/cycles ; conserver toutes valeurs brutes et tous objets ; exclure quarantaine des publications et recompter les révisions réelles seulement.
 - **Attention A013 :** le trigger actuel refuse UPDATE si OLD.superseded_by non NULL ; la remise à NULL proposée ne marche pas telle quelle. Ne pas désactiver les protections globalement ni lancer la migration sur actif pour « essayer ». La PK active observation_id doit être recontrôlée sur le clone avant FK.

@@ -39,6 +39,14 @@ WITH ranked_stocks AS (
     WHERE so.superseded_by IS NULL
       AND so.product_id IS NOT NULL
       AND so.location_id IS NOT NULL
+      AND NOT EXISTS (
+          SELECT 1 FROM obs.quarantine_ledger ql 
+          WHERE (
+              (ql.table_name = 'obs.stock_observation' AND ql.observation_id = so.observation_id)
+              OR (ql.table_name = 'meta.source_record' AND ql.source_record_id = so.source_record_id)
+          )
+          AND ql.revoked_at IS NULL
+      )
 )
 SELECT
     product_id,
