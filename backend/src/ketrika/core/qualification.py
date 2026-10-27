@@ -129,6 +129,8 @@ def validate_compose(document: str) -> None:
                     raise QualificationSafetyError("Host source must be mounted read-only")
             elif source not in volumes:
                 raise QualificationSafetyError("Mount references a foreign volume")
+    if services["web"].get("command") != ["sh", "/workspace/scripts/qa-web.sh", "serve"]:
+        raise QualificationSafetyError("Browser qualification must serve the completed web build")
     environment = services["api"].get("environment", {})
     if not isinstance(environment, dict):
         raise QualificationSafetyError("Qualification environment must be explicit")

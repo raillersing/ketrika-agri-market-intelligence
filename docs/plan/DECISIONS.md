@@ -1,5 +1,11 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-138 | 2026-10-27 | Accepté avant code | Navigateur sur le build frontend reçu
+
+- CI40531231419 : 2498 backend/567,78s,80 frontend/13 suites et build verts ; R0.3 58 verts, négatif build vert.24Go libres avant E2E. Navigateur14/26, navigation carte refusée503 par vérification de session, sans exception JS. Aucune réception globale acquise.
+- Le profil sert next dev après avoir reçu next build. La compilation à la demande est une cause possible de contention, non démontrée par les journaux disponibles. Servir le standalone issu du build reçu avec ses statiques en QA navigateur ; refuser si BUILD_ID/server.js manquent, sans repli dev ni reconstruction implicite. Garde Compose imposant cette commande ; usages dev conservés.
+- Middleware, délai5s, révocation, assertions navigateur et seuils de performance inchangés. Réception complète sur nouveau gel et26 scénarios obligatoires ; un503 persistant restera un échec. Qualification logicielle seulement.
+
 ## ADR-137 | 2026-10-27 | Accepté avant code | Espace de construction du runner CI éphémère
 
 - CI40529189214/86fdc2c : disque plein pendant qa-build, avant toute suite ; annotation122276979354 et journaux finaux indisponibles. Les nouveaux volumes source ne sont pas encore initialisés à ce stade ; ADR136 ne résout pas ce pic de construction.

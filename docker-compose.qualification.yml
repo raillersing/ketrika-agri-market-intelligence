@@ -111,7 +111,7 @@ services:
       - qa_web_node_modules:/app/node_modules
       - qa_web_next:/app/.next
     networks: [qualification]
-    command: [sh, /workspace/scripts/qa-web.sh, dev]
+    command: [sh, /workspace/scripts/qa-web.sh, serve]
 
   browser:
     image: ketrika-backend:qa-codex-browser-r05

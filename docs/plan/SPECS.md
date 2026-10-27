@@ -1,5 +1,7 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR138 : le service web QA navigateur exécute qa-web.sh serve : artefact standalone du build complet et statiques reçus, BUILD_ID/server.js obligatoires, aucun build ni repli dev implicite. Garde Compose et négatifs ; middleware et26 scénarios inchangés. Nouveau check complet nécessaire après ce changement d'environnement.
+
 ADR137 : CI sur ubuntu-24.04 explicite. Avant qa-build, le seul job GitHub-hosted éphémère vérifie son identité puis libère les quatre SDK inutilisés /usr/local/lib/android, /usr/share/dotnet, /opt/ghc et /usr/local/.ghcup avec mesures avant/après. Aucun nettoyage local, de volume, d'image ou du cache d'outils Actions. Images verrouillées et réception complète inchangées.
 
 ADR136 : sources QA backend_source_r06/web_source_r06 montées exclusivement sur/app/src pour éviter la copie implicite des dépendances dans le volume parent/app. Dépendances et.next en volumes dédiés r05 inchangés ; tests/configurations copiés dans chaque couche éphémère depuis le snapshot readonly. Utilisateurs non-root et gardes d'isolation conservés. Aucun ancien volume modifié/supprimé ; réception complète et mesure de stockage obligatoires.

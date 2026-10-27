@@ -31,6 +31,16 @@ def test_actual_profile_and_environment():
     validate_environment(environment())
 
 
+@pytest.mark.parametrize(
+    "command", [None, ["pnpm", "dev"], ["sh", "/workspace/scripts/qa-web.sh", "dev"]]
+)
+def test_browser_cannot_use_a_development_server(command):
+    spec = compose_spec()
+    spec["services"]["web"]["command"] = command
+    with pytest.raises(QualificationSafetyError, match="completed web build"):
+        validate_compose(yaml.safe_dump(spec))
+
+
 @pytest.mark.parametrize("service", ["api", "web", "browser"])
 @pytest.mark.parametrize("target", ["/app", "/app/.venv", "/app/node_modules", "/workspace"])
 def test_source_volume_cannot_shadow_dependencies_or_repository(service, target):
