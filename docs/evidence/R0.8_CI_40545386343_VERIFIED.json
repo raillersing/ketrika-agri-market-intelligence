@@ -1,0 +1,52 @@
+{
+  "commit": "e8f17ba892cb41345d446b4e2279a3cec7e331bc",
+  "source_fingerprint": "aade29b24c904e43965538f61d24ffa28d54c880032e75e92681b3fabbec5733",
+  "backend": {
+    "tests": 2511,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "integration_by_layout": 171,
+    "integration_by_marker": 164,
+    "integration_tests": 175
+  },
+  "coverage": {
+    "core": 92.35681500698463,
+    "extraction": 87.76595744680851,
+    "normalize": 88.12785388127854
+  },
+  "frontend": {
+    "tests": 82,
+    "suites": 13
+  },
+  "browser_checks": 26,
+  "browser_duration_seconds": 195.327,
+  "session_readiness_recoveries": [],
+  "rate_budget_waits": [
+    {
+      "stage": "/prices?product=UI_NO_SUCH_PRODUCT&actor=unknown",
+      "remaining": 17,
+      "seconds": 60
+    },
+    {
+      "stage": "/alerts",
+      "remaining": 16,
+      "seconds": 60
+    },
+    {
+      "stage": "/map",
+      "remaining": 18,
+      "seconds": 60
+    }
+  ],
+  "trace_sha256_only": "d16a09433c49479fca7d02a0470498a82581a0e93e8dfb6c140d8672f576e73e",
+  "critical_case_inclusion": {
+    "tests.unit.test_browser_rate_budget": 10,
+    "tests.unit.test_qualification": 74,
+    "tests.integration.test_quarantine_integration": 7,
+    "tests.unit.test_gold_graph_migration": 1,
+    "tests.unit.test_weather_migration": 3,
+    "tests.unit.test_gold_compatibility": 5
+  },
+  "limits": "Software qualification only; raw session traces excluded from exported artefact"
+}
