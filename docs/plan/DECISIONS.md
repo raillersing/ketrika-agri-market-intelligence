@@ -1,5 +1,12 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-139 | 2026-10-27 | Accepté avant code | Respect du quota pendant les parcours navigateur
+
+- CI40537966236 :2501 backend/590,07s et80 frontend verts,26Go libres ; E2E14/26 sur même503 carte. Le standalone ne supprime pas la cause. Reproduction privée réelle :60 lectures /auth/me passent,61e429/Retry-After59 ; même cookie sur/map donne503 générique. Le middleware masque le refus de débit, le parcours automatisé épuise le plafond60/min.
+- Préserver le429 et Retry-After sur page protégée, sans effacer le cookie ni autoriser la page. Proxy : exposer aussi les deux en-têtes quota publics existants. Login public reste utilisable ;401/403, révocation, délai5s et quotas inchangés.
+- Parcours : avant les navigations fonctionnelles authentifiées, sonder /api/v1/auth/me et vérifier200 + limite60 + restant valide. Sous20 requêtes restantes, attendre une fenêtre contractuelle complète60s, consigner la pause puis vérifier une fois le budget récupéré. Aucun retry d'un429/503, aucun changement d'identité, exemption, augmentation ou reset du limiteur. Tous scénarios et assertions conservés ; contrôles après logout sans sonde autorisante.
+- Vérifier les contre-exemples de quota/pause et la reproduction privée, puis check complet sur gel final. Les anciens rouges restent archivés. Les pauses ne prouvent ni latence ni capacité de marché.
+
 ## ADR-138 | 2026-10-27 | Accepté avant code | Navigateur sur le build frontend reçu
 
 - CI40531231419 : 2498 backend/567,78s,80 frontend/13 suites et build verts ; R0.3 58 verts, négatif build vert.24Go libres avant E2E. Navigateur14/26, navigation carte refusée503 par vérification de session, sans exception JS. Aucune réception globale acquise.

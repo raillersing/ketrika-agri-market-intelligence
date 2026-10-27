@@ -24,7 +24,7 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
       cache: "no-store",
     });
     const responseHeaders = new Headers();
-    for (const name of ["content-type", "content-disposition", "retry-after", "cache-control"]) {
+    for (const name of ["content-type", "content-disposition", "retry-after", "cache-control", "x-ratelimit-limit", "x-ratelimit-remaining"]) {
       const value = upstream.headers.get(name);
       if (value) responseHeaders.set(name, value);
     }

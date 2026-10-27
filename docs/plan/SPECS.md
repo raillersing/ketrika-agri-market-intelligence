@@ -1,5 +1,7 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR139 : un429 de vérification de session reste429 avec Retry-After sur page protégée ; le cookie est conservé, accès refusé. Proxy expose X-RateLimit-Limit/Remaining existants. Le parcours QA respecte60/min par sondes authentifiées :200 et quota valides obligatoires, sous20 restantes une pause60s consignée puis une seule vérification. Aucun retry d'erreur ni modification du limiteur ;26 scénarios inchangés, nouvelle réception complète.
+
 ADR138 : le service web QA navigateur exécute qa-web.sh serve : artefact standalone du build complet et statiques reçus, BUILD_ID/server.js obligatoires, aucun build ni repli dev implicite. Garde Compose et négatifs ; middleware et26 scénarios inchangés. Nouveau check complet nécessaire après ce changement d'environnement.
 
 ADR137 : CI sur ubuntu-24.04 explicite. Avant qa-build, le seul job GitHub-hosted éphémère vérifie son identité puis libère les quatre SDK inutilisés /usr/local/lib/android, /usr/share/dotnet, /opt/ghc et /usr/local/.ghcup avec mesures avant/après. Aucun nettoyage local, de volume, d'image ou du cache d'outils Actions. Images verrouillées et réception complète inchangées.

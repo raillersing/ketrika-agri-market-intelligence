@@ -59,4 +59,13 @@ describe("server-validated web sessions", () => {
     }
     expect(fetcher).not.toHaveBeenCalled();
   });
+  it("preserves quota refusal and Retry-After without granting access or deleting the session", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("", { status: 429, headers: { "Retry-After": "59" } })));
+    const response = await middleware(request("/map", "signed-test"));
+    expect(response.status).toBe(429);
+    expect(response.headers.get("retry-after")).toBe("59");
+    expect(response.headers.get("x-middleware-next")).toBeNull();
+    expect(response.headers.get("set-cookie")).toBeNull();
+    expect((await middleware(request("/login", "signed-test"))).headers.get("x-middleware-next")).toBe("1");
+  });
 });

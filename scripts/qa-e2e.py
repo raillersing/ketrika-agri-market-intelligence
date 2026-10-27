@@ -12,17 +12,20 @@ from datetime import date
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from playwright.sync_api import expect, sync_playwright
+
+from ketrika.core.browser_budget import respect_browser_budget
 from ketrika.core.qualification import validate_environment
 from ketrika.core.qualification_reports import E2E_SCENARIOS, capture_binding
-from playwright.sync_api import expect, sync_playwright
 
 
 def seed_reading_fixtures() -> tuple[dict[str, str], list[tuple[str, uuid.UUID]]]:
     """Owned synthetic UI records only, after qualification environment validation."""
     validate_environment(os.environ)
+    from sqlalchemy import select
+
     from ketrika.core.db import get_session
     from ketrika.core.models.db import Alert, Bulletin, Product
-    from sqlalchemy import select
 
     ids: dict[str, str] = {}
     owned: list[tuple[str, uuid.UUID]] = []
@@ -196,6 +199,13 @@ def main() -> int:
             assert response.ok, f"Authenticated same-origin prices: {response.status}"
             receipt["prices_status"] = response.status
             completed.append("authenticated same-origin prices API")
+
+            def navigate(path):
+                respect_browser_budget(
+                    lambda: context.request.get("/api/v1/auth/me"), receipt, path
+                )
+                return page.goto(path)
+
             navigation = page.get_by_role("navigation", name="Navigation principale")
             expect(navigation.locator('[aria-current="page"]')).to_have_count(1)
             expect(navigation.locator('[aria-current="page"]')).to_have_attribute("href", "/")
@@ -227,7 +237,7 @@ def main() -> int:
             expect(page).to_have_url("http://web:3000/prices", timeout=120000)
             expect(dialog).not_to_be_visible()
             completed.append("page search navigates real destinations and restores keyboard focus")
-            page.goto("/prices")
+            navigate("/prices")
             expect(page.get_by_text("Explorateur des prix vivriers", exact=True)).to_be_visible()
             page.screenshot(path=str(directory / "prices.png"), full_page=True)
             completed.append("price explorer renders")
@@ -252,7 +262,7 @@ def main() -> int:
                     dq_requests.append(url.path)
 
             page.on("request", record_dq_request)
-            page.goto("/prices?product=rice_dq_116994")
+            navigate("/prices?product=rice_dq_116994")
             expect(
                 page.get_by_text(
                     "Cette référence est réservée aux essais de qualité. Choisissez un produit du catalogue métier.",
@@ -268,7 +278,7 @@ def main() -> int:
                 "business filters exclude known DQ references without remapping the URL"
             )
 
-            page.goto("/prices?product=UI_NO_SUCH_PRODUCT&actor=unknown")
+            navigate("/prices?product=UI_NO_SUCH_PRODUCT&actor=unknown")
             expect(page.get_by_role("combobox", name="Stade de vente", exact=True)).to_have_value(
                 "unknown"
             )
@@ -296,7 +306,7 @@ def main() -> int:
                 )
 
             page.route("**/api/v1/products", catalog_outage)
-            page.goto("/prices?product=UI_NO_SUCH_PRODUCT")
+            navigate("/prices?product=UI_NO_SUCH_PRODUCT")
             expect(
                 page.get_by_text(
                     "Catalogue indisponible. Les données et la sélection ne sont pas remplacées.",
@@ -308,7 +318,7 @@ def main() -> int:
             )
             page.unroute("**/api/v1/products", catalog_outage)
             for path in ("/economy", "/alerts", "/bulletins"):
-                page.goto(path)
+                navigate(path)
                 expect(
                     page.get_by_role("region", name="Filtres de cette page", exact=True)
                 ).to_have_count(0)
@@ -316,7 +326,7 @@ def main() -> int:
                 "reference outage preserves selection without redundant global filters"
             )
 
-            page.goto("/map")
+            navigate("/map")
             expect(
                 page.get_by_role("heading", name="Carte géographique en préparation", exact=True)
             ).to_be_visible()
@@ -328,7 +338,7 @@ def main() -> int:
             expect(page.get_by_text(re.compile(r"Surcoût de transport estimé"))).to_have_count(0)
             completed.append("territory view is tabular and states missing geography")
 
-            bulletin_response = page.goto(f"/bulletins/{fixture_ids['bulletin']}")
+            bulletin_response = navigate(f"/bulletins/{fixture_ids['bulletin']}")
             if bulletin_response is not None and bulletin_response.status == 503:
                 assert bulletin_response.json() == {
                     "detail": "Vérification de session indisponible. Réessayez dans un instant."
@@ -369,7 +379,7 @@ def main() -> int:
                 "recorded bulletin facts preserve zero missingness and approval without invented narrative"
             )
 
-            page.goto("/alerts")
+            navigate("/alerts")
             page.get_by_role("combobox", name="État de l’alerte", exact=True).select_option("open")
             fixture_button = page.get_by_role("button").filter(
                 has_text="Contrôle UI — signal enregistré"
@@ -400,7 +410,7 @@ def main() -> int:
                     f"/bulletins/{fixture_ids['bulletin']}",
                 ):
                     page.set_viewport_size({"width": 320, "height": 844})
-                    page.goto(path)
+                    navigate(path)
                     expect(page.get_by_role("main").get_by_role("heading", level=1)).to_be_visible()
                     for loading_message in (
                         "Chargement des points de prix…",
@@ -430,7 +440,7 @@ def main() -> int:
             eco_res = context.request.get("/api/v1/economic/dashboard")
             assert eco_res.status == 503, f"Unqualified macro must fail closed: {eco_res.status}"
             assert eco_res.json()["detail"] == "economic_data_not_qualified"
-            page.goto("/economy")
+            navigate("/economy")
             expect(
                 page.get_by_text("Observatoire Économique & Conjoncture", exact=True)
             ).to_be_visible()
