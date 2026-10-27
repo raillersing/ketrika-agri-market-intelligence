@@ -85,7 +85,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-09 — Rebuild authentique et gate R0.9
 
-- **Statut :** TODO · P1 · rôle Data/QA · parents R0.8/R0.9 · dépendances : AU-08, R0.1–R0.7 reçus historiquement et non invalidés par le lot.
+- **Statut :** IN_PROGRESS (smoke logiciel PARTIAL conservé ; AU-08 non reçu et deux éditions authentiques B-R073 absentes, gate R0.9 non franchi) · P1 · rôle Data/QA · parents R0.8/R0.9 · dépendances : AU-08, R0.1–R0.7 reçus historiquement et non invalidés par le lot.
 - **Fichiers :** `pipelines/rebuild*.py`, `core/rebuild_*`, runbook OFFLINE_REBUILD_QUALIFICATION, corpus/reçus.
 - **Étapes :** réunir deux éditions authentiques du même produit/lieu/période avec une correction réelle ; vérifier droits/octets et annotations ; cloner destination explicitement dédiée ; exporter inventaire original avec versions et octets ; couper réellement le réseau du worker ; comparer valeurs, périodes, unités, provenance, révisions et Gold ; étape séparée de recalcul des modèles versionnés, avec abstention s'il manque les données.
 - **Réception :** aucune requête réseau, ancienne/nouvelle révision correctement rejouées, diff métier nul et inventaire original inchangé ; faux parseur modifiant une valeur détecté même à effectif égal. Puis réception R0 et tag nouveau uniquement si tous critères passent. Si les deux éditions restent absentes, documenter B-R073 et le format attendu ; ne pas modifier les sources disabled pour les acquérir.
@@ -94,7 +94,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-10 — Registre, découverte et contrat commun de sources
 
-- **Statut :** TODO · P1 · rôle Data/Collecte · parents R1.1/R1.2/R1.10 · dépendance : R0.9 DONE.
+- **Statut :** IN_PROGRESS (89 ciblés documentés conservés ; dépendance R0.9 non reçue et réconciliation opérationnelle à recevoir) · P1 · rôle Data/Collecte · parents R1.1/R1.2/R1.10 · dépendance : R0.9 DONE.
 - **Fichiers :** `registry/sources.yaml`, `connectors/{registry,discovery}.py`, `pipelines/source_definitions.py`, référentiels geo,18 fiches sources.
 - **Étapes :** rapprocher identifiant, classe effective, famille, droits, URL vérifiée, cadence acquisition/publication et SLA ; distinguer active du niveau LIVE_VERIFIED ; vérifier les23 régions et les codes réellement servis ; tester pagination bornée et dérive ; recenser réellement jobs/schedules actifs/arrêtés ; isoler données de test et entrées institutionnelles sans effacer l'historique.
 - **Réception :** aucune sourceplanned/disabled/fixture présentée qualifiée ; découverte d'édition suivante et idempotence sur serveur local ; URL inconnue en revue ; état registry/SQL/orchestrateur/API expliqué et cohérent. Aucune création autonome de source proposée par le copilote.

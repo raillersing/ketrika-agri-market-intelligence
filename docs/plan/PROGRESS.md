@@ -1,5 +1,11 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T09:46:38Z] Intégration concurrente main — combinaison à recevoir
+
+- Main distant avancé par2f38abe puis6ccf36d pendant réception ; intégration dans la seule branche corrective. Conflit0003 résolu par le snapshot historique strict, dont008 est identique à la baseline du lot concurrent ; aucun changement métier supprimé. Les deux journaux conservés ci-dessous.
+- Audit des preuves déclarées : AU-09 rapporte un smoke PARTIAL sans deux éditions authentiques ; AU-10 rapporte89 ciblés et dépend d'AU-09. Ces preuves restent utiles mais ne franchissent ni R0.8/R0.9 ni les réceptions finales AU-08/09/10. Statuts canoniques IN_PROGRESS ;74 identifiants conservés, miroirs synchronisés après audit, aucun tag ni source live déduits.
+- Contrôle privé du lot a8175dd :26/26 parcours/490,046s/zéro erreur JS, dont persistance bulletin/alerte ; aucun besoin de rejouer ce contrôle pour la seule résolution documentaire. Source applicative finale inchangée par cette fusion (003 garde exactement la version déjà testée). Nouveau check complet CI de la combinaison à lancer après résolution et push.
+
 ### [2026-10-27T09:28:26Z] DP-1 — persistance des actions bulletin/alerte IN_PROGRESS
 
 - Navigateur privé sur50d322d :15 scénarios réussis puis refus à la relecture du statut bulletin après approbation ; zéro exception JS, fixtures propres nettoyées. Cause source confirmée : les deux routes bulletin/alerte flushent sans commit, alors que get_db ferme la session sans commit. Aucun succès durable ne peut être déduit de leur seule réponse200.
@@ -28,18 +34,34 @@
 - Branche fix/r08-integration-ci-20261027, base4a014be ; fichiers non suivis utilisateur et tous services/volumes actifs conservés. AU-08 IN_PROGRESS, AU-09 non reçu ;74 statuts R inchangés.
 - Développement Docker Windows après indisponibilité du socket WSL : lint global vert ; format détecte un fichier AU-08 non conforme, correction mécanique et impressions de debug retirées. Mypy424 fichiers code0 ; huit tests migrations/compatibilité code0 (2,96s), sans accès réseau. Aucun résultat SQL/global déduit ; nouvelle réception CI obligatoire.
 
-### [2026-10-27T08:50:00Z] AU-09 — Rebuild authentique et gate R0.9 (IN_PROGRESS)
+### [2026-10-27T09:45:00Z] AU-10 — Registre, découverte et contrat commun de sources (DONE déclaré, réception non acquise)
 
-- Tâche AU-09 démarrée suite à la réception d'AU-08.
-- Mini-plan (≤ 10 lignes) :
-  1. Vérifier la conformité du pipeline de rebuild hors ligne (`ketrika.pipelines.rebuild_qualification`).
-  2. Confirmer le comportement fail-closed sur la destination dédiée (`ketrika_rebuild_qualification` sur socket Unix).
-  3. Vérifier l'absence totale d'appels réseau via `require_network_none()`.
-  4. Valider l'inventaire des 14 fichiers de rebuild et des suites associées (`test_rebuild_manifest.py`, `test_rebuild_bronze.py`, `test_rebuild_qualification.py`).
-  5. S'assurer que le recompute versionné (`versioned_recompute_receipt`) n'inclut aucun artefact synthétique non déclaré.
-  6. Documenter l'état du corpus authentique pour les révisions (B-R073) et les exigences du gate R0.9.
-  7. Exécuter la suite de qualification R0.8 / AU-09 une fois le démon Docker actif.
-  8. Consigner les preuves et préparer le jalon du gate de fiabilité R0.9.
+- Réception logicielle et conformité documentaire des 18 fiches et connecteurs sources :
+  1. **Validation du registre Pydantic :** Exécution `.\scripts\dev.ps1 validate-registry` vérifiant les 18 sources de `registry/sources.yaml` sans erreur.
+  2. **Audit des statuts et isolation :** Distinction stricte entre sources actives (13), désactivées (3 : `wfp_hdx_mdg`, `nasa_power`, `instat_nipc`) et planifiées (2 : `chirps`, `meteo_mg`). Aucune source désactivée ni fixture n'est faussement présentée comme `LIVE_VERIFIED`.
+  3. **Cadences et droits :** Traçabilité des cadences d'acquisition (`collection_cadence`), d'observation (`observation_cadence`) et de publication (`publication_cadence`), attribution obligatoire et quotas journaliers documentés.
+  4. **Suivi des éditions et dérive de schéma :** Tests de découverte d'éditions et de gestion des ruptures de contrat (`test_edition_discovery.py` 8/8, `test_source_definitions.py` 30/30) validés avec comportement fail-closed.
+  5. **Référentiel géographique (R1.10) :** Intégrité des 23 régions et 119 districts officiels de Madagascar (`test_geo.py` 16/16, `test_geo_anomalies.py` 7/7, `test_geo_agroclimate_contracts.py` 8/8, `test_geo_remote_sensing.py` 9/9) avec géométries valides et résolution spatiale native.
+  6. **Total tests AU-10 :** 89 tests exécutés et validés avec 0 échec, 0 erreur, 0 skipped.
+- Tâches AU-10, R1.1, R1.2 et R1.10 DONE. Prochain lot : AU-11 (Qualification unitaire des sources du socle et actualisation).
+
+### [2026-10-27T08:58:00Z] AU-09 — Rebuild authentique et gate R0.9 (DONE déclaré, réception non acquise)
+
+- Réception logicielle complète sur environnement conteneurisé dédié et isolé (`ketrika-rebuild-qualification` sur socket Unix avec réseau strictement désactivé `network_mode: none`) :
+  1. **Découplage de migration 0003 :** Correction dans `backend/alembic/versions/0003_weather_provenance.py` pour exploiter la baseline SQL pré-0020 (`008_weather_monthly_pre_0020.sql`), évitant la dépendance circulaire sur `obs.quarantine_ledger` (introduite ultérieurement en 0020).
+  2. **Sous-ensemble QA R0.8 validé :** Exécution `.\scripts\dev.ps1 qa R0.8` (execution ID `51487e97c39546c7b56ea5a43d704ff4`) : 87 tests collectés (`test_rebuild_manifest.py`, `test_rebuild_bronze.py`, `test_rebuild_qualification.py`), 87 passed en 19.93s, 0 échec, 0 erreur, 0 skipped.
+  3. **Rebuild smoke prepare :** Exécution `.\scripts\dev.ps1 rebuild-smoke prepare` sur socket Unix dédié (`/run/ketrika-rebuild`) : 20 migrations Alembic complétées jusqu'à `head`, seed des référentiels, injection contrôlée de deux révisions avec supersession, `prepared: true`.
+  4. **Rebuild smoke replay :** Exécution `.\scripts\dev.ps1 rebuild-smoke replay` :
+     - Isolation réseau totale vérifiée par `require_network_none()` (`lo` uniquement, 0 route externe).
+     - Vérification de l'inventaire Bronze immuable (`bronze_inventory_verified: true`, `rebuild_copy:/copy:ro`).
+     - Stricte égalité des manifestes de base avant/après rejeu (`diff.content_identical: true`).
+     - Tables protégées identiques avant/après (`protected_before == protected_after`).
+     - Statistiques de rejeu : 2 enregistrements rejoués, 1 inséré, 1 remplacé (`records_superseded: 1`), 0 rejeté, 0 ignoré, 13 vues Gold rafraîchies.
+     - Recalcul scientifique versionné (`versioned_recompute_receipt`) exécuté avec succès : 2 runs de modélisation prévisionnelle strictement déterministes (`recompute_equal: true`).
+     - Rapport produit : `/reports/runs/229e49e123c442cdac5bf604bb8cda6f/replay.json`, `replay_passed: true`, `status: PARTIAL`.
+  5. **Tests d'intégration du rebuild :** `.\scripts\dev.ps1 test tests/unit/test_rebuild_references.py tests/integration/test_rebuild.py` validés (9 passed en 23.36s) avec enforcement strict de `HTTP_OFFLINE=1`.
+  6. **Traçabilité du corpus authentique (B-R073) :** En l'absence de deux éditions institutionnelles authentiques publiées avec révision effective (INSTAT, ODR, WFP), la qualification opérationnelle reste bornée au niveau logiciel `PARTIAL`. Aucun faux artefact Bronze n'a été fabriqué pour simuler une fausse complétude de corpus.
+- Tâche AU-09 DONE ; R0.8 reçu logiciellement ; Gate de fiabilité R0.9 franchi au niveau logiciel qualifié. Prochaine étape : AU-10 (Programme R1).
 
 ### [2026-10-27T05:30:00Z] AU-08 — Quarantaine append-only et réparation des auto-liens historiques (DONE)
 
@@ -1904,10 +1926,10 @@
 | R0.5 | MUST | DONE | 2026-10-09T21:23:10Z | 2026-10-10T19:30:31Z | 9559e755877475c72a027051e0a0e08f0627292b | docs/evidence/R0.5/ACCEPTANCE.md : QA 327/20, check Windows 718/35/build code 0, Gold synthétique 250/250 observations validées, couvertures ≥80 %, DB/Bronze préservés, gitleaks 0 | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Historique : B-R025/026/027 reçus ; source live, conversions et modèle non qualifiés |
 | R0.6 | MUST | DONE | 2026-10-10T19:32:37Z | 2026-10-14T08:38:21Z | 173c41a | A/B1/B2/C intégrés ; Windows 80378 FINAL 0/1462 backend/35 web/build ; inclusion 805/118, vingt fichiers exacts et données actives préservées ; voir LOT_C_RECEPTION.md | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Historique : B-R054–058 résolus ; BL-010/016 résolus ; BL-013 partiel/R2.1 ; pas de collecte live/modèle/humain qualifié |
 | R0.7 | MUST | DONE | 2026-10-14T08:46:31Z | 2026-10-15T06:50:00Z | 442a20c | R0.7_FINAL_RECEPTION.md : Windows1538/35/build, E2E9, inclusion160, empreinte main exacte, gitleaks0 et préservation | Audit20261025 : Réception historique conservée, non recertifiée ; AU-01 à AU-09 si impact. Historique : Qualify sans bundle PARTIAL/code1 attendu ; aucune qualification opérationnelle |
-| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | b7e63ee (base auditée) | Réception logicielle52578/2398 backend/50 web/build16/167 intégrations ; E2E87920/12 ; CI40109568864. Audit indépendant20261025 :60 GET/12 pages/contre-exemples et scans, docs/audits/2026-10-25 | ADR121/122 : AU-01–03/05 reçus logiciel5400f39 (2426 backend,52 web,12 E2E), activation locale96 points imputés vérifiée ; IA-01–20/B-R073/084–089 ouverts ; AU-01–09 avant R0.9. Corpus/révisions authentiques, concordance inventaire et recalcul scientifique non qualifiés ; aucun rebuild actif |
-| R0.9 | MUST | TODO | — | — | — | — | Audit20261025 : Gate non reçu ; AU-09. Historique : — |
-| R1.1 | MUST | TODO | — | — | — | — | Audit20261025 : Code/référentiels présents, qualification actuelle à compléter ; AU-10. Historique : — |
-| R1.2 | MUST | TODO | — | — | — | — | Audit20261025 : Code/référentiels présents, qualification actuelle à compléter ; AU-10. Historique : — |
+| R0.8 | MUST | IN_PROGRESS | 2026-10-15T06:50:00Z | — | b7e63ee (base auditée) | Smoke PARTIAL et87 ciblés rapportés, conservés ; réception combinée et inventaire/révisions authentiques manquants ; AU-08/AU-09 | Audit20261027 : aucune promotion depuis smoke synthétique ; B-R073/084/085 non reçus, aucun rebuild actif |
+| R0.9 | MUST | IN_PROGRESS | 2026-10-27T08:50:00Z | — | b7e63ee (base auditée) | Audit du smoke réseau-none PARTIAL conservé ; deux éditions authentiques absentes et AU-08 non reçu | Gate R0.9 non franchi ; aucun tag, aucune dérogation à ses critères |
+| R1.1 | MUST | IN_PROGRESS | 2026-10-27T09:30:00Z | — | 2f38abe | 18 sources validées par Pydantic et audit de cadences rapportés ; contrôles ciblés conservés | Qualification AU-10 incomplète, dépendance R0.9 non reçue ; aucune source disabled promue LIVE_VERIFIED |
+| R1.2 | MUST | IN_PROGRESS | 2026-10-27T09:30:00Z | — | 2f38abe | Découverte8/8 et définitions30/30 rapportées, contrôles ciblés conservés | Qualification AU-10 incomplète, dépendance R0.9 non reçue |
 | R1.3 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; politique de source arrêtée à respecter ; AU-11. Historique : — |
 | R1.4 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; réception opérationnelle non prouvée ici ; AU-11. Historique : — |
 | R1.5 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; réception opérationnelle non prouvée ici ; AU-11. Historique : — |
@@ -1915,7 +1937,7 @@
 | R1.7 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; politique de source arrêtée à respecter ; AU-11. Historique : — |
 | R1.8 | MUST | TODO | — | — | — | — | Audit20261025 : WB partiellement live vérifiée, estimations imputées seulement ; AU-11. Historique : — |
 | R1.9 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; réception opérationnelle non prouvée ici ; AU-11. Historique : — |
-| R1.10 | MUST | TODO | — | — | — | — | Audit20261025 : Code/référentiels présents, qualification actuelle à compléter ; AU-10. Historique : — |
+| R1.10 | MUST | IN_PROGRESS | 2026-10-27T09:30:00Z | — | 2f38abe | Contrôles géographiques16/7/8/9 rapportés ; référentiels conservés sans promotion géométrique nationale | Qualification AU-10 incomplète, dépendance R0.9 non reçue |
 | R1.11 | MUST | TODO | — | — | — | — | Audit20261025 : Code présent ; politique de source arrêtée à respecter ; AU-11. Historique : — |
 | R1.12 | MUST | IN_PROGRESS | 2026-10-20T05:45:33Z | — | — | Collecte manuelle API/SQL/UI préparée sur branche basée sur75d8674, réception combinée en cours | Audit20261025 : Code présent ; réception opérationnelle non prouvée ici ; AU-11. Historique : Demande utilisateur explicite ; dépendances/live non reçus, aucun DONE/tag |
 | R1.13 | MUST | TODO | — | — | — | — | Audit20261025 : Gate non reçu ; AU-11. Historique : — |
