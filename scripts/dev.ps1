@@ -81,7 +81,7 @@ function Invoke-QaIsolated {
     }
     Invoke-QaDocker -DockerArgs @("run", "--rm", "--network", "none", "--mount", "type=bind,source=$RepoRoot,target=/workspace,readonly", "-e", "PYTHONPATH=/workspace/backend/src", "ketrika-backend:qa-codex-r05", "python", "-m", "ketrika.core.qualification", "compose", "/workspace/docker-compose.qualification.yml")
     Test-QaResourceOwnership -Kind "network" -Name "ketrika_qualification_main_final_network"
-    foreach ($suffix in @("pgdata", "bronze", "backend_venv_r05", "backend_source_r05", "web_source_r05", "web_node_modules_r05", "web_next_r05", "browser_venv_r05")) {
+    foreach ($suffix in @("pgdata", "bronze", "backend_venv_r05", "backend_source_r06", "web_source_r06", "web_node_modules_r05", "web_next_r05", "browser_venv_r05")) {
         Test-QaResourceOwnership -Kind "volume" -Name "ketrika_qualification_main_final_$suffix"
     }
     Invoke-QaDocker -DockerArgs ($QaComposeArgs + @("config", "--quiet"))

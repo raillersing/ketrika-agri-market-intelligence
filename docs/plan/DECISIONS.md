@@ -1,5 +1,13 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-136 | 2026-10-27 | Accepté avant code | Volumes QA de sources sans duplication de dépendances
+
+- CI40484252459/85acbca : check backend/frontend réussi, runner perdu durant navigateur ; annotation122121953659 System.IO.IOException No space left on device, aucun rapport final disponible. Ne pas attribuer ce résultat à un défaut applicatif ni le recevoir.
+- Mesure readonly des anciens volumes QA : backend_source_r05/.venv1893564Kio, web_source_r05/node_modules849944Kio, alors que ces dépendances ont aussi des volumes dédiés. Monter le volume de sources sur/app duplique implicitement ces répertoires au premier démarrage Docker.
+- Décision : nouveaux volumes backend_source_r06 et web_source_r06 montés seulement sur/app/src. Les dépendances r05 et.next restent dans leurs volumes dédiés ; tests/configurations restent copiés depuis le snapshot readonly dans la couche éphémère de chaque conteneur. Images et utilisateurs non-root inchangés. Gardes de profil imposant les deux destinations exactes ; aucun volume ancien supprimé ou nettoyé, aucun changement de DB/S3/réseau/points d'entrée.
+- Mesurer l'initialisation de volumes neufs et l'accès non-root aux sources/dépendances ; conserver df/docker system df avant navigateur dans CI. Tous scénarios, seuils, couvertures et commandes de réception conservés ; nouveau check complet obligatoire après ce changement d'environnement.
+- Alternative volume-nocopy avec/app entier écartée : volume neuf root-owned, écriture app refusée ; ne pas ajouter de conteneur applicatif root pour contourner ce défaut. Suppression de volumes ou d'images de réception rejetée.
+
 ## ADR-135 | 2026-10-27 | Accepté avant code | Relecture navigateur bornée après refus de session au démarrage
 
 - CI40476674632/50d322d : backend2483 et frontend80 verts ; navigateur15/26, arrivée au bulletin sur503 explicite « Vérification de session indisponible ». Contrôle privé distinct :15/26, approbation200 puis relecture draft ; commits manquants des routes bulletin/alerte corrigés conformément aux contrats existants.

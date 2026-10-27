@@ -10,7 +10,8 @@ if [ "${KETRIKA_QUALIFICATION:-}" != "1" ]; then
   echo "Qualification web command requires the isolated profile" >&2
   exit 1
 fi
-# Only the named source volume is written; host source is read-only.
+# Source and dependencies use separate named volumes; configs are copied into the
+# ephemeral container layer. The host source remains read-only.
 tar -C /workspace/web --exclude=node_modules --exclude=.next '--exclude=*.tsbuildinfo' '--exclude=.env*' -cf /tmp/ketrika-web-source.tar .
 tar -C /app -xf /tmp/ketrika-web-source.tar
 cd /app

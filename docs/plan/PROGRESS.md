@@ -1,5 +1,18 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T10:22:00Z] Réception85acbca interrompue par disque runner plein — correction environnement IN_PROGRESS
+
+- CI40484252459/job122121953659 terminé failure après check backend/frontend réussi ; navigateur interrompu, logs complets et artefacts indisponibles. Annotation originale : System.IO.IOException No space left on device sur _diag/Worker_20261027-095341-utc.log. Aucun check reçu ni fusion effectuée.
+- Mini-plan : ADR136/SPECS avant code ; supprimer la duplication à l'initialisation sans effacer de volume ; nouveaux volumes sources sur/app/src et gardes strictes ; mesures neufs/anciens et accès non-root ; contrôles ciblés, gel et nouveau check complet CI avec26 E2E. Destination active/main-final local conservée.
+- Mesures readonly préalables : ancien backend_source/.venv1893564Kio, ancien web_source/node_modules849944Kio ; volume-nocopy parent testé puis écarté car root-owned et écriture non-root refusée. Aucun seuil modifié, aucun gain runner final revendiqué avant mesure de la nouvelle réception.
+- Développement : volumes sources neufs seuls sur/app/src2192Kio backend/948Kio web ; sources écrites et dépendances lues avec utilisateurs app/node, exits0. Aucun ancien volume effacé. Lint/format/types code0, Compose config code0, Bash syntaxe code0, PowerShell natif syntax-ok.77 tests qualification/isolation code0/9,12s ; première commande pytest arrêtée avant collecte pour double chargement de plugin, corrigée par PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 comme le runner officiel, sans changement de test.
+
+### [2026-10-27T10:01:15Z] Réception distante combinée en cours — reprendre ce run
+
+- PR3 publiée, tête85acbca7d3a157ff06af7c3aaddcfe28971db879, base6ccf36d, candidat GitHubb2a9d8512d75b4d7ef1a964aa0ba9e753d8198ae. CI40484252459/job122121953659 en cours ; ne pas relancer sur simple reprise. Empreinte applicative indépendante0df8c355c12695bb0f42475291e6926574217a4da2a72c536ca7ba9e0d8dd296.
+- Dernier contrôle navigateur privé26/26/490,046s/zéro exception JS, trace SHA9a567db3c9ba2a2236473eed0b0a0bb8230dfcaab5b0a433b41a74e7c6386f81 gardée au seul volume privé ; reçus exportés sans trace. Les seules fixtures créées sont nettoyées. Services de diagnostic privés arrêtés, données/volumes et services actifs préservés.
+- Cohérence74 tâches code0 :7 DONE historiques/56 IN_PROGRESS/11 TODO ; dernier scan de fusion22683octets code0/zéro fuite. La réception CI complète, l'archivage des originaux, leur identité et la fusion distante restent à recevoir. Ce journal local non publié ne modifie pas le candidat CI figé.
+
 ### [2026-10-27T09:46:38Z] Intégration concurrente main — combinaison à recevoir
 
 - Main distant avancé par2f38abe puis6ccf36d pendant réception ; intégration dans la seule branche corrective. Conflit0003 résolu par le snapshot historique strict, dont008 est identique à la baseline du lot concurrent ; aucun changement métier supprimé. Les deux journaux conservés ci-dessous.

@@ -54,6 +54,8 @@ jobs:
         run: |
           bash scripts/dev.sh qa R0.3
           bash scripts/dev.sh qa-isolated negative-build
+          df -h / /var/lib/docker
+          docker system df
           bash scripts/dev.sh e2e
 
       - name: Show qualification service state on failure

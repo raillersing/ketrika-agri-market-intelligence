@@ -1,5 +1,7 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR136 : sources QA backend_source_r06/web_source_r06 montées exclusivement sur/app/src pour éviter la copie implicite des dépendances dans le volume parent/app. Dépendances et.next en volumes dédiés r05 inchangés ; tests/configurations copiés dans chaque couche éphémère depuis le snapshot readonly. Utilisateurs non-root et gardes d'isolation conservés. Aucun ancien volume modifié/supprimé ; réception complète et mesure de stockage obligatoires.
+
 ADR135 : le scénario navigateur de première lecture bulletin autorise une seule relecture après le503 exact de vérification de session, uniquement après /api/v1/auth/me200 réel ; incident et reprise inscrits au reçu. Autres503/panne persistante restent rouges. Middleware5s et P95 API inchangés. Les routes d'approbation bulletin et de suivi alerte valident leur transaction avant de confirmer la réussite, sans émission externe.
 
 ADR-134 : les migrations antérieures à0020 utilisent leurs définitions SQL historiques sans dépendance sur obs.quarantine_ledger. Le contrôle de compatibilité0018 reçoit un répertoire SQL historique explicite ; les appels runtime gardent les définitions courantes.0020 élargit alembic_version.version_num avant enregistrement de son identifiant publié. La réparation fusionnée exige encore son check complet et26 E2E avant réception ; aucun DONE déduit des seuls ciblés.

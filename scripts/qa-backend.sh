@@ -11,7 +11,8 @@ if [ "${KETRIKA_QUALIFICATION:-}" != "1" ]; then
   exit 1
 fi
 # Snapshot only versioned tooling inputs, never ambient .env or host dependencies.
-# All Python execution then uses the named volume, not Windows bind filesystem I/O.
+# Dependencies and src use separate named volumes. Tests/config use this container's
+# ephemeral snapshot, never the Windows bind filesystem during Python execution.
 tar -C /workspace/backend '--exclude=__pycache__' -cf /tmp/ketrika-backend-source.tar src tests alembic alembic.ini pyproject.toml README.md uv.lock
 tar -C /app -xf /tmp/ketrika-backend-source.tar
 python -m ketrika.core.qualification environment
