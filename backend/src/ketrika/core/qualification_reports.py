@@ -20,6 +20,73 @@ from ketrika.core.qualification import QualificationSafetyError
 MAX_REPORT_BYTES = 16 * 1024 * 1024
 MAX_CASES = 100000
 
+
+def export_native_reports(role: str, source: Path, destination: Path) -> dict[str, Any]:
+    """Copy only native QA reports; never traces, environments or arbitrary files."""
+    if role not in {"backend", "frontend", "browser"}:
+        raise QualificationSafetyError("report_export_role_unknown")
+    if source.is_symlink() or not source.is_dir():
+        raise QualificationSafetyError("report_export_source_invalid")
+    if destination.exists() or destination.is_symlink():
+        raise QualificationSafetyError("report_export_destination_exists")
+    if source.resolve() in destination.resolve().parents:
+        raise QualificationSafetyError("report_export_destination_inside_source")
+    candidates: list[Path] = []
+    export_root = source
+    if role == "backend":
+        candidates = [
+            source / name for name in ("qa-tests.xml", "qa-inventory.json", "qa-coverage.json")
+        ]
+    else:
+        base = source / (".qa-results" if role == "frontend" else "qa-browser-results")
+        export_root = base
+        if base.is_symlink():
+            raise QualificationSafetyError("report_export_symlink_forbidden")
+        if base.is_dir():
+            if role == "frontend":
+                candidates.append(base / "latest.json")
+            for directory in sorted(base.iterdir()):
+                pattern = (
+                    r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}"
+                    if role == "frontend"
+                    else r"[0-9a-f]{32}"
+                )
+                if re.fullmatch(pattern, directory.name) is None:
+                    continue
+                if directory.is_symlink():
+                    raise QualificationSafetyError("report_export_symlink_forbidden")
+                if directory.is_dir():
+                    candidates.append(directory / "receipt.json")
+                    if role == "frontend":
+                        candidates.append(directory / "vitest.json")
+    manifest: dict[str, Any] = {}
+    destination.mkdir(parents=True, exist_ok=False)
+    for path in candidates:
+        if path.is_symlink():
+            raise QualificationSafetyError("report_export_symlink_forbidden")
+        if not path.is_file():
+            continue
+        with path.open("rb") as stream:
+            data = stream.read(MAX_REPORT_BYTES + 1)
+        if len(data) > MAX_REPORT_BYTES:
+            raise QualificationSafetyError("report_export_too_large")
+        relative = path.relative_to(export_root)
+        # The destination is a fresh CI-owned directory outside the read-only inputs.
+        target = destination / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with target.open("xb") as stream:
+            stream.write(data)
+        manifest[relative.as_posix()] = {
+            "bytes": len(data),
+            "sha256": hashlib.sha256(data).hexdigest(),
+        }
+    destination.mkdir(parents=True, exist_ok=True)
+    with (destination / "manifest.json").open("x") as stream:
+        json.dump({"role": role, "files": manifest}, stream, indent=2)
+        stream.write("\n")
+    return {"role": role, "files": len(manifest), "scope": "original bytes, not qualification"}
+
+
 ENVIRONMENT_IDENTITY = {
     "project": "ketrika-qualification-main-final",
     "database": "ketrika_qualification",
@@ -323,6 +390,10 @@ def main() -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     fingerprint = sub.add_parser("fingerprint")
     fingerprint.add_argument("root", type=Path)
+    export = sub.add_parser("export-reports")
+    export.add_argument("role", choices=("backend", "frontend", "browser"))
+    export.add_argument("source", type=Path)
+    export.add_argument("destination", type=Path)
     junit = sub.add_parser("check-junit")
     junit.add_argument("report", type=Path)
     junit.add_argument("inventory", type=Path)
@@ -336,6 +407,11 @@ def main() -> int:
     frontend.add_argument("--commit", required=True)
     args = parser.parse_args()
     try:
+        if args.command == "export-reports":
+            sys.stdout.write(
+                json.dumps(export_native_reports(args.role, args.source, args.destination)) + "\n"
+            )
+            return 0
         if args.command == "fingerprint":
             sys.stdout.write(source_fingerprint(args.root) + "\n")
             return 0

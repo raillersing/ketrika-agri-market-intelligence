@@ -1,5 +1,7 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR-132 : lorsque main-final local est occupé ou porte une migration étrangère au gel, la réception complète peut utiliser le runner CI éphémère avec le même point d'entrée, sans mutation de la destination locale. La CI archive en lecture seule les originaux qa-tests.xml/qa-inventory.json/qa-coverage.json, les reçus/rapports Vitest et les seuls receipt.json navigateur. Traces de session, environnements, cookies et Bronze exclus. Les SHA natifs, empreintes et images restent propres à chaque exécution ; vérifier le contenu exact du candidat avant fusion et conserver les échecs disponibles.
+
 ## DP-1 — Présentation métier bornée (ADR-131)
 
 API/SQL/collectes et référentiels persistés inchangés. Filtres visibles seulement selon leur consommation réelle : accueil/prix produit+zone+stade ; territoire/commerce produit ; aucun global dans les autres pages. Sélection et reset conservent les paramètres non concernés. Les16 références DQ du diagnostic sont exclues des choix métier par identité exacte ; lien DQ explicite→refus visible sans substitution ni chargement métier, pas de suppression SQL. Les autres codes, dont inconnus, restent visibles et ne sont pas remappés implicitement. Stade unknown/absent→Non renseigné ; tout niveau explicite est conservé dans le filtre API.

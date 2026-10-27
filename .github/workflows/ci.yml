@@ -62,3 +62,33 @@ jobs:
           docker compose --env-file scripts/qualification.env
           --project-name ketrika-qualification-main-final
           -f docker-compose.qualification.yml ps -a
+
+      - name: Preserve native qualification reports without session traces
+        if: always()
+        run: |
+          for role in backend frontend browser; do
+            case "$role" in
+              backend) volume=ketrika_qualification_main_final_backend_venv_r05 ;;
+              frontend) volume=ketrika_qualification_main_final_web_node_modules_r05 ;;
+              browser) volume=ketrika_qualification_main_final_browser_venv_r05 ;;
+            esac
+            if docker volume inspect "$volume" >/dev/null 2>&1; then
+              mkdir -p "$PWD/qa-evidence"
+              docker run --rm --user 0 --network none \
+                --mount "type=bind,source=$PWD,target=/workspace,readonly" \
+                --mount "type=bind,source=$PWD/qa-evidence,target=/out" \
+                --mount "type=volume,source=$volume,target=/reports,readonly" \
+                -e PYTHONPATH=/workspace/backend/src \
+                ketrika-backend:qa-codex-r05 \
+                python -m ketrika.core.qualification_reports export-reports "$role" /reports "/out/$role"
+            fi
+          done
+
+      - name: Archive native reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: qualification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: qa-evidence/
+          if-no-files-found: error
+          retention-days: 30

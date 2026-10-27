@@ -1,5 +1,12 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T00:43:00Z] DP-1 — réception CI isolée, destination locale préservée
+
+- Avant tout check complet local, constat readonly : main-final porte0020_quarantine_ledger_and_anti_self_links et un runner depuis r08-quarantine-20261027 y exécute des intégrations. Aucun arrêt, downgrade, snapshot ou mutation de cette destination par DP-1 ; demande de coordination C053 déposée, pas d'accord présumé. AU-08 déjà engagé sera préservé, pas réimplémenté en concurrence.
+- ADR132/SPECS avant archivage CI : même check complet, mêmes seuils et26 scénarios dans un runner GitHub éphémère ; originaux natifs conservés en artefact, traces/session/Bronze exclus. Aucun check local partiel promu. Le SHA de candidat CI et celui de fusion resteront explicitement distincts.
+- Aperçu final : prix/territoires/commerce/alertes/bulletins passent320/390px et200% ; économie corrigée passe aussi320px/200% dans les deux thèmes, état503 réel conservé. Scan complémentaire48704octets code0/aucun secret. Réception globale encore à exécuter ; aucun DONE produit, merge ou déploiement revendiqué.
+- Collecteur natif : Ruff/format/Mypy code0, sept tests de frontière d'export code0 (5,78s), validation YAML code0, scan26336octets code0/aucun secret. Les reçus frontend sont exportés hors de leur répertoire caché afin d'être archivés sans élargir l'inclusion aux fichiers ambiants. Ces ciblés ne qualifient pas le lot ; gel/push/PR puis check complet CI et26 E2E requis.
+
 ### [2026-10-26T23:42:45Z] DP-0 constaté, DP-1 IN_PROGRESS — premiers correctifs de lecture
 
 - Implémentation autorisée par l'utilisateur après le plan7b85e7f. Même worktree natif isolé, branche feat/r08-dp1-20261027 ; aucun développement sur runtime. DP-0 : identités des originaux4e455ed/cd77a26 relues et conservées, nouvelle réception complète réservée au gel DP-1 sans check de base redondant. Pas de promotion d'un ancien reçu en preuve du nouveau contenu.

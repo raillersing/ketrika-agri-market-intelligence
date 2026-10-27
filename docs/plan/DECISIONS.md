@@ -1,4 +1,13 @@
 # DECISIONS (Architecture Decision Records - ADR)
+## ADR-132 | 2026-10-27 | Accepté avant code | Réception éphémère CI et conservation des rapports natifs
+
+- La destination locale main-final est utilisée par r08-quarantine-20261027 et porte sa migration0020. Aucun downgrade, remplacement de source, arrêt de runner ou partage de cette destination pour DP-1. Demande utilisateur : commit/push/merge puis poursuite ; C053 demande coordination sans présumer un accord.
+- Recevoir le gel DP-1 sur le runner éphémère GitHub via le check complet et le navigateur existants, sans check local concurrent, sans diminuer les scénarios, seuils ou exigences de couverture. La CI construit ses propres images verrouillées et ses reçus portent leurs vraies identités ; aucun reçu local antérieur réétiqueté.
+- Ajouter après exécution une extraction en lecture seule des rapports backend, frontend et reçus navigateur des seuls volumes QA éphémères, puis leur archivage comme artefact GitHub. Conserver aussi les échecs disponibles. Liste fermée de fichiers ; pas de trace.zip, cookie, environnement ou volume métier publié. Python reste dans Docker et les objets Bronze ne sont pas exportés ou modifiés.
+- Export borné dans qualification_reports, refus des liens symboliques et écrasements ; tests ciblés de la frontière d'export. Action officielle actions/upload-artifact@v7, version présentée par https://github.com/actions/upload-artifact le27 octobre, sans inclusion de fichiers cachés ; rétention30jours. Ce collecteur conserve des octets, il ne transforme pas un résultat rouge ou incomplet en réception.
+- Le SHA natif testé par la CI (notamment le candidat de fusion GitHub), le SHA de branche et le SHA final fusionné restent distincts ; leur égalité de contenu doit être contrôlée avant réutilisation. La réussite de CI ne qualifie ni données de marché ni activation locale. Une CI rouge ou sans rapports suffisants ne permet pas la réception.
+- Alternatives rejetées : reprendre la QA d'autrui, effacer sa migration, fabriquer une qualification à partir des seuls ciblés ou ajouter une pile de test parallèle avec identité trompeuse. Le prochain gel inclut ce changement de conservation et reçoit le workflow complet.
+
 ## ADR-131 | 2026-10-27 | Accepté avant code | DP-1, lecture des écrans et filtres sans faux faits
 
 - Demande utilisateur : commencer le plan DP-0–7 reçu en7b85e7f. DP-0 constate les identités distinctes4e455ed backend/frontend etcd77a26 navigateur, conservées sans réétiquetage. Le prochain contenu DP-1 sera gelé et reçu entièrement ; aucun check de base redondant avant son développement. R0.8 reste IN_PROGRESS et les74 statuts inchangés.
