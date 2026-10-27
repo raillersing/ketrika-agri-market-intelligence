@@ -271,6 +271,8 @@ def test_anti_self_link_repair_requires_quarantine_record():
             ),
             {"oid": obs_id, "srid": srid},
         )
+        # Resolve the deferred self-reference before changing trigger metadata.
+        session.execute(text("SET CONSTRAINTS ALL IMMEDIATE"))
         session.execute(
             text("ALTER TABLE obs.price_observation ENABLE TRIGGER trg_price_obs_superseded_only")
         )
@@ -309,6 +311,7 @@ def test_anti_self_link_repair_requires_quarantine_record():
             ),
             {"oid": obs_id, "srid": srid},
         )
+        session.execute(text("SET CONSTRAINTS ALL IMMEDIATE"))
         session.execute(
             text("ALTER TABLE obs.price_observation ENABLE TRIGGER trg_price_obs_superseded_only")
         )

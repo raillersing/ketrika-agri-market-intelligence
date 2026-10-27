@@ -1,5 +1,12 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T08:50:00Z] Réception corrective — contre-épreuve SQL historique corrigée
+
+- CI40473333968/d178fbb terminée rouge :2481 succès/un échec/584,45s ; originaux backend/inventaire/couverture récupérés, aucun frontend/navigateur exécuté. Cause distincte : fixture historique active un trigger avec événements FK différés en attente (ObjectInUse), avant toute assertion de réparation.
+- Préparation indépendante depuis32c36bd : SET CONSTRAINTS ALL IMMEDIATE avant les deux réactivations du trigger, sans retirer FK/trigger ni assertion ; transaction synthétique rollbackée conservée. Lint/format/Mypy ciblés code0.
+- Cluster privé déjà0021 et MinIO privé en volume nommé, réseau interne sans ports :sept intégrations quarantaine code0/15,50s. Premier lancement six succès/un NoSuchBucket après commande de démarrage MinIO mal préparée ; origine conservée comme diagnostic exclu, bucket créé/versionné avant reprise sans changement produit. Aucune destination active/main-final mutée.
+- Nouveau gel complet requis ; CI32c36bd continue sur son propre runner, non interrompue. AU-08 et programme restent non reçus ; statuts R inchangés.
+
 ### [2026-10-27T08:34:09Z] Réception corrective — graphe Gold complet préparé séparément
 
 - Installation SQL neuve d178fbb code0 de0001 à0020, mais inventaire12 vues au lieu de14 : market_health supprimée par recréation tardive de stock_latest, market_coverage omise. Pas de réception ni DONE déduit. CI40473333968/d178fbb continue sans interruption ; source figée intacte.
