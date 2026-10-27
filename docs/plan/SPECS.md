@@ -2,6 +2,8 @@
 
 ADR-134 : les migrations antérieures à0020 utilisent leurs définitions SQL historiques sans dépendance sur obs.quarantine_ledger. Le contrôle de compatibilité0018 reçoit un répertoire SQL historique explicite ; les appels runtime gardent les définitions courantes.0020 élargit alembic_version.version_num avant enregistrement de son identifiant publié. La réparation fusionnée exige encore son check complet et26 E2E avant réception ; aucun DONE déduit des seuls ciblés.
 
+Complément ADR134 :0021_gold_graph applique un snapshot des14 vues Gold dans leur ordre topologique, WITH NO DATA exclusivement, afin de réparer aussi les destinations ayant déjà appliqué0020. Aucun recalcul/publication ni mutation d'observation/Bronze. Les filtres de quarantaine, les droits Gold et le refus de publication macro sont conservés.
+
 ADR-132 : lorsque main-final local est occupé ou porte une migration étrangère au gel, la réception complète peut utiliser le runner CI éphémère avec le même point d'entrée, sans mutation de la destination locale. La CI archive en lecture seule les originaux qa-tests.xml/qa-inventory.json/qa-coverage.json, les reçus/rapports Vitest et les seuls receipt.json navigateur. Traces de session, environnements, cookies et Bronze exclus. Les SHA natifs, empreintes et images restent propres à chaque exécution ; vérifier le contenu exact du candidat avant fusion et conserver les échecs disponibles.
 
 ## DP-1 — Présentation métier bornée (ADR-131)

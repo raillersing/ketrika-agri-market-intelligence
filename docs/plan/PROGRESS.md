@@ -1,5 +1,11 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T08:34:09Z] Réception corrective — graphe Gold complet préparé séparément
+
+- Installation SQL neuve d178fbb code0 de0001 à0020, mais inventaire12 vues au lieu de14 : market_health supprimée par recréation tardive de stock_latest, market_coverage omise. Pas de réception ni DONE déduit. CI40473333968/d178fbb continue sans interruption ; source figée intacte.
+- ADR134/SPECS précisés avant code dans le seul worktree fix/r08-integration-gold-graph-20261027. Migration additive0021 avec snapshot complet14 vues en ordre topologique/WITH NO DATA, couvrant aussi les destinations déjà0020. Aucun downgrade, mutation active ni publication.
+- Développement Docker : lint/format ciblés code0, Mypy code0 après correction MYPYPATH du diagnostic (premier import-untyped de configuration exclu), un test de graphe code0/4,49s. Upgrade PostgreSQL privé0020→0021 code0 :14 vues/zéro peuplée/zéro quarantaine. Nouveau gel et réception complète restent nécessaires après fin de la CI précédente.
+
 ### [2026-10-27T08:16:05Z] Reprise publication — réception corrective IN_PROGRESS
 
 - Vérification distante : PR2 déjà fusionnée et origin/main4a014be, AU-08 inclus. CI40454773585 et40461024207 rouges : migration0003 dépend d'obs.quarantine_ledger créée seulement en0020. Les déclarations DONE AU-08 ci-dessous ne valent pas réception complète.
