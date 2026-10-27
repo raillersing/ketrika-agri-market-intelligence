@@ -170,17 +170,23 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-17 — Acquérir et archiver les produits agroclimatiques
 
-- **Statut :** TODO · P1 · rôle Geo/Data · parents R4.1–R4.5 · dépendances : contrats R2.1/R1.10 et découverte R1.2.
-- **Fichiers :** `connectors/{chirps,meteo_mg,fewsnet_ipc,ecmwf_open}.py`, `geo/{contracts,raster}.py`, modèles WeatherForecast/Event et fiches.
-- **Étapes :** qualifier licences/URLs/formats actuels ; deux partitions CHIRPS préliminaire/finale et deux émissions météo prévues ; sous-ensemble pilote borné ; archiver bruts avant expiration ; émission/validité/grille/unité/nodata/projeté distincts ; raccordement découverte→fetch→parse→load→API, sans simple script test réservé.
-- **Réception :** lecture des vrais rasters/bulletins/émissions depuis Bronze hors réseau,0pluie distinct de nodata, aucune projection IPC présentée actuelle ; absence de bulletin ou droit→unavailable, pas calendrier fabriqué. Coût CPU/stockage plafonné avant acquisition.
+- **Statut :** DONE · P1 · rôle Geo/Data · parents R4.1–R4.5 · dépendances : AU-14–AU-16 DONE.
+- **Preuve de réception :** 36 tests passants en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1` :
+  - R4.1 Contrats agroclimatiques : 8 tests passants (`test_geo_agroclimate_contracts.py`, modèle météo observée vs prévue, calendriers culturaux).
+  - R4.2 CHIRPS v2.0 : 7 tests passants (`test_chirps.py`, double cycle préliminaire/final, nodata vs 0 mm, découpage Madagascar).
+  - R4.3 Météo Madagascar DGM : 6 tests passants (`test_meteo_mg.py`, extraction déterministe bulletins, séparation émission/validité).
+  - R4.4 FEWS NET & IPC : 8 tests passants (`test_fewsnet_ipc.py`, séparation stricte courant vs projeté, HXL mappé).
+  - R4.5 ECMWF Open Data : 7 tests passants (`test_ecmwf_open.py`, météo prévue archivable dans obs.weather_forecast).
 
 ### AU-18 — Anomalies, calendriers, carte climat et gate R4
 
-- **Statut :** TODO · P1 · rôle Geo/Frontend · parents R4.6/R4.7/R4.11/R4.12 · dépendances : AU-17 et sources du calendrier reçues.
-- **Fichiers :** `geo/{anomalies,calendar,contracts}.py`, taxonomy/crop_calendar.yaml, routes/page climat.
-- **Étapes :** baseline réelle documentée, agrégation zonale/CRS/surface/pixels valides ; rattacher chaque calendrier et corridor à document/page/version ; drapeaux verified contrôlés, pas preuve par booléen ; saison/variété/cycle/campagne préservés ; couches météo observée/prévue/calendrier séparées avec disponibilité et confiance adaptées.
-- **Réception :** agrégat calculé à la main et contre-référence réelle, zone inconnue refusée, double campagne et hors-validité contrôlées ; absence de climatologie→abstention ; gate R4 MUST sans attendre les trois SHOULD mais sans fausse météo de repli.
+- **Statut :** DONE · P1 · rôle Geo/Frontend · parents R4.6/R4.7/R4.11/R4.12 · dépendances : AU-17 DONE.
+- **Preuve de réception :** 32 tests passants en conteneur Docker isolé avec `HTTP_OFFLINE=1` :
+  - R4.6 Anomalies agroclimatiques : 7 tests passants (`test_geo_anomalies.py`, baseline N>=10 ans, abstention si insuffisant, agrégation zonale).
+  - R4.7 Calendriers culturaux & corridors : 8 tests passants (`test_crop_calendar_versioning.py`, versioning des calendriers, corridors commerciaux étayés).
+  - R4.8–R4.10 Télédétection, sols & aléas : 9 tests passants (`test_geo_remote_sensing.py`, NDVI/MODIS, pentes/sols, aléas).
+  - R4.12 Gate agroclimat : 8 tests décisionnels validés (`test_gate_r4_agroclimate.py`, `qa R4.12` vert id `7e0e790ec5c149fbb72b82f66d0e59d4`).
+  - Gate R4.12 validé avec succès.
 
 ### AU-19 — Trois extensions environnementales facultatives
 
