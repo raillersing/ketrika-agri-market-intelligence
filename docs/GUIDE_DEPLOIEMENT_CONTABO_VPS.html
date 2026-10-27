@@ -3,22 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tutoriel de Déploiement VPS Contabo - Ketrika Agri Market Intelligence</title>
+  <title>Guide de Déploiement VPS Contabo — Ketrika Agri Market Intelligence</title>
   <style>
     :root {
       --primary: #10b981;
-      --primary-dark: #059669;
-      --primary-light: #ecfdf5;
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --surface-border: #334155;
+      --primary-hover: #059669;
+      --primary-subtle: rgba(16, 185, 129, 0.12);
+      --bg: #090d16;
+      --surface: #131c2e;
+      --surface-elevated: #1e293b;
+      --border: #334155;
+      --border-subtle: #1e293b;
       --text: #f8fafc;
       --text-muted: #94a3b8;
-      --code-bg: #090d16;
+      --code-bg: #060911;
       --accent: #38bdf8;
-      --warning-bg: #451a03;
-      --warning-border: #b45309;
-      --warning-text: #fde68a;
+      --accent-subtle: rgba(56, 189, 248, 0.12);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.1);
+      --warning-border: rgba(245, 158, 11, 0.3);
+      --danger: #ef4444;
+      --success: #10b981;
+      --radius: 12px;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-elevated: #f1f5f9;
+      --border: #cbd5e1;
+      --border-subtle: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --code-bg: #0f172a;
+      --accent: #0284c7;
+      --accent-subtle: rgba(2, 132, 199, 0.08);
+      --warning-bg: #fef3c7;
+      --warning-border: #fcd34d;
     }
 
     * {
@@ -28,89 +49,278 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background-color: var(--bg);
       color: var(--text);
       line-height: 1.65;
       padding: 2rem 1rem;
+      transition: background-color 0.2s, color 0.2s;
     }
 
     .container {
-      max-width: 960px;
+      max-width: 1040px;
       margin: 0 auto;
-      background-color: var(--surface);
-      border: 1px solid var(--surface-border);
-      border-radius: 12px;
-      padding: 2.5rem;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
     }
 
-    header {
-      border-bottom: 1px solid var(--surface-border);
-      padding-bottom: 1.5rem;
+    /* Top Sticky Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
     }
 
-    .badge {
-      display: inline-block;
-      font-size: 0.75rem;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
       font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, var(--primary), #059669);
+      color: #fff;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      padding: 0.25rem 0.6rem;
-      border-radius: 9999px;
-      background-color: var(--primary-dark);
-      color: #fff;
-      margin-bottom: 0.75rem;
     }
 
-    h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 0.5rem;
-    }
-
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 1.05rem;
-    }
-
-    h2 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--accent);
-      margin-top: 2rem;
-      margin-bottom: 1rem;
+    .theme-toggle-btn {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      border-bottom: 1px solid var(--surface-border);
-      padding-bottom: 0.4rem;
+      transition: all 0.2s;
+    }
+    .theme-toggle-btn:hover {
+      border-color: var(--primary);
+    }
+
+    /* Header hero */
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+
+    .lead {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      max-width: 800px;
+    }
+
+    /* Interactive customizer */
+    .customizer-box {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .customizer-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .customizer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .customizer-field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .customizer-field input {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      color: #38bdf8;
+      padding: 0.55rem 0.85rem;
+      border-radius: 6px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .customizer-field input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Progress bar */
+    .progress-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .progress-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .progress-bar-container {
+      flex: 1;
+      min-width: 200px;
+      height: 8px;
+      background: var(--surface-elevated);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Step Cards */
+    .step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-bottom: 1.75rem;
+      position: relative;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+      gap: 1rem;
+    }
+
+    .step-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #060911;
+      font-weight: 800;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
     }
 
     h3 {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 600;
-      color: #e2e8f0;
-      margin-top: 1.25rem;
-      margin-bottom: 0.5rem;
+      color: var(--accent);
+      margin: 1.5rem 0 0.5rem 0;
     }
 
-    p, ul, ol {
+    p {
       margin-bottom: 1rem;
+      color: var(--text);
     }
 
     ul, ol {
+      margin-bottom: 1rem;
       padding-left: 1.5rem;
     }
-
     li {
       margin-bottom: 0.4rem;
     }
 
-    strong {
-      color: #fff;
+    .checkbox-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .checkbox-wrap input[type="checkbox"] {
+      cursor: pointer;
+      width: 17px;
+      height: 17px;
+      accent-color: var(--primary);
+    }
+
+    /* Code block */
+    .code-block-wrap {
+      position: relative;
+      margin: 1rem 0 1.25rem 0;
+    }
+
+    pre {
+      background-color: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.15rem 1.25rem;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      color: #e2e8f0;
+      line-height: 1.55;
     }
 
     code {
@@ -123,19 +333,6 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    pre {
-      background-color: var(--code-bg);
-      border: 1px solid var(--surface-border);
-      border-radius: 8px;
-      padding: 1rem;
-      overflow-x: auto;
-      margin-bottom: 1.25rem;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.88rem;
-      color: #e2e8f0;
-      line-height: 1.5;
-    }
-
     pre code {
       background-color: transparent;
       padding: 0;
@@ -143,300 +340,735 @@
       color: inherit;
     }
 
+    .copy-btn {
+      position: absolute;
+      top: 0.65rem;
+      right: 0.65rem;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 0.3rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      color: #fff;
+      border-color: var(--primary);
+      background: var(--primary-subtle);
+    }
+    .copy-btn.copied {
+      color: #10b981;
+      border-color: #10b981;
+    }
+
+    /* Callout */
     .callout {
-      background-color: rgba(16, 185, 129, 0.08);
-      border-left: 4px solid var(--primary);
-      padding: 1rem;
+      background: var(--accent-subtle);
+      border-left: 4px solid var(--accent);
       border-radius: 0 8px 8px 0;
-      margin-bottom: 1.25rem;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
       font-size: 0.95rem;
     }
-
     .callout-warning {
-      background-color: var(--warning-bg);
-      border-left: 4px solid var(--warning-border);
-      color: var(--warning-text);
-      padding: 1rem;
+      background: var(--warning-bg);
+      border-left: 4px solid var(--warning);
       border-radius: 0 8px 8px 0;
-      margin-bottom: 1.25rem;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
       font-size: 0.95rem;
+      color: #fbbf24;
+    }
+    .callout-warning strong {
+      color: #fff;
     }
 
+    /* Table */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 1.5rem;
-      font-size: 0.92rem;
+      margin: 1rem 0 1.5rem 0;
+      font-size: 0.9rem;
     }
-
     th, td {
-      border: 1px solid var(--surface-border);
+      border: 1px solid var(--border);
       padding: 0.75rem 1rem;
       text-align: left;
     }
-
     th {
-      background-color: rgba(255, 255, 255, 0.04);
-      color: #f1f5f9;
+      background: var(--surface-elevated);
+      color: var(--text);
       font-weight: 600;
     }
-
     tr:nth-child(even) {
-      background-color: rgba(255, 255, 255, 0.015);
+      background: rgba(255, 255, 255, 0.015);
     }
 
-    .step-number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background-color: var(--primary);
-      color: #0f172a;
-      font-weight: 700;
+    /* Summary list */
+    .summary-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .summary-item {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
       font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .summary-icon {
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 1.1rem;
     }
 
     footer {
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--surface-border);
       text-align: center;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
       color: var(--text-muted);
       font-size: 0.85rem;
-    }
-
-    @media print {
-      body {
-        background-color: #fff;
-        color: #000;
-      }
-      .container {
-        border: none;
-        box-shadow: none;
-        padding: 0;
-        background-color: #fff;
-      }
-      pre {
-        background-color: #f8fafc;
-        border: 1px solid #cbd5e1;
-        color: #000;
-      }
-      code {
-        color: #0f172a;
-        background-color: #f1f5f9;
-      }
-      h2 {
-        color: #0284c7;
-        border-bottom: 1px solid #cbd5e1;
-      }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <header>
-    <span class="badge">Production &middot; Guide Officiel</span>
-    <h1>Déploiement VPS Contabo</h1>
-    <p class="subtitle">Plateforme Ketrika Agri Market Intelligence &mdash; Ubuntu 24.04 / 22.04 LTS</p>
-  </header>
 
-  <h2><span class="step-number">0</span> Pré-requis nécessaires</h2>
-  <p>Avant d'entamer l'installation sur votre VPS Contabo, rassemblez les informations suivantes :</p>
-  <ul>
-    <li><strong>Adresse IPv4 publique Contabo :</strong> Reçue par email (ex: <code>161.97.xxx.xxx</code>).</li>
-    <li><strong>Accès SSH root :</strong> Mot de passe ou clé SSH configuré lors de la commande.</li>
-    <li><strong>Nom de domaine / Sous-domaine :</strong> Par exemple <code>market.votre-domaine.com</code> avec un enregistrement DNS de <strong>type A</strong> pointant vers l'IP du VPS.</li>
-    <li><strong>Terminal :</strong> PowerShell sur Windows, ou Terminal sur macOS/Linux.</li>
-  </ul>
-
-  <div class="callout">
-    <strong>Note :</strong> Si vous n'avez pas encore configuré de nom de domaine, la <a href="#section-ip-direct" style="color: var(--accent); text-decoration: underline;">section 7</a> vous explique comment tester immédiatement avec l'adresse IP brute.
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="brand">
+      <span>Ketrika Agri Market Intelligence</span>
+      <span class="brand-badge">Guide Production</span>
+    </div>
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">
+      <span id="themeIcon">☀️</span> Mode Clair / Sombre
+    </button>
   </div>
 
-  <h2><span class="step-number">1</span> Connexion SSH et Amorçage du VPS</h2>
-  <p>Ouvrez votre terminal et connectez-vous au serveur en tant que <code>root</code> :</p>
-  <pre><code>ssh root@&lt;IP_DE_VOTRE_VPS_CONTABO&gt;</code></pre>
-  
-  <p>Une fois connecté, exécutez le script d'amorçage conçu pour automatiser la sécurisation du serveur et l'installation de Docker :</p>
-  <pre><code>curl -fsSL https://raw.githubusercontent.com/ketrika/ai-agent/main/deploy/bootstrap-vps.sh -o bootstrap.sh
+  <!-- Hero Header -->
+  <div class="hero">
+    <h1>Déploiement VPS Contabo</h1>
+    <p class="lead">
+      Guide pas-à-pas interactif pour déployer l'infrastructure complète de Ketrika Agri Market Intelligence sur un serveur Cloud VPS Contabo (Ubuntu 24.04 / 22.04 LTS).
+    </p>
+
+    <!-- Customizer Input -->
+    <div class="customizer-box">
+      <div class="customizer-title">
+        ⚙️ Personnalisation dynamique des commandes
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Saisissez vos paramètres réels ci-dessous. <strong>Toutes les commandes du tutoriel se mettront à jour en direct !</strong>
+      </p>
+      <div class="customizer-grid">
+        <div class="customizer-field">
+          <label for="inputIp">IP VPS Contabo</label>
+          <input type="text" id="inputIp" value="161.97.100.50" oninput="updateVariables()">
+        </div>
+        <div class="customizer-field">
+          <label for="inputDomain">Nom de domaine (FQDN)</label>
+          <input type="text" id="inputDomain" value="market.ketrika.mg" oninput="updateVariables()">
+        </div>
+        <div class="customizer-field">
+          <label for="inputEmail">Email Let's Encrypt (SSL)</label>
+          <input type="text" id="inputEmail" value="admin@ketrika.mg" oninput="updateVariables()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Checklist Header -->
+  <div class="progress-card">
+    <div class="progress-text">
+      Progression du déploiement : <span id="progressCount">0 / 11</span> étapes terminées (<span id="progressPercent">0%</span>)
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ETAPE 0 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-0">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">0</span>
+        <h2>Spécifications recommandées du VPS Contabo</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(0, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <p>Pour faire tourner la stack complète (PostGIS, MinIO S3, FastAPI, Next.js, Dagster, Caddy), l'offre recommandée chez Contabo est :</p>
+    
+    <div class="summary-list">
+      <div class="summary-item"><span class="summary-icon">✓</span> <strong>Offre :</strong> Cloud VPS S ou Cloud VPS M</div>
+      <div class="summary-item"><span class="summary-icon">✓</span> <strong>CPU :</strong> 4 vCPU cores (minimum 2 vCPU)</div>
+      <div class="summary-item"><span class="summary-icon">✓</span> <strong>RAM :</strong> 8 Go (ou 16 Go pour confort)</div>
+      <div class="summary-item"><span class="summary-icon">✓</span> <strong>Disque :</strong> 50 Go NVMe ou SSD</div>
+      <div class="summary-item"><span class="summary-icon">✓</span> <strong>OS :</strong> Ubuntu 24.04 LTS (Noble Numbat)</div>
+      <div class="summary-item"><span class="summary-icon">✓</span> <strong>Réseau :</strong> 1 adresse IPv4 publique dédiée</div>
+    </div>
+
+    <div class="callout">
+      💡 <strong>Conseil Contabo :</strong> Lors de votre commande sur le portail Contabo, sélectionnez <strong>Ubuntu 24.04</strong>. Vous pouvez coller votre clé publique SSH (<code>id_ed25519.pub</code>) dans la section Cloud-Init pour une connexion sécurisée sans mot de passe.
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ETAPE 1 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-1">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">1</span>
+        <h2>Configuration du Nom de Domaine (DNS)</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(1, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <p>Avant d'activer le certificat HTTPS Let's Encrypt automatique, configurez votre nom de domaine chez votre registrar (Cloudflare, Namecheap, OVH, etc.) :</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Type d'enregistrement</th>
+          <th>Nom / Hôte</th>
+          <th>Valeur cible (IP Contabo)</th>
+          <th>TTL / Proxy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A</strong></td>
+          <td><code class="var-domain-host">market</code></td>
+          <td><code class="var-ip">161.97.100.50</code></td>
+          <td>Automatique (DNS Only si Cloudflare)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Vérifiez la propagation DNS depuis votre terminal local :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>dig +short <span class="var-domain">market.ketrika.mg</span></code></pre>
+    </div>
+    <p>La commande doit renvoyer exactement votre adresse IP Contabo : <code class="var-ip">161.97.100.50</code>.</p>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ETAPE 2 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-2">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">2</span>
+        <h2>Connexion SSH & Amorçage du Serveur (Bootstrap)</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(2, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <p>1. Connectez-vous au serveur en tant que <code>root</code> depuis votre terminal :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>ssh root@<span class="var-ip">161.97.100.50</span></code></pre>
+    </div>
+
+    <p>2. Lancez le script d'amorçage officiel du dépôt. Il installe Docker Engine, UFW, Fail2ban, et prépare l'utilisateur non-root <code>deploy</code> :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>curl -fsSL https://raw.githubusercontent.com/raillersing/ketrika-agri-market-intelligence/main/deploy/bootstrap-vps.sh -o bootstrap.sh
 chmod +x bootstrap.sh
 ./bootstrap.sh</code></pre>
+    </div>
 
-  <p><strong>Ce que fait ce script automatiquement :</strong></p>
-  <ul>
-    <li>Mise à jour complète du système (<code>apt upgrade</code>).</li>
-    <li>Création d'un utilisateur sécurisé nommé <code>deploy</code>.</li>
-    <li>Installation de Docker Engine et du plugin Docker Compose officiel.</li>
-    <li>Activation du pare-feu <strong>UFW</strong> (seuls les ports 22, 80 et 443 sont ouverts).</li>
-    <li>Protection anti-bruteforce <strong>Fail2ban</strong> et mises à jour de sécurité automatiques.</li>
-    <li>Préparation du répertoire applicatif <code>/opt/ketrika</code>.</li>
-  </ul>
+    <div class="callout">
+      🛡️ <strong>Sécurité appliquée par le script :</strong>
+      <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+        <li>Pare-feu UFW activé (seuls les ports <strong>22 (SSH)</strong>, <strong>80 (HTTP)</strong> et <strong>443 (HTTPS)</strong> sont autorisés).</li>
+        <li>Protection anti-bruteforce Fail2ban activée contre les attaques SSH.</li>
+        <li>Création de l'utilisateur dédié <code>deploy</code> membre du groupe <code>docker</code>.</li>
+        <li>Répertoire applicatif <code>/opt/ketrika</code> configuré avec les bons droits.</li>
+      </ul>
+    </div>
+  </div>
 
-  <h2><span class="step-number">2</span> Bascule sur l'utilisateur <code>deploy</code></h2>
-  <p>Pour des raisons strictes de sécurité, nous n'exécutons jamais l'application sous <code>root</code> :</p>
-  <pre><code>su - deploy
+  <!-- ========================================================================= -->
+  <!-- ETAPE 3 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-3">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">3</span>
+        <h2>Bascule sur l'utilisateur <code>deploy</code> & Clonage</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(3, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <p>Ne déployez jamais l'application sous l'utilisateur <code>root</code>. Basculez sur l'utilisateur <code>deploy</code> :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>su - deploy
 cd /opt/ketrika</code></pre>
+    </div>
 
-  <h2><span class="step-number">3</span> Récupération du code source</h2>
-  <p>Clonez le dépôt dans le répertoire de travail :</p>
-  <pre><code>git clone https://github.com/ketrika/ai-agent.git .</code></pre>
+    <p>Clonez le dépôt officiel sur la branche principale <code>main</code> :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>git clone https://github.com/raillersing/ketrika-agri-market-intelligence.git .</code></pre>
+    </div>
+  </div>
 
-  <h2><span class="step-number">4</span> Configuration des variables d'environnement (<code>.env</code>)</h2>
-  <p>Créez le fichier <code>.env</code> à partir du modèle de configuration :</p>
-  <pre><code>cp .env.example .env
+  <!-- ========================================================================= -->
+  <!-- ETAPE 4 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-4">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">4</span>
+        <h2>Configuration des Secrets de Production (<code>.env</code>)</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(4, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <p>1. Copiez le template de configuration et verrouillez ses permissions :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>cp .env.example .env
 chmod 600 .env</code></pre>
+    </div>
 
-  <p>Générez des mots de passe aléatoires et robustes directement dans la console :</p>
-  <pre><code># Mot de passe sécurisé pour PostgreSQL :
+    <p>2. Générez des mots de passe cryptographiques sécurisés avec <code>openssl</code> :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code># Mot de passe robuste pour PostgreSQL :
 openssl rand -hex 24
 
 # Clé secrète pour les tokens JWT d'authentification :
-openssl rand -hex 32</code></pre>
+openssl rand -hex 32
 
-  <p>Ouvrez ensuite le fichier pour l'éditer avec <code>nano</code> :</p>
-  <pre><code>nano .env</code></pre>
+# Mot de passe lecture-seule pour le Copilote SQL :
+openssl rand -hex 24</code></pre>
+    </div>
 
-  <p>Remplissez les variables clés :</p>
-  <pre><code># Configuration générale
-APP_ENV=prod
-DOMAIN=market.votre-domaine.com
-ACME_EMAIL=votre-email@domaine.com
+    <p>3. Ouvrez le fichier <code>.env</code> avec <code>nano</code> :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>nano .env</code></pre>
+    </div>
 
-# Base de données PostgreSQL + PostGIS
+    <p>Adaptez les variables clés avec vos valeurs :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>APP_ENV=prod
+DOMAIN=<span class="var-domain">market.ketrika.mg</span>
+ACME_EMAIL=<span class="var-email">admin@ketrika.mg</span>
+
+# Base de données PostgreSQL + PostGIS 17
 POSTGRES_USER=ketrika
-POSTGRES_PASSWORD=&lt;COLLEZ_LE_MOT_DE_PASSE_POSTGRES_GENERE&gt;
+POSTGRES_PASSWORD=&lt;COLLEZ_VOTRE_MOT_DE_PASSE_POSTGRES_24HEX&gt;
 POSTGRES_DB=ketrika
-DATABASE_URL=postgresql+psycopg://ketrika:&lt;COLLEZ_LE_MOT_DE_PASSE_POSTGRES_GENERE&gt;@db:5432/ketrika
-COPILOT_DB_PASSWORD=&lt;MOT_DE_PASSE_LECTURE_SEULE&gt;
+DATABASE_URL=postgresql+psycopg://ketrika:&lt;COLLEZ_VOTRE_MOT_DE_PASSE_POSTGRES_24HEX&gt;@db:5432/ketrika
+COPILOT_DB_PASSWORD=&lt;COLLEZ_VOTRE_MOT_DE_PASSE_COPILOT_24HEX&gt;
 
-# Stockage Bronze S3 (MinIO autonome sur le VPS)
+# Stockage Bronze S3 (MinIO ou Cloudflare R2)
 S3_ENDPOINT_URL=http://minio:9000
-S3_ACCESS_KEY=minioadmin
-S3_SECRET_KEY=minioadmin
+S3_ACCESS_KEY=qualification-admin
+S3_SECRET_KEY=&lt;MOT_DE_PASSE_MINIO_OU_R2&gt;
 S3_BUCKET_BRONZE=bronze
 S3_REGION=auto
 
-# Sécurité des sessions
-JWT_SECRET=&lt;COLLEZ_LA_CLE_JWT_GENEREE&gt;
-CORS_ORIGINS=https://market.votre-domaine.com
+# Sécurité & Tokens JWT
+JWT_SECRET=&lt;COLLEZ_VOTRE_CLE_JWT_32HEX&gt;
+CORS_ORIGINS=https://<span class="var-domain">market.ketrika.mg</span>
 
-# Intelligence Artificielle (Mode Replay pour tests)
+# IA & Copilote (Gemini ou Replay local)
 LLM_PROVIDER=replay
+GEMINI_API_KEY=
 EXTERNAL_SEND_ENABLED=0</code></pre>
-  <p>Sauvegardez avec <code>Ctrl + O</code>, confirmez avec <code>Entrée</code>, puis quittez avec <code>Ctrl + X</code>.</p>
-
-  <h2><span class="step-number">5</span> Lancement et Initialisation des Données</h2>
-  
-  <h3>1. Construction des conteneurs de production</h3>
-  <pre><code>docker compose -f docker-compose.prod.yml build</code></pre>
-
-  <h3>2. Démarrage de la base de données PostGIS</h3>
-  <pre><code>docker compose -f docker-compose.prod.yml up -d db</code></pre>
-  <p>Attendez quelques secondes et vérifiez que la base est prête (état <code>healthy</code>) :</p>
-  <pre><code>docker compose -f docker-compose.prod.yml ps db</code></pre>
-
-  <h3>3. Application des migrations de schéma Alembic</h3>
-  <pre><code>docker compose -f docker-compose.prod.yml run --rm api alembic upgrade head</code></pre>
-
-  <h3>4. Chargement initial des référentiels vivriers (Seed)</h3>
-  <p>Cette commande peuple les régions/districts de Madagascar, les produits vivriers PPN (riz, maïs, manioc, huile, etc.) et les sources déclarées :</p>
-  <pre><code>docker compose -f docker-compose.prod.yml run --rm api python -m ketrika.normalize.loader seed</code></pre>
-
-  <h3>5. Démarrage complet de tous les services</h3>
-  <pre><code>docker compose -f docker-compose.prod.yml up -d</code></pre>
-
-  <p>Vérifiez que tous les services sont en ligne :</p>
-  <pre><code>docker compose -f docker-compose.prod.yml ps</code></pre>
-  <p>Vous devez observer les conteneurs : <code>caddy</code>, <code>web</code>, <code>api</code>, <code>db</code>, <code>dagster-webserver</code> et <code>dagster-daemon</code> en cours d'exécution.</p>
-
-  <h2><span class="step-number">6</span> Accès et Vérifications</h2>
-
-  <h3>1. Tester l'API en ligne</h3>
-  <pre><code>curl -I https://market.votre-domaine.com/v1/health</code></pre>
-  <p>Vous recevez un statut <code>200 OK</code> avec <code>"database": "connected"</code>.</p>
-
-  <h3>2. Documentation Swagger interactive</h3>
-  <p>Rendez-vous dans votre navigateur sur :<br>
-  <code>https://market.votre-domaine.com/docs</code></p>
-
-  <h3>3. Tableau de bord Web</h3>
-  <p>Ouvrez votre domaine principal :<br>
-  <code>https://market.votre-domaine.com</code></p>
-
-  <h3>4. Accéder à l'orchestrateur Dagster via tunnel SSH sécurisé</h3>
-  <p>L'interface de gestion des pipelines n'est pas exposée publiquement par sécurité. Pour y accéder depuis votre machine personnelle :</p>
-  <pre><code>ssh -L 3001:localhost:3001 deploy@&lt;IP_DE_VOTRE_VPS_CONTABO&gt;</code></pre>
-  <p>Puis ouvrez dans votre navigateur local : <code>http://localhost:3001</code>.</p>
-
-  <h2 id="section-ip-direct"><span class="step-number">7</span> Variante : Tester immédiatement sans nom de domaine</h2>
-  <div class="callout-warning">
-    Si vous n'avez pas de domaine disponible tout de suite, vous pouvez configurer Caddy pour écouter directement sur le port 80 de l'IP publique.
+    </div>
+    <p>Sauvegardez avec <code>Ctrl + O</code>, confirmez avec <code>Entrée</code>, puis quittez avec <code>Ctrl + X</code>.</p>
   </div>
-  <p>1. Éditez <code>deploy/Caddyfile</code> et remplacez la ligne <code>{$DOMAIN:localhost} {</code> par :</p>
-  <pre><code>:80 {
-	encode zstd gzip
 
-	handle /v1/* {
-		reverse_proxy api:8000
-	}
-	handle /docs* {
-		reverse_proxy api:8000
-	}
-	handle /openapi.json {
-		reverse_proxy api:8000
-	}
-	handle {
-		reverse_proxy web:3000
-	}
-}</code></pre>
-  <p>2. Dans <code>.env</code>, indiquez <code>DOMAIN=http://&lt;IP_DE_VOTRE_VPS&gt;</code>.</p>
-  <p>3. Redémarrez le reverse-proxy :</p>
-  <pre><code>docker compose -f docker-compose.prod.yml restart caddy</code></pre>
-  <p>Accédez ensuite directement à <code>http://&lt;IP_DE_VOTRE_VPS&gt;</code>.</p>
+  <!-- ========================================================================= -->
+  <!-- ETAPE 5 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-5">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">5</span>
+        <h2>Construction des Images Docker de Production</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(5, this.checked)"> Étape validée
+      </label>
+    </div>
 
-  <h2><span class="step-number">8</span> Commandes de Maintenance Essentielles</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Action</th>
-        <th>Commande (depuis <code>/opt/ketrika</code>)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Voir les logs en direct</strong></td>
-        <td><code>docker compose -f docker-compose.prod.yml logs -f</code></td>
-      </tr>
-      <tr>
-        <td><strong>Voir les logs de l'API</strong></td>
-        <td><code>docker compose -f docker-compose.prod.yml logs -f api</code></td>
-      </tr>
-      <tr>
-        <td><strong>Redémarrer les services</strong></td>
-        <td><code>docker compose -f docker-compose.prod.yml restart</code></td>
-      </tr>
-      <tr>
-        <td><strong>Arrêter proprement la stack</strong></td>
-        <td><code>docker compose -f docker-compose.prod.yml down</code></td>
-      </tr>
-      <tr>
-        <td><strong>Sauvegarder la base de données</strong></td>
-        <td><code>./deploy/backup.sh</code></td>
-      </tr>
-      <tr>
-        <td><strong>Mettre à jour le code</strong></td>
-        <td><code>git pull &amp;&amp; docker compose -f docker-compose.prod.yml build &amp;&amp; docker compose -f docker-compose.prod.yml up -d</code></td>
-      </tr>
-    </tbody>
-  </table>
+    <p>Construisez les conteneurs optimisés pour la production (FastAPI Backend, Next.js Frontend, Caddy Reverse Proxy) :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>docker compose -f docker-compose.prod.yml build</code></pre>
+    </div>
+    <p>Cette étape compile le frontend Next.js et installe les dépendances Python dans l'environnement conteneurisé scellé.</p>
+  </div>
 
+  <!-- ========================================================================= -->
+  <!-- ETAPE 6 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-6">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">6</span>
+        <h2>Initialisation de la Base de Données PostGIS</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(6, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <p>1. Démarrez le service de base de données PostGIS en arrière-plan :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>docker compose -f docker-compose.prod.yml up -d db</code></pre>
+    </div>
+
+    <p>2. Attendez que la base soit prête (état <code>healthy</code>) :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>docker compose -f docker-compose.prod.yml ps db</code></pre>
+    </div>
+
+    <p>3. Appliquez l'ensemble des 21 migrations de schéma Alembic jusqu'à <code>head</code> :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>docker compose -f docker-compose.prod.yml run --rm api alembic upgrade head</code></pre>
+    </div>
+
+    <p>4. Chargez les référentiels officiels de Madagascar (les 23 régions, 119 districts, taxonomie PPN vivriers) :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>docker compose -f docker-compose.prod.yml run --rm api python -m ketrika.normalize.loader seed</code></pre>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ETAPE 7 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-7">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">7</span>
+        <h2>Démarrage Complet & Certificat SSL Let's Encrypt</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(7, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <p>Démarrez l'ensemble des services en production :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>docker compose -f docker-compose.prod.yml up -d</code></pre>
+    </div>
+
+    <p>Vérifiez que tous les conteneurs sont en ligne :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>docker compose -f docker-compose.prod.yml ps</code></pre>
+    </div>
+
+    <p>Inspectez les logs de Caddy pour confirmer l'obtention automatique du certificat TLS/HTTPS Let's Encrypt :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>docker compose -f docker-compose.prod.yml logs caddy | grep -i "certificate"</code></pre>
+    </div>
+
+    <div class="callout">
+      🔒 <strong>HTTPS Automatique :</strong> Caddy contacte automatiquement Let's Encrypt via le protocole ACME, valide le challenge HTTP-01 sur le port 80, et génère un certificat SSL/TLS valide avec renouvellement automatique.
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ETAPE 8 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-8">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">8</span>
+        <h2>Tests de Fonctionnement en Ligne</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(8, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <p>1. Testez le point de contrôle de santé de l'API en HTTPS :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>curl -s -I https://<span class="var-domain">market.ketrika.mg</span>/v1/health</code></pre>
+    </div>
+    <p>La réponse doit afficher <code>HTTP/2 200</code> avec <code>"database": "connected"</code>.</p>
+
+    <p>2. Accédez à la documentation Swagger interactive dans votre navigateur :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>https://<span class="var-domain">market.ketrika.mg</span>/docs</code></pre>
+    </div>
+
+    <p>3. Ouvrez le tableau de bord web officiel :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>https://<span class="var-domain">market.ketrika.mg</span></code></pre>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ETAPE 9 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-9">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">9</span>
+        <h2>Accès Sécurisé à l'Orchestrateur Dagster (Tunnel SSH)</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(9, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <p>Par principe strict de sécurité, l'interface de gestion des pipelines Dagster (port 3001) n'est <strong>pas exposée publiquement</strong> sur Internet.</p>
+    <p>Pour y accéder en toute sécurité depuis votre machine locale, créez un tunnel SSH chiffré :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code># À exécuter depuis votre ordinateur personnel (PowerShell ou Terminal local) :
+ssh -L 3001:localhost:3001 deploy@<span class="var-ip">161.97.100.50</span></code></pre>
+    </div>
+    <p>Puis ouvrez dans votre navigateur local : <code>http://localhost:3001</code> pour administrer les déclencheurs de collecte.</p>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ETAPE 10 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-10">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">10</span>
+        <h2>Sauvegardes Automatiques Quotidiennes (Cron)</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(10, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <p>Configurez une tâche Cron quotidienne pour sauvegarder la base de données PostgreSQL chaque nuit à 02h00 :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>crontab -e</code></pre>
+    </div>
+
+    <p>Ajoutez la ligne suivante à la fin du fichier :</p>
+    <div class="code-block-wrap">
+      <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      <pre><code>0 2 * * * cd /opt/ketrika && ./deploy/backup.sh >> /var/log/ketrika-backup.log 2>&1</code></pre>
+    </div>
+    <p>Les sauvegardes seront archivées sous <code>/opt/ketrika/backups/</code> avec compression et empreinte SHA-256 de vérification.</p>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ETAPE 11 -->
+  <!-- ========================================================================= -->
+  <div class="step-card" id="step-11">
+    <div class="step-header">
+      <div class="step-title-wrap">
+        <span class="step-badge">11</span>
+        <h2>Commandes d'Exploitation & Maintenance Courante</h2>
+      </div>
+      <label class="checkbox-wrap">
+        <input type="checkbox" onchange="toggleStep(11, this.checked)"> Étape validée
+      </label>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Commande (depuis <code>/opt/ketrika</code>)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Afficher les logs en continu</strong></td>
+          <td><code>docker compose -f docker-compose.prod.yml logs -f</code></td>
+        </tr>
+        <tr>
+          <td><strong>Logs du backend API seul</strong></td>
+          <td><code>docker compose -f docker-compose.prod.yml logs -f api</code></td>
+        </tr>
+        <tr>
+          <td><strong>Logs du reverse proxy Caddy</strong></td>
+          <td><code>docker compose -f docker-compose.prod.yml logs -f caddy</code></td>
+        </tr>
+        <tr>
+          <td><strong>Mettre à jour le code & redémarrer</strong></td>
+          <td><code>git pull origin main && docker compose -f docker-compose.prod.yml build && docker compose -f docker-compose.prod.yml up -d</code></td>
+        </tr>
+        <tr>
+          <td><strong>Sauvegarde immédiate manuelle</strong></td>
+          <td><code>./deploy/backup.sh</code></td>
+        </tr>
+        <tr>
+          <td><strong>Vérifier l'état du pare-feu</strong></td>
+          <td><code>sudo ufw status verbose</code></td>
+        </tr>
+        <tr>
+          <td><strong>Vérifier les bannissements Fail2ban</strong></td>
+          <td><code>sudo fail2ban-client status sshd</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
   <footer>
-    Ketrika Agri Market Intelligence &middot; Architecture Auditable et Immuable &middot; 2026
+    <strong>Ketrika Agri Market Intelligence</strong> &middot; Documentation Technique de Déploiement Production &middot; Conforme Constitution AGENTS.md
   </footer>
+
 </div>
+
+<script>
+  // Dynamic replacement of variables
+  function updateVariables() {
+    const ip = document.getElementById('inputIp').value.trim() || '161.97.100.50';
+    const domain = document.getElementById('inputDomain').value.trim() || 'market.ketrika.mg';
+    const email = document.getElementById('inputEmail').value.trim() || 'admin@ketrika.mg';
+
+    // Domain host part (e.g., 'market' from 'market.ketrika.mg')
+    const domainHost = domain.split('.')[0] || 'market';
+
+    document.querySelectorAll('.var-ip').forEach(el => el.textContent = ip);
+    document.querySelectorAll('.var-domain').forEach(el => el.textContent = domain);
+    document.querySelectorAll('.var-email').forEach(el => el.textContent = email);
+    document.querySelectorAll('.var-domain-host').forEach(el => el.textContent = domainHost);
+
+    // Save to localStorage
+    localStorage.setItem('ketrika_deploy_ip', ip);
+    localStorage.setItem('ketrika_deploy_domain', domain);
+    localStorage.setItem('ketrika_deploy_email', email);
+  }
+
+  // Copy code snippet to clipboard
+  function copyCode(button) {
+    const pre = button.parentElement.querySelector('pre');
+    if (!pre) return;
+    const text = pre.innerText;
+
+    navigator.clipboard.writeText(text).then(() => {
+      const originalText = button.innerText;
+      button.innerText = 'Copié !';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.innerText = originalText;
+        button.classList.remove('copied');
+      }, 2000);
+    }).catch(err => {
+      console.error('Erreur de copie:', err);
+    });
+  }
+
+  // Progress checklist
+  const totalSteps = 12; // 0 to 11
+  let completedSteps = new Set();
+
+  function toggleStep(stepNum, isChecked) {
+    if (isChecked) {
+      completedSteps.add(stepNum);
+    } else {
+      completedSteps.delete(stepNum);
+    }
+    updateProgressUI();
+    saveProgress();
+  }
+
+  function updateProgressUI() {
+    const count = completedSteps.size;
+    const percent = Math.round((count / totalSteps) * 100);
+    document.getElementById('progressCount').textContent = `${count} / ${totalSteps}`;
+    document.getElementById('progressPercent').textContent = `${percent}%`;
+    document.getElementById('progressBar').style.width = `${percent}%`;
+  }
+
+  function saveProgress() {
+    localStorage.setItem('ketrika_deploy_steps', JSON.stringify([...completedSteps]));
+  }
+
+  function loadSavedState() {
+    const savedIp = localStorage.getItem('ketrika_deploy_ip');
+    const savedDomain = localStorage.getItem('ketrika_deploy_domain');
+    const savedEmail = localStorage.getItem('ketrika_deploy_email');
+
+    if (savedIp) document.getElementById('inputIp').value = savedIp;
+    if (savedDomain) document.getElementById('inputDomain').value = savedDomain;
+    if (savedEmail) document.getElementById('inputEmail').value = savedEmail;
+    updateVariables();
+
+    const savedSteps = localStorage.getItem('ketrika_deploy_steps');
+    if (savedSteps) {
+      try {
+        const arr = JSON.parse(savedSteps);
+        completedSteps = new Set(arr);
+        document.querySelectorAll('.step-card').forEach((card, idx) => {
+          const cb = card.querySelector('input[type="checkbox"]');
+          if (cb && completedSteps.has(idx)) {
+            cb.checked = true;
+          }
+        });
+        updateProgressUI();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+
+  // Theme toggle
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    document.getElementById('themeIcon').textContent = newTheme === 'light' ? '🌙' : '☀️';
+    localStorage.setItem('ketrika_theme', newTheme);
+  }
+
+  // Init
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('ketrika_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.getElementById('themeIcon').textContent = savedTheme === 'light' ? '🌙' : '☀️';
+    loadSavedState();
+  });
+</script>
 
 </body>
 </html>
