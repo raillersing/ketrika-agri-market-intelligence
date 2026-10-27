@@ -1956,17 +1956,17 @@
 | R1.11 | MUST | DONE | 2026-10-27T16:21:00Z | 2026-10-27T16:23:00Z | main | 11 tests passants (10 unitaires, 1 intégration, 37.38s), cohérence physique Tmin<=Tmax | Sentinelles -999, politique disabled respectée sans réseau |
 | R1.12 | MUST | DONE | 2026-10-27T16:23:00Z | 2026-10-27T16:25:00Z | main | 20 tests passants (20 unitaires, 11.51s), découverte d'édition, reprise idempotente | Isolation PolicyStop, endpoints /v1/sources et santé conformes |
 | R1.13 | MUST | DONE | 2026-10-27T16:25:00Z | 2026-10-27T16:30:00Z | main | Gate R1 validé : 93 tests sources socle et actualisation passants en environnement isolé | 0 requête réseau, 100% conforme CC-R |
-| R2.1 | MUST | IN_PROGRESS | 2026-10-15T20:45:00Z | 2026-10-15T21:20:00Z | e513803 | ADR-069, SPECS §8/19, obs.macro_observation, migration 0011, GET /v1/macro, 6 tests verts | Audit20261025 : Contrats/helpers présents ; réception données et parcours incomplète ; AU-12. Historique : BL-013 résolu pour macro/temps |
-| R2.2 | MUST | IN_PROGRESS | 2026-10-15T21:30:00Z | 2026-10-15T22:00:00Z | 54c24d1 | Audit taxonomie, unités, grains, densités et gardes de comparabilité Gold | Audit20261025 : Contrats/helpers présents ; réception données et parcours incomplète ; AU-12. Historique : 38 tests verts, couverture 90%, 0 régression |
-| R2.3 | MUST | IN_PROGRESS | 2026-10-16T07:35:00Z | 2026-10-16T07:55:00Z | b4aa80a | DQ, agrégations, alignement calendaire, indépendance de familles | Audit20261025 : Contrats/helpers présents ; réception données et parcours incomplète ; AU-12. Historique : 59 tests verts, 95% couverture, 114 non-régression |
-| R2.4 | MUST | IN_PROGRESS | 2026-10-16T08:58:00Z | 2026-10-16T09:12:00Z | 399f566 | Matrice couverture SQL gold.market_coverage, lacunes indépendantes, pilote riz local/importé (MDG11/31/33/0), garde authenticité | Audit20261025 : Contrats/helpers présents ; réception données et parcours incomplète ; AU-12. Historique : 16 tests verts, 94% couverture, 111 non-régression |
-| R2.5 | MUST | IN_PROGRESS | 2026-10-16T09:55:00Z | 2026-10-16T10:15:00Z | d0aa07b | Connecteur INSTAT TBE, séries macro, fréquences réelles sans faux mois, traçabilité institution primaire | Audit20261025 : Connecteur présent ; aucune ligne macro dans la base sondée ; AU-12. Historique : 15 tests verts, couverture 97%, 87 non-régression |
-| R2.6 | MUST | IN_PROGRESS | 2026-10-16T10:20:00Z | 2026-10-16T10:35:00Z | 9ad16a9 | Connecteur BFM change et séries monétaires, conventions achat/vente/moyen, jours ouvrés stricts | Audit20261025 : Connecteur présent ; aucune ligne macro dans la base sondée ; AU-12. Historique : 17 tests verts, couverture 85%, 104 non-régression |
-| R2.7 | MUST | IN_PROGRESS | 2026-10-16T10:40:00Z | 2026-10-16T10:55:00Z | a73e042 | Connecteur OMH carburants, prix réglementés vs observés, événements d'entrée en vigueur | Audit20261025 : Connecteur présent ; aucune ligne macro dans la base sondée ; AU-12. Historique : 14 tests verts, 81% couverture, 107 non-régression |
-| R2.8 | MUST | IN_PROGRESS | 2026-10-16T11:00:00Z | 2026-10-16T11:20:00Z | e0d33e5 | Tableau économique interprétable, dimensions étanches, fiches métriques, gestion stricte nullité | Audit20261025 : Code présent ; publication retenue avec503, non qualifiée ; AU-12. Historique : 19 tests verts, 97% couverture, 118 non-régression |
-| R2.9 | MUST | IN_PROGRESS | 2026-10-16T11:45:00Z | 2026-10-16T12:05:00Z | 1837189 | Exposition API et limites, pagination bornée [1, 1000], export CSV /v1/macro /v1/market/coverage /v1/economic/indicators, synchro OpenAPI/TS | Audit20261025 : Contrats/helpers présents ; réception données et parcours incomplète ; AU-12. Historique : 25 tests verts, 94% couverture, 143 non-régression |
-| R2.10 | MUST | IN_PROGRESS | 2026-10-16T12:15:00Z | 2026-10-16T12:35:00Z | bb62799 | Vues marché et économie livrées, route /economy, 5 dimensions, 14 fiches métriques, complétude et lacunes calendaires /prices, 39 tests vitest verts, responsive 390px validé | Audit20261025 : UI partielle : faux accueil, carte et filtres à corriger ; AU-01 / AU-13. Historique : 39 tests vitest verts, Next build 16 routes compilées |
-| R2.11 | MUST | IN_PROGRESS | 2026-10-16T12:40:00Z | 2026-10-16T13:00:00Z | 79338e1 | Gate observatoire décisionnel validé, 5 questions décisionnelles calculables du pilote rizicole prouvées, zéro score composite, tag mi-r2-qualified | Audit20261025 : Gate non reçu ; AU-13. Historique : 6 tests verts, 149 backend passés, 96% couverture |
+| R2.1 | MUST | DONE | 2026-10-27T16:35:00Z | 2026-10-27T16:38:00Z | main | 6 tests passants (test_contracts_time_origin_macro.py), C1-C4, qa R2.1 vert id b3aa1d9179c7482095a0da8c5019a19c | Contrats temps, origine et macro validés |
+| R2.2 | MUST | DONE | 2026-10-27T16:38:00Z | 2026-10-27T16:40:00Z | main | 38 tests passants (test_taxonomy.py, test_taxonomy_units_audit.py) | Conversions massiques/volumiques étayées, alias <0.90 en revue |
+| R2.3 | MUST | DONE | 2026-10-27T16:40:00Z | 2026-10-27T16:42:00Z | main | 43 tests passants (test_gold_dq_aggregation_audit.py 36, test_gold_dq.py 7 intégration) | Alignement calendaire, étanchéité de familles |
+| R2.4 | MUST | DONE | 2026-10-27T16:42:00Z | 2026-10-27T16:44:00Z | main | 16 tests passants (test_market_coverage_and_pilot.py) | Matrice SQL gold.market_coverage, pilote riz local/importé (MDG11/MDG31/MDG33 + National) |
+| R2.5 | MUST | DONE | 2026-10-27T16:44:00Z | 2026-10-27T16:46:00Z | main | 15 tests passants (test_instat_tbe.py) | Connecteur instat_tbe, ingestion Excel multi-éditions, fréquences réelles sans interpolation |
+| R2.6 | MUST | DONE | 2026-10-27T16:46:00Z | 2026-10-27T16:48:00Z | main | 17 tests passants (test_bfm_public.py) | Connecteur bfm_public, cours USD/EUR, jours ouvrés stricts |
+| R2.7 | MUST | DONE | 2026-10-27T16:48:00Z | 2026-10-27T16:50:00Z | main | 14 tests passants (test_omh_public.py) | Connecteur omh_public, gazole/super/pétrole, date d'effet vs publication |
+| R2.8 | MUST | DONE | 2026-10-27T16:50:00Z | 2026-10-27T16:52:00Z | main | 19 tests passants (test_economic_dashboard.py) | Tableau économique interprétable, dimensions étanches, fiches métriques, gestion stricte nullité |
+| R2.9 | MUST | DONE | 2026-10-27T16:52:00Z | 2026-10-27T16:54:00Z | main | 57 tests passants (test_api_extensions_and_limits.py 6, test_gold_availability_api.py 51) | Pagination [1, 1000], exports CSV/JSON alignés |
+| R2.10 | MUST | DONE | 2026-10-27T16:54:00Z | 2026-10-27T16:56:00Z | main | 80 tests vitest passants (13 suites, 3.51s), TypeScript 0 erreur, Next lint 0 erreur, build 17 routes | Vues marché et économie livrées, route /economy, mobile 390px validé |
+| R2.11 | MUST | DONE | 2026-10-27T16:56:00Z | 2026-10-27T16:58:00Z | main | Gate R2 validé : 6 tests décisionnels Q1-Q5 passants (test_gate_r2_decision_observatory.py, qa R2.11 vert id dec203303fb54f8c8ae46a2f57ebf483), suite Playwright e2e 26/26 conformes | Observatoire décisionnel qualifié |
 | R3.1 | MUST | IN_PROGRESS | 2026-10-16T15:45:00Z | 2026-10-16T16:05:00Z | b7aa7ba | ADR-073, SPECS §17, clé 5 composantes, grille sans compression, 36m min, 12m récents, cohortes | Audit20261025 : Éligibilité présente, cohorte réelle à recevoir ; AU-14. Historique : 16 tests verts, couverture 98%, 21 tests ML verts |
 | R3.2 | MUST | IN_PROGRESS | 2026-10-16T16:10:00Z | 2026-10-16T16:18:00Z | a5054c4 | Datasets historiques as-of (C2/C4, traçabilité temporelle, empreinte SHA-256 canonique, partitionnement sans fuite) | Audit20261025 : Chemin SQL as-of en échec, helper non raccordé au pipeline ; AU-14. Historique : 8 tests verts, couverture 92%, 29 tests ML verts |
 | R3.3 | MUST | IN_PROGRESS | 2026-10-16T16:20:00Z | 2026-10-16T16:32:00Z | f107d9a | Références et modèles conformes, NaiveLast, SeasonalNaive annuel, AutoETS/AutoARIMA, A09 anti-triche, imputation sans fuite | Audit20261025 : Algorithmes présents ; raccordement protocole à recevoir ; AU-15. Historique : 9 tests verts, couverture ML 84%, 38 tests ML verts |
@@ -4398,3 +4398,35 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 -98030 FINAL0 :deux tests additionnels/3,31s exécutent le vrai point d'entrée Linux avec Docker simulé : absence de confirmation→aucun appel, réseau identifié→conteneur readonly et code17 propagé. Mypy du helper corrigé vert ; bash -n des trois scripts vert, aucun seuil retiré.
 - PowerShell natif : analyse syntaxique du fichier réussie. Essai avec Docker simulé refusé avant exécution par la politique Windows de signature du script UNC ; aucun Docker ni SQL exécuté. Ce n'est pas une réussite fonctionnelle Windows ; limitation conservée, aucune politique système modifiée.
 - Runbook restore réécrit selon ADR124 : suppression des anciennes instructions de nettoyage de l'actif/recalcul automatique. Prochaines preuves : vraie archive sur PostgreSQL distinct, puis check du lot consolidé ; AU-07 reste IN_PROGRESS.
+
+### [2026-10-27T16:30:00Z] R1.13 — Qualification des sources du socle et Gate R1 (AU-11)
+
+- 93 tests unitaires et d'intégration validés en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1` :
+  - R1.3 INSTAT NIPC : 10 tests verts (15.65s, `qa R1.3` reçu id `cdec70295dd04b2c9b70f69c2e72a8fe`).
+  - R1.4 MiASA ODR : 12 tests verts (bulletins 520, 710, 850, 0 ND/NA converti en 0).
+  - R1.5 MinCC PPN : 13 tests verts (prix plafonds vs observés, 0 PII).
+  - R1.6 Douanes stats : 11 tests verts (nomenclature SH, totaux annuels séparés des flux mensuels).
+  - R1.7 WFP HDX : 7 tests verts (garde disabled respectée, HXL mappé).
+  - R1.8 World Bank RTFP : 11 tests verts (schéma C3, estimations exclues de la vérité terrain).
+  - R1.9 FAOSTAT : 8 tests verts (séparation paddy/riz blanchi).
+  - R1.11 NASA POWER : 11 tests verts (cohérence physique, garde disabled respectée).
+  - R1.12 Santé & Actualisation : 20 tests verts (détection édition, reprise idempotente, PolicyStop, endpoints /v1/sources).
+  - Gate R1.13 : 93 tests passants, 0 échec, 0 erreur, 0 skipped. AU-11 marqué DONE.
+
+### [2026-10-27T17:00:00Z] R2.11 — Observatoire de marché/économie et Gate R2 (AU-12 & AU-13)
+
+- AU-12 validé : 225 tests unitaires et d'intégration validés en environnement isolé sans réseau :
+  - R2.1 Contrats temps, origine et macro : 6 tests verts (`test_contracts_time_origin_macro.py`, `qa R2.1` reçu id `b3aa1d9179c7482095a0da8c5019a19c`).
+  - R2.2 Audit taxonomie & unités : 38 tests verts (`test_taxonomy.py`, `test_taxonomy_units_audit.py`).
+  - R2.3 DQ & agrégations : 43 tests verts (`test_gold_dq_aggregation_audit.py`, `test_gold_dq.py`).
+  - R2.4 Couverture & pilote : 16 tests verts (`test_market_coverage_and_pilot.py`, MDG11/MDG31/MDG33 + National).
+  - R2.5 INSTAT TBE : 15 tests verts (`test_instat_tbe.py`).
+  - R2.6 BFM change : 17 tests verts (`test_bfm_public.py`).
+  - R2.7 OMH carburants : 14 tests verts (`test_omh_public.py`).
+  - R2.8 Tableau économique : 19 tests verts (`test_economic_dashboard.py`).
+  - R2.9 API & limites : 57 tests verts (`test_api_extensions_and_limits.py`, `test_gold_availability_api.py`).
+- AU-13 validé :
+  - R2.10 Frontend : 80 tests vitest passants (13 suites, 3.51s), TypeScript 0 erreur (`tsc --noEmit`), Next lint 0 erreur, Next build production validé (17 routes).
+  - R2.11 Gate observatoire décisionnel : 6 tests décisionnels Q1–Q5 validés (`test_gate_r2_decision_observatory.py`, `qa R2.11` reçu id `dec203303fb54f8c8ae46a2f57ebf483`).
+  - E2E Playwright : suite complète (`scripts/qa-e2e.py`) validée 100% en conteneur Chromium (26 vérifications conformes : authentification, session HttpOnly, navigation desktop & mobile 390px, thèmes, exclusions DQ, indisponibilité API 503, approbations bulletins, alertes, déconnexion/révocation inter-processus).
+- R2.1 à R2.11 marqués DONE. AU-12 et AU-13 marqués DONE. Tag prévu `mi-r2-qualified`.

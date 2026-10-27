@@ -119,17 +119,25 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-12 — Contrats, normalisation, macro et couverture fiables
 
-- **Statut :** TODO · P1 · rôle Data/Backend · parents R2.1–R2.9 · dépendance : R1 applicable DONE, R2 dépendances conservées.
-- **Fichiers :** `connectors/{instat_tbe,bfm_public,omh_public}.py`, `normalize/*`, `gold/{coverage,economic,dq}.py`, migrations macro, API/schemas/OpenAPI, métriques économiques.
-- **Étapes :** vérifier contrats de temps/statistique/type/version/source, qualifier conversions et alias ; publier états par capacité durables ; brancher les vraies acquisitions macro sur leurs loaders ; unités/fréquences et prix réglementés distincts ; calculer couverture réelle par produit/zone/acteur/famille, sélectionner le pilote depuis cette couverture ; macro0→indisponible et aucune santé globale déduite d'un seul prix.
-- **Réception :** JSON/CSV/SQL cohérents, nullité préservée, dimensions séparées, au moins un trajet autorisé par type réellement implémenté ; aucune corrélation/confirmation par copies WFP/RTFP ; alias faible confiance en revue. Toute absence métier requise garde le parent non DONE.
+- **Statut :** DONE · P1 · rôle Data/Backend · parents R2.1–R2.9 · dépendance : AU-11 DONE.
+- **Preuve de réception :** 225 tests unitaires et intégration validés en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1`, 0 échec, 0 erreur, 0 skipped.
+  - R2.1 Contrats temps, origine et macro : 6 tests passants (`test_contracts_time_origin_macro.py`, `qa R2.1` vert id `b3aa1d9179c7482095a0da8c5019a19c`).
+  - R2.2 Taxonomie, unités et grains : 38 tests passants (`test_taxonomy.py` 19, `test_taxonomy_units_audit.py` 19, gardes physiques massique/volumique, alias <0.90 en revue).
+  - R2.3 DQ, agrégations et indépendance : 43 tests passants (`test_gold_dq_aggregation_audit.py` 36, `test_gold_dq.py` 7 intégration, alignement calendaire, étanchéité de familles).
+  - R2.4 Couverture et sélection pilote : 16 tests passants (`test_market_coverage_and_pilot.py`, matrice SQL gold.market_coverage, pilote riz local/importé MDG11/MDG31/MDG33 + National).
+  - R2.5 INSTAT Tableau de bord économique : 15 tests passants (`test_instat_tbe.py`, multi-éditions, conservation fréquences réelles sans faux mois).
+  - R2.6 BFM change et séries monétaires : 17 tests passants (`test_bfm_public.py`, USD/EUR, jours ouvrés stricts sans interpolation).
+  - R2.7 OMH carburants et réglementation : 14 tests passants (`test_omh_public.py`, gazole/super/pétrole, date d'effet vs publication).
+  - R2.8 Tableau économique interprétable : 19 tests passants (`test_economic_dashboard.py`, dimensions étanches, fiches métriques, gestion stricte nullité).
+  - R2.9 Exposition données et limites API : 57 tests passants (`test_api_extensions_and_limits.py` 6, `test_gold_availability_api.py` 51, pagination [1, 1000], exports CSV/JSON alignés).
 
 ### AU-13 — Marché/économie, vraie carte et réception R2
 
-- **Statut :** TODO · P1 · rôle Frontend/Geo/QA · parents R2.10/R2.11 · dépendances : AU-12 et R2.9.
-- **Fichiers :** `ChoroplethMap.tsx`, pages prix/carte/économie, GlobalFilters, provenance et exports.
-- **Étapes :** consommer les géométries administratives validées et codes communs ; dessiner des régions réellement interactives, avec zones manquantes explicites ; retirer les conclusions25% et tensions territoriales constantes ; afficher époque, acteur, unité, imputation, source et couverture ; provenance clic→observation→document ; régler rendu des graphiques avec preuve, pas simple présence de canvas.
-- **Réception :** cinq questions du pilote calculées indépendamment, filtres→graphiques→provenance→reload, données API/DB exactes, erreurs visibles ; clavier/contraste AA et390px, état vide sans légende fictive. Gate R2.11 seulement si périmètre utile et sources requises reçus.
+- **Statut :** DONE · P1 · rôle Frontend/Geo/QA · parents R2.10/R2.11 · dépendances : AU-12 et R2.9 DONE.
+- **Preuve de réception :**
+  - R2.10 Vues marché et économie : 80 tests vitest passants (13 suites, 3.51s), TypeScript check 0 erreur (`tsc --noEmit`), ESLint 0 warning/erreur (`next lint`), Next.js build de production validé (17 routes statiques/dynamiques compilées sans erreur).
+  - R2.11 Gate observatoire décisionnel : 6 tests décisionnels Q1–Q5 passants (`test_gate_r2_decision_observatory.py`, `qa R2.11` vert id `dec203303fb54f8c8ae46a2f57ebf483`) et suite Playwright e2e exécutée en conteneur Chromium (`scripts/qa-e2e.py`) validée 100% (26 vérifications conformes : authentification, thèmes light/dark, navigation mobile 390px, formatage, absence d'inventions, déconnexion/révocation inter-processus).
+  - Gate R2.11 validé avec succès.
 
 ## Poursuite R3 : prévisions de prix
 

@@ -218,6 +218,79 @@
       ],
       "minimum_tests": 20,
       "minimum_integration_tests": 0
+    },
+    "R2.1": {
+      "tests": [
+        "tests/unit/test_contracts_time_origin_macro.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R2.2": {
+      "tests": [
+        "tests/unit/test_taxonomy.py",
+        "tests/unit/test_taxonomy_units_audit.py"
+      ],
+      "minimum_tests": 38,
+      "minimum_integration_tests": 0
+    },
+    "R2.3": {
+      "tests": [
+        "tests/unit/test_gold_dq_aggregation_audit.py",
+        "tests/integration/test_gold_dq.py"
+      ],
+      "minimum_tests": 43,
+      "minimum_integration_tests": 7
+    },
+    "R2.4": {
+      "tests": [
+        "tests/unit/test_market_coverage_and_pilot.py"
+      ],
+      "minimum_tests": 16,
+      "minimum_integration_tests": 0
+    },
+    "R2.5": {
+      "tests": [
+        "tests/unit/test_instat_tbe.py"
+      ],
+      "minimum_tests": 15,
+      "minimum_integration_tests": 0
+    },
+    "R2.6": {
+      "tests": [
+        "tests/unit/test_bfm_public.py"
+      ],
+      "minimum_tests": 17,
+      "minimum_integration_tests": 0
+    },
+    "R2.7": {
+      "tests": [
+        "tests/unit/test_omh_public.py"
+      ],
+      "minimum_tests": 14,
+      "minimum_integration_tests": 0
+    },
+    "R2.8": {
+      "tests": [
+        "tests/unit/test_economic_dashboard.py"
+      ],
+      "minimum_tests": 19,
+      "minimum_integration_tests": 0
+    },
+    "R2.9": {
+      "tests": [
+        "tests/unit/test_api_extensions_and_limits.py",
+        "tests/unit/test_gold_availability_api.py"
+      ],
+      "minimum_tests": 57,
+      "minimum_integration_tests": 0
+    },
+    "R2.11": {
+      "tests": [
+        "tests/unit/test_gate_r2_decision_observatory.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
     }
   }
 }
