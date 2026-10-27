@@ -383,6 +383,7 @@ def main() -> int:
                     "/map",
                     "/trade",
                     "/alerts",
+                    "/economy",
                     f"/bulletins/{fixture_ids['bulletin']}",
                 ):
                     page.set_viewport_size({"width": 320, "height": 844})

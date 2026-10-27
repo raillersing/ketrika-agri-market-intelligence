@@ -163,7 +163,7 @@ function EconomyContent() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="min-w-0 text-2xl font-extrabold tracking-tight text-foreground flex items-start gap-2.5">
+            <h1 className="min-w-0 text-2xl font-extrabold tracking-tight text-foreground flex flex-wrap items-start gap-2.5">
               <BarChart3 className="w-6 h-6 shrink-0 text-primary-readable" />
               Observatoire Économique & Conjoncture
             </h1>
