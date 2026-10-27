@@ -12,7 +12,7 @@ export interface NavigationPage {
 export const NAVIGATION_PAGES: readonly NavigationPage[] = [
   { href: "/", label: "Vue d'ensemble", description: "Veille des marchés vivriers", group: "Vue d'ensemble", icon: "overview", keywords: "accueil tableau de bord" },
   { href: "/prices", label: "Prix vivriers", description: "Séries disponibles et nature des valeurs", group: "Explorer", icon: "prices", keywords: "prix séries observations" },
-  { href: "/map", label: "Carte des marchés", description: "Exploration géographique des données disponibles", group: "Explorer", icon: "map", keywords: "territoires régions lieux" },
+  { href: "/map", label: "Territoires", description: "Prix par territoire ; carte en préparation", group: "Explorer", icon: "map", keywords: "carte territoires régions lieux" },
   { href: "/trade", label: "Commerce extérieur", description: "Données disponibles sur les échanges", group: "Explorer", icon: "trade", keywords: "importations exportations douanes" },
   { href: "/economy", label: "Économie", description: "Indicateurs et disponibilité des séries", group: "Analyser", icon: "economy", keywords: "conjoncture macroéconomie" },
   { href: "/climate", label: "Climat et cultures", description: "Données climatiques et état de qualification", group: "Analyser", icon: "climate", keywords: "météo agriculture pluie" },

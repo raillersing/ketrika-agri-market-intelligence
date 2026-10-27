@@ -1,169 +1,94 @@
 "use client";
 
-import React, { useTransition, useEffect, useState } from "react";
+import React, { useId, useTransition, useEffect, useState } from "react";
 import { DEFAULT_PRODUCT } from "@/lib/market-overview";
+import { businessProducts, DQ_SELECTION_MESSAGE, filterFieldsForPath, isLegacyDQProduct, resetVisibleFilters, SALE_STAGES, type ProductReference } from "@/lib/market-filters";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  Check,
-  ChevronDown,
-  Filter,
-  MapPin,
-  RotateCcw,
-  Tag,
-  Users,
-  Wheat,
-} from "lucide-react";
-
-
-
-const ACTORS = [
-  { code: "", label: "Tous les niveaux" },
-  { code: "retail", label: "Détail (Consommateur)" },
-  { code: "wholesale", label: "Gros / Demi-gros" },
-  { code: "producer", label: "Producteur (Bord champ)" },
-];
+import { RotateCcw } from "lucide-react";
 
 export function GlobalFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const [products, setProducts] = useState<{ code: string; label: string }[]>([]);
-  const [regions, setRegions] = useState<{ pcode: string; label: string }[]>([]);
+  const [products, setProducts] = useState<ProductReference[]>([]);
+  const [regions, setRegions] = useState<{ pcode: string; name: string }[]>([]);
+  const [loading, setLoading] = useState(true);
   const [referenceError, setReferenceError] = useState(false);
+  const id = useId();
+  const fields = filterFieldsForPath(pathname);
+  const showProduct = fields.includes("product");
+  const showRegion = fields.includes("region");
+  const showActor = fields.includes("actor");
+
   useEffect(() => {
+    if (!showProduct) return;
     const controller = new AbortController();
+    setLoading(true); setReferenceError(false);
     async function load() {
       try {
-        const responses = await Promise.all([fetch("/api/v1/products", { signal: controller.signal }), fetch("/api/v1/locations?level=1", { signal: controller.signal })]);
-        if (responses.some((response) => !response.ok)) throw new Error("Référentiels indisponibles");
-        const [ps, ls] = await Promise.all(responses.map((response) => response.json()));
+        const responses = await Promise.all([
+          fetch("/api/v1/products", { signal: controller.signal }),
+          ...(showRegion ? [fetch("/api/v1/locations?level=1", { signal: controller.signal })] : []),
+        ]);
+        if (responses.some(response => !response.ok)) throw new Error("Référentiels indisponibles");
+        const data = await Promise.all(responses.map(response => response.json()));
         if (!controller.signal.aborted) {
-          setProducts(ps.map((p: { product_code: string; canonical_name_fr: string }) => ({ code: p.product_code, label: p.canonical_name_fr })));
-          setRegions(ls.filter((l: { pcode: string | null }) => l.pcode).map((l: { pcode: string; name: string }) => ({ pcode: l.pcode, label: l.name })));
+          setProducts(businessProducts(data[0]));
+          setRegions(showRegion ? data[1].filter((row: { pcode: string | null }) => row.pcode) : []);
         }
       } catch { if (!controller.signal.aborted) setReferenceError(true); }
+      finally { if (!controller.signal.aborted) setLoading(false); }
     }
     void load();
     return () => controller.abort();
-  }, []);
+  }, [showProduct, showRegion]);
 
-  const currentProduct = searchParams.get("product") || DEFAULT_PRODUCT;
-  const currentRegion = searchParams.get("region") || "";
-  const currentActor = searchParams.get("actor") || "";
-
-  const updateParam = (key: string, value: string) => {
+  if (!fields.length) return null;
+  const product = searchParams.get("product") || DEFAULT_PRODUCT;
+  const region = searchParams.get("region") || "";
+  const actor = searchParams.get("actor") || "";
+  const dqSelected = isLegacyDQProduct(product);
+  const update = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-    startTransition(() => {
-      router.push(`${pathname}?${params.toString()}`);
-    });
+    if (value) params.set(key, value); else params.delete(key);
+    startTransition(() => router.push(`${pathname}${params.size ? `?${params}` : ""}`));
   };
-
-  const resetFilters = () => {
-    const params = new URLSearchParams();
-    params.set("product", DEFAULT_PRODUCT);
-    startTransition(() => {
-      router.push(`${pathname}?${params.toString()}`);
-    });
+  const reset = () => {
+    const params = resetVisibleFilters(searchParams.toString(), fields);
+    startTransition(() => router.push(`${pathname}${params.size ? `?${params}` : ""}`));
   };
+  const customized = product !== DEFAULT_PRODUCT || (showRegion && !!region) || (showActor && !!actor);
+  const control = "min-h-[44px] w-full max-w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-60";
 
-  const isCustom = currentProduct !== DEFAULT_PRODUCT || currentRegion !== "" || currentActor !== "";
-
-  return (
-    <div className="bg-background/60 border-b border-border px-3 md:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 sticky top-16 z-10 backdrop-blur-md [&_select]:max-w-full">
-      <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2.5">
-        {/* Label */}
-        <div className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-muted-foreground mr-1">
-          <Filter className="w-3.5 h-3.5 text-primary-readable" />
-          <span>Filtres :</span>
-        </div>
-
-        {/* Produit Selector Pill */}
-        <div className="relative inline-flex max-w-full items-center">
-          <Wheat className="w-3.5 h-3.5 text-primary-readable absolute left-3 pointer-events-none" />
-          <select
-            value={currentProduct}
-            onChange={(e) => updateParam("product", e.target.value)}
-            disabled={isPending}
-            className="text-xs font-medium bg-card/90 text-foreground border border-border hover:border-emerald-500/40 rounded-xl pl-8 pr-7 py-1.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer transition-all appearance-none"
-          >
-            {!products.some((p) => p.code === currentProduct) && <option value={currentProduct}>{currentProduct}</option>}
-            {products.map((p) => (
-              <option key={p.code} value={p.code} className="bg-card text-foreground">
-                {p.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="w-3 h-3 text-muted-foreground absolute right-2.5 pointer-events-none" />
-        </div>
-
-        {/* Région Selector Pill */}
-        <div className="relative inline-flex max-w-full items-center">
-          <MapPin className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400 absolute left-3 pointer-events-none" />
-          <select
-            value={currentRegion}
-            onChange={(e) => updateParam("region", e.target.value)}
-            disabled={isPending}
-            className="text-xs font-medium bg-card/90 text-foreground border border-border hover:border-sky-500/40 rounded-xl pl-8 pr-7 py-1.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-sky-500 cursor-pointer transition-all appearance-none"
-          >
-            {<option value="">Toutes les zones</option>}
-            {currentRegion && !regions.some((r) => r.pcode === currentRegion) && <option value={currentRegion}>{currentRegion}</option>}
-            {regions.map((r) => (
-              <option key={r.pcode} value={r.pcode} className="bg-card text-foreground">
-                {r.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="w-3 h-3 text-muted-foreground absolute right-2.5 pointer-events-none" />
-        </div>
-
-        {/* Niveau Acteur Selector Pill */}
-        <div className="relative inline-flex max-w-full items-center">
-          <Users className="w-3.5 h-3.5 text-purple-700 dark:text-purple-400 absolute left-3 pointer-events-none" />
-          <select
-            value={currentActor}
-            onChange={(e) => updateParam("actor", e.target.value)}
-            disabled={isPending}
-            className="text-xs font-medium bg-card/90 text-foreground border border-border hover:border-purple-500/40 rounded-xl pl-8 pr-7 py-1.5 shadow-sm focus:outline-none focus:ring-1 focus:ring-purple-500 cursor-pointer transition-all appearance-none"
-          >
-            {ACTORS.map((a) => (
-              <option key={a.code} value={a.code} className="bg-card text-foreground">
-                {a.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="w-3 h-3 text-muted-foreground absolute right-2.5 pointer-events-none" />
-        </div>
-
-        {/* Loading indicator */}
-        {referenceError && <span role="alert" className="text-xs text-amber-700 dark:text-amber-300">Référentiels indisponibles</span>}
-        {isPending && (
-          <span className="text-[11px] text-primary-readable flex items-center gap-1.5 animate-pulse pl-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            Actualisation...
-          </span>
-        )}
-      </div>
-
-      {/* Right: Reset Action */}
-      <div className="flex items-center gap-2">
-        {isCustom && (
-          <button
-            onClick={resetFilters}
-            disabled={isPending}
-            className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-foreground px-2.5 py-1 rounded-lg hover:bg-foreground/[0.06] transition-colors"
-            title="Réinitialiser tous les filtres"
-          >
-            <RotateCcw className="w-3 h-3" />
-            <span>Réinitialiser</span>
-          </button>
-        )}
-      </div>
+  return <section aria-label="Filtres de cette page" aria-busy={isPending || loading} className="border-b border-border bg-header px-4 py-3 md:px-8">
+    <div className="flex flex-wrap items-end gap-3">
+      <label className="flex min-w-0 max-w-full flex-col gap-1 text-xs text-muted-foreground"><span>Produit</span>
+        <select value={dqSelected ? "" : product} onChange={event => update("product", event.target.value)} disabled={isPending || loading} className={control}>
+          {dqSelected && <option value="" disabled>Choisissez un produit</option>}
+          {!dqSelected && !products.some(row => row.product_code === product) && <option value={product}>{loading ? "Chargement du catalogue…" : `Sélection non reconnue : ${product}`}</option>}
+          {products.map(row => <option key={row.product_code} value={row.product_code}>{row.canonical_name_fr}</option>)}
+        </select>
+      </label>
+      {showRegion && <label className="flex min-w-0 max-w-full flex-col gap-1 text-xs text-muted-foreground"><span>Zone</span>
+        <select value={region} onChange={event => update("region", event.target.value)} disabled={isPending || loading} className={control}>
+          <option value="">Toutes les zones</option>
+          {region && !regions.some(row => row.pcode === region) && <option value={region}>Sélection non reconnue : {region}</option>}
+          {regions.map(row => <option key={row.pcode} value={row.pcode}>{row.name}</option>)}
+        </select>
+      </label>}
+      {showActor && <label className="flex min-w-0 max-w-full flex-col gap-1 text-xs text-muted-foreground"><span>Stade de vente</span>
+        <select value={actor} aria-describedby={`${id}-stages`} onChange={event => update("actor", event.target.value)} disabled={isPending} className={control}>
+          {!SALE_STAGES.some(stage => stage.code === actor) && <option value={actor}>Stade non reconnu : {actor}</option>}
+          {SALE_STAGES.map(stage => <option key={stage.code} value={stage.code}>{stage.label}</option>)}
+        </select>
+      </label>}
+      {customized && <button type="button" onClick={reset} disabled={isPending} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg px-3 text-sm text-muted-foreground hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"><RotateCcw aria-hidden="true" className="h-4 w-4" />Réinitialiser les filtres</button>}
     </div>
-  );
+    {showActor && <p id={`${id}-stages`} className="mt-2 text-xs leading-5 text-muted-foreground">Le stade distingue le prix au producteur, en gros et au détail. « Non renseigné » conserve les prix dont le stade est inconnu.</p>}
+    <p className="mt-1 text-xs leading-5 text-muted-foreground">Le catalogue liste les produits suivis. La disponibilité des données dépend de votre sélection.</p>
+    {dqSelected && <p role="alert" className="mt-2 text-sm text-amber-700 dark:text-amber-300">{DQ_SELECTION_MESSAGE}</p>}
+    {referenceError && <p role="alert" className="mt-2 text-sm text-amber-700 dark:text-amber-300">Catalogue indisponible. Les données et la sélection ne sont pas remplacées.</p>}
+    {isPending && <p role="status" className="mt-2 text-xs text-muted-foreground">Actualisation de la sélection…</p>}
+  </section>;
 }

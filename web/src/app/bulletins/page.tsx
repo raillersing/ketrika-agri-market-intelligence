@@ -2,149 +2,36 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Clock, FileText, RefreshCw, ShieldCheck } from "lucide-react";
-import { formatMonthYear } from "@/lib/formatters";
+import { ArrowRight, FileText } from "lucide-react";
+import { bulletinStateLabel, humanDate } from "@/lib/reading";
 
-interface BulletinItem {
-  bulletinId: string;
-  periodStart: string;
-  periodEnd: string;
-  status: "draft" | "approved" | "sent";
-  createdAt: string;
-  factsCount?: number;
-}
-
+type Bulletin = { bulletin_id: string; period_start: string; period_end: string; status: string; created_at: string; facts: Record<string, unknown> };
 export default function BulletinsPage() {
+  const [items, setItems] = useState<Bulletin[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [bulletins, setBulletins] = useState<BulletinItem[]>([]);
-
   useEffect(() => {
-    async function fetchBulletins() {
-      setLoading(true);
-      setError(null);
+    const controller = new AbortController();
+    async function load() {
       try {
-        const apiUrl = "/api";
-        const res = await fetch(`${apiUrl}/v1/bulletins`, {
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          throw new Error(`Erreur API: ${res.statusText}`);
-        }
-
-        const data = await res.json();
-        const items: BulletinItem[] = data.map((b: any) => ({
-          bulletinId: b.bulletin_id,
-          periodStart: b.period_start,
-          periodEnd: b.period_end,
-          status: b.status,
-          createdAt: b.created_at,
-          factsCount: Object.keys(b.facts || {}).length,
-        }));
-        setBulletins(items);
-      } catch (err: any) {
-        setError(err.message || "Erreur de chargement des bulletins hebdomadaires");
-      } finally {
-        setLoading(false);
-      }
+        const response = await fetch("/api/v1/bulletins", { credentials: "include", signal: controller.signal });
+        if (!response.ok) throw new Error(`Les bulletins sont indisponibles (HTTP ${response.status}).`);
+        const data: Bulletin[] = await response.json();
+        if (!controller.signal.aborted) setItems(data);
+      } catch (failure) { if (!controller.signal.aborted) setError(failure instanceof Error ? failure.message : "Les bulletins sont indisponibles."); }
+      finally { if (!controller.signal.aborted) setLoading(false); }
     }
-
-    fetchBulletins();
+    void load(); return () => controller.abort();
   }, []);
-
-  return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-extrabold tracking-tight text-foreground flex items-center gap-2.5">
-              <FileText className="w-6 h-6 text-primary-readable" />
-              Bulletins hebdomadaires PPN
-            </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-primary-readable border border-emerald-500/20">
-              Certifié SPECS §20
-            </span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Rapports officiels de conjoncture des marchés vivriers • Audit mécanique 100% des chiffres.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 px-3 py-1.5 glass-panel rounded-xl text-xs font-mono text-primary-readable">
-          <ShieldCheck className="w-4 h-4" />
-          <span>Audit-proof</span>
-        </div>
-      </div>
-
-      {error && (
-        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-700 dark:text-rose-300 text-xs">
-          {error}
-        </div>
-      )}
-
-      {/* Bulletins Table */}
-      <div className="glass-card rounded-2xl overflow-hidden">
-        <div className="p-4 border-b border-border flex items-center justify-between">
-          <h2 className="text-sm font-bold text-foreground">
-            Éditions publiées & Rapports disponibles
-          </h2>
-          <span className="text-[11px] font-mono text-muted-foreground">
-            {bulletins.length} éditions
-          </span>
-        </div>
-
-        {loading ? (
-          <div className="p-16 text-center text-xs text-muted-foreground flex items-center justify-center gap-2 font-mono">
-            <RefreshCw className="w-4 h-4 animate-spin text-primary-readable" />
-            Chargement des bulletins...
-          </div>
-        ) : bulletins.length === 0 ? (
-          <div className="p-16 text-center text-xs text-muted-foreground font-mono">
-            Aucun bulletin généré pour le moment.
-          </div>
-        ) : (
-          <div className="divide-y divide-border">
-            {bulletins.map((b) => (
-              <div
-                key={b.bulletinId}
-                className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-foreground/[0.02] transition-colors"
-              >
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold text-sm text-foreground">
-                      Bulletin hebdomadaire PPN — Semaine du {b.periodStart} au {b.periodEnd}
-                    </span>
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase border ${
-                        b.status === "approved"
-                          ? "bg-emerald-500/15 text-primary-readable border-emerald-500/30"
-                          : b.status === "sent"
-                          ? "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30"
-                          : "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
-                      }`}
-                    >
-                      {b.status}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground font-mono">
-                    Généré le {formatMonthYear(b.createdAt)} • {b.factsCount || 0} faits chiffrés vérifiés
-                  </p>
-                </div>
-
-                <Link
-                  href={`/bulletins/${b.bulletinId}`}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-primary-action hover:bg-primary-hover text-primary-foreground shadow-md shadow-emerald-950/40 transition-all hover:scale-102 self-start sm:self-auto"
-                >
-                  <span>Lire le bulletin</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return <div className="space-y-6">
+    <header className="space-y-2"><h1 className="flex flex-wrap items-center gap-3 text-2xl font-semibold"><FileText aria-hidden="true" className="h-6 w-6 shrink-0 text-primary-readable" />Bulletins de veille</h1><p className="max-w-3xl text-sm leading-6 text-muted-foreground">Retrouvez les faits enregistrés pour chaque période. Le statut d’approbation ne garantit pas, à lui seul, la qualification des données.</p></header>
+    <div className="grid gap-3 sm:grid-cols-3">{[["Brouillon", "Une édition à examiner."], ["Approuvé", "Une validation éditoriale enregistrée."], ["Envoi enregistré", "Un état enregistré à vérifier dans le suivi d’envoi."]].map(([label, description]) => <div key={label} className="rounded-xl border border-border bg-card p-4"><p className="font-medium">{label}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{description}</p></div>)}</div>
+    {error && <p role="alert" className="rounded-xl border border-rose-500/20 p-4 text-sm text-rose-700 dark:text-rose-300">{error}</p>}
+    {loading ? <p role="status" className="text-sm text-muted-foreground">Chargement des bulletins…</p> : !error && <section aria-label="Éditions disponibles" className="divide-y divide-border rounded-xl border border-border bg-card">
+      {!items.length ? <div className="p-6"><h2 className="font-medium">Aucun bulletin enregistré</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Les éditions apparaîtront ici après leur préparation à partir de faits disponibles.</p></div> : items.map(item => <article key={item.bulletin_id} className="flex flex-wrap items-center justify-between gap-4 p-5">
+        <div className="min-w-0"><p className="text-xs text-muted-foreground">Du {humanDate(item.period_start)} au {humanDate(item.period_end)}</p><h2 className="mt-2 text-lg font-medium">Bulletin de veille des marchés vivriers</h2><p className="mt-2 text-sm text-muted-foreground">{bulletinStateLabel(item.status)} · Créé le {humanDate(item.created_at)}</p></div>
+        <Link href={`/bulletins/${item.bulletin_id}`} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-primary-action px-4 py-2 text-sm text-primary-foreground hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">Lire le bulletin<ArrowRight aria-hidden="true" className="h-4 w-4" /></Link>
+      </article>)}
+    </section>}
+  </div>;
 }

@@ -1,6 +1,6 @@
 # Irooa — plan de correction des données et des parcours
 
-Date : 27 octobre 2026. Statut : PLANNED, aucune implémentation par ce document.
+Date : 27 octobre 2026. Statut : DP-0 constat documentaire reçu ; DP-1 IN_PROGRESS (implémentation autorisée, réception encore requise) ; DP-2–7 PLANNED.
 Demande utilisateur : planifier les corrections à partir de la recherche du27 octobre.
 Base documentaire : f947f33, recherche et requêtes en annexe. Les lots ci-dessous
 détaillent les AU existants ; ils ne créent pas de nouvelles tâches R, ne modifient

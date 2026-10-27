@@ -1,5 +1,15 @@
 # AU-06, AU-07 et Navigation Irooa — réception logicielle du 26 octobre 2026
 
+**Clarification de traçabilité du27 octobre2026 (DP-0) :** les originaux backend
+et frontend de ce dossier portent le commit `4e455ed` et l'empreinte
+`cf7cf73dad71a496ca11306704066db7c1d6fe09319279d4be99643c2572e624` ; le reçu
+navigateur porte `cd77a26` et l'empreinte `79205eca5139574880ed60f765a9e47fd8c80812b6c675e6198b555348a39680`.
+Ce dossier regroupe donc des preuves de deux gels et ne constitue pas un check
+complet unique de `cd77a26`. La formulation historique ci-dessous ne réétiquette
+aucun original ; les effectifs et statuts historiques sont conservés. Le nouveau
+contenu applicatif DP-1 doit recevoir son propre check complet et ses E2E exacts.
+Comparaison : [identités des reçus](../data-product-research-20261027/receipt-bindings.json).
+
 Source figée `cd77a26194cef60c1dbb456a94ba38bf68d38461`, empreinte `79205eca5139574880ed60f765a9e47fd8c80812b6c675e6198b555348a39680`. Base reçue `a0fac30` ; dépendances actualisées, gardes de restauration avec fidélité des ACL, navigation accessible, thèmes clair/sombre Irooa, page publique `/about` et bytecode Python optimisé. Contrats et ADRs : ADR-124, ADR-125, ADR-126, ADR-127, ADR-128, ADR-129, ADR-130.
 
 ## Preuves originales

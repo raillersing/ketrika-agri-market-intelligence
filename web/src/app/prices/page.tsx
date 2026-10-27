@@ -1,448 +1,83 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { DEFAULT_PRODUCT } from "@/lib/market-overview";
 import { useSearchParams } from "next/navigation";
-import { Activity, CheckCircle2, Download, Layers, RefreshCw, Search, Table, TrendingUp } from "lucide-react";
+import { Download, TrendingUp } from "lucide-react";
+import { DEFAULT_PRODUCT, summarizePrices, type MarketPrice } from "@/lib/market-overview";
+import { DQ_SELECTION_MESSAGE, isLegacyDQProduct, saleStageLabel } from "@/lib/market-filters";
 import { formatMonthYear, formatPrice } from "@/lib/formatters";
+import { PriceChart, type PriceDataPoint } from "@/components/charts/PriceChart";
 import { ValueKindBadge } from "@/components/ui/ValueKindBadge";
 import { SourceBadge } from "@/components/ui/SourceBadge";
-import { ProvenanceLink } from "@/components/ui/ProvenanceLink";
-import { PriceChart, type PriceDataPoint } from "@/components/charts/PriceChart";
 
-interface PriceRow {
-  month: string;
-  productCode: string;
-  locationName: string;
-  actorLevel: string;
-  medianPrice: number;
-  minPrice?: number | null;
-  maxPrice?: number | null;
-  valueKind: string;
-  sourceId?: string;
-  observationId?: string;
+type Coverage = { expected_months: number; observed_months: number; missing_months: number; coverage_ratio: number; missing_months_list: string[] };
+type Forecast = { product_code: string; location_pcode: string; actor_level: string; currency: string; unit: string; target_period: string; p50: number; p10: number | null; p90: number | null; horizon: number; model_requested: string; model_effective: string; is_baseline: boolean; is_calibrated: boolean; calibration_sample_size: number; fallback_reason: string | null; dataset_fingerprint: string };
+type Abstention = { product_code: string; location_pcode: string; actor_level: string; reason: string; points_count: number };
+function selectionQuery(product: string, region: string, actor: string) {
+  const params = new URLSearchParams({ product });
+  if (region) params.set("location", region);
+  if (actor) params.set("actor_level", actor);
+  return params;
 }
-
-interface SeriesCoverageGaps {
-  product_code: string;
-  location_pcode: string;
-  location_name?: string | null;
-  actor_level: string;
-  expected_months: number;
-  observed_months: number;
-  missing_months: number;
-  coverage_ratio: number;
-  missing_months_list: string[];
-  source_families: string[];
-  is_pilot_candidate: boolean;
-}
-
-interface ForecastAbstention {
-  series_key: string;
-  product_code: string;
-  location_pcode: string;
-  actor_level: string;
-  reason: string;
-  points_count: number;
-}
-
 function PricesContent() {
-  const searchParams = useSearchParams();
-  const product = searchParams.get("product") || DEFAULT_PRODUCT;
-  const region = searchParams.get("region") || "";
-  const actor = searchParams.get("actor") || "";
-
+  const params = useSearchParams();
+  const product = params.get("product") || DEFAULT_PRODUCT;
+  const region = params.get("region") || "";
+  const actor = params.get("actor") || "";
+  const [rows, setRows] = useState<MarketPrice[]>([]);
+  const [forecasts, setForecasts] = useState<Forecast[]>([]);
+  const [forecastAvailable, setForecastAvailable] = useState(false);
+  const [abstentions, setAbstentions] = useState<Abstention[]>([]);
+  const [coverage, setCoverage] = useState<Coverage | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [chartData, setChartData] = useState<PriceDataPoint[]>([]);
-  const [tableData, setTableData] = useState<PriceRow[]>([]);
-  const [coverageGaps, setCoverageGaps] = useState<SeriesCoverageGaps | null>(null);
-  const [abstentionInfo, setAbstentionInfo] = useState<ForecastAbstention | null>(null);
-  const [hasForecasts, setHasForecasts] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState("");
-
   useEffect(() => {
-    async function fetchPrices() {
-      setLoading(true);
-      setError(null);
-      setAbstentionInfo(null);
-      setHasForecasts(false);
+    const controller = new AbortController();
+    const options = { credentials: "include" as const, signal: controller.signal };
+    setLoading(true); setError(null); setRows([]); setForecasts([]); setCoverage(null); setAbstentions([]); setForecastAvailable(false);
+    async function load() {
       try {
-        const apiUrl = "/api";
-        const params = new URLSearchParams();
-        if (product) params.set("product", product);
-        if (region) params.set("location", region);
-        if (actor) params.set("actor_level", actor);
-
-        const [res, gapsRes, fcRes, absRes] = await Promise.all([
-          fetch(`${apiUrl}/v1/prices?${params.toString()}`, { credentials: "include" }),
-          fetch(
-            `${apiUrl}/v1/market/coverage/gaps?product=${encodeURIComponent(
-              product
-            )}&location=${encodeURIComponent(region || "MDG11")}&actor_level=${encodeURIComponent(
-              actor || "retail"
-            )}`,
-            { credentials: "include" }
-          ).catch(() => null),
-          fetch(`${apiUrl}/v1/forecasts?${params.toString()}`, { credentials: "include" }).catch(() => null),
-          fetch(`${apiUrl}/v1/forecasts/abstentions?product=${encodeURIComponent(product)}`, { credentials: "include" }).catch(() => null),
+        if (isLegacyDQProduct(product)) throw new Error(DQ_SELECTION_MESSAGE);
+        const query = selectionQuery(product, region, actor);
+        const [priceResponse, forecastResponse, abstentionResponse, coverageResponse] = await Promise.all([
+          fetch(`/api/v1/prices?${query}`, options),
+          fetch(`/api/v1/forecasts?${query}`, options).catch(() => null),
+          fetch(`/api/v1/forecasts/abstentions?${new URLSearchParams({ product })}`, options).catch(() => null),
+          region && actor ? fetch(`/api/v1/market/coverage/gaps?${new URLSearchParams({ product, location: region, actor_level: actor })}`, options).catch(() => null) : Promise.resolve(null),
         ]);
-
-        if (!res.ok) {
-          throw new Error(`Erreur API: ${res.statusText}`);
-        }
-
-        const data = await res.json();
-        const rows: PriceRow[] = data.map((item: any) => ({
-          month: item.month,
-          productCode: item.product_code,
-          locationName: item.location_name || "National",
-          actorLevel: item.actor_level || "retail",
-          medianPrice: item.median_price,
-          minPrice: item.min_price,
-          maxPrice: item.max_price,
-          valueKind: item.value_kind || "observed",
-          sourceId: item.sources?.[0] || item.source_id,
-        }));
-
-        setTableData(rows);
-
-        const chartPts: PriceDataPoint[] = rows.map((r) => ({
-          month: r.month,
-          medianPrice: r.medianPrice,
-          minPrice: r.minPrice,
-          maxPrice: r.maxPrice,
-          valueKind: r.valueKind,
-          sourceId: r.sourceId,
-        }));
-
-        // Parse and append genuine conformal forecasts if available
-        let foundForecasts = false;
-        if (fcRes && fcRes.ok) {
-          const fcData = await fcRes.json();
-          if (Array.isArray(fcData) && fcData.length > 0) {
-            foundForecasts = true;
-            setHasForecasts(true);
-            const fcPts: PriceDataPoint[] = fcData.map((f: any) => ({
-              month: f.target_period,
-              medianPrice: f.p50,
-              p10Price: f.p10,
-              p90Price: f.p90,
-              valueKind: "forecast",
-              modelEffective: f.model_effective,
-              modelRequested: f.model_requested,
-              isBaseline: f.is_baseline,
-              isCalibrated: f.is_calibrated,
-              calibrationSampleSize: f.calibration_sample_size,
-              fallbackReason: f.fallback_reason,
-              horizon: f.horizon,
-              datasetFingerprint: f.dataset_fingerprint,
-              sourceId: `ml.${f.model_effective || "forecast"}`,
-            }));
-            chartPts.push(...fcPts);
-          }
-        }
-
-        // Check for documented abstentions if no forecasts were present
-        if (!foundForecasts && absRes && absRes.ok) {
-          const absData = await absRes.json();
-          if (Array.isArray(absData) && absData.length > 0) {
-            const match = absData.find(
-              (a: any) =>
-                a.product_code === product &&
-                (!region || a.location_pcode === region)
-            );
-            if (match) {
-              setAbstentionInfo(match);
-            }
-          }
-        }
-
-        setChartData(chartPts);
-
-        if (gapsRes && gapsRes.ok) {
-          const gapsData: SeriesCoverageGaps = await gapsRes.json();
-          setCoverageGaps(gapsData);
-        } else {
-          setCoverageGaps(null);
-        }
-      } catch (err: any) {
-        setError(err.message || "Impossible de charger les données de prix");
-      } finally {
-        setLoading(false);
-      }
+        if (!priceResponse.ok) throw new Error(`Les prix sont indisponibles (HTTP ${priceResponse.status}).`);
+        const data: MarketPrice[] = await priceResponse.json();
+        const future: Forecast[] = forecastResponse?.ok ? await forecastResponse.json() : [];
+        const refused: Abstention[] = abstentionResponse?.ok ? await abstentionResponse.json() : [];
+        const gaps: Coverage | null = coverageResponse?.ok ? await coverageResponse.json() : null;
+        if (!controller.signal.aborted) { setRows(data); setForecasts(future); setAbstentions(refused); setCoverage(gaps); setForecastAvailable(!!forecastResponse?.ok); }
+      } catch (failure) { if (!controller.signal.aborted) setError(failure instanceof Error ? failure.message : "Les prix sont indisponibles."); }
+      finally { if (!controller.signal.aborted) setLoading(false); }
     }
-
-    fetchPrices();
+    void load(); return () => controller.abort();
   }, [product, region, actor]);
-
-  const handleExportCsv = () => {
-    const apiUrl = "/api";
-    const params = new URLSearchParams();
-    if (product) params.set("product", product);
-    if (region) params.set("location", region);
-    if (actor) params.set("actor_level", actor);
-    params.set("format", "csv");
-    window.open(`${apiUrl}/v1/prices?${params.toString()}`, "_blank");
+  const { latest, series } = summarizePrices(rows);
+  const comparableForecasts = latest ? forecasts.filter(row => row.product_code === latest.product_code && row.location_pcode === latest.location_pcode && row.actor_level === latest.actor_level && row.currency === latest.currency && row.unit === latest.unit && row.target_period > latest.month) : [];
+  const chart: PriceDataPoint[] = [
+    ...series.map(row => ({ month: row.month, medianPrice: row.median_price, minPrice: row.min_price, maxPrice: row.max_price, valueKind: row.value_kind, sourceId: row.sources?.[0] })),
+    ...comparableForecasts.map(row => ({ month: row.target_period, medianPrice: row.p50, p10Price: row.p10, p90Price: row.p90, valueKind: "forecast", sourceId: `ml.${row.model_effective}`, horizon: row.horizon, modelEffective: row.model_effective, modelRequested: row.model_requested, isBaseline: row.is_baseline, isCalibrated: row.is_calibrated, calibrationSampleSize: row.calibration_sample_size, fallbackReason: row.fallback_reason || undefined, datasetFingerprint: row.dataset_fingerprint })),
+  ];
+  const abstention = abstentions.find(row => row.product_code === product && (!region || row.location_pcode === region) && (!actor || row.actor_level === actor));
+  const exportCsv = () => {
+    if (isLegacyDQProduct(product)) return;
+    const query = selectionQuery(product, region, actor); query.set("format", "csv");
+    window.open(`/api/v1/prices?${query}`, "_blank", "noopener,noreferrer");
   };
-
-  const filteredTableData = tableData.filter((row) =>
-    row.locationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    row.month.includes(searchTerm) ||
-    row.actorLevel.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-extrabold tracking-tight text-foreground flex items-center gap-2.5">
-              <TrendingUp className="w-6 h-6 text-primary-readable" />
-              Explorateur des prix vivriers
-            </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-500/10 text-primary-readable border border-emerald-500/20">
-              {tableData.length} observations
-            </span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Historique mensuel des prix nominaux, dispersion géographique et traçabilité certifiée.
-          </p>
-        </div>
-
-        <button
-          onClick={handleExportCsv}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary-action hover:bg-primary-hover text-primary-foreground text-xs font-semibold rounded-xl shadow-lg shadow-emerald-950/40 transition-all hover:scale-102 self-start sm:self-auto"
-        >
-          <Download className="w-4 h-4" />
-          Exporter CSV
-        </button>
-      </div>
-
-      {/* Error state */}
-      {error && (
-        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-700 dark:text-rose-300 text-xs flex items-center justify-between">
-          <span>{error}</span>
-        </div>
-      )}
-
-      {/* Series Coverage and Quality Metrics (R2.4, R2.10) */}
-      {coverageGaps && (
-        <div className="glass-card rounded-2xl p-4 border border-border bg-card/40">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-border">
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-primary-readable" />
-              <h2 className="text-xs font-bold uppercase tracking-wider text-foreground font-mono">
-                Couverture de Série & Audit des Lacunes Calendaires (R2.4)
-              </h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <span
-                className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono border ${
-                  coverageGaps.is_pilot_candidate
-                    ? "bg-emerald-500/10 text-primary-readable border-emerald-500/20"
-                    : "bg-muted text-muted-foreground border-border"
-                }`}
-              >
-                {coverageGaps.is_pilot_candidate ? "✓ Candidat Pilote ML" : "Série Hors Pilote"}
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
-            <div className="bg-background/60 p-2.5 rounded-xl border border-border">
-              <span className="text-[10px] font-mono text-muted-foreground block">Complétude</span>
-              <span className="text-base font-bold font-mono text-primary-readable mt-0.5 block">
-                {(coverageGaps.coverage_ratio * 100).toFixed(1)} %
-              </span>
-            </div>
-
-            <div className="bg-background/60 p-2.5 rounded-xl border border-border">
-              <span className="text-[10px] font-mono text-muted-foreground block">Continuité</span>
-              <span className="text-base font-bold font-mono text-foreground mt-0.5 block">
-                {coverageGaps.observed_months} / {coverageGaps.expected_months} mois
-              </span>
-            </div>
-
-            <div className="bg-background/60 p-2.5 rounded-xl border border-border">
-              <span className="text-[10px] font-mono text-muted-foreground block">Lacunes Calendaires</span>
-              <span
-                className={`text-base font-bold font-mono mt-0.5 block ${
-                  coverageGaps.missing_months === 0 ? "text-primary-readable" : "text-amber-700 dark:text-amber-400"
-                }`}
-              >
-                {coverageGaps.missing_months} mois
-              </span>
-            </div>
-
-            <div className="bg-background/60 p-2.5 rounded-xl border border-border">
-              <span className="text-[10px] font-mono text-muted-foreground block">Familles Sources</span>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {coverageGaps.source_families.length > 0 ? (
-                  coverageGaps.source_families.map((fam) => (
-                    <span
-                      key={fam}
-                      className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-muted text-muted-foreground border border-border"
-                    >
-                      {fam}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-xs text-muted-foreground">—</span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {coverageGaps.missing_months_list.length > 0 && (
-            <div className="mt-3 pt-2.5 border-t border-border text-[11px] text-amber-700/90 dark:text-amber-300/90 flex items-center gap-1.5 font-mono">
-              <span className="font-semibold">Mois manquants sans observation :</span>
-              <span>{coverageGaps.missing_months_list.join(", ")}</span>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Chart View */}
-      <PriceChart
-        title={`Série temporelle des prix — ${product}`}
-        data={chartData}
-        productName={product}
-      />
-
-      {/* Honest Forecasting Status & Abstention Panel (ADR-078) */}
-      {hasForecasts ? (
-        <div className="glass-panel p-3.5 rounded-xl border border-purple-500/20 bg-purple-950/20 text-xs flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-            <span className="text-purple-700 dark:text-purple-200 font-semibold">Prévisions de prix intégrées :</span>
-            <span className="text-muted-foreground">
-              Modèles statistiques normatifs (horizons h=1..3) avec bandes conformes à 80% et zéro chiffre inventé.
-            </span>
-          </div>
-          <span className="text-[10px] font-mono text-purple-700/80 dark:text-purple-300/80">
-            Source : ml.price_forecast • Évaluation rolling-origin
-          </span>
-        </div>
-      ) : abstentionInfo ? (
-        <div className="glass-panel p-3.5 rounded-xl border border-amber-500/20 bg-amber-950/20 text-xs flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400" />
-            <span className="text-amber-700 dark:text-amber-200 font-semibold">Abstention méthodologique :</span>
-            <span className="text-muted-foreground">
-              Prévision non certifiée pour cette série ({abstentionInfo.reason}, {abstentionInfo.points_count} points disponibles).
-            </span>
-          </div>
-          <span className="text-[10px] font-mono text-amber-700/80 dark:text-amber-300/80">
-            Conformité SPECS §17 : aucune extrapolation artificielle produite
-          </span>
-        </div>
-      ) : null}
-
-      {/* Data Table */}
-      <div className="glass-card rounded-2xl overflow-hidden">
-        <div className="p-4 border-b border-border flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Table className="w-4 h-4 text-primary-readable" />
-            <h2 className="text-sm font-bold text-foreground">
-              Tableau des observations mensuelles
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Search inside table */}
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-2.5" />
-              <input
-                type="text"
-                placeholder="Filtrer lieu, date..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="text-xs bg-card border border-border rounded-lg pl-8 pr-3 py-1.5 text-foreground placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 w-44 sm:w-56"
-              />
-            </div>
-            <span className="text-xs font-mono text-muted-foreground">
-              {filteredTableData.length} lignes
-            </span>
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="p-16 text-center text-xs text-muted-foreground flex items-center justify-center gap-2 font-mono">
-            <RefreshCw className="w-4 h-4 animate-spin text-primary-readable" />
-            Chargement des observations...
-          </div>
-        ) : filteredTableData.length === 0 ? (
-          <div className="p-16 text-center text-xs text-muted-foreground font-mono">
-            Aucun enregistrement ne correspond aux critères sélectionnés.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
-              <thead className="bg-background/60 text-muted-foreground border-b border-border uppercase font-mono text-[10px] tracking-wider">
-                <tr>
-                  <th className="px-4 py-3">Mois</th>
-                  <th className="px-4 py-3">Région / Marché</th>
-                  <th className="px-4 py-3">Niveau d&apos;acteur</th>
-                  <th className="px-4 py-3 text-right">Prix médian</th>
-                  <th className="px-4 py-3 text-right">Fourchette</th>
-                  <th className="px-4 py-3">Nature</th>
-                  <th className="px-4 py-3">Source</th>
-                  <th className="px-4 py-3">Traçabilité</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {filteredTableData.map((row, idx) => (
-                  <tr key={`${row.month}-${row.locationName}-${idx}`} className="hover:bg-foreground/[0.02] transition-colors">
-                    <td className="px-4 py-2.5 font-medium text-foreground">
-                      {formatMonthYear(row.month)}
-                    </td>
-                    <td className="px-4 py-2.5 text-foreground">{row.locationName}</td>
-                    <td className="px-4 py-2.5 capitalize text-muted-foreground">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-muted text-muted-foreground border border-border">
-                        {row.actorLevel}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2.5 text-right font-mono font-bold text-primary-readable">
-                      {formatPrice(row.medianPrice, "kg")}
-                    </td>
-                    <td className="px-4 py-2.5 text-right text-muted-foreground font-mono text-[11px]">
-                      {row.minPrice && row.maxPrice
-                        ? `${formatPrice(row.minPrice, "kg")} – ${formatPrice(row.maxPrice, "kg")}`
-                        : "—"}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <ValueKindBadge kind={row.valueKind} />
-                    </td>
-                    <td className="px-4 py-2.5">
-                      {row.sourceId && <SourceBadge sourceId={row.sourceId} />}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <ProvenanceLink observationId={row.observationId} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return <div className="space-y-6">
+    <header className="flex flex-wrap items-start justify-between gap-4"><div className="space-y-2"><h1 className="flex flex-wrap items-center gap-3 text-2xl font-semibold"><TrendingUp aria-hidden="true" className="h-6 w-6 shrink-0 text-primary-readable" />Explorateur des prix vivriers</h1><p className="max-w-3xl text-sm leading-6 text-muted-foreground">Consultez les points mensuels disponibles. Une estimation, une observation et une prévision restent des valeurs de nature différente.</p></div><button type="button" disabled={loading || !!error || !rows.length} onClick={exportCsv} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"><Download aria-hidden="true" className="h-4 w-4" />Exporter la sélection CSV</button></header>
+    {loading ? <p role="status" className="text-sm text-muted-foreground">Chargement des points de prix…</p> : error ? <p role="alert" className="rounded-xl border border-rose-500/20 p-4 text-sm text-rose-700 dark:text-rose-300">{error}</p> : <>
+      {!rows.length ? <section className="rounded-xl border border-border bg-card p-6"><h2 className="font-medium">Aucun point de prix pour cette sélection</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Les filtres sont conservés. Un autre produit, une autre zone ou un autre stade peut disposer de données. Cette absence ne signifie pas un prix nul.</p></section> : <>
+        {latest && <section aria-label="Série affichée" className="space-y-3"><p className="text-sm leading-6 text-muted-foreground">Courbe : {latest.location_name || latest.location_pcode || "Zone non renseignée"} · {saleStageLabel(latest.actor_level)} · {latest.currency}/{latest.unit}. Le tableau conserve tous les points de la sélection. Les périodes absentes ne sont pas des mesures.</p><PriceChart title="Une série comparable" data={chart} productName={product} unit={latest.unit} currency={latest.currency} /></section>}
+        <section className="rounded-xl border border-border bg-card p-5"><h2 className="text-lg font-medium">Points mensuels de la sélection</h2><p className="mt-2 text-sm text-muted-foreground">{rows.length} points disponibles · L’export reprend ces filtres.</p><div className="mt-4 overflow-x-auto"><table className="w-full text-left text-sm"><caption className="sr-only">Période, zone, stade de vente, prix et nature pour {product}</caption><thead className="text-muted-foreground"><tr>{["Période", "Zone", "Stade de vente", "Prix", "Nature", "Source"].map(title => <th key={title} scope="col" className="p-3 font-medium">{title}</th>)}</tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.month}-${row.location_pcode}-${row.actor_level}-${index}`} className="border-t border-border"><td className="whitespace-nowrap p-3">{formatMonthYear(row.month)}</td><th scope="row" className="p-3 font-medium">{row.location_name || row.location_pcode || "Non renseignée"}</th><td className="p-3">{saleStageLabel(row.actor_level)}</td><td className="whitespace-nowrap p-3">{row.currency === "MGA" ? formatPrice(row.median_price, row.unit) : `${row.median_price} ${row.currency}/${row.unit}`}</td><td className="p-3"><ValueKindBadge kind={row.value_kind} /></td><td className="p-3">{row.sources?.length ? row.sources.map(source => <SourceBadge key={source} sourceId={source} />) : "Source non renseignée"}</td></tr>)}</tbody></table></div></section>
+      </>}
+      <section className="rounded-xl border border-border bg-card p-5"><h2 className="font-medium">Disponibilité de la série</h2>{coverage ? <><dl className="mt-3 grid gap-4 text-sm sm:grid-cols-3"><div><dt className="text-muted-foreground">Complétude</dt><dd>{(coverage.coverage_ratio * 100).toFixed(1)} %</dd></div><div><dt className="text-muted-foreground">Mois renseignés</dt><dd>{coverage.observed_months} / {coverage.expected_months}</dd></div><div><dt className="text-muted-foreground">Mois manquants</dt><dd>{coverage.missing_months}</dd></div></dl>{coverage.missing_months_list.length > 0 && <p className="mt-3 break-words text-xs text-muted-foreground">Périodes manquantes : {coverage.missing_months_list.join(", ")}</p>}</> : <p className="mt-2 text-sm leading-6 text-muted-foreground">{region && actor ? "La mesure de couverture est indisponible pour cette sélection." : "Choisissez une zone et un stade de vente pour consulter la mesure de couverture correspondante."}</p>}</section>
+      <section className="rounded-xl border border-border bg-card p-5"><h2 className="font-medium">Prévisions et limites</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{comparableForecasts.length ? "Les prévisions renvoyées pour la série affichée sont distinguées dans le graphique. Leur présence ne suffit pas à qualifier leur précision." : !forecastAvailable ? "Les informations de prévision sont indisponibles. Aucun résultat n’est déduit de cette absence." : forecasts.length ? "Les prévisions reçues ne correspondent pas à une période future et au périmètre exact de la série affichée. Elles ne sont pas ajoutées à la courbe." : "Aucune prévision n’est disponible dans cette réponse pour la sélection."}</p>{abstention && <p className="mt-3 break-words text-sm text-muted-foreground">Abstention enregistrée : {abstention.reason} · {abstention.points_count} points.</p>}</section>
+    </>}
+  </div>;
 }
-
-export default function PricesPage() {
-  return (
-    <React.Suspense
-      fallback={
-        <div className="p-16 text-center text-xs text-muted-foreground flex items-center justify-center gap-2 font-mono">
-          <RefreshCw className="w-4 h-4 animate-spin text-primary-readable" />
-          Chargement des prix vivriers...
-        </div>
-      }
-    >
-      <PricesContent />
-    </React.Suspense>
-  );
-}
+export default function PricesPage() { return <React.Suspense fallback={<p role="status">Chargement de l’explorateur…</p>}><PricesContent /></React.Suspense>; }

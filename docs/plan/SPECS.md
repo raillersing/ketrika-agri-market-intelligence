@@ -1,5 +1,15 @@
 # SPECS : spécifications techniques normatives du MVP
 
+## DP-1 — Présentation métier bornée (ADR-131)
+
+API/SQL/collectes et référentiels persistés inchangés. Filtres visibles seulement selon leur consommation réelle : accueil/prix produit+zone+stade ; territoire/commerce produit ; aucun global dans les autres pages. Sélection et reset conservent les paramètres non concernés. Les16 références DQ du diagnostic sont exclues des choix métier par identité exacte ; lien DQ explicite→refus visible sans substitution ni chargement métier, pas de suppression SQL. Les autres codes, dont inconnus, restent visibles et ne sont pas remappés implicitement. Stade unknown/absent→Non renseigné ; tout niveau explicite est conservé dans le filtre API.
+
+/map annonce une vue territoriale tabulaire, sans géométrie ou diagnostic non qualifié, et expose date/unité/nature/source des lignes reçues. Les différents mois récents ne sont pas présentés comme un classement simultané. Alertes et bulletins affichent données/statuts réels, erreurs et absence distinctes, détails techniques secondaires. Aucune narration fixe ou certification dans le bulletin ; faits reçus affichables sans les déclarer qualifiés, zéro conservé et structure inattendue non transformée en texte d'analyse. Aucun PDF supposé si le DTO ne le fournit pas. Approbation admin et envoi distincts. Le contenu source reste une donnée échappée, jamais HTML ou instruction exécutée.
+
+Le nouveau gel inclut runners/scénarios et sa réception complète ; les anciens reçus conservent leurs identités. Le préchauffage/navigation jusqu'à240s du runner précédent est documenté comme attente de préparation et ne change pas l'objectif API P95<1000ms. Les seuils scientifiques, budgets, droits et gates de données/modèles restent inchangés.
+
+Prix : un graphique historique est borné à une série comparable ; les mois absents provoquent une rupture visuelle et ne sont pas interpolés. L'export CSV utilise les mêmes filtres prix que la requête de lecture. Commerce consomme month/flow et les valeurs du DTO effectif ; aucun ratio de dépendance fixe ni bouton CSV sans support serveur. La qualification navigateur utilise des Product/Alert/Bulletin synthétiques dans le profil dédié déjà validé, sans observation de marché ou objet Bronze ajouté ; seules les lignes qu'elle a créées sont nettoyées. Ces fixtures ne qualifient jamais une collecte ou un marché réel.
+
 ## Migration de sécurité des dépendances — ADR-125
 
 AU-06 migre Next15.5.28/React19.3.1 (App Router et paramètres asynchrones), MapLibre6.16.0, ECharts6.1.0/wrapper3.0.6 et Vitest5.0.5, sans changer les contrats métier ni les scénarios scientifiques. Node22.23.3 existant satisfait les prérequis. Les transitoires Python restent contraints et verrouillés sur des versions corrigées avec Python3.12. Les nouveaux locks, images distinctes, audits, check complet et E2E sont requis avant réception ; les preuves AU-04 sur anciennes images ne qualifient pas cette migration.

@@ -27,3 +27,16 @@ export function summarizePrices(rows: MarketPrice[]) {
   const series = latest ? ordered.filter((row) => comparisonKey(row) === comparisonKey(latest)).reverse() : [];
   return { latest, series, sources: Array.from(new Set(rows.flatMap((row) => row.sources))) };
 }
+
+/** A visual break, not an observation or an interpolated value. Input is time ordered. */
+export function withCalendarGaps<T extends { month: string }>(rows: readonly T[]): (T | null)[] {
+  const monthIndex = (value: string) => {
+    const match = /^(\d{4})-(0[1-9]|1[0-2])(?:-\d{2})?$/.exec(value);
+    return match ? Number(match[1]) * 12 + Number(match[2]) : null;
+  };
+  return rows.flatMap<T | null>((row, index) => {
+    const current = monthIndex(row.month);
+    const next = rows[index + 1] ? monthIndex(rows[index + 1].month) : null;
+    return current !== null && next !== null && next - current > 1 ? [row, null] : [row];
+  });
+}
