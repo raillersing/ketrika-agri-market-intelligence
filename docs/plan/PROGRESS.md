@@ -1,5 +1,12 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T08:16:05Z] Reprise publication — réception corrective IN_PROGRESS
+
+- Vérification distante : PR2 déjà fusionnée et origin/main4a014be, AU-08 inclus. CI40454773585 et40461024207 rouges : migration0003 dépend d'obs.quarantine_ledger créée seulement en0020. Les déclarations DONE AU-08 ci-dessous ne valent pas réception complète.
+- Mini-plan : ADR134/SPECS avant code ; figer SQL historique0003/0018 ; vérifier version Alembic neuve ; tests ciblés Docker ; commit/push/PR puis check complet et26 E2E CI ; conserver originaux et mettre à jour les statuts avant fusion uniquement verte.
+- Branche fix/r08-integration-ci-20261027, base4a014be ; fichiers non suivis utilisateur et tous services/volumes actifs conservés. AU-08 IN_PROGRESS, AU-09 non reçu ;74 statuts R inchangés.
+- Développement Docker Windows après indisponibilité du socket WSL : lint global vert ; format détecte un fichier AU-08 non conforme, correction mécanique et impressions de debug retirées. Mypy424 fichiers code0 ; huit tests migrations/compatibilité code0 (2,96s), sans accès réseau. Aucun résultat SQL/global déduit ; nouvelle réception CI obligatoire.
+
 ### [2026-10-27T08:50:00Z] AU-09 — Rebuild authentique et gate R0.9 (IN_PROGRESS)
 
 - Tâche AU-09 démarrée suite à la réception d'AU-08.

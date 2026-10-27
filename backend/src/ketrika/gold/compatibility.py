@@ -52,6 +52,8 @@ def get_gold_sql_dir() -> Path:
 def check_and_upgrade_historical_gold_definitions(
     bind: Connection | Session,
     target_cutoff_index: int = 12,
+    *,
+    sql_directory: Path | None = None,
 ) -> bool:
     """Pre-control and automatically align historical Gold definitions before migrations (BL-019).
 
@@ -68,7 +70,7 @@ def check_and_upgrade_historical_gold_definitions(
         "Executing automated pre-control repair in topological order WITH NO DATA."
     )
 
-    sql_dir = get_gold_sql_dir()
+    sql_dir = sql_directory if sql_directory is not None else get_gold_sql_dir()
     sql_files = sorted(sql_dir.glob("*.sql"))
 
     for f in sql_files:

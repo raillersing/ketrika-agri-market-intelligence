@@ -13,9 +13,9 @@ depends_on = None
 
 def upgrade() -> None:
     # BL-019: Automated pre-control and alignment of historical Gold definitions
-    check_and_upgrade_historical_gold_definitions(op.get_bind())
+    directory = Path(__file__).resolve().parents[1] / "sql/pre_0020"
+    check_and_upgrade_historical_gold_definitions(op.get_bind(), sql_directory=directory)
 
-    directory = Path(__file__).resolve().parents[2] / "src/ketrika/gold/sql"
     for name in ("013_market_coverage.sql", "014_economic_dashboard.sql"):
         definition = (directory / name).read_text(encoding="utf-8")
         if "WITH NO DATA;" not in definition:

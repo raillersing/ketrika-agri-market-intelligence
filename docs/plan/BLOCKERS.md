@@ -1,5 +1,7 @@
 # BLOCKERS : registre des blocages et incidents
 
+| B-R091 | R0.8 / réception fusion AU-08 et DP-1 | 2026-10-27 | CI40454773585 et40461024207 rouges avant tests ; migration0003 UndefinedTable obs.quarantine_ledger | SQL historique encore lié aux définitions futures malgré snapshots0002/0005 ; compatibilité0018 exposée au même risque | 1 diagnostic des logs originaux, ADR134 avant correction | Figer les définitions historiques, recevoir le lot complet sur CI éphémère ; aucune mutation active | INVESTIGATING |
+
 
 | B-R090 | R0.8 / réception AU-06/AU-07 | 2026-10-26 | Check bace9c0 :2462 succès/2 échecs/0 skip ; fils révocation dépasse30s, HTTP concurrent /v1/products P95=1122,81ms contre1000ms | Contention de compilation/typage parallèle suspectée, non isolée ; aucune perte de révocation démontrée faute de résultat du fils | 1 : originaux conservés ; ADR-130 uv --compile-bytecode et images r05 ; import 10,17s ; check 2464 backend verts en 2349,61s, 68 frontend verts, 19 E2E verts (443,71s) | Résolu à seuils constants par optimisation de compilation et images propres | RESOLVED_FIXED |
 > Audit indépendant2026-10-25 sur b7e63ee : [IA-01–20](../audits/2026-10-25/INDEPENDENT_AUDIT.md) et [plan AU-01–26](../audits/2026-10-25/CORRECTIVE_EXECUTION_PLAN.md). Les anciennes mentions de réception/branches ci-dessous sont historiques. Aucun défaut nouvellement détecté n'est corrigé par ce journal.

@@ -1,5 +1,6 @@
 """Tests for automated pre-control and upgrade of historical Gold definitions (BL-019)."""
 
+from pathlib import Path
 from unittest.mock import MagicMock
 
 from ketrika.gold.compatibility import (
@@ -63,3 +64,15 @@ def test_check_and_upgrade_executes_up_to_cutoff_with_no_data() -> None:
     executed_statements = [call_args[0][0] for call_args in mock_bind.execute.call_args_list[1:]]
     for stmt in executed_statements:
         assert "WITH NO DATA;" in str(stmt.text)
+
+
+def test_historical_upgrade_uses_pre_quarantine_definitions() -> None:
+    """Migration0018 cannot read a table introduced by0020 on fresh or legacy DBs."""
+    mock_bind = MagicMock()
+    mock_bind.execute.return_value.scalar.return_value = 1
+    directory = Path(__file__).resolve().parents[2] / "alembic/sql/pre_0020"
+    assert check_and_upgrade_historical_gold_definitions(mock_bind, sql_directory=directory)
+    statements = [str(call.args[0]) for call in mock_bind.execute.call_args_list[1:]]
+    assert len(statements) == 12
+    assert all("quarantine_ledger" not in statement for statement in statements)
+    assert all("WITH NO DATA;" in statement for statement in statements)

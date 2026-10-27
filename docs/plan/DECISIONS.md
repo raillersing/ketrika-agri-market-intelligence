@@ -1,5 +1,12 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-134 | 2026-10-27 | Accepté avant code | Réception corrective après fusion et migrations Gold historiques
+
+- Constat : PR2 fusionnée à distance, main4a014be ; CI40454773585 et40461024207 rouges avant tests. La migration0003 lit désormais une vue dépendant de la table de0020. Le DONE AU-08 déclaré sur des ciblés n'est pas une réception complète ; ne pas réutiliser cette déclaration pour AU-09.
+- Décision : figer les définitions Gold pré-0020 dans les SQL Alembic et les employer dans0003 et le contrôle de compatibilité de0018. Les vues courantes continuent à exclure la quarantaine après0020. Conserver les identifiants des migrations publiées ; agrandir explicitement la colonne de version avant l'enregistrement de0020, y compris sur installation neuve.
+- Réception : branche corrective distincte, tests Docker ciblés puis check complet et26 E2E sur runner CI éphémère. Aucune mutation active, downgrade ou nouveau tag ; conserver les deux CI rouges. AU-08 reste IN_PROGRESS jusqu'aux preuves complètes ; AU-09 ne peut être reçu sur cette dépendance non qualifiée.
+- Alternatives : créer une fausse table prématurée, raccourcir une révision publiée ou ignorer la CI rejetés. Aucun seuil ni scénario retiré.
+
 ## ADR-133 | 2026-10-27 | Accepté avant code | Quarantaine append-only, interdiction des auto-liens et réparation B-R084 / B-R085 (AU-08)
 
 - Contexte : AU-08, B-R084 (728 auto-liens `superseded_by = observation_id` dans `obs.price_observation` et autres tables obs), B-R085 (164 SourceRecord référençant des clés Bronze absentes), IA-04 et Attention A013. Le trigger PostgreSQL `obs.check_obs_superseded_only()` refusait tout UPDATE si `OLD.superseded_by IS NOT NULL` et si `NEW.superseded_by IS NULL`. Une remise à NULL brute échoue closed par le trigger. Désactiver globalement les protections violerait la règle d'immuabilité et publierait soudain 728 observations historiques non vérifiées ou issues de tests (`review_status = 'accepted'`) dans `gold.price_obs_current`. Créer de faux objets Bronze pour combler les 164 clés absentes violerait formellement l'interdit AGENTS.md §8.10.

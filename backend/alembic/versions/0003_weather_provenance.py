@@ -32,7 +32,7 @@ def upgrade() -> None:
           BEFORE UPDATE OR DELETE ON obs.weather_observation
           FOR EACH ROW EXECUTE FUNCTION obs.check_obs_superseded_only();
     """)
-    sql_dir = Path(__file__).resolve().parents[2] / "src/ketrika/gold/sql"
+    sql_dir = Path(__file__).resolve().parents[1] / "sql/pre_0020"
     for filename in ("008_weather_monthly.sql", "010_market_health.sql"):
         op.execute((sql_dir / filename).read_text(encoding="utf-8"))
     op.execute(

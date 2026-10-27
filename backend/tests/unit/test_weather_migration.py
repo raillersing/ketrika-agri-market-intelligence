@@ -56,6 +56,7 @@ def test_upgrade_is_additive_for_observations_and_targets_only_known_gold_views(
     assert "CREATE UNIQUE INDEX weather_current_uk" in statements[0]
     assert "INITIALLY DEFERRED" in statements[0]
     assert "to_jsonb(wo)->>'superseded_by' IS NULL" in statements[1]
+    assert "quarantine_ledger" not in statements[1]
     assert "gold.market_health" in statements[2]
     for statement in statements:
         assert "DELETE FROM" not in statement and "TRUNCATE" not in statement
