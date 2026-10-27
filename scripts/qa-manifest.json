@@ -146,6 +146,284 @@
       "tests": ["tests/unit/test_qa_manifest.py", "tests/unit/test_quality_failures.py", "tests/unit/test_dataset_isolation.py", "tests/integration/test_db_permissions.py"],
       "minimum_tests": 58,
       "minimum_integration_tests": 4
+    },
+    "R1.3": {
+      "tests": [
+        "tests/unit/test_instat_nipc.py",
+        "tests/integration/test_instat_nipc.py"
+      ],
+      "minimum_tests": 10,
+      "minimum_integration_tests": 1
+    },
+    "R1.4": {
+      "tests": [
+        "tests/unit/test_miasa_odr.py",
+        "tests/integration/test_miasa_odr.py"
+      ],
+      "minimum_tests": 12,
+      "minimum_integration_tests": 1
+    },
+    "R1.5": {
+      "tests": [
+        "tests/unit/test_mincc_ppn.py",
+        "tests/integration/test_mincc_ppn.py"
+      ],
+      "minimum_tests": 13,
+      "minimum_integration_tests": 1
+    },
+    "R1.6": {
+      "tests": [
+        "tests/unit/test_douanes_stats.py",
+        "tests/integration/test_douanes_stats.py"
+      ],
+      "minimum_tests": 11,
+      "minimum_integration_tests": 1
+    },
+    "R1.7": {
+      "tests": [
+        "tests/unit/test_wfp_hdx_mdg.py",
+        "tests/integration/test_wfp_hdx_mdg.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 1
+    },
+    "R1.8": {
+      "tests": [
+        "tests/unit/test_wb_rtfp_mdg.py",
+        "tests/integration/test_wb_rtfp_mdg.py"
+      ],
+      "minimum_tests": 11,
+      "minimum_integration_tests": 1
+    },
+    "R1.9": {
+      "tests": [
+        "tests/unit/test_faostat.py",
+        "tests/integration/test_faostat.py"
+      ],
+      "minimum_tests": 8,
+      "minimum_integration_tests": 1
+    },
+    "R1.11": {
+      "tests": [
+        "tests/unit/test_nasa_power.py",
+        "tests/integration/test_nasa_power.py"
+      ],
+      "minimum_tests": 11,
+      "minimum_integration_tests": 1
+    },
+    "R1.12": {
+      "tests": [
+        "tests/unit/test_source_health_and_refresh.py",
+        "tests/unit/test_sources_refresh_api.py"
+      ],
+      "minimum_tests": 20,
+      "minimum_integration_tests": 0
+    },
+    "R2.1": {
+      "tests": [
+        "tests/unit/test_contracts_time_origin_macro.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R2.2": {
+      "tests": [
+        "tests/unit/test_taxonomy.py",
+        "tests/unit/test_taxonomy_units_audit.py"
+      ],
+      "minimum_tests": 38,
+      "minimum_integration_tests": 0
+    },
+    "R2.3": {
+      "tests": [
+        "tests/unit/test_gold_dq_aggregation_audit.py",
+        "tests/integration/test_gold_dq.py"
+      ],
+      "minimum_tests": 43,
+      "minimum_integration_tests": 7
+    },
+    "R2.4": {
+      "tests": [
+        "tests/unit/test_market_coverage_and_pilot.py"
+      ],
+      "minimum_tests": 16,
+      "minimum_integration_tests": 0
+    },
+    "R2.5": {
+      "tests": [
+        "tests/unit/test_instat_tbe.py"
+      ],
+      "minimum_tests": 15,
+      "minimum_integration_tests": 0
+    },
+    "R2.6": {
+      "tests": [
+        "tests/unit/test_bfm_public.py"
+      ],
+      "minimum_tests": 17,
+      "minimum_integration_tests": 0
+    },
+    "R2.7": {
+      "tests": [
+        "tests/unit/test_omh_public.py"
+      ],
+      "minimum_tests": 14,
+      "minimum_integration_tests": 0
+    },
+    "R2.8": {
+      "tests": [
+        "tests/unit/test_economic_dashboard.py"
+      ],
+      "minimum_tests": 19,
+      "minimum_integration_tests": 0
+    },
+    "R2.9": {
+      "tests": [
+        "tests/unit/test_api_extensions_and_limits.py",
+        "tests/unit/test_gold_availability_api.py"
+      ],
+      "minimum_tests": 57,
+      "minimum_integration_tests": 0
+    },
+    "R2.11": {
+      "tests": [
+        "tests/unit/test_gate_r2_decision_observatory.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R3.1": {
+      "tests": [
+        "tests/unit/test_ml_series_eligibility.py"
+      ],
+      "minimum_tests": 16,
+      "minimum_integration_tests": 0
+    },
+    "R3.2": {
+      "tests": [
+        "tests/unit/test_ml_as_of_dataset.py"
+      ],
+      "minimum_tests": 8,
+      "minimum_integration_tests": 0
+    },
+    "R3.3": {
+      "tests": [
+        "tests/unit/test_ml_models_conformance.py"
+      ],
+      "minimum_tests": 9,
+      "minimum_integration_tests": 0
+    },
+    "R3.4": {
+      "tests": [
+        "tests/unit/test_ml_backtest_protocol.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R3.5": {
+      "tests": [
+        "tests/unit/test_ml_conformal_intervals.py"
+      ],
+      "minimum_tests": 5,
+      "minimum_integration_tests": 0
+    },
+    "R3.6": {
+      "tests": [
+        "tests/unit/test_ml_exogenous.py"
+      ],
+      "minimum_tests": 11,
+      "minimum_integration_tests": 0
+    },
+    "R3.7": {
+      "tests": [
+        "tests/unit/test_ml_forecast_publication.py"
+      ],
+      "minimum_tests": 4,
+      "minimum_integration_tests": 0
+    },
+    "R3.8": {
+      "tests": [
+        "tests/unit/test_ml_matured_evaluation.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 0
+    },
+    "R3.9": {
+      "tests": [
+        "tests/unit/test_gate_r3_price_forecast.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R4.1": {
+      "tests": [
+        "tests/unit/test_geo_agroclimate_contracts.py"
+      ],
+      "minimum_tests": 8,
+      "minimum_integration_tests": 0
+    },
+    "R4.2": {
+      "tests": [
+        "tests/unit/test_chirps.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 0
+    },
+    "R4.3": {
+      "tests": [
+        "tests/unit/test_meteo_mg.py"
+      ],
+      "minimum_tests": 6,
+      "minimum_integration_tests": 0
+    },
+    "R4.4": {
+      "tests": [
+        "tests/unit/test_fewsnet_ipc.py"
+      ],
+      "minimum_tests": 8,
+      "minimum_integration_tests": 0
+    },
+    "R4.5": {
+      "tests": [
+        "tests/unit/test_ecmwf_open.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 0
+    },
+    "R4.6": {
+      "tests": [
+        "tests/unit/test_geo_anomalies.py"
+      ],
+      "minimum_tests": 7,
+      "minimum_integration_tests": 0
+    },
+    "R4.7": {
+      "tests": [
+        "tests/unit/test_crop_calendar_versioning.py"
+      ],
+      "minimum_tests": 8,
+      "minimum_integration_tests": 0
+    },
+    "R4.8": {
+      "tests": [
+        "tests/unit/test_geo_remote_sensing.py"
+      ],
+      "minimum_tests": 9,
+      "minimum_integration_tests": 0
+    },
+    "R4.11": {
+      "tests": [
+        "tests/unit/test_geo.py"
+      ],
+      "minimum_tests": 16,
+      "minimum_integration_tests": 0
+    },
+    "R4.12": {
+      "tests": [
+        "tests/unit/test_gate_r4_agroclimate.py"
+      ],
+      "minimum_tests": 8,
+      "minimum_integration_tests": 0
     }
   }
 }

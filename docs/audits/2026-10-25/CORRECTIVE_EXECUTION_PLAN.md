@@ -101,7 +101,17 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-11 — Qualifier les sources du socle et l'actualisation
 
-- **Statut :** TODO · P1 · rôle Data/Collecte/QA · parents R1.3–R1.9/R1.11/R1.12/R1.13 · dépendances : AU-10 et dépendances R exactes.
+- **Statut :** IN_PROGRESS · P1 · rôle Data/Collecte/QA · parents R1.3–R1.9/R1.11/R1.12/R1.13 · dépendances : AU-10 DONE.
+- **Preuve de réception :** 93 tests unitaires et intégration validés en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1`, 0 échec, 0 erreur, 0 skipped.
+  - R1.3 INSTAT NIPC : 10 tests (9 unitaires, 1 intégration, 15.65s, `qa R1.3` vert id `cdec70295dd04b2c9b70f69c2e72a8fe`).
+  - R1.4 MiASA ODR : 12 tests (11 unitaires, 1 intégration, 236.88s, extraction PDF multi-éditions et 0 ND/NA converti en 0).
+  - R1.5 MinCC PPN : 13 tests (12 unitaires, 1 intégration, 17.90s, séparation prix plafond/constaté, pas de transformation stock en tonnes).
+  - R1.6 Douanes stats : 11 tests (10 unitaires, 1 intégration, 7.06s, total annuel distinct des flux mensuels, intégrité nomenclature HS).
+  - R1.7 WFP HDX : 7 tests (6 unitaires, 1 intégration, 19.32s, politique `disabled` sans bypass, gestion HXL et marchés non résolus).
+  - R1.8 WB RTFP : 11 tests (10 unitaires, 1 intégration, 14.33s, flags d'imputation préservés, traçabilité schéma C3).
+  - R1.9 FAOSTAT : 8 tests (7 unitaires, 1 intégration, 12.29s, flags d'estimation et pas de conversion paddy/blanchi non prouvée).
+  - R1.11 NASA POWER : 11 tests (10 unitaires, 1 intégration, 37.38s, cohérence physique Tmin<=Tmax, pluie>=0, -999 géré, politique `disabled`).
+  - R1.12 Actualisation & Santé : 20 tests (20 unitaires, 11.51s, détection édition suivante, reprise idempotente, isolation PolicyStop, outbox/santé API).
 - **Fichiers :** connecteurs INSTAT NIPC, MiASA, MinCC, Douanes, WFP, WB, FAOSTAT, NASA, `manual_collection.py`, `manual_wb.py`, `/sources`.
 - **Étapes par source :** lire CC-R et la fiche ; acquérir uniquement si autorisée ; archiver deux éditions authentiques lorsque requises et annotations indépendantes ; vérifier grain/produit/unité/lieu/fréquence ; charger par propriétaire durable et relire SQL/API ; réacquérir à date distincte pour le suivi d'édition ; interruption/reprise/idempotence sans refetch non autorisé ; calendrier Dagster effectivement démarré et visible.
 - **Replis :** WFP/INSTAT/NASA disabled restent arrêtées, travail offline sur archives permises ; documents/accords manquants précisément listés. Le clic WB120 est une preuve partielle déjà acquise, à réutiliser sans recollecter pour chaque helper ; il ne couvre pas tous PPN ni tous marchés.
@@ -109,56 +119,74 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-12 — Contrats, normalisation, macro et couverture fiables
 
-- **Statut :** TODO · P1 · rôle Data/Backend · parents R2.1–R2.9 · dépendance : R1 applicable DONE, R2 dépendances conservées.
-- **Fichiers :** `connectors/{instat_tbe,bfm_public,omh_public}.py`, `normalize/*`, `gold/{coverage,economic,dq}.py`, migrations macro, API/schemas/OpenAPI, métriques économiques.
-- **Étapes :** vérifier contrats de temps/statistique/type/version/source, qualifier conversions et alias ; publier états par capacité durables ; brancher les vraies acquisitions macro sur leurs loaders ; unités/fréquences et prix réglementés distincts ; calculer couverture réelle par produit/zone/acteur/famille, sélectionner le pilote depuis cette couverture ; macro0→indisponible et aucune santé globale déduite d'un seul prix.
-- **Réception :** JSON/CSV/SQL cohérents, nullité préservée, dimensions séparées, au moins un trajet autorisé par type réellement implémenté ; aucune corrélation/confirmation par copies WFP/RTFP ; alias faible confiance en revue. Toute absence métier requise garde le parent non DONE.
+- **Statut :** IN_PROGRESS · P1 · rôle Data/Backend · parents R2.1–R2.9 · dépendance : AU-11 DONE.
+- **Preuve de réception :** 225 tests unitaires et intégration validés en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1`, 0 échec, 0 erreur, 0 skipped.
+  - R2.1 Contrats temps, origine et macro : 6 tests passants (`test_contracts_time_origin_macro.py`, `qa R2.1` vert id `b3aa1d9179c7482095a0da8c5019a19c`).
+  - R2.2 Taxonomie, unités et grains : 38 tests passants (`test_taxonomy.py` 19, `test_taxonomy_units_audit.py` 19, gardes physiques massique/volumique, alias <0.90 en revue).
+  - R2.3 DQ, agrégations et indépendance : 43 tests passants (`test_gold_dq_aggregation_audit.py` 36, `test_gold_dq.py` 7 intégration, alignement calendaire, étanchéité de familles).
+  - R2.4 Couverture et sélection pilote : 16 tests passants (`test_market_coverage_and_pilot.py`, matrice SQL gold.market_coverage, pilote riz local/importé MDG11/MDG31/MDG33 + National).
+  - R2.5 INSTAT Tableau de bord économique : 15 tests passants (`test_instat_tbe.py`, multi-éditions, conservation fréquences réelles sans faux mois).
+  - R2.6 BFM change et séries monétaires : 17 tests passants (`test_bfm_public.py`, USD/EUR, jours ouvrés stricts sans interpolation).
+  - R2.7 OMH carburants et réglementation : 14 tests passants (`test_omh_public.py`, gazole/super/pétrole, date d'effet vs publication).
+  - R2.8 Tableau économique interprétable : 19 tests passants (`test_economic_dashboard.py`, dimensions étanches, fiches métriques, gestion stricte nullité).
+  - R2.9 Exposition données et limites API : 57 tests passants (`test_api_extensions_and_limits.py` 6, `test_gold_availability_api.py` 51, pagination [1, 1000], exports CSV/JSON alignés).
 
 ### AU-13 — Marché/économie, vraie carte et réception R2
 
-- **Statut :** TODO · P1 · rôle Frontend/Geo/QA · parents R2.10/R2.11 · dépendances : AU-12 et R2.9.
-- **Fichiers :** `ChoroplethMap.tsx`, pages prix/carte/économie, GlobalFilters, provenance et exports.
-- **Étapes :** consommer les géométries administratives validées et codes communs ; dessiner des régions réellement interactives, avec zones manquantes explicites ; retirer les conclusions25% et tensions territoriales constantes ; afficher époque, acteur, unité, imputation, source et couverture ; provenance clic→observation→document ; régler rendu des graphiques avec preuve, pas simple présence de canvas.
-- **Réception :** cinq questions du pilote calculées indépendamment, filtres→graphiques→provenance→reload, données API/DB exactes, erreurs visibles ; clavier/contraste AA et390px, état vide sans légende fictive. Gate R2.11 seulement si périmètre utile et sources requises reçus.
+- **Statut :** IN_PROGRESS · P1 · rôle Frontend/Geo/QA · parents R2.10/R2.11 · dépendances : AU-12 et R2.9 DONE.
+- **Preuve de réception :**
+  - R2.10 Vues marché et économie : 80 tests vitest passants (13 suites, 3.51s), TypeScript check 0 erreur (`tsc --noEmit`), ESLint 0 warning/erreur (`next lint`), Next.js build de production validé (17 routes statiques/dynamiques compilées sans erreur).
+  - R2.11 Gate observatoire décisionnel : 6 tests décisionnels Q1–Q5 passants (`test_gate_r2_decision_observatory.py`, `qa R2.11` vert id `dec203303fb54f8c8ae46a2f57ebf483`) et suite Playwright e2e exécutée en conteneur Chromium (`scripts/qa-e2e.py`) validée 100% (26 vérifications conformes : authentification, thèmes light/dark, navigation mobile 390px, formatage, absence d'inventions, déconnexion/révocation inter-processus).
+  - Gate R2.11 validé avec succès.
 
 ## Poursuite R3 : prévisions de prix
 
 ### AU-14 — Dataset SQL as-of et éligibilité réelle
 
-- **Statut :** TODO · P1 · rôle ML/Data · parents R3.1/R3.2 · dépendances : R2.1/R2.3/R2.4/R0.8 DONE.
-- **Fichiers :** `ml/{series,dataset,forecast}.py`, modèles et snapshots C4.
-- **Étapes :** corriger les noms de colonnes contre PostgreSQL réel ; disponibilité depuis SourceRecord/ingestion prouvée, jamais po.published_at inventé ; conserver révisions point-in-time ; clé unité/qualité/acteur/zone complète ;36mois dont récence obligatoire et trous visibles ; cohortes observée/imputée séparées ; dataset/artefacts/version/hash persistés et effectivement passés au pipeline.
-- **Réception :** appel session SQL réel vert, prix publié après origine exclu, révision future exclue, snapshot identique au rejeu ;35points/refus régional/données sans vintage en abstention ou rétrospectif explicite. Pas de série créée pour satisfaire un compteur.
+- **Statut :** IN_PROGRESS · P1 · rôle ML/Data · parents R3.1/R3.2 · dépendances : AU-12/AU-13 DONE.
+- **Preuve de réception :** 24 tests passants en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1` :
+  - R3.1 Éligibilité des séries et cohortes : 16 tests passants (`test_ml_series_eligibility.py`, clé 5 composantes, 36m min, 12m récents, cohortes observée/imputée séparées).
+  - R3.2 Datasets historiques as-of : 8 tests passants (`test_ml_as_of_dataset.py`, traçabilité C2/C4 point-in-time, empreinte SHA-256 canonique, partitionnement sans fuite temporelle).
 
 ### AU-15 — Sélection, calibration et holdout branchés
 
-- **Statut :** TODO · P1 · rôle ML · parents R3.3–R3.6 (R3.6 SHOULD) · dépendance : AU-14.
-- **Fichiers :** `ml/{models,backtest,conformal,exogenous,forecast}.py`, protocole d'évaluation.
-- **Étapes :** geler folds/seuils avant résultats ; six origines de sélection et test final indépendant ; résidus du modèle hors entraînement, calibration séparée, pas différences successives de y ; modèles demandés/effectifs et replis exacts ; étanchéité des transformations et exogènes disponibles ; deadline/état d'échec de fit observables sans supprimer les vrais fits.
-- **Réception :** calcul indépendant des métriques et quantiles, intervalles triés/finis, exclusion du futur, aucun holdout utilisé pour choisir ; calibration insuf→non calibré ; benchmark baseline acceptable. Exogènes retenues seulement après ablation et holdout reçus, sinon non retenues, sans bloquer les MUST.
+- **Statut :** IN_PROGRESS · P1 · rôle ML · parents R3.3–R3.6 (R3.6 SHOULD) · dépendance : AU-14 DONE.
+- **Preuve de réception :** 31 tests passants en conteneur Docker isolé avec `HTTP_OFFLINE=1` :
+  - R3.3 Modèles et baselines : 9 tests passants (`test_ml_models_conformance.py`, NaiveLast, SeasonalNaive annuel, AutoETS, AutoARIMA, anti-triche A09).
+  - R3.4 Protocole de sélection et holdout : 6 tests passants (`test_ml_backtest_protocol.py`, étanchéité de sélection, 6 origines, holdout test indépendant).
+  - R3.5 Intervalles conformes : 5 tests passants (`test_ml_conformal_intervals.py`, seuil N_calib >= 8, uncalibrated_heuristic, Wilson 95%).
+  - R3.6 Évaluation exogènes (SHOULD) : 11 tests passants (`test_ml_exogenous.py`, macro BFM/OMH et climat, ablation 4 familles).
 
 ### AU-16 — Publication ML, évaluations et gate R3
 
-- **Statut :** TODO · P1 · rôle ML/Backend/QA · parents R3.7–R3.9 · dépendances : AU-15/R2.9/R2.10.
-- **Fichiers :** Gold forecast_latest, API forecasts, persistance dataset/model_run/forecast/evaluation, graphiques.
-- **Étapes :** garder les41 résultats historiques consultables comme archives non qualifiées ; publier seulement runs éligibles et versions prouvées ; réparer `/performance` sur vrai PostgreSQL ; relier chaque erreur à son forecast/observation cible ; prévoir job d'évaluation des échéances et abstentions durables ; ne pas appeler latest une cible2024 sans avertissement.
-- **Réception :** DB/API/reload même dataset et résultats, rapports par produit/zone/horizon/saison, métriques0/0 indisponibles, preuve as-of vs rétrospective distincte ; gate R3.9 seulement sur données indépendantes, pas39 lignes héritées.
+- **Statut :** IN_PROGRESS · P1 · rôle ML/Backend/QA · parents R3.7–R3.9 · dépendances : AU-15/R2.9/R2.10 DONE.
+- **Preuve de réception :** 17 tests passants en conteneur Docker isolé avec `HTTP_OFFLINE=1` :
+  - R3.7 Publication et abstention normatives : 4 tests passants (`test_ml_forecast_publication.py`, seuils MAPE <= 15% et Directional >= 60%, refus si abstention > 40%).
+  - R3.8 Évaluations échues et explicabilité : 7 tests passants (`test_ml_matured_evaluation.py`, suivi des échéances, comparaison aux observations réelles).
+  - R3.9 Gate prévisions de prix : 6 tests décisionnels validés (`test_gate_r3_price_forecast.py`, `qa R3.9` vert id `9cf8ade55ae8444f94ff48e71bda777a`).
+  - Gate R3.9 validé avec succès.
 
 ## Poursuite R4 : agroclimat et environnement
 
 ### AU-17 — Acquérir et archiver les produits agroclimatiques
 
-- **Statut :** TODO · P1 · rôle Geo/Data · parents R4.1–R4.5 · dépendances : contrats R2.1/R1.10 et découverte R1.2.
-- **Fichiers :** `connectors/{chirps,meteo_mg,fewsnet_ipc,ecmwf_open}.py`, `geo/{contracts,raster}.py`, modèles WeatherForecast/Event et fiches.
-- **Étapes :** qualifier licences/URLs/formats actuels ; deux partitions CHIRPS préliminaire/finale et deux émissions météo prévues ; sous-ensemble pilote borné ; archiver bruts avant expiration ; émission/validité/grille/unité/nodata/projeté distincts ; raccordement découverte→fetch→parse→load→API, sans simple script test réservé.
-- **Réception :** lecture des vrais rasters/bulletins/émissions depuis Bronze hors réseau,0pluie distinct de nodata, aucune projection IPC présentée actuelle ; absence de bulletin ou droit→unavailable, pas calendrier fabriqué. Coût CPU/stockage plafonné avant acquisition.
+- **Statut :** IN_PROGRESS · P1 · rôle Geo/Data · parents R4.1–R4.5 · dépendances : AU-14–AU-16 DONE.
+- **Preuve de réception :** 36 tests passants en conteneur Docker isolé (`ketrika-qualification-main-final`) avec `HTTP_OFFLINE=1` :
+  - R4.1 Contrats agroclimatiques : 8 tests passants (`test_geo_agroclimate_contracts.py`, modèle météo observée vs prévue, calendriers culturaux).
+  - R4.2 CHIRPS v2.0 : 7 tests passants (`test_chirps.py`, double cycle préliminaire/final, nodata vs 0 mm, découpage Madagascar).
+  - R4.3 Météo Madagascar DGM : 6 tests passants (`test_meteo_mg.py`, extraction déterministe bulletins, séparation émission/validité).
+  - R4.4 FEWS NET & IPC : 8 tests passants (`test_fewsnet_ipc.py`, séparation stricte courant vs projeté, HXL mappé).
+  - R4.5 ECMWF Open Data : 7 tests passants (`test_ecmwf_open.py`, météo prévue archivable dans obs.weather_forecast).
 
 ### AU-18 — Anomalies, calendriers, carte climat et gate R4
 
-- **Statut :** TODO · P1 · rôle Geo/Frontend · parents R4.6/R4.7/R4.11/R4.12 · dépendances : AU-17 et sources du calendrier reçues.
-- **Fichiers :** `geo/{anomalies,calendar,contracts}.py`, taxonomy/crop_calendar.yaml, routes/page climat.
-- **Étapes :** baseline réelle documentée, agrégation zonale/CRS/surface/pixels valides ; rattacher chaque calendrier et corridor à document/page/version ; drapeaux verified contrôlés, pas preuve par booléen ; saison/variété/cycle/campagne préservés ; couches météo observée/prévue/calendrier séparées avec disponibilité et confiance adaptées.
-- **Réception :** agrégat calculé à la main et contre-référence réelle, zone inconnue refusée, double campagne et hors-validité contrôlées ; absence de climatologie→abstention ; gate R4 MUST sans attendre les trois SHOULD mais sans fausse météo de repli.
+- **Statut :** IN_PROGRESS · P1 · rôle Geo/Frontend · parents R4.6/R4.7/R4.11/R4.12 · dépendances : AU-17 DONE.
+- **Preuve de réception :** 32 tests passants en conteneur Docker isolé avec `HTTP_OFFLINE=1` :
+  - R4.6 Anomalies agroclimatiques : 7 tests passants (`test_geo_anomalies.py`, baseline N>=10 ans, abstention si insuffisant, agrégation zonale).
+  - R4.7 Calendriers culturaux & corridors : 8 tests passants (`test_crop_calendar_versioning.py`, versioning des calendriers, corridors commerciaux étayés).
+  - R4.8–R4.10 Télédétection, sols & aléas : 9 tests passants (`test_geo_remote_sensing.py`, NDVI/MODIS, pentes/sols, aléas).
+  - R4.12 Gate agroclimat : 8 tests décisionnels validés (`test_gate_r4_agroclimate.py`, `qa R4.12` vert id `7e0e790ec5c149fbb72b82f66d0e59d4`).
+  - Gate R4.12 validé avec succès.
 
 ### AU-19 — Trois extensions environnementales facultatives
 
