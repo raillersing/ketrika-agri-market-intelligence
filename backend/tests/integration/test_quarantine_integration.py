@@ -254,14 +254,18 @@ def test_anti_self_link_repair_requires_quarantine_record():
         _, srid = _ensure_test_source_and_record(session)
         obs_id = str(uuid4())
 
-        # In order to simulate a historical self-link existing prior to migration 0020,
-        # we temporarily disable the trigger to insert the defective historical row
+        # Build historical state before installing guards, on a private temporary
+        # copy of the real schema. Never disable a guard on an observation table.
+        table = "historical_price_" + uuid4().hex
         session.execute(
-            text("ALTER TABLE obs.price_observation DISABLE TRIGGER trg_price_obs_superseded_only")
+            text(
+                f"CREATE TEMP TABLE {table} (LIKE obs.price_observation "
+                "INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES) ON COMMIT DROP"
+            )
         )
         session.execute(
             text(
-                "INSERT INTO obs.price_observation "
+                f"INSERT INTO {table} "
                 "(observation_id, source_record_id, natural_key, product_raw, actor_level, "
                 "period_start, period_end, price_raw, unit_raw, conversion_status, "
                 "observed_or_imputed, extraction_method, "
@@ -271,49 +275,34 @@ def test_anti_self_link_repair_requires_quarantine_record():
             ),
             {"oid": obs_id, "srid": srid},
         )
-        # Resolve the deferred self-reference before changing trigger metadata.
         session.execute(text("SET CONSTRAINTS ALL IMMEDIATE"))
-        session.execute(
-            text("ALTER TABLE obs.price_observation ENABLE TRIGGER trg_price_obs_superseded_only")
+        for name, function in (
+            ("legacy_guard", "check_obs_superseded_only"),
+            ("zz_cycle_guard", "check_supersession_acyclic"),
+        ):
+            session.execute(
+                text(
+                    f"CREATE TRIGGER {name} BEFORE INSERT OR UPDATE OR DELETE ON {table} "
+                    f"FOR EACH ROW EXECUTE FUNCTION obs.{function}()"
+                )
+            )
+        schema = session.scalar(
+            text("SELECT nspname FROM pg_namespace WHERE oid=pg_my_temp_schema()")
         )
+        qualified_table = f"{schema}.{table}"
         session.flush()
 
         # 1. Attempting to clear superseded_by without quarantine record fails
         with pytest.raises(DBAPIError) as exc_info:
-            session.execute(
-                text(
-                    "UPDATE obs.price_observation "
-                    "SET superseded_by = NULL "
-                    "WHERE observation_id = :oid"
-                ),
-                {"oid": obs_id},
-            )
-            session.flush()
+            with session.begin_nested():
+                session.execute(
+                    text(f"UPDATE {table} SET superseded_by = NULL WHERE observation_id = :oid"),
+                    {"oid": obs_id},
+                )
+                session.flush()
         assert (
             "Historical self-link cannot be cleared without an active quarantine ledger record"
             in str(exc_info.value)
-        )
-        session.rollback()
-
-        # Re-insert the historical self-linked row with trigger disabled
-        session.execute(
-            text("ALTER TABLE obs.price_observation DISABLE TRIGGER trg_price_obs_superseded_only")
-        )
-        session.execute(
-            text(
-                "INSERT INTO obs.price_observation "
-                "(observation_id, source_record_id, natural_key, product_raw, actor_level, "
-                "period_start, period_end, price_raw, unit_raw, conversion_status, "
-                "observed_or_imputed, extraction_method, "
-                "confidence, review_status, price_mga_per_base, superseded_by) "
-                "VALUES (:oid, :srid, 'nk_repair_test', 'riz', 'retail', '2026-10-01', '2026-10-01', "
-                "'2500', 'kg', 'converted', 'observed', 'deterministic', 1.0, 'accepted', 2500, :oid)"
-            ),
-            {"oid": obs_id, "srid": srid},
-        )
-        session.execute(text("SET CONSTRAINTS ALL IMMEDIATE"))
-        session.execute(
-            text("ALTER TABLE obs.price_observation ENABLE TRIGGER trg_price_obs_superseded_only")
         )
         # 2. Insert quarantine record
         qid = str(uuid4())
@@ -321,26 +310,30 @@ def test_anti_self_link_repair_requires_quarantine_record():
             text(
                 "INSERT INTO obs.quarantine_ledger "
                 "(quarantine_id, table_name, observation_id, source_record_id, reason_code, details, operator) "
-                "VALUES (:qid, 'obs.price_observation', :oid, :srid, 'HISTORICAL_SELF_LINK', '{\"repaired\": true}', 'pytest')"
+                "VALUES (:qid, :table, :oid, :srid, 'HISTORICAL_SELF_LINK', '{\"repaired\": true}', 'pytest')"
             ),
-            {"qid": qid, "oid": obs_id, "srid": srid},
+            {"qid": qid, "oid": obs_id, "srid": srid, "table": qualified_table},
         )
         session.flush()
 
         # 3. Now clearing superseded_by succeeds under quarantine guard!
         session.execute(
-            text(
-                "UPDATE obs.price_observation SET superseded_by = NULL WHERE observation_id = :oid"
-            ),
+            text(f"UPDATE {table} SET superseded_by = NULL WHERE observation_id = :oid"),
             {"oid": obs_id},
         )
         session.flush()
 
         repaired_superseded_by = session.execute(
-            text("SELECT superseded_by FROM obs.price_observation WHERE observation_id = :oid"),
+            text(f"SELECT superseded_by FROM {table} WHERE observation_id = :oid"),
             {"oid": obs_id},
         ).scalar_one()
         assert repaired_superseded_by is None
+        assert (
+            session.scalar(
+                text(f"SELECT price_raw FROM {table} WHERE observation_id=:id"), {"id": obs_id}
+            )
+            == "2500"
+        )
         session.rollback()
 
 

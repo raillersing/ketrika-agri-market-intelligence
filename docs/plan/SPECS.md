@@ -1,5 +1,11 @@
 # SPECS : spécifications techniques normatives du MVP
 
+ADR141 : la cohorte courante de normalisation exclut observations et références source en quarantaine active. Une source quarantainée ne peut créer de nouvelle observation ; ce refus précède toute supersession. Une ancienne ligne quarantainée conserve sa clé unique : sa réutilisation est refusée explicitement par observation_quarantined_identity_reserved avant insertion, sans mutation historique. Le wipe refuse toute quarantaine active sans effacement. Le CLI rebuild exige le laboratoire dédié déjà défini et l'isolation réseau réelle ; aucun rebuild actif implicite ni dérogation par variable. Les archives et la qualification AU-09 restent distinctes.
+
+ADR140 : toute nouvelle arête superseded_by sur les sept tables d'observations doit garder la lignée acyclique. Migration0022 ajoute un garde distinct parcourant et verrouillant FOR UPDATE les cibles de la chaîne ; un cycle, deadlock ou conflit de sérialisation refuse la transaction, sans retry implicite. Les gardes d'immuabilité/quarantaine et FK restent inchangées, aucun historique n'est modifié par l'installation. Réception de réparation historique sur clone séparée.
+
+Le même garde exige, pour auto-lien historique→NULL, une quarantaine active HISTORICAL_SELF_LINK portant la même source_record_id ; un motif révocable ou une référence source différente refuse la réparation. Cela complète les protections existantes, sans les remplacer.
+
 ADR139 : un429 de vérification de session reste429 avec Retry-After sur page protégée ; le cookie est conservé, accès refusé. Proxy expose X-RateLimit-Limit/Remaining existants. Le parcours QA respecte60/min par sondes authentifiées :200 et quota valides obligatoires, sous20 restantes une pause60s consignée puis une seule vérification. Aucun retry d'erreur ni modification du limiteur ;26 scénarios inchangés, nouvelle réception complète.
 
 ADR138 : le service web QA navigateur exécute qa-web.sh serve : artefact standalone du build complet et statiques reçus, BUILD_ID/server.js obligatoires, aucun build ni repli dev implicite. Garde Compose et négatifs ; middleware et26 scénarios inchangés. Nouveau check complet nécessaire après ce changement d'environnement.

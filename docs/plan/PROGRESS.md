@@ -1,5 +1,11 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T18:39:20Z] Reprise R0.8/AU-08 — lignée acyclique et réception sur clone
+
+- Base distante20552dd, réception logicielle antérieure CI40545386343 conservée pour son contenu exact ; ne pas la rejouer comme check de base. R0.8/AU-08 reste IN_PROGRESS ; aucune dépendance aval promue.
+- Mini-plan : reproduire les cycles multi-lignes dans PostgreSQL privé ; ADR/SPECS avant correction ; migration additive et gardes sous concurrence ; régressions SQL positives/négatives ; inventaire original readonly et clone SQL/S3 distinct ; comparer bruts/objets/liens et publication ; gel, check complet et E2E avant réception ; poursuivre le corpus authentique sans lever les PolicyStop.
+- Les fichiers utilisateur et les services actifs sont préservés ; travail dans fix/r08-provenance-reception-20261027. Les chiffres historiques728/164 doivent être revérifiés, pas supposés actuels.
+
 ### [2026-10-27T14:51:33Z] Reprise après publication concurrente — réception corrective à compléter
 
 - PR3 fusionnée à distance en71e87f5 pendant l'interruption ; main avancé jusqu'àef3efd2. Les huit derniers runs distants restent rouges, dont40519766861 : Missing verified commit for DONE R1.3. Aucun succès global réutilisable sur ce contenu.
@@ -4557,3 +4563,11 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Preuve consolidée R0.8_CI_40545386343_RECEPTION.md ; originaux natifs archivés sans traces/cookies, manifeste/taille/SHA et inclusion réelle des cas critiques contrôlés par vérificateur readonly code0. Historique rouge conservé ; incidents logiciels B-R091–096 reçus par ce gel.
 - AU-01–AU-07 et Irooa/Ketrikay présents sur main. Aucun DONE R ajouté :7 historiques/65 IN_PROGRESS/2 TODO ; R0.8/AU-08, provenance B-R084/B-R085, corpus B-R073 et qualifications live/modèles/humaine distincts, programme PARTIAL, aucun tag final.
 - Clôture suivante limitée aux preuves/PROGRESS/HANDOFF/rapport, exception documentaire §3.3, source applicative inchangée. Ne pas refaire le check sur simple reprise documentaire ; nouveau contenu applicatif/environnement exige sa propre réception.
+
+### [2026-10-28T21:03:00Z] AU-08 — clone historique reçu, protections applicatives en réception
+
+- Reprise sur main6130427 dans un clone Git autonome : ancien worktree préservé malgré métadonnées Git remplacées ; aucun reset du dépôt partagé. ADR140/141 et SPECS avant code, migration additive0022 et exclusion de quarantaine en normalisation ; refus explicite des clés historiques réservées et du wipe/CLI non isolé.
+- Sauvegarde originale0018 en lecture seule, restauration neuve dédiée puis0018→0022 code0. Comparateur readonly code0 :38 tables/bruts/ACL/propriétaires conservés,485 références intactes,1149 auto-liens réparés avec quarantaine permanente (728 parmi914 prix),164 références Bronze non vérifiables isolées,1313 entrées au total, zéro cycle ;14 Gold non publiés. Idempotence code0 :40 tables protégées, zéro nouveau changement.
+- Bronze original :684 versions/1565454 octets valides et inventaire inchangé avant/après ; audits code1 conservés pour164 références sans preuve, jamais convertis en succès. Copie distincte des684 versions puis relecture vérifiée, correspondance des VersionID natives explicite ; aucun objet original modifié ni manquant fabriqué.
+- Refus wipe sur ce vrai clone, en transaction READ ONLY :1313 quarantaines conservées et nouvelle comparaison SQL identique. Ciblés code0 :116/23,49s dont14 cycles/concurrence,7 anciennes quarantaines,23 comparateur,9 copie,13 nouvelles protections et50 régressions. Contre-exemples rouges archivés, aucune assertion ni contrainte SQL retirée. Check global et26 E2E à recevoir sur source figée avant fusion ; ces ciblés ne clôturent pas R0.8.
+- Originaux et limites : docs/evidence/R0.8_AU08_20261028_RECEPTION.md et archives CLONE_NATIVE/TARGETED_NATIVE/FIRST_GREEN/FIRST_RED. Dump et octets Bronze privés ; données/services actifs préservés. R0.8 reste IN_PROGRESS, AU-09/B-R073 et qualifications live/modèles/humaines non reçus, aucun tag ni DONE R ajouté.
