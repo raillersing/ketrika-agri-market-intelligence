@@ -10,6 +10,7 @@ import pytest
 spec = importlib.util.spec_from_file_location(
     "quarantine_bronze_copy", Path("/workspace/backend/scripts/copy_quarantine_bronze.py")
 )
+assert spec is not None and spec.loader is not None
 copy = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(copy)
 

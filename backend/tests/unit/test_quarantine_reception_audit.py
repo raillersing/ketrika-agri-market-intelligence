@@ -8,6 +8,7 @@ import pytest
 
 PATH = Path("/workspace/backend/scripts/qualify_quarantine_clone.py")
 spec = importlib.util.spec_from_file_location("quarantine_clone_audit", PATH)
+assert spec is not None and spec.loader is not None
 audit = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(audit)
 
