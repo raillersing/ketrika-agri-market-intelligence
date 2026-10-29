@@ -414,6 +414,7 @@ invalid_date,2026-05-30,Arrêté,DIESEL,4900,5200
 def test_omh_load_macro_record_insertion_and_idempotence():
     """Verify load_macro_record_with_supersession inserts and idempotently skips for OMH fuel ceiling."""
     mock_session = MagicMock()
+    mock_session.scalar.return_value = False
     mock_session.execute.return_value.scalar_one_or_none.return_value = None
 
     rec = MacroRecord(

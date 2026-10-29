@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from ketrika.connectors.records import PriceRecord
 from ketrika.core.models.db import PriceObservation, ReviewItem, SourceRecord
+from ketrika.core.quarantine import eligible_observation
 from ketrika.normalize.price_identity import IDENTITY_VERSION
 from ketrika.normalize.supersede import create_review_item
 
@@ -62,6 +63,7 @@ def resolve_price_identity(
             .where(
                 SourceRecord.source_id == source_id,
                 PriceObservation.superseded_by.is_(None),
+                eligible_observation(PriceObservation),
                 *(
                     getattr(PriceObservation, field) == getattr(record, field)
                     for field in dimensions

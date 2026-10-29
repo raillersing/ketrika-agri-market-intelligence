@@ -217,6 +217,7 @@ def test_ecmwf_open_unavailable_and_empty():
 def test_ecmwf_loader_watertight_separation_and_supersession():
     """Test loader into obs.weather_forecast, never contaminating obs.weather_observation (ADR-084)."""
     session = MagicMock()
+    session.scalar.return_value = False
     source_record_id = uuid.uuid4()
     source_id = "ecmwf_open"
 

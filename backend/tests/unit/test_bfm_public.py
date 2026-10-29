@@ -393,6 +393,7 @@ def test_bfm_parse_missing_content():
 def test_bfm_load_macro_record_insertion_and_idempotence():
     """Verify load_macro_record_with_supersession inserts and idempotently skips for daily BFM rate."""
     mock_session = MagicMock()
+    mock_session.scalar.return_value = False
     mock_session.execute.return_value.scalar_one_or_none.return_value = None
 
     rec = MacroRecord(

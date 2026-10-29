@@ -9,6 +9,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from ketrika.core.models.db import Base, ReviewItem
+from ketrika.core.quarantine import eligible_observation, require_eligible_source
 
 T = TypeVar("T", bound=Base)
 
@@ -59,12 +60,25 @@ def load_observation_with_supersession[T: Base](
     stmt = select(model_cls).where(
         model_any.natural_key == (lookup_key if lookup_key is not None else natural_key),
         model_any.superseded_by.is_(None),
+        eligible_observation(model_cls),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()
 
     if current_obs is None:
+        reserved = session.execute(
+            select(model_any.observation_id)
+            .where(
+                model_any.natural_key.in_({natural_key, lookup_key or natural_key}),
+                model_any.superseded_by.is_(None),
+                ~eligible_observation(model_cls),
+            )
+            .limit(1)
+        ).scalar_one_or_none()
+        if reserved is not None:
+            raise ValueError("observation_quarantined_identity_reserved")
         new_id = uuid.uuid4()
         new_obs = create_instance_fn(new_id)
+        require_eligible_source(session, getattr(new_obs, "source_record_id", None))
         session.add(new_obs)
         session.flush()
         return "inserted", new_id
@@ -102,13 +116,14 @@ def load_observation_with_supersession[T: Base](
         raise ValueError(
             "Self-supersession is forbidden: superseded_by cannot reference observation itself"
         )
+    new_obs = create_instance_fn(new_id)
+    require_eligible_source(session, getattr(new_obs, "source_record_id", None))
     upd_stmt = (
         update(model_cls).where(model_any.observation_id == current_pk).values(superseded_by=new_id)
     )
     session.execute(upd_stmt)
     session.flush()
 
-    new_obs = create_instance_fn(new_id)
     session.add(new_obs)
     session.flush()
 

@@ -1,0 +1,5 @@
+BEGIN
+SET
+ERROR:  permission denied for schema obs
+LINE 1: ...D ONLY; SET LOCAL ROLE ketrika_app; SELECT 1 FROM obs.price_...
+                                                             ^

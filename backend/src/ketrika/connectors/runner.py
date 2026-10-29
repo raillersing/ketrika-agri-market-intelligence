@@ -45,6 +45,7 @@ from ketrika.core.models.db import (
     WeatherForecast,
     WeatherObservation,
 )
+from ketrika.core.quarantine import require_eligible_observation, require_eligible_source
 from ketrika.normalize.price_bridge import identity_evidence, resolve_price_identity
 
 
@@ -125,6 +126,7 @@ def load_price_record_with_supersession(
 
     Returns: (action, observation_id) where action is 'inserted', 'idempotent_skipped', or 'superseded'.
     """
+    require_eligible_source(session, source_record_id)
     resolution = resolve_price_identity(session, record, source_id, source_record_id)
     if resolution.review_id is not None:
         return "review_required", resolution.review_id
@@ -138,6 +140,8 @@ def load_price_record_with_supersession(
         PriceObservation.superseded_by.is_(None),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()
+    if current_obs is not None:
+        require_eligible_observation(session, PriceObservation, current_obs.observation_id)
 
     price_val = record.price_value
     missing_code = record.missing_code
@@ -243,12 +247,15 @@ def load_stock_record_with_supersession(
     source_record_id: uuid.UUID,
 ) -> tuple[str, uuid.UUID]:
     """Load StockRecord into obs.stock_observation with supersession."""
+    require_eligible_source(session, source_record_id)
     nk = record.compute_natural_key(source_id)
     stmt = select(StockObservation).where(
         StockObservation.natural_key == nk,
         StockObservation.superseded_by.is_(None),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()
+    if current_obs is not None:
+        require_eligible_observation(session, StockObservation, current_obs.observation_id)
 
     q_val = record.quantity_value
     if q_val is None and record.quantity_raw:
@@ -347,12 +354,15 @@ def load_trade_flow_with_supersession(
     source_record_id: uuid.UUID,
 ) -> tuple[str, uuid.UUID]:
     """Load TradeFlowRecord into obs.trade_flow with supersession."""
+    require_eligible_source(session, source_record_id)
     nk = record.compute_natural_key(source_id)
     stmt = select(TradeFlow).where(
         TradeFlow.natural_key == nk,
         TradeFlow.superseded_by.is_(None),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()
+    if current_obs is not None:
+        require_eligible_observation(session, TradeFlow, current_obs.observation_id)
 
     if current_obs is None:
         new_obs = TradeFlow(
@@ -440,12 +450,15 @@ def load_production_record_with_supersession(
             raise ValueError("production_value_not_representable")
         if value.quantize(Decimal("0.0001")) != value:
             raise ValueError("production_precision_not_supported")
+    require_eligible_source(session, source_record_id)
     nk = record.compute_natural_key(source_id)
     stmt = select(ProductionObservation).where(
         ProductionObservation.natural_key == nk,
         ProductionObservation.superseded_by.is_(None),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()
+    if current_obs is not None:
+        require_eligible_observation(session, ProductionObservation, current_obs.observation_id)
 
     if current_obs is None:
         new_obs = ProductionObservation(
@@ -522,12 +535,15 @@ def load_cpi_record_with_supersession(
     source_record_id: uuid.UUID,
 ) -> tuple[str, uuid.UUID]:
     """Load CpiRecord into obs.cpi_observation with supersession."""
+    require_eligible_source(session, source_record_id)
     nk = record.compute_natural_key(source_id)
     stmt = select(CpiObservation).where(
         CpiObservation.natural_key == nk,
         CpiObservation.superseded_by.is_(None),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()
+    if current_obs is not None:
+        require_eligible_observation(session, CpiObservation, current_obs.observation_id)
 
     if current_obs is None:
         new_obs = CpiObservation(
@@ -592,6 +608,9 @@ def load_weather_record_with_supersession(
     source_record_id: uuid.UUID,
 ) -> tuple[str, uuid.UUID]:
     """Preserve weather revisions and supplied proof; never fabricate raw values."""
+    require_eligible_source(session, source_record_id)
+    if record.raster_source_record_id is not None:
+        require_eligible_source(session, record.raster_source_record_id)
     loc_stmt = select(Location).where(
         or_(
             Location.pcode == record.location_raw,
@@ -619,6 +638,8 @@ def load_weather_record_with_supersession(
         WeatherObservation.superseded_by.is_(None),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()
+    if current_obs is not None:
+        require_eligible_observation(session, WeatherObservation, current_obs.observation_id)
     # Refuse silent NUMERIC(10,3) rounding; raw evidence stays source supplied.
     source_value = Decimal(str(record.value))
     if not source_value.is_finite() or abs(source_value) > Decimal("9999999.999"):
@@ -678,12 +699,15 @@ def load_macro_record_with_supersession(
     source_record_id: uuid.UUID,
 ) -> tuple[str, uuid.UUID]:
     """Load MacroRecord into obs.macro_observation with supersession (ADR-069)."""
+    require_eligible_source(session, source_record_id)
     nk = record.compute_natural_key(source_id)
     stmt = select(MacroObservation).where(
         MacroObservation.natural_key == nk,
         MacroObservation.superseded_by.is_(None),
     )
     current_obs = session.execute(stmt).scalar_one_or_none()
+    if current_obs is not None:
+        require_eligible_observation(session, MacroObservation, current_obs.observation_id)
 
     # C2 : first_available_at cannot be None, fallback conservative to fetched_at or now
     first_avail = record.first_available_at
@@ -775,6 +799,7 @@ def load_event_record_with_supersession(
     source_record_id: uuid.UUID,
 ) -> tuple[str, uuid.UUID]:
     """Load EventRecord into obs.event."""
+    require_eligible_source(session, source_record_id)
     product_ids: list[uuid.UUID] = []
     location_ids: list[uuid.UUID] = []
 
@@ -846,6 +871,7 @@ def load_weather_forecast_record_with_supersession(
     source_id: str,
     source_record_id: uuid.UUID,
 ) -> tuple[str, uuid.UUID]:
+    require_eligible_source(session, source_record_id)
     loc_stmt = select(Location).where(
         or_(
             Location.pcode == record.location_raw,
