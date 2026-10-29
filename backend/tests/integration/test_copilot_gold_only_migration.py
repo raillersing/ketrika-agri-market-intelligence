@@ -5,10 +5,11 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from ketrika.core.db import get_engine
-from ketrika.core.qualification import require_synthetic_test_database
 from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
+
+from ketrika.core.db import get_engine
+from ketrika.core.qualification import require_synthetic_test_database
 
 
 @pytest.fixture
