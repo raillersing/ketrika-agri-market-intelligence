@@ -1,0 +1,15 @@
+test_cli_errors_do_not_export_credentials (test_sql_role_audit.ProfileTests.test_cli_errors_do_not_export_credentials) ... ok
+test_copilot_write_read_sequence_and_timeout_overrides_refuse (test_sql_role_audit.ProfileTests.test_copilot_write_read_sequence_and_timeout_overrides_refuse) ... ok
+test_elevated_roles_and_membership_refuse (test_sql_role_audit.ProfileTests.test_elevated_roles_and_membership_refuse) ... ok
+test_historical_missing_usage_detected (test_sql_role_audit.ProfileTests.test_historical_missing_usage_detected) ... ok
+test_missing_roles_refuse (test_sql_role_audit.ProfileTests.test_missing_roles_refuse) ... ok
+test_missing_tables_columns_and_gold_refuse (test_sql_role_audit.ProfileTests.test_missing_tables_columns_and_gold_refuse) ... ok
+test_unknown_privileges_fail_closed (test_sql_role_audit.ProfileTests.test_unknown_privileges_fail_closed) ... ok
+test_valid_does_not_mutate_input (test_sql_role_audit.ProfileTests.test_valid_does_not_mutate_input) ... ok
+test_actual_grants_inherited_public_and_historical_denial (test_sql_role_audit.SqlTests.test_actual_grants_inherited_public_and_historical_denial) ... ok
+test_actual_valid_catalog_and_readonly_transaction (test_sql_role_audit.SqlTests.test_actual_valid_catalog_and_readonly_transaction) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.706s
+
+OK

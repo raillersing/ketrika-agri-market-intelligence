@@ -4632,3 +4632,14 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 
 - Commit5271f3d poussé, PR7 ouverte. Contrôles locaux documentaires :74 statuts canoniques identiques (7/65/2), diff --check code0, syntaxe AST des quatre diagnostics sous Docker code0 ; scan Gitleaks des fichiers et archives décompressées1,58Mo, zéro secret. Contre-lecture SQL privée :15 price_observation,13 vues Gold populated, economic_dashboard non populated ; compte et réserve conformes au rapport.
 - CI40837727836/job123326370017 échoue avant tout step : GitHub signale paiements récents refusés ou plafond à augmenter. Zéro test démarré, aucun résultat logiciel déduit. B-R100 externe consigné, PR7 non fusionnée ; ni dépense, changement de facturation, contournement ou relancement aveugle. Réception PR6/main verte inchangée ; déblocage : rétablir Actions côté compte puis recevoir le contrôle de la tête exacte.
+
+### [2026-10-29T17:18:22Z] Reprise R0.8/B-R098 — audit effectif reproductible
+
+- PR7 toujours ouverte, contrôle historique refusé avant démarrage par facturation/plafond ; aucune relance aveugle. Nouveau worktree indépendant fix/r08-sql-role-audit-20261029, actif préservé.
+- Mini-plan : diagnostic readonly autonome et tests dédiés ; inventaire borné des schémas/tables/séquences et privilèges effectifs des deux rôles du contrat ; refus si rôle absent/surprivilégié/profil incomplet, ne lire ni secrets ni lignes métier ; conserver les défauts et produire un rapport structuré sans GRANT. Tester positifs/négatifs sur instance dédiée, puis capturer le clone historique sans corriger ses ACL. Documentation §3.3 seulement, aucun DONE produit/gate/tag.
+
+### [2026-10-29T17:27:32Z] Audit SQL readonly reçu ; écarts historiques détaillés
+
+- Nouveau diagnostic docs/diagnostics : READ ONLY/REPEATABLE READ, budget local5s, inventaire borné et privilèges effectifs incluant PUBLIC/héritage, aucun secret/GRANT/ligne métier. Ruff2 et mypy2 verts ;10 tests/1,706s dont2 scénarios PostgreSQL réel, zéro skip. Premier transfert chown refusé sous cap_drop ALL corrigé par --no-same-owner ; première suite SQL avant readiness rouge conservée, jamais promue.
+- Clone historique code1 attendu :55 objets par rôle,28 écarts (7 USAGE absents,20 droits applicatifs manquants,1 SELECT latent copilot sur obs.quarantine_ledger accordé par0020). Aucune lecture effective du copilote affirmée sans USAGE.40 tables/comptes/empreintes/liens/provenance/ACL, révision et Gold identiques avant/après, seul captured_at ignoré. Reçus natifs et runbook joints.
+- B-R098 reste non qualifié, anomalie distincte B-R101 du grant copilote à traiter sans réécrire0020 ni élargir les rôles historiques. Aucun statut R changé et aucun gate/donnée/déploiement reçu ; exception readonly §3.3, référence logicielle CI40825552642 intacte.
