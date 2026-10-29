@@ -1,4 +1,5 @@
 """Verify a targeted ACL migration changed no historical business state."""
+
 import json
 from pathlib import Path
 
@@ -19,11 +20,23 @@ assert before == after, "Unexpected change outside the one declared ACL"
 failures = audit["assessment"]["failures"]
 assert len(failures) == 27 and all(row["role"] == "ketrika_app" for row in failures)
 assert {row["reason"] for row in failures} == {
-    "missing_schema_usage", "missing_select", "missing_insert", "missing_update"
+    "missing_schema_usage",
+    "missing_select",
+    "missing_insert",
+    "missing_update",
 }
-print(json.dumps({
-    "passed": True, "tables_preserved": len(before["tables"]),
-    "acl_removed": removed, "historical_application_profile_failures": len(failures),
-    "r08_qualified": False, "deployment_qualified": False,
-    "scope": "isolated second historical clone; one ACL removed, no business change"
-}, indent=2, sort_keys=True))
+print(
+    json.dumps(
+        {
+            "passed": True,
+            "tables_preserved": len(before["tables"]),
+            "acl_removed": removed,
+            "historical_application_profile_failures": len(failures),
+            "r08_qualified": False,
+            "deployment_qualified": False,
+            "scope": "isolated second historical clone; one ACL removed, no business change",
+        },
+        indent=2,
+        sort_keys=True,
+    )
+)
