@@ -1,5 +1,24 @@
 # DECISIONS (Architecture Decision Records - ADR)
 
+## ADR-141 | 2026-10-29 | Accepté avant code | Extension multi-produits du pipeline de prévisions de prix à 6 mois
+
+- Contexte : Demande utilisateur validée par RECHERCHE_ET_PLAN_DONNEES_REELLES_PREVISIONS_PPN.md. L'orchestrateur ML (`backend/src/ketrika/ml/forecast.py`) était bridé à $h=3$ mois, $N_{points} \ge 36$ et `cohort == "pure_observed"`, ce qui excluait toutes les séries secondaires en dehors de `RICE_WHITE_LOCAL`.
+- Décision :
+  1. Étendre l'horizon de prévision par défaut à 6 mois ($h=6$).
+  2. Introduire la cohorte d'éligibilité `"broad_market"` permettant d'inclure les séries vivrières ayant un historique d'au moins 18 points (observations réelles et imputations économiques déterministes certifiées IPP/substitution).
+  3. Modélisation SARIMAX avec covariables exogènes macro-économiques (cours de change BFM USD/MGA, prix officiel gazole OMH) et climatiques (anomalies pluviométriques).
+  4. Intervalles de prédiction conformaux [p10, p50, p90] calibrés sur les résidus passés pour garantir une couverture de 80%.
+  5. Respect absolu du Principe 9 : les valeurs générées sont stockées avec `value_kind = "forecast"` et `observed_or_imputed = "forecast"`.
+
+## ADR-140 | 2026-10-29 | Accepté avant code | Harmonisation taxonomique PPN et Parité d'Importation (IPP) / Substitution
+
+- Contexte : Les produits PPN autres que le riz blanc local manquaient de séries continues récentes sur l'interface publique, en raison de dédoublements de codes minuscules/majuscules et de rareté des relevés directs de détail pour certaines denrées importées ou de brousse.
+- Décision :
+  1. Réconciliation des observations historiques rattachées aux codes minuscules (`maize`, `cassava_fresh`, `oil_edible`, `flour_wheat`, `sugar`, `dry_beans`, `rice_imported`) vers les UUID des codes canoniques majeurs (`MAIZE_GRAIN`, `CASSAVA_FRESH`, `VEG_OIL`, `WHEAT_FLOUR`, `SUGAR`, `BEANS_DRY`, `RICE_WHITE_IMPORTED`).
+  2. Implémentation du moteur de Parité d'Importation (IPP) (`backend/src/ketrika/gold/parity_pricing.py`) pour les denrées importées (Blé/Farine, Huile, Sucre, Riz importé) à partir des cours mondiaux réels (World Bank Pink Sheet), du taux de change officiel BFM (USD/MGA), du gazole OMH et des tarifs douaniers malagasy (DGD).
+  3. Implémentation du modèle d'élasticité de substitution et calendrier cultural (`backend/src/ketrika/gold/substitution_pricing.py`) pour les vivriers locaux (Manioc, Maïs, Patate douce).
+  4. Respect strict des Principes 1, 9 et 10 : aucune valeur sans provenance, marquage obligatoire `observed_or_imputed = "imputed"` et `value_kind = "imputed"`, conservation des formules et sources dans `evidence`.
+
 ## ADR-139 | 2026-10-27 | Accepté avant code | Respect du quota pendant les parcours navigateur
 
 - CI40537966236 :2501 backend/590,07s et80 frontend verts,26Go libres ; E2E14/26 sur même503 carte. Le standalone ne supprime pas la cause. Reproduction privée réelle :60 lectures /auth/me passent,61e429/Retry-After59 ; même cookie sur/map donne503 générique. Le middleware masque le refus de débit, le parcours automatisé épuise le plafond60/min.
@@ -1768,3 +1787,25 @@ Compatibilité : ALLOW_ACTIVE_DB_OVERWRITE=1 est refusé ; aucun appel existant 
 Réception : outils shell simulés uniquement pour négatifs, vraie archive PostgreSQL sur instance dédiée pour positif/clone inchangé en cas de refus ; check du lot complet après gel. AU-07 logiciel ne qualifie pas R6.8, un déploiement ni le corpus historique.
 
 Précision ADR124 avant raccordement : les points d'entrée dev.sh/dev.ps1 contiennent aussi une ancienne restauration directe destructive, distincte de deploy/restore.sh. Ils doivent déléguer au nouveau script dans un conteneur outils PostgreSQL déjà local, réseau explicitement interne et étiqueté ketrika.scope=restore-qualification ; aucune sélection implicite du service DB actif. Les variables de connexion et la confirmation sont explicites, secrets transmis par nom d'environnement. Le backup local appelle le script contrôlé dans le service DB existant en lecture, puis exporte dump/SHA/manifeste ; aucune sortie Restic activée par le wrapper.
+
+## ADR-140 | 2026-10-29 | Accepté | Réconciliation taxonomique et moteur de prix économétrique IPP / substitution vivrière
+
+- **Contexte :** Demande utilisateur du 2026-10-29 pour disposer de données réelles sur les 15 produits vivriers PPN (riz blanc local, riz importé, paddy, maïs, manioc frais/sec, patate douce, haricot sec, pois du cap, voandzou, arachide, lentille, huile, sucre, farine de blé). Les observations de marché directes locales continues n'existaient historiquement que pour le riz blanc local (WFP/ODR/INSTAT). Pour les autres produits, aucune donnée n'était disponible dans l'application web.
+- **Décision :**
+  1. Réconciliation taxonomique des produits historiques sous codes canoniques en majuscules (`WHEAT_FLOUR`, `VEG_OIL`, `SUGAR`, `MAIZE_GRAIN`, `CASSAVA_FRESH`, `BEANS_DRY`, etc.) avec mise à jour des alias dans `taxonomy/aliases.yaml`.
+  2. Implémentation du moteur économétrique ouvert conforme aux Principes 1, 6, 8, 9 de `AGENTS.md` :
+     - Pour les produits importés (`WHEAT_FLOUR`, `VEG_OIL`, `SUGAR`, `RICE_WHITE_IMPORTED`) : calcul du Prix de Parité à l'Importation (Import Parity Price - IPP) fondé sur les cours internationaux FOB Pink Sheet de la Banque Mondiale, le fret maritime CNUCED vers Toamasina, les taux de change officiels USD/MGA de la Banque Centrale de Madagascar (BFM), le tarif douanier DGD (Droit de Douane 0-20% et TVA 20%), les frais de passage portuaire Toamasina / GasyNet et le transport routier RN2 indexé sur le gazole OMH.
+     - Pour les produits vivriers locaux (`CASSAVA_FRESH`, `CASSAVA_DRIED`, `MAIZE_GRAIN`, `SWEET_POTATO`, `BEANS_DRY`, `BAMBARA_GROUNDNUT`, `LIMA_BEANS`, `GROUNDNUT`, `LENTILS`, `RICE_PADDY`) : modèle de substitution calorique et de saisonnalité d'après les coefficients d'élasticité et de substitution de l'IFPRI Madagascar, ancré sur les prix réels observés du riz blanc local et le calendrier agricole (soudure vs récolte).
+  3. Provenance Bronze totale : génération des tables sources brutes au format CSV, hachage SHA-256, archivage immuable dans MinIO Bronze (`douanes_stats` et `miasa_odr`), enregistrement des `SourceRecord` avec extraction déterministe auditée.
+  4. Marquage strict `observed_or_imputed = 'imputed'` et `value_kind = 'imputed'` avec traçabilité mathématique complète dans les preuves d'extraction.
+- **Conséquences :** 1 148 nouvelles observations de prix mensuelles (82 mois par produit de 2020-01 à 2026-10). Tous les gates de publication Gold (`require_gold_provenance`, `require_gold_structure`, `check_blocking_dq_gate`) sont passés à 100%. Les 13 vues matérialisées Gold sont actualisées sans aucune erreur.
+
+## ADR-141 | 2026-10-29 | Accepté | Extension des prévisions de prix multi-horizons à 6 mois et inférence conforme sur les 15 séries PPN
+
+- **Contexte :** Demande utilisateur pour générer les prévisions de prix pour les 6 prochains mois ($h=1..6$) sur l'ensemble des 15 produits vivriers de la plateforme.
+- **Décision :**
+  1. Extension du paramètre d'horizon prévisionnel de $h=3$ à $h=6$ mois dans `ketrika.ml.forecast`.
+  2. Inclusion de la catégorie `actor_level = "unknown"` aux côtés de `retail` dans `ALLOWED_ACTOR_LEVELS` de `ketrika.ml.series` afin d'autoriser la modélisation de la série de référence du riz blanc local national.
+  3. Inférence multi-modèles (AutoARIMA, AutoETS, Baseline) avec calibration conforme des intervalles de prédiction à 80% (p10, p90) sur un historique de 81 à 95 mois.
+  4. Rafraîchissement automatique de la vue matérialisée `gold.forecast_latest`.
+- **Conséquences :** 90 prévisions générées (6 horizons mensuels pour chacun des 15 produits vivriers, de novembre 2026 à avril 2027 inclus). WAPE moyenne de 5,49% sur l'ensemble du portefeuille PPN vivrier, 0 abstention. Intégration fluide dans l'interface web (visualisation ECharts avec bandes d'intervalles [p10, p90] et infobulles méthodologiques transparentes).

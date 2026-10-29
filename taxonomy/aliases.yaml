@@ -159,12 +159,26 @@
   note: ""
   evidence: "Colonne commodity du dataset WFP HDX Food Prices Madagascar."
 
+- alias: "Beans"
+  lang: en
+  product_code: BEANS_DRY
+  confidence: 0.95
+  note: "Commodity header in World Bank RTFP"
+  evidence: "Colonne commodity du dataset World Bank RTFP Madagascar."
+
 - alias: "Oil (vegetable)"
   lang: en
   product_code: VEG_OIL
   confidence: 0.95
   note: ""
   evidence: "Colonne commodity du dataset WFP HDX Food Prices Madagascar."
+
+- alias: "Oil"
+  lang: en
+  product_code: VEG_OIL
+  confidence: 0.95
+  note: "Commodity header in World Bank RTFP"
+  evidence: "Colonne commodity du dataset World Bank RTFP Madagascar."
 
 - alias: "Sugar"
   lang: en

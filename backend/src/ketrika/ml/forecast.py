@@ -89,9 +89,9 @@ def compute_series_fingerprint(data_cutoff: date, series_list: list[Any]) -> str
 def run_price_forecasting_pipeline(
     session: Session,
     data_cutoff: date,
-    horizon: int = 3,
+    horizon: int = 6,
     min_points: int | None = None,
-    cohort: str = "pure_observed",
+    cohort: str = "all",
     dataset_fingerprint: str | None = None,
     refresh_gold: bool = True,
 ) -> dict[str, Any]:
@@ -317,3 +317,29 @@ def run_price_forecasting_pipeline(
         "metrics": overall_metrics,
         "dataset_fingerprint": computed_fingerprint,
     }
+
+
+if __name__ == "__main__":
+    import argparse
+
+    from ketrika.core.db import get_session
+
+    parser = argparse.ArgumentParser(description="Run Ketrika price forecasting pipeline")
+    parser.add_argument("--cutoff", type=str, default=None, help="Cutoff date YYYY-MM-DD")
+    parser.add_argument("--horizon", type=int, default=6, help="Forecast horizon (months)")
+    parser.add_argument("--cohort", type=str, default="all", help="pure_observed, mixed, or all")
+    args = parser.parse_args()
+
+    cutoff_date = date.fromisoformat(args.cutoff) if args.cutoff else date.today()
+    with get_session() as session:
+        res = run_price_forecasting_pipeline(
+            session=session,
+            data_cutoff=cutoff_date,
+            horizon=args.horizon,
+            cohort=args.cohort,
+            refresh_gold=True,
+        )
+        session.commit()
+        print(
+            f"Forecasting complete: {res['forecasts_generated']} forecasts generated across {res['n_series']} series."
+        )
