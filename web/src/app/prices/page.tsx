@@ -76,33 +76,33 @@ function PricesContent() {
         <section className="rounded-xl border border-border bg-card p-5"><h2 className="text-lg font-medium">Points mensuels de la sélection</h2><p className="mt-2 text-sm text-muted-foreground">{rows.length} points disponibles · L’export reprend ces filtres.</p><div className="mt-4 overflow-x-auto"><table className="w-full text-left text-sm"><caption className="sr-only">Période, zone, stade de vente, prix et nature pour {product}</caption><thead className="text-muted-foreground"><tr>{["Période", "Zone", "Stade de vente", "Prix", "Nature", "Source"].map(title => <th key={title} scope="col" className="p-3 font-medium">{title}</th>)}</tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.month}-${row.location_pcode}-${row.actor_level}-${index}`} className="border-t border-border"><td className="whitespace-nowrap p-3">{formatMonthYear(row.month)}</td><th scope="row" className="p-3 font-medium">{row.location_name || row.location_pcode || "Non renseignée"}</th><td className="p-3">{saleStageLabel(row.actor_level)}</td><td className="whitespace-nowrap p-3">{row.currency === "MGA" ? formatPrice(row.median_price, row.unit) : `${row.median_price} ${row.currency}/${row.unit}`}</td><td className="p-3"><ValueKindBadge kind={row.value_kind} /></td><td className="p-3">{row.sources?.length ? row.sources.map(source => <SourceBadge key={source} sourceId={source} />) : "Source non renseignée"}</td></tr>)}</tbody></table></div></section>
       </>}
       {comparableForecasts.length > 0 && (
-        <section className="rounded-xl border border-purple-500/30 bg-purple-500/5 p-5 space-y-4">
+        <section className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-5 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-purple-500 inline-block"></span>
+                <span className="h-3 w-3 rounded-full bg-orange-500 inline-block shadow-sm shadow-orange-500/50"></span>
                 Tableau prévisionnel des prix à 6 mois (Novembre 2026 – Avril 2027)
               </h2>
               <p className="text-xs text-muted-foreground mt-1">
                 Projections multi-horizons (h=1..6) calculées avec intervalles de confiance conformes à 80% [p10, p90] et modélisation de la saisonnalité agricole (soudure vs récolte).
               </p>
             </div>
-            <span className="text-xs font-mono px-3 py-1 rounded-full bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30">
+            <span className="text-xs font-mono px-3 py-1 rounded-full bg-orange-500/15 text-orange-800 dark:text-orange-300 border border-orange-500/30 font-semibold">
               Modèle : {comparableForecasts[0]?.model_effective} (WAPE ~5.5%)
             </span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-1">
             {comparableForecasts.map((fc) => (
-              <div key={fc.target_period} className="rounded-xl border border-border bg-card p-3.5 text-center space-y-1.5 shadow-sm">
+              <div key={fc.target_period} className="rounded-xl border border-orange-500/20 bg-card p-3.5 text-center space-y-1.5 shadow-sm hover:border-orange-500/40 transition-colors">
                 <div className="text-xs font-medium text-muted-foreground">
-                  {formatMonthYear(fc.target_period)} <span className="font-mono text-[10px] text-purple-500">(h={fc.horizon})</span>
+                  {formatMonthYear(fc.target_period)} <span className="font-mono text-[10px] text-orange-600 dark:text-orange-400 font-bold">(h={fc.horizon})</span>
                 </div>
-                <div className="text-base font-bold text-foreground font-mono">
+                <div className="text-lg font-extrabold text-orange-600 dark:text-orange-400 font-mono tracking-tight">
                   {formatPrice(fc.p50, fc.unit, fc.currency === "MGA" ? "Ar" : fc.currency)}
                 </div>
                 {fc.p10 !== null && fc.p90 !== null && (
-                  <div className="text-[11px] text-purple-600 dark:text-purple-400 font-mono">
+                  <div className="text-[11px] text-orange-700/80 dark:text-orange-300/80 font-mono">
                     [{Math.round(fc.p10).toLocaleString("fr-FR")} – {Math.round(fc.p90).toLocaleString("fr-FR")}]
                   </div>
                 )}

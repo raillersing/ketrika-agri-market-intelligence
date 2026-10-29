@@ -154,7 +154,7 @@ export function PriceChart({
             </div>
             <div style="margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
               <span style="color: ${palette.muted};">${isForecast ? "Prévision (p50) :" : "Prix médian :"}</span>
-              <strong style="color: ${palette.text}; font-family: monospace;">${escapeHtml(formatPrice(item.medianPrice, unit, currencyLabel))}</strong>
+              <strong style="color: ${isForecast ? palette.forecast : palette.text}; font-family: monospace;">${escapeHtml(formatPrice(item.medianPrice, unit, currencyLabel))}</strong>
             </div>
             ${
               item.p10Price !== undefined && item.p90Price !== undefined && item.p10Price !== null && item.p90Price !== null
@@ -234,7 +234,7 @@ export function PriceChart({
               type: "line",
               data: bandRange,
               lineStyle: { opacity: 0 },
-              areaStyle: { color: hasForecast ? "rgba(192, 132, 252, 0.18)" : palette.band },
+              areaStyle: { color: hasForecast ? (theme === "dark" ? "rgba(251, 146, 60, 0.20)" : "rgba(234, 88, 12, 0.14)") : palette.band },
               stack: "confidence-band",
               symbol: "none",
             },
