@@ -2,13 +2,15 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowRight, KeyRound } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from") || "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -29,13 +31,18 @@ export default function LoginPage() {
       }
       const data = await response.json();
       if (typeof data.token !== "string" || !data.token) throw new Error("Réponse de connexion invalide");
-      router.push("/");
+      router.push(from);
       router.refresh();
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : "Erreur de connexion");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFillDemo = () => {
+    setEmail("admin@ketrika.mg");
+    setPassword("AdminKetrika2026!");
   };
 
   return (
@@ -51,9 +58,35 @@ export default function LoginPage() {
           <div><label htmlFor="login-password" className="mb-2 block text-sm text-foreground">Mot de passe</label><input id="login-password" name="password" type="password" autoComplete="current-password" required value={password} onChange={event => setPassword(event.target.value)} aria-describedby={error ? "login-error" : undefined} className="min-h-12 w-full rounded-lg border border-border bg-foreground/[0.03] px-3 text-base text-foreground outline-none transition-colors focus:border-border focus:ring-1 focus:ring-ring" /></div>
           <button type="submit" disabled={loading} aria-busy={loading} className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg bg-primary-action px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-wait disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"><span>{loading ? "Connexion en cours…" : "Se connecter"}</span><ArrowRight aria-hidden="true" className="h-4 w-4" /></button>
         </form>
+
+        <div className="mt-6 p-4 rounded-xl border border-primary/20 bg-primary/5 text-xs space-y-2">
+          <div className="font-semibold text-primary-readable flex items-center gap-1.5">
+            <KeyRound className="w-3.5 h-3.5" />
+            Accès local configuré :
+          </div>
+          <div className="text-muted-foreground font-mono text-[11px]">
+            admin@ketrika.mg / AdminKetrika2026!
+          </div>
+          <button
+            type="button"
+            onClick={handleFillDemo}
+            className="mt-1 inline-flex items-center text-xs text-primary-readable underline font-medium hover:opacity-80"
+          >
+            Remplir automatiquement les champs
+          </button>
+        </div>
+
         <p className="mt-6 text-xs leading-6 text-muted-foreground">Accès réservé aux comptes configurés pour cet environnement.</p>
       </section>
       <footer className="mx-auto flex w-full max-w-5xl flex-wrap justify-between gap-4 border-t border-border py-6 text-xs text-muted-foreground"><span>Un produit {BRAND.company}</span><Link href="/about" prefetch={false} className="inline-flex min-h-11 items-center rounded py-2 text-muted-foreground hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">À propos d’{BRAND.product} et de {BRAND.company}</Link></footer>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <React.Suspense fallback={<div className="min-h-dvh flex items-center justify-center">Chargement...</div>}>
+      <LoginContent />
+    </React.Suspense>
   );
 }
