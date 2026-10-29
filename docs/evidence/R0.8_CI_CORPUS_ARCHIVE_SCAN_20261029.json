@@ -1,0 +1,31 @@
+{
+  "network_requests": 0,
+  "rights_or_revision_qualified": false,
+  "matches": [
+    {
+      "source_id": "miasa_odr",
+      "hostname": "www.agriculture.gov.mg",
+      "classification": "synthetic",
+      "records": 3
+    },
+    {
+      "source_id": "mincc_ppn",
+      "hostname": "www.commerce.gov.mg",
+      "classification": "synthetic",
+      "records": 10
+    },
+    {
+      "source_id": "wb_rtfp_mdg",
+      "hostname": "microdata.worldbank.org",
+      "classification": "authentic",
+      "records": 2
+    },
+    {
+      "source_id": "wb_rtfp_mdg",
+      "hostname": "microdata.worldbank.org",
+      "classification": "not_in_received_manifest",
+      "records": 1
+    }
+  ],
+  "scope": "selected archived hashes only; no source URL or business values exported"
+}
