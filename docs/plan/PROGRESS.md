@@ -4648,3 +4648,14 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 
 - ADR146/SPECS avant code. Mini-plan : migration additive0023 après0022 ; retrait SELECT copilote sur le seul registre obs, refus transactionnel si privilège hérité subsiste ; scénarios SQL rôle réel, Gold conservé et refus hors Gold ; développement ciblé puis gel et check complet dans QA dédiée inactive, pas sur actif ; conserver le rouge externe GitHub comme blocage distinct de la réception locale.
 - Diagnostic9b50710 reçu séparément :10 tests/1,706s et scan1,46Mo sans secret ; empreintes des40 tables historiques et ACL inchangées. Aucune preuve passée ne reçoit automatiquement cette nouvelle migration applicative.
+
+### [2026-10-29T17:58:48Z] B-R101 — source figée et réception locale en cours
+
+- Candidat69aeb37b4d026c6c83c68d63d678310611172fc1 poussé, PR8 draft dépend de PR7. Lint/format2 fichiers et typage avec MYPYPATH reçu verts ; premier typage hors contexte refusait les imports non py.typed, sans changement ni ignore du produit.
+- Seconde base neuve ketrika_restore_copilot_20261029 créée par TEMPLATE du clone AU08 isolé/inactif, référence originale conservée. Alembic0022→0023 code0 et nouvelle exécution head code0. Vérification native code0 :40 tables/comptes/empreintes/liens/provenance/Gold identiques, seul SELECT direct copilot_ro sur registre retiré et numéro Alembic avancé ;27 écarts historiques applicatifs restent refusés. Aucune modification de l'actif ou du clone référence.
+- Check complet unique lancé via scripts/dev.ps1 check sur copie autonome Windows Temp ketrika-copilot-reception-20261029, source69aeb37 figée. QA locale distincte, ownership contrôlé ; API/web QA auparavant inactives en tests, aucun processus final interrompu ni autre service arrêté. Journal natif Temp/ketrika-copilot-check-69aeb37-20261029.log, processus exec81146 : reprendre ce processus connu, ne pas relancer un check de base à la session suivante. Aucune réception avant son code final et les E2E/rapports applicables.
+
+### [2026-10-29T18:06:37Z] Réception69aeb37 rouge avant tests — contexte du lint corrigé
+
+- Check exec81146 terminé code1 : Ruff I001 sur le seul nouvel import ketrika dans le test de migration ; pytest/frontend/E2E non démarrés. Rapport natif rouge conservé. Le ciblé exécuté hors arborescence ne classait pas ketrika comme first-party, contrairement au vrai /app/src du check.
+- Correction dans l'arborescence réelle /app/tests + configuration reçue, sans modifier les règles, assertions, sélections ou seuils. Nouveau commit/source puis réception complète requise ; ne pas reprendre le processus terminé ni annoncer les tests verts. La migration et sa preuve SQL sur clone sont inchangées, seule organisation des imports du test corrigée.
