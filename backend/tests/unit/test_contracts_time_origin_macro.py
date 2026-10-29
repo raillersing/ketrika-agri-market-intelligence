@@ -79,6 +79,7 @@ def test_macro_record_natural_key_determinism() -> None:
 def test_macro_record_loader_insertion_and_idempotence() -> None:
     """Criterion 2: MacroRecord loading is inserted first, then skipped idempotently on identical replay."""
     session = MagicMock()
+    session.scalar.return_value = False
     source_record_id = uuid.uuid4()
     source_id = "instat_macro"
 
@@ -118,6 +119,7 @@ def test_macro_record_loader_insertion_and_idempotence() -> None:
 def test_contract_c2_time_availability_conservative_fallback() -> None:
     """Criterion 3 (Contract C2): first_available_at cannot be backdated; falls back conservative to fetched_at."""
     session = MagicMock()
+    session.scalar.return_value = False
     source_record_id = uuid.uuid4()
     source_id = "bcm_macro"
     fetched_timestamp = datetime(2024, 10, 1, 12, 0, 0, tzinfo=UTC)
@@ -150,6 +152,7 @@ def test_contract_c2_time_availability_conservative_fallback() -> None:
 def test_macro_supersession_on_revised_value() -> None:
     """Criterion 4: Revision of macroeconomic estimate supersedes previous observation non-destructively."""
     session = MagicMock()
+    session.scalar.return_value = False
     source_record_id = uuid.uuid4()
     source_id = "instat_macro"
 

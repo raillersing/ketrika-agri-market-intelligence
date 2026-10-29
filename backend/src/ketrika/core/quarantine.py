@@ -51,6 +51,21 @@ def require_eligible_source(session: Session, identifier: Any) -> None:
         raise ValueError("observation_source_quarantined")
 
 
+def require_eligible_observation(session: Session, model: type[Base], identifier: Any) -> None:
+    row: Any = model
+    try:
+        observation_id = UUID(str(identifier))
+    except (ValueError, TypeError, AttributeError):
+        raise ValueError("observation_identity_required") from None
+    excluded = session.scalar(
+        select(~eligible_observation(model)).where(row.observation_id == observation_id)
+    )
+    if type(excluded) is not bool:
+        raise ValueError("quarantine_check_unavailable")
+    if excluded:
+        raise ValueError("observation_quarantined_identity_reserved")
+
+
 def require_no_active_quarantine(session: Session) -> None:
     excluded = session.scalar(select(exists().where(QuarantineLedger.revoked_at.is_(None))))
     if type(excluded) is not bool:

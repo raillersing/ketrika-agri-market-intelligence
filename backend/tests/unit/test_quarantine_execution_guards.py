@@ -61,3 +61,77 @@ def test_cli_rebuild_never_reaches_replay_on_unselected_destination(monkeypatch)
         rebuild.main()
     assert exit_info.value.code == 1
     replay.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "loader_name",
+    [
+        "load_price_record_with_supersession",
+        "load_stock_record_with_supersession",
+        "load_trade_flow_with_supersession",
+        "load_production_record_with_supersession",
+        "load_cpi_record_with_supersession",
+        "load_weather_record_with_supersession",
+        "load_macro_record_with_supersession",
+        "load_event_record_with_supersession",
+        "load_weather_forecast_record_with_supersession",
+    ],
+)
+@pytest.mark.parametrize("state,reason", [(True, "source_quarantined"), (None, "unavailable")])
+def test_every_direct_entry_refuses_ineligible_or_unknown_source_before_writes(
+    loader_name, state, reason
+):
+    from types import SimpleNamespace
+
+    from ketrika.connectors import runner
+
+    session = MagicMock()
+    session.scalar.return_value = state
+    record = SimpleNamespace(value=1.25)
+    with pytest.raises(ValueError, match=reason):
+        getattr(runner, loader_name)(session, record, "synthetic", uuid4())
+    session.execute.assert_not_called()
+    session.add.assert_not_called()
+    session.flush.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "state,reason", [(True, "identity_reserved"), (None, "unavailable"), (False, None)]
+)
+def test_selected_observation_requires_an_explicit_admissible_state(state, reason):
+    from ketrika.core.models.db import PriceObservation
+    from ketrika.core.quarantine import require_eligible_observation
+
+    session = MagicMock()
+    session.scalar.return_value = state
+    if reason:
+        with pytest.raises(ValueError, match=reason):
+            require_eligible_observation(session, PriceObservation, uuid4())
+    else:
+        require_eligible_observation(session, PriceObservation, uuid4())
+    session.execute.assert_not_called()
+    session.add.assert_not_called()
+
+
+def test_selected_observation_identity_is_required_before_query():
+    from ketrika.core.models.db import PriceObservation
+    from ketrika.core.quarantine import require_eligible_observation
+
+    session = MagicMock()
+    with pytest.raises(ValueError, match="identity_required"):
+        require_eligible_observation(session, PriceObservation, None)
+    session.scalar.assert_not_called()
+
+
+def test_weather_rejects_quarantined_secondary_raster_before_location_or_write():
+    from types import SimpleNamespace
+
+    from ketrika.connectors import runner
+
+    session = MagicMock()
+    session.scalar.side_effect = [False, True]
+    record = SimpleNamespace(raster_source_record_id=uuid4())
+    with pytest.raises(ValueError, match="source_quarantined"):
+        runner.load_weather_record_with_supersession(session, record, "synthetic", uuid4())
+    session.execute.assert_not_called()
+    session.add.assert_not_called()

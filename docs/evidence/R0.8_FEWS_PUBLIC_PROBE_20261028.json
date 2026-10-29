@@ -1,0 +1,17 @@
+{
+  "authenticity_qualified": false,
+  "editions": [],
+  "finished_at": "2026-10-28T21:23:49.622660+00:00",
+  "reason": "Fetching disallowed by robots.txt: https://fdw.fews.net/api/marketpricefacts.csv",
+  "redistribution_rights_verified": false,
+  "requests": [
+    {
+      "path": "/robots.txt",
+      "status": 200
+    }
+  ],
+  "source": "fewsnet_price_history_probe",
+  "source_payload_persisted": false,
+  "started_at": "2026-10-28T21:23:48.010101+00:00",
+  "status": "policy_stopped"
+}

@@ -1,0 +1,15 @@
+BEGIN
+SET
+auth|ketrika||f|f
+dq|ketrika||f|f
+gold|ketrika|{ketrika=UC/ketrika,ketrika_app=U/ketrika,copilot_ro=U/ketrika}|t|t
+meta|ketrika||f|f
+ml|ketrika||f|f
+obs|ketrika||f|f
+ops|ketrika||f|f
+ref|ketrika||f|f
+gold|ketrika|r|{ketrika_app=r/ketrika,copilot_ro=r/ketrika}
+copilot_ro|f|t|f|f|t|f|f|-1||{statement_timeout=5s}
+ketrika|t|t|t|t|t|t|t|-1||
+ketrika_app|f|t|f|f|t|f|f|-1||
+COMMIT
