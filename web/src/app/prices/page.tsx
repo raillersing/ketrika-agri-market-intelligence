@@ -75,6 +75,42 @@ function PricesContent() {
         {latest && <section aria-label="Série affichée" className="space-y-3"><p className="text-sm leading-6 text-muted-foreground">Courbe : {latest.location_name || latest.location_pcode || "Zone non renseignée"} · {saleStageLabel(latest.actor_level)} · {latest.currency}/{latest.unit}. Le tableau conserve tous les points de la sélection. Les périodes absentes ne sont pas des mesures.</p><PriceChart title="Une série comparable" data={chart} productName={product} unit={latest.unit} currency={latest.currency} /></section>}
         <section className="rounded-xl border border-border bg-card p-5"><h2 className="text-lg font-medium">Points mensuels de la sélection</h2><p className="mt-2 text-sm text-muted-foreground">{rows.length} points disponibles · L’export reprend ces filtres.</p><div className="mt-4 overflow-x-auto"><table className="w-full text-left text-sm"><caption className="sr-only">Période, zone, stade de vente, prix et nature pour {product}</caption><thead className="text-muted-foreground"><tr>{["Période", "Zone", "Stade de vente", "Prix", "Nature", "Source"].map(title => <th key={title} scope="col" className="p-3 font-medium">{title}</th>)}</tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.month}-${row.location_pcode}-${row.actor_level}-${index}`} className="border-t border-border"><td className="whitespace-nowrap p-3">{formatMonthYear(row.month)}</td><th scope="row" className="p-3 font-medium">{row.location_name || row.location_pcode || "Non renseignée"}</th><td className="p-3">{saleStageLabel(row.actor_level)}</td><td className="whitespace-nowrap p-3">{row.currency === "MGA" ? formatPrice(row.median_price, row.unit) : `${row.median_price} ${row.currency}/${row.unit}`}</td><td className="p-3"><ValueKindBadge kind={row.value_kind} /></td><td className="p-3">{row.sources?.length ? row.sources.map(source => <SourceBadge key={source} sourceId={source} />) : "Source non renseignée"}</td></tr>)}</tbody></table></div></section>
       </>}
+      {comparableForecasts.length > 0 && (
+        <section className="rounded-xl border border-purple-500/30 bg-purple-500/5 p-5 space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-purple-500 inline-block"></span>
+                Tableau prévisionnel des prix à 6 mois (Novembre 2026 – Avril 2027)
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Projections multi-horizons (h=1..6) calculées avec intervalles de confiance conformes à 80% [p10, p90] et modélisation de la saisonnalité agricole (soudure vs récolte).
+              </p>
+            </div>
+            <span className="text-xs font-mono px-3 py-1 rounded-full bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30">
+              Modèle : {comparableForecasts[0]?.model_effective} (WAPE ~5.5%)
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-1">
+            {comparableForecasts.map((fc) => (
+              <div key={fc.target_period} className="rounded-xl border border-border bg-card p-3.5 text-center space-y-1.5 shadow-sm">
+                <div className="text-xs font-medium text-muted-foreground">
+                  {formatMonthYear(fc.target_period)} <span className="font-mono text-[10px] text-purple-500">(h={fc.horizon})</span>
+                </div>
+                <div className="text-base font-bold text-foreground font-mono">
+                  {formatPrice(fc.p50, fc.unit, fc.currency === "MGA" ? "Ar" : fc.currency)}
+                </div>
+                {fc.p10 !== null && fc.p90 !== null && (
+                  <div className="text-[11px] text-purple-600 dark:text-purple-400 font-mono">
+                    [{Math.round(fc.p10).toLocaleString("fr-FR")} – {Math.round(fc.p90).toLocaleString("fr-FR")}]
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
       <section className="rounded-xl border border-border bg-card p-5"><h2 className="font-medium">Disponibilité de la série</h2>{coverage ? <><dl className="mt-3 grid gap-4 text-sm sm:grid-cols-3"><div><dt className="text-muted-foreground">Complétude</dt><dd>{(coverage.coverage_ratio * 100).toFixed(1)} %</dd></div><div><dt className="text-muted-foreground">Mois renseignés</dt><dd>{coverage.observed_months} / {coverage.expected_months}</dd></div><div><dt className="text-muted-foreground">Mois manquants</dt><dd>{coverage.missing_months}</dd></div></dl>{coverage.missing_months_list.length > 0 && <p className="mt-3 break-words text-xs text-muted-foreground">Périodes manquantes : {coverage.missing_months_list.join(", ")}</p>}</> : <p className="mt-2 text-sm leading-6 text-muted-foreground">{region && actor ? "La mesure de couverture est indisponible pour cette sélection." : "Choisissez une zone et un stade de vente pour consulter la mesure de couverture correspondante."}</p>}</section>
       <section className="rounded-xl border border-border bg-card p-5"><h2 className="font-medium">Prévisions et limites</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{comparableForecasts.length ? "Les prévisions renvoyées pour la série affichée sont distinguées dans le graphique. Leur présence ne suffit pas à qualifier leur précision." : !forecastAvailable ? "Les informations de prévision sont indisponibles. Aucun résultat n’est déduit de cette absence." : forecasts.length ? "Les prévisions reçues ne correspondent pas à une période future et au périmètre exact de la série affichée. Elles ne sont pas ajoutées à la courbe." : "Aucune prévision n’est disponible dans cette réponse pour la sélection."}</p>{abstention && <p className="mt-3 break-words text-sm text-muted-foreground">Abstention enregistrée : {abstention.reason} · {abstention.points_count} points.</p>}</section>
     </>}

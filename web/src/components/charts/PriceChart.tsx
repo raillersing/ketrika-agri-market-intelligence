@@ -78,11 +78,35 @@ export function PriceChart({
 
   const sortedData = [...data].sort((a, b) => a.month.localeCompare(b.month));
   const chartRows = withCalendarGaps(sortedData);
-  const categories = chartRows.map((d) => d ? formatMonthYear(d.month) : "Période sans données");
-  const medianPrices = chartRows.map((d) => d ? d.medianPrice : null);
+  const categories = chartRows.map((d) => (d ? formatMonthYear(d.month) : "Période sans données"));
+
+  // Identify last historical (observed / imputed) point index to connect the forecast seamlessly
+  let lastObsIdx = -1;
+  for (let i = 0; i < chartRows.length; i++) {
+    const item = chartRows[i];
+    if (item && item.valueKind !== "forecast") {
+      lastObsIdx = i;
+    }
+  }
+
+  const hasForecast = chartRows.some((d) => d?.valueKind === "forecast");
+
+  // Separate historical series and forecast series
+  const historicalPrices = chartRows.map((d, idx) => {
+    if (!d) return null;
+    if (d.valueKind !== "forecast") return d.medianPrice;
+    return null;
+  });
+
+  const forecastPrices = chartRows.map((d, idx) => {
+    if (!d) return null;
+    if (idx === lastObsIdx) return d.medianPrice; // Connect to the last historical point
+    if (d.valueKind === "forecast") return d.medianPrice;
+    return null;
+  });
 
   const hasBand = sortedData.some((d) => (d.p10Price ?? d.minPrice) !== undefined);
-  const bandBase = chartRows.map((d) => d ? d.p10Price ?? d.minPrice ?? d.medianPrice : null);
+  const bandBase = chartRows.map((d) => (d ? d.p10Price ?? d.minPrice ?? d.medianPrice : null));
   const bandRange = chartRows.map((d) => {
     if (!d) return null;
     const high = d.p90Price ?? d.maxPrice ?? d.medianPrice;
@@ -99,6 +123,13 @@ export function PriceChart({
       top: "16",
       textStyle: { fontSize: 13, fontWeight: "700", color: palette.text, fontFamily: "inherit" },
       subtextStyle: { fontSize: 11, color: palette.muted, fontFamily: "inherit" },
+    },
+    legend: {
+      show: hasForecast,
+      right: "16",
+      top: "16",
+      textStyle: { color: palette.text, fontSize: 11, fontFamily: "inherit" },
+      data: ["Historique", "Prévision (6 mois)"],
     },
     tooltip: {
       trigger: "axis",
@@ -119,29 +150,39 @@ export function PriceChart({
         return `
           <div style="font-family: inherit; font-size: 11px;">
             <div style="font-weight: 700; margin-bottom: 6px; color: ${isForecast ? palette.forecast : palette.primary}; font-size: 12px;">
-              ${escapeHtml(formatMonthYear(item.month))} ${isForecast && item.horizon ? `(Horizon h=${item.horizon})` : ''}
+              ${escapeHtml(formatMonthYear(item.month))} ${isForecast && item.horizon ? `(Horizon h=${item.horizon})` : ""}
             </div>
             <div style="margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
-              <span style="color: ${palette.muted};">${isForecast ? 'Prévision (p50) :' : 'Prix médian :'}</span>
+              <span style="color: ${palette.muted};">${isForecast ? "Prévision (p50) :" : "Prix médian :"}</span>
               <strong style="color: ${palette.text}; font-family: monospace;">${escapeHtml(formatPrice(item.medianPrice, unit, currencyLabel))}</strong>
             </div>
-            ${item.p10Price !== undefined && item.p90Price !== undefined && item.p10Price !== null && item.p90Price !== null ? `
+            ${
+              item.p10Price !== undefined && item.p90Price !== undefined && item.p10Price !== null && item.p90Price !== null
+                ? `
             <div style="color: ${palette.text}; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
               <span style="color: ${palette.muted};">Intervalle [p10, p90] :</span>
-              <span style="font-family: monospace;">${escapeHtml(formatPrice(item.p10Price, unit, currencyLabel))} – ${escapeHtml(formatPrice(item.p90Price, unit, currencyLabel))}</span>
-            </div>` : item.minPrice != null && item.maxPrice != null ? `
+              <span style="font-family: monospace; color: ${palette.forecast}; font-weight: 600;">${escapeHtml(formatPrice(item.p10Price, unit, currencyLabel))} – ${escapeHtml(formatPrice(item.p90Price, unit, currencyLabel))}</span>
+            </div>`
+                : item.minPrice != null && item.maxPrice != null
+                  ? `
             <div style="color: ${palette.muted}; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px;">
               <span>Fourchette (Min - Max) :</span>
               <span style="font-family: monospace;">${escapeHtml(formatPrice(item.minPrice, unit, currencyLabel))} – ${escapeHtml(formatPrice(item.maxPrice, unit, currencyLabel))}</span>
-            </div>` : ""}
-            ${isForecast && item.modelEffective ? `
+            </div>`
+                  : ""
+            }
+            ${
+              isForecast && item.modelEffective
+                ? `
             <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid ${palette.border}; font-size: 10px; color: ${palette.text};">
-              <div>Modèle : <strong style="color: ${palette.text};">${escapeHtml(item.modelEffective)}${item.isBaseline ? ' (Baseline)' : ''}</strong></div>
-              ${item.fallbackReason ? `<div style="color: ${palette.warning};">Repli : ${escapeHtml(item.fallbackReason)}</div>` : ''}
+              <div>Modèle : <strong style="color: ${palette.forecast};">${escapeHtml(item.modelEffective)}${item.isBaseline ? " (Baseline)" : ""}</strong></div>
+              ${item.fallbackReason ? `<div style="color: ${palette.warning};">Repli : ${escapeHtml(item.fallbackReason)}</div>` : ""}
               <div style="color: ${item.isCalibrated ? palette.primary : palette.warning};">
-                ${item.isCalibrated ? `Calibration déclarée par le modèle (N=${item.calibrationSampleSize ?? 'non renseigné'})` : 'Calibration non déclarée dans cette réponse'}
+                ${item.isCalibrated ? `Calibration conforme déclarée (N=${item.calibrationSampleSize ?? "non renseigné"})` : "Calibration non déclarée"}
               </div>
-            </div>` : ''}
+            </div>`
+                : ""
+            }
             <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid ${palette.border}; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
               <span style="color: ${isForecast ? palette.forecast : palette.imputed}; font-size: 10px;">● ${escapeHtml(kindInfo.label)}</span>
               ${sourceLabel ? `<span style="color: ${palette.muted}; font-size: 10px; font-family: monospace;">${escapeHtml(sourceLabel)}</span>` : ""}
@@ -153,7 +194,7 @@ export function PriceChart({
     grid: {
       left: "45",
       right: "25",
-      top: "75",
+      top: hasForecast ? "85" : "75",
       bottom: "35",
       containLabel: true,
     },
@@ -193,19 +234,19 @@ export function PriceChart({
               type: "line",
               data: bandRange,
               lineStyle: { opacity: 0 },
-              areaStyle: { color: palette.band },
+              areaStyle: { color: hasForecast ? "rgba(192, 132, 252, 0.18)" : palette.band },
               stack: "confidence-band",
               symbol: "none",
             },
           ]
         : []),
       {
-        name: "Prix médian",
+        name: "Historique",
         type: "line",
-        data: medianPrices,
+        data: historicalPrices,
         smooth: true,
         symbol: "circle",
-        symbolSize: 6,
+        symbolSize: 5,
         itemStyle: {
           color: palette.primary,
           borderColor: palette.primary,
@@ -214,8 +255,6 @@ export function PriceChart({
         lineStyle: {
           width: 3,
           color: palette.primary,
-          shadowColor: "transparent",
-          shadowBlur: 0,
         },
         areaStyle: {
           color: {
@@ -231,6 +270,28 @@ export function PriceChart({
           },
         },
       },
+      ...(hasForecast
+        ? [
+            {
+              name: "Prévision (6 mois)",
+              type: "line",
+              data: forecastPrices,
+              smooth: true,
+              symbol: "diamond",
+              symbolSize: 8,
+              itemStyle: {
+                color: palette.forecast,
+                borderColor: palette.forecast,
+                borderWidth: 2,
+              },
+              lineStyle: {
+                width: 3,
+                type: "dashed",
+                color: palette.forecast,
+              },
+            },
+          ]
+        : []),
     ],
   };
 
