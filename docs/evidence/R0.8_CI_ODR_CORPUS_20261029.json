@@ -1,0 +1,13 @@
+{
+  "authenticity_qualified": false,
+  "documents": [],
+  "finished_at": "2026-10-29T06:17:46.233886+00:00",
+  "reason": "http_daily_budget_exhausted",
+  "revision_qualified": false,
+  "rights_verified": false,
+  "silver_imported": false,
+  "source_id": "miasa_odr",
+  "started_at": "2026-10-29T06:16:44.246005+00:00",
+  "status": "policy_stopped",
+  "trace": []
+}

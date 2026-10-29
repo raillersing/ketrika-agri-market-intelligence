@@ -4611,3 +4611,35 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Probe readonly propriétaire sur les1313 témoins du clone, code0 :728 prix,191 CPI,116 météo,50 commerce,35 stocks,29 production,164 références source ; tous refusés explicitement, aucune admission silencieuse. Pas de témoin macro historique,42 cas SQL neufs couvrent les sept types et les deux rôles. Nouvelle capture/comparaison des40 tables code0, bruts/liens/ACL inchangés.
 - Comparaison native source/clone code0 : schémas/propriétaires/ACL/USAGE effectifs, privilèges par défaut, attributs/configurations et adhésions des rôles identiques. Mot de passe non lu ni copié. Les deux contre-épreuves historiques ketrika_app refusent obs avec code1, sans GRANT ni autre changement ; B-R098 non clôturé.
 - Reçus R0.8_AU08_TYPED_20261028_REAL_NATIVE et TARGETED_NATIVE ; diagnostics R0.8_SQL_SCHEMA_RIGHTS_20261028_*. Les témoins réels ne qualifient ni le rôle applicatif historique, ni une source, un modèle ou R0.8 entier. Prochain check complet sur le contenu consolidé requis avant fusion de PR6.
+
+### [2026-10-29T06:06:03Z] B-R073 — diagnostic ODR indépendant autorisé avant acquisition
+
+- R0.8 IN_PROGRESS ; candidat6dad3cd/CI40825552642 figé, worktree et destination QA préservés. Source miasa_odr active/approuvée, SQL original active et aucun arrêt HTTP connu au contrôle readonly.
+- Mini-plan : ADR144/SPECS avant diagnostic ; robots et page officielle septembre, PDF octobre/novembre et lien septembre réellement découvert ; conserver originaux privés SHA/MIME/dates sous bornes ; comparer la même cellule mensuelle à grain strict ; aucune différence temporelle assimilée à correction ; recevoir C1/annotations avant corpus qualifié et replay réseau coupé. Stop immédiat de la source sur refus d'accès ou robots, sans repli de route.
+
+### [2026-10-29T07:20:43Z] AU-09 — diagnostic de rejeu réel sur code reçu, une seule édition
+
+- Source6dad3cd/main8283fe0 et CI40825552642 reçus ; aucune nouvelle modification applicative. Mini-plan : nouveaux volumes/cluster/socket sans réseau ; vérifier paquet C1 et octets déjà conservés ; préparer puis rejouer avec copie readonly ; comparer tous manifestes et conserver les refus ; recalcul séparé seuil36, abstention si insuffisant ; ne recevoir aucune révision/gate à partir d'une édition unique. ADR145/SPECS avant exécution.
+
+### [2026-10-29T07:43:27Z] Réception AU-08 et fusion vérifiée ; AU-09 PARTIAL
+
+- PR6 fusionnée8283fe0, arbre462803664b68042df82a99ba6ebcebc36abd0476 identique au candidatbbc41c2 ; CI40825552642 et main40829089007 vertes. Originaux/vérificateur archivés :2635 backend dont237 intégrations,82 frontend,26 E2E, zéro échec/erreur/skip obligatoire ; couvertures92,4143/87,7660/88,2220%. Empreinte applicativeb928b1f4c2dd80b307bd608b89cbe233b9e48a84f89f02b49b4ee286a46ecc0b. AU-08 reçu logiciel/clone selon preuves consolidées, sans migration active ni qualification du profil historique B-R098.
+- Rejeu actuel dédié réellement network=none/non-root/readonly :2/2 sources,15 valeurs imputées insérées,0 révision/rejet/skip ; manifestes capturés et Bronze inchangés.13 Gold publiables rafraîchis mais vides, vue economic_dashboard réservée ; seuil36 intact,0 série/0 prévision, deux statuts globaux no_eligible_series. Rapport natif, wrapper et confinement assaini joints. Une seule édition ne clôt ni B-R073, ni AU-09/R0.8/R0.9.
+- Diagnostic ODR : dépendance absente refusée avant réseau puis pdfplumber existant ; budget10/10 atteint sans document ni réponse HTTP exploitable, cause transport inconnue. B-R099 DEFERRED_BUDGET ; aucun quota réinitialisé, refus d'accès inventé ou route alternative. WB120 identique, FEWS robots refusé ; corpus corrigé toujours absent.
+- Clôture documentaire §3.3 : restauration des85 lignes historiques AU08 tronquées par matérialisation sparse, reçus et passation actualisés ; aucun changement applicatif, seuil, sélection QA ou statut R. Toujours7 DONE/65 IN_PROGRESS/2 TODO. La réception logicielle ci-dessus demeure distincte des données, modèles et usage humain.
+
+### [2026-10-29T07:49:15Z] PR7 poussée ; contrôle distant bloqué avant exécution
+
+- Commit5271f3d poussé, PR7 ouverte. Contrôles locaux documentaires :74 statuts canoniques identiques (7/65/2), diff --check code0, syntaxe AST des quatre diagnostics sous Docker code0 ; scan Gitleaks des fichiers et archives décompressées1,58Mo, zéro secret. Contre-lecture SQL privée :15 price_observation,13 vues Gold populated, economic_dashboard non populated ; compte et réserve conformes au rapport.
+- CI40837727836/job123326370017 échoue avant tout step : GitHub signale paiements récents refusés ou plafond à augmenter. Zéro test démarré, aucun résultat logiciel déduit. B-R100 externe consigné, PR7 non fusionnée ; ni dépense, changement de facturation, contournement ou relancement aveugle. Réception PR6/main verte inchangée ; déblocage : rétablir Actions côté compte puis recevoir le contrôle de la tête exacte.
+
+### [2026-10-29T17:18:22Z] Reprise R0.8/B-R098 — audit effectif reproductible
+
+- PR7 toujours ouverte, contrôle historique refusé avant démarrage par facturation/plafond ; aucune relance aveugle. Nouveau worktree indépendant fix/r08-sql-role-audit-20261029, actif préservé.
+- Mini-plan : diagnostic readonly autonome et tests dédiés ; inventaire borné des schémas/tables/séquences et privilèges effectifs des deux rôles du contrat ; refus si rôle absent/surprivilégié/profil incomplet, ne lire ni secrets ni lignes métier ; conserver les défauts et produire un rapport structuré sans GRANT. Tester positifs/négatifs sur instance dédiée, puis capturer le clone historique sans corriger ses ACL. Documentation §3.3 seulement, aucun DONE produit/gate/tag.
+
+### [2026-10-29T17:27:32Z] Audit SQL readonly reçu ; écarts historiques détaillés
+
+- Nouveau diagnostic docs/diagnostics : READ ONLY/REPEATABLE READ, budget local5s, inventaire borné et privilèges effectifs incluant PUBLIC/héritage, aucun secret/GRANT/ligne métier. Ruff2 et mypy2 verts ;10 tests/1,706s dont2 scénarios PostgreSQL réel, zéro skip. Premier transfert chown refusé sous cap_drop ALL corrigé par --no-same-owner ; première suite SQL avant readiness rouge conservée, jamais promue.
+- Clone historique code1 attendu :55 objets par rôle,28 écarts (7 USAGE absents,20 droits applicatifs manquants,1 SELECT latent copilot sur obs.quarantine_ledger accordé par0020). Aucune lecture effective du copilote affirmée sans USAGE.40 tables/comptes/empreintes/liens/provenance/ACL, révision et Gold identiques avant/après, seul captured_at ignoré. Reçus natifs et runbook joints.
+- B-R098 reste non qualifié, anomalie distincte B-R101 du grant copilote à traiter sans réécrire0020 ni élargir les rôles historiques. Aucun statut R changé et aucun gate/donnée/déploiement reçu ; exception readonly §3.3, référence logicielle CI40825552642 intacte.

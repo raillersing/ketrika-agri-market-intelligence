@@ -77,7 +77,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-08 — Quarantaine et réparation historique auditable
 
-- **Statut :** IN_PROGRESS (implémentation0a8ed1a fusionnée, CI40454773585/40461024207 rouges avant tests ; réception complète manquante, ADR134) · P1 · rôle Data/SQL · parent R0.8 · dépendances : AU-07 avant toute restauration ; arbitrage ADR/SPECS de B-R084/B-R085.
+- **Statut :** DONE (logiciel et clone reçus, PR6 8283fe0, CI40825552642 :2635 backend+82 frontend+26 E2E ; preuves AU08 et droits conservés, actif non migré, B-R098 distinct) · P1 · rôle Data/SQL · parent R0.8 · dépendances : AU-07 avant toute restauration ; arbitrage ADR/SPECS de B-R084/B-R085.
 - **Fichiers :** migrations additives, modèles, `normalize/*`, `gold/sql/*`, `core/rebuild_manifest.py`, provenance/guards et runbook de réparation.
 - **Étapes :** faire un inventaire exact des728 auto-liens,164 références absentes et autres données de test héritées ; capturer états avant et identités ; choisir une table de quarantaine append-only plutôt que fausse révision ; spécifier la réparation exceptionnelle des liens et ses permissions ; clone SQL/S3 séparé ; anti-auto-liens/cycles ; conserver toutes valeurs brutes et tous objets ; exclure quarantaine des publications et recompter les révisions réelles seulement.
 - **Attention A013 :** le trigger actuel refuse UPDATE si OLD.superseded_by non NULL ; la remise à NULL proposée ne marche pas telle quelle. Ne pas désactiver les protections globalement ni lancer la migration sur actif pour « essayer ». La PK active observation_id doit être recontrôlée sur le clone avant FK.
@@ -85,7 +85,7 @@ Commandes de réception : `bash scripts/dev.sh check` sous Linux, `./scripts/dev
 
 ### AU-09 — Rebuild authentique et gate R0.9
 
-- **Statut :** IN_PROGRESS (smoke logiciel PARTIAL conservé ; AU-08 non reçu et deux éditions authentiques B-R073 absentes, gate R0.9 non franchi) · P1 · rôle Data/QA · parents R0.8/R0.9 · dépendances : AU-08, R0.1–R0.7 reçus historiquement et non invalidés par le lot.
+- **Statut :** IN_PROGRESS (smoke logiciel PARTIAL conservé ; AU-08 reçu sur clone ; deux éditions authentiques B-R073 absentes, gate R0.9 non franchi) · P1 · rôle Data/QA · parents R0.8/R0.9 · dépendances : AU-08, R0.1–R0.7 reçus historiquement et non invalidés par le lot.
 - **Fichiers :** `pipelines/rebuild*.py`, `core/rebuild_*`, runbook OFFLINE_REBUILD_QUALIFICATION, corpus/reçus.
 - **Étapes :** réunir deux éditions authentiques du même produit/lieu/période avec une correction réelle ; vérifier droits/octets et annotations ; cloner destination explicitement dédiée ; exporter inventaire original avec versions et octets ; couper réellement le réseau du worker ; comparer valeurs, périodes, unités, provenance, révisions et Gold ; étape séparée de recalcul des modèles versionnés, avec abstention s'il manque les données.
 - **Réception :** aucune requête réseau, ancienne/nouvelle révision correctement rejouées, diff métier nul et inventaire original inchangé ; faux parseur modifiant une valeur détecté même à effectif égal. Puis réception R0 et tag nouveau uniquement si tous critères passent. Si les deux éditions restent absentes, documenter B-R073 et le format attendu ; ne pas modifier les sources disabled pour les acquérir.
