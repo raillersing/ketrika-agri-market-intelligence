@@ -2072,3 +2072,15 @@ n'est déduit de sa seule portée nationale. La grille de points n'est pas quali
 de carte géographique tant que géométries et correspondances ne sont pas reçues.
 Ne pas comparer quantitativement des points hétérogènes ni inventer une unité,
 une devise, une source ou un prix en l'absence de donnée.
+
+### Expansion d'alias en lecture (ADR160)
+
+Les API n'élargissent un filtre produit à un code canonique que si l'alias atteint
+0,9. Les codes/noms canoniques exacts restent acceptés. rice_milled ne prouve pas
+une origine locale : alias de revue à0,8, absent de la conversion automatique des
+anciens codes. Aucun code, origine ou grain n'est inventé pour remplir un filtre.
+
+0028 applique aussi ce déclassement au seul alias global rice_milled non revu
+pointant vers RICE_WHITE_LOCAL. Confiance déjà inférieure, preuve humaine,
+variante de source et autre cible ne sont pas modifiées ; caches commerce
+invalidés uniquement après changement. Aucun droit ni observation modifié.

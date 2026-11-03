@@ -72,7 +72,7 @@ def get_prices(
     params: dict[str, Any] = {}
 
     if product:
-        resolved = resolve_product(product)
+        resolved = resolve_product(product, min_confidence=0.9)
         canonical = resolved[0] if resolved else None
         if canonical and canonical != product:
             query_sql += " AND (product_code = :product OR product_code = :canonical OR product_id::text = :product)"
@@ -138,7 +138,7 @@ def get_prices_latest(
 
     params: dict[str, Any] = {"lvl": level}
     if product:
-        resolved = resolve_product(product)
+        resolved = resolve_product(product, min_confidence=0.9)
         canonical = resolved[0] if resolved else None
         if canonical and canonical != product:
             prod_filter = "AND (product_code = :prod OR product_code = :canonical OR product_id::text = :prod)"

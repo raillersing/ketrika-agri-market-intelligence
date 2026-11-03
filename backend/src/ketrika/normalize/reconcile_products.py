@@ -1,7 +1,7 @@
 """Reconcile legacy lowercase product codes into canonical uppercase PPN taxonomy (ADR-149).
 
 Transfers active price, stock, and trade observations from legacy test codes
-(maize, cassava_fresh, oil_edible, flour_wheat, dry_beans, sugar, rice_imported, rice_milled, cassava_dry)
+(maize, cassava_fresh, oil_edible, flour_wheat, dry_beans, sugar, rice_imported, cassava_dry)
 to the canonical products (MAIZE_GRAIN, CASSAVA_FRESH, VEG_OIL, etc.) via immutable supersession (Rule 4.3).
 """
 
@@ -28,7 +28,6 @@ CODE_MAPPING: dict[str, str] = {
     "dry_beans": "BEANS_DRY",
     "sugar": "SUGAR",
     "rice_imported": "RICE_WHITE_IMPORTED",
-    "rice_milled": "RICE_WHITE_LOCAL",
 }
 
 

@@ -1992,3 +1992,31 @@ preuves ne sont pas reçues. Tests de non-régionalisation et réception complè
 Alternatives : modifier seulement le libellé du test ou conserver une pseudo-carte
 (rejetés). Aucun nouveau jeu de données, région, frontière ou prix généré ; aucun
 contrat de source n'est levé.
+
+## ADR-160 | 2026-11-03 | Alias de riz sans origine inventée
+
+Contexte : rice_milled désigne le riz usiné sans preuve d'origine locale. La
+confiance1 de l'alias concurrent repose sur ADR149, pas sur un document source.
+Les API nouvelles utilisent resolve_product avec son seuil par défaut0,8 sans
+exposer cette incertitude. Audit READ ONLY du clone0027 : les18 copies de prix
+rice_milled→RICE_WHITE_LOCAL sont déjà quarantainées, aucune réécriture requise.
+
+Décision : conserver l'alias à0,8 pour revue et supprimer cette conversion de la
+réconciliation automatique. Exiger min_confidence0,9 pour développer un alias
+dans les API ; codes exacts et alias documentés suffisamment confiants restent
+acceptés. Un libellé générique ne devient pas local/importé par défaut. Tests
+sémantiques de résolution et de paramètres SQL, puis réception complète.
+
+Alternative : confiance1 déduite du seul nom de l'ancien identifiant (rejetée).
+Pas de nouvelle migration ni suppression de donnée : les copies existantes sont
+déjà conservées en quarantaine par0027, et la source reste non qualifiée.
+
+Complément ADR160 avant migration : le clone conserve une ligne globale
+rice_milled→RICE_WHITE_LOCAL, confiance1 et human_reviewed=false. Le YAML seul ne
+corrige pas les lecteurs SQL.0028 ramène uniquement cet alias global non revu à
+0,8 (jamais une hausse), préserve variantes de source/revues/autres produits et
+invalide trade_monthly/import_dependency si changement. Les observations, droits
+et quarantaines restent inchangés. Réception sur une nouvelle copie privée du
+clone0027 ; original0027 et ses preuves conservés. Un downgrade ne rétablit pas
+la confiance non justifiée. L'absence initialement envisagée de migration est
+remplacée par cette correction persistante, sans nouvelle quarantaine.

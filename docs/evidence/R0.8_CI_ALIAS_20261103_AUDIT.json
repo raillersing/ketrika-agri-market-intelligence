@@ -1,0 +1,10 @@
+{
+  "captured_at": "2026-11-03T19:32:43.088957+00:00",
+  "database": "ketrika_restore_final_20261103",
+  "revision": "0027_quarantined_normalization_copies",
+  "sql": "SELECT count(*),count(*) FILTER (WHERE EXISTS (SELECT 1 FROM obs.quarantine_ledger q WHERE q.table_name='obs.price_observation' AND q.observation_id=copy.observation_id AND q.revoked_at IS NULL)) FROM obs.price_observation o JOIN obs.price_observation copy ON o.superseded_by=copy.observation_id JOIN ref.product p1 ON p1.product_id=o.product_id JOIN ref.product p2 ON p2.product_id=copy.product_id WHERE copy.evidence ? 'reconciled_from' AND p1.product_code='rice_milled' AND p2.product_code='RICE_WHITE_LOCAL'",
+  "copies": 18,
+  "already_quarantined": 18,
+  "active_database_modified": false,
+  "scope": "isolated clone metadata, not source or market qualification"
+}

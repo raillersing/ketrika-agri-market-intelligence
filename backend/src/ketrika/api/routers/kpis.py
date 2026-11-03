@@ -43,7 +43,7 @@ def get_market_health(
     """
     params: dict[str, Any] = {}
     if product:
-        resolved = resolve_product(product)
+        resolved = resolve_product(product, min_confidence=0.9)
         canonical = resolved[0] if resolved else None
         if canonical and canonical != product:
             sql += " AND (product_code = :product OR product_code = :canonical OR product_id::text = :product)"

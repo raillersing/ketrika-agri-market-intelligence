@@ -126,7 +126,7 @@ def get_forecasts(
         """
 
     if product:
-        resolved = resolve_product(product)
+        resolved = resolve_product(product, min_confidence=0.9)
         canonical = resolved[0] if resolved else None
         if canonical and canonical != product:
             sql += " AND (product_code = :product OR product_code = :canonical OR product_id::text = :product)"
@@ -396,7 +396,7 @@ def get_forecast_abstentions(
 
     prod_set: set[str] | None = None
     if product:
-        resolved = resolve_product(product)
+        resolved = resolve_product(product, min_confidence=0.9)
         canonical = resolved[0] if resolved else None
         prod_set = {product, canonical} if canonical else {product}
 
