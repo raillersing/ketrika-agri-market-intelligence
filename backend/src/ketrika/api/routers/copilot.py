@@ -45,6 +45,7 @@ def get_copilot_agent() -> CopilotAgent:
 
 
 @router.post("/ask", response_model=CopilotAskResponse)
+@router.post("/query", response_model=CopilotAskResponse)
 def ask_copilot(
     payload: CopilotAskRequest,
     user: UserAccount = Depends(require_client),

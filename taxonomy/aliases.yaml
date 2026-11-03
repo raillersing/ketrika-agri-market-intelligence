@@ -257,3 +257,96 @@
   note: "Blé / farine de blé consommée sur les marchés urbains"
   evidence: "Dataset World Bank RTFP Madagascar."
 
+- alias: "oil_edible"
+  lang: fr
+  product_code: VEG_OIL
+  confidence: 1.0
+  note: "Identifiant historique du référentiel initial"
+  evidence: "Réconciliation taxonomique PPN Ketrika ADR-149."
+
+- alias: "flour_wheat"
+  lang: fr
+  product_code: WHEAT_FLOUR
+  confidence: 1.0
+  note: "Identifiant historique du référentiel initial"
+  evidence: "Réconciliation taxonomique PPN Ketrika ADR-149."
+
+- alias: "dry_beans"
+  lang: fr
+  product_code: BEANS_DRY
+  confidence: 1.0
+  note: "Identifiant historique du référentiel initial"
+  evidence: "Réconciliation taxonomique PPN Ketrika ADR-149."
+
+- alias: "cassava_dry"
+  lang: fr
+  product_code: CASSAVA_DRIED
+  confidence: 1.0
+  note: "Identifiant historique du référentiel initial"
+  evidence: "Réconciliation taxonomique PPN Ketrika ADR-149."
+
+- alias: "rice_milled"
+  lang: fr
+  product_code: RICE_WHITE_LOCAL
+  confidence: 1.0
+  note: "Identifiant historique du référentiel initial"
+  evidence: "Réconciliation taxonomique PPN Ketrika ADR-149."
+
+- alias: "rice_imported"
+  lang: fr
+  product_code: RICE_WHITE_IMPORTED
+  confidence: 1.0
+  note: "Identifiant historique du référentiel initial"
+  evidence: "Réconciliation taxonomique PPN Ketrika ADR-149."
+
+- alias: "Haricots secs communs"
+  lang: fr
+  product_code: BEANS_DRY
+  confidence: 0.95
+  note: ""
+  evidence: "Nomenclature douanière DGD SH 0713.33."
+
+- alias: "Wheat flour"
+  lang: en
+  product_code: WHEAT_FLOUR
+  confidence: 0.95
+  note: ""
+  evidence: "Données de commerce extérieur FAOSTAT Madagascar."
+
+- alias: "Oil, palm"
+  lang: en
+  product_code: VEG_OIL
+  confidence: 0.95
+  note: ""
+  evidence: "Données de commerce extérieur FAOSTAT Madagascar."
+
+- alias: "Sugar Raw Centrifugal"
+  lang: en
+  product_code: SUGAR
+  confidence: 0.95
+  note: ""
+  evidence: "Données de commerce extérieur FAOSTAT Madagascar."
+
+- alias: "Farine de froment ou de méteil"
+  lang: fr
+  product_code: WHEAT_FLOUR
+  confidence: 0.95
+  note: ""
+  evidence: "Nomenclature douanière DGD SH 1101.00."
+
+- alias: "Sucre de canne ou de betterave raffiné"
+  lang: fr
+  product_code: SUGAR
+  confidence: 0.95
+  note: ""
+  evidence: "Nomenclature douanière DGD SH 1701.99."
+
+- alias: "Maïs en grains"
+  lang: fr
+  product_code: MAIZE_GRAIN
+  confidence: 0.95
+  note: ""
+  evidence: "Nomenclature douanière DGD SH 1005.90."
+
+
+

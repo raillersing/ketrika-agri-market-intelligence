@@ -68,7 +68,15 @@ function OverviewContent() {
   }, [product, region, actor]);
 
   const { latest, series, sources } = summarizePrices(rows);
-  const comparableForecasts = latest ? forecasts.filter(row => row.product_code === latest.product_code && row.location_pcode === latest.location_pcode && row.actor_level === latest.actor_level && row.currency === latest.currency && row.unit === latest.unit && row.target_period > latest.month) : [];
+  const comparableForecasts = latest
+    ? forecasts.filter(
+        (row) =>
+          row.product_code.toUpperCase() === latest.product_code.toUpperCase() &&
+          (row.location_pcode === latest.location_pcode || (!row.location_pcode && !latest.location_pcode) || (row.location_pcode === "MDG" && !latest.location_pcode)) &&
+          (row.actor_level === latest.actor_level || row.actor_level === "unknown" || latest.actor_level === "unknown") &&
+          row.target_period > latest.month
+      )
+    : [];
   const chart: PriceDataPoint[] = [
     ...series.map(row => ({ month: row.month, medianPrice: row.median_price, minPrice: row.min_price, maxPrice: row.max_price, valueKind: row.value_kind, sourceId: row.sources?.[0] })),
     ...comparableForecasts.map(row => ({ month: row.target_period, medianPrice: row.p50, p10Price: row.p10, p90Price: row.p90, valueKind: "forecast", sourceId: `ml.${row.model_effective}`, horizon: row.horizon, modelEffective: row.model_effective, modelRequested: row.model_requested, isBaseline: row.is_baseline, isCalibrated: row.is_calibrated, calibrationSampleSize: row.calibration_sample_size, fallbackReason: row.fallback_reason || undefined, datasetFingerprint: row.dataset_fingerprint })),

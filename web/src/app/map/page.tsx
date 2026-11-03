@@ -92,18 +92,21 @@ function MapContent() {
   const regionPricesMap: Record<string, RegionPriceData> = {};
 
   // Initialize with official locations (23 regions of Madagascar)
+  // Use national parity benchmark as default price if specific local survey is absent
   for (const loc of locations) {
     if (loc.admin_level === 1) {
       regionPricesMap[loc.pcode] = {
         pcode: loc.pcode,
         name: loc.name,
-        price: null,
-        unit: "kg",
+        price: nationalPrice?.median_price ?? null,
+        unit: nationalPrice?.unit || "kg",
+        valueKind: nationalPrice?.value_kind || undefined,
+        sourceId: nationalPrice ? (nationalPrice.sources?.[0] || "parite_nationale") : undefined,
       };
     }
   }
 
-  // Overlay regional prices if available
+  // Overlay specific regional survey prices if available
   for (const row of rows) {
     regionPricesMap[row.location_pcode] = {
       pcode: row.location_pcode,

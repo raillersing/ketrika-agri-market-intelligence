@@ -1,5 +1,22 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-11-03T10:45:00Z] Requalification PPN — Réconciliation taxonomique, prévisions 6 mois orange & robustesse UI
+
+- **Objectifs & Implémentation :**
+  - **Réconciliation taxonomique PPN :** Ajout des alias normalisés pour les 15 produits vivriers majeurs (`taxonomy/aliases.yaml`, table `ref.product_alias`). Injection de `resolve_product()` dans les routeurs `/v1/prices`, `/v1/forecasts`, `/v1/market/coverage`, `/v1/kpis`, `/v1/trade` pour accepter indifféremment les codes legacy minuscules ou les codes de nomenclature douanière.
+  - **Vue matérialisée des flux d'échanges (`006_trade_monthly.sql`) :** Jointure robuste via `ref.product_alias` sur `product_raw` pour les observations dont le `product_id` n'était pas formellement relié à l'ingestion, éliminant tout blocage sans violer le principe 3 (immutabilité des tables `obs.*`).
+  - **Prévisions multi-horizons à 6 mois et différenciation visuelle :** Traçage et affichage en ambre / orange éclatant (`#ea580c` / `#fb923c`) des prévisions $h=1..6$ sur `PriceChart` et cartes récapitulatives avec intervalles de confiance conformes à 80% [p10, p90] et modélisation de la saisonnalité agricole.
+  - **Copilote Analyste :** Ajout de l'alias `@router.post("/query")` en plus de `/ask` sur `backend/src/ketrika/api/routers/copilot.py` et alignement de la requête frontend.
+  - **Cartographie régionale (`/map`) :** Affichage d'un repli analytique propre sur le cours de parité nationale lorsque le relevé régional spécifique est absent, évitant les zones blanches sur les denrées importées/transformées (sucre, huile, farine, maïs).
+  - **Observatoire Économique (`/economy`) :** Gestion propre du statut HTTP 503 (`economic_data_not_qualified` selon ADR-070/ADR-117) : affichage informatif de la réserve méthodologique tout en maintenant l'accès interactif aux 14 fiches métriques et définitions normatives.
+- **Preuves de qualification locale (100% vert) :**
+  - Backend unit tests : `docker exec aiagent-api-1 pytest tests/unit/test_parity_pricing.py tests/unit/test_gate_r2_decision_observatory.py tests/unit/test_copilot.py -v` -> **28 passed in 121.47s** (0 échec, 0 régression).
+  - Backend lint & types : `ruff check` (All checks passed!), `mypy` (Success: no issues found in 6 source files).
+  - Frontend types : `docker exec aiagent-web-1 pnpm typecheck` (`tsc --noEmit`) -> **Exit code 0** (0 erreur).
+  - Frontend unit tests : `docker exec aiagent-web-1 pnpm test` (`vitest run`) -> **13 test files passed, 82 tests passed** in 16.30s.
+  - Frontend lint : `docker exec aiagent-web-1 pnpm lint` (`next lint`) -> **Exit code 0** (✔ No ESLint warnings or errors).
+
+
 ### [2026-10-27T18:39:20Z] Reprise R0.8/AU-08 — lignée acyclique et réception sur clone
 
 - Base distante20552dd, réception logicielle antérieure CI40545386343 conservée pour son contenu exact ; ne pas la rejouer comme check de base. R0.8/AU-08 reste IN_PROGRESS ; aucune dépendance aval promue.
