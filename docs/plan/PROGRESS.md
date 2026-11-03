@@ -4775,3 +4775,7 @@ Consolidation ADR155 :11 SQL/7,66s verts et clone0024→0025 code0 :40 tables id
 ### [2026-11-03T18:36:00Z] Intégration des journaux et horodatage de publication
 
 Les deux branches documentaires sont conservées intégralement (ADR151/156 et ADR152–155/157–158), sans écraser les preuves ou le travail concurrent. Les entrées09:10/09:15 ci-dessus ont été rédigées lors de la consolidation18:33–18:35Z ; leur heure saisie provenait du contexte de reprise et n'est pas une heure d'exécution mesurée. Les heures des rapports natifs restent les références. PR10 candidat c8c82a3, CI41695027642 démarrée18:33:58Z, aucune réception complète encore déduite.
+
+### [2026-11-03T18:49:00Z] AU-09 — recherche documentaire de repli bornée
+
+Recherche d'index d'archives sur le domaine web.archive.org et le nom exact du bulletin ODR octobre2024 : aucun résultat renvoyé par les deux requêtes. Aucune requête supplémentaire à MINAE/ODR, aucun document acquis et aucune URL d'archive inventée ; cela ne prouve pas l'absence d'une archive. Le quota central10/10 et les arrêts restent conservés. Le corpus de deux éditions authentiques corrigées reste manquant ; aucune qualification ajoutée.
