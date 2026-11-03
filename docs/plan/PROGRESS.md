@@ -4686,3 +4686,10 @@ ADR147 documente avant toute fusion la possibilité normative de réception loca
 - AU-09/B-R073, données/modèles/humain et R0.8/R0.9 restent incomplets ;7 DONE historiques/65 IN_PROGRESS/2 TODO, aucun gate/tag supplémentaire. Passation et rapport PARTIAL maintenus, état de publication à vérifier via PR7/8 et tête distante.
 
 Clôture documentaire : validation canonique en Docker code0,74 statuts synchronisés (7 DONE/65 IN_PROGRESS/2 TODO), trois lecteurs ruff/format/mypy code0 ; gitleaks sur nouveaux diffs et originaux décompressés3,76Mo, zéro secret. Diff applicatif depuis487adb3 vide ; aucune nouvelle réception complète déclenchée pour cette clôture readonly (§3.3).
+
+### [2026-11-03T06:54:00Z] R0.8 — admission IPP concurrente à corriger avant réception
+
+- Main94628b7 publié concurremment : nouveau code d'imputation avec paramètres mathématiques, faux replis et URL officielles non vérifiées. Ne pas réutiliser487adb3 pour recevoir ces changements. Autre checkout et services préservés.
+- Mini-plan : ADR152/SPECS avant code ; conserver scénarios numériques comme synthétiques ; supprimer le chemin de publication non sourcé et ses schémas Gold déclarés ; tests d'absence SQL/S3 et refus de contrats ; gel puis check complet CI/E2E avant fusion. Aucun objet Bronze ni ligne historique effacé, aucune baisse de seuil ou qualification scientifique déduite.
+
+Développement ADR152 :27 tests unitaires puis12 ciblés/9,18s dont sept SQL réels, lint/format441 et mypy440 verts ; source/interface concurrentes conservées, seuls imports inutilisés de reconcile_products corrigés (cause CI main41592145565 rouge avant tests). Clone neuf0021→0024 :39 tables hors registre identiques,4 références/4592 prix/84 prévisions quarantainés,1313 entrées antérieures conservées ; aucun SQL/S3 actif muté. Gardes d'ACL/propriétaire/dépendances strictes, pas de droit historique implicite. Réception consolidée complète encore requise sur prochain gel.

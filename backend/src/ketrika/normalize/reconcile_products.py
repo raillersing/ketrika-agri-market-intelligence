@@ -9,14 +9,12 @@ from __future__ import annotations
 
 import logging
 import uuid
-from typing import Any
 
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ketrika.core.db import get_session
 from ketrika.core.models.db import PriceObservation, Product, StockObservation, TradeFlow
-from ketrika.gold.refresh import refresh_gold_views
 
 logger = logging.getLogger("ketrika.reconcile_products")
 
@@ -37,18 +35,14 @@ def reconcile_products(session: Session) -> dict[str, int]:
     """Reconcile legacy observations by superseding them with canonical product references."""
     # 1. Load canonical products map
     canonical_products = (
-        session.execute(
-            select(Product).where(Product.product_code.in_(set(CODE_MAPPING.values())))
-        )
+        session.execute(select(Product).where(Product.product_code.in_(set(CODE_MAPPING.values()))))
         .scalars()
         .all()
     )
     canonical_by_code: dict[str, Product] = {p.product_code: p for p in canonical_products}
 
     legacy_products = (
-        session.execute(
-            select(Product).where(Product.product_code.in_(set(CODE_MAPPING.keys())))
-        )
+        session.execute(select(Product).where(Product.product_code.in_(set(CODE_MAPPING.keys()))))
         .scalars()
         .all()
     )
@@ -142,9 +136,11 @@ def reconcile_products(session: Session) -> dict[str, int]:
     active_stock_keys: dict[tuple[str, str], uuid.UUID] = {
         (row[0], row[1]): row[2]
         for row in session.execute(
-            select(StockObservation.natural_key, StockObservation.target, StockObservation.observation_id).where(
-                StockObservation.superseded_by.is_(None)
-            )
+            select(
+                StockObservation.natural_key,
+                StockObservation.target,
+                StockObservation.observation_id,
+            ).where(StockObservation.superseded_by.is_(None))
         ).all()
     }
 

@@ -1862,3 +1862,35 @@ Décision : recevoir localement par les points d'entrée inchangés, sur source 
 Le refus de facturation hébergé demeure explicitement non exécuté, jamais annoncé vert. Ne désactiver aucun workflow, règle, limite ni seuil, ne publier aucun faux statut CI et n'utiliser aucun admin/force ; fusion ordinaire avec tête attendue exacte seulement. Si GitHub la refuse, conserver la PR ouverte et consigner le motif, sans contourner. Une CI démarrée doit terminer et ses résultats être examinés. Les originaux locaux et rouges sont conservés ; l'indisponibilité externe reste distincte de la réception logicielle.
 
 Alternatives : attente de paiement sans travail indépendant (inutile tant que réception locale prévue disponible), dépenses non autorisées ou masquage du contrôle (rejetés). Les conditions précédentes restent non satisfaites tant que la réception en cours n'est pas terminée et auditée.
+
+## ADR-152 | 2026-11-03 | Refuser la publication de prix IPP sans intrants sourcés
+
+Contexte : le code concurrent94628b7 ajoute des paramètres calculés par constantes
+et sinusoïdes, un repli de prix du riz et des CSV produits localement attribués
+à des URL officielles non vérifiées. Une provenance vers ce CSV ne prouve pas
+la provenance des intrants économiques. L'étiquette imputed ne suffit pas.
+
+Décision : conserver les fonctions numériques uniquement comme scénarios
+synthétiques non qualifiés, explicitement signalés ; refuser leurs points
+d'entrée d'ingestion avant toute lecture SQL ou écriture Bronze/Silver.
+Retirer les déclarations de schéma qui admettent ces CSV comme publications
+douanes_stats/miasa_odr. Préserver tous les objets et lignes historiques ; aucun
+retrait de donnée active dans ce lot. Réactivation exige intrants officiels
+vérifiés, versions/formules/identités et preuves reçues ; aucun drapeau pour
+forcer la publication. Ajouter contre-épreuves d'absence d'effets et refus Gold.
+Réception complète du nouveau contenu, seuils/couvertures/scénarios conservés.
+
+Alternatives : considérer un CSV local comme source officielle (rejeté),
+supprimer des données actives sans réception (rejeté), confondre prix simulés
+et imputations sourcées (rejeté). Le modèle scientifique reste non qualifié.
+
+Extension bornée ADR152 avant migration : audit actif readonly a trouvé quatre
+SourceRecord sur les deux URL générées et4592 lignes prix portant les méthodes
+IPP/substitution. Aucun octet ni valeur modifié. Ajouter0024 append-only : mettre
+ces références/lignes en quarantaine, ainsi que les prévisions potentiellement
+entraînées sur leurs séries (cohorte mixte/all/inconnue, période <= cutoff).
+Les preuves restent dans leurs tables ; les prix Gold existants excluent déjà
+la quarantaine après refresh. La vue forecast_latest doit également exclure
+explicitement ses entités quarantainées, avant le classement des dernières
+prévisions. Garder les14 vues et leurs permissions de lecture contractuelles ;
+aucun refresh ou migration actif dans ce lot, réception sur SQL isolé et clone.

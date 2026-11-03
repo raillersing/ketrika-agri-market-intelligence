@@ -2000,3 +2000,20 @@ Diagnostic ODR ADR144 : origine gouvernementale publiquement découverte www.min
 ADR145 : rejeu diagnostic du seul paquet WB authentique déjà archivé sur nouveaux volumes/DB/socket, réseau none réel ; code et corpus figés, copie readonly. Le recalcul utilise le seuil36 existant et conserve l'abstention. Une seule édition ne reçoit ni révision authentique, R0.8, R0.9, modèle ou source opérationnelle. Aucun seed d'observations synthétiques dans ce diagnostic.
 
 ADR146 / correction du contrat §8 : copilot_ro n'a aucun SELECT latent sur obs.quarantine_ledger. Migration0023 retire le grant direct introduit par0020 ; si un héritage/PUBLIC maintient ce privilège, refus transactionnel sans correction globale implicite. Pas de nouvel USAGE ni changement du rôle applicatif. Un downgrade ne réintroduit pas ce droit hors Gold.
+
+### Reprise2026-11-03 : intrants IPP non qualifiés (ADR152)
+
+Les fonctions historiques de parity_pricing générant des trajectoires par
+constantes/sinusoïdes constituent des scénarios synthétiques, jamais des cours
+BFM/OMH/Pink Sheet observés. Leurs sorties ne peuvent créer de SourceRecord,
+objet Bronze ou observation dans le produit. Les points d'entrée d'ingestion
+refusent avant SQL/S3 tant que le contrat d'intrants officiels versionnés et
+vérifiés n'est pas implémenté et reçu. Les CSV générés ne sont pas des formats
+officiels admis pour douanes_stats/miasa_odr. Aucun objet historique supprimé.
+
+0024 conserve les références aux deux chemins générés non vérifiés via une
+quarantaine append-only UNVERIFIED_ECONOMIC_INPUTS. Les prévisions des mêmes
+produit/lieu/acteur à cutoff compatible et cohorte autre que pure_observed sont
+marquées POTENTIALLY_CONTAMINATED_TRAINING ; il s'agit d'un risque de provenance,
+pas d'une causalité scientifique démontrée. Gold forecast_latest exclut ces
+entités avant ROW_NUMBER. Aucune observation/source/prévision n'est supprimée.
