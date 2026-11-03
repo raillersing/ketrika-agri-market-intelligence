@@ -1,0 +1,1593 @@
+{
+  "assessment": {
+    "failures": [
+      {
+        "reason": "missing_schema_usage",
+        "role": "ketrika_app",
+        "subject": "auth"
+      },
+      {
+        "reason": "missing_schema_usage",
+        "role": "ketrika_app",
+        "subject": "dq"
+      },
+      {
+        "reason": "missing_schema_usage",
+        "role": "ketrika_app",
+        "subject": "meta"
+      },
+      {
+        "reason": "missing_schema_usage",
+        "role": "ketrika_app",
+        "subject": "ml"
+      },
+      {
+        "reason": "missing_schema_usage",
+        "role": "ketrika_app",
+        "subject": "obs"
+      },
+      {
+        "reason": "missing_schema_usage",
+        "role": "ketrika_app",
+        "subject": "ops"
+      },
+      {
+        "reason": "missing_schema_usage",
+        "role": "ketrika_app",
+        "subject": "ref"
+      },
+      {
+        "reason": "missing_select",
+        "role": "ketrika_app",
+        "subject": "meta.source_record"
+      },
+      {
+        "reason": "missing_insert",
+        "role": "ketrika_app",
+        "subject": "meta.source_record"
+      },
+      {
+        "reason": "missing_select",
+        "role": "ketrika_app",
+        "subject": "obs.price_observation"
+      },
+      {
+        "reason": "missing_insert",
+        "role": "ketrika_app",
+        "subject": "obs.price_observation"
+      },
+      {
+        "reason": "missing_update",
+        "role": "ketrika_app",
+        "subject": "obs.price_observation"
+      },
+      {
+        "reason": "missing_select",
+        "role": "ketrika_app",
+        "subject": "obs.stock_observation"
+      },
+      {
+        "reason": "missing_insert",
+        "role": "ketrika_app",
+        "subject": "obs.stock_observation"
+      },
+      {
+        "reason": "missing_update",
+        "role": "ketrika_app",
+        "subject": "obs.stock_observation"
+      },
+      {
+        "reason": "missing_select",
+        "role": "ketrika_app",
+        "subject": "obs.trade_flow"
+      },
+      {
+        "reason": "missing_insert",
+        "role": "ketrika_app",
+        "subject": "obs.trade_flow"
+      },
+      {
+        "reason": "missing_update",
+        "role": "ketrika_app",
+        "subject": "obs.trade_flow"
+      },
+      {
+        "reason": "missing_select",
+        "role": "ketrika_app",
+        "subject": "obs.production_observation"
+      },
+      {
+        "reason": "missing_insert",
+        "role": "ketrika_app",
+        "subject": "obs.production_observation"
+      },
+      {
+        "reason": "missing_update",
+        "role": "ketrika_app",
+        "subject": "obs.production_observation"
+      },
+      {
+        "reason": "missing_select",
+        "role": "ketrika_app",
+        "subject": "obs.cpi_observation"
+      },
+      {
+        "reason": "missing_insert",
+        "role": "ketrika_app",
+        "subject": "obs.cpi_observation"
+      },
+      {
+        "reason": "missing_update",
+        "role": "ketrika_app",
+        "subject": "obs.cpi_observation"
+      },
+      {
+        "reason": "missing_select",
+        "role": "ketrika_app",
+        "subject": "obs.weather_observation"
+      },
+      {
+        "reason": "missing_insert",
+        "role": "ketrika_app",
+        "subject": "obs.weather_observation"
+      },
+      {
+        "reason": "missing_update",
+        "role": "ketrika_app",
+        "subject": "obs.weather_observation"
+      },
+      {
+        "reason": "outside_gold_object_privilege",
+        "role": "copilot_ro",
+        "subject": "obs.quarantine_ledger"
+      }
+    ],
+    "passed": false,
+    "scope": "effective metadata privileges only; no login, workflow or deployment qualification"
+  },
+  "captured_at": "2026-10-29T17:26:51.120572+00:00",
+  "database": "ketrika_restore_au08_20261028",
+  "isolation": "repeatable read",
+  "read_only": true,
+  "roles": {
+    "copilot_ro": {
+      "direct_memberships": [],
+      "flags": {
+        "rolbypassrls": false,
+        "rolcanlogin": true,
+        "rolcreatedb": false,
+        "rolcreaterole": false,
+        "rolreplication": false,
+        "rolsuper": false
+      },
+      "objects": [
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "api_key",
+          "references": false,
+          "schema": "auth",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "token_revocation",
+          "references": false,
+          "schema": "auth",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "user_account",
+          "references": false,
+          "schema": "auth",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "v",
+          "name": "dq_result",
+          "references": false,
+          "schema": "dq",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "cpi_food",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "economic_dashboard",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "forecast_latest",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "import_dependency",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "market_coverage",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "market_health",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "price_changes",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "price_monthly",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "price_monthly_best",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "price_obs_current",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "source_health",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "stock_latest",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "trade_monthly",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "weather_monthly",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "collection_request",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "document_partition",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "http_daily_budget",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "http_domain_pacing",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "http_policy_stop",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "ingestion_batch",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "ingestion_batch_member",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "ingestion_run",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "llm_call",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "silver_attempt",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "silver_attempt_member",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "silver_attempt_result",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "source",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "source_record",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "forecast",
+          "references": false,
+          "schema": "ml",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "forecast_evaluation",
+          "references": false,
+          "schema": "ml",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "model_run",
+          "references": false,
+          "schema": "ml",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "cpi_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "event",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "macro_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "price_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "production_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "quarantine_ledger",
+          "references": false,
+          "schema": "obs",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "stock_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "trade_flow",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "weather_forecast",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "weather_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "alert",
+          "references": false,
+          "schema": "ops",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "bulletin",
+          "references": false,
+          "schema": "ops",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "dq_result",
+          "references": false,
+          "schema": "ops",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "review_item",
+          "references": false,
+          "schema": "ops",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "crop_calendar",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "location",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "location_alias",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "product",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "product_alias",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "unit_conversion",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        }
+      ],
+      "schemas": [
+        {
+          "create": false,
+          "nspname": "auth",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "dq",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "gold",
+          "usage": true
+        },
+        {
+          "create": false,
+          "nspname": "meta",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "ml",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "obs",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "ops",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "ref",
+          "usage": false
+        }
+      ],
+      "sequences": [],
+      "statement_timeout_settings": [
+        {
+          "database_oid": 0,
+          "setting": "statement_timeout=5s"
+        }
+      ]
+    },
+    "ketrika_app": {
+      "direct_memberships": [],
+      "flags": {
+        "rolbypassrls": false,
+        "rolcanlogin": true,
+        "rolcreatedb": false,
+        "rolcreaterole": false,
+        "rolreplication": false,
+        "rolsuper": false
+      },
+      "objects": [
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "api_key",
+          "references": false,
+          "schema": "auth",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "token_revocation",
+          "references": false,
+          "schema": "auth",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "user_account",
+          "references": false,
+          "schema": "auth",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "v",
+          "name": "dq_result",
+          "references": false,
+          "schema": "dq",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "cpi_food",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "economic_dashboard",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "forecast_latest",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "import_dependency",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "market_coverage",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "market_health",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "price_changes",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "price_monthly",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "price_monthly_best",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "price_obs_current",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "source_health",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "stock_latest",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "trade_monthly",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "m",
+          "name": "weather_monthly",
+          "references": false,
+          "schema": "gold",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "collection_request",
+          "references": false,
+          "schema": "meta",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": true
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "document_partition",
+          "references": false,
+          "schema": "meta",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "http_daily_budget",
+          "references": false,
+          "schema": "meta",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": true
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "http_domain_pacing",
+          "references": false,
+          "schema": "meta",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": true
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "http_policy_stop",
+          "references": false,
+          "schema": "meta",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "ingestion_batch",
+          "references": false,
+          "schema": "meta",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "ingestion_batch_member",
+          "references": false,
+          "schema": "meta",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "ingestion_run",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "llm_call",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "silver_attempt",
+          "references": false,
+          "schema": "meta",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "silver_attempt_member",
+          "references": false,
+          "schema": "meta",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "silver_attempt_result",
+          "references": false,
+          "schema": "meta",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "source",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "source_record",
+          "references": false,
+          "schema": "meta",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "forecast",
+          "references": false,
+          "schema": "ml",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "forecast_evaluation",
+          "references": false,
+          "schema": "ml",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "model_run",
+          "references": false,
+          "schema": "ml",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "cpi_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "event",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": true,
+          "insert": true,
+          "kind": "r",
+          "name": "macro_observation",
+          "references": true,
+          "schema": "obs",
+          "select": true,
+          "trigger": true,
+          "truncate": true,
+          "update": true
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "price_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "production_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": true,
+          "kind": "r",
+          "name": "quarantine_ledger",
+          "references": false,
+          "schema": "obs",
+          "select": true,
+          "trigger": false,
+          "truncate": false,
+          "update": true
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "stock_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "trade_flow",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "weather_forecast",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "weather_observation",
+          "references": false,
+          "schema": "obs",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "alert",
+          "references": false,
+          "schema": "ops",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "bulletin",
+          "references": false,
+          "schema": "ops",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "dq_result",
+          "references": false,
+          "schema": "ops",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "review_item",
+          "references": false,
+          "schema": "ops",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "crop_calendar",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "location",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "location_alias",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "product",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "product_alias",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        },
+        {
+          "delete": false,
+          "insert": false,
+          "kind": "r",
+          "name": "unit_conversion",
+          "references": false,
+          "schema": "ref",
+          "select": false,
+          "trigger": false,
+          "truncate": false,
+          "update": false
+        }
+      ],
+      "schemas": [
+        {
+          "create": false,
+          "nspname": "auth",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "dq",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "gold",
+          "usage": true
+        },
+        {
+          "create": false,
+          "nspname": "meta",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "ml",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "obs",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "ops",
+          "usage": false
+        },
+        {
+          "create": false,
+          "nspname": "ref",
+          "usage": false
+        }
+      ],
+      "sequences": [],
+      "statement_timeout_settings": []
+    }
+  }
+}

@@ -1,4 +1,4 @@
-## ADR-145 | 2026-10-29 | Accepté avant code | Extension multi-produits du pipeline de prévisions de prix à 6 mois
+## ADR-150 | 2026-10-29 | Accepté avant code | Extension multi-produits du pipeline de prévisions de prix à 6 mois
 
 - Contexte : Demande utilisateur validée par RECHERCHE_ET_PLAN_DONNEES_REELLES_PREVISIONS_PPN.md. L'orchestrateur ML (`backend/src/ketrika/ml/forecast.py`) était bridé à $h=3$ mois, $N_{points} \ge 36$ et `cohort == "pure_observed"`, ce qui excluait toutes les séries secondaires en dehors de `RICE_WHITE_LOCAL`.
 - Décision :
@@ -8,7 +8,7 @@
   4. Intervalles de prédiction conformaux [p10, p50, p90] calibrés sur les résidus passés pour garantir une couverture de 80%.
   5. Respect absolu du Principe 9 : les valeurs générées sont stockées avec `value_kind = "forecast"` et `observed_or_imputed = "forecast"`.
 
-## ADR-144 | 2026-10-29 | Accepté avant code | Harmonisation taxonomique PPN et Parité d'Importation (IPP) / Substitution
+## ADR-149 | 2026-10-29 | Accepté avant code | Harmonisation taxonomique PPN et Parité d'Importation (IPP) / Substitution
 
 - Contexte : Les produits PPN autres que le riz blanc local manquaient de séries continues récentes sur l'interface publique, en raison de dédoublements de codes minuscules/majuscules et de rareté des relevés directs de détail pour certaines denrées importées ou de brousse.
 - Décision :
@@ -16,6 +16,23 @@
   2. Implémentation du moteur de Parité d'Importation (IPP) (`backend/src/ketrika/gold/parity_pricing.py`) pour les denrées importées (Blé/Farine, Huile, Sucre, Riz importé) à partir des cours mondiaux réels (World Bank Pink Sheet), du taux de change officiel BFM (USD/MGA), du gazole OMH et des tarifs douaniers malagasy (DGD).
   3. Implémentation du modèle d'élasticité de substitution et calendrier cultural (`backend/src/ketrika/gold/substitution_pricing.py`) pour les vivriers locaux (Manioc, Maïs, Patate douce).
   4. Respect strict des Principes 1, 9 et 10 : aucune valeur sans provenance, marquage obligatoire `observed_or_imputed = "imputed"` et `value_kind = "imputed"`, conservation des formules et sources dans `evidence`.
+
+## ADR-145 | 2026-10-29 | Accepté avant exécution | Rejeu isolé du paquet authentique déjà conservé
+
+- Le logiciel8283fe0/6dad3cd est reçu par CI40825552642 ; les nouvelles gardes d'admission doivent aussi être observées sur les octets WB déjà archivés, sans nouvelle acquisition ni contournement du budget ODR.
+- Créer uniquement de nouveaux conteneurs/volumes ketrika_au09_single_20261029_* ; PostgreSQL et workers network=none, socket partagée privée et aucun port. Conserver le nom logique/DSN/socket exact déjà exigé par require_destination. Code figé6dad3cd et image locale qa-codex-r05 ; corpus étude4a9e254e.../échantillon15 prixbc4a01e5... et reçus C1 existants, vérifiés par SHA.
+- Réutiliser price_preview.prepare pour une destination neuve, sans importer de module tests ; refs seulement, aucun seed synthétique d'observations. Rejeu par run_offline_replay, copie Bronze readonly et worker non-root/capabilities retirées. Inventaires complets et valeurs avant/après, SourceRecord et référentiels conservés, confinement kernel et inspect.
+- Le recalcul séparé utilise min_points=36 par défaut, jamais le min_points=1 du vieux script de preview. Données insuffisantes impliquent abstention explicite ; aucun résultat de modèle qualifié. Une seule édition, aucune vraie correction : R0.8/AU-09 restent PARTIAL même si le mécanisme de rejeu passe.
+- Aucun volume antérieur, base active, copie Bronze originale ou source distante n'est muté. Si préparation/rejeu échoue, conserver ses originaux et reprendre à la première preuve manquante, sans reset ni reconstitution synthétique.
+
+## ADR-144 | 2026-10-29 | Accepté avant diagnostic | Vérifier des bulletins ODR publics comparables
+
+- Contexte : B-R073 reste ouvert après WB identique et refus robots FEWS NET. La recherche readonly découvre des bulletins officiels ODR n°40/41/42 portant septembre/octobre/novembre2024 sur www.minae.gov.mg. Source miasa_odr active/approuvée dans le registre et SQL original ; aucun PolicyStop source/origine connu au contrôle préalable. Les anciennes fixtures dites authentiques ne prouvent pas ces nouveaux documents.
+- Décision : diagnostic distinct sur le laboratoire corpus existant, jamais la source ou le clone actifs. Autoriser uniquement HTTPS www.minae.gov.mg et son éventuel alias minae.gov.mg, robots reçus, GET anonyme, sans cookies/authentification, client et budget SQL durables reçus ; plafond10 requêtes/jour/source et0,2/s. Limiter HTML à1Mio, PDF à5Mio/fichier et trois documents/15Mio ; conserver les originaux acceptés dans un répertoire privé neuf avec SHA, MIME et date de récupération.
+- Candidats découverts, non qualifiés avant réponse réelle : page septembre https://www.minae.gov.mg/bulletin-mensuel-odr-n-40-mois-de-2024-septembre-2024/ ; PDF octobre https://www.minae.gov.mg/wp-content/uploads/2025/04/Bulletin_N%C2%B041_ODR_Octobre_2024.pdf ; novembre https://www.minae.gov.mg/wp-content/uploads/2025/04/Bulletin_N%C2%B042_ODR_Novembre_2024.pdf. Le PDF septembre doit être découvert dans les liens publics de sa page, jamais construit par supposition.
+- Robots interdit,401/403 ou challenge : arrêt durable immédiat de miasa_odr dans le diagnostic et aucune autre route/origine de cette source. Aucun proxy, contact tiers, formulaire ou site privé. Arrêter avant conservation si contenu privé/PII de particuliers constaté ; aucune extraction de noms, téléphones ou emails de particuliers. Les seules données métier candidates sont les tableaux institutionnels de prix, avec référence à l'organisme.
+- Vérifier le contenu du PDF, non son nom de fichier, pour édition/mois, grain district/produit/acteur/statistique/unité/devise et mois comparé. Une différence entre deux observations temporelles n'est pas une correction. Rechercher uniquement la répétition de la même cellule mensuelle dans deux éditions ; toute correction reste candidate avant revue indépendante et preuve source. Droits et authenticité restent explicitement non qualifiés tant que C1 n'est pas reçu ; aucune redistribution ni import Silver/Gold à ce stade.
+- Alternative : fabriquer une ancienne valeur ou acquérir une source disabled refusé. Diagnostic et éventuel corpus ne changent pas le candidat logiciel6dad3cd ni CI40825552642 ; le replay complet R0.8/AU-09 et les gates restent distincts.
 
 ## ADR-143 | 2026-10-28 | Accepté avant code | Admission homogène de quarantaine aux entrées métier directes
 
@@ -1821,3 +1838,27 @@ Précision ADR124 avant raccordement : les points d'entrée dev.sh/dev.ps1 conti
 
 Amendement ADR142 avant repli : World Bank wb_rtfp_mdg reste actif/approuvé. Le diagnostic peut relire son endpoint public déjà reçu par ManualWbConnector (même fenêtre explicite120 MDG/c_rice et contexte metadata8240) sur HTTPS microdata.worldbank.org, avec le même budget SQL privé10/jour,0,2/s et borne256Kio. Comparer au JSON original SHA9d17c04c..., sans changer ni promouvoir cet original. Source et valeurs restent imputées ; seule une différence de même identité/variable peut être candidate à révision, jamais rice contre c_rice ni un échantillon différent. Sortie de comparaison sans prix, aucun import ni redistribution des payloads. PolicyStop indépendant par origine, sans recontacter fdw.fews.net.
 Précision repli WB avant acquisition : après validation du pays MDG, des colonnes publiques attendues et des bornes, conserver les seuls JSON acceptés dans un nouveau répertoire privé exclusif, fichiers adressés par SHA256, pour provenance du diagnostic. Aucun remplacement d'objet Bronze, import Silver ni redistribution ; dates de récupération distinctes des dates de publication, authentification et qualification restent explicitement non acquises.
+
+## ADR-146 | 2026-10-29 | Accepté avant code | Copilote strictement Gold
+
+Contexte : l'audit readonly reçu B-R101 détecte un GRANT SELECT direct de migration0020 sur obs.quarantine_ledger à copilot_ro. SPECS §8 réserve ce rôle à Gold. L'absence actuelle d'USAGE sur obs bloque la lecture mais ne justifie pas de garder un privilège latent.
+
+Décision : migration additive0023, après0022, retirant seulement SELECT sur cette table au rôle copilot_ro. Ne pas réécrire0020, élargir USAGE, changer les tables/objets/données ni les autres rôles. Si PUBLIC ou une appartenance laisse SELECT effectif après retrait, la migration refuse et sa transaction annule le changement ; une revue explicite du profil est requise, aucun retrait global implicite. Downgrade sans réintroduction du droit interdit. Contrôle réel du rôle, de Gold et du refus hors Gold ; nouvelle réception applicative complète sur source figée avant fusion. Les manques historiques applicatifs B-R098 restent séparés.
+
+## ADR-148 | 2026-10-29 | Accepté avant changement QA | Conserver la quarantaine, recevoir sur base neuve
+
+Contexte : check487adb3 sur QA locale historique,5 failed/5 errors/43 passed avant arrêt maxfail10 ; les dix incidents lèvent rebuild_quarantine_preservation_required. La destination porte une quarantaine historique ; le garde-fou reçu refuse correctement wipe. Les trois nouvelles régressions de permissions passent mais ne reçoivent pas le lot. Ce n'est pas un défaut à corriger par suppression de quarantaine ni baisse de seuil.
+
+Décision : après fin du processus et export des originaux rouges, vérifier propriétaire et absence de session sur la seule base QA ketrika_qualification, puis la renommer ketrika_qualification_archive_20261029 si ce nom est absent. Conserver OID, tables, ACL, quarantaine, volumes et tous objets Bronze ; aucune terminaison de session, aucun reset/drop/truncate ni changement d'ACL sur l'archive. Créer une nouvelle base vide ketrika_qualification appartenant à ketrika, migrée/seedée exclusivement par le runner reçu. L'actif aiagent et les clones de référence sont exclus. Source487adb3 inchangée ; nouvelle réception complète après ce changement d'environnement, sans réutiliser le check rouge. Réseau interne, compte/bucket S3 dédiés, Mailpit et budgets restent ceux du contrat QA ; aucun appel externe autorisé et aucun PolicyStop externe contourné.
+
+Alternative : retirer les témoins/forcer wipe (interdit) ; effacer le volume (interdit) ; déplacer la réception sur CI (indisponible pour facturation). Cette conservation et nouvelle base ne qualifient aucune source ni donnée de marché.
+
+## ADR-147 | 2026-10-29 | Décision conditionnelle avant fusion | Réception locale normative, CI hébergée indisponible
+
+Contexte : GitHub Actions refuse le démarrage des jobs pour facturation/plafond (B-R100, zéro step), tandis que AGENTS §3.3/§10 prescrit check complet et critères applicables, sans imposer exclusivement un runner hébergé. La demande de commit/push/merge reste autorisée ; aucun achat ni changement de compte n'est autorisé implicitement.
+
+Décision : recevoir localement par les points d'entrée inchangés, sur source figée et destinations QA dédiées. Fusion uniquement après check backend/frontend complet vert, couvertures et inclusion de tous cas critiques vérifiées dans les originaux, contrôle négatif de build et26 E2E avec reçu/SHA/environnement/images concordants ; SQL réel du clone et critères du lot également verts. Une erreur de test réelle dans quelque réception applicable reste à résoudre. Les diagnostics/documentation séparés utilisent exclusivement l'exception bornée §3.3, sans DONE produit déduit. Aucune nouvelle source, donnée, performance de marché ou qualification humaine implicite.
+
+Le refus de facturation hébergé demeure explicitement non exécuté, jamais annoncé vert. Ne désactiver aucun workflow, règle, limite ni seuil, ne publier aucun faux statut CI et n'utiliser aucun admin/force ; fusion ordinaire avec tête attendue exacte seulement. Si GitHub la refuse, conserver la PR ouverte et consigner le motif, sans contourner. Une CI démarrée doit terminer et ses résultats être examinés. Les originaux locaux et rouges sont conservés ; l'indisponibilité externe reste distincte de la réception logicielle.
+
+Alternatives : attente de paiement sans travail indépendant (inutile tant que réception locale prévue disponible), dépenses non autorisées ou masquage du contrôle (rejetés). Les conditions précédentes restent non satisfaites tant que la réception en cours n'est pas terminée et auditée.

@@ -1,0 +1,14 @@
+{
+  "acl_removed": [
+    "copilot_ro",
+    "ketrika",
+    "SELECT",
+    false
+  ],
+  "deployment_qualified": false,
+  "historical_application_profile_failures": 27,
+  "passed": true,
+  "r08_qualified": false,
+  "scope": "isolated second historical clone; one ACL removed, no business change",
+  "tables_preserved": 40
+}

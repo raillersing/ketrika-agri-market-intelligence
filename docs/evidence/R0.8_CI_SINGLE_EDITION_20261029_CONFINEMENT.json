@@ -1,0 +1,142 @@
+{
+  "containers": [
+    {
+      "cap_drop": null,
+      "container_id": "523bea052f38e105f94353f9b8d58ff6e91adc360c498170231aebe382d3dd48",
+      "image_id": "sha256:01a6a70e41e6c4467c8f55f6063555ed72db2d6662cd0d571040d42eadaeb6f6",
+      "mounts": [
+        {
+          "Destination": "/var/run/postgresql",
+          "RW": true,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_socket"
+        },
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "RW": true,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_pgdata"
+        }
+      ],
+      "name": "/ketrika-au09-single-db-20261029",
+      "network_mode": "none",
+      "port_bindings": {},
+      "readonly_rootfs": false,
+      "security_opt": null,
+      "state": {
+        "ExitCode": 0,
+        "FinishedAt": "0001-01-01T00:00:00Z",
+        "StartedAt": "2026-10-29T07:21:30.325105687Z",
+        "Status": "running"
+      },
+      "user": ""
+    },
+    {
+      "cap_drop": [
+        "ALL"
+      ],
+      "container_id": "9e6de9096aa7128fb3ac010e0b8f6a2a9dc9a39f4fb2577f3cd0502c933d6ba7",
+      "image_id": "sha256:a54aadb9f11143af0d9091f693a7e6dc3953cc255f3565ad761a81a2ea5390ca",
+      "mounts": [
+        {
+          "Destination": "/copy",
+          "RW": true,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_copy"
+        },
+        {
+          "Destination": "/out",
+          "RW": true,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_reports"
+        },
+        {
+          "Destination": "/packet",
+          "RW": false,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_packet"
+        },
+        {
+          "Destination": "/workspace",
+          "RW": false,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_source"
+        },
+        {
+          "Destination": "/run/ketrika-rebuild",
+          "RW": true,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_socket"
+        }
+      ],
+      "name": "/ketrika-au09-single-prepare-20261029",
+      "network_mode": "none",
+      "port_bindings": {},
+      "readonly_rootfs": true,
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "state": {
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-29T07:25:55.342496168Z",
+        "StartedAt": "2026-10-29T07:25:24.581325611Z",
+        "Status": "exited"
+      },
+      "user": "0"
+    },
+    {
+      "cap_drop": [
+        "ALL"
+      ],
+      "container_id": "3d944af7c3d05ec85ad364193dd316e6b58fb8533c480b882362774ea39806dc",
+      "image_id": "sha256:a54aadb9f11143af0d9091f693a7e6dc3953cc255f3565ad761a81a2ea5390ca",
+      "mounts": [
+        {
+          "Destination": "/copy",
+          "RW": false,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_copy"
+        },
+        {
+          "Destination": "/out",
+          "RW": true,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_reports"
+        },
+        {
+          "Destination": "/runner.py",
+          "RW": false,
+          "Type": "bind"
+        },
+        {
+          "Destination": "/workspace",
+          "RW": false,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_source"
+        },
+        {
+          "Destination": "/run/ketrika-rebuild",
+          "RW": true,
+          "Type": "volume",
+          "name": "ketrika_au09_single_20261029_socket"
+        }
+      ],
+      "name": "/ketrika-au09-single-replay-20261029",
+      "network_mode": "none",
+      "port_bindings": {},
+      "readonly_rootfs": true,
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "state": {
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-29T07:29:51.954197551Z",
+        "StartedAt": "2026-10-29T07:29:08.652461539Z",
+        "Status": "exited"
+      },
+      "user": "app"
+    }
+  ],
+  "passed": true,
+  "scope": "kernel-independent orchestrator confinement; credentials excluded"
+}
