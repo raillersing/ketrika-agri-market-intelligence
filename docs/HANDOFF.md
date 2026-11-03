@@ -13,3 +13,10 @@ Le rejeu réel d'une édition conserve2 sources/15 valeurs imputées, sans écar
 Programme :7 DONE historiques,65 IN_PROGRESS,2 TODO ; R0.8/R0.9 et R6.11 non reçus, aucun tag final. GitHub Actions indisponible avant tout step pour facturation/plafond (B-R100), jamais annoncé vert. ADR147 autorise la fusion ordinaire après réception locale complète vérifiée, sans admin/force ni faux statut. Un refus de GitHub doit être conservé, pas contourné ; rétablir Actions côté compte reste une action d'infrastructure distincte.
 
 H1–H7 inchangés : replay sans clé, livraison locale sans provisionnement, Mailpit/brouillons, aucune collecte privée, revue humaine explicite, budgets stricts et aucun contact de tiers. Le guide VPS n'est pas une preuve de déploiement. Voir [PROGRESS](plan/PROGRESS.md), [BLOCKERS](plan/BLOCKERS.md) et [rapport](MARKET_INTELLIGENCE_REPORT.md).
+
+Reprise du 2026-11-03 : diagnostic transport ODR instrumenté et reçu offline
+(cinq tests), sans nouvelle collecte. B-R104 : ancien laboratoire de découverte
+et son volume non retrouvés dans Docker Desktop ; ne pas recréer son registre
+à partir du seul rapport10/10, qui ne contient pas tous les arrêts durables.
+Rétablir le registre original et vérifier source/origines avant reprise ; sinon
+fournir directement le corpus des deux éditions autorisées défini ci-dessus.

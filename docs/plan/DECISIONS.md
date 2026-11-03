@@ -1843,3 +1843,23 @@ Décision : recevoir localement par les points d'entrée inchangés, sur source 
 Le refus de facturation hébergé demeure explicitement non exécuté, jamais annoncé vert. Ne désactiver aucun workflow, règle, limite ni seuil, ne publier aucun faux statut CI et n'utiliser aucun admin/force ; fusion ordinaire avec tête attendue exacte seulement. Si GitHub la refuse, conserver la PR ouverte et consigner le motif, sans contourner. Une CI démarrée doit terminer et ses résultats être examinés. Les originaux locaux et rouges sont conservés ; l'indisponibilité externe reste distincte de la réception logicielle.
 
 Alternatives : attente de paiement sans travail indépendant (inutile tant que réception locale prévue disponible), dépenses non autorisées ou masquage du contrôle (rejetés). Les conditions précédentes restent non satisfaites tant que la réception en cours n'est pas terminée et auditée.
+
+## ADR-149 | 2026-11-03 | Reprise du diagnostic ODR avec continuité du registre
+
+Contexte : ADR144 conserve une tentative de collecte ODR arrêtée à10/10 sans
+exceptions réseau ; le laboratoire et son volume ne sont plus retrouvés dans
+Docker Desktop. Les rapports exportés ne représentent pas tous les arrêts SQL.
+
+Décision : instrumenter une nouvelle copie du diagnostic sans modifier les
+originaux, les budgets, les identités ni les politiques. Exiger la base dédiée
+et son compteur historique avant les vérifications natives des arrêts et tout
+réseau. Le défaut de registre durable refuse la reprise ; aucune reconstruction
+à partir du seul reçu, aucune activation implicite. Continuer les diagnostics
+offline et conserver B-R073 ouvert ; le corpus peut être fourni avec ses droits
+et annotations selon HANDOFF. Ce repli documentaire ne reçoit aucun produit,
+source, modèle, gate ou tag. Exception readonly AGENTS §3.3 ; source applicative
+487adb3 et réception complète antérieure restent inchangées.
+
+Alternatives : recréer un laboratoire vide et changer l'identité pour relancer
+(rejeté : perte de continuité des arrêts), ignorer les erreurs de transport
+(rejeté : preuve inexploitable), inventer une révision (interdit).

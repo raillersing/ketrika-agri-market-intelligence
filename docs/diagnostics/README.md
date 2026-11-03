@@ -38,3 +38,33 @@ rôles, schémas et tables de fixture : ne jamais le lancer sur l'actif, un clon
 historique ou une autre destination partagée. Absence de SQL = erreur, aucun
 skip. Les GRANT/REVOKE des seuls tests restent dans cette fixture isolée.
 Les essais positifs synthétiques ne qualifient aucune donnée de marché.
+
+## Témoin de transport ODR
+
+`transport_witness.py` enveloppe le transport déjà borné du diagnostic ODR :
+aucune relance, requête, politique, identité ou admission supplémentaire.
+Il conserve au maximum dix tentatives et seulement leur heure UTC, phase,
+code HTTP éventuel et classe d'erreur. Aucun message d'exception, URL, en-tête,
+cookie, identifiant ou corps n'entre dans ce témoin. Une erreur de lecture après
+réception des en-têtes reste distincte d'un téléchargement complet ; elle se
+propage au caller. Les réponses préchargées sont également prises en compte.
+
+`odr_candidates.py` est une nouvelle copie instrumentée du diagnostic ADR144 ;
+le script et les rapports historiques dans evidence restent inchangés.
+Le probe exige la base dédiée historique `ketrika_corpus_discovery_20261028`,
+son compteur source original du 29 octobre (10/10), puis le contrôle natif des
+arrêts source/origine avant tout appel réseau. Il ne recrée pas le laboratoire,
+ne réactive aucune source et ne remet aucun quota à zéro. Le report inclut les
+tentatives de transport ; ses documents restent non qualifiés et hors Silver.
+L'emplacement de sortie est exclusif : conserver une tentative existante.
+
+Au 2026-11-03 le conteneur et le volume de ce laboratoire ne sont plus présents
+dans Docker Desktop ; aucune nouvelle tentative ODR n'est exécutée. Rétablir
+le laboratoire avec son registre durable original et vérifier ses arrêts avant
+usage ; à défaut fournir les deux éditions publiques autorisées décrites dans
+HANDOFF. Un changement de date ne suffit pas à reconstruire un registre perdu.
+
+Vérification locale dans Docker : `python -m unittest -v test_transport_witness`
+depuis le répertoire des diagnostics ; cinq tests offline, dont trois classes
+d'erreur de connexion/timeout, flux interrompu, succès et borne de tentatives.
+Ce sont des tests du diagnostic, aucune preuve de collecte réelle.

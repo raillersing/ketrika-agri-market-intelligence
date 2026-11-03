@@ -11,3 +11,11 @@ Le premier check a refusé à juste titre wipe sur ancienne QA quarantainée. Se
 AU-09 demeure partiel. Le rejeu d'une seule édition conserve2 sources et15 valeurs imputées ;13 vues Gold publiables restent vides, macro réservée. Au seuil36, aucune série éligible ni prévision ; aucun modèle validé. Deux éditions authentiques corrigées au même grain et leurs droits/provenance restent nécessaires (B-R073). WB120 identique, FEWS refuse robots, ODR différé au budget avec transport inconnu.13 empreintes déclarées gouvernementales de l'archive correspondent à des fixtures synthetic, pas à un nouveau corpus authentique.
 
 Aucune collecte live, performance de marché ou utilisation humaine déduite des tests logiciels. H1–H7 conservés : replay, préparation locale, aucun envoi externe ni collecte privée, revue humaine explicite, budgets stricts, aucun contact de tiers. Le guide VPS demeure préparatoire. Voir [HANDOFF](HANDOFF.md) pour les critères précis et les PR7/8 pour la publication distante.
+
+Reprise du 2026-11-03 : état PARTIAL confirmé, tête distante2031adc avant nouveau
+lot documentaire. Témoin de transport ODR reçu offline (cinq tests), aucune
+nouvelle édition acquise ni importée. Le laboratoire de collecte et son registre
+original ne sont plus retrouvés (B-R104) ; leur continuité est requise avant
+reprise, conformément à ADR149. R0.8 reste la première tâche MUST éligible ;
+R0.9 dépend de sa réception, les capacités aval ne sont pas qualifiées par ces
+tests. Le corpus authentique corrigé demandé dans HANDOFF reste indispensable.
