@@ -59,7 +59,7 @@ tentatives de transport ; ses documents restent non qualifiés et hors Silver.
 L'emplacement de sortie est exclusif : conserver une tentative existante.
 
 Au 2026-11-03 le conteneur et le volume de ce laboratoire ne sont plus présents
-dans Docker Desktop ; aucune nouvelle tentative ODR n'est exécutée. Rétablir
+dans Docker Desktop ; ce mode historique ne lance aucune nouvelle tentative. Rétablir
 le laboratoire avec son registre durable original et vérifier ses arrêts avant
 usage ; à défaut fournir les deux éditions publiques autorisées décrites dans
 HANDOFF. Un changement de date ne suffit pas à reconstruire un registre perdu.
@@ -68,3 +68,23 @@ Vérification locale dans Docker : `python -m unittest -v test_transport_witness
 depuis le répertoire des diagnostics ; cinq tests offline, dont trois classes
 d'erreur de connexion/timeout, flux interrompu, succès et borne de tentatives.
 Ce sont des tests du diagnostic, aucune preuve de collecte réelle.
+
+## Acquisition réelle distincte (ADR156)
+
+`odr_live_candidates.py` utilise le registre central durable déjà existant de la
+base `ketrika`, après vérification de la source approuvée/active et des arrêts
+source/origines. Ce diagnostic ne restaure pas le laboratoire historique. Il
+emploie le client poli et son admission native, limite le jour à dix tentatives
+et conserve les compteurs/arrêts ; il ne change ni identité ni quota après
+épuisement. Les seuls effets SQL sont les métadonnées natives de débit/arrêt,
+aucune insertion métier ou attribution de droits. Les sorties privées sont des
+candidats non qualifiés, jamais Silver/Gold ; les documents exigent encore
+provenance, droits et annotations avant admission.
+
+Résultat2026-11-03 : dix ConnectError, aucun en-tête HTTP ni document ; quota
+central10/10, source active, zéro PolicyStop. La cause réseau n'est pas établie.
+Ne plus interroger ce jour UTC. Le prédicat `odr_live_policy.py` distingue un
+refus externe réel d'un quota ou problème local, qui ne désactive pas la source.
+
+Tests Docker offline : `python -m unittest -v test_transport_witness test_odr_live_policy`
+(sept cas). Ces tests ne prouvent ni disponibilité distante ni corpus corrigé.
