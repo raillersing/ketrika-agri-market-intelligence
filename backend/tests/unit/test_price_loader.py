@@ -197,6 +197,8 @@ def test_invalid_semantics_refused(changes):
 )
 def test_semantic_metadata_supersession_not_full_evidence(current_kind, wanted_kind, expected):
     session = MagicMock()
+    session.scalar.return_value = False
+    source_record_id = uuid4()
     current = PriceObservation(
         observation_id=uuid4(),
         price_raw="2850",
@@ -207,7 +209,9 @@ def test_semantic_metadata_supersession_not_full_evidence(current_kind, wanted_k
         session,
         PriceObservation,
         "synthetic_key",
-        lambda identifier: PriceObservation(observation_id=identifier),
+        lambda identifier: PriceObservation(
+            observation_id=identifier, source_record_id=source_record_id
+        ),
         {"price_raw": "2850"},
         evidence_fields={("normalization", "value_kind"): wanted_kind},
     )

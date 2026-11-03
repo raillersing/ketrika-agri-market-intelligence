@@ -32,6 +32,7 @@ def record() -> WeatherRecord:
 
 def session_for(current: WeatherObservation | None = None) -> MagicMock:
     session = MagicMock(spec=Session)
+    session.scalar.return_value = False
     location = Location(location_id=uuid4(), name="TEST-LOCATION", admin_level=2)
     first = MagicMock()
     first.scalars.return_value.first.return_value = location

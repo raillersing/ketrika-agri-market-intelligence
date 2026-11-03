@@ -271,6 +271,7 @@ def test_fewsnet_ipc_loader_insertion_and_idempotence():
     from ketrika.core.models.db import Event
 
     session = MagicMock()
+    session.scalar.return_value = False
     source_record_id = uuid.uuid4()
     source_id = "fewsnet_mdg"
 

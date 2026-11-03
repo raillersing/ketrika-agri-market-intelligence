@@ -22,6 +22,7 @@ from ketrika.core.models.db import SourceRecord
 from ketrika.core.policy import PolicyEngine
 from ketrika.core.provenance import ArtifactReader
 from ketrika.core.provenance_bronze import BronzeProofReader
+from ketrika.core.quarantine import require_no_active_quarantine
 from ketrika.gold.provenance_gate import GoldProvenanceRejected
 from ketrika.gold.refresh import refresh_gold_views
 from ketrika.gold.schema_gate import GoldSchemaRejected
@@ -36,6 +37,7 @@ def wipe_silver_gold_tables(
 
     Uses TRUNCATE CASCADE to safely bypass row-level immutability triggers on obs tables.
     """
+    require_no_active_quarantine(session)
     logger.info("Wiping tables in schema obs and ml...")
 
     # 1. Truncate obs and ml tables
@@ -262,7 +264,15 @@ def main() -> None:
     )
     print("=== Ketrika Agri Market Intelligence: Offline Database Rebuild ===")
     try:
-        stats = rebuild_database(offline=True)
+        from ketrika.pipelines.rebuild_qualification import (
+            require_destination,
+            require_network_none,
+        )
+
+        with get_session() as session:
+            require_destination(session)
+            require_network_none()
+            stats = rebuild_database(session=session, offline=True)
         print("Rebuild successfully finished!")
         print(
             f"  Source records processed: {stats['source_records_replayed']}/{stats['source_records_total']}"

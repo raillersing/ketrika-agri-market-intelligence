@@ -149,6 +149,7 @@ def test_wipe_keeps_injected_reader_for_initial_gold_refresh(local_copy, monkeyp
     )
     reader = BronzeProofReader(store)
     session = MagicMock()
+    session.scalar.return_value = False
     session.execute.return_value.scalars.return_value.all.return_value = []
     refresh = MagicMock(return_value={"count": 12})
     monkeypatch.setattr(rebuild, "refresh_gold_views", refresh)

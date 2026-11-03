@@ -1,0 +1,19 @@
+{
+  "authentic_revision_qualified": false,
+  "finished_at": "2026-10-28T21:31:25.537966+00:00",
+  "original_bytes_unchanged": true,
+  "original_fetched_at": "2026-10-24T13:13:10.103455+00:00",
+  "original_sha256": "9d17c04cb0ddb0886afb677685aecfc4e746deb14b0284155466b26ceef695e3",
+  "reason": "corpus_nonpublic_request_refused",
+  "receipts": [],
+  "requests": [
+    {
+      "path": "/robots.txt",
+      "status": 404
+    }
+  ],
+  "silver_imported": false,
+  "source_values": "publisher modeled close estimates, never observed prices",
+  "started_at": "2026-10-28T21:31:20.165263+00:00",
+  "status": "policy_stopped"
+}

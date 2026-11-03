@@ -303,6 +303,7 @@ def test_republished_cpi_traceability():
 def test_load_macro_record_mock_insertion_and_idempotence():
     """Verify load_macro_record_with_supersession inserts and idempotently skips."""
     mock_session = MagicMock()
+    mock_session.scalar.return_value = False
     # Case 1: No existing row -> inserted
     mock_session.execute.return_value.scalar_one_or_none.return_value = None
 

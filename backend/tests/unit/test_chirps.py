@@ -138,6 +138,7 @@ def test_raster_budget_limit_enforcement():
 def test_double_version_supersession_c2_c4():
     """Criterion 5: Preliminary version is archived with superseded_by when final arrives (C2/C4)."""
     mock_session = MagicMock()
+    mock_session.scalar.return_value = False
 
     loc_id = uuid.uuid4()
     mock_loc = MagicMock(spec=Location)

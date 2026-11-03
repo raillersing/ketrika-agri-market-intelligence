@@ -222,6 +222,7 @@ def test_load_stock_record_with_supersession():
     )
 
     mock_session = MagicMock()
+    mock_session.scalar.return_value = False
     source_rec_id = uuid.uuid4()
 
     # Case 1: Fresh insertion

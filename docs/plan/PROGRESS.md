@@ -1,5 +1,11 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-10-27T18:39:20Z] Reprise R0.8/AU-08 — lignée acyclique et réception sur clone
+
+- Base distante20552dd, réception logicielle antérieure CI40545386343 conservée pour son contenu exact ; ne pas la rejouer comme check de base. R0.8/AU-08 reste IN_PROGRESS ; aucune dépendance aval promue.
+- Mini-plan : reproduire les cycles multi-lignes dans PostgreSQL privé ; ADR/SPECS avant correction ; migration additive et gardes sous concurrence ; régressions SQL positives/négatives ; inventaire original readonly et clone SQL/S3 distinct ; comparer bruts/objets/liens et publication ; gel, check complet et E2E avant réception ; poursuivre le corpus authentique sans lever les PolicyStop.
+- Les fichiers utilisateur et les services actifs sont préservés ; travail dans fix/r08-provenance-reception-20261027. Les chiffres historiques728/164 doivent être revérifiés, pas supposés actuels.
+
 ### [2026-10-27T14:51:33Z] Reprise après publication concurrente — réception corrective à compléter
 
 - PR3 fusionnée à distance en71e87f5 pendant l'interruption ; main avancé jusqu'àef3efd2. Les huit derniers runs distants restent rouges, dont40519766861 : Missing verified commit for DONE R1.3. Aucun succès global réutilisable sur ce contenu.
@@ -4557,3 +4563,51 @@ Les sous-implémentations de sécurité du runner dans R0.1 ne marquent pas R0.2
 - Preuve consolidée R0.8_CI_40545386343_RECEPTION.md ; originaux natifs archivés sans traces/cookies, manifeste/taille/SHA et inclusion réelle des cas critiques contrôlés par vérificateur readonly code0. Historique rouge conservé ; incidents logiciels B-R091–096 reçus par ce gel.
 - AU-01–AU-07 et Irooa/Ketrikay présents sur main. Aucun DONE R ajouté :7 historiques/65 IN_PROGRESS/2 TODO ; R0.8/AU-08, provenance B-R084/B-R085, corpus B-R073 et qualifications live/modèles/humaine distincts, programme PARTIAL, aucun tag final.
 - Clôture suivante limitée aux preuves/PROGRESS/HANDOFF/rapport, exception documentaire §3.3, source applicative inchangée. Ne pas refaire le check sur simple reprise documentaire ; nouveau contenu applicatif/environnement exige sa propre réception.
+
+### [2026-10-28T21:03:00Z] AU-08 — clone historique reçu, protections applicatives en réception
+
+- Reprise sur main6130427 dans un clone Git autonome : ancien worktree préservé malgré métadonnées Git remplacées ; aucun reset du dépôt partagé. ADR140/141 et SPECS avant code, migration additive0022 et exclusion de quarantaine en normalisation ; refus explicite des clés historiques réservées et du wipe/CLI non isolé.
+- Sauvegarde originale0018 en lecture seule, restauration neuve dédiée puis0018→0022 code0. Comparateur readonly code0 :38 tables/bruts/ACL/propriétaires conservés,485 références intactes,1149 auto-liens réparés avec quarantaine permanente (728 parmi914 prix),164 références Bronze non vérifiables isolées,1313 entrées au total, zéro cycle ;14 Gold non publiés. Idempotence code0 :40 tables protégées, zéro nouveau changement.
+- Bronze original :684 versions/1565454 octets valides et inventaire inchangé avant/après ; audits code1 conservés pour164 références sans preuve, jamais convertis en succès. Copie distincte des684 versions puis relecture vérifiée, correspondance des VersionID natives explicite ; aucun objet original modifié ni manquant fabriqué.
+- Refus wipe sur ce vrai clone, en transaction READ ONLY :1313 quarantaines conservées et nouvelle comparaison SQL identique. Ciblés code0 :116/23,49s dont14 cycles/concurrence,7 anciennes quarantaines,23 comparateur,9 copie,13 nouvelles protections et50 régressions. Contre-exemples rouges archivés, aucune assertion ni contrainte SQL retirée. Check global et26 E2E à recevoir sur source figée avant fusion ; ces ciblés ne clôturent pas R0.8.
+- Originaux et limites : docs/evidence/R0.8_AU08_20261028_RECEPTION.md et archives CLONE_NATIVE/TARGETED_NATIVE/FIRST_GREEN/FIRST_RED. Dump et octets Bronze privés ; données/services actifs préservés. R0.8 reste IN_PROGRESS, AU-09/B-R073 et qualifications live/modèles/humaines non reçus, aucun tag ni DONE R ajouté.
+
+### [2026-10-28T21:17:00Z] CI40769033192 — typage des nouveaux tests corrigé, réception à reprendre
+
+- Candidat062c1bf/empreintea3e70cd934c3c72735db797b2b341447cc44a45398ab84cd2a65dab47f0c066b : construction, migrations0018→0022, seed, lint et format434 fichiers verts. Mypy global refuse six erreurs dans deux nouveaux tests chargeant les outils via importlib ; aucun pytest/frontend/E2E exécuté, aucune réception globale.
+- Correction bornée : assertions explicites ModuleSpec et loader non None avant création/exécution du module ; aucun ignore de typage, test retiré ou seuil changé. Le ciblé précédent116 reste une preuve de développement de l'ancien contenu. Contrôle src+tests et ciblés impactés avant nouveau gel puis nouveau check complet ; PR6 reste non fusionnée.
+
+### [2026-10-28T21:20:00Z] R0.8/B-R073 — diagnostic indépendant préparé
+
+- Candidat AU-08 2c4cb8e figé, CI40770745028 ; aucune modification de ses sources ou destinations QA. Nouveau worktree indépendant feat/r08-authentic-revision-corpus-20261028.
+- Mini-plan : ADR142/SPECS avant diagnostic ; laboratoire SQL/outils distincts ; robots puis extrait public FEWS NET borné avec policy/budget reçus ; sortie de métadonnées sans valeur/PII ; vérifier disponibilité des anciens états et droits primaires avant tout corpus conservé ; consigner refus et poursuivre les replis autorisés. Aucun import produit ni DONE/gate/tag par ce diagnostic.
+
+### [2026-10-28T21:33:00Z] R0.8/AU-08 — entrées métier directes à raccorder avant fusion
+
+- Audit runner : sept chargeurs directs ne passent pas tous par le chargeur générique protégé. ADR143/SPECS avant code ; contrôler source et ligne choisie avant comparaison/idempotence/mutation, garder unicité et archives ; couvrir les sept chemins et les régressions positives/négatives.
+- Candidat2c4cb8e/CI40770745028 préservé dans son worktree, aucun processus de réception interrompu ni destination partagée modifiée. Ce résultat restera partiel tant que le raccordement nécessaire n'est pas reçu par un nouveau check complet sur le lot stabilisé.
+
+### [2026-10-28T21:36:00Z] B-R073 — FEWS NET refusé, repli WB diagnostic à corriger
+
+- FEWS NET : seul GET /robots.txt200, API de prix interdite par robots ; zéro requête de données. Source de diagnostic privée disabled ; budget source/domaine1 sur10 et relecture SqlBudgetBackend.check refuse durablement sans réseau. Aucune authentification ni autre route de cette origine tentée ; B-R073 reste ouvert.
+- Repli WB : première préparation refuse registre absent avant réseau, copie du registre exact ensuite ; premier probe émet seulement robots404, puis sa propre garde anonyme refuse la requête suivante avant émission (corpus_nonpublic_request_refused). Aucun401/403/challenge/robots interdit constaté, aucune donnée récupérée ; ce refus local n'est pas une indisponibilité prouvée de WB.
+- Correction de diagnostic : politique de cookies refusant tout stockage/retour de cookie dès la création du client et trace des seuls attributs méthode/chemin/présence de cookie du refus local. Conserver le rapport rouge et les quotas ; ne corriger l'état de la seule source du laboratoire que si aucun arrêt HTTP réel n'existe. Ne pas modifier la source active ni lever un refus serveur.
+
+### [2026-10-29T05:47:28Z] AU-08 raccordement direct stabilisé ; corpus sans nouvelle édition
+
+- ADR143 implémenté aux sept chargeurs directs et à la source des événements/prévisions ; météo vérifie aussi la référence raster secondaire. Une ligne courante quarantainée est refusée avant idempotence/révision, sans effacer sa clé ni modifier ses bruts/liens. Les contrôles inconnus refusent l'admission.
+- Développement privé code0 :303 tests/65,13s, dont21 SQL (sept types × ligne identique/ligne révisée/source),23 nouveaux négatifs et régressions existantes. Lint435 fichiers et mypy434 modules verts. Originaux rouges conservés : fixture géographique sans boundary_version corrigée explicitement ; anciens doubles SQL déclarent False plutôt que l'inconnu MagicMock, sans changer les assertions. Nouveau gel complet obligatoire avant fusion.
+- CI40770745028 sur2c4cb8e est verte et ses rapports natifs téléchargés ; candidat ef51dadfc115834c1af088e967603ea63ff74cef, empreinte8fc30ae10f9a4ed93a92d9935f571675ff0332ce34b7fa5c3d2b76470470208a. Ne pas la réutiliser comme réception de ce raccordement postérieur.
+- FEWS NET : refus robots reçu sans appel de prix, source de diagnostic désactivée durablement ; aucune autre route de cette origine tentée. WB : après correction des cookies anonymes du seul outil, contexte51241 octets et extrait28248 octets HTTP200, empreintes identiques à l'original ;120 identités communes,0 valeur changée,0 ajout/retrait. Aucune seconde édition authentique obtenue, aucune importation Silver ni donnée observée déduite des estimations c_rice. B-R073 et programme restent ouverts/PARTIAL.
+
+### [2026-10-29T05:47:28Z] Droits SQL effectifs — comparaison originale/clone, sans élargissement
+
+-42 SQL (sept types × trois scénarios × propriétaire/application), code0/14,50s ; insertion positive et refus de quarantaine avec les vrais rôles sur base neuve. Aucun raccourci par superutilisateur pour ces21 cas applicatifs.
+- Probe historique en READ ONLY sous ketrika_app refusé avant lecture, permission denied for schema obs. Audit original et clone : ACL de schémas identiques, Gold USAGE présent pour app/copilot, USAGE absent ailleurs, aucune adhésion de rôles. La restauration préserve aussi ce défaut préexistant ; droits de tables seuls ne prouvent pas leur accès effectif.
+- Aucun GRANT sur l'actif ou le clone pour verdir le probe. Les1313 témoins historiques doivent être vérifiés sous le propriétaire effectivement utilisé par ce runtime ; le rôle applicatif historique reste non qualifié (B-R098), distinct des42 SQL neufs.
+
+### [2026-10-29T05:47:28Z] AU-08 — témoins réels et conservation des droits vérifiés
+
+- Probe readonly propriétaire sur les1313 témoins du clone, code0 :728 prix,191 CPI,116 météo,50 commerce,35 stocks,29 production,164 références source ; tous refusés explicitement, aucune admission silencieuse. Pas de témoin macro historique,42 cas SQL neufs couvrent les sept types et les deux rôles. Nouvelle capture/comparaison des40 tables code0, bruts/liens/ACL inchangés.
+- Comparaison native source/clone code0 : schémas/propriétaires/ACL/USAGE effectifs, privilèges par défaut, attributs/configurations et adhésions des rôles identiques. Mot de passe non lu ni copié. Les deux contre-épreuves historiques ketrika_app refusent obs avec code1, sans GRANT ni autre changement ; B-R098 non clôturé.
+- Reçus R0.8_AU08_TYPED_20261028_REAL_NATIVE et TARGETED_NATIVE ; diagnostics R0.8_SQL_SCHEMA_RIGHTS_20261028_*. Les témoins réels ne qualifient ni le rôle applicatif historique, ni une source, un modèle ou R0.8 entier. Prochain check complet sur le contenu consolidé requis avant fusion de PR6.

@@ -1,6 +1,4 @@
-# DECISIONS (Architecture Decision Records - ADR)
-
-## ADR-141 | 2026-10-29 | Accepté avant code | Extension multi-produits du pipeline de prévisions de prix à 6 mois
+## ADR-145 | 2026-10-29 | Accepté avant code | Extension multi-produits du pipeline de prévisions de prix à 6 mois
 
 - Contexte : Demande utilisateur validée par RECHERCHE_ET_PLAN_DONNEES_REELLES_PREVISIONS_PPN.md. L'orchestrateur ML (`backend/src/ketrika/ml/forecast.py`) était bridé à $h=3$ mois, $N_{points} \ge 36$ et `cohort == "pure_observed"`, ce qui excluait toutes les séries secondaires en dehors de `RICE_WHITE_LOCAL`.
 - Décision :
@@ -10,7 +8,7 @@
   4. Intervalles de prédiction conformaux [p10, p50, p90] calibrés sur les résidus passés pour garantir une couverture de 80%.
   5. Respect absolu du Principe 9 : les valeurs générées sont stockées avec `value_kind = "forecast"` et `observed_or_imputed = "forecast"`.
 
-## ADR-140 | 2026-10-29 | Accepté avant code | Harmonisation taxonomique PPN et Parité d'Importation (IPP) / Substitution
+## ADR-144 | 2026-10-29 | Accepté avant code | Harmonisation taxonomique PPN et Parité d'Importation (IPP) / Substitution
 
 - Contexte : Les produits PPN autres que le riz blanc local manquaient de séries continues récentes sur l'interface publique, en raison de dédoublements de codes minuscules/majuscules et de rareté des relevés directs de détail pour certaines denrées importées ou de brousse.
 - Décision :
@@ -18,6 +16,39 @@
   2. Implémentation du moteur de Parité d'Importation (IPP) (`backend/src/ketrika/gold/parity_pricing.py`) pour les denrées importées (Blé/Farine, Huile, Sucre, Riz importé) à partir des cours mondiaux réels (World Bank Pink Sheet), du taux de change officiel BFM (USD/MGA), du gazole OMH et des tarifs douaniers malagasy (DGD).
   3. Implémentation du modèle d'élasticité de substitution et calendrier cultural (`backend/src/ketrika/gold/substitution_pricing.py`) pour les vivriers locaux (Manioc, Maïs, Patate douce).
   4. Respect strict des Principes 1, 9 et 10 : aucune valeur sans provenance, marquage obligatoire `observed_or_imputed = "imputed"` et `value_kind = "imputed"`, conservation des formules et sources dans `evidence`.
+
+## ADR-143 | 2026-10-28 | Accepté avant code | Admission homogène de quarantaine aux entrées métier directes
+
+- Contexte : l'audit après gel2c4cb8e relève que les chargeurs directs du runner (prix, stocks, commerce, production, CPI, météo, macro) ne passent pas tous par normalize.supersede. Le contrôle du rapprochement prix seul ne suffit pas pour leurs sélections courantes et révisions.
+- Décision : vérifier la référence source à chaque entrée typée avant mutation et avant retour d'idempotence ; refuser aussi une ligne courante sélectionnée si elle-même ou sa source sont en quarantaine active. Conserver les contraintes uniques, les lignes et leurs liens : aucune réadmission automatique ni nouvelle révision d'une archive. Source refusée ou résultat de contrôle inconnu échoue-fermé. Le chemin générique garde son exclusion et son refus de clé réservée.
+- Une sélection existante peut rester visible au diagnostic du chargeur, mais ne peut être comparée comme observation admissible ou révisée avant le contrôle explicite. Cette approche évite qu'une ligne cachée par un filtre de lecture mène ensuite à une collision unique ou à l'effacement d'une clé historique. La quarantaine n'est jamais une révision.
+- Les événements et prévisions météo vérifient leur référence source ; aucun nouveau schéma, endpoint, rôle ou modèle n'est introduit. Les autres lectures ML/DQ restent à qualifier dans leurs tâches respectives.
+- Réception : tests SQL sur les sept entrées directes, refus de la source et de la ligne historique avant insertion/idempotence/révision, bruts/liens inchangés ; régressions typées positives/négatives, types source+tests, puis check complet du lot stabilisé et26 E2E. Travail indépendant du run40770745028, sans interruption ni mutation de sa source ou destination QA ; ne pas fusionner tant que ce raccordement nécessaire n'est pas reçu.
+
+## ADR-142 | 2026-10-28 | Accepté avant code | Diagnostic public borné des états historiques FEWS NET
+
+- Contexte : B-R073 ne dispose pas de deux éditions authentiques comparables. Documentation officielle https://help.fews.net/fdw/fews-net-api confirme as_of_date et accès anonyme public ; politiques https://help.fews.net/fde/v3/data-usage-policies-and-permissions et https://help.fews.net/fdp/data-and-information-use-and-attribution-policy distinguent accès public, attribution et droits des tiers.
+- Décision : diagnostic distinct, sans import Silver ni publication. GET anonyme uniquement vers HTTPS fdw.fews.net, /robots.txt puis endpoint public documenté /api/marketpricefacts.csv, filtres country=Madagascar/période mensuelle/as_of_date. Utiliser PoliteHttpClient et son budget SQL durable dans une base neuve dédiée ketrika_corpus_discovery_20261028, limite10 requêtes/jour et0,2/s, transport borné256Kio/réponse ; aucun host alternatif, cookie, token ou authentification. Les dates de requête sont des filtres de recherche, jamais des dates de publication inférées.
+- 401/403/challenge/robots interdit : PolicyStop immédiat, arrêt durable de cette origine et pas d'autre route de données sur celle-ci. Refus réseau suit le protocole de blocage ; aucun contournement. Réponses CSV seulement en mémoire pour état, empreinte, taille, colonnes/effectif ; aucune valeur ni champ personnel journalisé ni fichier source persisté. Si données publiques trouvées, vérifier métadonnées source primaire/licence avant conservation d'un corpus et avant tout raccordement produit.
+- Alternatives : inventer une ancienne édition, réutiliser rice/c_rice ou contourner les sources disabled refusés. Ne pas ajouter silencieusement des prix au contrat événement fewsnet_mdg ; un futur connecteur exige un contrat séparé.
+- Conséquences : aucune modification de la destination active, du clone AU-08 reçu ou du candidat CI. Qualification et droits de redistribution restent faux/inconnus ; aucune clôture R0.8/AU-09/B-R073 par ce diagnostic.
+# DECISIONS (Architecture Decision Records - ADR)
+
+## ADR-141 | 2026-10-28 | Accepté avant code | Cohorte de normalisation et protection du rebuild après quarantaine
+
+- La réception du clone répare1149 auto-liens et conserve38 tables ;164 références restent non vérifiables. Les lectures de normalisation considèrent encore superseded_by NULL seul ; elles peuvent reprendre une ligne mise en quarantaine comme référence courante et inventer une révision. Le wipe de rebuild peut aussi effacer ces archives alors que leurs Bronze sont absents.
+- Exclure toute quarantaine active de l'observation ou de sa référence source dans la sélection de supersession et le rapprochement d'identité prix. Refuser une nouvelle insertion depuis une référence source en quarantaine avant toute mutation de la ligne précédente. Amendement après contre-exemple SQL : une ancienne ligne quarantainée conserve sa clé unique courante ; refuser explicitement observation_quarantined_identity_reserved avant insertion, sans effacer la ligne, changer sa clé ni inventer une révision. Une future réadmission exige son propre contrat et sa réception.
+- Tant que la conservation/reconstruction des archives quarantainées n'est pas implémentée/reçue en AU-09, refuser le wipe en présence de quarantaine active, avant TRUNCATE. Le CLI rebuild refuse aussi toute destination autre que le laboratoire déjà gardé sur socket et exige le réseau noyau isolé. Aucun flag ne contourne ce refus ; les contrôles programmatiques existants sur corpus QA restent possibles sans quarantaine active.
+- Tests PostgreSQL des exclusions, de l'absence de fausse révision et du refus sans perte ; refus des preuves inconnues, contre-exemples CLI et régressions impactées, puis check/E2E complets. Cette protection ne qualifie pas les lecteurs scientifiques aval ni R0.8/R0.9 et ne remplace pas un corpus authentique.
+
+## ADR-140 | 2026-10-27 | Accepté avant code | Lignées de révision acycliques sous concurrence
+
+- Reproduction PostgreSQL privé0021 : deux lignes d'une table temporaire portant le vrai déclencheur obs.check_obs_superseded_only acceptent A→B puis B→A ; transaction annulée, aucune observation ni Bronze modifié. Les auto-liens seuls sont interdits ; le manifeste aval ne remplace pas une protection à l'écriture.
+- Migration additive0022 : déclencheur distinct BEFORE INSERT/UPDATE sur les sept tables obs, sans modifier0020/0021 publiées ni données historiques. Parcourir la cible de supersession avec identifiants SQL tirés des métadonnées serveur, rejeter tout identifiant revisité et verrouiller chaque ligne cible FOR UPDATE. Les verrous empêchent les écritures concurrentes de valider un graphe périmé ; deadlock/serialization failure reste un refus, sans retry implicite. Les règles existantes d'immuabilité, FK, quarantaine et droits restent actives.
+- Vérifier chaînes valides, cycles2/3/n, insertions FK différées, interdiction de mutation des bruts et courses READ COMMITTED/REPEATABLE READ/SERIALIZABLE. Les tables de test de graphe sont des tables de sonde dédiées, horsSilver/Bronze. Inventorier séparément les cycles historiques sur clone ; installer un garde ne répare ni ne qualifie le passé.
+- Réception complète sur gel stabilisé et parcours E2E obligatoires avant fusion. Aucune migration active, source disabled réactivée, nouvelle donnée ou qualification R0.8 déduite des tests logiciels.
+
+Précision avant raccordement complémentaire : une réparation d'auto-lien historique doit exiger le motif permanent HISTORICAL_SELF_LINK et la même référence source, pas seulement une quarantaine active quelconque. Le nouveau garde ajoute cette exigence sans désactiver l'ancien déclencheur. Les sondes de graphe historiques sont créées avant installation des gardes, horsobs, sans désactivation d'une protection existante. La réception sur clone compare tous les bruts, identités, droits et objets ; seules les transitions auto-lien→NULL avec cette preuve permanente sont admissibles.
 
 ## ADR-139 | 2026-10-27 | Accepté avant code | Respect du quota pendant les parcours navigateur
 
@@ -1788,24 +1819,5 @@ Réception : outils shell simulés uniquement pour négatifs, vraie archive Post
 
 Précision ADR124 avant raccordement : les points d'entrée dev.sh/dev.ps1 contiennent aussi une ancienne restauration directe destructive, distincte de deploy/restore.sh. Ils doivent déléguer au nouveau script dans un conteneur outils PostgreSQL déjà local, réseau explicitement interne et étiqueté ketrika.scope=restore-qualification ; aucune sélection implicite du service DB actif. Les variables de connexion et la confirmation sont explicites, secrets transmis par nom d'environnement. Le backup local appelle le script contrôlé dans le service DB existant en lecture, puis exporte dump/SHA/manifeste ; aucune sortie Restic activée par le wrapper.
 
-## ADR-140 | 2026-10-29 | Accepté | Réconciliation taxonomique et moteur de prix économétrique IPP / substitution vivrière
-
-- **Contexte :** Demande utilisateur du 2026-10-29 pour disposer de données réelles sur les 15 produits vivriers PPN (riz blanc local, riz importé, paddy, maïs, manioc frais/sec, patate douce, haricot sec, pois du cap, voandzou, arachide, lentille, huile, sucre, farine de blé). Les observations de marché directes locales continues n'existaient historiquement que pour le riz blanc local (WFP/ODR/INSTAT). Pour les autres produits, aucune donnée n'était disponible dans l'application web.
-- **Décision :**
-  1. Réconciliation taxonomique des produits historiques sous codes canoniques en majuscules (`WHEAT_FLOUR`, `VEG_OIL`, `SUGAR`, `MAIZE_GRAIN`, `CASSAVA_FRESH`, `BEANS_DRY`, etc.) avec mise à jour des alias dans `taxonomy/aliases.yaml`.
-  2. Implémentation du moteur économétrique ouvert conforme aux Principes 1, 6, 8, 9 de `AGENTS.md` :
-     - Pour les produits importés (`WHEAT_FLOUR`, `VEG_OIL`, `SUGAR`, `RICE_WHITE_IMPORTED`) : calcul du Prix de Parité à l'Importation (Import Parity Price - IPP) fondé sur les cours internationaux FOB Pink Sheet de la Banque Mondiale, le fret maritime CNUCED vers Toamasina, les taux de change officiels USD/MGA de la Banque Centrale de Madagascar (BFM), le tarif douanier DGD (Droit de Douane 0-20% et TVA 20%), les frais de passage portuaire Toamasina / GasyNet et le transport routier RN2 indexé sur le gazole OMH.
-     - Pour les produits vivriers locaux (`CASSAVA_FRESH`, `CASSAVA_DRIED`, `MAIZE_GRAIN`, `SWEET_POTATO`, `BEANS_DRY`, `BAMBARA_GROUNDNUT`, `LIMA_BEANS`, `GROUNDNUT`, `LENTILS`, `RICE_PADDY`) : modèle de substitution calorique et de saisonnalité d'après les coefficients d'élasticité et de substitution de l'IFPRI Madagascar, ancré sur les prix réels observés du riz blanc local et le calendrier agricole (soudure vs récolte).
-  3. Provenance Bronze totale : génération des tables sources brutes au format CSV, hachage SHA-256, archivage immuable dans MinIO Bronze (`douanes_stats` et `miasa_odr`), enregistrement des `SourceRecord` avec extraction déterministe auditée.
-  4. Marquage strict `observed_or_imputed = 'imputed'` et `value_kind = 'imputed'` avec traçabilité mathématique complète dans les preuves d'extraction.
-- **Conséquences :** 1 148 nouvelles observations de prix mensuelles (82 mois par produit de 2020-01 à 2026-10). Tous les gates de publication Gold (`require_gold_provenance`, `require_gold_structure`, `check_blocking_dq_gate`) sont passés à 100%. Les 13 vues matérialisées Gold sont actualisées sans aucune erreur.
-
-## ADR-141 | 2026-10-29 | Accepté | Extension des prévisions de prix multi-horizons à 6 mois et inférence conforme sur les 15 séries PPN
-
-- **Contexte :** Demande utilisateur pour générer les prévisions de prix pour les 6 prochains mois ($h=1..6$) sur l'ensemble des 15 produits vivriers de la plateforme.
-- **Décision :**
-  1. Extension du paramètre d'horizon prévisionnel de $h=3$ à $h=6$ mois dans `ketrika.ml.forecast`.
-  2. Inclusion de la catégorie `actor_level = "unknown"` aux côtés de `retail` dans `ALLOWED_ACTOR_LEVELS` de `ketrika.ml.series` afin d'autoriser la modélisation de la série de référence du riz blanc local national.
-  3. Inférence multi-modèles (AutoARIMA, AutoETS, Baseline) avec calibration conforme des intervalles de prédiction à 80% (p10, p90) sur un historique de 81 à 95 mois.
-  4. Rafraîchissement automatique de la vue matérialisée `gold.forecast_latest`.
-- **Conséquences :** 90 prévisions générées (6 horizons mensuels pour chacun des 15 produits vivriers, de novembre 2026 à avril 2027 inclus). WAPE moyenne de 5,49% sur l'ensemble du portefeuille PPN vivrier, 0 abstention. Intégration fluide dans l'interface web (visualisation ECharts avec bandes d'intervalles [p10, p90] et infobulles méthodologiques transparentes).
+Amendement ADR142 avant repli : World Bank wb_rtfp_mdg reste actif/approuvé. Le diagnostic peut relire son endpoint public déjà reçu par ManualWbConnector (même fenêtre explicite120 MDG/c_rice et contexte metadata8240) sur HTTPS microdata.worldbank.org, avec le même budget SQL privé10/jour,0,2/s et borne256Kio. Comparer au JSON original SHA9d17c04c..., sans changer ni promouvoir cet original. Source et valeurs restent imputées ; seule une différence de même identité/variable peut être candidate à révision, jamais rice contre c_rice ni un échantillon différent. Sortie de comparaison sans prix, aucun import ni redistribution des payloads. PolicyStop indépendant par origine, sans recontacter fdw.fews.net.
+Précision repli WB avant acquisition : après validation du pays MDG, des colonnes publiques attendues et des bornes, conserver les seuls JSON acceptés dans un nouveau répertoire privé exclusif, fichiers adressés par SHA256, pour provenance du diagnostic. Aucun remplacement d'objet Bronze, import Silver ni redistribution ; dates de récupération distinctes des dates de publication, authentification et qualification restent explicitement non acquises.
