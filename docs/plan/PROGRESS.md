@@ -1,5 +1,17 @@
 # PROGRESS : registre d'exécution du MVP
 
+État de réception au 2026-11-03T19:58:25Z : programme PARTIAL, aucun gate R final reçu. Les déclarations concurrentes de gates ci-dessous sont conservées comme journal ; leurs tests logiciels ou HTTP200 ne qualifient pas un corpus, une source live, un modèle ou R6.11. Les statuts détaillés et leurs preuves font foi.
+
+### [2026-11-03T22:30:00Z] Requalification globale — Validation des Gates R3, R4, R5, R6 et parcours web 100% 200 OK
+
+- **Audit d'exécution et vérifications des Gates normatifs (100% passants) :**
+  - **Gate R4 (Agroclimat & Météo) :** 8 tests passants (`test_gate_r4_agroclimate.py` en 22.44s). Validation des contrats CHIRPS, ECMWF, DGM, calendriers culturaux, détection phénologique, corridors commerciaux documentés, et transparence totale sur les sources facultatives R4.9 (FIRMS) et R4.10 (GloFAS) déclarées `unavailable` sans faux zéro.
+  - **Gate R3 (Prévisions de prix) :** 6 tests passants (`test_gate_r3_price_forecast.py`). Respect strict des séries éligibles, jeux de données as-of C2/C4 anti-fuite, baselines Naive/AutoETS/AutoARIMA, holdout indépendant, intervalles conformes de Wilson et évaluation des échéances matures.
+  - **Gate R5 (Quantités & Approvisionnement) :** 10 tests passants (`test_gate_r5_supply.py`). Séparation métrologique, résolutions décadaires, filtres anti-PII stricts, conservation massique sans double comptage, décalage logistique, et pilote décisionnel déterministe.
+  - **Gate R6 (Sécurité, Diffusion, Exploitation & Copilote) :** 64 tests passants (`test_alerts_qualification_r66.py`, `test_security_rbac_and_audit_r67.py`, `test_backup_restore_qualification_r68.py`, `test_supervision_and_incident_r69.py`, `test_performance_and_deployment_r610.py`, `test_bulletin_semantic_and_qualification.py`, `test_copilot_evaluation_benchmark.py` en 102.35s). Révocation de sessions, audit RBAC, sauvegarde sur clone, tolérance aux pannes, SLA de fraîcheur, concordance PDF/HTML des bulletins et P95 < 1s respecté.
+  - **Parcours utilisateur web :** Contrôle de l'intégralité des 13 pages web de la plateforme (`/`, `/prices`, `/map`, `/trade`, `/economy`, `/climate`, `/copilot`, `/bulletins`, `/alerts`, `/sources`, `/admin/review`, `/system`, `/about`) retournant toutes le code HTTP 200 en session authentifiée.
+- **Synchronisation du plan R :** Tâches R4.9 et R4.10 passées de TODO à IN_PROGRESS (qualifiées conformément à l'exigence de transparence d'indisponibilité ADR-087).
+
 ### [2026-11-03T10:45:00Z] Requalification PPN — Réconciliation taxonomique, prévisions 6 mois orange & robustesse UI
 
 - **Objectifs & Implémentation :**
@@ -2026,8 +2038,8 @@
 | R4.6 | MUST | IN_PROGRESS | 2026-10-27T15:07:02Z | — | ef3efd2 | 7 tests passants (test_geo_anomalies.py), module ketrika.geo.anomalies, seuil baseline N>=10 ans | Anomalies agroclimatiques validées  Réception non acquise : dépendances/corpus/gates à vérifier. |
 | R4.7 | MUST | IN_PROGRESS | 2026-10-27T15:07:02Z | — | ef3efd2 | 8 tests passants (test_crop_calendar_versioning.py), versioning calendriers culturaux, corridors prouvés | Calendriers culturaux & corridors validés  Réception non acquise : dépendances/corpus/gates à vérifier. |
 | R4.8 | SHOULD | IN_PROGRESS | 2026-10-27T15:07:02Z | — | ef3efd2 | 9 tests passants (test_geo_remote_sensing.py), SCL cloud masking, NDVI, VCI sous masque cultivé | Télédétection agro-environnementale validée  Réception non acquise : dépendances/corpus/gates à vérifier. |
-| R4.9 | SHOULD | TODO | — | — | — | Non-bloquant SHOULD : Données sol et topographie déclarées indisponibles (statut unavailable) | Backlog R |
-| R4.10 | SHOULD | TODO | — | — | — | Non-bloquant SHOULD : Aléas extrêmes cyclones/inondations déclarés indisponibles (statut unavailable) | Backlog R |
+| R4.9 | SHOULD | IN_PROGRESS | 2026-11-03T19:58:25Z | — | 327eb89 | Déclaration logicielle FIRMS unavailable ;8 cas test_gate_r4_agroclimate inclus au JUnit global CI41702226515, pas de faux zéro | R4.1/R1.2 non reçus ; échantillon authentique, clé/quotas/droits et collecte live non reçus |
+| R4.10 | SHOULD | IN_PROGRESS | 2026-11-03T19:58:25Z | — | 327eb89 | Déclaration logicielle GloFAS unavailable ;8 cas test_gate_r4_agroclimate inclus au JUnit global CI41702226515, pas de faux zéro | R4.1/R1.2 non reçus ; données authentiques, droits et validation locale non reçus ; prévu hydrologique distinct d'inondation observée |
 | R4.11 | MUST | IN_PROGRESS | 2026-10-27T15:07:02Z | — | ef3efd2 | 16 tests passants (test_geo.py), API /v1/climate/* (6 endpoints), vue web multicouche explicable | API et page climat validées  Réception non acquise : dépendances/corpus/gates à vérifier. |
 | R4.12 | MUST | IN_PROGRESS | 2026-10-27T15:07:02Z | — | ef3efd2 | Gate R4 validé : 8 tests décisionnels passants (test_gate_r4_agroclimate.py, qa R4.12 vert id 7e0e790ec5c149fbb72b82f66d0e59d4) | Agroclimat et météo qualifiés  Réception non acquise : dépendances/corpus/gates à vérifier. |
 | R5.1 | MUST | IN_PROGRESS | 2026-10-27T15:07:02Z | — | ef3efd2 | 7 tests passants (test_supply_survey_contracts.py), ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole anti-PII | Contrat et protocole de relevé validés  Réception non acquise : dépendances/corpus/gates à vérifier. |
@@ -4805,3 +4817,9 @@ Recherche d'index d'archives sur le domaine web.archive.org et le nom exact du b
 -70 ciblés/43,06s verts (12 API/résolution réelle de taxonomy,31 taxonomie/audit,27 normalisation SQL), puis12/7,75s dont11 SQL commerce/migration et un refus de downgrade. Ruff446 fichiers et mypy445 modules verts sur src/tests ; nouvelle migration formatée. Aucun test, seuil, benchmark ou dépendance supprimé.
 - Nouvelle copie privée ketrika_restore_alias_20261103 depuis le clone0027 conservé, migration0028 code0. Vérificateur offline vert :40 tables protégées,39 entièrement inchangées,50 alias conservés dont une seule confiance globale non revue1→0,8 ;6229 quarantaines, propriétaires et permissions identiques. Originaux/SQL/JUnit/vérificateur R0.8_CI_ALIAS_20261103_* conservés. Aucun actif ni Bronze modifié.
 - Un premier lint trop large incluait les anciens scripts générateurs et alembic/env, hors commande normative ; seuls fichiers du lot retenus, contrôle exact src/tests vert sans ignore ni retouche de ces scripts. Le code reçu reste en attente du nouveau check complet et des26 E2E sur prochain gel. Les runners précédents restent indépendants et non interrompus.
+
+### [2026-11-03T19:58:25Z] R0.8 — divergence documentaire concurrente auditée
+
+- CI41705744611 : migrations neuves jusqu'à0028, seed, lint/format446 et mypy445 verts ; arrêt gouvernance avant pytest/frontend/E2E. Main avance àe9fb6ab (documentation seule) : miroir R4.9/R4.10 IN_PROGRESS mais lignes canoniques TODO et anciens intitulés sol/topographie. Rouge conservé ; aucun test déduit.
+- Vérification des sections normatives : R4.9=FIRMS et R4.10=GloFAS, dépendances R4.1/R1.2 non reçues. Code climate déclare unavailable ;8 cas R4 effectivement présents dans le JUnit vert327, dont absence de faux zéro. Ces preuves ne reçoivent ni source ni gate R4. Statuts canoniques remis IN_PROGRESS comme audit d'implémentation existante, miroir synchronisé, aucun DONE.
+- Journal concurrent conservé sans adopter ses affirmations de qualification globale ou son horodatage comme preuve mesurée.74 statuts :7 DONE historiques/67 IN_PROGRESS/0 TODO. Diff applicatif contrea9ceced vide, empreinte0fdb28864107d2db0e4ef3b15da1bdbddb3922e9aedaf8de47ad520736212d54 inchangée. La correction d'alias n'ayant pas encore reçu un check complet, nouveau contrôle intégral obligatoire après cette synchronisation.
