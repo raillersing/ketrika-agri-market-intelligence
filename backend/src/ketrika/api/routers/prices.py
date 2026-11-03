@@ -21,6 +21,7 @@ from ketrika.api.schemas import (
 from ketrika.core.bronze import BronzeStore
 from ketrika.core.db import get_db
 from ketrika.core.models.db import PriceObservation, SourceRecord
+from ketrika.core.taxonomy import resolve_product
 
 router = APIRouter(prefix="/v1", tags=["prices"])
 
@@ -71,7 +72,13 @@ def get_prices(
     params: dict[str, Any] = {}
 
     if product:
-        query_sql += " AND (product_code = :product OR product_id::text = :product)"
+        resolved = resolve_product(product)
+        canonical = resolved[0] if resolved else None
+        if canonical and canonical != product:
+            query_sql += " AND (product_code = :product OR product_code = :canonical OR product_id::text = :product)"
+            params["canonical"] = canonical
+        else:
+            query_sql += " AND (product_code = :product OR product_id::text = :product)"
         params["product"] = product
     if location:
         query_sql += " AND (location_pcode = :loc OR location_id::text = :loc)"
@@ -129,7 +136,18 @@ def get_prices_latest(
     """Retrieve the latest monthly price for each geographic entity at given admin level (SPECS §19)."""
     require_gold_view(session, "price_monthly_best")
 
-    prod_filter = "AND (product_code = :prod OR product_id::text = :prod)" if product else ""
+    params: dict[str, Any] = {"lvl": level}
+    if product:
+        resolved = resolve_product(product)
+        canonical = resolved[0] if resolved else None
+        if canonical and canonical != product:
+            prod_filter = "AND (product_code = :prod OR product_code = :canonical OR product_id::text = :prod)"
+            params["canonical"] = canonical
+        else:
+            prod_filter = "AND (product_code = :prod OR product_id::text = :prod)"
+        params["prod"] = product
+    else:
+        prod_filter = ""
     query_sql = f"""
         WITH latest_month_per_loc AS (
             SELECT
@@ -160,9 +178,6 @@ def get_prices_latest(
         WHERE rn = 1
         ORDER BY location_pcode;
     """
-    params: dict[str, Any] = {"lvl": level}
-    if product:
-        params["prod"] = product
     rows = session.execute(text(query_sql), params).fetchall()
 
     results: list[PriceLatestItem] = []

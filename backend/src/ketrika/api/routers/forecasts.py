@@ -25,6 +25,7 @@ from ketrika.api.schemas import (
     PerformanceMetricsSummary,
 )
 from ketrika.core.db import get_db
+from ketrika.core.taxonomy import resolve_product
 from ketrika.ml.evaluation import (
     EvaluationRecord,
     MaturedForecastEvaluator,
@@ -125,7 +126,13 @@ def get_forecasts(
         """
 
     if product:
-        sql += " AND (product_code = :product OR product_id::text = :product)"
+        resolved = resolve_product(product)
+        canonical = resolved[0] if resolved else None
+        if canonical and canonical != product:
+            sql += " AND (product_code = :product OR product_code = :canonical OR product_id::text = :product)"
+            params["canonical"] = canonical
+        else:
+            sql += " AND (product_code = :product OR product_id::text = :product)"
         params["product"] = product
     if location:
         sql += " AND (location_pcode = :loc OR location_id::text = :loc)"
@@ -387,9 +394,15 @@ def get_forecast_abstentions(
     if row and isinstance(row[0], dict):
         abstentions_raw = row[0].get("abstentions", [])
 
+    prod_set: set[str] | None = None
+    if product:
+        resolved = resolve_product(product)
+        canonical = resolved[0] if resolved else None
+        prod_set = {product, canonical} if canonical else {product}
+
     filtered: list[ForecastAbstentionItem] = []
     for item in abstentions_raw:
-        if product and item.get("product_code") != product:
+        if prod_set and item.get("product_code") not in prod_set:
             continue
         if location and item.get("location_pcode") != location:
             continue

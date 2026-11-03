@@ -4,13 +4,15 @@ from __future__ import annotations
 
 import datetime
 from collections.abc import Generator
-from typing import Any
+from types import SimpleNamespace
+from typing import Any, Self
 from unittest.mock import MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
 
 from ketrika.api.main import app
+from ketrika.api.routers import climate
 from ketrika.core.db import get_db
 from ketrika.core.models.db import Location, WeatherForecast
 
@@ -118,7 +120,29 @@ def mock_db_session():
 
 
 @pytest.fixture
-def client(mock_db_session) -> Generator[TestClient, None, None]:
+def climate_clock(monkeypatch):
+    class FixedDateTime(datetime.datetime):
+        moment = datetime.datetime(2026, 10, 18, tzinfo=datetime.UTC)
+
+        @classmethod
+        def now(cls, tz: datetime.tzinfo | None = None) -> Self:
+            return cls.fromtimestamp(cls.moment.timestamp(), tz=tz)
+
+    monkeypatch.setattr(
+        climate,
+        "datetime",
+        SimpleNamespace(
+            datetime=FixedDateTime,
+            date=datetime.date,
+            timedelta=datetime.timedelta,
+            UTC=datetime.UTC,
+        ),
+    )
+    return FixedDateTime
+
+
+@pytest.fixture
+def client(mock_db_session, climate_clock) -> Generator[TestClient, None, None]:
     """Create FastAPI test client with mocked DB dependency."""
     app.dependency_overrides[get_db] = lambda: mock_db_session
     c = TestClient(app)
@@ -264,3 +288,19 @@ def test_weather_anomalies_backward_compatibility(client: TestClient):
     assert len(items) >= 1
     assert items[0]["district_pcode"] == "MDG11"
     assert items[0]["value_kind"] == "observed"
+
+
+def test_historical_month_never_receives_current_weather_forecast(
+    client, climate_clock, mock_db_session
+):
+    climate_clock.moment = datetime.datetime(2026, 11, 18, tzinfo=datetime.UTC)
+    response = client.get("/v1/climate/summary?location=MDG11&month=2026-10-01")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["forecast_model"] is None
+    assert data["forecast_next_72h_precip_mm"] is None
+    assert data["forecast_p10_mm"] is None and data["forecast_p90_mm"] is None
+    assert not any(
+        "FROM obs.weather_forecast" in str(call.args[0])
+        for call in mock_db_session.execute.call_args_list
+    )

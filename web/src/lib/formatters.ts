@@ -93,7 +93,7 @@ export const VALUE_KIND_MAP: Record<ValueKind, ValueKindInfo> = {
   forecast: {
     label: "Prévision",
     description: "Projection future issue d'un modèle prédictif",
-    badgeClass: "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-950 dark:text-purple-300",
+    badgeClass: "bg-orange-100 text-orange-900 border-orange-300 dark:bg-orange-950/60 dark:text-orange-300 dark:border-orange-700/50",
   },
   composite: {
     label: "Composite",

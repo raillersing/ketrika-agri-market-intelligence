@@ -19,6 +19,7 @@ from ketrika.api.schemas import (
 )
 from ketrika.core.db import get_db
 from ketrika.core.pilot import check_pilot_authenticity, load_pilot_config
+from ketrika.core.taxonomy import resolve_product
 from ketrika.gold.coverage import (
     compute_series_gaps_independent_sql,
     query_market_coverage_matrix,
@@ -41,9 +42,11 @@ def get_market_coverage(
 ) -> Any:
     """Retrieve market coverage matrix cells with pagination and CSV export (SPECS §19, R2.4, ADR-071)."""
     require_gold_view(session, "market_coverage")
+    resolved = resolve_product(product) if product else None
+    resolved_p = resolved[0] if resolved else product
     rows = query_market_coverage_matrix(
         session=session,
-        product_code=product,
+        product_code=resolved_p,
         location_pcode=location,
         actor_level=actor_level,
         from_month=from_date,
@@ -97,9 +100,11 @@ def get_series_gaps(
     """Compute independent calendar gaps and coverage ratio for a single series in SQL."""
     require_gold_view(session, "market_coverage")
     target_loc = location or "MDG11"
+    resolved = resolve_product(product) if product else None
+    resolved_p = resolved[0] if resolved else product
     summary = compute_series_gaps_independent_sql(
         session=session,
-        product_code=product,
+        product_code=resolved_p or product,
         location_pcode=target_loc,
         actor_level=actor_level,
     )

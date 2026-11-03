@@ -368,7 +368,7 @@ class MaturedForecastEvaluator:
                 # Prefer gold.price_monthly_best for normalized median, fallback to obs.price_observation
                 obs_sql = """
                     SELECT
-                        price_median_mga::float AS price,
+                        median_price::float AS price,
                         NULL::uuid AS observation_id
                     FROM gold.price_monthly_best
                     WHERE product_id = :prod_id

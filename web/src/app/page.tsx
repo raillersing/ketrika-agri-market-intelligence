@@ -5,12 +5,13 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { ValueKindBadge } from "@/components/ui/ValueKindBadge";
-import { PriceChart } from "@/components/charts/PriceChart";
+import { PriceChart, type PriceDataPoint } from "@/components/charts/PriceChart";
 import { DEFAULT_PRODUCT, summarizePrices, type MarketPrice } from "@/lib/market-overview";
 import { DQ_SELECTION_MESSAGE, isLegacyDQProduct, saleStageLabel } from "@/lib/market-filters";
 import { formatMonthYear } from "@/lib/formatters";
 
 interface MarketAlert { product_code: string | null; location_pcode: string | null; }
+type Forecast = { product_code: string; location_pcode: string; actor_level: string; currency: string; unit: string; target_period: string; p50: number; p10: number | null; p90: number | null; horizon: number; model_requested: string; model_effective: string; is_baseline: boolean; is_calibrated: boolean; calibration_sample_size: number; fallback_reason: string | null; dataset_fingerprint: string };
 
 function OverviewContent() {
   const params = useSearchParams();
@@ -18,6 +19,7 @@ function OverviewContent() {
   const region = params.get("region") || "";
   const actor = params.get("actor") || "";
   const [rows, setRows] = useState<MarketPrice[]>([]);
+  const [forecasts, setForecasts] = useState<Forecast[]>([]);
   const [alerts, setAlerts] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [alertError, setAlertError] = useState(false);
@@ -29,7 +31,7 @@ function OverviewContent() {
     const query = new URLSearchParams({ product });
     if (region) query.set("location", region);
     if (actor) query.set("actor_level", actor);
-    setLoading(true); setError(null); setRows([]); setAlerts(null); setAlertError(false);
+    setLoading(true); setError(null); setRows([]); setForecasts([]); setAlerts(null); setAlertError(false);
     if (isLegacyDQProduct(product)) {
       setError(DQ_SELECTION_MESSAGE); setLoading(false);
       return () => controller.abort();
@@ -44,6 +46,15 @@ function OverviewContent() {
         if (!controller.signal.aborted) setError(err instanceof Error ? err.message : "Prix indisponibles.");
       } finally { if (!controller.signal.aborted) setLoading(false); }
     }
+    async function loadForecasts() {
+      try {
+        const response = await fetch(`/api/v1/forecasts?${query}`, options);
+        if (response.ok) {
+          const data: Forecast[] = await response.json();
+          if (!controller.signal.aborted) setForecasts(data);
+        }
+      } catch {}
+    }
     async function loadAlerts() {
       try {
         const response = await fetch("/api/v1/alerts?state=open", options);
@@ -52,11 +63,24 @@ function OverviewContent() {
         if (!controller.signal.aborted) setAlerts(data.filter((a) => a.product_code === product && (!region || a.location_pcode === region)).length);
       } catch { if (!controller.signal.aborted) setAlertError(true); }
     }
-    void loadPrices(); void loadAlerts();
+    void loadPrices(); void loadForecasts(); void loadAlerts();
     return () => controller.abort();
   }, [product, region, actor]);
 
   const { latest, series, sources } = summarizePrices(rows);
+  const comparableForecasts = latest
+    ? forecasts.filter(
+        (row) =>
+          row.product_code.toUpperCase() === latest.product_code.toUpperCase() &&
+          (row.location_pcode === latest.location_pcode || (!row.location_pcode && !latest.location_pcode) || (row.location_pcode === "MDG" && !latest.location_pcode)) &&
+          (row.actor_level === latest.actor_level || row.actor_level === "unknown" || latest.actor_level === "unknown") &&
+          row.target_period > latest.month
+      )
+    : [];
+  const chart: PriceDataPoint[] = [
+    ...series.map(row => ({ month: row.month, medianPrice: row.median_price, minPrice: row.min_price, maxPrice: row.max_price, valueKind: row.value_kind, sourceId: row.sources?.[0] })),
+    ...comparableForecasts.map(row => ({ month: row.target_period, medianPrice: row.p50, p10Price: row.p10, p90Price: row.p90, valueKind: "forecast", sourceId: `ml.${row.model_effective}`, horizon: row.horizon, modelEffective: row.model_effective, modelRequested: row.model_requested, isBaseline: row.is_baseline, isCalibrated: row.is_calibrated, calibrationSampleSize: row.calibration_sample_size, fallbackReason: row.fallback_reason || undefined, datasetFingerprint: row.dataset_fingerprint })),
+  ];
   const scope = latest ? `${latest.location_name || latest.location_pcode} · ${saleStageLabel(latest.actor_level)} · ${formatMonthYear(latest.month)}` : "Aucune série disponible";
   const query = new URLSearchParams(params.toString());
   query.set("product", product);
@@ -80,7 +104,7 @@ function OverviewContent() {
         <KpiCard title="Alertes ouvertes enregistrées" value={alerts} subtitle={alertError ? "Historique indisponible." : "Produit et zone sélectionnés ; tous stades de vente. Ces alertes ne constituent pas un diagnostic validé."} />
         <KpiCard title="Couverture des stocks" value={null} subtitle="Non évaluée ici : aucun nombre de jours de couverture n’est déduit des prix." />
       </div>
-      {!loading && !error && <PriceChart title={`Une série comparable — ${scope}`} productName={product} unit={latest?.unit} currency={latest?.currency} data={series.map((r) => ({ month: r.month, medianPrice: r.median_price, minPrice: r.min_price, maxPrice: r.max_price, valueKind: r.value_kind, sourceId: r.sources[0] }))} />}
+      {!loading && !error && <PriceChart title={`Une série comparable — ${scope}`} productName={product} unit={latest?.unit} currency={latest?.currency} data={chart} />}
       <div className="glass-card rounded-2xl p-4 space-y-3">
         <h2 className="text-foreground font-semibold">Derniers points de la sélection</h2>
         {!loading && !error && !rows.length && <p className="text-muted-foreground">Aucune donnée disponible pour ces filtres.</p>}

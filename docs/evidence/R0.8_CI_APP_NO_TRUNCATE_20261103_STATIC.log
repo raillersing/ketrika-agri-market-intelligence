@@ -1,0 +1,10 @@
+All checks passed!
+1 file reformatted, 2 files left unchanged
+442 files already formatted
+tests/unit/test_ml_models_conformance.py:28: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/unit/test_durable_session_store.py:104: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/unit/test_schema_contracts.py:62: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/unit/test_ml_forecast.py:72: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+tests/integration/test_schema_gold_gate.py:73: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+pyproject.toml: note: unused section(s): module = ['geopandas.*', 'mlforecast.*', 'pandera.*', 'shapely.*']
+Success: no issues found in 441 source files

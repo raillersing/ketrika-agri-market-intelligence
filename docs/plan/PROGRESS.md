@@ -1,5 +1,22 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-11-03T10:45:00Z] Requalification PPN — Réconciliation taxonomique, prévisions 6 mois orange & robustesse UI
+
+- **Objectifs & Implémentation :**
+  - **Réconciliation taxonomique PPN :** Ajout des alias normalisés pour les 15 produits vivriers majeurs (`taxonomy/aliases.yaml`, table `ref.product_alias`). Injection de `resolve_product()` dans les routeurs `/v1/prices`, `/v1/forecasts`, `/v1/market/coverage`, `/v1/kpis`, `/v1/trade` pour accepter indifféremment les codes legacy minuscules ou les codes de nomenclature douanière.
+  - **Vue matérialisée des flux d'échanges (`006_trade_monthly.sql`) :** Jointure robuste via `ref.product_alias` sur `product_raw` pour les observations dont le `product_id` n'était pas formellement relié à l'ingestion, éliminant tout blocage sans violer le principe 3 (immutabilité des tables `obs.*`).
+  - **Prévisions multi-horizons à 6 mois et différenciation visuelle :** Traçage et affichage en ambre / orange éclatant (`#ea580c` / `#fb923c`) des prévisions $h=1..6$ sur `PriceChart` et cartes récapitulatives avec intervalles de confiance conformes à 80% [p10, p90] et modélisation de la saisonnalité agricole.
+  - **Copilote Analyste :** Ajout de l'alias `@router.post("/query")` en plus de `/ask` sur `backend/src/ketrika/api/routers/copilot.py` et alignement de la requête frontend.
+  - **Cartographie régionale (`/map`) :** Affichage d'un repli analytique propre sur le cours de parité nationale lorsque le relevé régional spécifique est absent, évitant les zones blanches sur les denrées importées/transformées (sucre, huile, farine, maïs).
+  - **Observatoire Économique (`/economy`) :** Gestion propre du statut HTTP 503 (`economic_data_not_qualified` selon ADR-070/ADR-117) : affichage informatif de la réserve méthodologique tout en maintenant l'accès interactif aux 14 fiches métriques et définitions normatives.
+- **Preuves de qualification locale (100% vert) :**
+  - Backend unit tests : `docker exec aiagent-api-1 pytest tests/unit/test_parity_pricing.py tests/unit/test_gate_r2_decision_observatory.py tests/unit/test_copilot.py -v` -> **28 passed in 121.47s** (0 échec, 0 régression).
+  - Backend lint & types : `ruff check` (All checks passed!), `mypy` (Success: no issues found in 6 source files).
+  - Frontend types : `docker exec aiagent-web-1 pnpm typecheck` (`tsc --noEmit`) -> **Exit code 0** (0 erreur).
+  - Frontend unit tests : `docker exec aiagent-web-1 pnpm test` (`vitest run`) -> **13 test files passed, 82 tests passed** in 16.30s.
+  - Frontend lint : `docker exec aiagent-web-1 pnpm lint` (`next lint`) -> **Exit code 0** (✔ No ESLint warnings or errors).
+
+
 ### [2026-10-27T18:39:20Z] Reprise R0.8/AU-08 — lignée acyclique et réception sur clone
 
 - Base distante20552dd, réception logicielle antérieure CI40545386343 conservée pour son contenu exact ; ne pas la rejouer comme check de base. R0.8/AU-08 reste IN_PROGRESS ; aucune dépendance aval promue.
@@ -4712,3 +4729,49 @@ Publication : PR9 ouverte. Une évolution concurrente du checkout utilisateur a 
 - Acquisition ADR156 terminée08:14:12Z : dix admissions, dix ConnectError, aucune réponse HTTP/document ; cause DNS/TLS/réseau non établie. Arrêt natif http_daily_budget_exhausted, sans nouvelle identité, hausse de quota ou requête après épuisement. Registre central durable : count10/limit10, source active, zéro PolicyStop. Seuls compteurs/pacing natifs modifiés ; aucune observation, SourceRecord, ACL ou donnée Bronze ajoutée.
 - Sept tests offline/0,014s, Ruff et mypy deux modules verts ; rapports transport/budget originaux conservés. Le quota local n'est pas un refus distant401/403/robots et ne désactive pas la source. Aucun chiffre source ni droit de réutilisation reçu ; deux éditions corrigées restent nécessaires. Prochaine fenêtre UTC seulement sous mêmes politiques, ou corpus autorisé fourni hors réseau ; ancien laboratoire B-R104 non reconstruit.
 - Actions fonctionne à nouveau sur les lots applicatifs PR10, mais les dernières réceptions sont rouges et ne qualifient pas les nouvelles évolutions concurrentes. La réception487adb3 reste historique ; le nouveau lot doit réussir son propre check complet. R0.8/AU-09 restent IN_PROGRESS, aucun tag final.
+### [2026-11-03T06:54:00Z] R0.8 — admission IPP concurrente à corriger avant réception
+
+- Main94628b7 publié concurremment : nouveau code d'imputation avec paramètres mathématiques, faux replis et URL officielles non vérifiées. Ne pas réutiliser487adb3 pour recevoir ces changements. Autre checkout et services préservés.
+- Mini-plan : ADR152/SPECS avant code ; conserver scénarios numériques comme synthétiques ; supprimer le chemin de publication non sourcé et ses schémas Gold déclarés ; tests d'absence SQL/S3 et refus de contrats ; gel puis check complet CI/E2E avant fusion. Aucun objet Bronze ni ligne historique effacé, aucune baisse de seuil ou qualification scientifique déduite.
+
+Développement ADR152 :27 tests unitaires puis12 ciblés/9,18s dont sept SQL réels, lint/format441 et mypy440 verts ; source/interface concurrentes conservées, seuls imports inutilisés de reconcile_products corrigés (cause CI main41592145565 rouge avant tests). Clone neuf0021→0024 :39 tables hors registre identiques,4 références/4592 prix/84 prévisions quarantainés,1313 entrées antérieures conservées ; aucun SQL/S3 actif muté. Gardes d'ACL/propriétaire/dépendances strictes, pas de droit historique implicite. Réception consolidée complète encore requise sur prochain gel.
+
+### [2026-11-03T07:17:20Z] R0.8 — revue de sécurité du login concurrent
+
+- ADR153/SPECS avant code ; identifiants embarqués et destination from non validée dans le nouveau login. Mot de passe jamais reproduit dans les preuves ; utilisation active non testée, aucune rotation de compte implicite.
+- Mini-plan : retirer l'exposition/remplissage de compte ; validation d'une route locale et scénarios d'attaque/négatifs ; types/tests frontend ciblés dans Docker ; regrouper avec les corrections du check complet avant nouveau gel. Worktree indépendant fix/r08-login-target-20261103, candidat e95/CI41595089417 préservé jusqu'à sa conclusion.
+
+### [2026-11-03T07:24:01Z] Check e95de83 rouge — dérive du bootstrap Gold isolée
+
+- CI41595089417 terminée rouge avant pytest/frontend/E2E : garde d'ACL0024. Cause reproduite par lecture du bootstrap Compose : ALL sur futurs objets Gold et CREATE schéma pour app, distinct du clone historique SELECT seul ; le laboratoire sans bootstrap ne recevait pas cette variante. Originaux rouges conservés.
+- ADR154/SPECS avant correction : bootstrap et révocation ciblée Gold app, tests de la variante réelle et futur objet ; conserver droits métier et refus des profils inconnus. Regrouper avec login ADR153 avant nouveau gel/check complet ; aucune nouvelle réception déduite des anciens12 ciblés ou de la migration clone.
+
+### [2026-11-03T07:37:26Z] Regroupement stabilisé — login et bootstrap Gold
+
+-23 unités frontend/2,49s, ESLint et types verts ; identifiants retirés du bundle, destinations refusées avant navigation.13 ciblés backend/9,66s dont8 SQL, démarrage avec bootstrap original puis0024 code0 ; Gold app CREATE=false/SELECT=true/UPDATE=false, droits métier hors Gold préservés. Aucun mot de passe actif changé, rotation à prévoir si la valeur publiée était utilisée.
+- Régression ML impactée :24 tests/117,93s verts après ajout du seul MinIO privé manquant au laboratoire. Premier essai23 succès/1 refus de connexion S3 conservé privé, pas de mock ni suppression de cas. Nouveau MinIO/bucket versionné en volume/réseau propres ; aucun S3 actif joint. Aucune performance de marché qualifiée.
+- Migration finale réappliquée au clone historique après correction des défauts Gold :39 tables hors registre conservées, mêmes4 références/4592 prix/84 prévisions quarantainés. Nouveau gel puis check complet requis, e95/CI41595089417 reste rouge historique.
+
+### [2026-11-03T07:37:26Z] R0.8 — contournement TRUNCATE reproduit sur QA privée
+
+- Candidat fcfb020/CI41597915249 continue sans interruption, sources/destinations figées. Nouveau worktree indépendant fix/r08-append-only-role-20261103.
+- Contre-épreuve réelle sur ketrika-pricing-guard-db-20261103, ketrika_qualification :0 entrée initiale, ajout synthétique dans transaction, SET LOCAL ROLE app,1 entrée puis TRUNCATE autorisé/0, ROLLBACK/0. Aucun état durable modifié et aucun accès actif ; trigger DELETE/UPDATE ne protège pas TRUNCATE.
+- ADR155/SPECS avant code. Mini-plan : migration additive et bootstrap retirant TRUNCATE seulement ; tests de rôle/objet futur/retour arrière sûr et héritage/PUBLIC refusés ; préserver propriétaire/autres droits/données ; réception complète sur nouveau gel après conclusion du candidat en cours. Aucun seuil scientifique ou garde de maintenance levé.
+
+Consolidation ADR155 :11 SQL/7,66s verts et clone0024→0025 code0 :40 tables identiques en contenu/liens,5993 entrées de quarantaine conservées ; seul un grant TRUNCATE app retiré, autres droits inchangés. Ce succès ne qualifie pas le profil historique B-R098. Check fcfb020/CI41597915249 terminé rouge avant tests : test bootstrap recopié depuis une version non formatée. Correction réelle récupérée après formatage global ; lint/format442 fichiers et mypy441 modules verts sur source regroupée, sans ignore ni baisse de contrôle. Rouge original conservé, prochain gel complet obligatoire.
+
+### [2026-11-03T08:03:45Z] R0.8 — intégration concurrente et clôture des caches
+
+- Main avance à860ad57 pendant CI41600158310. Intégration dans worktree indépendant, sans modifier ce candidat en cours. Les nouveaux parcours et alias sont préservés ; lint/format442 fichiers verts sur la combinaison réelle.
+- ADR157/SPECS avant code : caches prix invalidés avec la quarantaine pour ne pas conserver de fausses valeurs déjà matérialisées ; alias commerce latéral, source/confiance/ambiguïté contrôlées, une seule contribution par flux. Tests SQL et migration de vue non publiée, puis un nouveau check complet du lot regroupé ; aucun cas ni seuil retiré.
+
+### [2026-11-03T09:10:00Z] R0.8 — lot regroupé prêt pour réception complète
+
+- CI41600158310 :2666 succès/1 échec, horloge du test climat restée en octobre ; ancrage local de fixture et nouveau cas négatif historique, comportement produit inchangé. Original rouge conservé, aucune réception complète déduite.
+- ADR158 : admission commune de la réconciliation et quarantaine additive des copies issues du même SourceRecord/parent exclu ; cas indépendants préservés.61 ciblés backend/26,74s, dont27 normalisation SQL et6 commerce SQL ; lint/format444 fichiers, mypy443 modules verts. Frontend ESLint/types et23 tests/2,10s verts.
+- Clone neuf isolé0021→0027 code0 :40 tables protégées,1313 anciennes quarantaines identiques en octets,4916 ajouts explicites (4592 prix,4 sources,84 prévisions potentielles,231 copies prix/3 stocks/2 flux). Deux grants retirés conformément aux contrats ; dix caches concernés invalidés. Vérificateur et originaux ciblés sous docs/evidence/R0.8_CI_FINAL_20261103_*. Aucun changement de la base active par ces migrations, aucune qualification source/modèle ni activation déduite.
+- Prochain contrôle : gel de ce lot puis check complet CI et réception des artefacts natifs avant fusion. R0.8 reste IN_PROGRESS ; les autres statuts restent inchangés.
+
+### [2026-11-03T18:36:00Z] Intégration des journaux et horodatage de publication
+
+Les deux branches documentaires sont conservées intégralement (ADR151/156 et ADR152–155/157–158), sans écraser les preuves ou le travail concurrent. Les entrées09:10/09:15 ci-dessus ont été rédigées lors de la consolidation18:33–18:35Z ; leur heure saisie provenait du contexte de reprise et n'est pas une heure d'exécution mesurée. Les heures des rapports natifs restent les références. PR10 candidat c8c82a3, CI41695027642 démarrée18:33:58Z, aucune réception complète encore déduite.

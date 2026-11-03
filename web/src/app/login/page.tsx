@@ -2,13 +2,15 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { safeLoginTarget } from "@/lib/login-target";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
-export default function LoginPage() {
-  const router = useRouter();
+function LoginContent() {
+  const searchParams = useSearchParams();
+  const from = safeLoginTarget(searchParams.get("from"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -29,14 +31,14 @@ export default function LoginPage() {
       }
       const data = await response.json();
       if (typeof data.token !== "string" || !data.token) throw new Error("Réponse de connexion invalide");
-      router.push("/");
-      router.refresh();
+      window.location.href = from;
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : "Erreur de connexion");
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="flex min-h-dvh flex-col bg-background px-5 text-foreground">
@@ -51,9 +53,18 @@ export default function LoginPage() {
           <div><label htmlFor="login-password" className="mb-2 block text-sm text-foreground">Mot de passe</label><input id="login-password" name="password" type="password" autoComplete="current-password" required value={password} onChange={event => setPassword(event.target.value)} aria-describedby={error ? "login-error" : undefined} className="min-h-12 w-full rounded-lg border border-border bg-foreground/[0.03] px-3 text-base text-foreground outline-none transition-colors focus:border-border focus:ring-1 focus:ring-ring" /></div>
           <button type="submit" disabled={loading} aria-busy={loading} className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg bg-primary-action px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-wait disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"><span>{loading ? "Connexion en cours…" : "Se connecter"}</span><ArrowRight aria-hidden="true" className="h-4 w-4" /></button>
         </form>
+
         <p className="mt-6 text-xs leading-6 text-muted-foreground">Accès réservé aux comptes configurés pour cet environnement.</p>
       </section>
       <footer className="mx-auto flex w-full max-w-5xl flex-wrap justify-between gap-4 border-t border-border py-6 text-xs text-muted-foreground"><span>Un produit {BRAND.company}</span><Link href="/about" prefetch={false} className="inline-flex min-h-11 items-center rounded py-2 text-muted-foreground hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">À propos d’{BRAND.product} et de {BRAND.company}</Link></footer>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <React.Suspense fallback={<div className="min-h-dvh flex items-center justify-center">Chargement...</div>}>
+      <LoginContent />
+    </React.Suspense>
   );
 }

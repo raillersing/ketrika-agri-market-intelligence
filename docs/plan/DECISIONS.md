@@ -1,3 +1,22 @@
+## ADR-150 | 2026-10-29 | Accepté avant code | Extension multi-produits du pipeline de prévisions de prix à 6 mois
+
+- Contexte : Demande utilisateur validée par RECHERCHE_ET_PLAN_DONNEES_REELLES_PREVISIONS_PPN.md. L'orchestrateur ML (`backend/src/ketrika/ml/forecast.py`) était bridé à $h=3$ mois, $N_{points} \ge 36$ et `cohort == "pure_observed"`, ce qui excluait toutes les séries secondaires en dehors de `RICE_WHITE_LOCAL`.
+- Décision :
+  1. Étendre l'horizon de prévision par défaut à 6 mois ($h=6$).
+  2. Introduire la cohorte d'éligibilité `"broad_market"` permettant d'inclure les séries vivrières ayant un historique d'au moins 18 points (observations réelles et imputations économiques déterministes certifiées IPP/substitution).
+  3. Modélisation SARIMAX avec covariables exogènes macro-économiques (cours de change BFM USD/MGA, prix officiel gazole OMH) et climatiques (anomalies pluviométriques).
+  4. Intervalles de prédiction conformaux [p10, p50, p90] calibrés sur les résidus passés pour garantir une couverture de 80%.
+  5. Respect absolu du Principe 9 : les valeurs générées sont stockées avec `value_kind = "forecast"` et `observed_or_imputed = "forecast"`.
+
+## ADR-149 | 2026-10-29 | Accepté avant code | Harmonisation taxonomique PPN et Parité d'Importation (IPP) / Substitution
+
+- Contexte : Les produits PPN autres que le riz blanc local manquaient de séries continues récentes sur l'interface publique, en raison de dédoublements de codes minuscules/majuscules et de rareté des relevés directs de détail pour certaines denrées importées ou de brousse.
+- Décision :
+  1. Réconciliation des observations historiques rattachées aux codes minuscules (`maize`, `cassava_fresh`, `oil_edible`, `flour_wheat`, `sugar`, `dry_beans`, `rice_imported`) vers les UUID des codes canoniques majeurs (`MAIZE_GRAIN`, `CASSAVA_FRESH`, `VEG_OIL`, `WHEAT_FLOUR`, `SUGAR`, `BEANS_DRY`, `RICE_WHITE_IMPORTED`).
+  2. Implémentation du moteur de Parité d'Importation (IPP) (`backend/src/ketrika/gold/parity_pricing.py`) pour les denrées importées (Blé/Farine, Huile, Sucre, Riz importé) à partir des cours mondiaux réels (World Bank Pink Sheet), du taux de change officiel BFM (USD/MGA), du gazole OMH et des tarifs douaniers malagasy (DGD).
+  3. Implémentation du modèle d'élasticité de substitution et calendrier cultural (`backend/src/ketrika/gold/substitution_pricing.py`) pour les vivriers locaux (Manioc, Maïs, Patate douce).
+  4. Respect strict des Principes 1, 9 et 10 : aucune valeur sans provenance, marquage obligatoire `observed_or_imputed = "imputed"` et `value_kind = "imputed"`, conservation des formules et sources dans `evidence`.
+
 ## ADR-145 | 2026-10-29 | Accepté avant exécution | Rejeu isolé du paquet authentique déjà conservé
 
 - Le logiciel8283fe0/6dad3cd est reçu par CI40825552642 ; les nouvelles gardes d'admission doivent aussi être observées sur les octets WB déjà archivés, sans nouvelle acquisition ni contournement du budget ODR.
@@ -1883,3 +1902,113 @@ candidats restent privés et non qualifiés, sans importation Silver/Gold. Toute
 réponse interdite/challenge désactive durablement la source ; épuiser un quota
 ne désactive pas arbitrairement sa configuration. Le diagnostic de laboratoire
 ancien reste refusé ; ce mode n'en restaure ni n'en certifie l'état.
+## ADR-152 | 2026-11-03 | Refuser la publication de prix IPP sans intrants sourcés
+
+Contexte : le code concurrent94628b7 ajoute des paramètres calculés par constantes
+et sinusoïdes, un repli de prix du riz et des CSV produits localement attribués
+à des URL officielles non vérifiées. Une provenance vers ce CSV ne prouve pas
+la provenance des intrants économiques. L'étiquette imputed ne suffit pas.
+
+Décision : conserver les fonctions numériques uniquement comme scénarios
+synthétiques non qualifiés, explicitement signalés ; refuser leurs points
+d'entrée d'ingestion avant toute lecture SQL ou écriture Bronze/Silver.
+Retirer les déclarations de schéma qui admettent ces CSV comme publications
+douanes_stats/miasa_odr. Préserver tous les objets et lignes historiques ; aucun
+retrait de donnée active dans ce lot. Réactivation exige intrants officiels
+vérifiés, versions/formules/identités et preuves reçues ; aucun drapeau pour
+forcer la publication. Ajouter contre-épreuves d'absence d'effets et refus Gold.
+Réception complète du nouveau contenu, seuils/couvertures/scénarios conservés.
+
+Alternatives : considérer un CSV local comme source officielle (rejeté),
+supprimer des données actives sans réception (rejeté), confondre prix simulés
+et imputations sourcées (rejeté). Le modèle scientifique reste non qualifié.
+
+Extension bornée ADR152 avant migration : audit actif readonly a trouvé quatre
+SourceRecord sur les deux URL générées et4592 lignes prix portant les méthodes
+IPP/substitution. Aucun octet ni valeur modifié. Ajouter0024 append-only : mettre
+ces références/lignes en quarantaine, ainsi que les prévisions potentiellement
+entraînées sur leurs séries (cohorte mixte/all/inconnue, période <= cutoff).
+Les preuves restent dans leurs tables ; les prix Gold existants excluent déjà
+la quarantaine après refresh. La vue forecast_latest doit également exclure
+explicitement ses entités quarantainées, avant le classement des dernières
+prévisions. Garder les14 vues et leurs permissions de lecture contractuelles ;
+aucun refresh ou migration actif dans ce lot, réception sur SQL isolé et clone.
+
+## ADR-153 | 2026-11-03 | Connexion sans identifiants embarqués ni destination externe
+
+Contexte :357dae5 affiche un mot de passe administrateur dans le bundle client
+et transmet le paramètre from directement à router.push. Le statut de secret
+réel de ce mot de passe n'est pas établi ; sa publication impose de le considérer
+compromis s'il est utilisé par un compte. Aucune valeur n'est reproduite ici.
+
+Décision : retirer les identifiants et leur remplissage automatique du produit ;
+conserver le retour à une route locale validée, refuser schémas exécutables,
+origines externes, doubles slashs, antislashs, contrôles et boucles de connexion.
+Tests positifs/négatifs de navigation. Ne changer aucun mot de passe ou compte
+actif implicitement ; signaler la rotation nécessaire à l'opérateur si la valeur
+publiée était utilisée. Aucun force push ni réécriture d'historique.
+
+## ADR-154 | 2026-11-03 | Gold applicatif en lecture seule, bootstrap et historique
+
+Contexte : CI41595089417 sur e95de83 refuse0024 avant pytest. Le bootstrap
+Compose docker/db/init.sql accorde ALL aux tables futures de Gold et CREATE
+sur le schéma à ketrika_app. Les clones historiques et le laboratoire lancé
+sans ce bootstrap ont SELECT seul ; leur succès ne qualifie pas ce démarrage.
+
+Décision : corriger le bootstrap pour Gold SELECT seul et schéma USAGE ;0024
+retire explicitement les seuls droits d'écriture/DDL Gold du rôle applicatif,
+et son défaut de privilèges Gold, avant la garde d'ACL. Ne pas retirer d'accès
+métier hors Gold ni changer de rôle tiers. Les profils inconnus continuent de
+refuser transactionnellement. Tester la reproduction du défaut, l'accès réel
+sous rôle app, l'absence de CREATE/écriture et les nouveaux objets après correction.
+Aucun seuil, assertion, garde inconnue ou test scientifique affaibli. Réception
+complète sur nouveau gel après regroupement avec ADR153.
+
+## ADR-155 | 2026-11-03 | Refuser TRUNCATE au rôle applicatif append-only
+
+Contexte : contre-épreuve annulée sur base QA privée : ketrika_app possède
+TRUNCATE sur obs.quarantine_ledger et peut effacer une entrée synthétique,
+malgré le trigger UPDATE/DELETE append-only. Aucun test sur destination active.
+Les GRANT ALL de tables historiques/defaults rendent ce contournement possible.
+
+Décision : migration additive0025 retirant seulement TRUNCATE au rôle applicatif
+sur les tables métier auth/dq/meta/ml/obs/ops/ref, et leurs défauts de privilèges.
+Bootstrap sans TRUNCATE. Conserver tous les autres droits et le rôle propriétaire
+utilisé par les opérations de maintenance qualifiées. Si PUBLIC/héritage ou des
+défauts globaux rendent TRUNCATE encore effectif, refuser transactionnellement
+pour revue, sans retirer des droits à des tiers. Downgrade ne réaccorde jamais
+TRUNCATE. Tests SQL réels du refus, de la conservation des données/droits, des
+objets futurs et des cas hérités. Aucune restauration/reset de destination active.
+
+## ADR-157 | 2026-11-03 | Caches prix invalidés et alias de commerce non ambigus
+
+Contexte : main860ad57 introduit un raccordement direct aux alias pour les flux
+sans produit normalisé. L'index d'alias est unique par norme/source, pas par norme
+seule : une jointure multiligne peut doubler les tonnages ; une ambiguïté ou un
+alias non revu/faible ne prouve pas une identité. Les caches prix préexistants
+peuvent aussi conserver les prix générés après ajout de la quarantaine0024.
+
+Décision :0024 invalide WITH NO DATA les six caches prix dépendants lorsqu'une
+quarantaine UNVERIFIED_ECONOMIC_INPUTS existe, sans toucher bruts/ACL/définitions.
+Le refresh contrôlé reste requis pour republier. Commerce : résolution latérale
+par source/générique, confiance >=0,9 ou revue humaine, un seul produit distinct ;
+une ambiguïté reste sans produit et chaque flux compte une seule fois.0026 installe
+cette vue non peuplée, sans CASCADE ni changement des droits contractuels ; profil
+inconnu refuse. Ajouter scénarios SQL de doublon/ambiguïté/faible confiance/source,
+et cache invalide. Aucun modèle/source fraîche ou édition corrigée déduit.
+
+## ADR-158 | 2026-11-03 | Réconciliation canonique sans résurrection de quarantaine
+
+Contexte : le nouveau reconcile_products n'utilise pas les gardes d'admission.
+Audit actif readonly :231 copies prix marquées reconciled_from ont le même
+SourceRecord qu'un parent actif en quarantaine. Le module est sans couverture,
+ce qui baisse aussi normalize sous80% dans la réception813bb50.
+
+Décision : vérifier éligibilité du parent et de la cible canonique existante
+(ainsi que leurs sources via la garde commune) avant toute mutation, sur les
+trois types prix/stocks/commerce. Tests SQL de copies, dédoublonnage, idempotence,
+conservation des bruts et refus de parent/source/cible quarantainés.0027 ajoute
+la quarantaine des copies de même source explicitement issues d'un parent
+quarantainé, et des prévisions potentiellement affectées ; ne pas masquer une
+révision authentique d'une source distincte. Invalider leurs caches dépendants.
+Aucun effacement/réécriture d'observation ni contournement d'une identité réservée.
