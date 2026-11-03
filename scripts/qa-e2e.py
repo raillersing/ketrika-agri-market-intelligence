@@ -173,10 +173,13 @@ def main() -> int:
             expect(page).to_have_url(re.compile(r"http://web:3000/login(?:\?.*)?"))
             assert not any(cookie["name"] == "session_token" for cookie in context.cookies())
             completed.append("UI rejects and clears an arbitrary session cookie")
+            expect(page.locator('input[type="email"]')).to_have_value("")
+            expect(page.locator('input[type="password"]')).to_have_value("")
             page.locator('input[type="email"]').fill("admin@ketrika.local")
             page.locator('input[type="password"]').fill("change-me")
             page.locator('form button[type="submit"]').click()
-            expect(page).to_have_url("http://web:3000/", timeout=240000)
+            expect(page).to_have_url("http://web:3000/prices", timeout=240000)
+            receipt["login_return_target"] = "/prices"
             cookies = context.cookies()
             assert any(
                 cookie["name"] == "session_token" and cookie["httpOnly"] for cookie in cookies
@@ -190,7 +193,7 @@ def main() -> int:
                 except Exception:
                     pass
             page.reload()
-            expect(page).to_have_url("http://web:3000/")
+            expect(page).to_have_url("http://web:3000/prices")
             completed.append("reload retains authentication")
             profile = context.request.get("/api/v1/auth/me")
             assert profile.ok and profile.json()["role"] == "admin"
@@ -206,6 +209,8 @@ def main() -> int:
                 )
                 return page.goto(path)
 
+            page.goto("/")
+            expect(page).to_have_url("http://web:3000/")
             navigation = page.get_by_role("navigation", name="Navigation principale")
             expect(navigation.locator('[aria-current="page"]')).to_have_count(1)
             expect(navigation.locator('[aria-current="page"]')).to_have_attribute("href", "/")
