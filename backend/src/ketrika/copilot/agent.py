@@ -33,6 +33,25 @@ def resolve_product_code(q: str) -> str:
     return "rice_milled"
 
 
+def resolve_product_filter(prod: str) -> str:
+    """Generate SQL filter matching both canonical uppercase and lowercase legacy codes."""
+    if prod == "rice_milled":
+        return "(product_code = 'rice_milled' OR product_code = 'RICE_WHITE_LOCAL' OR product_code = 'RICE_WHITE_IMPORTED')"
+    if prod == "maize":
+        return "(product_code = 'maize' OR product_code = 'MAIZE_GRAIN')"
+    if prod == "sugar":
+        return "(product_code = 'sugar' OR product_code = 'SUGAR')"
+    if prod == "oil_edible":
+        return "(product_code = 'oil_edible' OR product_code = 'VEG_OIL')"
+    if prod == "wheat_flour":
+        return "(product_code = 'wheat_flour' OR product_code = 'WHEAT_FLOUR')"
+    if prod == "beans":
+        return "(product_code = 'beans' OR product_code = 'BEANS_DRY')"
+    if prod == "cassava":
+        return "(product_code = 'cassava' OR product_code = 'CASSAVA_FRESH' OR product_code = 'CASSAVA_DRIED')"
+    return f"product_code = '{prod}'"
+
+
 def resolve_location_clause(q: str, prefix_operator: str = "AND") -> str:
     """Resolve location filter clause from query keywords."""
     op = f"{prefix_operator} "
@@ -98,7 +117,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         return f"""
         SELECT product_name, location_name, horizon, target_period, p10, p50, p90, model_name
         FROM gold.forecast_latest
-        WHERE product_code = '{prod}' {loc_clause}
+        WHERE {resolve_product_filter(prod)} {loc_clause}
         ORDER BY horizon ASC
         LIMIT 3;
         """.strip()
@@ -154,7 +173,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         return f"""
         SELECT product_name, location_name, month, median_price, chg_1m, chg_12m, z_score_robust
         FROM gold.price_changes
-        WHERE product_code = '{prod}' {loc_clause}
+        WHERE {resolve_product_filter(prod)} {loc_clause}
         ORDER BY month DESC
         LIMIT 6;
         """.strip()
@@ -165,7 +184,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         return f"""
         SELECT product_name, location_name, month, median_price, vol_12, med_12, mad_12
         FROM gold.price_changes
-        WHERE product_code = '{prod}'
+        WHERE {resolve_product_filter(prod)}
         ORDER BY month DESC
         LIMIT 5;
         """.strip()
@@ -187,7 +206,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         return f"""
         SELECT product_name, year, import_tons, production_tons, idr_pct
         FROM gold.import_dependency
-        WHERE product_code = '{prod}'
+        WHERE {resolve_product_filter(prod)}
         ORDER BY year DESC
         LIMIT 5;
         """.strip()
@@ -212,7 +231,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         return f"""
         SELECT month, flow, weight_tons, value_mga
         FROM gold.trade_monthly
-        WHERE product_code = '{prod}'
+        WHERE {resolve_product_filter(prod)}
         ORDER BY month DESC
         LIMIT 12;
         """.strip()
@@ -234,7 +253,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
         return f"""
         SELECT month, source_id, median_price, min_price, max_price, n_obs
         FROM gold.price_monthly
-        WHERE product_code = '{prod}'
+        WHERE {resolve_product_filter(prod)}
         ORDER BY month DESC
         LIMIT 10;
         """.strip()
@@ -273,7 +292,7 @@ def generate_sql_from_question(question: str, settings: Settings | None = None) 
     return f"""
     SELECT product_name, location_name, month, median_price, chosen_source_id
     FROM gold.price_monthly_best
-    WHERE product_code = '{prod}' {loc_clause}
+    WHERE {resolve_product_filter(prod)} {loc_clause}
     ORDER BY month DESC
     LIMIT 6;
     """.strip()
