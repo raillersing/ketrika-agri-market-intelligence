@@ -1973,3 +1973,22 @@ la quarantaine des copies de même source explicitement issues d'un parent
 quarantainé, et des prévisions potentiellement affectées ; ne pas masquer une
 révision authentique d'une source distincte. Invalider leurs caches dépendants.
 Aucun effacement/réécriture d'observation ni contournement d'une identité réservée.
+
+## ADR-159 | 2026-11-03 | Niveaux territoriaux sans régionalisation implicite
+
+Contexte : la page territoriale concurrente reporte un point national sur chaque
+région du catalogue sans observation régionale. Elle annonce une carte interactive
+alors que le composant ne charge aucune géométrie qualifiée ; les légendes imposent
+kg/Ar et taisent la nature des valeurs. Le scénario territorial historique refuse
+à juste titre une telle qualification. Le check073db40 en cours reste intact.
+
+Décision : conserver grille et séries, mais uniquement avec les points réellement
+renvoyés à leur niveau. Présenter le national séparément, sans modèle/organisme
+inventé ni repli vers les régions. Afficher devise, unité, nature et source de
+chaque point, y compris zéro/absence. Pas d'écart territorial calculé sur unités
+ou cohortes hétérogènes ; géographie explicitement non qualifiée tant que ses
+preuves ne sont pas reçues. Tests de non-régionalisation et réception complète.
+
+Alternatives : modifier seulement le libellé du test ou conserver une pseudo-carte
+(rejetés). Aucun nouveau jeu de données, région, frontière ou prix généré ; aucun
+contrat de source n'est levé.

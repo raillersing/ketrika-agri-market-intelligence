@@ -331,6 +331,27 @@ def main() -> int:
                 "reference outage preserves selection without redundant global filters"
             )
 
+            # Synthetic HTTP fixtures verify UI scope only; never market provenance.
+            regional_fixture: list[dict] = []
+            national_fixture = {
+                "product_code": "RICE_WHITE_LOCAL",
+                "location_pcode": "UI_NATIONAL",
+                "location_name": "Portée nationale synthétique",
+                "month": "2026-01-01",
+                "median_price": 999,
+                "currency": "USD",
+                "unit": "t",
+                "value_kind": "imputed",
+                "sources": ["ui_scope_fixture"],
+            }
+
+            def territorial_fixture(route) -> None:
+                level = parse_qs(urlparse(route.request.url).query).get("level", ["1"])[0]
+                values = [national_fixture] if level == "0" else regional_fixture
+                route.fulfill(status=200, content_type="application/json", body=json.dumps(values))
+
+            territorial_route = re.compile(r".*/api/v1/prices/latest(?:\?.*)?$")
+            page.route(territorial_route, territorial_fixture)
             navigate("/map")
             expect(
                 page.get_by_role("heading", name="Carte géographique en préparation", exact=True)
@@ -341,6 +362,42 @@ def main() -> int:
             expect(page.get_by_role("combobox", name="Produit", exact=True)).to_be_visible()
             expect(page.get_by_role("combobox", name="Zone", exact=True)).to_have_count(0)
             expect(page.get_by_text(re.compile(r"Surcoût de transport estimé"))).to_have_count(0)
+            regional_grid = page.get_by_role("region", name="Points régionaux disponibles")
+            expect(page.get_by_role("region", name="Point national disponible")).to_contain_text(
+                "999 USD/t"
+            )
+            expect(regional_grid.get_by_role("button")).to_have_count(0)
+            expect(regional_grid).not_to_contain_text("999")
+            regional_fixture.append(
+                dict(
+                    national_fixture,
+                    location_pcode="UI_REGION",
+                    location_name="Zone UI synthétique",
+                    median_price=100,
+                    value_kind="observed",
+                )
+            )
+            page.reload()
+            expect(regional_grid).to_contain_text("100 USD/t")
+            expect(regional_grid).to_contain_text("Observé")
+            expect(regional_grid).to_contain_text("ui_scope_fixture")
+            expect(regional_grid).not_to_contain_text("999")
+            region_button = regional_grid.get_by_role(
+                "button", name=re.compile("Zone UI synthétique")
+            )
+            expect(region_button).to_have_attribute("aria-pressed", "false")
+            region_button.click()
+            expect(region_button).to_have_attribute("aria-pressed", "true")
+            page.unroute(territorial_route, territorial_fixture)
+            navigate("/map")
+            expect(
+                page.get_by_role("heading", name="Derniers points par zone", exact=True)
+            ).to_be_visible()
+            expect(
+                page.get_by_text("Chargement des prix par territoire…", exact=True)
+            ).not_to_be_visible()
+            expect(regional_grid).not_to_contain_text("Zone UI synthétique")
+            receipt["territorial_scope_verified"] = True
             completed.append("territory view is tabular and states missing geography")
 
             bulletin_response = navigate(f"/bulletins/{fixture_ids['bulletin']}")

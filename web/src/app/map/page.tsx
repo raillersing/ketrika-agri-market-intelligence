@@ -23,19 +23,11 @@ type TerritorialPrice = {
   sources: string[];
 };
 
-type LocationMeta = {
-  location_id: string;
-  pcode: string;
-  name: string;
-  admin_level: number;
-};
-
 function MapContent() {
   const searchParams = useSearchParams();
   const product = searchParams.get("product") || DEFAULT_PRODUCT;
   const [rows, setRows] = useState<TerritorialPrice[]>([]);
-  const [nationalPrice, setNationalPrice] = useState<TerritorialPrice | null>(null);
-  const [locations, setLocations] = useState<LocationMeta[]>([]);
+  const [nationalPrices, setNationalPrices] = useState<TerritorialPrice[]>([]);
   const [selectedPcode, setSelectedPcode] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,12 +37,12 @@ function MapContent() {
     setLoading(true);
     setError(null);
     setRows([]);
-    setNationalPrice(null);
+    setNationalPrices([]);
 
     async function load() {
       try {
         if (isLegacyDQProduct(product)) throw new Error(DQ_SELECTION_MESSAGE);
-        const [regRes, natRes, locRes] = await Promise.all([
+        const [regRes, natRes] = await Promise.all([
           fetch(`/api/v1/prices/latest?${new URLSearchParams({ product, level: "1" })}`, {
             credentials: "include",
             signal: controller.signal,
@@ -59,21 +51,15 @@ function MapContent() {
             credentials: "include",
             signal: controller.signal,
           }).catch(() => null),
-          fetch(`/api/v1/locations?level=1`, {
-            credentials: "include",
-            signal: controller.signal,
-          }).catch(() => null),
         ]);
 
         if (!regRes.ok) throw new Error(`Les prix par territoire sont indisponibles (HTTP ${regRes.status}).`);
         const regData: TerritorialPrice[] = await regRes.json();
         const natData: TerritorialPrice[] = natRes?.ok ? await natRes.json() : [];
-        const locData: LocationMeta[] = locRes?.ok ? await locRes.json() : [];
 
         if (!controller.signal.aborted) {
           setRows(regData);
-          setNationalPrice(natData[0] || null);
-          setLocations(locData);
+          setNationalPrices(natData);
         }
       } catch (failure) {
         if (!controller.signal.aborted) {
@@ -88,35 +74,15 @@ function MapContent() {
     return () => controller.abort();
   }, [product]);
 
-  // Build the dictionary of regional prices for the ChoroplethMap
-  const regionPricesMap: Record<string, RegionPriceData> = {};
-
-  // Initialize with official locations (23 regions of Madagascar)
-  // Use national parity benchmark as default price if specific local survey is absent
-  for (const loc of locations) {
-    if (loc.admin_level === 1) {
-      regionPricesMap[loc.pcode] = {
-        pcode: loc.pcode,
-        name: loc.name,
-        price: nationalPrice?.median_price ?? null,
-        unit: nationalPrice?.unit || "kg",
-        valueKind: nationalPrice?.value_kind || undefined,
-        sourceId: nationalPrice ? (nationalPrice.sources?.[0] || "parite_nationale") : undefined,
-      };
-    }
-  }
-
-  // Overlay specific regional survey prices if available
-  for (const row of rows) {
-    regionPricesMap[row.location_pcode] = {
+  const regionPoints: RegionPriceData[] = rows.map((row) => ({
       pcode: row.location_pcode,
       name: row.location_name || row.location_pcode,
       price: row.median_price,
       unit: row.unit,
+      currency: row.currency,
       valueKind: row.value_kind,
-      sourceId: row.sources?.[0],
-    };
-  }
+      sources: row.sources || [],
+  }));
 
   return (
     <div className="space-y-6">
@@ -126,42 +92,42 @@ function MapContent() {
           Prix par territoire et découpage régional
         </h1>
         <p className="text-sm leading-6 text-muted-foreground">
-          Répartition des cours vivriers sur les 23 régions de Madagascar. Les estimations économétriques nationales et les relevés directs sont traçables avec leur niveau administratif.
+          Les points sont affichés à leur niveau enregistré. Un point national ne remplace pas une mesure régionale.
         </p>
       </header>
 
       {/* National Benchmark Card if available */}
-      {nationalPrice && (
-        <section className="rounded-2xl border border-primary/20 bg-primary/5 p-5 flex flex-wrap items-center justify-between gap-4">
+      {nationalPrices.map((nationalPrice, index) => (
+        <section key={`${nationalPrice.location_pcode}-${index}`} aria-label="Point national disponible" className="rounded-2xl border border-primary/20 bg-primary/5 p-5 flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="text-xs uppercase tracking-wider font-semibold text-primary-readable flex items-center gap-2">
               <Compass className="w-4 h-4" />
-              Référence nationale de parité (Niveau Admin 0 — Madagascar)
+              Point national de la sélection
             </div>
             <div className="mt-1 text-2xl font-bold font-mono text-foreground">
-              {formatPrice(nationalPrice.median_price, nationalPrice.unit, nationalPrice.currency === "MGA" ? "Ar" : nationalPrice.currency)}
+              {formatPrice(nationalPrice.median_price, nationalPrice.unit || "Unité non renseignée", nationalPrice.currency === "MGA" ? "Ar" : nationalPrice.currency || "Devise non renseignée")}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Dernière mise à jour : {formatMonthYear(nationalPrice.month)} · Modèle : Parité d’importation / Modèle vivrier national (DGD / BFM / Pink Sheet).
+              Période enregistrée : {formatMonthYear(nationalPrice.month)}. Ce point ne décrit pas les prix de chaque région.
             </p>
           </div>
           <div className="flex items-center gap-2">
             <ValueKindBadge kind={nationalPrice.value_kind} />
-            {nationalPrice.sources?.map((s) => (
+            {nationalPrice.sources?.length ? nationalPrice.sources.map((s) => (
               <SourceBadge key={s} sourceId={s} />
-            ))}
+            )) : <span className="text-xs text-muted-foreground">Source non renseignée</span>}
           </div>
         </section>
-      )}
+      ))}
 
       {/* Regional Visualizer Map Component */}
       <section aria-labelledby="map-availability" className="space-y-3">
         <h2 id="map-availability" className="text-lg font-medium text-foreground flex items-center gap-2">
           <Compass className="w-5 h-5 text-primary-readable" />
-          Carte interactive des régions de Madagascar
+          Carte géographique en préparation
         </h2>
         <ChoroplethMap
-          regionPrices={regionPricesMap}
+          regionPrices={regionPoints}
           selectedPcode={selectedPcode}
           onRegionSelect={(pcode) => setSelectedPcode(pcode === selectedPcode ? undefined : pcode)}
           className="shadow-sm"
@@ -177,19 +143,19 @@ function MapContent() {
       {loading ? (
         <p role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
           <RefreshCw aria-hidden="true" className="h-4 w-4 animate-spin" />
-          Chargement des points territoriaux…
+          Chargement des prix par territoire…
         </p>
       ) : (
         !error && (
           <section className="rounded-xl border border-border bg-card p-5">
-            <h2 className="text-lg font-medium">Relevés régionaux directs disponibles</h2>
+            <h2 className="text-lg font-medium">Derniers points par zone</h2>
             <p className="my-3 text-sm leading-6 text-muted-foreground">
-              Les dates et les sources correspondent aux enquêtes régionales enregistrées (ex. WFP / RTFP / INSTAT). Pour les denrées sans enquête directe locale, la référence de parité nationale s’applique.
+              Consultez la période, la nature et les sources de chaque point régional disponible. Aucune valeur nationale n’est reportée sur une région sans donnée.
             </p>
 
             {!rows.length ? (
               <p role="status" className="py-6 text-sm text-muted-foreground">
-                Aucune enquête de marché locale directe au niveau régional pour ce produit. Consultez la référence nationale ci-dessus ou sélectionnez un autre produit (ex. Riz blanc local).
+                Aucun point régional enregistré pour ce produit. Un éventuel point national est présenté séparément.
               </p>
             ) : (
               <div className="relative overflow-x-auto">
@@ -212,9 +178,7 @@ function MapContent() {
                         </th>
                         <td className="whitespace-nowrap p-3">{formatMonthYear(row.month)}</td>
                         <td className="whitespace-nowrap p-3">
-                          {row.currency === "MGA"
-                            ? formatPrice(row.median_price, row.unit)
-                            : `${row.median_price} ${row.currency}/${row.unit}`}
+                          {formatPrice(row.median_price, row.unit || "Unité non renseignée", row.currency === "MGA" ? "Ar" : row.currency || "Devise non renseignée")}
                         </td>
                         <td className="p-3">
                           <ValueKindBadge kind={row.value_kind} />
