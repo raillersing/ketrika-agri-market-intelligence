@@ -1863,3 +1863,23 @@ source, modèle, gate ou tag. Exception readonly AGENTS §3.3 ; source applicati
 Alternatives : recréer un laboratoire vide et changer l'identité pour relancer
 (rejeté : perte de continuité des arrêts), ignorer les erreurs de transport
 (rejeté : preuve inexploitable), inventer une révision (interdit).
+
+## ADR-156 | 2026-11-03 | Acquisition ODR réelle sous budget central existant
+
+Contexte : le laboratoire historique reste perdu (ADR151/B-R104). Le registre
+central de l'application a été consulté en READ ONLY : miasa_odr active/approved,
+aucun arrêt source ni origine sur les deux hôtes MINAE ; compteurs historiques
+2026-10-21/26 conservés, aucun compteur du jour. Le refus privé du29 était un
+quota épuisé sans réponse HTTP, pas un droit de relancer une source interdite.
+
+Décision : autoriser un probe d'acquisition réelle séparé, utilisant le client
+natif et le registre central durable existant, même source/origines approuvées
+ADR144, jour UTC courant. Aucun registre recréé, compteur remis à zéro, arrêt
+levé, identité changée ni plafond augmenté. Budget source/jour borné à10 et0,2rps,
+requêtes GET anonymes, robots/PolicyStop natifs et témoin de transport reçu.
+Les seuls effets SQL admis sont les compteurs/pacing/arrêts d'acquisition natifs ;
+aucune observation, SourceRecord, ACL ou donnée de marché modifiée. Les fichiers
+candidats restent privés et non qualifiés, sans importation Silver/Gold. Toute
+réponse interdite/challenge désactive durablement la source ; épuiser un quota
+ne désactive pas arbitrairement sa configuration. Le diagnostic de laboratoire
+ancien reste refusé ; ce mode n'en restaure ni n'en certifie l'état.

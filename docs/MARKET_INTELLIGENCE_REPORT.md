@@ -19,3 +19,11 @@ original ne sont plus retrouvés (B-R104) ; leur continuité est requise avant
 reprise, conformément à ADR151. R0.8 reste la première tâche MUST éligible ;
 R0.9 dépend de sa réception, les capacités aval ne sont pas qualifiées par ces
 tests. Le corpus authentique corrigé demandé dans HANDOFF reste indispensable.
+
+Actualisation2026-11-03 : ADR156 a reçu un diagnostic réel via registre central
+préexistant, distinct de la restauration du laboratoire absent. Dix admissions,
+dix ConnectError, zéro réponse HTTP/document, quota10/10 et arrêts conservés.
+Aucun corpus, provenance ou droit source acquis ; aucune donnée métier importée.
+Sept tests offline verts ne débloquent pas AU-09. Le défaut Actions historique
+n'est plus actuel : PR10 exécute les contrôles et doit obtenir sa réception
+complète avant fusion ; les anciens résultats487adb3 ne couvrent pas ce lot.

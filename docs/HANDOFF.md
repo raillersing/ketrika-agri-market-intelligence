@@ -20,3 +20,13 @@ et son volume non retrouvés dans Docker Desktop ; ne pas recréer son registre
 à partir du seul rapport10/10, qui ne contient pas tous les arrêts durables.
 Rétablir le registre original et vérifier source/origines avant reprise ; sinon
 fournir directement le corpus des deux éditions autorisées défini ci-dessus.
+
+Actualisation2026-11-03 ADR156 : acquisition réelle distincte autorisée via le
+registre central durable préexistant, sans recréer le laboratoire perdu. Dix
+admissions/dix ConnectError, zéro réponse ou document ; quota10/10 conservé,
+source active et aucun PolicyStop. Ne plus interroger aujourd'hui UTC, ne pas
+changer d'identité ni contourner le budget. Prochaine fenêtre conforme ou corpus
+hors réseau avec les droits/provenances requis. Les sept tests du diagnostic
+ne qualifient aucune source. Actions fonctionne à nouveau ; les réceptions
+applicatives de PR10 sont en cours après des rouges conservés.487adb3 reste une
+réception historique, pas celle des nouvelles fonctionnalités concurrentes.
