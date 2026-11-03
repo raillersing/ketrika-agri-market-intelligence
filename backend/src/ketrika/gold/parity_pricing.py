@@ -1,40 +1,17 @@
-"""Import Parity Price (IPP) and Caloric Substitution Pricing Engine (ADR-140, SPECS §11).
+"""Synthetic IPP/substitution scenarios, unverified and excluded from ingestion.
 
-Implements real econometric pricing for PPN products lacking continuous direct local market observation:
-1. Import Parity Pricing (IPP) for imported staples (WHEAT_FLOUR, VEG_OIL, SUGAR, RICE_WHITE_IMPORTED)
-   based on World Bank Pink Sheet international FOB benchmarks, CNUCED freight rates,
-   Banque Centrale (BFM) USD/MGA exchange rates, and DGD customs tariffs.
-2. Econometric Caloric Substitution & Spatial Pricing for domestic staples
-   (CASSAVA_FRESH, CASSAVA_DRIED, MAIZE_GRAIN, SWEET_POTATO, BEANS_DRY, BAMBARA_GROUNDNUT,
-   LIMA_BEANS, GROUNDNUT, LENTILS, RICE_PADDY)
-   based on IFPRI Madagascar caloric substitution elasticities, crop calendar seasonality,
-   and regional transport margins.
-
-Principle 1 (Total Provenance): Raw benchmark tables are stored immutably into Bronze MinIO.
-Principle 9: Values are strictly marked observed_or_imputed = 'imputed' with detailed equations in evidence.
+Constants and sinusoidal trajectories below are illustrative inputs, not
+observations from BFM, OMH, World Bank, customs, or IFPRI. Numeric helpers
+remain for offline scenario exploration; no writer may publish them. ADR152.
 """
 
 from __future__ import annotations
 
-import csv
-import hashlib
-import io
-import logging
 import math
-import uuid
-from datetime import UTC, date, datetime
-from decimal import Decimal
+from datetime import date
 from typing import Any
 
-from sqlalchemy import select, text
 from sqlalchemy.orm import Session
-
-from ketrika.core.bronze import BronzeStore
-from ketrika.core.db import get_session
-from ketrika.core.models.db import Location, PriceObservation, Product, SourceRecord
-from ketrika.gold.refresh import refresh_gold_views
-
-logger = logging.getLogger("ketrika.gold.parity_pricing")
 
 IPP_PRODUCTS = ["RICE_WHITE_IMPORTED", "WHEAT_FLOUR", "VEG_OIL", "SUGAR"]
 SUBSTITUTION_PRODUCTS = [
@@ -71,9 +48,9 @@ def get_monthly_dates() -> list[date]:
     return dates
 
 
-# Certified historical monthly benchmark parameters
+# Synthetic scenario parameters; no primary-source verification.
 def get_macro_benchmarks(d: date) -> dict[str, float]:
-    """Historical BFM exchange rates, ocean freight, and fuel price indicators."""
+    """Synthetic exchange, freight, and fuel trajectories; not historical facts."""
     year, month = d.year, d.month
     progress = (year - 2020) + (month - 1) / 12.0
 
@@ -178,6 +155,7 @@ def compute_import_parity_price(
 
     return {
         "price": retail_unit_price,
+        "qualification": "synthetic_unverified",
         "unit": unit,
         "fob_usd": round(fob_usd, 2),
         "freight_usd": freight,
@@ -185,7 +163,7 @@ def compute_import_parity_price(
         "tariff_dd": tariff_dd,
         "vat_rate": vat_rate,
         "method": "Import Parity Pricing (IPP)",
-        "source_citation": "World Bank Pink Sheet FOB & Douanes Malagasy Tariff",
+        "source_citation": None,
     }
 
 
@@ -260,6 +238,7 @@ def compute_substitution_price(
 
     return {
         "price": price,
+        "qualification": "synthetic_unverified",
         "unit": unit,
         "method": "IFPRI Caloric Substitution & Seasonality Model",
         "details": details,
@@ -268,477 +247,18 @@ def compute_substitution_price(
     }
 
 
+class UnverifiedPricingInputs(ValueError):
+    """Synthetic trajectories cannot be published as sourced market prices."""
+
+
 def generate_and_load_econometric_prices(session: Session) -> dict[str, int]:
-    """Generate and store complete econometric pricing for all PPN products into Bronze & Silver/Gold."""
-    bronze = BronzeStore()
-    monthly_dates = get_monthly_dates()
-
-    # 1. Fetch products and locations
-    prods = {p.product_code: p for p in session.execute(select(Product)).scalars().all()}
-    national_loc = session.execute(
-        select(Location).where(Location.admin_level == 0)
-    ).scalar_one_or_none()
-    if not national_loc:
-        national_loc = session.execute(select(Location).where(Location.pcode == "MDG")).scalar_one()
-
-    # 2. Get baseline rice prices for all months
-    rice_prod = prods["RICE_WHITE_LOCAL"]
-    rice_obs = {
-        row[0]: float(row[1])
-        for row in session.execute(
-            text(
-                "SELECT date_trunc('month', period_start)::date, AVG(price_mga_per_base) "
-                "FROM obs.price_observation "
-                "WHERE product_id = :pid AND superseded_by IS NULL "
-                "GROUP BY date_trunc('month', period_start)::date"
-            ),
-            {"pid": rice_prod.product_id},
-        ).all()
-    }
-
-    def get_rice_price(d: date) -> float:
-        if d in rice_obs:
-            return rice_obs[d]
-        progress = (d.year - 2020) + (d.month - 1) / 12.0
-        base = 2100.0 + progress * (2650.0 - 2100.0) / 6.75
-        seasonal = 1.0 + 0.10 * math.sin((d.month - 4) * 3.1415 / 6.0)
-        return round(base * seasonal, 2)
-
-    # 3. Build Bronze Artifacts with explicit audit-compliant column bindings
-    # BindingPolicy for price_observation expects:
-    # Value: price_value
-    # Identities: product_raw, location_raw, period_start, unit_raw, currency_raw
-    csv_header = [
-        "period_start",
-        "product_raw",
-        "location_raw",
-        "unit_raw",
-        "currency_raw",
-        "price_value",
-        "product_code",
-    ]
-
-    ipp_csv_buf = io.StringIO()
-    ipp_writer = csv.writer(ipp_csv_buf)
-    ipp_writer.writerow(csv_header)
-
-    sub_csv_buf = io.StringIO()
-    sub_writer = csv.writer(sub_csv_buf)
-    sub_writer.writerow(csv_header)
-
-    ipp_products = ["RICE_WHITE_IMPORTED", "WHEAT_FLOUR", "VEG_OIL", "SUGAR"]
-    sub_products = [
-        "CASSAVA_FRESH",
-        "CASSAVA_DRIED",
-        "MAIZE_GRAIN",
-        "SWEET_POTATO",
-        "BEANS_DRY",
-        "BAMBARA_GROUNDNUT",
-        "LIMA_BEANS",
-        "GROUNDNUT",
-        "LENTILS",
-        "RICE_PADDY",
-    ]
-
-    ipp_records: list[dict[str, Any]] = []
-    sub_records: list[dict[str, Any]] = []
-
-    ipp_row_idx = 0
-    for d in monthly_dates:
-        macro = get_macro_benchmarks(d)
-        for pcode in ipp_products:
-            prod = prods[pcode]
-            res = compute_import_parity_price(pcode, d, macro)
-            p_val_str = f"{res['price']:.2f}"
-            ipp_writer.writerow(
-                [
-                    d.isoformat(),
-                    prod.canonical_name_fr,
-                    national_loc.name,
-                    res["unit"],
-                    "MGA",
-                    p_val_str,
-                    pcode,
-                ]
-            )
-            ipp_records.append(
-                {
-                    "row_index": ipp_row_idx,
-                    "date": d,
-                    "product_code": pcode,
-                    "res": res,
-                    "macro": macro,
-                    "price_str": p_val_str,
-                }
-            )
-            ipp_row_idx += 1
-
-    sub_row_idx = 0
-    for d in monthly_dates:
-        macro = get_macro_benchmarks(d)
-        p_rice = get_rice_price(d)
-        for pcode in sub_products:
-            prod = prods[pcode]
-            res = compute_substitution_price(pcode, d, p_rice, macro)
-            p_val_str = f"{res['price']:.2f}"
-            sub_writer.writerow(
-                [
-                    d.isoformat(),
-                    prod.canonical_name_fr,
-                    national_loc.name,
-                    res["unit"],
-                    "MGA",
-                    p_val_str,
-                    pcode,
-                ]
-            )
-            sub_records.append(
-                {
-                    "row_index": sub_row_idx,
-                    "date": d,
-                    "product_code": pcode,
-                    "res": res,
-                    "macro": macro,
-                    "price_str": p_val_str,
-                }
-            )
-            sub_row_idx += 1
-
-    # 4. Save Bronze Artifacts into MinIO and create or retrieve SourceRecords
-    ipp_bytes = ipp_csv_buf.getvalue().encode("utf-8")
-    ipp_sha = hashlib.sha256(ipp_bytes).hexdigest()
-    ipp_artifact = bronze.put(
-        source_id="douanes_stats",
-        content=ipp_bytes,
-        mime_type="text/csv",
-        url="https://www.douanes.gov.mg/stats/import-parity-benchmarks",
-    )
-
-    existing_ipp_sr = session.execute(
-        select(SourceRecord).where(
-            SourceRecord.source_id == "douanes_stats",
-            SourceRecord.content_sha256 == ipp_sha,
-        )
-    ).scalar_one_or_none()
-
-    if existing_ipp_sr:
-        ipp_sr_id = existing_ipp_sr.source_record_id
-    else:
-        ipp_sr_id = uuid.uuid4()
-        ipp_sr = SourceRecord(
-            source_record_id=ipp_sr_id,
-            source_id="douanes_stats",
-            object_key=ipp_artifact.object_key,
-            content_sha256=ipp_sha,
-            mime_type="text/csv",
-            source_url="https://www.douanes.gov.mg/stats/import-parity-benchmarks",
-            fetched_at=datetime.now(UTC),
-            parser_version="1.0.0",
-            extraction_status="parsed",
-        )
-        session.add(ipp_sr)
-
-    sub_bytes = sub_csv_buf.getvalue().encode("utf-8")
-    sub_sha = hashlib.sha256(sub_bytes).hexdigest()
-    sub_artifact = bronze.put(
-        source_id="miasa_odr",
-        content=sub_bytes,
-        mime_type="text/csv",
-        url="http://www.agriculture.gov.mg/odr/caloric-substitution-benchmarks",
-    )
-
-    existing_sub_sr = session.execute(
-        select(SourceRecord).where(
-            SourceRecord.source_id == "miasa_odr",
-            SourceRecord.content_sha256 == sub_sha,
-        )
-    ).scalar_one_or_none()
-
-    if existing_sub_sr:
-        sub_sr_id = existing_sub_sr.source_record_id
-    else:
-        sub_sr_id = uuid.uuid4()
-        sub_sr = SourceRecord(
-            source_record_id=sub_sr_id,
-            source_id="miasa_odr",
-            object_key=sub_artifact.object_key,
-            content_sha256=sub_sha,
-            mime_type="text/csv",
-            source_url="http://www.agriculture.gov.mg/odr/caloric-substitution-benchmarks",
-            fetched_at=datetime.now(UTC),
-            parser_version="1.0.0",
-            extraction_status="parsed",
-        )
-        session.add(sub_sr)
-    session.flush()
-
-    # 5. Load active price observations with natural key uniqueness check & provenance cells
-    active_nks: dict[str, uuid.UUID] = {
-        row[0]: row[1]
-        for row in session.execute(
-            select(PriceObservation.natural_key, PriceObservation.observation_id).where(
-                PriceObservation.superseded_by.is_(None)
-            )
-        ).all()
-    }
-
-    inserted_count = 0
-    superseded_count = 0
-
-    # Ingest IPP records
-    for item in ipp_records:
-        pcode = item["product_code"]
-        prod = prods[pcode]
-        d = item["date"]
-        res = item["res"]
-        r_idx = item["row_index"]
-        p_val_str = item["price_str"]
-        nk = f"{pcode}|{national_loc.location_id}|retail|{d.isoformat()}"
-
-        # Exact provenance structure matching BindingPolicy for price_observation
-        provenance = {
-            "version": 1,
-            "format": "csv",
-            "delimiter": ",",
-            "row": r_idx,
-            "cells": [
-                {
-                    "field": "price_value",
-                    "role": "value",
-                    "kind": "number",
-                    "column": "price_value",
-                    "expected": p_val_str,
-                },
-                {
-                    "field": "product_raw",
-                    "role": "identity",
-                    "kind": "text",
-                    "column": "product_raw",
-                    "expected": prod.canonical_name_fr,
-                },
-                {
-                    "field": "location_raw",
-                    "role": "identity",
-                    "kind": "text",
-                    "column": "location_raw",
-                    "expected": national_loc.name,
-                },
-                {
-                    "field": "period_start",
-                    "role": "identity",
-                    "kind": "text",
-                    "column": "period_start",
-                    "expected": d.isoformat(),
-                },
-                {
-                    "field": "unit_raw",
-                    "role": "identity",
-                    "kind": "text",
-                    "column": "unit_raw",
-                    "expected": res["unit"],
-                },
-                {
-                    "field": "currency_raw",
-                    "role": "identity",
-                    "kind": "text",
-                    "column": "currency_raw",
-                    "expected": "MGA",
-                },
-            ],
-        }
-
-        evidence = {
-            "method": "Import Parity Pricing (IPP)",
-            "benchmark_source": "World Bank Pink Sheet & Douanes Malagasy",
-            "fob_usd": res["fob_usd"],
-            "freight_ocean_usd": res["freight_usd"],
-            "fx_usd_mga": res["fx_usd_mga"],
-            "tariff_customs_rate": res["tariff_dd"],
-            "vat_rate": res["vat_rate"],
-            "formula": "IPP = [((FOB + Freight)*FX*(1+DD)*(1+VAT)) + Port + Transport] * (1+Margin)",
-            "normalization": {"value_kind": "point"},
-            "price_identity": {"statistical_kind": "point"},
-            "observed_or_imputed": "imputed",
-            "provenance": provenance,
-        }
-
-        new_id = uuid.uuid4()
-        if nk in active_nks:
-            old_id = active_nks[nk]
-            session.execute(
-                text(
-                    "UPDATE obs.price_observation SET superseded_by = :new_id WHERE observation_id = :old_id"
-                ),
-                {"new_id": new_id, "old_id": old_id},
-            )
-            superseded_count += 1
-
-        obs = PriceObservation(
-            observation_id=new_id,
-            source_record_id=ipp_sr_id,
-            natural_key=nk,
-            product_raw=prod.canonical_name_fr,
-            product_id=prod.product_id,
-            location_raw=national_loc.name,
-            location_id=national_loc.location_id,
-            market_name="National Average",
-            actor_level="retail",
-            period_start=d,
-            period_end=date(
-                d.year, d.month, 28 if d.month == 2 else (30 if d.month in (4, 6, 9, 11) else 31)
-            ),
-            published_at=datetime(d.year, d.month, 1, tzinfo=UTC),
-            price_raw=p_val_str,
-            price_value=Decimal(p_val_str),
-            currency_raw="MGA",
-            unit_raw=res["unit"],
-            price_mga_per_base=Decimal(p_val_str),
-            base_unit=prod.base_unit,
-            conversion_status="exact",
-            observed_or_imputed="imputed",
-            extraction_method="deterministic",
-            evidence=evidence,
-            confidence=0.95,
-            review_status="accepted",
-            superseded_by=None,
-        )
-        session.add(obs)
-        active_nks[nk] = new_id
-        inserted_count += 1
-
-    # Ingest Substitution records
-    for item in sub_records:
-        pcode = item["product_code"]
-        prod = prods[pcode]
-        d = item["date"]
-        res = item["res"]
-        r_idx = item["row_index"]
-        p_val_str = item["price_str"]
-        nk = f"{pcode}|{national_loc.location_id}|retail|{d.isoformat()}"
-
-        provenance = {
-            "version": 1,
-            "format": "csv",
-            "delimiter": ",",
-            "row": r_idx,
-            "cells": [
-                {
-                    "field": "price_value",
-                    "role": "value",
-                    "kind": "number",
-                    "column": "price_value",
-                    "expected": p_val_str,
-                },
-                {
-                    "field": "product_raw",
-                    "role": "identity",
-                    "kind": "text",
-                    "column": "product_raw",
-                    "expected": prod.canonical_name_fr,
-                },
-                {
-                    "field": "location_raw",
-                    "role": "identity",
-                    "kind": "text",
-                    "column": "location_raw",
-                    "expected": national_loc.name,
-                },
-                {
-                    "field": "period_start",
-                    "role": "identity",
-                    "kind": "text",
-                    "column": "period_start",
-                    "expected": d.isoformat(),
-                },
-                {
-                    "field": "unit_raw",
-                    "role": "identity",
-                    "kind": "text",
-                    "column": "unit_raw",
-                    "expected": res["unit"],
-                },
-                {
-                    "field": "currency_raw",
-                    "role": "identity",
-                    "kind": "text",
-                    "column": "currency_raw",
-                    "expected": "MGA",
-                },
-            ],
-        }
-
-        evidence = {
-            "method": "IFPRI Caloric Substitution Model",
-            "benchmark_source": "MiASA ODR & IFPRI Madagascar EPM Caloric Elasticity",
-            "anchor_rice_price": res["anchor_rice_price"],
-            "is_soudure": res["is_soudure"],
-            "details": res["details"],
-            "normalization": {"value_kind": "point"},
-            "price_identity": {"statistical_kind": "point"},
-            "observed_or_imputed": "imputed",
-            "provenance": provenance,
-        }
-
-        new_id = uuid.uuid4()
-        if nk in active_nks:
-            old_id = active_nks[nk]
-            session.execute(
-                text(
-                    "UPDATE obs.price_observation SET superseded_by = :new_id WHERE observation_id = :old_id"
-                ),
-                {"new_id": new_id, "old_id": old_id},
-            )
-            superseded_count += 1
-
-        obs = PriceObservation(
-            observation_id=new_id,
-            source_record_id=sub_sr_id,
-            natural_key=nk,
-            product_raw=prod.canonical_name_fr,
-            product_id=prod.product_id,
-            location_raw=national_loc.name,
-            location_id=national_loc.location_id,
-            market_name="National Average",
-            actor_level="retail",
-            period_start=d,
-            period_end=date(
-                d.year, d.month, 28 if d.month == 2 else (30 if d.month in (4, 6, 9, 11) else 31)
-            ),
-            published_at=datetime(d.year, d.month, 1, tzinfo=UTC),
-            price_raw=p_val_str,
-            price_value=Decimal(p_val_str),
-            currency_raw="MGA",
-            unit_raw=res["unit"],
-            price_mga_per_base=Decimal(p_val_str),
-            base_unit=prod.base_unit,
-            conversion_status="exact",
-            observed_or_imputed="imputed",
-            extraction_method="deterministic",
-            evidence=evidence,
-            confidence=0.92,
-            review_status="accepted",
-            superseded_by=None,
-        )
-        session.add(obs)
-        active_nks[nk] = new_id
-        inserted_count += 1
-
-    session.flush()
-    return {
-        "inserted": inserted_count,
-        "superseded": superseded_count,
-        "total_active_series": len(ipp_products) + len(sub_products),
-    }
+    """Refuse synthetic inputs before SQL, Bronze, or observation mutations."""
+    raise UnverifiedPricingInputs("verified_economic_pricing_inputs_required")
 
 
 def main() -> None:
-    logging.basicConfig(level=logging.INFO)
-    with get_session() as session:
-        with session.begin():
-            stats = generate_and_load_econometric_prices(session)
-            print(f"Econometric pricing generated and loaded successfully: {stats}")
-        refresh_gold_views(session)
-        print("Gold materialized views refreshed successfully.")
+    """Do not connect to a database for an unqualified generator."""
+    raise UnverifiedPricingInputs("verified_economic_pricing_inputs_required")
 
 
 if __name__ == "__main__":

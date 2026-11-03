@@ -48,6 +48,12 @@ WITH latest_runs AS (
     JOIN ml.model_run mr ON f.model_run_id = mr.model_run_id
     LEFT JOIN ref.product p ON f.product_id = p.product_id
     LEFT JOIN ref.location loc ON f.location_id = loc.location_id
+    WHERE NOT EXISTS (
+        SELECT 1 FROM obs.quarantine_ledger ql
+        WHERE ql.table_name = 'ml.forecast'
+          AND ql.observation_id = f.forecast_id
+          AND ql.revoked_at IS NULL
+    )
 )
 SELECT
     forecast_id,

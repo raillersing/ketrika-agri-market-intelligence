@@ -1,0 +1,1 @@
+{"revision" : "0024_unverified_economic_inputs", "gold_create" : false, "gold_select" : true, "gold_update" : false, "scope" : "fresh isolated database initialized with original Compose bootstrap then corrected migration"}

@@ -1862,3 +1862,161 @@ Décision : recevoir localement par les points d'entrée inchangés, sur source 
 Le refus de facturation hébergé demeure explicitement non exécuté, jamais annoncé vert. Ne désactiver aucun workflow, règle, limite ni seuil, ne publier aucun faux statut CI et n'utiliser aucun admin/force ; fusion ordinaire avec tête attendue exacte seulement. Si GitHub la refuse, conserver la PR ouverte et consigner le motif, sans contourner. Une CI démarrée doit terminer et ses résultats être examinés. Les originaux locaux et rouges sont conservés ; l'indisponibilité externe reste distincte de la réception logicielle.
 
 Alternatives : attente de paiement sans travail indépendant (inutile tant que réception locale prévue disponible), dépenses non autorisées ou masquage du contrôle (rejetés). Les conditions précédentes restent non satisfaites tant que la réception en cours n'est pas terminée et auditée.
+
+## ADR-152 | 2026-11-03 | Refuser la publication de prix IPP sans intrants sourcés
+
+Contexte : le code concurrent94628b7 ajoute des paramètres calculés par constantes
+et sinusoïdes, un repli de prix du riz et des CSV produits localement attribués
+à des URL officielles non vérifiées. Une provenance vers ce CSV ne prouve pas
+la provenance des intrants économiques. L'étiquette imputed ne suffit pas.
+
+Décision : conserver les fonctions numériques uniquement comme scénarios
+synthétiques non qualifiés, explicitement signalés ; refuser leurs points
+d'entrée d'ingestion avant toute lecture SQL ou écriture Bronze/Silver.
+Retirer les déclarations de schéma qui admettent ces CSV comme publications
+douanes_stats/miasa_odr. Préserver tous les objets et lignes historiques ; aucun
+retrait de donnée active dans ce lot. Réactivation exige intrants officiels
+vérifiés, versions/formules/identités et preuves reçues ; aucun drapeau pour
+forcer la publication. Ajouter contre-épreuves d'absence d'effets et refus Gold.
+Réception complète du nouveau contenu, seuils/couvertures/scénarios conservés.
+
+Alternatives : considérer un CSV local comme source officielle (rejeté),
+supprimer des données actives sans réception (rejeté), confondre prix simulés
+et imputations sourcées (rejeté). Le modèle scientifique reste non qualifié.
+
+Extension bornée ADR152 avant migration : audit actif readonly a trouvé quatre
+SourceRecord sur les deux URL générées et4592 lignes prix portant les méthodes
+IPP/substitution. Aucun octet ni valeur modifié. Ajouter0024 append-only : mettre
+ces références/lignes en quarantaine, ainsi que les prévisions potentiellement
+entraînées sur leurs séries (cohorte mixte/all/inconnue, période <= cutoff).
+Les preuves restent dans leurs tables ; les prix Gold existants excluent déjà
+la quarantaine après refresh. La vue forecast_latest doit également exclure
+explicitement ses entités quarantainées, avant le classement des dernières
+prévisions. Garder les14 vues et leurs permissions de lecture contractuelles ;
+aucun refresh ou migration actif dans ce lot, réception sur SQL isolé et clone.
+
+## ADR-153 | 2026-11-03 | Connexion sans identifiants embarqués ni destination externe
+
+Contexte :357dae5 affiche un mot de passe administrateur dans le bundle client
+et transmet le paramètre from directement à router.push. Le statut de secret
+réel de ce mot de passe n'est pas établi ; sa publication impose de le considérer
+compromis s'il est utilisé par un compte. Aucune valeur n'est reproduite ici.
+
+Décision : retirer les identifiants et leur remplissage automatique du produit ;
+conserver le retour à une route locale validée, refuser schémas exécutables,
+origines externes, doubles slashs, antislashs, contrôles et boucles de connexion.
+Tests positifs/négatifs de navigation. Ne changer aucun mot de passe ou compte
+actif implicitement ; signaler la rotation nécessaire à l'opérateur si la valeur
+publiée était utilisée. Aucun force push ni réécriture d'historique.
+
+## ADR-154 | 2026-11-03 | Gold applicatif en lecture seule, bootstrap et historique
+
+Contexte : CI41595089417 sur e95de83 refuse0024 avant pytest. Le bootstrap
+Compose docker/db/init.sql accorde ALL aux tables futures de Gold et CREATE
+sur le schéma à ketrika_app. Les clones historiques et le laboratoire lancé
+sans ce bootstrap ont SELECT seul ; leur succès ne qualifie pas ce démarrage.
+
+Décision : corriger le bootstrap pour Gold SELECT seul et schéma USAGE ;0024
+retire explicitement les seuls droits d'écriture/DDL Gold du rôle applicatif,
+et son défaut de privilèges Gold, avant la garde d'ACL. Ne pas retirer d'accès
+métier hors Gold ni changer de rôle tiers. Les profils inconnus continuent de
+refuser transactionnellement. Tester la reproduction du défaut, l'accès réel
+sous rôle app, l'absence de CREATE/écriture et les nouveaux objets après correction.
+Aucun seuil, assertion, garde inconnue ou test scientifique affaibli. Réception
+complète sur nouveau gel après regroupement avec ADR153.
+
+## ADR-155 | 2026-11-03 | Refuser TRUNCATE au rôle applicatif append-only
+
+Contexte : contre-épreuve annulée sur base QA privée : ketrika_app possède
+TRUNCATE sur obs.quarantine_ledger et peut effacer une entrée synthétique,
+malgré le trigger UPDATE/DELETE append-only. Aucun test sur destination active.
+Les GRANT ALL de tables historiques/defaults rendent ce contournement possible.
+
+Décision : migration additive0025 retirant seulement TRUNCATE au rôle applicatif
+sur les tables métier auth/dq/meta/ml/obs/ops/ref, et leurs défauts de privilèges.
+Bootstrap sans TRUNCATE. Conserver tous les autres droits et le rôle propriétaire
+utilisé par les opérations de maintenance qualifiées. Si PUBLIC/héritage ou des
+défauts globaux rendent TRUNCATE encore effectif, refuser transactionnellement
+pour revue, sans retirer des droits à des tiers. Downgrade ne réaccorde jamais
+TRUNCATE. Tests SQL réels du refus, de la conservation des données/droits, des
+objets futurs et des cas hérités. Aucune restauration/reset de destination active.
+
+## ADR-157 | 2026-11-03 | Caches prix invalidés et alias de commerce non ambigus
+
+Contexte : main860ad57 introduit un raccordement direct aux alias pour les flux
+sans produit normalisé. L'index d'alias est unique par norme/source, pas par norme
+seule : une jointure multiligne peut doubler les tonnages ; une ambiguïté ou un
+alias non revu/faible ne prouve pas une identité. Les caches prix préexistants
+peuvent aussi conserver les prix générés après ajout de la quarantaine0024.
+
+Décision :0024 invalide WITH NO DATA les six caches prix dépendants lorsqu'une
+quarantaine UNVERIFIED_ECONOMIC_INPUTS existe, sans toucher bruts/ACL/définitions.
+Le refresh contrôlé reste requis pour republier. Commerce : résolution latérale
+par source/générique, confiance >=0,9 ou revue humaine, un seul produit distinct ;
+une ambiguïté reste sans produit et chaque flux compte une seule fois.0026 installe
+cette vue non peuplée, sans CASCADE ni changement des droits contractuels ; profil
+inconnu refuse. Ajouter scénarios SQL de doublon/ambiguïté/faible confiance/source,
+et cache invalide. Aucun modèle/source fraîche ou édition corrigée déduit.
+
+## ADR-158 | 2026-11-03 | Réconciliation canonique sans résurrection de quarantaine
+
+Contexte : le nouveau reconcile_products n'utilise pas les gardes d'admission.
+Audit actif readonly :231 copies prix marquées reconciled_from ont le même
+SourceRecord qu'un parent actif en quarantaine. Le module est sans couverture,
+ce qui baisse aussi normalize sous80% dans la réception813bb50.
+
+Décision : vérifier éligibilité du parent et de la cible canonique existante
+(ainsi que leurs sources via la garde commune) avant toute mutation, sur les
+trois types prix/stocks/commerce. Tests SQL de copies, dédoublonnage, idempotence,
+conservation des bruts et refus de parent/source/cible quarantainés.0027 ajoute
+la quarantaine des copies de même source explicitement issues d'un parent
+quarantainé, et des prévisions potentiellement affectées ; ne pas masquer une
+révision authentique d'une source distincte. Invalider leurs caches dépendants.
+Aucun effacement/réécriture d'observation ni contournement d'une identité réservée.
+
+## ADR-159 | 2026-11-03 | Niveaux territoriaux sans régionalisation implicite
+
+Contexte : la page territoriale concurrente reporte un point national sur chaque
+région du catalogue sans observation régionale. Elle annonce une carte interactive
+alors que le composant ne charge aucune géométrie qualifiée ; les légendes imposent
+kg/Ar et taisent la nature des valeurs. Le scénario territorial historique refuse
+à juste titre une telle qualification. Le check073db40 en cours reste intact.
+
+Décision : conserver grille et séries, mais uniquement avec les points réellement
+renvoyés à leur niveau. Présenter le national séparément, sans modèle/organisme
+inventé ni repli vers les régions. Afficher devise, unité, nature et source de
+chaque point, y compris zéro/absence. Pas d'écart territorial calculé sur unités
+ou cohortes hétérogènes ; géographie explicitement non qualifiée tant que ses
+preuves ne sont pas reçues. Tests de non-régionalisation et réception complète.
+
+Alternatives : modifier seulement le libellé du test ou conserver une pseudo-carte
+(rejetés). Aucun nouveau jeu de données, région, frontière ou prix généré ; aucun
+contrat de source n'est levé.
+
+## ADR-160 | 2026-11-03 | Alias de riz sans origine inventée
+
+Contexte : rice_milled désigne le riz usiné sans preuve d'origine locale. La
+confiance1 de l'alias concurrent repose sur ADR149, pas sur un document source.
+Les API nouvelles utilisent resolve_product avec son seuil par défaut0,8 sans
+exposer cette incertitude. Audit READ ONLY du clone0027 : les18 copies de prix
+rice_milled→RICE_WHITE_LOCAL sont déjà quarantainées, aucune réécriture requise.
+
+Décision : conserver l'alias à0,8 pour revue et supprimer cette conversion de la
+réconciliation automatique. Exiger min_confidence0,9 pour développer un alias
+dans les API ; codes exacts et alias documentés suffisamment confiants restent
+acceptés. Un libellé générique ne devient pas local/importé par défaut. Tests
+sémantiques de résolution et de paramètres SQL, puis réception complète.
+
+Alternative : confiance1 déduite du seul nom de l'ancien identifiant (rejetée).
+Pas de nouvelle migration ni suppression de donnée : les copies existantes sont
+déjà conservées en quarantaine par0027, et la source reste non qualifiée.
+
+Complément ADR160 avant migration : le clone conserve une ligne globale
+rice_milled→RICE_WHITE_LOCAL, confiance1 et human_reviewed=false. Le YAML seul ne
+corrige pas les lecteurs SQL.0028 ramène uniquement cet alias global non revu à
+0,8 (jamais une hausse), préserve variantes de source/revues/autres produits et
+invalide trade_monthly/import_dependency si changement. Les observations, droits
+et quarantaines restent inchangés. Réception sur une nouvelle copie privée du
+clone0027 ; original0027 et ses preuves conservés. Un downgrade ne rétablit pas
+la confiance non justifiée. L'absence initialement envisagée de migration est
+remplacée par cette correction persistante, sans nouvelle quarantaine.

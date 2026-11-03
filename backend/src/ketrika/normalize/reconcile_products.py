@@ -1,7 +1,7 @@
-"""Reconcile legacy lowercase product codes into canonical uppercase PPN taxonomy (ADR-140).
+"""Reconcile legacy lowercase product codes into canonical uppercase PPN taxonomy (ADR-149).
 
 Transfers active price, stock, and trade observations from legacy test codes
-(maize, cassava_fresh, oil_edible, flour_wheat, dry_beans, sugar, rice_imported, rice_milled, cassava_dry)
+(maize, cassava_fresh, oil_edible, flour_wheat, dry_beans, sugar, rice_imported, cassava_dry)
 to the canonical products (MAIZE_GRAIN, CASSAVA_FRESH, VEG_OIL, etc.) via immutable supersession (Rule 4.3).
 """
 
@@ -9,14 +9,13 @@ from __future__ import annotations
 
 import logging
 import uuid
-from typing import Any
 
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ketrika.core.db import get_session
 from ketrika.core.models.db import PriceObservation, Product, StockObservation, TradeFlow
-from ketrika.gold.refresh import refresh_gold_views
+from ketrika.core.quarantine import require_eligible_observation
 
 logger = logging.getLogger("ketrika.reconcile_products")
 
@@ -29,7 +28,6 @@ CODE_MAPPING: dict[str, str] = {
     "dry_beans": "BEANS_DRY",
     "sugar": "SUGAR",
     "rice_imported": "RICE_WHITE_IMPORTED",
-    "rice_milled": "RICE_WHITE_LOCAL",
 }
 
 
@@ -37,18 +35,14 @@ def reconcile_products(session: Session) -> dict[str, int]:
     """Reconcile legacy observations by superseding them with canonical product references."""
     # 1. Load canonical products map
     canonical_products = (
-        session.execute(
-            select(Product).where(Product.product_code.in_(set(CODE_MAPPING.values())))
-        )
+        session.execute(select(Product).where(Product.product_code.in_(set(CODE_MAPPING.values()))))
         .scalars()
         .all()
     )
     canonical_by_code: dict[str, Product] = {p.product_code: p for p in canonical_products}
 
     legacy_products = (
-        session.execute(
-            select(Product).where(Product.product_code.in_(set(CODE_MAPPING.keys())))
-        )
+        session.execute(select(Product).where(Product.product_code.in_(set(CODE_MAPPING.keys()))))
         .scalars()
         .all()
     )
@@ -82,6 +76,7 @@ def reconcile_products(session: Session) -> dict[str, int]:
         legacy_obs = list(session.execute(stmt).scalars().all())
 
         for old_obs in legacy_obs:
+            require_eligible_observation(session, PriceObservation, old_obs.observation_id)
             nk_parts = (old_obs.natural_key or "").split("|")
             if nk_parts and len(nk_parts) >= 4:
                 new_nk = f"{target_code}|{nk_parts[1]}|{nk_parts[2]}|{nk_parts[3]}"
@@ -89,6 +84,7 @@ def reconcile_products(session: Session) -> dict[str, int]:
                 new_nk = f"{target_code}|{old_obs.location_id}|{old_obs.actor_level}|{old_obs.period_start}"
 
             if new_nk in active_price_nks:
+                require_eligible_observation(session, PriceObservation, active_price_nks[new_nk])
                 # Existing active canonical row already present; supersede legacy to it
                 old_obs.superseded_by = active_price_nks[new_nk]
                 reconciled_prices += 1
@@ -97,7 +93,7 @@ def reconcile_products(session: Session) -> dict[str, int]:
             new_id = uuid.uuid4()
             ev = dict(old_obs.evidence or {})
             ev["reconciled_from"] = legacy_code
-            ev["reconciliation_adr"] = "ADR-140"
+            ev["reconciliation_adr"] = "ADR-149"
 
             old_obs.superseded_by = new_id
             active_price_nks[new_nk] = new_id
@@ -142,9 +138,11 @@ def reconcile_products(session: Session) -> dict[str, int]:
     active_stock_keys: dict[tuple[str, str], uuid.UUID] = {
         (row[0], row[1]): row[2]
         for row in session.execute(
-            select(StockObservation.natural_key, StockObservation.target, StockObservation.observation_id).where(
-                StockObservation.superseded_by.is_(None)
-            )
+            select(
+                StockObservation.natural_key,
+                StockObservation.target,
+                StockObservation.observation_id,
+            ).where(StockObservation.superseded_by.is_(None))
         ).all()
     }
 
@@ -162,6 +160,7 @@ def reconcile_products(session: Session) -> dict[str, int]:
         legacy_stocks = list(session.execute(stmt_s).scalars().all())
 
         for old_stk in legacy_stocks:
+            require_eligible_observation(session, StockObservation, old_stk.observation_id)
             nk_parts = (old_stk.natural_key or "").split("|")
             if nk_parts and len(nk_parts) >= 3:
                 new_nk = f"{target_code}|{nk_parts[1]}|{nk_parts[2]}"
@@ -170,6 +169,7 @@ def reconcile_products(session: Session) -> dict[str, int]:
 
             stk_key = (new_nk, old_stk.target)
             if stk_key in active_stock_keys:
+                require_eligible_observation(session, StockObservation, active_stock_keys[stk_key])
                 old_stk.superseded_by = active_stock_keys[stk_key]
                 reconciled_stocks += 1
                 continue
@@ -177,7 +177,7 @@ def reconcile_products(session: Session) -> dict[str, int]:
             new_id = uuid.uuid4()
             ev = dict(old_stk.evidence or {})
             ev["reconciled_from"] = legacy_code
-            ev["reconciliation_adr"] = "ADR-140"
+            ev["reconciliation_adr"] = "ADR-149"
             old_stk.superseded_by = new_id
             active_stock_keys[stk_key] = new_id
 
@@ -237,6 +237,7 @@ def reconcile_products(session: Session) -> dict[str, int]:
         legacy_trades = list(session.execute(stmt_t).scalars().all())
 
         for old_tr in legacy_trades:
+            require_eligible_observation(session, TradeFlow, old_tr.observation_id)
             nk_parts = (old_tr.natural_key or "").split("|")
             if nk_parts and len(nk_parts) >= 4:
                 new_nk = f"{target_code}|{nk_parts[1]}|{nk_parts[2]}|{nk_parts[3]}"
@@ -244,6 +245,7 @@ def reconcile_products(session: Session) -> dict[str, int]:
                 new_nk = f"{target_code}|{old_tr.flow}|{old_tr.partner_iso3}|{old_tr.period_start}"
 
             if new_nk in active_trade_nks:
+                require_eligible_observation(session, TradeFlow, active_trade_nks[new_nk])
                 old_tr.superseded_by = active_trade_nks[new_nk]
                 reconciled_trades += 1
                 continue
@@ -251,7 +253,7 @@ def reconcile_products(session: Session) -> dict[str, int]:
             new_id = uuid.uuid4()
             ev = dict(old_tr.evidence or {})
             ev["reconciled_from"] = legacy_code
-            ev["reconciliation_adr"] = "ADR-140"
+            ev["reconciliation_adr"] = "ADR-149"
             old_tr.superseded_by = new_id
             active_trade_nks[new_nk] = new_id
 

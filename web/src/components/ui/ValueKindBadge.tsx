@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { getValueKindInfo, type ValueKind } from "@/lib/formatters";
+import { getValueKindInfo, type ValueKind } from "../../lib/formatters";
 
 interface ValueKindBadgeProps {
   kind: ValueKind | string | null | undefined;
