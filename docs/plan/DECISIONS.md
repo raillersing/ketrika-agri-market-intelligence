@@ -1894,3 +1894,33 @@ la quarantaine après refresh. La vue forecast_latest doit également exclure
 explicitement ses entités quarantainées, avant le classement des dernières
 prévisions. Garder les14 vues et leurs permissions de lecture contractuelles ;
 aucun refresh ou migration actif dans ce lot, réception sur SQL isolé et clone.
+
+## ADR-153 | 2026-11-03 | Connexion sans identifiants embarqués ni destination externe
+
+Contexte :357dae5 affiche un mot de passe administrateur dans le bundle client
+et transmet le paramètre from directement à router.push. Le statut de secret
+réel de ce mot de passe n'est pas établi ; sa publication impose de le considérer
+compromis s'il est utilisé par un compte. Aucune valeur n'est reproduite ici.
+
+Décision : retirer les identifiants et leur remplissage automatique du produit ;
+conserver le retour à une route locale validée, refuser schémas exécutables,
+origines externes, doubles slashs, antislashs, contrôles et boucles de connexion.
+Tests positifs/négatifs de navigation. Ne changer aucun mot de passe ou compte
+actif implicitement ; signaler la rotation nécessaire à l'opérateur si la valeur
+publiée était utilisée. Aucun force push ni réécriture d'historique.
+
+## ADR-154 | 2026-11-03 | Gold applicatif en lecture seule, bootstrap et historique
+
+Contexte : CI41595089417 sur e95de83 refuse0024 avant pytest. Le bootstrap
+Compose docker/db/init.sql accorde ALL aux tables futures de Gold et CREATE
+sur le schéma à ketrika_app. Les clones historiques et le laboratoire lancé
+sans ce bootstrap ont SELECT seul ; leur succès ne qualifie pas ce démarrage.
+
+Décision : corriger le bootstrap pour Gold SELECT seul et schéma USAGE ;0024
+retire explicitement les seuls droits d'écriture/DDL Gold du rôle applicatif,
+et son défaut de privilèges Gold, avant la garde d'ACL. Ne pas retirer d'accès
+métier hors Gold ni changer de rôle tiers. Les profils inconnus continuent de
+refuser transactionnellement. Tester la reproduction du défaut, l'accès réel
+sous rôle app, l'absence de CREATE/écriture et les nouveaux objets après correction.
+Aucun seuil, assertion, garde inconnue ou test scientifique affaibli. Réception
+complète sur nouveau gel après regroupement avec ADR153.

@@ -241,3 +241,27 @@ def test_latest_valid_forecast_remains_when_newer_candidate_is_quarantined(migra
         text("SELECT forecast_id FROM gold.forecast_latest WHERE series_key=:series"),
         {"series": rejected.series_key},
     ).all() == [retained.forecast_id]
+
+
+def test_bootstrap_gold_writes_are_removed_without_changing_business_rights(migration_case):
+    migration, connection, _ = migration_case
+    before = connection.scalar(text("SELECT relacl::text FROM pg_class WHERE oid='obs.price_observation'::regclass"))
+    connection.execute(text("GRANT CREATE ON SCHEMA gold TO ketrika_app"))
+    connection.execute(text("GRANT ALL ON gold.forecast_latest TO ketrika_app"))
+    connection.execute(text("ALTER DEFAULT PRIVILEGES IN SCHEMA gold GRANT ALL ON TABLES TO ketrika_app"))
+    assert connection.scalar(text("SELECT has_table_privilege('ketrika_app','gold.forecast_latest','UPDATE')")) is True
+    migration.upgrade()
+    table = "gold.synthetic_acl_" + uuid4().hex
+    connection.execute(text(f"CREATE MATERIALIZED VIEW {table} AS SELECT 1 AS synthetic WITH NO DATA"))
+    assert connection.scalar(text(f"SELECT has_table_privilege('ketrika_app','{table}','SELECT')")) is True
+    assert connection.scalar(text(f"SELECT has_table_privilege('ketrika_app','{table}','UPDATE')")) is False
+    assert connection.scalar(text("SELECT relacl::text FROM pg_class WHERE oid='obs.price_observation'::regclass")) == before
+    connection.execute(text("SET LOCAL ROLE ketrika_app"))
+    connection.execute(text("EXPLAIN SELECT * FROM gold.forecast_latest"))
+    assert connection.scalar(text("SELECT has_schema_privilege(current_user,'gold','CREATE')")) is False
+    with pytest.raises(DBAPIError, match="permission denied"):
+        with connection.begin_nested():
+            connection.execute(text("CREATE TABLE gold.synthetic_forbidden(id integer)"))
+    with pytest.raises(DBAPIError, match="permission denied"):
+        with connection.begin_nested():
+            connection.execute(text("DELETE FROM gold.forecast_latest"))

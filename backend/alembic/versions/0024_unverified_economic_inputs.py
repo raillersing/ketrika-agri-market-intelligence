@@ -73,6 +73,15 @@ END $$
 
 
 def upgrade() -> None:
+    op.execute("""
+        REVOKE CREATE ON SCHEMA gold FROM ketrika_app;
+        REVOKE ALL ON ALL SEQUENCES IN SCHEMA gold FROM ketrika_app;
+        ALTER DEFAULT PRIVILEGES IN SCHEMA gold REVOKE ALL ON SEQUENCES FROM ketrika_app;
+        REVOKE INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,MAINTAIN
+          ON ALL TABLES IN SCHEMA gold FROM ketrika_app;
+        ALTER DEFAULT PRIVILEGES IN SCHEMA gold REVOKE ALL ON TABLES FROM ketrika_app;
+        ALTER DEFAULT PRIVILEGES IN SCHEMA gold GRANT SELECT ON TABLES TO ketrika_app;
+    """)
     op.execute(ACL_GUARD)
     op.execute(QUARANTINE)
     definition = (Path(__file__).resolve().parents[1] / "sql/0024_forecast_latest.sql").read_text(

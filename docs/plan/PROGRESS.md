@@ -4693,3 +4693,19 @@ Clôture documentaire : validation canonique en Docker code0,74 statuts synchron
 - Mini-plan : ADR152/SPECS avant code ; conserver scénarios numériques comme synthétiques ; supprimer le chemin de publication non sourcé et ses schémas Gold déclarés ; tests d'absence SQL/S3 et refus de contrats ; gel puis check complet CI/E2E avant fusion. Aucun objet Bronze ni ligne historique effacé, aucune baisse de seuil ou qualification scientifique déduite.
 
 Développement ADR152 :27 tests unitaires puis12 ciblés/9,18s dont sept SQL réels, lint/format441 et mypy440 verts ; source/interface concurrentes conservées, seuls imports inutilisés de reconcile_products corrigés (cause CI main41592145565 rouge avant tests). Clone neuf0021→0024 :39 tables hors registre identiques,4 références/4592 prix/84 prévisions quarantainés,1313 entrées antérieures conservées ; aucun SQL/S3 actif muté. Gardes d'ACL/propriétaire/dépendances strictes, pas de droit historique implicite. Réception consolidée complète encore requise sur prochain gel.
+
+### [2026-11-03T07:17:20Z] R0.8 — revue de sécurité du login concurrent
+
+- ADR153/SPECS avant code ; identifiants embarqués et destination from non validée dans le nouveau login. Mot de passe jamais reproduit dans les preuves ; utilisation active non testée, aucune rotation de compte implicite.
+- Mini-plan : retirer l'exposition/remplissage de compte ; validation d'une route locale et scénarios d'attaque/négatifs ; types/tests frontend ciblés dans Docker ; regrouper avec les corrections du check complet avant nouveau gel. Worktree indépendant fix/r08-login-target-20261103, candidat e95/CI41595089417 préservé jusqu'à sa conclusion.
+
+### [2026-11-03T07:24:01Z] Check e95de83 rouge — dérive du bootstrap Gold isolée
+
+- CI41595089417 terminée rouge avant pytest/frontend/E2E : garde d'ACL0024. Cause reproduite par lecture du bootstrap Compose : ALL sur futurs objets Gold et CREATE schéma pour app, distinct du clone historique SELECT seul ; le laboratoire sans bootstrap ne recevait pas cette variante. Originaux rouges conservés.
+- ADR154/SPECS avant correction : bootstrap et révocation ciblée Gold app, tests de la variante réelle et futur objet ; conserver droits métier et refus des profils inconnus. Regrouper avec login ADR153 avant nouveau gel/check complet ; aucune nouvelle réception déduite des anciens12 ciblés ou de la migration clone.
+
+### [2026-11-03T07:37:26Z] Regroupement stabilisé — login et bootstrap Gold
+
+-23 unités frontend/2,49s, ESLint et types verts ; identifiants retirés du bundle, destinations refusées avant navigation.13 ciblés backend/9,66s dont8 SQL, démarrage avec bootstrap original puis0024 code0 ; Gold app CREATE=false/SELECT=true/UPDATE=false, droits métier hors Gold préservés. Aucun mot de passe actif changé, rotation à prévoir si la valeur publiée était utilisée.
+- Régression ML impactée :24 tests/117,93s verts après ajout du seul MinIO privé manquant au laboratoire. Premier essai23 succès/1 refus de connexion S3 conservé privé, pas de mock ni suppression de cas. Nouveau MinIO/bucket versionné en volume/réseau propres ; aucun S3 actif joint. Aucune performance de marché qualifiée.
+- Migration finale réappliquée au clone historique après correction des défauts Gold :39 tables hors registre conservées, mêmes4 références/4592 prix/84 prévisions quarantainés. Nouveau gel puis check complet requis, e95/CI41595089417 reste rouge historique.

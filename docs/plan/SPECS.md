@@ -2017,3 +2017,19 @@ produit/lieu/acteur à cutoff compatible et cohorte autre que pure_observed sont
 marquées POTENTIALLY_CONTAMINATED_TRAINING ; il s'agit d'un risque de provenance,
 pas d'une causalité scientifique démontrée. Gold forecast_latest exclut ces
 entités avant ROW_NUMBER. Aucune observation/source/prévision n'est supprimée.
+
+### Connexion et destination après authentification (ADR153)
+
+Le client n'embarque ni n'affiche un mot de passe de compte configuré. Le paramètre
+from doit désigner une route locale de même origine ; refuser schémas, origines
+externes, doubles slashs, antislashs/contrôles (bruts ou encodés) et retour à login.
+En cas de refus, utiliser /. La rotation d'un identifiant précédemment publié
+reste une opération distincte, sans reprise de sa valeur dans les preuves.
+
+### Gold applicatif au bootstrap (ADR154)
+
+ketrika_app reçoit USAGE sur Gold et SELECT sur ses tables/vues, sans CREATE ni
+INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER/MAINTAIN. Cela vaut aussi pour
+les défauts de privilèges du créateur de migration.0024 retire ces droits hérités
+du bootstrap pour le seul périmètre Gold, sans modifier les droits métier hors
+Gold. Les rôles/ACL supplémentaires inconnus requièrent une revue et refusent.
