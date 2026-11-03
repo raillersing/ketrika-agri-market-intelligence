@@ -42,7 +42,7 @@ def get_market_coverage(
 ) -> Any:
     """Retrieve market coverage matrix cells with pagination and CSV export (SPECS §19, R2.4, ADR-071)."""
     require_gold_view(session, "market_coverage")
-    resolved = resolve_product(product) if product else None
+    resolved = resolve_product(product, min_confidence=0.9) if product else None
     resolved_p = resolved[0] if resolved else product
     rows = query_market_coverage_matrix(
         session=session,
@@ -100,7 +100,7 @@ def get_series_gaps(
     """Compute independent calendar gaps and coverage ratio for a single series in SQL."""
     require_gold_view(session, "market_coverage")
     target_loc = location or "MDG11"
-    resolved = resolve_product(product) if product else None
+    resolved = resolve_product(product, min_confidence=0.9) if product else None
     resolved_p = resolved[0] if resolved else product
     summary = compute_series_gaps_independent_sql(
         session=session,

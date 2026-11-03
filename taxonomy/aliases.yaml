@@ -288,9 +288,9 @@
 - alias: "rice_milled"
   lang: fr
   product_code: RICE_WHITE_LOCAL
-  confidence: 1.0
-  note: "Identifiant historique du référentiel initial"
-  evidence: "Réconciliation taxonomique PPN Ketrika ADR-149."
+  confidence: 0.8
+  note: "Riz usiné sans origine locale ou importée démontrée ; revue requise"
+  evidence: "Identifiant du référentiel initial, libellé Riz blanc ; aucune preuve d'origine locale (ADR-160)."
 
 - alias: "rice_imported"
   lang: fr

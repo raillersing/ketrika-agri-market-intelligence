@@ -1,0 +1,1 @@
+{"active_database_modified": false, "alias_rows": 50, "downgraded_unreviewed_global_aliases": 1, "fully_unchanged_tables": 39, "owners_and_permissions_unchanged": true, "passed": true, "protected_tables": 40, "quarantines_unchanged": 6229, "scope": "isolated SQL metadata correction, not deployment/source/model qualification"}
