@@ -2062,3 +2062,13 @@ par reconciled_from, même SourceRecord et lien de parenté sont mises en quaran
 par0027, sans changer leurs bruts/liens. Une nouvelle source indépendante ne
 reçoit pas automatiquement cette qualification de copie. Le code demeure couvert
 par SQL réel, et normalize garde son seuil80% inchangé.
+
+### Points territoriaux sans repli national (ADR159)
+
+La vue territoriale conserve le niveau administratif de chaque point de l'API.
+Un point national n'est jamais recopié comme prix régional ; son unité/devise,
+nature et provenance restent affichées à part. Aucun nom de modèle ou d'organisme
+n'est déduit de sa seule portée nationale. La grille de points n'est pas qualifiée
+de carte géographique tant que géométries et correspondances ne sont pas reçues.
+Ne pas comparer quantitativement des points hétérogènes ni inventer une unité,
+une devise, une source ou un prix en l'absence de donnée.
