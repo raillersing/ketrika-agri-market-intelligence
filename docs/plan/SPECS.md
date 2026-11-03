@@ -2033,3 +2033,12 @@ INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER/MAINTAIN. Cela vaut aussi pour
 les défauts de privilèges du créateur de migration.0024 retire ces droits hérités
 du bootstrap pour le seul périmètre Gold, sans modifier les droits métier hors
 Gold. Les rôles/ACL supplémentaires inconnus requièrent une revue et refusent.
+
+### Rôle applicatif et append-only (ADR155)
+
+ketrika_app ne peut TRUNCATE aucune table des schémas métier auth/dq/meta/ml/obs/
+ops/ref ; cette restriction vaut aussi pour les nouveaux objets. Les opérations
+de maintenance/reconstruction qualifiées utilisent le propriétaire, avec leurs
+gardes de destination et de quarantaine existantes.0025 retire uniquement ce
+droit applicatif ; privilège effectif hérité/PUBLIC ou défaut global inconnu
+impose une revue et annule la migration, sans révocation sur un rôle tiers.

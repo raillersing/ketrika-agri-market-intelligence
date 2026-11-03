@@ -1924,3 +1924,19 @@ refuser transactionnellement. Tester la reproduction du défaut, l'accès réel
 sous rôle app, l'absence de CREATE/écriture et les nouveaux objets après correction.
 Aucun seuil, assertion, garde inconnue ou test scientifique affaibli. Réception
 complète sur nouveau gel après regroupement avec ADR153.
+
+## ADR-155 | 2026-11-03 | Refuser TRUNCATE au rôle applicatif append-only
+
+Contexte : contre-épreuve annulée sur base QA privée : ketrika_app possède
+TRUNCATE sur obs.quarantine_ledger et peut effacer une entrée synthétique,
+malgré le trigger UPDATE/DELETE append-only. Aucun test sur destination active.
+Les GRANT ALL de tables historiques/defaults rendent ce contournement possible.
+
+Décision : migration additive0025 retirant seulement TRUNCATE au rôle applicatif
+sur les tables métier auth/dq/meta/ml/obs/ops/ref, et leurs défauts de privilèges.
+Bootstrap sans TRUNCATE. Conserver tous les autres droits et le rôle propriétaire
+utilisé par les opérations de maintenance qualifiées. Si PUBLIC/héritage ou des
+défauts globaux rendent TRUNCATE encore effectif, refuser transactionnellement
+pour revue, sans retirer des droits à des tiers. Downgrade ne réaccorde jamais
+TRUNCATE. Tests SQL réels du refus, de la conservation des données/droits, des
+objets futurs et des cas hérités. Aucune restauration/reset de destination active.

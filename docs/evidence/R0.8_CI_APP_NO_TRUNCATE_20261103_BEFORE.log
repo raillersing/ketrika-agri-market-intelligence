@@ -1,0 +1,9 @@
+BEGIN
+0
+INSERT 0 1
+SET
+ketrika_app|1
+TRUNCATE TABLE
+0
+ROLLBACK
+0

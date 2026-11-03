@@ -1,0 +1,1 @@
+{"active_database_modified": false, "only_app_truncate_grants_removed": 1, "passed": true, "protected_tables": 40, "quarantines_preserved": 5993, "scope": "isolated role migration, not complete historical-role/source/model qualification"}
