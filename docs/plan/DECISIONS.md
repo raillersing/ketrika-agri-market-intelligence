@@ -1844,7 +1844,7 @@ Le refus de facturation hébergé demeure explicitement non exécuté, jamais an
 
 Alternatives : attente de paiement sans travail indépendant (inutile tant que réception locale prévue disponible), dépenses non autorisées ou masquage du contrôle (rejetés). Les conditions précédentes restent non satisfaites tant que la réception en cours n'est pas terminée et auditée.
 
-## ADR-149 | 2026-11-03 | Reprise du diagnostic ODR avec continuité du registre
+## ADR-151 | 2026-11-03 | Reprise du diagnostic ODR avec continuité du registre
 
 Contexte : ADR144 conserve une tentative de collecte ODR arrêtée à10/10 sans
 exceptions réseau ; le laboratoire et son volume ne sont plus retrouvés dans

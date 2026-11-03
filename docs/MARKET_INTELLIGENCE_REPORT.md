@@ -16,6 +16,6 @@ Reprise du 2026-11-03 : état PARTIAL confirmé, tête distante2031adc avant nou
 lot documentaire. Témoin de transport ODR reçu offline (cinq tests), aucune
 nouvelle édition acquise ni importée. Le laboratoire de collecte et son registre
 original ne sont plus retrouvés (B-R104) ; leur continuité est requise avant
-reprise, conformément à ADR149. R0.8 reste la première tâche MUST éligible ;
+reprise, conformément à ADR151. R0.8 reste la première tâche MUST éligible ;
 R0.9 dépend de sa réception, les capacités aval ne sont pas qualifiées par ces
 tests. Le corpus authentique corrigé demandé dans HANDOFF reste indispensable.
