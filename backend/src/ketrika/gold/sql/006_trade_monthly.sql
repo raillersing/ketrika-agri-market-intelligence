@@ -6,9 +6,9 @@ DROP MATERIALIZED VIEW IF EXISTS gold.trade_monthly CASCADE;
 
 CREATE MATERIALIZED VIEW gold.trade_monthly AS
 SELECT
-    tf.product_id,
-    p.product_code,
-    p.canonical_name_fr AS product_name,
+    COALESCE(tf.product_id, pa.product_id) AS product_id,
+    COALESCE(p.product_code, p2.product_code) AS product_code,
+    COALESCE(p.canonical_name_fr, p2.canonical_name_fr) AS product_name,
     tf.flow,
     date_trunc('month', tf.period_start)::date AS month,
     round((sum(COALESCE(tf.weight_kg, 0.0)) / 1000.0)::numeric, 3) AS weight_tonnes,
@@ -17,6 +17,13 @@ SELECT
     count(*)::integer AS n_records
 FROM obs.trade_flow tf
 LEFT JOIN ref.product p ON tf.product_id = p.product_id
+LEFT JOIN ref.product_alias pa ON (
+    tf.product_id IS NULL AND (
+        pa.alias_display = tf.product_raw
+        OR pa.alias_norm = lower(trim(tf.product_raw))
+    )
+)
+LEFT JOIN ref.product p2 ON pa.product_id = p2.product_id
 WHERE tf.superseded_by IS NULL
   AND NOT EXISTS (
       SELECT 1 FROM obs.quarantine_ledger ql 
@@ -27,9 +34,9 @@ WHERE tf.superseded_by IS NULL
       AND ql.revoked_at IS NULL
   )
 GROUP BY
-    tf.product_id,
-    p.product_code,
-    p.canonical_name_fr,
+    COALESCE(tf.product_id, pa.product_id),
+    COALESCE(p.product_code, p2.product_code),
+    COALESCE(p.canonical_name_fr, p2.canonical_name_fr),
     tf.flow,
     date_trunc('month', tf.period_start)::date
 WITH NO DATA;

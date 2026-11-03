@@ -59,7 +59,7 @@ export default function CopilotPage() {
 
     try {
       const apiUrl = "/api";
-      const res = await fetch(`${apiUrl}/v1/copilot/query`, {
+      const res = await fetch(`${apiUrl}/v1/copilot/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

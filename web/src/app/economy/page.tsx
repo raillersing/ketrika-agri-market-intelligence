@@ -85,13 +85,13 @@ interface PilotEconomicContext {
 
 const DIMENSION_CONFIG: Record<
   string,
-  { label: string; icon: React.ComponentType<{ className?: string }>; color: string }
+  { label: string; icon: React.ComponentType<{ className?: string }>; color: string; description?: string }
 > = {
-  inflation: { label: "Inflation & Prix Conso", icon: Percent, color: "text-amber-700 dark:text-amber-400" },
-  exchange_rate: { label: "Taux de Change", icon: Scale, color: "text-blue-700 dark:text-blue-400" },
-  fuel_energy: { label: "Carburants & Énergie", icon: Fuel, color: "text-rose-700 dark:text-rose-400" },
-  external_trade: { label: "Commerce Extérieur", icon: Layers, color: "text-primary-readable" },
-  real_activity: { label: "Activité Réelle", icon: Zap, color: "text-purple-700 dark:text-purple-400" },
+  inflation: { label: "Inflation & Prix Conso", icon: Percent, color: "text-amber-700 dark:text-amber-400", description: "Indice des prix à la consommation et composantes alimentaires" },
+  exchange_rate: { label: "Taux de Change", icon: Scale, color: "text-blue-700 dark:text-blue-400", description: "Parités de change MGA/USD et MGA/EUR" },
+  fuel_energy: { label: "Carburants & Énergie", icon: Fuel, color: "text-rose-700 dark:text-rose-400", description: "Prix des carburants et coûts logistiques énergétiques" },
+  external_trade: { label: "Commerce Extérieur", icon: Layers, color: "text-primary-readable", description: "Flux d'importations et balances commerciales vivrières" },
+  real_activity: { label: "Activité Réelle", icon: Zap, color: "text-purple-700 dark:text-purple-400", description: "Indicateurs de conjoncture économique et production" },
 };
 
 function EconomyContent() {
@@ -102,11 +102,13 @@ function EconomyContent() {
   const [pilotContext, setPilotContext] = useState<PilotEconomicContext | null>(null);
   const [activeDimension, setActiveDimension] = useState<string>("inflation");
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
+  const [isWithheld, setIsWithheld] = useState(false);
 
   useEffect(() => {
     async function loadEconomicData() {
       setLoading(true);
       setError(null);
+      setIsWithheld(false);
       try {
         const [dashRes, catalogRes, pilotRes] = await Promise.all([
           fetch("/api/v1/economic/dashboard", { credentials: "include" }),
@@ -118,9 +120,9 @@ function EconomyContent() {
           const dashData: EconomicDashboardResponse = await dashRes.json();
           setDashboard(dashData);
         } else if (dashRes.status === 503) {
-          // Macroeconomic dashboard is in qualified withholding (ADR-070 / R2.8)
+          // Macroeconomic dashboard is in qualified withholding (ADR-070 / R2.8 / ADR-117)
           setDashboard(null);
-          setError("Données économiques non qualifiées ou temporairement indisponibles.");
+          setIsWithheld(true);
         } else {
           throw new Error("Impossible de charger le tableau économique.");
         }
@@ -193,6 +195,24 @@ function EconomyContent() {
         <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-700 dark:text-rose-300 text-xs flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-rose-700 dark:text-rose-400 shrink-0" />
           <span>{error}</span>
+        </div>
+      )}
+
+      {/* Withheld Informative State */}
+      {isWithheld && (
+        <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-800 dark:text-amber-300 text-xs flex flex-wrap items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-3">
+            <ShieldCheck className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
+            <div>
+              <strong className="font-semibold">Embargo méthodologique de qualification (ADR-070 / ADR-117) :</strong>
+              <p className="mt-0.5 text-muted-foreground">
+                Les séries macroéconomiques agrégées sont en réserve de certification de provenance. Le catalogue des 14 fiches métriques et définitions normatives ci-dessous reste intégralement consultable.
+              </p>
+            </div>
+          </div>
+          <span className="font-mono text-[10px] px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 font-semibold shrink-0">
+            Réserve Gold
+          </span>
         </div>
       )}
 
@@ -324,9 +344,91 @@ function EconomyContent() {
           Chargement du tableau économique...
         </div>
       ) : error ? null : !dashboard || !dashboard.dimensions?.[activeDimension] ? (
-        <div className="glass-card rounded-2xl p-12 text-center text-xs text-muted-foreground font-mono">
-          Aucune donnée disponible pour cette dimension économique.
-        </div>
+        Object.values(indicatorsCatalog).filter((c) => c.dimension === activeDimension).length > 0 ? (
+          <div className="space-y-4">
+            <div className="glass-card rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <span>{DIMENSION_CONFIG[activeDimension]?.label || activeDimension}</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono border bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20">
+                    Fiches normatives (ADR-070)
+                  </span>
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">{DIMENSION_CONFIG[activeDimension]?.description || "Indicateurs normatifs"}</p>
+              </div>
+              <div className="text-xs font-mono text-muted-foreground">
+                {Object.values(indicatorsCatalog).filter((c) => c.dimension === activeDimension).length} métriques enregistrées
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Object.values(indicatorsCatalog)
+                .filter((c) => c.dimension === activeDimension)
+                .map((card) => {
+                  const isExpanded = !!expandedCards[card.metric_id];
+                  return (
+                    <div
+                      key={card.metric_id}
+                      className="glass-card rounded-2xl p-4 flex flex-col justify-between border border-border hover:border-emerald-500/30 transition-colors"
+                    >
+                      <div>
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                            {card.metric_id}
+                          </span>
+                          <span className="text-[10px] font-mono text-muted-foreground">
+                            {card.frequency} · {card.geo_scope}
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-bold text-foreground mt-2">{card.title}</h4>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{card.definition}</p>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-border space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-muted-foreground">Unité :</span>
+                          <span className="font-mono font-semibold">{card.unit}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-muted-foreground">Source principale :</span>
+                          <span className="font-mono text-primary-readable font-medium">{card.primary_source}</span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => toggleExpand(card.metric_id)}
+                          className="w-full mt-2 pt-2 border-t border-border/50 text-[11px] text-primary-readable flex items-center justify-between hover:underline font-medium"
+                        >
+                          <span>{isExpanded ? "Masquer la formule" : "Détails & formule de calcul"}</span>
+                          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                        </button>
+
+                        {isExpanded && (
+                          <div className="mt-2 p-2.5 rounded-lg bg-background/50 border border-border text-[11px] space-y-1.5 animate-in fade-in duration-150">
+                            <div>
+                              <strong className="text-muted-foreground">Formule :</strong>
+                              <div className="font-mono text-xs text-foreground mt-0.5 p-1 bg-card rounded border border-border/40">
+                                {card.formula}
+                              </div>
+                            </div>
+                            {card.limitations && (
+                              <div className="text-muted-foreground text-[10px] mt-1">
+                                <strong>Limites :</strong> {card.limitations}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        ) : (
+          <div className="glass-card rounded-2xl p-12 text-center text-xs text-muted-foreground font-mono">
+            Aucune donnée disponible pour cette dimension économique.
+          </div>
+        )
       ) : (
         <div className="space-y-4">
           {/* Dimension Header Summary */}

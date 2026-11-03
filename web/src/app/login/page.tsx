@@ -32,8 +32,7 @@ function LoginContent() {
       }
       const data = await response.json();
       if (typeof data.token !== "string" || !data.token) throw new Error("Réponse de connexion invalide");
-      router.push(from);
-      router.refresh();
+      window.location.href = from;
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : "Erreur de connexion");
     } finally {

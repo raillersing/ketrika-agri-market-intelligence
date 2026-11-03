@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from ketrika.api.gold_availability import require_gold_view
 from ketrika.api.schemas import MarketHealthItem
 from ketrika.core.db import get_db
+from ketrika.core.taxonomy import resolve_product
 
 router = APIRouter(prefix="/v1/kpis", tags=["kpis"])
 
@@ -42,7 +43,13 @@ def get_market_health(
     """
     params: dict[str, Any] = {}
     if product:
-        sql += " AND (product_code = :product OR product_id::text = :product)"
+        resolved = resolve_product(product)
+        canonical = resolved[0] if resolved else None
+        if canonical and canonical != product:
+            sql += " AND (product_code = :product OR product_code = :canonical OR product_id::text = :product)"
+            params["canonical"] = canonical
+        else:
+            sql += " AND (product_code = :product OR product_id::text = :product)"
         params["product"] = product
     if location:
         sql += " AND (location_pcode = :loc OR location_id::text = :loc)"
