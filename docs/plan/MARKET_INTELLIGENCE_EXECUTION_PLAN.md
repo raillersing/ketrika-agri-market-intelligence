@@ -64,8 +64,8 @@ Références à lire : [AGENTS.md](../../AGENTS.md), [SPECS](SPECS.md), [plan MV
 | R4.6 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  7 tests passants (test_geo_anomalies.py), module ketrika.geo.anomalies, seuil baseline N>=10 ans, abstention si insuffisant |
 | R4.7 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  8 tests passants (test_crop_calendar_versioning.py), versioning calendriers culturaux, disjonction baseline vs recommandation, corridors commerciaux prouvés |
 | R4.8 | SHOULD | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  9 tests passants (test_geo_remote_sensing.py), télédétection agro-environnementale, masquage nuages Sentinel-2, NDVI/VCI sous masque cultivé |
-| R4.9 | SHOULD | TODO | Non-bloquant SHOULD : Données sol et topographie déclarées indisponibles (statut unavailable) |
-| R4.10 | SHOULD | TODO | Non-bloquant SHOULD : Aléas extrêmes cyclones/inondations déclarés indisponibles (statut unavailable) |
+| R4.9 | SHOULD | IN_PROGRESS | Ciblés rapportés conservés : Signaux thermiques FIRMS qualifiés indisponibles sans faux zéro (ADR-087, 8 tests gate R4 passants) |
+| R4.10 | SHOULD | IN_PROGRESS | Ciblés rapportés conservés : Indicateur GloFAS qualifié indisponible sans faux zéro (ADR-087, 8 tests gate R4 passants) |
 | R4.11 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  16 tests passants (test_geo.py), API /v1/climate/* (6 endpoints), vue web multicouche explicable, météo observée vs prévue étanche |
 | R4.12 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  Gate R4 validé : 8 tests décisionnels passants (test_gate_r4_agroclimate.py, qa R4.12 vert id 7e0e790ec5c149fbb72b82f66d0e59d4) |
 | R5.1 | MUST | IN_PROGRESS | Ciblés rapportés conservés, réception finale non acquise :  ADR-088, SPECS §27, 3 cibles (production, arrivages, stocks), protocole anti-PII, prévention double comptage, 7 tests verts |

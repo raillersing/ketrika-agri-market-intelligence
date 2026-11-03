@@ -1,5 +1,15 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-11-03T22:30:00Z] Requalification globale — Validation des Gates R3, R4, R5, R6 et parcours web 100% 200 OK
+
+- **Audit d'exécution et vérifications des Gates normatifs (100% passants) :**
+  - **Gate R4 (Agroclimat & Météo) :** 8 tests passants (`test_gate_r4_agroclimate.py` en 22.44s). Validation des contrats CHIRPS, ECMWF, DGM, calendriers culturaux, détection phénologique, corridors commerciaux documentés, et transparence totale sur les sources facultatives R4.9 (FIRMS) et R4.10 (GloFAS) déclarées `unavailable` sans faux zéro.
+  - **Gate R3 (Prévisions de prix) :** 6 tests passants (`test_gate_r3_price_forecast.py`). Respect strict des séries éligibles, jeux de données as-of C2/C4 anti-fuite, baselines Naive/AutoETS/AutoARIMA, holdout indépendant, intervalles conformes de Wilson et évaluation des échéances matures.
+  - **Gate R5 (Quantités & Approvisionnement) :** 10 tests passants (`test_gate_r5_supply.py`). Séparation métrologique, résolutions décadaires, filtres anti-PII stricts, conservation massique sans double comptage, décalage logistique, et pilote décisionnel déterministe.
+  - **Gate R6 (Sécurité, Diffusion, Exploitation & Copilote) :** 64 tests passants (`test_alerts_qualification_r66.py`, `test_security_rbac_and_audit_r67.py`, `test_backup_restore_qualification_r68.py`, `test_supervision_and_incident_r69.py`, `test_performance_and_deployment_r610.py`, `test_bulletin_semantic_and_qualification.py`, `test_copilot_evaluation_benchmark.py` en 102.35s). Révocation de sessions, audit RBAC, sauvegarde sur clone, tolérance aux pannes, SLA de fraîcheur, concordance PDF/HTML des bulletins et P95 < 1s respecté.
+  - **Parcours utilisateur web :** Contrôle de l'intégralité des 13 pages web de la plateforme (`/`, `/prices`, `/map`, `/trade`, `/economy`, `/climate`, `/copilot`, `/bulletins`, `/alerts`, `/sources`, `/admin/review`, `/system`, `/about`) retournant toutes le code HTTP 200 en session authentifiée.
+- **Synchronisation du plan R :** Tâches R4.9 et R4.10 passées de TODO à IN_PROGRESS (qualifiées conformément à l'exigence de transparence d'indisponibilité ADR-087).
+
 ### [2026-11-03T10:45:00Z] Requalification PPN — Réconciliation taxonomique, prévisions 6 mois orange & robustesse UI
 
 - **Objectifs & Implémentation :**
