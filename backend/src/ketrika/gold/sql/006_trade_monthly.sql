@@ -17,12 +17,17 @@ SELECT
     count(*)::integer AS n_records
 FROM obs.trade_flow tf
 LEFT JOIN ref.product p ON tf.product_id = p.product_id
-LEFT JOIN ref.product_alias pa ON (
-    tf.product_id IS NULL AND (
-        pa.alias_display = tf.product_raw
-        OR pa.alias_norm = lower(trim(tf.product_raw))
-    )
-)
+LEFT JOIN meta.source_record sr ON sr.source_record_id = tf.source_record_id
+LEFT JOIN LATERAL (
+    SELECT min(a.product_id::text)::uuid AS product_id
+    FROM ref.product_alias a
+    WHERE tf.product_id IS NULL
+      AND (a.source_id IS NULL OR a.source_id = sr.source_id)
+      AND (a.confidence >= 0.9 OR a.human_reviewed IS TRUE)
+      AND (a.alias_display = tf.product_raw
+           OR a.alias_norm = lower(trim(tf.product_raw)))
+    HAVING count(DISTINCT a.product_id) = 1
+) pa ON true
 LEFT JOIN ref.product p2 ON pa.product_id = p2.product_id
 WHERE tf.superseded_by IS NULL
   AND NOT EXISTS (

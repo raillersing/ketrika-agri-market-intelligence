@@ -290,3 +290,31 @@ def test_bootstrap_gold_writes_are_removed_without_changing_business_rights(migr
     with pytest.raises(DBAPIError, match="permission denied"):
         with connection.begin_nested():
             connection.execute(text("DELETE FROM gold.forecast_latest"))
+
+
+def test_quarantine_invalidates_existing_price_caches(migration_case):
+    migration, connection, session = migration_case
+    _, observation, _ = seed(session)
+    connection.execute(text("REFRESH MATERIALIZED VIEW gold.price_obs_current"))
+    assert (
+        connection.scalar(
+            text("SELECT count(*) FROM gold.price_obs_current WHERE observation_id=:id"),
+            {"id": observation.observation_id},
+        )
+        == 1
+    )
+    migration.upgrade()
+    states = connection.execute(
+        text(
+            "SELECT matviewname,ispopulated FROM pg_matviews WHERE schemaname='gold' AND matviewname IN ('price_obs_current','price_monthly','price_monthly_best','price_changes','market_health','market_coverage')"
+        )
+    ).all()
+    assert len(states) == 6
+    assert all(not populated for _, populated in states)
+    assert (
+        connection.scalar(
+            text("SELECT count(*) FROM obs.price_observation WHERE observation_id=:id"),
+            {"id": observation.observation_id},
+        )
+        == 1
+    )

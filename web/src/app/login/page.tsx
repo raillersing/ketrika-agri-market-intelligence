@@ -2,14 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 import { safeLoginTarget } from "@/lib/login-target";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 function LoginContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const from = safeLoginTarget(searchParams.get("from"));
   const [email, setEmail] = useState("");

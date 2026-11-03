@@ -1940,3 +1940,36 @@ défauts globaux rendent TRUNCATE encore effectif, refuser transactionnellement
 pour revue, sans retirer des droits à des tiers. Downgrade ne réaccorde jamais
 TRUNCATE. Tests SQL réels du refus, de la conservation des données/droits, des
 objets futurs et des cas hérités. Aucune restauration/reset de destination active.
+
+## ADR-157 | 2026-11-03 | Caches prix invalidés et alias de commerce non ambigus
+
+Contexte : main860ad57 introduit un raccordement direct aux alias pour les flux
+sans produit normalisé. L'index d'alias est unique par norme/source, pas par norme
+seule : une jointure multiligne peut doubler les tonnages ; une ambiguïté ou un
+alias non revu/faible ne prouve pas une identité. Les caches prix préexistants
+peuvent aussi conserver les prix générés après ajout de la quarantaine0024.
+
+Décision :0024 invalide WITH NO DATA les six caches prix dépendants lorsqu'une
+quarantaine UNVERIFIED_ECONOMIC_INPUTS existe, sans toucher bruts/ACL/définitions.
+Le refresh contrôlé reste requis pour republier. Commerce : résolution latérale
+par source/générique, confiance >=0,9 ou revue humaine, un seul produit distinct ;
+une ambiguïté reste sans produit et chaque flux compte une seule fois.0026 installe
+cette vue non peuplée, sans CASCADE ni changement des droits contractuels ; profil
+inconnu refuse. Ajouter scénarios SQL de doublon/ambiguïté/faible confiance/source,
+et cache invalide. Aucun modèle/source fraîche ou édition corrigée déduit.
+
+## ADR-158 | 2026-11-03 | Réconciliation canonique sans résurrection de quarantaine
+
+Contexte : le nouveau reconcile_products n'utilise pas les gardes d'admission.
+Audit actif readonly :231 copies prix marquées reconciled_from ont le même
+SourceRecord qu'un parent actif en quarantaine. Le module est sans couverture,
+ce qui baisse aussi normalize sous80% dans la réception813bb50.
+
+Décision : vérifier éligibilité du parent et de la cible canonique existante
+(ainsi que leurs sources via la garde commune) avant toute mutation, sur les
+trois types prix/stocks/commerce. Tests SQL de copies, dédoublonnage, idempotence,
+conservation des bruts et refus de parent/source/cible quarantainés.0027 ajoute
+la quarantaine des copies de même source explicitement issues d'un parent
+quarantainé, et des prévisions potentiellement affectées ; ne pas masquer une
+révision authentique d'une source distincte. Invalider leurs caches dépendants.
+Aucun effacement/réécriture d'observation ni contournement d'une identité réservée.

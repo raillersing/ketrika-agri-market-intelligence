@@ -84,6 +84,20 @@ def upgrade() -> None:
     """)
     op.execute(ACL_GUARD)
     op.execute(QUARANTINE)
+    op.execute("""
+        DO $$ BEGIN
+          IF EXISTS (SELECT 1 FROM obs.quarantine_ledger
+                     WHERE reason_code='UNVERIFIED_ECONOMIC_INPUTS'
+                       AND table_name='obs.price_observation' AND revoked_at IS NULL) THEN
+            REFRESH MATERIALIZED VIEW gold.market_coverage WITH NO DATA;
+            REFRESH MATERIALIZED VIEW gold.market_health WITH NO DATA;
+            REFRESH MATERIALIZED VIEW gold.price_changes WITH NO DATA;
+            REFRESH MATERIALIZED VIEW gold.price_monthly_best WITH NO DATA;
+            REFRESH MATERIALIZED VIEW gold.price_monthly WITH NO DATA;
+            REFRESH MATERIALIZED VIEW gold.price_obs_current WITH NO DATA;
+          END IF;
+        END $$;
+    """)
     definition = (Path(__file__).resolve().parents[1] / "sql/0024_forecast_latest.sql").read_text(
         encoding="utf-8"
     )

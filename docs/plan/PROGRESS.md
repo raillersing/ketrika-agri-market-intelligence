@@ -4734,3 +4734,15 @@ Développement ADR152 :27 tests unitaires puis12 ciblés/9,18s dont sept SQL ré
 - ADR155/SPECS avant code. Mini-plan : migration additive et bootstrap retirant TRUNCATE seulement ; tests de rôle/objet futur/retour arrière sûr et héritage/PUBLIC refusés ; préserver propriétaire/autres droits/données ; réception complète sur nouveau gel après conclusion du candidat en cours. Aucun seuil scientifique ou garde de maintenance levé.
 
 Consolidation ADR155 :11 SQL/7,66s verts et clone0024→0025 code0 :40 tables identiques en contenu/liens,5993 entrées de quarantaine conservées ; seul un grant TRUNCATE app retiré, autres droits inchangés. Ce succès ne qualifie pas le profil historique B-R098. Check fcfb020/CI41597915249 terminé rouge avant tests : test bootstrap recopié depuis une version non formatée. Correction réelle récupérée après formatage global ; lint/format442 fichiers et mypy441 modules verts sur source regroupée, sans ignore ni baisse de contrôle. Rouge original conservé, prochain gel complet obligatoire.
+
+### [2026-11-03T08:03:45Z] R0.8 — intégration concurrente et clôture des caches
+
+- Main avance à860ad57 pendant CI41600158310. Intégration dans worktree indépendant, sans modifier ce candidat en cours. Les nouveaux parcours et alias sont préservés ; lint/format442 fichiers verts sur la combinaison réelle.
+- ADR157/SPECS avant code : caches prix invalidés avec la quarantaine pour ne pas conserver de fausses valeurs déjà matérialisées ; alias commerce latéral, source/confiance/ambiguïté contrôlées, une seule contribution par flux. Tests SQL et migration de vue non publiée, puis un nouveau check complet du lot regroupé ; aucun cas ni seuil retiré.
+
+### [2026-11-03T09:10:00Z] R0.8 — lot regroupé prêt pour réception complète
+
+- CI41600158310 :2666 succès/1 échec, horloge du test climat restée en octobre ; ancrage local de fixture et nouveau cas négatif historique, comportement produit inchangé. Original rouge conservé, aucune réception complète déduite.
+- ADR158 : admission commune de la réconciliation et quarantaine additive des copies issues du même SourceRecord/parent exclu ; cas indépendants préservés.61 ciblés backend/26,74s, dont27 normalisation SQL et6 commerce SQL ; lint/format444 fichiers, mypy443 modules verts. Frontend ESLint/types et23 tests/2,10s verts.
+- Clone neuf isolé0021→0027 code0 :40 tables protégées,1313 anciennes quarantaines identiques en octets,4916 ajouts explicites (4592 prix,4 sources,84 prévisions potentielles,231 copies prix/3 stocks/2 flux). Deux grants retirés conformément aux contrats ; dix caches concernés invalidés. Vérificateur et originaux ciblés sous docs/evidence/R0.8_CI_FINAL_20261103_*. Aucun changement de la base active par ces migrations, aucune qualification source/modèle ni activation déduite.
+- Prochain contrôle : gel de ce lot puis check complet CI et réception des artefacts natifs avant fusion. R0.8 reste IN_PROGRESS ; les autres statuts restent inchangés.

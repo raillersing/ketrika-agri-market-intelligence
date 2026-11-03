@@ -2042,3 +2042,23 @@ de maintenance/reconstruction qualifiées utilisent le propriétaire, avec leurs
 gardes de destination et de quarantaine existantes.0025 retire uniquement ce
 droit applicatif ; privilège effectif hérité/PUBLIC ou défaut global inconnu
 impose une revue et annule la migration, sans révocation sur un rôle tiers.
+
+### Publication Gold après quarantaine et résolution d'alias (ADR157)
+
+Une quarantaine économique invalide les caches price_obs_current, price_monthly,
+price_monthly_best, price_changes, market_health et market_coverage WITH NO DATA ;
+aucune ancienne valeur non fiable ne reste publiée faute de refresh reçu.
+Pour trade_monthly, un produit manquant ne peut être résolu que par des alias
+génériques ou de la source du document, à confiance >=0,9 ou revue humaine vraie,
+et vers un seul produit distinct. Les alias identiques ne multiplient pas le
+poids ; les ambiguïtés restent non résolues sans supprimer le flux brut.
+
+### Réconciliation des produits et quarantaine (ADR158)
+
+Changer un identifiant canonique ne requalifie pas une observation quarantainée.
+La réconciliation prix/stocks/commerce doit refuser un parent, sa source ou une
+cible canonique non éligibles avant mutation. Les copies historiques reconnues
+par reconciled_from, même SourceRecord et lien de parenté sont mises en quarantaine
+par0027, sans changer leurs bruts/liens. Une nouvelle source indépendante ne
+reçoit pas automatiquement cette qualification de copie. Le code demeure couvert
+par SQL réel, et normalize garde son seuil80% inchangé.
