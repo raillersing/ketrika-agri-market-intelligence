@@ -1,0 +1,648 @@
+{
+  "common_valid_grains": 94954,
+  "numeric_revision_candidates": 89633,
+  "storage_scale4_revision_candidates": 89633,
+  "lexical_only_changes": 0,
+  "old_only_valid_estimates": 0,
+  "new_only_valid_estimates": 482,
+  "changed_sample": [
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2010-05-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1023.92",
+      "new_price_raw": "1036.93",
+      "old_data_row": 278,
+      "new_data_row": 279,
+      "old_csv_line": 279,
+      "new_csv_line": 280
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2010-06-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "920.61",
+      "new_price_raw": "919.54",
+      "old_data_row": 279,
+      "new_data_row": 280,
+      "old_csv_line": 280,
+      "new_csv_line": 281
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2010-07-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "971.37",
+      "new_price_raw": "963.52",
+      "old_data_row": 280,
+      "new_data_row": 281,
+      "old_csv_line": 281,
+      "new_csv_line": 282
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2010-08-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1051.1",
+      "new_price_raw": "1058.4",
+      "old_data_row": 281,
+      "new_data_row": 282,
+      "old_csv_line": 282,
+      "new_csv_line": 283
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2010-09-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1264.73",
+      "new_price_raw": "1271.6",
+      "old_data_row": 282,
+      "new_data_row": 283,
+      "old_csv_line": 283,
+      "new_csv_line": 284
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2010-10-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1269.71",
+      "new_price_raw": "1281.55",
+      "old_data_row": 283,
+      "new_data_row": 284,
+      "old_csv_line": 284,
+      "new_csv_line": 285
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2010-11-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1245.65",
+      "new_price_raw": "1268.89",
+      "old_data_row": 284,
+      "new_data_row": 285,
+      "old_csv_line": 285,
+      "new_csv_line": 286
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2010-12-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1092.72",
+      "new_price_raw": "1079.64",
+      "old_data_row": 285,
+      "new_data_row": 286,
+      "old_csv_line": 286,
+      "new_csv_line": 287
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2015-01-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1110.36",
+      "new_price_raw": "1039.69",
+      "old_data_row": 334,
+      "new_data_row": 335,
+      "old_csv_line": 335,
+      "new_csv_line": 336
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2015-02-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1156.12",
+      "new_price_raw": "1076.35",
+      "old_data_row": 335,
+      "new_data_row": 336,
+      "old_csv_line": 336,
+      "new_csv_line": 337
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2015-03-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1103.3",
+      "new_price_raw": "1066.05",
+      "old_data_row": 336,
+      "new_data_row": 337,
+      "old_csv_line": 337,
+      "new_csv_line": 338
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2015-04-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1046.21",
+      "new_price_raw": "968.63",
+      "old_data_row": 337,
+      "new_data_row": 338,
+      "old_csv_line": 338,
+      "new_csv_line": 339
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2015-05-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "947.98",
+      "new_price_raw": "891.86",
+      "old_data_row": 338,
+      "new_data_row": 339,
+      "old_csv_line": 339,
+      "new_csv_line": 340
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2015-06-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "984.53",
+      "new_price_raw": "930.65",
+      "old_data_row": 339,
+      "new_data_row": 340,
+      "old_csv_line": 340,
+      "new_csv_line": 341
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2015-07-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1027.44",
+      "new_price_raw": "981.84",
+      "old_data_row": 340,
+      "new_data_row": 341,
+      "old_csv_line": 341,
+      "new_csv_line": 342
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2015-08-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1097.83",
+      "new_price_raw": "1036.85",
+      "old_data_row": 341,
+      "new_data_row": 342,
+      "old_csv_line": 342,
+      "new_csv_line": 343
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2015-09-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1201.7",
+      "new_price_raw": "1222.16",
+      "old_data_row": 342,
+      "new_data_row": 343,
+      "old_csv_line": 343,
+      "new_csv_line": 344
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2015-10-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1209.03",
+      "new_price_raw": "1194.16",
+      "old_data_row": 343,
+      "new_data_row": 344,
+      "old_csv_line": 344,
+      "new_csv_line": 345
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2016-05-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1002.78",
+      "new_price_raw": "1009.76",
+      "old_data_row": 350,
+      "new_data_row": 351,
+      "old_csv_line": 351,
+      "new_csv_line": 352
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2016-06-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1156.41",
+      "new_price_raw": "1141.62",
+      "old_data_row": 351,
+      "new_data_row": 352,
+      "old_csv_line": 352,
+      "new_csv_line": 353
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2016-07-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1227.75",
+      "new_price_raw": "1282.05",
+      "old_data_row": 352,
+      "new_data_row": 353,
+      "old_csv_line": 353,
+      "new_csv_line": 354
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2016-08-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1186.27",
+      "new_price_raw": "1221.6",
+      "old_data_row": 353,
+      "new_data_row": 354,
+      "old_csv_line": 354,
+      "new_csv_line": 355
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2016-09-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1182.82",
+      "new_price_raw": "1254.08",
+      "old_data_row": 354,
+      "new_data_row": 355,
+      "old_csv_line": 355,
+      "new_csv_line": 356
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2016-10-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1209.92",
+      "new_price_raw": "1206.2",
+      "old_data_row": 355,
+      "new_data_row": 356,
+      "old_csv_line": 356,
+      "new_csv_line": 357
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2016-11-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1213.34",
+      "new_price_raw": "1207.55",
+      "old_data_row": 356,
+      "new_data_row": 357,
+      "old_csv_line": 357,
+      "new_csv_line": 358
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2016-12-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1186.2",
+      "new_price_raw": "1163.25",
+      "old_data_row": 357,
+      "new_data_row": 358,
+      "old_csv_line": 358,
+      "new_csv_line": 359
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2017-01-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1247.05",
+      "new_price_raw": "1219.14",
+      "old_data_row": 358,
+      "new_data_row": 359,
+      "old_csv_line": 359,
+      "new_csv_line": 360
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2017-02-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1404.74",
+      "new_price_raw": "1419.61",
+      "old_data_row": 359,
+      "new_data_row": 360,
+      "old_csv_line": 360,
+      "new_csv_line": 361
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2017-03-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1652.94",
+      "new_price_raw": "1653.48",
+      "old_data_row": 360,
+      "new_data_row": 361,
+      "old_csv_line": 361,
+      "new_csv_line": 362
+    },
+    {
+      "grain": {
+        "ISO3": "MDG",
+        "country": "Madagascar",
+        "adm1_name": "Alaotra Mangoro",
+        "adm2_name": "Ambatondrazaka",
+        "mkt_name": "Alaotra Mangoro (Region)",
+        "lat": "-17.84",
+        "lon": "48.41",
+        "geo_id": "gid_-178400000484100000",
+        "price_date": "2017-04-01",
+        "currency": "MGA"
+      },
+      "old_price_raw": "1370.62",
+      "new_price_raw": "1352.82",
+      "old_data_row": 361,
+      "new_data_row": 362,
+      "old_csv_line": 362,
+      "new_csv_line": 363
+    }
+  ],
+  "editions": [
+    {
+      "archive_sha256": "b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d",
+      "member": "MDG_RTFP_mkt_2007_2026-09-28.csv",
+      "member_sha256": "b55b9fa9f9c5467e0f63d3aae045436064684d8c57349a6b88655ca4a982f2f5",
+      "member_bytes": 43353435,
+      "rows": 114234,
+      "valid_estimates": 94954,
+      "missing_estimates": 19280,
+      "invalid_estimates": 0,
+      "currencies": [
+        "MGA"
+      ],
+      "crc_verified": true
+    },
+    {
+      "archive_sha256": "43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83",
+      "member": "MDG_RTFP_mkt_2007_2026-10-05.csv",
+      "member_sha256": "7f8a07ac02403bf97fee642873afb2d6d084dedb6dabd944599769412d39e89e",
+      "member_bytes": 43602829,
+      "rows": 114716,
+      "valid_estimates": 95436,
+      "missing_estimates": 19280,
+      "invalid_estimates": 0,
+      "currencies": [
+        "MGA"
+      ],
+      "crc_verified": true
+    }
+  ],
+  "variable": "c_rice",
+  "value_kind": "imputed",
+  "statistic": "publisher_modeled_close",
+  "source_unit_reference": "KG / ticker rice / study MDG_2021_RTFP_v02_M metadata",
+  "unit_reference_sha256": "4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860",
+  "authentic_revision_qualified": false,
+  "silver_imported": false,
+  "scope": "Original bytes and numeric comparison only; rights, annotations and replay reception remain separate"
+}

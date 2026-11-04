@@ -1,0 +1,16 @@
+All checks passed!
+3 files already formatted
+Success: no issues found in 2 source files
+test_invalid_bounds (test_transport_witness.WitnessTests.test_invalid_bounds) ... ok
+test_limit_refuses_before_inner_transport (test_transport_witness.WitnessTests.test_limit_refuses_before_inner_transport) ... ok
+test_partial_stream_retains_failure (test_transport_witness.WitnessTests.test_partial_stream_retains_failure) ... ok
+test_request_errors_propagate_without_sensitive_messages (test_transport_witness.WitnessTests.test_request_errors_propagate_without_sensitive_messages) ... ok
+test_success_preserves_bytes_and_status (test_transport_witness.WitnessTests.test_success_preserves_bytes_and_status) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.018s
+
+OK
+Preflight subprocess: expected exit1 dedicated_discovery_database_required,
+wrapper exit0 EXPECTED_REFUSAL_BEFORE_SQL_AND_HTTP on QA configuration.
+No source requests; application source unchanged from origin/main2031adc.

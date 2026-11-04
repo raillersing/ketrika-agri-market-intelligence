@@ -1863,6 +1863,45 @@ Le refus de facturation hébergé demeure explicitement non exécuté, jamais an
 
 Alternatives : attente de paiement sans travail indépendant (inutile tant que réception locale prévue disponible), dépenses non autorisées ou masquage du contrôle (rejetés). Les conditions précédentes restent non satisfaites tant que la réception en cours n'est pas terminée et auditée.
 
+## ADR-151 | 2026-11-03 | Reprise du diagnostic ODR avec continuité du registre
+
+Contexte : ADR144 conserve une tentative de collecte ODR arrêtée à10/10 sans
+exceptions réseau ; le laboratoire et son volume ne sont plus retrouvés dans
+Docker Desktop. Les rapports exportés ne représentent pas tous les arrêts SQL.
+
+Décision : instrumenter une nouvelle copie du diagnostic sans modifier les
+originaux, les budgets, les identités ni les politiques. Exiger la base dédiée
+et son compteur historique avant les vérifications natives des arrêts et tout
+réseau. Le défaut de registre durable refuse la reprise ; aucune reconstruction
+à partir du seul reçu, aucune activation implicite. Continuer les diagnostics
+offline et conserver B-R073 ouvert ; le corpus peut être fourni avec ses droits
+et annotations selon HANDOFF. Ce repli documentaire ne reçoit aucun produit,
+source, modèle, gate ou tag. Exception readonly AGENTS §3.3 ; source applicative
+487adb3 et réception complète antérieure restent inchangées.
+
+Alternatives : recréer un laboratoire vide et changer l'identité pour relancer
+(rejeté : perte de continuité des arrêts), ignorer les erreurs de transport
+(rejeté : preuve inexploitable), inventer une révision (interdit).
+
+## ADR-156 | 2026-11-03 | Acquisition ODR réelle sous budget central existant
+
+Contexte : le laboratoire historique reste perdu (ADR151/B-R104). Le registre
+central de l'application a été consulté en READ ONLY : miasa_odr active/approved,
+aucun arrêt source ni origine sur les deux hôtes MINAE ; compteurs historiques
+2026-10-21/26 conservés, aucun compteur du jour. Le refus privé du29 était un
+quota épuisé sans réponse HTTP, pas un droit de relancer une source interdite.
+
+Décision : autoriser un probe d'acquisition réelle séparé, utilisant le client
+natif et le registre central durable existant, même source/origines approuvées
+ADR144, jour UTC courant. Aucun registre recréé, compteur remis à zéro, arrêt
+levé, identité changée ni plafond augmenté. Budget source/jour borné à10 et0,2rps,
+requêtes GET anonymes, robots/PolicyStop natifs et témoin de transport reçu.
+Les seuls effets SQL admis sont les compteurs/pacing/arrêts d'acquisition natifs ;
+aucune observation, SourceRecord, ACL ou donnée de marché modifiée. Les fichiers
+candidats restent privés et non qualifiés, sans importation Silver/Gold. Toute
+réponse interdite/challenge désactive durablement la source ; épuiser un quota
+ne désactive pas arbitrairement sa configuration. Le diagnostic de laboratoire
+ancien reste refusé ; ce mode n'en restaure ni n'en certifie l'état.
 ## ADR-152 | 2026-11-03 | Refuser la publication de prix IPP sans intrants sourcés
 
 Contexte : le code concurrent94628b7 ajoute des paramètres calculés par constantes
@@ -2020,3 +2059,27 @@ et quarantaines restent inchangés. Réception sur une nouvelle copie privée du
 clone0027 ; original0027 et ses preuves conservés. Un downgrade ne rétablit pas
 la confiance non justifiée. L'absence initialement envisagée de migration est
 remplacée par cette correction persistante, sans nouvelle quarantaine.
+
+## ADR-161 | 2026-11-03 | Découvrir les archives WB sans recréer de quota
+
+L'index public catalog/8240/data-api semble lister plusieurs fichiers datés,
+contrairement à la seule API courante comparée auparavant. Vérifier cette piste
+par GET anonymes bornés sur l'origine officielle microdata.worldbank.org, client
+poli et registre central préexistant. Cap10/jour réduit,0,2rps, limites1MiB pour
+HTML/JSON et témoin de transport ; aucun reset/identité ou registre reconstruit.
+
+Ne pas importer ni déclarer une correction depuis un index. Conserver sorties
+privées candidates, dates/MIME/SHA, vérifier URL réelle, droits et même grain
+avant toute acquisition de prix. Origines/chemins externes, cookies, auth et
+méthodes autres que GET refusés.401/403/challenge suit l'arrêt natif, pas de
+contournement. Seuls compteurs/pacing/arrêts natifs peuvent être modifiés ; aucun
+SourceRecord, observation, droit SQL ou Bronze. Diagnostic §3.3, pas produit DONE.
+
+Complément ADR161 avant acquisition : liste officielle reçue HTTP200, SHA
+ a3c12a2ada1cdf366b28f3d5b8dc3902f5ccedaa860733c82d90f846c8098039,
+36 ressources dont deux archives prix ouvertes360505/360780 (versions2026-09-28
+et2026-10-05,6,20MiB environ). Autoriser seulement leurs URL download/info exactes
+émises par cette liste, même origine et anonymat ;8MiB par ZIP,1MiB par JSON/HTML.
+Le quota central10 n'est ni recréé ni augmenté (cinq admissions déjà consommées).
+Fiches puis originaux privés, contrôle MIME/PK et SHA ; comparaison/qualification
+indépendante ensuite. Aucune observation, SourceRecord ou objet Bronze ajouté.

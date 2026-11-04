@@ -1,0 +1,75 @@
+{
+  "authenticity_qualified": false,
+  "documents": [],
+  "finished_at": "2026-11-03T08:14:12.307584+00:00",
+  "reason": "http_daily_budget_exhausted",
+  "revision_qualified": false,
+  "rights_verified": false,
+  "silver_imported": false,
+  "source_id": "miasa_odr",
+  "started_at": "2026-11-03T08:13:13.621074+00:00",
+  "status": "policy_stopped",
+  "trace": [],
+  "transport_attempts": [
+    {
+      "attempt": 1,
+      "error_class": "ConnectError",
+      "phase": "request_failed",
+      "started_at": "2026-11-03T08:13:13.673384+00:00"
+    },
+    {
+      "attempt": 2,
+      "error_class": "ConnectError",
+      "phase": "request_failed",
+      "started_at": "2026-11-03T08:13:18.659071+00:00"
+    },
+    {
+      "attempt": 3,
+      "error_class": "ConnectError",
+      "phase": "request_failed",
+      "started_at": "2026-11-03T08:13:23.652835+00:00"
+    },
+    {
+      "attempt": 4,
+      "error_class": "ConnectError",
+      "phase": "request_failed",
+      "started_at": "2026-11-03T08:13:32.517047+00:00"
+    },
+    {
+      "attempt": 5,
+      "error_class": "ConnectError",
+      "phase": "request_failed",
+      "started_at": "2026-11-03T08:13:37.529195+00:00"
+    },
+    {
+      "attempt": 6,
+      "error_class": "ConnectError",
+      "phase": "request_failed",
+      "started_at": "2026-11-03T08:13:42.518691+00:00"
+    },
+    {
+      "attempt": 7,
+      "error_class": "ConnectError",
+      "phase": "request_failed",
+      "started_at": "2026-11-03T08:13:47.720185+00:00"
+    },
+    {
+      "attempt": 8,
+      "error_class": "ConnectError",
+      "phase": "request_failed",
+      "started_at": "2026-11-03T08:13:56.645900+00:00"
+    },
+    {
+      "attempt": 9,
+      "error_class": "ConnectError",
+      "phase": "request_failed",
+      "started_at": "2026-11-03T08:14:02.143396+00:00"
+    },
+    {
+      "attempt": 10,
+      "error_class": "ConnectError",
+      "phase": "request_failed",
+      "started_at": "2026-11-03T08:14:07.135331+00:00"
+    }
+  ]
+}

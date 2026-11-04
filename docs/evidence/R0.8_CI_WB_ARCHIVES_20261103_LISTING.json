@@ -1,0 +1,44 @@
+{
+  "finished_at": "2026-11-03T20:21:45.704550+00:00",
+  "receipts": [
+    {
+      "bytes": 37254,
+      "fetched_at": "2026-11-03T20:21:45.704119+00:00",
+      "mime": "application/json; charset=utf-8",
+      "sha256": "a3c12a2ada1cdf366b28f3d5b8dc3902f5ccedaa860733c82d90f846c8098039",
+      "url": "https://microdata.worldbank.org/api/downloads/MDG_2021_RTFP_v02_M/files?type=data"
+    }
+  ],
+  "revision_qualified": false,
+  "rights_verified": false,
+  "silver_imported": false,
+  "source_id": "wb_rtfp_mdg",
+  "started_at": "2026-11-03T20:21:40.010123+00:00",
+  "status": "metadata_downloaded_unqualified",
+  "trace": [
+    {
+      "location": null,
+      "status": 404,
+      "url": "https://microdata.worldbank.org/robots.txt"
+    },
+    {
+      "location": null,
+      "status": 200,
+      "url": "https://microdata.worldbank.org/api/downloads/MDG_2021_RTFP_v02_M/files?type=data"
+    }
+  ],
+  "transport_attempts": [
+    {
+      "attempt": 1,
+      "phase": "body_complete",
+      "started_at": "2026-11-03T20:21:40.062578+00:00",
+      "status": 404
+    },
+    {
+      "attempt": 2,
+      "phase": "body_complete",
+      "started_at": "2026-11-03T20:21:45.051145+00:00",
+      "status": 200
+    }
+  ]
+}
