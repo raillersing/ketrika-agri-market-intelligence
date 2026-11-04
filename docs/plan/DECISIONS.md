@@ -2083,3 +2083,26 @@ et2026-10-05,6,20MiB environ). Autoriser seulement leurs URL download/info exact
 Le quota central10 n'est ni recréé ni augmenté (cinq admissions déjà consommées).
 Fiches puis originaux privés, contrôle MIME/PK et SHA ; comparaison/qualification
 indépendante ensuite. Aucune observation, SourceRecord ou objet Bronze ajouté.
+
+## ADR-162 | 2026-11-04 | Lire et annoter les originaux ZIP WB sans fausse réponse JSON
+
+Les éditions officielles WB reçues sont des ZIP CSV de6,5Mo contenant un CSV
+de43Mo. Le contrat JSON2.0.0 ne les couvre pas ; aucune conversion persistée ne
+peut prétendre être la réponse publiée. Ajouter un lecteur déterministe fermé
+WB : ZIP≤8MiB, exactement un membre CSV au nom MDG_RTFP_mkt_2007_YYYY-MM-DD.csv,
+décompression≤64MiB, CRC vérifié, aucun chemin extrait, chiffrement/liens/refus
+et plafond250000 lignes. En-têtes uniques, lignes rectangulaires et grain sans
+doublon ; conserver les lexèmes décimaux, les manquants restent absents.
+
+Première tranche : annotations indépendantes directement adressées par
+(member,row,column) dans l'original, membre et SHA explicitement liés ; extension
+8MiB du corpus réservée à ce format WB vérifié. Aucune hausse générale du cap5MiB.
+La validation relit le ZIP original et compare les lexèmes, sans appeler le parser
+produit ni importer d'observation. Droits/acquisition vérifiés séparément, revue
+humaine=false. Le label Rice(local)/KG vient du contexte officiel, c_rice reste
+imputed ; aucune origine déduite de rice_milled et aucun national régionalisé.
+
+Le raccordement ultérieur parse/provenance/Gold/rebuild exigera son contrat de
+preuve et un gel reçu complet avant tout DONE R0.8. Alternative rejetée : JSON
+transformé présenté comme original ou archive décompressée sans preuve du ZIP.
+Aucun actif, quota, seuil scientifique ni code de check modifié.
