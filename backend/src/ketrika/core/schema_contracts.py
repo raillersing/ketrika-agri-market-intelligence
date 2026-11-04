@@ -10,10 +10,11 @@ from types import MappingProxyType
 from ketrika.core.schema_audit import CSVSchemaContract, SchemaContract
 from ketrika.core.schema_json import JSONSchemaAlternatives, JSONSchemaContract
 from ketrika.core.schema_rtfp import WB_RTFP_JSON
+from ketrika.core.schema_wb_archive import WBArchiveSchemaContract
 
 
 def contract_fingerprint(contract: SchemaContract) -> str:
-    if isinstance(contract, (JSONSchemaContract, JSONSchemaAlternatives)):
+    if isinstance(contract, (JSONSchemaContract, JSONSchemaAlternatives, WBArchiveSchemaContract)):
         return contract.sha256
     if not isinstance(contract, CSVSchemaContract):
         raise ValueError("schema_registry_invalid_contract")
@@ -54,6 +55,8 @@ class SchemaContractBinding:
             and self.mime_type in {"text/csv", "application/csv"}
             or isinstance(self.contract, (JSONSchemaContract, JSONSchemaAlternatives))
             and self.mime_type == "application/json"
+            or isinstance(self.contract, WBArchiveSchemaContract)
+            and self.mime_type in {"application/zip", "application/octet-stream"}
         ):
             raise ValueError("schema_registry_invalid_format")
         contract_fingerprint(self.contract)
@@ -88,25 +91,14 @@ class SchemaContractRegistry:
         return self._lookup.get((source_id, parser_version, mime_type))
 
 
-PPN_PRICING_CSV = CSVSchemaContract(
-    version="1.0.0",
-    required_columns=(
-        "period_start",
-        "product_raw",
-        "location_raw",
-        "unit_raw",
-        "currency_raw",
-        "price_value",
-        "product_code",
-    ),
-    delimiter=",",
-)
-
-# Exact declared contracts for Gold publication gates (ADR-140)
+# Explicit archived source/version/MIME bindings only; no inferred format or version.
 DECLARED_SCHEMA_BINDINGS = (
     SchemaContractBinding("wb_rtfp_mdg", "2.0.0", "application/json", WB_RTFP_JSON),
-    SchemaContractBinding("douanes_stats", "1.0.0", "text/csv", PPN_PRICING_CSV),
-    SchemaContractBinding("miasa_odr", "1.0.0", "text/csv", PPN_PRICING_CSV),
+    SchemaContractBinding("wb_rtfp_mdg", "3.0.0", "application/json", WB_RTFP_JSON.alternatives[1]),
+    SchemaContractBinding("wb_rtfp_mdg", "3.0.0", "application/zip", WBArchiveSchemaContract()),
+    SchemaContractBinding(
+        "wb_rtfp_mdg", "3.0.0", "application/octet-stream", WBArchiveSchemaContract()
+    ),
 )
 DEFAULT_SCHEMA_CONTRACT_REGISTRY = SchemaContractRegistry(DECLARED_SCHEMA_BINDINGS)
 

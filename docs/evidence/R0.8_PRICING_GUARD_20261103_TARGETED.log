@@ -1,0 +1,6 @@
+All checks passed!
+2 files left unchanged
+pyproject.toml: note: unused section(s): module = ['dagster.*', 'geopandas.*', 'ketrika.extraction.*', 'ketrika.normalize.*', 'lightgbm.*', 'mlforecast.*', 'pandera.*', 'pdfplumber.*', 'pypdfium2.*', 'selectolax.*', 'shapely.*', 'statsforecast.*', 'weasyprint.*']
+Success: no issues found in 3 source files
+............                                                             [100%]
+12 passed in 10.39s

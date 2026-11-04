@@ -1,0 +1,7 @@
+{
+  "source_fingerprint": "7d81deb9b8846d9a3bd1e64f843e493134cff2100ec859f6e0188158b66f68eb",
+  "installed_distributions": 184,
+  "installed_version_mismatches": [],
+  "uv_lock_sha256": "d8df1fb58eb7e44c25dac54d09edae3e855c7998d57bacad5926aac6eeca7bde",
+  "scope": "actual frozen native replay runtime, filesystem Bronze copy; CI bound independently"
+}

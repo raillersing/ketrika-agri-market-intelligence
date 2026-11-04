@@ -1,13 +1,28 @@
-# Ketrika Market Intelligence — réception PARTIAL
+# Ketrika Market Intelligence — PARTIAL
 
-R6.11 reste non reçu, aucun tag final. PROGRESS et le plan R conservent7 DONE historiques,65 IN_PROGRESS et2 TODO sur74. Les anciennes annonces de qualification complète restent retirées et archivées.
+R0.8 est reçu ; R0.9 et R6.11 restent non reçus. Les74 statuts sont cohérents :
+8 DONE dont7 historiques,66 IN_PROGRESS, aucun tag final. La réception du contenu
+WB ne rétablit aucune ancienne annonce de qualification complète du programme.
 
-Réception locale complète du logiciel487adb3 :2638 backend dont240 intégrations/3376,64s,82 frontend/13 suites,26 E2E/292,641s. Zéro échec, erreur ou skip obligatoire. Couvertures core92,41%, extraction87,77%, normalize88,22%. Check, contrôle négatif de build et navigateur code0, sources/images/environnement et originaux SHA/taille [vérifiés](evidence/R0.8_CI_COPILOT_20261029_RECEPTION.md).58 cas R0.3 inclus dans le JUnit global ; trois pauses de débit60s, zéro erreur JS et révocation/nettoyage vérifiés.
+Lot3a974be, CI41769707448 complète verte :2796 backend/301 intégrations,
+113 frontend/15 suites,26 E2E, zéro échec/erreur/skip obligatoire/erreur JS.
+Couvertures core92,179700%, extraction87,765957%, normalize88,955823%.
+Originaux/manifestes/identités contrôlés, empreinte applicative7d81deb9b8846d9a3bd1e64f843e493134cff2100ec859f6e0188158b66f68eb.
 
-0023 retire le seul SELECT latent du copilote hors Gold ; défaut persistant via héritage/PUBLIC refusé transactionnellement, Gold et autres rôles conservés. Seconde copie historique :40 tables/bruts/liens conservés, une seule ACL retirée, migration idempotente. Le profil minimal neuf est conforme ;27 défauts applicatifs historiques B-R098 restent non qualifiés. L'actif et le clone de référence ne sont pas migrés par ce lot.
+Deux éditions officielles et664 cellules/60 nombres indépendants :163 lignes,
+81 révisions,82 courantes ; prix imputés nationaux c_rice depuis2020. Rejeu sur
+réception et clone restauré sans réseau/non-root : contenu Silver/Gold/ref et
+quatre Bronze identiques. Une ancienne valeur changée est détectée même avec
+163/163 lignes. Recalcul modèle/dataset séparé identique, seuil36 et3 prévisions
+par exécution. Ce résultat ne qualifie ni performance de marché, source fraîche,
+revue humaine ni rétention des versions S3 originales. Macro Gold reste réservée.
 
-Le premier check a refusé à juste titre wipe sur ancienne QA quarantainée. Ses1672 témoins sont conservés avec la base entière sous nom d'archive ; une nouvelle QA vide a reçu le contrôle complet, sans effacement d'objet/volume ni baisse de seuil. Les rouges restent archivés. Actions hébergé ne démarre pas pour facturation/plafond, ce n'est pas une CI verte ; réception locale normative et fusion ordinaire conditionnées aux preuves ADR147, sans désactivation ni contournement.
+Les protections AU, l'interface Irooa/Ketrikay et les correctifs des prix non
+vérifiés, quarantaines, alias, territoires, login et droits sont conservés.
+Les clones de restauration0021→0028 et leurs quarantaines/droits sont préservés ;
+aucune migration/activation sur l'actif ni correction déclarative de B-R098.
 
-AU-09 demeure partiel. Le rejeu d'une seule édition conserve2 sources et15 valeurs imputées ;13 vues Gold publiables restent vides, macro réservée. Au seuil36, aucune série éligible ni prévision ; aucun modèle validé. Deux éditions authentiques corrigées au même grain et leurs droits/provenance restent nécessaires (B-R073). WB120 identique, FEWS refuse robots, ODR différé au budget avec transport inconnu.13 empreintes déclarées gouvernementales de l'archive correspondent à des fixtures synthetic, pas à un nouveau corpus authentique.
-
-Aucune collecte live, performance de marché ou utilisation humaine déduite des tests logiciels. H1–H7 conservés : replay, préparation locale, aucun envoi externe ni collecte privée, revue humaine explicite, budgets stricts, aucun contact de tiers. Le guide VPS demeure préparatoire. Voir [HANDOFF](HANDOFF.md) pour les critères précis et les PR7/8 pour la publication distante.
+R0.9 doit raccorder le manifeste externe autorisé au vérificateur de gate et
+assembler ses preuves sans confondre les producteurs authentiques et logiciels.
+Les autres qualifications sources/modèles/humaines du programme restent ouvertes.
+Aucun déploiement, envoi externe ou contact de tiers effectué. H1–H7 conservés.

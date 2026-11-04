@@ -82,7 +82,7 @@ def execute_durable_silver(
         or ctx.source_id != batch.source_id
     ):
         raise ValueError("silver_batch_source_mismatch")
-    native_rtfp = batch.source_id == "wb_rtfp_mdg" and batch.parser_version == "2.0.0"
+    native_rtfp = batch.source_id == "wb_rtfp_mdg" and batch.parser_version in {"2.0.0", "3.0.0"}
     if batch.parser_version != connector.parser_version and not native_rtfp:
         raise ValueError("silver_batch_parser_mismatch")
     with exclusive_silver_run(batch.ingestion_run_id, batch.source_id):

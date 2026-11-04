@@ -26,7 +26,14 @@ def test_default_registry_never_infers_public_or_fixture_contracts():
     # Global registry is deliberately isolated by the autouse fixture.
     assert get_schema_contract_registry().bindings == ()
     registry = SchemaContractRegistry(DECLARED_SCHEMA_BINDINGS)
-    assert len(registry.bindings) == 1
+    assert {binding.key for binding in registry.bindings} == {
+        ("wb_rtfp_mdg", "2.0.0", "application/json"),
+        ("wb_rtfp_mdg", "3.0.0", "application/json"),
+        ("wb_rtfp_mdg", "3.0.0", "application/zip"),
+        ("wb_rtfp_mdg", "3.0.0", "application/octet-stream"),
+    }
+    assert registry.resolve("wb_rtfp_mdg", "3.0.0", "text/csv") is None
+    assert registry.resolve("wb_rtfp_mdg", "3.0.1", "application/zip") is None
     assert registry.resolve("wb_rtfp_mdg", "2.0.0", "application/json") is not None
     assert registry.resolve("wb_rtfp_mdg", "1.0.0", "text/csv") is None
     assert registry.resolve("wfp_hdx_mdg", "1.0.1", "text/csv") is None

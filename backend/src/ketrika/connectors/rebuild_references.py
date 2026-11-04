@@ -19,7 +19,7 @@ def resolve_snapshot_keys(
     """One supported successful processing identity per native price document."""
     identities: dict[UUID, str] = {}
     for record in records:
-        if record.source_id != "wb_rtfp_mdg" or record.parser_version != "2.0.0":
+        if record.source_id != "wb_rtfp_mdg" or record.parser_version not in {"2.0.0", "3.0.0"}:
             continue
         rows = (
             session.execute(

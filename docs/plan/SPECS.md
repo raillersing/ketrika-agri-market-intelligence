@@ -2000,3 +2000,113 @@ Diagnostic ODR ADR144 : origine gouvernementale publiquement découverte www.min
 ADR145 : rejeu diagnostic du seul paquet WB authentique déjà archivé sur nouveaux volumes/DB/socket, réseau none réel ; code et corpus figés, copie readonly. Le recalcul utilise le seuil36 existant et conserve l'abstention. Une seule édition ne reçoit ni révision authentique, R0.8, R0.9, modèle ou source opérationnelle. Aucun seed d'observations synthétiques dans ce diagnostic.
 
 ADR146 / correction du contrat §8 : copilot_ro n'a aucun SELECT latent sur obs.quarantine_ledger. Migration0023 retire le grant direct introduit par0020 ; si un héritage/PUBLIC maintient ce privilège, refus transactionnel sans correction globale implicite. Pas de nouvel USAGE ni changement du rôle applicatif. Un downgrade ne réintroduit pas ce droit hors Gold.
+
+### Reprise2026-11-03 : intrants IPP non qualifiés (ADR152)
+
+Les fonctions historiques de parity_pricing générant des trajectoires par
+constantes/sinusoïdes constituent des scénarios synthétiques, jamais des cours
+BFM/OMH/Pink Sheet observés. Leurs sorties ne peuvent créer de SourceRecord,
+objet Bronze ou observation dans le produit. Les points d'entrée d'ingestion
+refusent avant SQL/S3 tant que le contrat d'intrants officiels versionnés et
+vérifiés n'est pas implémenté et reçu. Les CSV générés ne sont pas des formats
+officiels admis pour douanes_stats/miasa_odr. Aucun objet historique supprimé.
+
+0024 conserve les références aux deux chemins générés non vérifiés via une
+quarantaine append-only UNVERIFIED_ECONOMIC_INPUTS. Les prévisions des mêmes
+produit/lieu/acteur à cutoff compatible et cohorte autre que pure_observed sont
+marquées POTENTIALLY_CONTAMINATED_TRAINING ; il s'agit d'un risque de provenance,
+pas d'une causalité scientifique démontrée. Gold forecast_latest exclut ces
+entités avant ROW_NUMBER. Aucune observation/source/prévision n'est supprimée.
+
+### Connexion et destination après authentification (ADR153)
+
+Le client n'embarque ni n'affiche un mot de passe de compte configuré. Le paramètre
+from doit désigner une route locale de même origine ; refuser schémas, origines
+externes, doubles slashs, antislashs/contrôles (bruts ou encodés) et retour à login.
+En cas de refus, utiliser /. La rotation d'un identifiant précédemment publié
+reste une opération distincte, sans reprise de sa valeur dans les preuves.
+
+### Gold applicatif au bootstrap (ADR154)
+
+ketrika_app reçoit USAGE sur Gold et SELECT sur ses tables/vues, sans CREATE ni
+INSERT/UPDATE/DELETE/TRUNCATE/REFERENCES/TRIGGER/MAINTAIN. Cela vaut aussi pour
+les défauts de privilèges du créateur de migration.0024 retire ces droits hérités
+du bootstrap pour le seul périmètre Gold, sans modifier les droits métier hors
+Gold. Les rôles/ACL supplémentaires inconnus requièrent une revue et refusent.
+
+### Rôle applicatif et append-only (ADR155)
+
+ketrika_app ne peut TRUNCATE aucune table des schémas métier auth/dq/meta/ml/obs/
+ops/ref ; cette restriction vaut aussi pour les nouveaux objets. Les opérations
+de maintenance/reconstruction qualifiées utilisent le propriétaire, avec leurs
+gardes de destination et de quarantaine existantes.0025 retire uniquement ce
+droit applicatif ; privilège effectif hérité/PUBLIC ou défaut global inconnu
+impose une revue et annule la migration, sans révocation sur un rôle tiers.
+
+### Publication Gold après quarantaine et résolution d'alias (ADR157)
+
+Une quarantaine économique invalide les caches price_obs_current, price_monthly,
+price_monthly_best, price_changes, market_health et market_coverage WITH NO DATA ;
+aucune ancienne valeur non fiable ne reste publiée faute de refresh reçu.
+Pour trade_monthly, un produit manquant ne peut être résolu que par des alias
+génériques ou de la source du document, à confiance >=0,9 ou revue humaine vraie,
+et vers un seul produit distinct. Les alias identiques ne multiplient pas le
+poids ; les ambiguïtés restent non résolues sans supprimer le flux brut.
+
+### Réconciliation des produits et quarantaine (ADR158)
+
+Changer un identifiant canonique ne requalifie pas une observation quarantainée.
+La réconciliation prix/stocks/commerce doit refuser un parent, sa source ou une
+cible canonique non éligibles avant mutation. Les copies historiques reconnues
+par reconciled_from, même SourceRecord et lien de parenté sont mises en quarantaine
+par0027, sans changer leurs bruts/liens. Une nouvelle source indépendante ne
+reçoit pas automatiquement cette qualification de copie. Le code demeure couvert
+par SQL réel, et normalize garde son seuil80% inchangé.
+
+### Points territoriaux sans repli national (ADR159)
+
+La vue territoriale conserve le niveau administratif de chaque point de l'API.
+Un point national n'est jamais recopié comme prix régional ; son unité/devise,
+nature et provenance restent affichées à part. Aucun nom de modèle ou d'organisme
+n'est déduit de sa seule portée nationale. La grille de points n'est pas qualifiée
+de carte géographique tant que géométries et correspondances ne sont pas reçues.
+Ne pas comparer quantitativement des points hétérogènes ni inventer une unité,
+une devise, une source ou un prix en l'absence de donnée.
+
+### Expansion d'alias en lecture (ADR160)
+
+Les API n'élargissent un filtre produit à un code canonique que si l'alias atteint
+0,9. Les codes/noms canoniques exacts restent acceptés. rice_milled ne prouve pas
+une origine locale : alias de revue à0,8, absent de la conversion automatique des
+anciens codes. Aucun code, origine ou grain n'est inventé pour remplir un filtre.
+
+0028 applique aussi ce déclassement au seul alias global rice_milled non revu
+pointant vers RICE_WHITE_LOCAL. Confiance déjà inférieure, preuve humaine,
+variante de source et autre cible ne sont pas modifiées ; caches commerce
+invalidés uniquement après changement. Aucun droit ni observation modifié.
+
+### Corpus ZIP WB — ADR-162
+
+L'annotation authentique peut adresser directement un original WB ZIP CSV par
+format wb_zip_csv_v1 et path=[member,row,column] : row zéro-indexé hors en-tête,
+column exact, member au nom MDG_RTFP_mkt_2007_YYYY-MM-DD.csv. Bornes8MiB ZIP,
+64MiB décompressés,250000 lignes, un membre sans chiffrement ni lien ; aucun
+fichier extrait. SHA/CRC et schéma tabulaire vérifiés avant lecture de cellule.
+Les nombres CSV sont comparés comme lexèmes décimaux finis, jamais via float ;
+null/chaîne vide ne vaut pas zéro. Le plafond corpus5MiB reste inchangé hors de
+ce format WB validé, total50MiB inchangé. Aucun nouveau format de preuve Gold
+ni parser produit autorisé par cette seule annotation.
+
+### Parser historique WB ZIP — ADR-163
+
+Triplet wb_rtfp_mdg/3.0.0/application{zip,octet-stream} : un CSV original
+MDG_RTFP_mkt_2007_YYYY-MM-DD.csv, contrat d'en-tête exact reçu, limites ADR162.
+Contexte JSON3.0.0 du même batch durable, forme additional.ticker_info déclarée.
+Preuve rtfp_zip_csv_v1/version2 : member,row,ticker_index,price_field=c_rice,
+location_field=mkt_name,context_source_record_id ; attendu lié aux champs DB.
+Contrôle direct des cellules et du grain national explicite (MDG/Market Average/
+gid_mdg_national_average, lat/lon vides), période mensuelle >=2020 et <=mois du
+membre, c_rice positif fini, imputed/point/unknown. Produit/unité viennent du
+contexte Rice(local)/KG de cette ligne rice, sans defaults. Parser JSON2.0.0
+inchangé ; aucune généralisation de source ou région. Rebuild et gates savent
+lire les ZIP originaux, sans réponse HTTP ni objet Bronze dérivé fabriqué.

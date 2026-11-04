@@ -1,0 +1,26 @@
+{
+  "development_only": true,
+  "database_ingested": false,
+  "rebuild_qualified": false,
+  "uid": 1000,
+  "network": {
+    "interfaces": [
+      "lo"
+    ],
+    "external_ipv4_routes": 0
+  },
+  "editions": [
+    {
+      "sha256": "b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d",
+      "records": 81,
+      "annotation_values_verified": 30
+    },
+    {
+      "sha256": "43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83",
+      "records": 82,
+      "annotation_values_verified": 30
+    }
+  ],
+  "same_periods": 81,
+  "changed_raw_values": 81
+}

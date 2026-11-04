@@ -1,0 +1,15 @@
+Found 1 error (1 fixed, 0 remaining).
+1 file reformatted, 2 files left unchanged
+Success: no issues found in 2 source files
+test_invalid_bounds (test_transport_witness.WitnessTests.test_invalid_bounds) ... ok
+test_limit_refuses_before_inner_transport (test_transport_witness.WitnessTests.test_limit_refuses_before_inner_transport) ... ok
+test_partial_stream_retains_failure (test_transport_witness.WitnessTests.test_partial_stream_retains_failure) ... ok
+test_request_errors_propagate_without_sensitive_messages (test_transport_witness.WitnessTests.test_request_errors_propagate_without_sensitive_messages) ... ok
+test_success_preserves_bytes_and_status (test_transport_witness.WitnessTests.test_success_preserves_bytes_and_status) ... ok
+test_external_refusals_stop_source (test_odr_live_policy.StopPolicyTests.test_external_refusals_stop_source) ... ok
+test_local_configuration_and_quotas_do_not_disable_source (test_odr_live_policy.StopPolicyTests.test_local_configuration_and_quotas_do_not_disable_source) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.014s
+
+OK

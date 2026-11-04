@@ -204,26 +204,26 @@ function EconomyContent() {
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
             <div>
-              <strong className="font-semibold">Embargo méthodologique de qualification (ADR-070 / ADR-117) :</strong>
+              <strong className="font-semibold">Données économiques non qualifiées ou temporairement indisponibles.</strong>
               <p className="mt-0.5 text-muted-foreground">
-                Les séries macroéconomiques agrégées sont en réserve de certification de provenance. Le catalogue des 14 fiches métriques et définitions normatives ci-dessous reste intégralement consultable.
+                Les séries ne sont pas publiées tant que leur provenance et leur qualité ne sont pas vérifiées. Les définitions des indicateurs restent consultables ci-dessous.
               </p>
             </div>
           </div>
           <span className="font-mono text-[10px] px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 font-semibold shrink-0">
-            Réserve Gold
+            Données non publiées
           </span>
         </div>
       )}
 
       {/* Rice Pilot Transmission Context Panel (ADR-070 transmission link) */}
-      {pilotContext && (
+      {pilotContext && !isWithheld && (
         <div className="glass-card rounded-2xl p-5 border border-emerald-500/20 bg-gradient-to-br from-emerald-950/30 via-slate-900/60 to-slate-950/80">
           <div className="flex items-center justify-between pb-3 border-b border-border">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <h2 className="text-xs font-bold uppercase tracking-wider text-primary-readable font-mono">
-                Contexte Macroéconomique du Pilote Rizicole (R2.4)
+                Contexte économique du riz
               </h2>
             </div>
             <span className="text-[11px] font-mono text-muted-foreground">
@@ -426,7 +426,7 @@ function EconomyContent() {
           </div>
         ) : (
           <div className="glass-card rounded-2xl p-12 text-center text-xs text-muted-foreground font-mono">
-            Aucune donnée disponible pour cette dimension économique.
+            {isWithheld ? "Définitions des indicateurs temporairement indisponibles." : "Aucune donnée disponible pour cette dimension économique."}
           </div>
         )
       ) : (

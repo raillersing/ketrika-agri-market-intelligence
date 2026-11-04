@@ -111,6 +111,15 @@ def validate_annotation(base: Path, entry: dict[str, Any], entries: dict[str, An
     ):
         raise CorpusError("Golden must reference an authentic acquired document")
     validate_acquisition(base, source)
+    original_path = safe_path(base, document)
+    maximum = 8 * 1024 * 1024 if source.get("artifact_type") == "wb_zip_csv_v1" else MAX_FILE_BYTES
+    if original_path.stat().st_size > maximum:
+        raise CorpusError("Annotated original exceeds size limit")
+    original = original_path.read_bytes()
+    if len(original) != source.get("size_bytes") or hashlib.sha256(
+        original
+    ).hexdigest() != source.get("sha256"):
+        raise CorpusError("Annotated original bytes mismatch")
     golden = json.loads(safe_path(base, entry["path"]).read_text())
     metadata = golden.get("metadata", {})
     if (
@@ -133,7 +142,22 @@ def validate_annotation(base: Path, entry: dict[str, Any], entries: dict[str, An
         raise CorpusError("Annotation must declare scope and cells")
     if entry["rights"] != source["rights"]:
         raise CorpusError("Annotation rights must follow original document")
-    payload = json.loads(safe_path(base, document).read_text(), parse_float=Decimal)
+    archive_cells = None
+    if source.get("artifact_type") == "wb_zip_csv_v1":
+        from ketrika.core.wb_archive import ArchiveError, cells
+
+        if metadata.get("format") != "wb_zip_csv_v1":
+            raise CorpusError("ZIP annotation format required")
+        coordinates = [cell.get("path") for cell in golden["cells"]]
+        if any(not isinstance(path, list) for path in coordinates):
+            raise CorpusError("Invalid ZIP annotation coordinates")
+        try:
+            archive_cells = cells(original, coordinates)
+        except ArchiveError as exc:
+            raise CorpusError(str(exc)) from None
+        payload = None
+    else:
+        payload = json.loads(original.decode("utf-8"), parse_float=Decimal)
     seen: set[tuple[Any, ...]] = set()
     for cell in golden["cells"]:
         keys = cell.get("path")
@@ -147,16 +171,30 @@ def validate_annotation(base: Path, entry: dict[str, Any], entries: dict[str, An
         if identity in seen:
             raise CorpusError("Duplicate annotation cell")
         seen.add(identity)
-        value = payload
-        try:
-            for key in keys:
-                if isinstance(key, int) and key < 0:
-                    raise CorpusError("Negative cell indices forbidden")
-                value = value[key]
-        except (IndexError, KeyError, TypeError) as exc:
-            raise CorpusError("Annotation cell is absent in source") from exc
+        value: Any
+        if archive_cells is not None:
+            value = archive_cells[tuple(keys)]
+        else:
+            value = payload
+            try:
+                for key in keys:
+                    if isinstance(key, int) and key < 0:
+                        raise CorpusError("Negative cell indices forbidden")
+                    value = value[key]
+            except (IndexError, KeyError, TypeError) as exc:
+                raise CorpusError("Annotation cell is absent in source") from exc
         expected = cell.get("expected")
         if cell.get("value_type") == "number":
+            if archive_cells is not None:
+                from decimal import InvalidOperation
+
+                try:
+                    numeric = Decimal(value)
+                except (InvalidOperation, TypeError):
+                    raise CorpusError("Numeric annotation mismatch") from None
+                if not numeric.is_finite() or value != expected:
+                    raise CorpusError("Numeric annotation mismatch")
+                continue
             if (
                 type(value) not in (Decimal, int)
                 or not isinstance(expected, str)
@@ -187,7 +225,9 @@ def validate_manifest(base: Path, manifest: dict[str, Any]) -> dict[str, Any]:
             raise CorpusError("Duplicate or non-corpus file")
         seen.add(relative)
         size = path.stat().st_size
-        if size > MAX_FILE_BYTES or entry.get("size_bytes") != size:
+        is_wb_archive = entry.get("artifact_type") == "wb_zip_csv_v1"
+        maximum = 8 * 1024 * 1024 if is_wb_archive else MAX_FILE_BYTES
+        if size > maximum or entry.get("size_bytes") != size:
             raise CorpusError("File size limit or receipt mismatch")
         total += size
         if entry.get("sha256") != sha256(path):
@@ -199,6 +239,10 @@ def validate_manifest(base: Path, manifest: dict[str, Any]) -> dict[str, Any]:
             raise CorpusError("Missing artifact type/origin")
         if not entry["origin"].get("kind") or not isinstance(entry.get("rights"), dict):
             raise CorpusError("Missing origin/rights")
+        if is_wb_archive and (
+            kind != "authentic" or entry["origin"].get("kind") != "official_acquisition"
+        ):
+            raise CorpusError("WB archive requires official acquisition")
         if entry.get("annotator") != "agent" or entry.get("human_reviewed") is not False:
             raise CorpusError("Human review is not proved by this corpus")
         if kind == "synthetic":
@@ -209,7 +253,19 @@ def validate_manifest(base: Path, manifest: dict[str, Any]) -> dict[str, Any]:
             if entry["origin"].get("kind") == "independent_annotation":
                 annotations.append(entry)
             elif entry["origin"].get("kind") == "official_acquisition":
-                validate_acquisition(base, entry)
+                receipt = validate_acquisition(base, entry)
+                if is_wb_archive:
+                    from ketrika.core.wb_archive import ArchiveError, rows
+
+                    if receipt["source_id"] != "wb_rtfp_mdg" or receipt["mime_type"].split(";")[
+                        0
+                    ].strip().lower() not in ("application/zip", "application/octet-stream"):
+                        raise CorpusError("WB archive acquisition required")
+                    try:
+                        for _ in rows(path.read_bytes(), entry.get("archive_member")):
+                            pass
+                    except ArchiveError as exc:
+                        raise CorpusError(str(exc)) from None
                 authentic.append(relative)
             else:
                 raise CorpusError("Unsupported authentic origin")

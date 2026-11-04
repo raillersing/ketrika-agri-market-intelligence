@@ -1,0 +1,62 @@
+{
+  "finished_at": "2026-11-03T20:12:32.992821+00:00",
+  "receipts": [
+    {
+      "bytes": 60569,
+      "fetched_at": "2026-11-03T20:12:28.141574+00:00",
+      "mime": "text/html; charset=UTF-8",
+      "sha256": "9b556b2044fa1b474c061b186986a1c7906d3988e4b4caf347bbbafff417d224",
+      "url": "https://microdata.worldbank.org/catalog/8240/data-api"
+    },
+    {
+      "bytes": 51241,
+      "fetched_at": "2026-11-03T20:12:32.992167+00:00",
+      "mime": "application/json; charset=utf-8",
+      "sha256": "4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860",
+      "url": "https://microdata.worldbank.org/metadata/export/8240/json"
+    }
+  ],
+  "revision_qualified": false,
+  "rights_verified": false,
+  "silver_imported": false,
+  "source_id": "wb_rtfp_mdg",
+  "started_at": "2026-11-03T20:12:22.254492+00:00",
+  "status": "metadata_downloaded_unqualified",
+  "trace": [
+    {
+      "location": null,
+      "status": 404,
+      "url": "https://microdata.worldbank.org/robots.txt"
+    },
+    {
+      "location": null,
+      "status": 200,
+      "url": "https://microdata.worldbank.org/catalog/8240/data-api"
+    },
+    {
+      "location": null,
+      "status": 200,
+      "url": "https://microdata.worldbank.org/metadata/export/8240/json"
+    }
+  ],
+  "transport_attempts": [
+    {
+      "attempt": 1,
+      "phase": "body_complete",
+      "started_at": "2026-11-03T20:12:22.330735+00:00",
+      "status": 404
+    },
+    {
+      "attempt": 2,
+      "phase": "body_complete",
+      "started_at": "2026-11-03T20:12:27.298586+00:00",
+      "status": 200
+    },
+    {
+      "attempt": 3,
+      "phase": "body_complete",
+      "started_at": "2026-11-03T20:12:32.287412+00:00",
+      "status": 200
+    }
+  ]
+}

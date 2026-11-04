@@ -1,0 +1,31 @@
+{
+  "files": 6,
+  "size_bytes": 13185491,
+  "counts": {
+    "authentic": 6
+  },
+  "authentic_documents": [
+    "tests/fixtures/b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d.zip",
+    "tests/fixtures/43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83.zip",
+    "tests/fixtures/4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860.json"
+  ],
+  "authentic_annotations": 3,
+  "verified_annotation_cells": 664,
+  "scope": "offline artifact integrity only; not live collection or market performance",
+  "network": {
+    "interfaces": [
+      "lo"
+    ],
+    "external_ipv4_routes": 0
+  },
+  "code_sha256": {
+    "backend/src/ketrika/core/wb_archive.py": "ffbd94d54f8a3abb5617dd4642ddff7032ee119d63e378543c386541f2684d7c",
+    "backend/src/ketrika/core/corpus.py": "33591f070ba52aa02d3cbc1266e2a1a7c296c672e52351492c25146b9c833282",
+    "docs/diagnostics/wb_revision_packet.py": "915ad8bbfc9a8902f55ac40ae87a1364dd4a1e93dff777f1959ad6c9b2f48792",
+    "docs/evidence/R0.8_WB_ARCHIVE_20261104_ANNOTATIONS.json": "335505d3ee3a6c9cdf23ad55ca66b3684c921c0bf790113742ef3f30baf0e144"
+  },
+  "human_reviewed": false,
+  "numeric_annotations": 60,
+  "silver_imported": false,
+  "rebuild_qualified": false
+}
