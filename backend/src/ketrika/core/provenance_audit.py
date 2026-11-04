@@ -107,6 +107,14 @@ def bind_observation(table: str, observation: Any) -> ObservationClaim:
     from ketrika.core.provenance_rtfp import bind_rtfp_observation, is_context_proof
 
     source_proof = (getattr(observation, "evidence", None) or {}).get("provenance", {})
+    from ketrika.core.provenance_wb_archive import bind_archive_observation, is_archive_proof
+
+    if (
+        table == "price_observation"
+        and isinstance(source_proof, dict)
+        and is_archive_proof(source_proof)
+    ):
+        return bind_archive_observation(observation, source_proof)
     if (
         table == "price_observation"
         and isinstance(source_proof, dict)
@@ -222,9 +230,12 @@ def audit_observation_provenance(
         claims.append(claim)
     record_ids = {claim.source_record_id for claim in claims if claim.source_record_id}
     from ketrika.core.provenance_rtfp import context_reference, is_context_proof
+    from ketrika.core.provenance_wb_archive import is_archive_proof
 
     record_ids.update(
-        context_reference(claim.proof) for claim in claims if is_context_proof(claim.proof)
+        context_reference(claim.proof)
+        for claim in claims
+        if is_context_proof(claim.proof) or is_archive_proof(claim.proof)
     )
     records = (
         session.scalars(

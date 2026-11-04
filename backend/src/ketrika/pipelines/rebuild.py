@@ -162,14 +162,21 @@ def rebuild_database(
             )
 
             try:
-                if s_rec.source_id == "wb_rtfp_mdg" and s_rec.parser_version == "2.0.0":
+                if s_rec.source_id == "wb_rtfp_mdg" and s_rec.parser_version == "3.0.0":
+                    from ketrika.connectors.rtfp_archive import parse_persisted as parse_archive
+
+                    parse_res = parse_archive(s, raw_artifact, proof_reader)
+                elif s_rec.source_id == "wb_rtfp_mdg" and s_rec.parser_version == "2.0.0":
                     from ketrika.connectors.rtfp_json import parse_persisted
 
                     parse_res = parse_persisted(s, raw_artifact, proof_reader)
                 else:
                     parse_res = connector.parse(raw_artifact, ctx)
                 for rec in parse_res.records:
-                    if s_rec.source_id == "wb_rtfp_mdg" and s_rec.parser_version == "2.0.0":
+                    if s_rec.source_id == "wb_rtfp_mdg" and s_rec.parser_version in {
+                        "2.0.0",
+                        "3.0.0",
+                    }:
                         from ketrika.connectors.records import PriceRecord
                         from ketrika.normalize.price_loader import load_normalized_price
 

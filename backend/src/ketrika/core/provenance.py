@@ -370,6 +370,10 @@ class ProvenanceVerifier:
     ) -> VerificationReport:
         if mode not in ("complete", "incremental"):
             raise ValueError("Unsupported verification mode")
+        from ketrika.core.provenance_wb_archive import is_archive_proof, verify_archive_batch
+
+        if any(is_archive_proof(claim.proof) for claim in claims):
+            return verify_archive_batch(self, claims, mode)
         from ketrika.core.provenance_rtfp import is_context_proof, verify_context_batch
 
         if any(is_context_proof(claim.proof) for claim in claims):
