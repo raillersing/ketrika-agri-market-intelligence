@@ -166,7 +166,7 @@ def consume_connector_silver(
         or ctx.source_id != batch.source_id
     ):
         raise ValueError("silver_batch_source_mismatch")
-    native_rtfp = batch.source_id == "wb_rtfp_mdg" and batch.parser_version == "2.0.0"
+    native_rtfp = batch.source_id == "wb_rtfp_mdg" and batch.parser_version in {"2.0.0", "3.0.0"}
     if batch.parser_version != connector.parser_version and not native_rtfp:
         raise ValueError("silver_batch_parser_mismatch")
     run = session.get(IngestionRun, batch.ingestion_run_id)
@@ -229,7 +229,11 @@ def consume_connector_silver(
                 run_id=batch.ingestion_run_id,
                 metadata=dict(ctx.metadata),
             )
-            if native_rtfp:
+            if native_rtfp and batch.parser_version == "3.0.0":
+                from ketrika.connectors.rtfp_archive import parse_persisted as parse_archive
+
+                result = parse_archive(session, artifact, reader)
+            elif native_rtfp:
                 from ketrika.connectors.rtfp_json import parse_persisted
 
                 result = parse_persisted(session, artifact, reader)

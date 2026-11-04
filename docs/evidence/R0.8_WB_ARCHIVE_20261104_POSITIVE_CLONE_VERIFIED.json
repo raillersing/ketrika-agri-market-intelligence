@@ -1,0 +1,25 @@
+{
+  "verified": true,
+  "price_rows": 163,
+  "revision_links": 81,
+  "current_gold_rows": 82,
+  "independent_numeric_annotations_in_sql": 60,
+  "positive_manifests_identical": true,
+  "bronze_objects_unchanged": 4,
+  "negative_changed_values": 1,
+  "negative_counts_identical": 163,
+  "negative_changed_tables": [
+    "obs.price_observation"
+  ],
+  "versioned_recompute_equal": true,
+  "separate_forecasts_each_run": 3,
+  "min_points_required": 36,
+  "model_qualified": false,
+  "human_reviewed": false,
+  "source_freshness_qualified": false,
+  "original_s3_versions_verified": false,
+  "originals_sha256": {
+    "R0.8_WB_ARCHIVE_20261104_REAL_REPLAY.json.gz": "bebe54c0e0d7c938d8bdde274652f8a08d7cdc238d967f883476a3e61db444ed",
+    "R0.8_WB_ARCHIVE_20261104_FALSE_PARSER.json.gz": "f8fd120a04f2dddd03065b3d89ed694f5098fe7063aca1a61df295d196e3252a"
+  }
+}

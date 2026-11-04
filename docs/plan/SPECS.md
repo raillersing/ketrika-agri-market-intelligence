@@ -2096,3 +2096,17 @@ Les nombres CSV sont comparés comme lexèmes décimaux finis, jamais via float 
 null/chaîne vide ne vaut pas zéro. Le plafond corpus5MiB reste inchangé hors de
 ce format WB validé, total50MiB inchangé. Aucun nouveau format de preuve Gold
 ni parser produit autorisé par cette seule annotation.
+
+### Parser historique WB ZIP — ADR-163
+
+Triplet wb_rtfp_mdg/3.0.0/application{zip,octet-stream} : un CSV original
+MDG_RTFP_mkt_2007_YYYY-MM-DD.csv, contrat d'en-tête exact reçu, limites ADR162.
+Contexte JSON3.0.0 du même batch durable, forme additional.ticker_info déclarée.
+Preuve rtfp_zip_csv_v1/version2 : member,row,ticker_index,price_field=c_rice,
+location_field=mkt_name,context_source_record_id ; attendu lié aux champs DB.
+Contrôle direct des cellules et du grain national explicite (MDG/Market Average/
+gid_mdg_national_average, lat/lon vides), période mensuelle >=2020 et <=mois du
+membre, c_rice positif fini, imputed/point/unknown. Produit/unité viennent du
+contexte Rice(local)/KG de cette ligne rice, sans defaults. Parser JSON2.0.0
+inchangé ; aucune généralisation de source ou région. Rebuild et gates savent
+lire les ZIP originaux, sans réponse HTTP ni objet Bronze dérivé fabriqué.

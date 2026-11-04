@@ -19,6 +19,7 @@ from ketrika.core.provenance import (
 from ketrika.core.provenance_audit import POLICIES
 from ketrika.core.schema_drift import MAX_BYTES, inspect_csv_schema
 from ketrika.core.schema_json import JSONSchemaAlternatives, JSONSchemaContract, inspect_json_schema
+from ketrika.core.schema_wb_archive import WBArchiveSchemaContract, inspect_archive_schema
 
 MAX_ARTIFACTS = 100_000
 
@@ -52,7 +53,9 @@ class CSVSchemaContract:
         )
 
 
-SchemaContract = CSVSchemaContract | JSONSchemaContract | JSONSchemaAlternatives
+SchemaContract = (
+    CSVSchemaContract | JSONSchemaContract | JSONSchemaAlternatives | WBArchiveSchemaContract
+)
 
 
 @dataclass(frozen=True)
@@ -95,7 +98,8 @@ def audit_source_schema(
     )
 
     if contract is not None and not isinstance(
-        contract, (CSVSchemaContract, JSONSchemaContract, JSONSchemaAlternatives)
+        contract,
+        (CSVSchemaContract, JSONSchemaContract, JSONSchemaAlternatives, WBArchiveSchemaContract),
     ):
         raise ValueError("schema_audit_invalid_contract")
     if not isinstance(source_id, str) or not source_id:
@@ -194,6 +198,15 @@ def audit_source_schema(
                                 delimiter=selected_contract.delimiter,
                             )
                             result = asdict(inspection)
+                            result["contract_version"] = selected_contract.version
+                        elif isinstance(
+                            selected_contract, WBArchiveSchemaContract
+                        ) and reference.mime_type in {
+                            "application/zip",
+                            "application/octet-stream",
+                        }:
+                            archive_inspection = inspect_archive_schema(content, selected_contract)
+                            result = asdict(archive_inspection)
                             result["contract_version"] = selected_contract.version
                         elif (
                             isinstance(

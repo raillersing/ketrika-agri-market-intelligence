@@ -2106,3 +2106,38 @@ Le raccordement ultérieur parse/provenance/Gold/rebuild exigera son contrat de
 preuve et un gel reçu complet avant tout DONE R0.8. Alternative rejetée : JSON
 transformé présenté comme original ou archive décompressée sans preuve du ZIP.
 Aucun actif, quota, seuil scientifique ni code de check modifié.
+
+## ADR-163 | 2026-11-04 | Rejouer les ZIP WB originaux avec contexte durable
+
+Le paquet ADR162 est validé mais le parser JSON2.0.0 ne peut pas lire ses ZIP.
+Créer un parser3.0.0 distinct et une preuve composée rtfp_zip_csv_v1/version2,
+sans élargir les preuves JSON anciennes. Primary ZIP original +contexte JSON
+source WB, références et parser identiques au batch immuable ; absence,
+ambiguïté, substitution de source ou SHA refusée. Structure ZIP déclarée pour
+ce triplet source/version/MIME, contrat d'en-tête exact des46 colonnes reçues.
+
+Portée de réception bornée : c_rice de la série explicitement publiée
+geo_id=gid_mdg_national_average et adm1/adm2/mkt_name=Market Average, pays MDG,
+coordonnées lat/lon vides, périodes mensuelles depuis2020 jusqu'au mois de
+l'édition. Ne jamais agréger les marchés ou recopier le national en région.
+Les autres lignes sont validées structurellement mais hors portée de ce parser,
+jamais comptées comme un rappel de collecte nationale complète. Prix positifs
+finis arrondis HALF_UP à4 décimales, lexème original conservé ; vide absent,
+valeur non numérique refusée. imputed/point/unknown, label et KG depuis la
+même ligne ticker rice du contexte officiel ; aucune unité/origine implicite.
+
+Le vérificateur relit cellules ZIP et contexte, lie les champs persistés et le
+grain national ; normalisation numérique4 décimales exclusivement sur price_value.
+Lecture ZIP préparée une fois par objet/batch de vérification, sans cache global
+ni objet transformé persisté. Audit, gate structurel/Gold et rebuild dispatchent
+explicitement3.0.0 ; une nouvelle version ne bénéficie pas d'une autorisation
+implicite. L'alias de lieu national, s'il est nécessaire à la réception isolée,
+est exclusivement WB, fondé sur le geo_id explicite, jamais une règle globale.
+
+Réception dans nouveaux volumes/DB PostgreSQL par socket, conteneurs sans réseau,
+Bronze copie immuable. Vérifier annotations, chargement append-only/idempotence,
+révisions réelles, Gold, manifestes/rebuild, contre-épreuve de prix modifié et
+inventaire inchangé. Seuil36 et contraintes scientifiques intacts ; recalcul
+modèle/dataset séparé, aucun marché validé ni actif modifié. Check complet du
+lot figé avant fusion. Alternative rejetée : faux JSON source ou preuve ZIP
+omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB.

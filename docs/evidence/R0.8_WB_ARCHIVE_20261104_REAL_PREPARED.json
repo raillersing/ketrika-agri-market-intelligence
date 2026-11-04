@@ -1,0 +1,122 @@
+{
+  "loaded": true,
+  "rows": 163,
+  "superseded": 81,
+  "current": 82,
+  "stats": [
+    {
+      "n_fetched": 2,
+      "n_new_artifacts": 2,
+      "n_inserted": 81,
+      "n_superseded": 0,
+      "n_skipped": 0,
+      "n_rejected": 0,
+      "n_review": 0
+    },
+    {
+      "n_fetched": 2,
+      "n_new_artifacts": 1,
+      "n_inserted": 1,
+      "n_superseded": 81,
+      "n_skipped": 0,
+      "n_rejected": 0,
+      "n_review": 0
+    }
+  ],
+  "provenance_valid": 163,
+  "gold": {
+    "views_refreshed": [
+      "price_obs_current",
+      "price_monthly",
+      "price_monthly_best",
+      "price_changes",
+      "stock_latest",
+      "trade_monthly",
+      "import_dependency",
+      "weather_monthly",
+      "cpi_food",
+      "market_health",
+      "source_health",
+      "forecast_latest",
+      "market_coverage"
+    ],
+    "withheld_views": {
+      "economic_dashboard": "macro_publication_not_qualified"
+    },
+    "errors": {},
+    "count": 13,
+    "provenance_state": "cells_verified",
+    "source_cell_dq_id": "fbdeb151-6c4a-442e-8521-38d43f58e825",
+    "provenance_scope": "source_cells_not_authenticity_conversions_or_model",
+    "source_observations_total": 82,
+    "source_observations_valid": 82,
+    "source_cell_rate": "100",
+    "structure_state": "structure_verified",
+    "structure_dq_ids": [
+      "bc757c7e-1314-4c6a-b663-eae3e1c8e308"
+    ],
+    "structure_artifacts_total": 2,
+    "structure_artifacts_valid": 2,
+    "structure_scope": "publication_candidate_artifacts_not_authenticity_or_model",
+    "publication_parse_checks": [
+      {
+        "state": "measured",
+        "groups": [
+          {
+            "group_id": "86d7bbda-cfd1-4506-9c36-70516fcdb001",
+            "total": 2,
+            "parsed": 2,
+            "rate": 100.0
+          },
+          {
+            "group_id": "a2e3c0bf-1387-40e6-af48-3b6486470e0c",
+            "total": 2,
+            "parsed": 2,
+            "rate": 100.0
+          }
+        ],
+        "scope": "complete_related_batches_current_parse_status"
+      }
+    ],
+    "denominators_scope": "global_inventory",
+    "denominators": {
+      "candidate_files": 3,
+      "parsed_files": 3,
+      "failed_files": 0,
+      "review_files": 0,
+      "pending_files": 0,
+      "candidate_rows": 82,
+      "accepted_rows": 82,
+      "rejected_rows": 0,
+      "review_rows": 0
+    }
+  },
+  "corpus": {
+    "files": 6,
+    "size_bytes": 13185491,
+    "counts": {
+      "authentic": 6
+    },
+    "authentic_documents": [
+      "tests/fixtures/b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d.zip",
+      "tests/fixtures/43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83.zip",
+      "tests/fixtures/4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860.json"
+    ],
+    "authentic_annotations": 3,
+    "verified_annotation_cells": 664,
+    "scope": "offline artifact integrity only; not live collection or market performance"
+  },
+  "replay_qualified": false,
+  "uid": 0,
+  "network": {
+    "interfaces": [
+      "lo"
+    ],
+    "external_ipv4_routes": 0
+  },
+  "human_reviewed": false,
+  "source_freshness_qualified": false,
+  "model_qualified": false,
+  "s3_retention_qualified": false,
+  "finished_at": "2026-11-04T03:14:46.183241+00:00"
+}
