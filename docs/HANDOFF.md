@@ -1,28 +1,49 @@
-# Passation — PARTIAL
+# Passation — programme R PARTIAL
 
-Le programme R reste non reçu :7 DONE historiques,67 IN_PROGRESS,0 TODO. R0.8 reste la première tâche MUST à reprendre ; R0.9 et R6.11 ne sont pas qualifiés, aucun tag final. Les lots AU-01–AU-07 et Irooa/Ketrikay sont déjà dans main ; AU-08 et la correction Gold-only sont fusionnés via PR6–8.
+R0.8 est reçu sur le contenu authentique borné. Les74 statuts sont synchronisés :
+8 DONE (dont7 historiques),66 IN_PROGRESS. R0.9 reste la prochaine tâche MUST ;
+R6.11 n'est pas reçu, aucun tag final ni qualification globale du programme.
+AU-01–AU-07 et Irooa/Ketrikay sont dans main, AU-08/Gold-only via PR6–8,
+les correctifs de provenance/alias/territoire via PR10 ; corpus ZIP via PR11.
 
-PR10 fusionnée le2026-11-03T20:38:32Z sur main2048e8035c8d5311eaeffc2e9f50f893f4c2e86c. Réception complète CI41708302370 verte :2720 backend/299 intégrations,113 frontend/15 suites,26 E2E, zéro échec/erreur/skip obligatoire et zéro erreur JS. Originaux natifs vérifiés, empreinte applicative0fdb28864107d2db0e4ef3b15da1bdbddb3922e9aedaf8de47ad520736212d54 ; contenu applicatif identique au merge. Contrôle automatique post-merge41714450184 également success, vérifié le2026-11-04. Les rouges intermédiaires restent historiques ; B-R100 ne décrit plus l'état actuel d'Actions.
+PR12 candidat3a974be reçu par CI41769707448 :2796 backend/301 intégrations,
+113 frontend/15 suites,26 E2E, zéro échec/erreur/skip obligatoire/erreur JS.
+Trois manifestes natifs et leurs octets/SHA/identités vérifiés, empreinte
+7d81deb9b8846d9a3bd1e64f843e493134cff2100ec859f6e0188158b66f68eb.
+La publication/merge final doit être vérifiée par ses refs distantes.
 
-Le lot refuse les prix calculés sans intrants vérifiés, empêche la résurrection des observations quarantainées et la multiplication des flux par alias, conserve les niveaux territoriaux et signale les données macro non qualifiées. Login sans identifiants affichés, retour local validé, Gold applicatif en lecture et TRUNCATE retiré. Alias faible sans origine locale inventée : seuil API0,9, rice_milled en revue0,8 et conversion automatique retirée.
+Deux ZIP WB originaux2026-09-28/2026-10-05, contexte et annotations conservés
+readonly :664 cellules dont60 valeurs. Les163 lignes ingérées conservent81
+anciennes versions et82 courantes. Rejeu sur réception puis clone restauré,
+non-root/network none : contenus Silver/Gold/ref identiques, quatre objets
+Bronze inchangés. Une seule ancienne valeur falsifiée est détectée malgré
+163 lignes avant/après ; seule obs.price_observation diffère. Recalcul séparé
+versionné, seuil36 intact,3 prévisions par exécution, identiques. B-R073 résolu
+sur cette portée nationale c_rice depuis2020, imputée ; aucun marché/modèle,
+source fraîche, rétention S3 originale ni revue humaine qualifiés.
 
-SQL reçu sur isolé : copie neuve de la base active0021→0027,40 tables protégées,1313 anciennes quarantaines conservées en octets et4916 ajouts explicites ; caches concernés invalidés. Nouvelle copie privée0027→0028 :39 tables entièrement inchangées,50 alias conservés dont une seule confiance globale non revue1→0,8 ;6229 quarantaines, propriétaires et permissions identiques. Originaux et vérificateurs sous docs/evidence/R0.8_CI_FINAL_20261103_* et R0.8_CI_ALIAS_20261103_*. Aucun Bronze effacé.
+Les volumes ketrika_wb_source_archives_20261103_candidates,
+ketrika_wb_revision_packet_20261104 et ketrika_wb_replay_* sont préservés,
+comme les clusters de contre-épreuve et de clone positif. Une sauvegarde
+additive hors Docker conserve originaux et paquet sous
+/home/raillersing/projects/ketrika-corpus-backups/wb-originals-and-annotations-20261104.tar.gz,
+SHA6be44f393a1cbe4908f639e9b260e9cd29018a4389323c755660bd64f599370a,
+ZIP relus et vérifiés. Voir WB_ARCHIVE_REPLAY_RUNBOOK et les originaux comprimés.
 
-Activation distincte : ces migrations ne sont pas appliquées à la base active. Le profil historique B-R098 conserve ses écarts, sans GRANT ajouté pour faire passer les contrôles. Préserver checkout utilisateur, services, volumes, archives et destinations de référence ; aucun reset/restore/rebuild de test sur l'actif. Les anciens identifiants affichés restent dans l'historique publié : si leur valeur est utilisée, effectuer une rotation opérationnelle ; aucune valeur, vérification de compte actif ou rotation revendiquée ici.
+R0.9 : le plan R0.4 permet un manifeste externe, mais core.qualify ne consulte
+encore que backend/tests/corpus-manifest.json. Raccorder explicitement le paquet
+externe avec chemins/SHA/droits/annotations bornés, conserver les identités des
+producteurs SQL authentiques et CI synthétiques, puis recevoir le gate complet.
+Ne jamais réétiqueter un producteur ou éditer une preuve pour contourner un rejet.
 
-AU-09/B-R073 exige deux éditions publiques autorisées contenant une correction réelle au même grain : produit, lieu, période, variable, statistique, unité, devise et acteur. Fournir pour chacune original, URL vérifiable, publication/récupération UTC, SHA256, MIME, licence/attribution et annotations indépendantes des cellules corrigées. Garder human_reviewed=false sans revue effective. Réception hors réseau sur DB/S3 dédiés : provenance, valeurs, révisions, Gold et rejeu, puis qualification distincte des modèles. Deux mois différents ne constituent pas une correction.
+Activation distincte : les migrations0022–0028 ne sont pas appliquées à l'actif.
+Le rôle historique B-R098 conserve ses écarts ; aucun GRANT ajouté sur l'actif
+pour verdir une preuve. Aucun reset, volume/Bronze supprimé, mot de passe actif
+lu/copié/tourné, ni service partagé redémarré. Préserver le checkout utilisateur
+et les autres worktrees. Les identifiants anciennement affichés restent dans
+l'historique ; rotation opérationnelle à traiter si ces valeurs sont utilisées.
 
-Source ODR2026-11-03 / ADR156 : acquisition réelle via registre central préexistant, distincte du laboratoire perdu B-R104 ; dix ConnectError, zéro réponse HTTP/document, quota10/10 conservé, source active et zéro PolicyStop. Seuls compteurs/pacing natifs modifiés ; aucune observation, SourceRecord, ACL ou Bronze ajouté. Ne plus interroger ce jour UTC ni changer d'identité/origine pour contourner le budget. Prochaine fenêtre UTC conforme ou corpus autorisé hors réseau ; ancien registre non reconstruit. Sept tests offline ne qualifient pas la source. Recherche d'archive bornée sans résultat indexé, pas preuve d'absence.
-
-WB / ADR161 : deux ZIP officiels2026-09-28 et2026-10-05 effectivement acquis par les routes publiques listées, conservés en lecture seule dans le volume ketrika_wb_source_archives_20261103_candidates. SHA, URLs et reçus natifs sous docs/evidence/R0.8_CI_WB_ARCHIVES_*. Comparaison hors réseau :94954 grains valides communs,89633 corrections numériques de c_rice également distinctes à NUMERIC(18,4),482 nouveaux grains ; aucun doublon. Ce sont des estimations imputées, pas des prix observés. L'absence des deux éditions n'est donc plus le verrou : annotations indépendantes reçues (664 cellules,60 valeurs) ; ingestion/rejeu isolés restent à recevoir avant clôture B-R073/AU-09. Le contexte publié nomme Rice (local), unité KG ; la série nationale Market Average est explicite, elle ne doit jamais être recopiée vers une région. published_at reste inconnu ; la date changed des fiches ne prouve pas une première publication.
-
-Les dix admissions WB du2026-11-03 sont conservées :3 robots404 et7 réponses200, aucun contournement ni remise à zéro. Seuls budgets/pacing centraux modifiés, aucune observation/SourceRecord/Bronze formel importé. FEWS arrêté pour robots ; les anciennes empreintes gouvernementales synthetic et le rejeu historique2 sources/15 valeurs restent distincts des nouveaux originaux. Aucun modèle de marché validé.
-
-H1–H7 conservés : replay sans clé, livraison locale sans provisionnement, Mailpit/brouillons, aucune collecte privée, revue humaine explicite, budgets stricts et aucun contact de tiers. Ni déploiement, ni performance de marché, ni usage humain déduits des tests. Voir PROGRESS, BLOCKERS et MARKET_INTELLIGENCE_REPORT.
-
-Actualisation2026-11-04 : le code de lecture/validation du corpus fa4c60f est reçu
-par CI41762643860 complète,2754 backend/299 intégrations,113 frontend,26 E2E.
-Les664 cellules, dont60 nombres, sont désormais annotées et validées sur le
-volume dédié hors réseau ; les droits et l'attribution figurent dans le paquet.
-L'ingestion native et le rejeu sont un lot distinct encore à recevoir avant
-AU-09/R0.8, pas une absence restante des deux éditions ou de leurs annotations.
+Budgets ODR/WB centraux du3 novembre conservés, aucun reset/identité reconstruite.
+FEWS reste arrêté pour robots. L'ancien laboratoire B-R104 n'est pas reconstitué.
+H1–H7 inchangés : replay, pas de provisionnement, Mailpit/brouillons, aucune
+collecte privée, revue humaine explicite, budgets et aucun contact de tiers.
