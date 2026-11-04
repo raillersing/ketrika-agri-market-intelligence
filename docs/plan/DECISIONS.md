@@ -2059,3 +2059,27 @@ et quarantaines restent inchangés. Réception sur une nouvelle copie privée du
 clone0027 ; original0027 et ses preuves conservés. Un downgrade ne rétablit pas
 la confiance non justifiée. L'absence initialement envisagée de migration est
 remplacée par cette correction persistante, sans nouvelle quarantaine.
+
+## ADR-161 | 2026-11-03 | Découvrir les archives WB sans recréer de quota
+
+L'index public catalog/8240/data-api semble lister plusieurs fichiers datés,
+contrairement à la seule API courante comparée auparavant. Vérifier cette piste
+par GET anonymes bornés sur l'origine officielle microdata.worldbank.org, client
+poli et registre central préexistant. Cap10/jour réduit,0,2rps, limites1MiB pour
+HTML/JSON et témoin de transport ; aucun reset/identité ou registre reconstruit.
+
+Ne pas importer ni déclarer une correction depuis un index. Conserver sorties
+privées candidates, dates/MIME/SHA, vérifier URL réelle, droits et même grain
+avant toute acquisition de prix. Origines/chemins externes, cookies, auth et
+méthodes autres que GET refusés.401/403/challenge suit l'arrêt natif, pas de
+contournement. Seuls compteurs/pacing/arrêts natifs peuvent être modifiés ; aucun
+SourceRecord, observation, droit SQL ou Bronze. Diagnostic §3.3, pas produit DONE.
+
+Complément ADR161 avant acquisition : liste officielle reçue HTTP200, SHA
+ a3c12a2ada1cdf366b28f3d5b8dc3902f5ccedaa860733c82d90f846c8098039,
+36 ressources dont deux archives prix ouvertes360505/360780 (versions2026-09-28
+et2026-10-05,6,20MiB environ). Autoriser seulement leurs URL download/info exactes
+émises par cette liste, même origine et anonymat ;8MiB par ZIP,1MiB par JSON/HTML.
+Le quota central10 n'est ni recréé ni augmenté (cinq admissions déjà consommées).
+Fiches puis originaux privés, contrôle MIME/PK et SHA ; comparaison/qualification
+indépendante ensuite. Aucune observation, SourceRecord ou objet Bronze ajouté.

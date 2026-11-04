@@ -1,29 +1,13 @@
 # Ketrika Market Intelligence — réception PARTIAL
 
-R6.11 reste non reçu, aucun tag final. PROGRESS et le plan R conservent7 DONE historiques,65 IN_PROGRESS et2 TODO sur74. Les anciennes annonces de qualification complète restent retirées et archivées.
+R6.11 reste non reçu, aucun tag final. Les74 statuts restent synchronisés :7 DONE historiques,67 IN_PROGRESS et0 TODO. Les anciennes annonces de qualification complète ne sont pas rétablies.
 
-Réception locale complète du logiciel487adb3 :2638 backend dont240 intégrations/3376,64s,82 frontend/13 suites,26 E2E/292,641s. Zéro échec, erreur ou skip obligatoire. Couvertures core92,41%, extraction87,77%, normalize88,22%. Check, contrôle négatif de build et navigateur code0, sources/images/environnement et originaux SHA/taille [vérifiés](evidence/R0.8_CI_COPILOT_20261029_RECEPTION.md).58 cas R0.3 inclus dans le JUnit global ; trois pauses de débit60s, zéro erreur JS et révocation/nettoyage vérifiés.
+PR10 fusionnée sur main2048e8035c8d5311eaeffc2e9f50f893f4c2e86c, réception CI41708302370 complète verte :2720 backend/299 intégrations,113 frontend/15 suites,26 E2E, zéro échec/erreur/skip obligatoire et zéro erreur JS ; couvertures core92,414339%, extraction87,765957%, normalize88,955823%. Empreinte0fdb28864107d2db0e4ef3b15da1bdbddb3922e9aedaf8de47ad520736212d54, originaux natifs et identité applicative du merge vérifiés. CI automatique post-merge41714450184 également success au contrôle du2026-11-04. Les anciennes réceptions ne remplacent pas ces preuves.
 
-0023 retire le seul SELECT latent du copilote hors Gold ; défaut persistant via héritage/PUBLIC refusé transactionnellement, Gold et autres rôles conservés. Seconde copie historique :40 tables/bruts/liens conservés, une seule ACL retirée, migration idempotente. Le profil minimal neuf est conforme ;27 défauts applicatifs historiques B-R098 restent non qualifiés. L'actif et le clone de référence ne sont pas migrés par ce lot.
+Les prix IPP/substitution générés sans intrants vérifiés sont refusés. La copie d'une observation quarantainée ne la réadmet pas en Gold. Les alias ne multiplient pas les tonnages ; un national n'est pas régionalisé, nature/devise/unité/source restent affichées, la grille ne prétend pas représenter des frontières qualifiées. Le login retire les identifiants affichés et valide le retour local ; Gold et les tables métier n'accordent plus les privilèges applicatifs dangereux identifiés.
 
-Le premier check a refusé à juste titre wipe sur ancienne QA quarantainée. Ses1672 témoins sont conservés avec la base entière sous nom d'archive ; une nouvelle QA vide a reçu le contrôle complet, sans effacement d'objet/volume ni baisse de seuil. Les rouges restent archivés. Actions hébergé ne démarre pas pour facturation/plafond, ce n'est pas une CI verte ; réception locale normative et fusion ordinaire conditionnées aux preuves ADR147, sans désactivation ni contournement.
+Clone SQL0021→0027 :40 tables protégées,1313 anciennes quarantaines conservées et4916 ajouts, caches affectés invalidés.0028 sur nouvelle copie du clone conservé :39 tables entièrement identiques,50 alias conservés dont une seule confiance globale non revue abaissée à0,8 ;6229 quarantaines et droits inchangés. Aucun objet Bronze supprimé. Ces migrations ne constituent pas une activation sur l'actif ; profil historique B-R098 non qualifié et aucune rotation de compte actif revendiquée.
 
-AU-09 demeure partiel. Le rejeu d'une seule édition conserve2 sources et15 valeurs imputées ;13 vues Gold publiables restent vides, macro réservée. Au seuil36, aucune série éligible ni prévision ; aucun modèle validé. Deux éditions authentiques corrigées au même grain et leurs droits/provenance restent nécessaires (B-R073). WB120 identique, FEWS refuse robots, ODR différé au budget avec transport inconnu.13 empreintes déclarées gouvernementales de l'archive correspondent à des fixtures synthetic, pas à un nouveau corpus authentique.
+AU-09 reste non reçu, mais deux éditions officielles WB sont désormais acquises : ZIP2026-09-28/2026-10-05 conservés sans modification dans le volume dédié ketrika_wb_source_archives_20261103_candidates. Comparaison offline :94954 grains valides communs,89633 révisions numériques persistant à la précision SQL4 décimales et482 nouveaux grains. Les c_rice sont imputés ; aucune observation réelle ni qualification de modèle déduite. Annotations indépendantes, ingestion avec provenance et rejeu isolé restent à recevoir. Dix admissions natives WB conservées, aucune observation active importée. ODR : dix ConnectError sans document le2026-11-03 ; ancien laboratoire B-R104 non reconstruit, FEWS robots respecté, empreintes gouvernementales synthetic inchangées. L'absence des éditions n'est plus un motif d'arrêt humain : l'implémentation sûre du rejeu peut poursuivre.
 
-Aucune collecte live, performance de marché ou utilisation humaine déduite des tests logiciels. H1–H7 conservés : replay, préparation locale, aucun envoi externe ni collecte privée, revue humaine explicite, budgets stricts, aucun contact de tiers. Le guide VPS demeure préparatoire. Voir [HANDOFF](HANDOFF.md) pour les critères précis et les PR7/8 pour la publication distante.
-
-Reprise du 2026-11-03 : état PARTIAL confirmé, tête distante2031adc avant nouveau
-lot documentaire. Témoin de transport ODR reçu offline (cinq tests), aucune
-nouvelle édition acquise ni importée. Le laboratoire de collecte et son registre
-original ne sont plus retrouvés (B-R104) ; leur continuité est requise avant
-reprise, conformément à ADR151. R0.8 reste la première tâche MUST éligible ;
-R0.9 dépend de sa réception, les capacités aval ne sont pas qualifiées par ces
-tests. Le corpus authentique corrigé demandé dans HANDOFF reste indispensable.
-
-Actualisation2026-11-03 : ADR156 a reçu un diagnostic réel via registre central
-préexistant, distinct de la restauration du laboratoire absent. Dix admissions,
-dix ConnectError, zéro réponse HTTP/document, quota10/10 et arrêts conservés.
-Aucun corpus, provenance ou droit source acquis ; aucune donnée métier importée.
-Sept tests offline verts ne débloquent pas AU-09. Le défaut Actions historique
-n'est plus actuel : PR10 exécute les contrôles et doit obtenir sa réception
-complète avant fusion ; les anciens résultats487adb3 ne couvrent pas ce lot.
+Actions exécute désormais les contrôles ; son ancien défaut de facturation reste historique. Les rouges intermédiaires sont conservés et les réceptions restent attachées à leur contenu exact. Aucun gate R, modèle de marché, collecte live réussie, déploiement ou usage humain déduit des tests logiciels. H1–H7 inchangés ; HANDOFF décrit les actions et formats précis de reprise.

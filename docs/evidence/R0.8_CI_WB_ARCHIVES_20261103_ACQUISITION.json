@@ -1,0 +1,98 @@
+{
+  "finished_at": "2026-11-03T20:28:11.392733+00:00",
+  "receipts": [
+    {
+      "bytes": 1112,
+      "fetched_at": "2026-11-03T20:27:48.280951+00:00",
+      "mime": "application/json; charset=utf-8",
+      "sha256": "978df9e3e5f3741d1abfc8c74ecc4b608112fdfc3d4fc7643528d50b46a3b8b3",
+      "url": "https://microdata.worldbank.org/api/downloads/info/MDG_2021_RTFP_v02_M/360505"
+    },
+    {
+      "bytes": 1112,
+      "fetched_at": "2026-11-03T20:27:52.913330+00:00",
+      "mime": "application/json; charset=utf-8",
+      "sha256": "1df8b8c9523dd3761fcf38099e21cc90599d86b679a1d00dd74d35ff30bbe03f",
+      "url": "https://microdata.worldbank.org/api/downloads/info/MDG_2021_RTFP_v02_M/360780"
+    },
+    {
+      "bytes": 6495672,
+      "fetched_at": "2026-11-03T20:28:05.036334+00:00",
+      "mime": "application/octet-stream",
+      "sha256": "b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d",
+      "url": "https://microdata.worldbank.org/api/downloads/download/MDG_2021_RTFP_v02_M/360505?filename=MDG_RTFP_mkt_2007_2026-09-28.zip"
+    },
+    {
+      "bytes": 6521461,
+      "fetched_at": "2026-11-03T20:28:11.392183+00:00",
+      "mime": "application/octet-stream",
+      "sha256": "43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83",
+      "url": "https://microdata.worldbank.org/api/downloads/download/MDG_2021_RTFP_v02_M/360780?filename=MDG_RTFP_mkt_2007_2026-10-05.zip"
+    }
+  ],
+  "revision_qualified": false,
+  "rights_verified": false,
+  "silver_imported": false,
+  "source_id": "wb_rtfp_mdg",
+  "started_at": "2026-11-03T20:27:42.302280+00:00",
+  "status": "archive_candidates_downloaded_unqualified",
+  "trace": [
+    {
+      "location": null,
+      "status": 404,
+      "url": "https://microdata.worldbank.org/robots.txt"
+    },
+    {
+      "location": null,
+      "status": 200,
+      "url": "https://microdata.worldbank.org/api/downloads/info/MDG_2021_RTFP_v02_M/360505"
+    },
+    {
+      "location": null,
+      "status": 200,
+      "url": "https://microdata.worldbank.org/api/downloads/info/MDG_2021_RTFP_v02_M/360780"
+    },
+    {
+      "location": null,
+      "status": 200,
+      "url": "https://microdata.worldbank.org/api/downloads/download/MDG_2021_RTFP_v02_M/360505?filename=MDG_RTFP_mkt_2007_2026-09-28.zip"
+    },
+    {
+      "location": null,
+      "status": 200,
+      "url": "https://microdata.worldbank.org/api/downloads/download/MDG_2021_RTFP_v02_M/360780?filename=MDG_RTFP_mkt_2007_2026-10-05.zip"
+    }
+  ],
+  "transport_attempts": [
+    {
+      "attempt": 1,
+      "phase": "body_complete",
+      "started_at": "2026-11-03T20:27:42.599285+00:00",
+      "status": 404
+    },
+    {
+      "attempt": 2,
+      "phase": "body_complete",
+      "started_at": "2026-11-03T20:27:47.647395+00:00",
+      "status": 200
+    },
+    {
+      "attempt": 3,
+      "phase": "body_complete",
+      "started_at": "2026-11-03T20:27:52.349048+00:00",
+      "status": 200
+    },
+    {
+      "attempt": 4,
+      "phase": "body_complete",
+      "started_at": "2026-11-03T20:27:57.346888+00:00",
+      "status": 200
+    },
+    {
+      "attempt": 5,
+      "phase": "body_complete",
+      "started_at": "2026-11-03T20:28:05.064437+00:00",
+      "status": 200
+    }
+  ]
+}
