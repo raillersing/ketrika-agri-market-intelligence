@@ -1,0 +1,76 @@
+{
+  "commit": "fa938666371b9f842c2bf7124bcf16252644339b",
+  "source_fingerprint": "6030d790bc19db29da983f69603514c9fb02c61dc5e3c677b232ea85dd975c77",
+  "backend": {
+    "tests": 2754,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "integration_by_layout": 295,
+    "integration_by_marker": 164,
+    "integration_tests": 299
+  },
+  "coverage": {
+    "core": 92.4306625577812,
+    "extraction": 87.76595744680851,
+    "normalize": 88.95582329317268
+  },
+  "frontend": {
+    "tests": 113,
+    "suites": 15
+  },
+  "browser_checks": 26,
+  "browser_duration_seconds": 197.795,
+  "session_readiness_recoveries": [],
+  "rate_budget_waits": [
+    {
+      "stage": "/prices?product=UI_NO_SUCH_PRODUCT&actor=unknown",
+      "remaining": 14,
+      "seconds": 60
+    },
+    {
+      "stage": "/bulletins/e1839844-f9a4-4ba0-a0c0-4472dd164b9f",
+      "remaining": 16,
+      "seconds": 60
+    },
+    {
+      "stage": "/prices",
+      "remaining": 18,
+      "seconds": 60
+    }
+  ],
+  "trace_sha256_only": "a91205c71e7e940434b484c566e77cf730e11e8d5c385e61d962a318ccab75a5",
+  "critical_case_inclusion": {
+    "tests.unit.test_wb_archive": 23,
+    "tests.unit.test_corpus_wb_archive": 11,
+    "tests.unit.test_product_filter_confidence": 12,
+    "tests.integration.test_ambiguous_rice_alias_migration": 6,
+    "tests.unit.test_api_climate": 8,
+    "tests.integration.test_unverified_economic_inputs": 9,
+    "tests.integration.test_application_no_truncate": 11,
+    "tests.integration.test_trade_alias_aggregation": 6,
+    "tests.integration.test_reconcile_products_admission": 27,
+    "tests.unit.test_unverified_pricing_publication": 5,
+    "tests.unit.test_parity_pricing": 5,
+    "tests.integration.test_copilot_gold_only_migration": 3,
+    "tests.unit.test_browser_rate_budget": 10,
+    "tests.unit.test_qualification": 74,
+    "tests.integration.test_quarantine_integration": 7,
+    "tests.integration.test_supersession_cycles": 14,
+    "tests.integration.test_quarantine_normalization": 6,
+    "tests.integration.test_quarantine_typed_admission": 42,
+    "tests.unit.test_quarantine_execution_guards": 30,
+    "tests.unit.test_quarantine_reception_audit": 23,
+    "tests.unit.test_quarantine_bronze_copy": 9,
+    "tests.unit.test_gold_graph_migration": 1,
+    "tests.unit.test_weather_migration": 3,
+    "tests.unit.test_gold_compatibility": 5
+  },
+  "r03_case_inclusion": {
+    "tests.unit.test_qa_manifest": 45,
+    "tests.unit.test_quality_failures": 3,
+    "tests.unit.test_dataset_isolation": 6,
+    "tests.integration.test_db_permissions": 4
+  },
+  "limits": "Software qualification only; raw session traces excluded from exported artefact"
+}
