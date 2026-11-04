@@ -2084,3 +2084,15 @@ anciens codes. Aucun code, origine ou grain n'est inventé pour remplir un filtr
 pointant vers RICE_WHITE_LOCAL. Confiance déjà inférieure, preuve humaine,
 variante de source et autre cible ne sont pas modifiées ; caches commerce
 invalidés uniquement après changement. Aucun droit ni observation modifié.
+
+### Corpus ZIP WB — ADR-162
+
+L'annotation authentique peut adresser directement un original WB ZIP CSV par
+format wb_zip_csv_v1 et path=[member,row,column] : row zéro-indexé hors en-tête,
+column exact, member au nom MDG_RTFP_mkt_2007_YYYY-MM-DD.csv. Bornes8MiB ZIP,
+64MiB décompressés,250000 lignes, un membre sans chiffrement ni lien ; aucun
+fichier extrait. SHA/CRC et schéma tabulaire vérifiés avant lecture de cellule.
+Les nombres CSV sont comparés comme lexèmes décimaux finis, jamais via float ;
+null/chaîne vide ne vaut pas zéro. Le plafond corpus5MiB reste inchangé hors de
+ce format WB validé, total50MiB inchangé. Aucun nouveau format de preuve Gold
+ni parser produit autorisé par cette seule annotation.

@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "path": "tests/fixtures/b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d.zip",
+      "sha256": "b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d",
+      "size_bytes": 6495672,
+      "artifact_type": "wb_zip_csv_v1",
+      "authenticity": "authentic",
+      "annotator": "agent",
+      "human_reviewed": false,
+      "origin": {
+        "kind": "official_acquisition",
+        "reference": "tests/b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d-acquisition.json"
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+        "evidence": "https://data.worldbank.org/summary-terms-of-use",
+        "dataset_evidence": "https://microdata.worldbank.org/metadata/export/8240/json",
+        "attribution": "Andree, B. P. J. (2021). Monthly food price estimates by product and market. MDG_2021_RTFP_v02_M. World Bank Microdata Library. doi:10.48529/2ZH0-JF55. Edition identified by each original filename; context version2026-10-05.",
+        "scope": "publisher open price estimates; no third-party raw prices or endorsement"
+      },
+      "archive_member": "MDG_RTFP_mkt_2007_2026-09-28.csv"
+    },
+    {
+      "path": "tests/fixtures/b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d-annotation.json",
+      "sha256": "32b3e0ceb4e75e8853b5d9f996b7d5a961cfde652e7d0261bd784fd57f28382a",
+      "size_bytes": 57943,
+      "artifact_type": "golden",
+      "authenticity": "authentic",
+      "rights": {
+        "status": "verified",
+        "licence": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+        "evidence": "https://data.worldbank.org/summary-terms-of-use",
+        "dataset_evidence": "https://microdata.worldbank.org/metadata/export/8240/json",
+        "attribution": "Andree, B. P. J. (2021). Monthly food price estimates by product and market. MDG_2021_RTFP_v02_M. World Bank Microdata Library. doi:10.48529/2ZH0-JF55. Edition identified by each original filename; context version2026-10-05.",
+        "scope": "publisher open price estimates; no third-party raw prices or endorsement"
+      },
+      "origin": {
+        "kind": "independent_annotation",
+        "reference": "tests/fixtures/b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d.zip"
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83.zip",
+      "sha256": "43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83",
+      "size_bytes": 6521461,
+      "artifact_type": "wb_zip_csv_v1",
+      "authenticity": "authentic",
+      "annotator": "agent",
+      "human_reviewed": false,
+      "origin": {
+        "kind": "official_acquisition",
+        "reference": "tests/43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83-acquisition.json"
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+        "evidence": "https://data.worldbank.org/summary-terms-of-use",
+        "dataset_evidence": "https://microdata.worldbank.org/metadata/export/8240/json",
+        "attribution": "Andree, B. P. J. (2021). Monthly food price estimates by product and market. MDG_2021_RTFP_v02_M. World Bank Microdata Library. doi:10.48529/2ZH0-JF55. Edition identified by each original filename; context version2026-10-05.",
+        "scope": "publisher open price estimates; no third-party raw prices or endorsement"
+      },
+      "archive_member": "MDG_RTFP_mkt_2007_2026-10-05.csv"
+    },
+    {
+      "path": "tests/fixtures/43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83-annotation.json",
+      "sha256": "b8ba6d0c9628e738137e486c3a8010a6110c900198e00e56205a3434a92905fc",
+      "size_bytes": 57937,
+      "artifact_type": "golden",
+      "authenticity": "authentic",
+      "rights": {
+        "status": "verified",
+        "licence": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+        "evidence": "https://data.worldbank.org/summary-terms-of-use",
+        "dataset_evidence": "https://microdata.worldbank.org/metadata/export/8240/json",
+        "attribution": "Andree, B. P. J. (2021). Monthly food price estimates by product and market. MDG_2021_RTFP_v02_M. World Bank Microdata Library. doi:10.48529/2ZH0-JF55. Edition identified by each original filename; context version2026-10-05.",
+        "scope": "publisher open price estimates; no third-party raw prices or endorsement"
+      },
+      "origin": {
+        "kind": "independent_annotation",
+        "reference": "tests/fixtures/43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83.zip"
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860.json",
+      "sha256": "4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860",
+      "size_bytes": 51241,
+      "artifact_type": "json",
+      "authenticity": "authentic",
+      "annotator": "agent",
+      "human_reviewed": false,
+      "origin": {
+        "kind": "official_acquisition",
+        "reference": "tests/4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860-acquisition.json"
+      },
+      "rights": {
+        "status": "verified",
+        "licence": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+        "evidence": "https://data.worldbank.org/summary-terms-of-use",
+        "dataset_evidence": "https://microdata.worldbank.org/metadata/export/8240/json",
+        "attribution": "Andree, B. P. J. (2021). Monthly food price estimates by product and market. MDG_2021_RTFP_v02_M. World Bank Microdata Library. doi:10.48529/2ZH0-JF55. Edition identified by each original filename; context version2026-10-05.",
+        "scope": "publisher open price estimates; no third-party raw prices or endorsement"
+      }
+    },
+    {
+      "path": "tests/fixtures/4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860-annotation.json",
+      "sha256": "dbba05779d15815d291e52c595f6bef757a40246bcc3ddc6f74a033c25bea496",
+      "size_bytes": 1237,
+      "artifact_type": "golden",
+      "authenticity": "authentic",
+      "rights": {
+        "status": "verified",
+        "licence": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+        "evidence": "https://data.worldbank.org/summary-terms-of-use",
+        "dataset_evidence": "https://microdata.worldbank.org/metadata/export/8240/json",
+        "attribution": "Andree, B. P. J. (2021). Monthly food price estimates by product and market. MDG_2021_RTFP_v02_M. World Bank Microdata Library. doi:10.48529/2ZH0-JF55. Edition identified by each original filename; context version2026-10-05.",
+        "scope": "publisher open price estimates; no third-party raw prices or endorsement"
+      },
+      "origin": {
+        "kind": "independent_annotation",
+        "reference": "tests/fixtures/4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860.json"
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    }
+  ]
+}

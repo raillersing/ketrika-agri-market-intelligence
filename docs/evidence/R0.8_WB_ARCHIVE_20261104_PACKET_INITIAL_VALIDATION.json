@@ -1,0 +1,25 @@
+{
+  "files": 6,
+  "size_bytes": 13185491,
+  "counts": {
+    "authentic": 6
+  },
+  "authentic_documents": [
+    "tests/fixtures/b7af62d6f8825582bcbaea73041fc1c3bbc5932abac5266b54fffdcd38f9a63d.zip",
+    "tests/fixtures/43a59a06bac8609e2f845b6ce8d210b4c66065f8a7d0aa990ba6f74be80dbc83.zip",
+    "tests/fixtures/4a9e254e14c65ca5d3c85d69362f94ca4ccaf46b8e68cfbf88f300df6c122860.json"
+  ],
+  "authentic_annotations": 3,
+  "verified_annotation_cells": 664,
+  "scope": "offline artifact integrity only; not live collection or market performance",
+  "network": {
+    "interfaces": [
+      "lo"
+    ],
+    "external_ipv4_routes": 0
+  },
+  "human_reviewed": false,
+  "silver_imported": false,
+  "rebuild_qualified": false,
+  "numeric_annotations": 60
+}
