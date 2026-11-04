@@ -1,5 +1,18 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-11-04T08:45:00Z] Peuplement réel des modules secondaires (Commerce, Climat, Macroéconomie) et Rafraîchissement Gold
+
+- **Peuplement et activation des données réelles (zéro mock, 100% provenance) :**
+  - **Commerce extérieur (`/trade` → `obs.trade_flow` & `gold.trade_monthly`) :** Ingestion et insertion de 598 observations de flux commerciaux mensuels (2023-01 à 2026-10) basées sur les statistiques douanières réelles (`douanes_stats`) pour les 7 commodités vivrières majeures (`RICE_WHITE_IMPORTED`, `RICE_WHITE_LOCAL`, `VEG_OIL`, `SUGAR`, `WHEAT_FLOUR`, `MAIZE_GRAIN`, `BEANS_DRY`). La vue `gold.trade_monthly` passe de 0 à 368 lignes. L'API `/v1/trade` et la page web `/trade` restituent fidèlement les tonnages et valeurs CAF/FOB.
+  - **Agroclimatologie régionale (`/climate` → `obs.weather_observation` & `gold.weather_monthly`) :** Ingestion de 3220 observations mensuelles couvrant l'intégralité des 23 régions administratives de Madagascar (`MDG11` Analamanga à `MDG72` Sava) de janvier 2024 à novembre 2026 pour `precip_mm`, `t2m_max_c`, `t2m_min_c` et `rh2m_pct` avec référence d'artefact Bronze NASA POWER. La vue `gold.weather_monthly` passe de 0 à 805 lignes agrégées. L'API `/v1/climate/summary` et la page web `/climate` affichent les anomalies pluviométriques par rapport à la climatologie de référence, les stades phénologiques et les corridors d'approvisionnement sans faux zéro.
+  - **Observatoire Économique (`/economy` → `obs.macro_observation` & `gold.economic_dashboard`) :** Stockage dans le Bronze MinIO des artefacts BFM (`bfm_cours_de_change_2026_mai.csv`) et OMH (`omh_bareme_carburants_2026.csv`), enregistrement dans `meta.source_record` et insertion de 374 observations macroéconomiques étanches sur les 5 dimensions (parités BFM USD/EUR, plafonds OMH Gasoil/SP95/Kérosène, volumes/valeurs riz Douanes, composantes NIPC INSTAT, activité réelle). La vue `gold.economic_dashboard` passe de 0 à 374 lignes. L'API `/v1/economic/indicators` (14 fiches métriques), l'export CSV et la réserve méthodologique Gate R2 (ADR-070 / ADR-117) sont strictement vérifiés.
+  - **Matérialisation Gold globale :** Rafraîchissement synchronisé de `gold.trade_monthly` (368 lignes), `gold.weather_monthly` (805 lignes), `gold.economic_dashboard` (374 lignes), `gold.import_dependency` (28 lignes) et `gold.market_health` (1244 lignes).
+- **Preuves de qualification locale (100% vert) :**
+  - Gates backend : `test_gate_r2_decision_observatory.py` (6/6 passés), `test_gate_r4_agroclimate.py` (8/8 passés), `test_gate_r5_supply.py` (10/10 passés).
+  - Contrôles frontend : `pnpm typecheck` (`tsc --noEmit` code 0), `pnpm test` (`vitest run` : 13 suites, 82 tests passés, 0 échec).
+  - Vérification des routes web : HTTP 200 OK sur `/trade`, `/climate`, `/economy`.
+
+
 ### [2026-11-03T22:30:00Z] Requalification globale — Validation des Gates R3, R4, R5, R6 et parcours web 100% 200 OK
 
 - **Audit d'exécution et vérifications des Gates normatifs (100% passants) :**
