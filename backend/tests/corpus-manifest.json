@@ -2285,6 +2285,46 @@
       },
       "annotator": "agent",
       "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/corridors/corridor_freight_benchmarks_2024_2026.csv",
+      "sha256": "297c21dfa3a80273cc682f5ab4f608368b638518bdb1421230e849a4f78d6860",
+      "size_bytes": 8453,
+      "artifact_type": "csv",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_douanes_fixtures.py",
+        "limitations": "Synthetic benchmark for corridor transport friction testing."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/world_benchmarks/world_fob_benchmarks_2024_2026.csv",
+      "sha256": "349a9c23b18030224a50e6a39a101b9059ea692eff22c7460039fd74d7522fce",
+      "size_bytes": 8619,
+      "artifact_type": "csv",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_generator",
+        "reference": "scripts/generate_douanes_fixtures.py",
+        "limitations": "Synthetic benchmark for world commodity fob price parity testing."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
     }
   ]
 }
