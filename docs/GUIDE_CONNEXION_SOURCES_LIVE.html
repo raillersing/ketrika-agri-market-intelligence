@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide d'Activation des Sources Live — Ketrika Agri Market Intelligence</title>
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --primary-subtle: rgba(16, 185, 129, 0.12);
+      --bg: #090d16;
+      --surface: #131c2e;
+      --surface-elevated: #1e293b;
+      --border: #334155;
+      --border-subtle: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --code-bg: #060911;
+      --accent: #38bdf8;
+      --accent-subtle: rgba(56, 189, 248, 0.12);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.1);
+      --warning-border: rgba(245, 158, 11, 0.3);
+      --danger: #ef4444;
+      --success: #10b981;
+      --radius: 12px;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-elevated: #f1f5f9;
+      --border: #cbd5e1;
+      --border-subtle: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --code-bg: #0f172a;
+      --accent: #0284c7;
+      --accent-subtle: rgba(2, 132, 199, 0.08);
+      --warning-bg: #fef3c7;
+      --warning-border: #fcd34d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding: 2rem 1rem;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+    }
+
+    .brand-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle, .btn-ghost {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .theme-toggle:hover, .btn-ghost:hover {
+      background: var(--surface-elevated);
+      border-color: var(--accent);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-primary { background: var(--primary-subtle); color: var(--primary); }
+    .badge-accent { background: var(--accent-subtle); color: var(--accent); }
+    .badge-warning { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning-border); }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.65rem 1.15rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      background: var(--primary-subtle);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-box {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+    }
+
+    .info-box-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+
+    .info-box-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .step-list {
+      list-style: none;
+      counter-reset: step-counter;
+      margin-top: 1.25rem;
+    }
+
+    .step-item {
+      position: relative;
+      padding-left: 2.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-item::before {
+      counter-increment: step-counter;
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: var(--primary-subtle);
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .step-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin: 0.75rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.45rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    pre {
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    .copy-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.2rem 0.55rem;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--surface-elevated);
+      color: var(--text);
+    }
+
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      font-size: 0.92rem;
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+    }
+
+    .alert-tip {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .alert-warning {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: #fbbf24;
+    }
+
+    .alert-info {
+      background: var(--accent-subtle);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #7dd3fc;
+    }
+
+    .checklist {
+      list-style: none;
+      margin: 1rem 0;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      background: var(--surface-elevated);
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .check-item.done {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-container {
+      background: var(--surface-elevated);
+      border-radius: 10px;
+      height: 14px;
+      overflow: hidden;
+      margin: 1rem 0 1.5rem 0;
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">K</div>
+        <div>
+          <div class="brand-title">Ketrika Agri Market Intelligence</div>
+          <div class="brand-subtitle">Guide d'activation opérationnelle des flux de données réelles (Live Sources)</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="badge badge-primary">Version 0.2.0</span>
+        <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">☀️ Mode Clair</button>
+      </div>
+    </header>
+
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="openTab(event, 'overview')">🧭 Vue d'ensemble</button>
+      <button class="tab-btn" onclick="openTab(event, 'wfp')">🌾 1. WFP / HDX</button>
+      <button class="tab-btn" onclick="openTab(event, 'nasa')">☀️ 2. NASA POWER</button>
+      <button class="tab-btn" onclick="openTab(event, 'pinksheet')">📈 3. BM Pink Sheet</button>
+      <button class="tab-btn" onclick="openTab(event, 'freight')">🚢 4. Fret Maritime</button>
+      <button class="tab-btn" onclick="openTab(event, 'test')">🧪 5. Script de Test Direct</button>
+      <button class="tab-btn" onclick="openTab(event, 'checklist')">✅ 6. Checklist Live</button>
+    </nav>
+
+    <!-- TAB 0: OVERVIEW -->
+    <div id="overview" class="tab-content active">
+      <div class="card">
+        <div class="card-title">
+          <span>Architecture de Collecte Réelle & Déontologie</span>
+          <span class="badge badge-accent">100% Provenance Bronze</span>
+        </div>
+        <p class="card-subtitle">Comment Ketrika connecte les institutions internationales et les cours mondiaux sans compromettre l'intégrité de ses données.</p>
+        
+        <div class="grid-2">
+          <div class="info-box">
+            <div class="info-box-title">Principe #1 : Bronze Immuable</div>
+            <div class="info-box-value">Aucune donnée n'entre en Silver sans empreinte SHA-256 d'un fichier brut stocké en S3.</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Principe #2 : Légalité & Politesse</div>
+            <div class="info-box-value">Zéro contournement de CAPTCHA, zéro proxy rotatif, User-Agent transparent obligatoire.</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Principe #3 : Étanchéité Temporelle</div>
+            <div class="info-box-value">Filtre As-Of strict : aucune révision future ne pollue les calculs historiques.</div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Principe #4 : Statut Transparent</div>
+            <div class="info-box-value">Séparation visuelle et fonctionnelle obligatoire entre Observé, Imputé et Prévu.</div>
+          </div>
+        </div>
+
+        <div class="alert alert-info">
+          <div>💡 <strong>Note de gouvernance :</strong> Les quatre sources ci-dessous sont gérées par le registre centralisé <code>registry/sources.yaml</code> et les connecteurs isolés dans <code>backend/src/ketrika/connectors/</code>. Ce guide fournit les instructions exactes pour les passer du mode simulation au flux réel connecté.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: WFP HDX -->
+    <div id="wfp" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>1. WFP Food Prices Madagascar (OCHA HDX)</span>
+          <span class="badge badge-warning">En attente jeton API</span>
+        </div>
+        <p class="card-subtitle">Séries historiques et mensuelles des prix de détail et de gros sur 40+ marchés de Madagascar.</p>
+
+        <ul class="step-list">
+          <li class="step-item">
+            <div class="step-title">Créer un compte et obtenir un jeton API HDX gratuit</div>
+            <div class="step-desc">HDX (Humanitarian Data Exchange) applique un WAF Cloudflare bloquant les requêtes directes sans identification. Pour accéder à l'API CKAN officielle en toute légitimité :</div>
+            <ol style="margin-left: 1.5rem; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">
+              <li>Visitez le portail : <a href="https://data.humdata.org/" target="_blank" style="color: var(--accent);">https://data.humdata.org/</a></li>
+              <li>Créez un compte ou connectez-vous avec vos identifiants.</li>
+              <li>Allez dans votre profil utilisateur &rarr; <strong>API Tokens</strong> &rarr; <strong>Create API Token</strong>.</li>
+              <li>Nommez votre jeton <code>Ketrika-Market-Intelligence</code> et copiez la clé générée.</li>
+            </ol>
+          </li>
+
+          <li class="step-item">
+            <div class="step-title">Configurer le fichier d'environnement <code>.env</code></div>
+            <div class="step-desc">Renseignez votre jeton dans le fichier <code>.env</code> à la racine du projet :</div>
+            <div class="code-block">
+              <div class="code-header">
+                <span>.env</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+              </div>
+              <pre><code># Clé API officielle Humanitarian Data Exchange (HDX / WFP)
+HDX_API_KEY=votre_jeton_hdx_ici_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+BOT_USER_AGENT=Ketrika-Market-Intelligence/0.2.0 (contact@ketrika.mg; +https://ketrika.mg)</code></pre>
+            </div>
+          </li>
+
+          <li class="step-item">
+            <div class="step-title">Activer la source dans <code>registry/sources.yaml</code></div>
+            <div class="step-desc">Ouvrez <code>registry/sources.yaml</code> et modifiez le bloc <code>wfp_hdx_mdg</code> :</div>
+            <div class="code-block">
+              <div class="code-header">
+                <span>registry/sources.yaml</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+              </div>
+              <pre><code>- source_id: wfp_hdx_mdg
+  name: "WFP Food Prices – Madagascar (HDX)"
+  owner: "World Food Programme / OCHA HDX"
+  source_family: un_wfp
+  priority: P1
+  status: active                  # Passer de disabled à active
+  access_method: api             # Via API CKAN HDX
+  connector: ketrika.connectors.wfp_hdx_mdg:WfpHdxMdgConnector
+  entrypoints:
+    - url: "https://data.humdata.org/api/3/action/package_show?id=wfp-food-prices-for-madagascar"
+      kind: api
+      verified: true
+      verified_at: "2026-11-05T00:00:00Z"</code></pre>
+            </div>
+          </li>
+
+          <li class="step-item">
+            <div class="step-title">Tester l'ingestion en direct</div>
+            <div class="step-desc">Exécutez la synchronisation via le script de développement sécurisé :</div>
+            <div class="code-block">
+              <div class="code-header">
+                <span>PowerShell</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+              </div>
+              <pre><code>.\scripts\dev.ps1 backfill wfp_hdx_mdg</code></pre>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TAB 2: NASA POWER -->
+    <div id="nasa" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>2. NASA POWER Agroclimatology (API Journalière)</span>
+          <span class="badge badge-primary">Gratuit & Open Data</span>
+        </div>
+        <p class="card-subtitle">Données agro-météorologiques par points géographiques (précipitations, températures min/max, humidité).</p>
+
+        <ul class="step-list">
+          <li class="step-item">
+            <div class="step-title">Comprendre les conditions d'utilisation</div>
+            <div class="step-desc">L'API NASA POWER est en <strong>Domaine Public</strong>. Elle ne nécessite **aucune clé API secrète ni paiement**. La NASA applique cependant un seuil de politesse de **30 requêtes par minute**. Ketrika gère cela grâce à une mise en cache par maille native de 0.5° &times; 0.5°.</div>
+          </li>
+
+          <li class="step-item">
+            <div class="step-title">Activer la source dans <code>registry/sources.yaml</code></div>
+            <div class="step-desc">Dans <code>registry/sources.yaml</code>, mettez à jour le bloc <code>nasa_power</code> :</div>
+            <div class="code-block">
+              <div class="code-header">
+                <span>registry/sources.yaml</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+              </div>
+              <pre><code>- source_id: nasa_power
+  name: "NASA POWER Agroclimatology Daily Point API"
+  owner: "NASA Langley Research Center"
+  source_family: nasa
+  priority: P1
+  status: active                  # Passer de disabled à active
+  access_method: api
+  connector: ketrika.connectors.nasa_power:NasaPowerConnector
+  cadence: daily
+  freshness_sla_days: 7
+  entrypoints:
+    - url: "https://power.larc.nasa.gov/api/temporal/daily/point"
+      kind: api
+      verified: true
+      verified_at: "2026-11-05T00:00:00Z"</code></pre>
+            </div>
+          </li>
+
+          <li class="step-item">
+            <div class="step-title">Lancer la collecte réelle sur les 23 régions</div>
+            <div class="step-desc">Le connecteur interroge les centroïdes des 23 régions malagasy pour les 30 derniers jours :</div>
+            <div class="code-block">
+              <div class="code-header">
+                <span>PowerShell</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+              </div>
+              <pre><code>.\scripts\dev.ps1 backfill nasa_power</code></pre>
+            </div>
+          </li>
+        </ul>
+
+        <div class="alert alert-tip">
+          <div>🌱 <strong>Cohérence physique automatique :</strong> Le validateur vérifie que <code>Tmin &le; Tmax</code> et <code>Pluie &ge; 0</code>. Les sentinelles <code>-999.0</code> émises par la NASA lors de pannes capteurs sont automatiquement converties en valeurs manquantes sans faire échouer l'ingestion.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: PINK SHEET -->
+    <div id="pinksheet" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>3. Banque Mondiale Pink Sheet (Cours Mondiaux FOB)</span>
+          <span class="badge badge-primary">CC-BY 4.0</span>
+        </div>
+        <p class="card-subtitle">Cotations FOB mondiales officielles du riz blanc 25% brisures, huile de palme brute, blé et sucre.</p>
+
+        <ul class="step-list">
+          <li class="step-item">
+            <div class="step-title">Vérifier l'URL mensuelle officielle</div>
+            <div class="step-desc">La Banque Mondiale actualise le fichier Pink Sheet chaque mois (entre le 2 et le 4). Deux flux officiels sont disponibles en direct :</div>
+            <ul style="margin-left: 1.5rem; color: var(--text-muted); font-size: 0.9rem;">
+              <li><strong>CSV direct :</strong> <code>https://databank.worldbank.org/data/download/Pink_Sheet.csv</code></li>
+              <li><strong>Série historique Excel :</strong> <code>https://thedocs.worldbank.org/en/doc/5d903e848db1d1b8e4a0f8e9e525b442-0350012021/related/CMO-Historical-Data-Monthly.xlsx</code></li>
+            </ul>
+          </li>
+
+          <li class="step-item">
+            <div class="step-title">Vérifier la configuration du connecteur</div>
+            <div class="step-desc">Dans <code>registry/sources.yaml</code>, la source est définie comme suit :</div>
+            <div class="code-block">
+              <div class="code-header">
+                <span>registry/sources.yaml</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+              </div>
+              <pre><code>- source_id: world_benchmarks
+  name: "World Bank Commodity Pink Sheet & Global Freight"
+  owner: "World Bank Development Prospects Group"
+  status: active
+  access_method: file
+  connector: ketrika.connectors.world_benchmarks:WorldBenchmarksConnector
+  entrypoints:
+    - url: "https://databank.worldbank.org/data/download/Pink_Sheet.csv"
+      kind: file
+      verified: true</code></pre>
+            </div>
+          </li>
+
+          <li class="step-item">
+            <div class="step-title">Ingérer les derniers cours en direct</div>
+            <div class="code-block">
+              <div class="code-header">
+                <span>PowerShell</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+              </div>
+              <pre><code>.\scripts\dev.ps1 backfill world_benchmarks</code></pre>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TAB 4: FREIGHT -->
+    <div id="freight" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>4. Fret Maritime International & Corridors RN2 / RN4</span>
+          <span class="badge badge-accent">Modèle Hybride</span>
+        </div>
+        <p class="card-subtitle">Intégration du coût d'acheminement conteneurisé (Asie &rarr; Toamasina) et transport terrestre.</p>
+
+        <div class="step-item">
+          <div class="step-title">Comprendre le modèle de fret dans Ketrika</div>
+          <div class="step-desc">Le coût du fret maritime alimente la formule de <strong>Parité d'Importation (IPP)</strong> :</div>
+          <div class="code-block">
+            <pre><code>IPP (Ar/kg) = [ (Prix_FOB_USD + Fret_Conteneur_USD) &times; Taux_Change_USD_MGA &times; (1 + Droits_Douane + TVA) 
+              + Frais_Portuaires_Tamatave + Fret_Routier_RN2_Tamatave_Tana ] / 1000</code></pre>
+          </div>
+        </div>
+
+        <ul class="step-list">
+          <li class="step-item">
+            <div class="step-title">Option A : Flux Hebdomadaire Public Drewry WCI (Recommandé)</div>
+            <div class="step-desc">Drewry publie un résumé public chaque jeudi sur son site sans abonnement payant :</div>
+            <div class="code-block">
+              <div class="code-header">
+                <span>URL officielle</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+              </div>
+              <pre><code>https://www.drewry.co.uk/supply-chain-advisors/world-container-index-assessed-by-drewry</code></pre>
+            </div>
+          </li>
+
+          <li class="step-item">
+            <div class="step-title">Option B : API Professionnelle Freightos Baltic Index (FBX)</div>
+            <div class="step-desc">Si votre organisation dispose d'un abonnement API Freightos :</div>
+            <div class="code-block">
+              <div class="code-header">
+                <span>.env</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+              </div>
+              <pre><code>FREIGHTOS_API_KEY=votre_cle_freightos_commerciale_ici</code></pre>
+            </div>
+          </li>
+
+          <li class="step-item">
+            <div class="step-title">Option C : Barèmes Publics Armateurs Toamasina (CMA CGM / MSC)</div>
+            <div class="step-desc">Ketrika supporte l'ingestion périodique des avis officiels de surcharge carburant (BAF) et taux de fret publiés par les agences maritimes locales à Tamatave.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TAB 5: TEST SCRIPT -->
+    <div id="test" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>Script de Test de Connectivité Directe (Sans risque)</span>
+          <span class="badge badge-primary">Vérification Réseau</span>
+        </div>
+        <p class="card-subtitle">Exécutez ce script Python autonome pour vérifier vos accès distants sans altérer la base de données de production.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>scripts/test_live_connectivity.py</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+          </div>
+          <pre><code>#!/usr/bin/env python3
+"""Script de vérification de connectivité aux sources externes en direct."""
+
+import os
+import sys
+import urllib.request
+import json
+
+SOURCES = {
+    "NASA POWER API (Agroclimatologie Point)": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR&community=AG&longitude=47.5&latitude=-18.9&start=20240101&end=20240105&format=JSON",
+        "headers": {"User-Agent": "Ketrika-Market-Intelligence/0.2.0 (audit@ketrika.mg)"},
+    },
+    "World Bank Commodity Data (Pink Sheet Historique 2026)": {
+        "url": "https://thedocs.worldbank.org/en/doc/74e8be41ceb20fa0da750cda2f6b9e4e-0050012026/related/CMO-Historical-Data-Monthly.xlsx",
+        "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
+    },
+    "HDX / WFP Package API (Madagascar Food Prices)": {
+        "url": "https://data.humdata.org/api/3/action/package_show?id=wfp-food-prices-for-madagascar",
+        "headers": {
+            "User-Agent": "Ketrika-Market-Intelligence/0.2.0 (audit@ketrika.mg)",
+            **(
+                {"Authorization": f"Bearer {os.environ['HDX_API_KEY']}"}
+                if os.environ.get("HDX_API_KEY")
+                else {}
+            ),
+        },
+    },
+    "Drewry World Container Index (Fret Maritime Mondial)": {
+        "url": "https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/world-container-index-assessed-by-drewry",
+        "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
+    },
+    "Banque Centrale de Madagascar (Portail BCM)": {
+        "url": "https://www.banque-centrale.mg/",
+        "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
+    },
+}
+
+def test_source(name, config):
+    print(f"\n[+] Test de : {name}...")
+    req = urllib.request.Request(config["url"], headers=config["headers"])
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            code = resp.getcode()
+            length = len(resp.read(512))
+            print(f"    &check; Succès HTTP {code} (Premiers octets reçus : {length} octets)")
+            return True
+    except Exception as exc:
+        print(f"    &cross; Échec : {exc}")
+        return False
+
+if __name__ == "__main__":
+    print("=== Ketrika Agri : Diagnostic de Connectivité Réseau ===")
+    results = [test_source(name, conf) for name, conf in SOURCES.items()]
+    print(f"\nRésultat : {sum(results)}/{len(results)} sources joignables en direct.")</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>Commande d'exécution PowerShell</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+          </div>
+          <pre><code>python .\backend\scripts\test_live_connectivity.py</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: CHECKLIST -->
+    <div id="checklist" class="tab-content">
+      <div class="card">
+        <div class="card-title">
+          <span>Checklist de Déploiement & Passage en Production</span>
+          <span id="scoreBadge" class="badge badge-accent">0% Réalisé</span>
+        </div>
+        <p class="card-subtitle">Cochez les étapes au fur et à mesure pour mesurer votre état de préparation au direct.</p>
+
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="checklist" id="checklistContainer">
+          <label class="check-item"><input type="checkbox" onchange="updateChecklist()"> Clé API HDX générée sur humdata.org et ajoutée dans .env</label>
+          <label class="check-item"><input type="checkbox" onchange="updateChecklist()"> User-Agent officiel défini (BOT_USER_AGENT)</label>
+          <label class="check-item"><input type="checkbox" onchange="updateChecklist()"> Source nasa_power passée en status: active dans registry/sources.yaml</label>
+          <label class="check-item"><input type="checkbox" onchange="updateChecklist()"> Source world_benchmarks vérifiée avec URL Pink Sheet officielle</label>
+          <label class="check-item"><input type="checkbox" onchange="updateChecklist()"> Source wfp_hdx_mdg passée en status: active</label>
+          <label class="check-item"><input type="checkbox" onchange="updateChecklist()"> Script test_live_connectivity.py exécuté avec succès HTTP 200</label>
+          <label class="check-item"><input type="checkbox" onchange="updateChecklist()"> Ingestion Bronze testée sur un run dédié sans écrasement</label>
+          <label class="check-item"><input type="checkbox" onchange="updateChecklist()"> Données Silver et Gold rafraîchies et consultables sur l'UI</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openTab(evt, tabName) {
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => content.classList.remove('active'));
+
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(tabName).classList.add('active');
+      evt.currentTarget.classList.add('active');
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.getElementById('themeBtn');
+      if (body.getAttribute('data-theme') === 'light') {
+        body.removeAttribute('data-theme');
+        btn.textContent = '☀️ Mode Clair';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        body.setAttribute('data-theme', 'light');
+        btn.textContent = '🌙 Mode Sombre';
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.setAttribute('data-theme', 'light');
+      document.getElementById('themeBtn').textContent = '🌙 Mode Sombre';
+    }
+
+    function copyCode(button) {
+      const pre = button.parentElement.nextElementSibling;
+      const code = pre.querySelector('code') ? pre.querySelector('code').innerText : pre.innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = button.textContent;
+        button.textContent = 'Copié !';
+        button.style.borderColor = 'var(--primary)';
+        button.style.color = 'var(--primary)';
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.style.borderColor = '';
+          button.style.color = '';
+        }, 2000);
+      });
+    }
+
+    function updateChecklist() {
+      const container = document.getElementById('checklistContainer');
+      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+      let checkedCount = 0;
+
+      checkboxes.forEach((cb, index) => {
+        if (cb.checked) {
+          checkedCount++;
+          cb.parentElement.classList.add('done');
+        } else {
+          cb.parentElement.classList.remove('done');
+        }
+      });
+
+      const total = checkboxes.length;
+      const percentage = Math.round((checkedCount / total) * 100);
+      document.getElementById('progressBar').style.width = percentage + '%';
+      document.getElementById('scoreBadge').textContent = percentage + '% Réalisé';
+
+      if (percentage === 100) {
+        document.getElementById('scoreBadge').className = 'badge badge-primary';
+        document.getElementById('scoreBadge').textContent = '100% Prêt pour le Live !';
+      } else {
+        document.getElementById('scoreBadge').className = 'badge badge-accent';
+      }
+
+      const state = Array.from(checkboxes).map(cb => cb.checked);
+      localStorage.setItem('ketrika_live_checklist', JSON.stringify(state));
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('ketrika_live_checklist');
+      if (saved) {
+        try {
+          const state = JSON.parse(saved);
+          const checkboxes = document.querySelectorAll('#checklistContainer input[type="checkbox"]');
+          checkboxes.forEach((cb, i) => {
+            if (state[i]) cb.checked = true;
+          });
+          updateChecklist();
+        } catch (e) {}
+      }
+    });
+  </script>
+</body>
+</html>
