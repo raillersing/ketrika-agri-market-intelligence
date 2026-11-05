@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from ketrika.connectors.bfm_public import Connector as BfmPublicConnector
 from ketrika.connectors.chirps import ChirpsConnector
+from ketrika.connectors.corridor_friction import CorridorFrictionConnector
 from ketrika.connectors.douanes_stats import DouanesStatsConnector
 from ketrika.connectors.dummy_csv import DummyCsvConnector
 from ketrika.connectors.ecmwf_open import EcmwfOpenConnector
@@ -23,6 +24,7 @@ from ketrika.connectors.nasa_power import NasaPowerConnector
 from ketrika.connectors.omh_public import Connector as OmhPublicConnector
 from ketrika.connectors.wb_rtfp_mdg import WbRtfpMdgConnector
 from ketrika.connectors.wfp_hdx_mdg import WfpHdxMdgConnector
+from ketrika.connectors.world_benchmarks import WorldBenchmarksConnector
 
 if TYPE_CHECKING:
     from ketrika.connectors.base import Connector
@@ -48,6 +50,8 @@ _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "mincc_ppn": MinccPpnConnector,
     "douanes_stats": DouanesStatsConnector,
     "market_supply": MarketSupplyConnector,
+    "world_benchmarks": WorldBenchmarksConnector,
+    "corridor_friction": CorridorFrictionConnector,
 }
 
 

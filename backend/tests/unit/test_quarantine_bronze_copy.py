@@ -7,8 +7,12 @@ from pathlib import Path
 
 import pytest
 
+_script_path = Path("/workspace/backend/scripts/copy_quarantine_bronze.py")
+if not _script_path.exists():
+    _script_path = Path(__file__).resolve().parents[2] / "scripts" / "copy_quarantine_bronze.py"
+
 spec = importlib.util.spec_from_file_location(
-    "quarantine_bronze_copy", Path("/workspace/backend/scripts/copy_quarantine_bronze.py")
+    "quarantine_bronze_copy", _script_path
 )
 assert spec is not None and spec.loader is not None
 copy = importlib.util.module_from_spec(spec)

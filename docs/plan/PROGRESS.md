@@ -1,5 +1,14 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-11-05T01:30:00Z] Lot 1 : ADR-164 & Contrats de Données Alternatives Exogènes (Parité, Phénologie, Corridors)
+
+- **Mini-plan Lot 1 (ADR-164 & Contrats normatifs) :**
+  1. Formalisation d'ADR-164 dans `docs/plan/DECISIONS.md` (Parité FOB/Fret avec lag maritime déterministe $L=1..2$ mois, Stress agroclimatique phénologique pondéré, Friction des corridors routiers).
+  2. Spécification normative de la section §27 dans `docs/plan/SPECS.md` (catégories `obs.macro_observation`, tables Gold, anti-leakage strict).
+  3. Intégrité des principes AGENTS.md : Zéro mock, Bronze SHA-256 immuable, `observed_or_imputed='forecast'`, étanchéité as-of.
+  4. Réception documentaire et validation de conformité des contrats.
+- **Réception Lot 1 :** Validé sans rupture de compatibilité. Prochain lot éligible : Lot 2 (Connecteurs & Ingestion Bronze des flux alternatifs).
+
 ### [2026-11-04T08:45:00Z] Peuplement réel des modules secondaires (Commerce, Climat, Macroéconomie) et Rafraîchissement Gold
 
 - **Peuplement et activation des données réelles (zéro mock, 100% provenance) :**

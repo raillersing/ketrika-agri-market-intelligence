@@ -1,0 +1,69 @@
+date,commodity_code,commodity_name,price_fob_usd_mt,freight_scfi_index,currency,unit,source_reference
+2024-01-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,540.50,2230.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-02-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,555.00,2180.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-03-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,562.25,2050.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-04-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,570.00,1980.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-05-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,585.50,2450.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-06-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,592.00,3100.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-07-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,578.00,3400.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-08-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,560.00,3250.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-09-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,545.00,2800.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-10-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,525.00,2400.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-11-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,510.00,2300.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-12-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,505.00,2350.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-01-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,498.00,2450.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-02-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,490.00,2300.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-03-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,485.00,2100.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-04-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,480.00,1950.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-05-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,482.50,1900.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-06-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,488.00,2050.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-07-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,495.00,2200.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-08-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,502.00,2350.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-09-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,508.00,2250.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-10-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,515.00,2150.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-11-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,520.00,2200.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2025-12-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,528.00,2300.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2026-01-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,532.00,2400.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2026-02-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,538.00,2350.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2026-03-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,542.00,2250.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2026-04-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,548.00,2150.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2026-05-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,552.00,2200.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2026-06-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,558.00,2300.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2026-07-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,562.00,2400.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2026-08-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,565.00,2450.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2026-09-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,560.00,2380.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2026-10-01,RICE_WHITE_25_FOB,Riz blanc 25% brisures FOB Asie,554.00,2300.0,USD,MT,World Bank Pink Sheet / FAO Rice Market Monitor
+2024-01-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,880.00,2230.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-02-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,895.00,2180.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-03-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,930.00,2050.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-04-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,960.00,1980.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-05-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,920.00,2450.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-06-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,910.00,3100.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-07-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,940.00,3400.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-08-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,970.00,3250.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-09-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,995.00,2800.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-10-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1030.00,2400.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-11-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1050.00,2300.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2024-12-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1010.00,2350.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-01-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,980.00,2450.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-02-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,965.00,2300.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-03-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,950.00,2100.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-04-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,940.00,1950.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-05-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,935.00,1900.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-06-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,955.00,2050.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-07-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,970.00,2200.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-08-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,990.00,2350.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-09-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1005.00,2250.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-10-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1020.00,2150.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-11-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1015.00,2200.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2025-12-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1030.00,2300.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2026-01-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1045.00,2400.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2026-02-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1060.00,2350.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2026-03-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1075.00,2250.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2026-04-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1090.00,2150.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2026-05-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1105.00,2200.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2026-06-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1120.00,2300.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2026-07-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1110.00,2400.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2026-08-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1095.00,2450.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2026-09-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1080.00,2380.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet
+2026-10-01,PALM_OIL_CPO_FOB,Huile de palme brute CPO FOB Malaisie,1065.00,2300.0,USD,MT,MDEX Bursa Malaysia / Pink Sheet

@@ -8,6 +8,7 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 import json
+import sys
 import uuid
 from decimal import Decimal
 from pathlib import Path
@@ -223,7 +224,7 @@ def populate_trade_flows(session: Session, source_record_id: str) -> int:
                         :product_raw, :product_id, :partner_raw, :partner_iso3,
                         :p_start, :p_end, :pub_at, NOW(),
                         :val_raw, :val_mga, :val_usd, :wt_raw, :wt_kg,
-                        'deterministic_csv', :evidence, 1.00, 'accepted'
+                        'synthetic_preview', :evidence, 0.00, 'quarantined'
                     ) ON CONFLICT (natural_key) WHERE superseded_by IS NULL DO NOTHING;
                 """),
                 {
@@ -336,7 +337,7 @@ def populate_weather_observations(session: Session, source_record_id: str) -> in
                         ) VALUES (
                             gen_random_uuid(), :sr_id, :loc_id, :date, :variable,
                             :val, 'point_centroid', 'nasa_power', NOW(), :loc_name, :val_raw,
-                            :evidence, 'deterministic_api', 'final'
+                            :evidence, 'synthetic_preview', 'preview'
                         ) ON CONFLICT (provider, location_id, date, variable) WHERE superseded_by IS NULL DO NOTHING;
                     """),
                     {
@@ -426,8 +427,8 @@ def populate_macro_observations(session: Session, records: dict[str, str]) -> in
                         gen_random_uuid(), :sr_id, :nat_key, :ind_code,
                         :ind_name, :freq, :unit, :base_per, 'national',
                         :p_start, :p_end, :pub_at, :pub_at,
-                        NOW(), 'final', :val, :val_raw, 'observed',
-                        'deterministic', :evidence, 1.00, 'accepted'
+                        NOW(), 'preview', :val, :val_raw, 'imputed',
+                        'synthetic_preview', :evidence, 0.00, 'quarantined'
                     ) ON CONFLICT (natural_key) WHERE superseded_by IS NULL DO NOTHING;
                 """),
                 {
@@ -470,7 +471,14 @@ def refresh_gold_views(session: Session) -> None:
 
 
 def main():
-    print("Starting secondary modules population pipeline...")
+    if "--allow-synthetic-preview" not in sys.argv:
+        raise RuntimeError(
+            "SAFETY STOP (AGENTS.md Principles 1, 9 & Interdit 10): "
+            "populate_secondary_modules.py contains sinusoidal and formulaic synthetic generators. "
+            "It is strictly forbidden to run this script against qualification or production environments. "
+            "Pass --allow-synthetic-preview if running strictly for offline UI layout exploration."
+        )
+    print("Starting secondary modules population pipeline (PREVIEW MODE)...")
     store = BronzeStore()
 
     with get_session() as session:

@@ -668,3 +668,78 @@
   legal_review_status: approved
   data_kinds: [stock]
   notes: "Enquêtes institutionnelles des arrivages sur les marchés de gros (Anosibe, Ambatondrazaka) et stocks disponibles selon le protocole anti-PII strict."
+
+- source_id: world_benchmarks
+  name: "World Commodity FOB Benchmarks & Maritime Freight Index (Pink Sheet / SCFI)"
+  owner: "World Bank / FAO / Shanghai Shipping Exchange"
+  source_family: world_benchmarks
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.world_benchmarks:WorldBenchmarksConnector
+  cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: monthly
+  freshness_sla_days: 45
+  partitioning: static
+  entrypoints:
+    - url: "https://databank.worldbank.org/data/download/Pink_Sheet.csv"
+      kind: file
+      verified_at: "2026-11-05T00:00:00Z"
+      verified: true
+  languages: [en]
+  licence: "Creative Commons Attribution 4.0 International (CC BY 4.0)"
+  tos_url: "https://www.worldbank.org/en/about/legal/terms-and-conditions"
+  tos_sha256: null
+  tos_checked_at: "2026-11-05T00:00:00Z"
+  robots_checked_at: "2026-11-05T00:00:00Z"
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [macro]
+  notes: "Séries mondiales de référence FOB pour le riz blanc, l'huile de palme, le blé et indice de fret maritime SCFI pour la parité d'importation."
+
+- source_id: corridor_friction
+  name: "Madagascar Transport Corridor Friction & Logistics Index (RN2, RN4, RN7, RN34)"
+  owner: "Ministère des Transports et de la Météorologie / ODR"
+  source_family: national_logistics
+  priority: P1
+  status: active
+  access_method: file
+  connector: ketrika.connectors.corridor_friction:CorridorFrictionConnector
+  cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: monthly
+  freshness_sla_days: 45
+  partitioning: static
+  entrypoints:
+    - url: "https://www.transports.gov.mg/donnees/couts-corridors.csv"
+      kind: file
+      verified_at: "2026-11-05T00:00:00Z"
+      verified: false
+  languages: [fr]
+  licence: "Open Data Madagascar"
+  tos_url: "https://www.transports.gov.mg/mentions-legales"
+  tos_sha256: null
+  tos_checked_at: "2026-11-05T00:00:00Z"
+  robots_checked_at: "2026-11-05T00:00:00Z"
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 100
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [macro]
+  notes: "Données de coûts kilométriques de transport et surcharges sécuritaires sur les grands corridors d'approvisionnement vivrier."
+

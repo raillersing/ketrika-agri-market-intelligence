@@ -2110,3 +2110,32 @@ membre, c_rice positif fini, imputed/point/unknown. Produit/unité viennent du
 contexte Rice(local)/KG de cette ligne rice, sans defaults. Parser JSON2.0.0
 inchangé ; aucune généralisation de source ou région. Rebuild et gates savent
 lire les ZIP originaux, sans réponse HTTP ni objet Bronze dérivé fabriqué.
+
+### 27. Données Alternatives Exogènes & Modélisation Prédictive Causale — ADR-164
+
+#### 27.1 Contrats d'ingestion des flux alternatifs (Bronze & Silver)
+1. **Cours mondiaux FOB & Fret maritime :**
+   - Ingestion dans `obs.macro_observation` sous catégories :
+     - `world_commodity_fob` : Séries réelles des cours mondiaux de référence (Riz blanc 25% Inde/Pakistan, Huile de palme brute MDEX, Blé US HRW/mer Noire, Sucre brut n°11). Unités : `USD/tonne` ou `USD/kg`.
+     - `freight_index` : Indices de fret maritime conteneurs et vraquiers (SCFI, Baltic Dry Index).
+   - Chaque enregistrement est rattaché à un objet Bronze MinIO immuable avec hash SHA-256 via `meta.source_record`.
+2. **Décalage maritime déterministe (Maritime Transit Lag) :**
+   - Le délai de mer et d'acheminement douanier depuis l'Asie du Sud/Sud-Est vers le Grand Port de Toamasina est fixé à $L \in [1, 2]$ mois (45 à 60 jours calendaires).
+   - Dans le feature store as-of, le cours mondial au cutoff $t$ sert de prédicteur direct du coût d'importation rendu pour les échéances prédictives $t+1$ et $t+2$.
+3. **Pondération agroclimatique phénologique :**
+   - Croisement des observations météo (`obs.weather_observation`) et du calendrier cultural officiel (`taxonomy/crop_calendar.yaml`).
+   - Indice de stress hydrique phénologique $\text{AgroStress}_{r, c, t}$ calculé à partir des anomalies pluviométriques mensuelles pondérées par stade :
+     - Semis / Repiquage : $w = 0.20$
+     - Tallage : $w = 0.25$
+     - Floraison / Épiaison : $w = 0.50$ (stade critique d'avortement des grains)
+     - Maturation : $w = 0.05$
+4. **Friction spatiale et coût de transfert des corridors :**
+   - Modélisation du coût de transfert $C_{ij, t}$ entre régions d'expédition $i$ et Antananarivo $j$ sur les 4 axes structurants (RN2 Toamasina, RN4 Mahajanga/Marovoay, RN7 Fianarantsoa/Toliara, RN34 Bongolava/Menabe).
+   - Décomposition : $\text{BaseTransport}(Gasoil_t) \times (1 + \text{FrictionFactor}_{ij, t})$.
+
+#### 27.2 Moteur Prédictif Causal Multivarié
+- Module `ketrika.ml.causal_forecast` combinant modèle structurel vectoriel / SARIMAX avec covariables exogènes décalées et régression non-linéaire résiduelle (LightGBM).
+- Évaluation as-of stricte sans fuite d'information future (anti-leakage) sur fenêtre glissante 2024–2026.
+- Les prévisions générées sont stockées avec `observed_or_imputed = 'forecast'` et `value_kind = 'forecast'`.
+- Critère de qualification scientifique : réduction mesurée d'au moins 15 % du MAPE sur les denrées importées à $h=2$ mois par rapport aux baselines univariées R3.
+

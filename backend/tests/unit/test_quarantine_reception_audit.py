@@ -7,6 +7,8 @@ from pathlib import Path
 import pytest
 
 PATH = Path("/workspace/backend/scripts/qualify_quarantine_clone.py")
+if not PATH.exists():
+    PATH = Path(__file__).resolve().parents[2] / "scripts" / "qualify_quarantine_clone.py"
 spec = importlib.util.spec_from_file_location("quarantine_clone_audit", PATH)
 assert spec is not None and spec.loader is not None
 audit = importlib.util.module_from_spec(spec)

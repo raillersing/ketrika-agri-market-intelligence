@@ -2141,3 +2141,31 @@ inventaire inchangé. Seuil36 et contraintes scientifiques intacts ; recalcul
 modèle/dataset séparé, aucun marché validé ni actif modifié. Check complet du
 lot figé avant fusion. Alternative rejetée : faux JSON source ou preuve ZIP
 omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB.
+
+## ADR-164 | 2026-11-05 | Accepté avant code | Architecture d'enrichissement prédictif par données alternatives exogènes (Parité, Phénologie, Corridors)
+
+- Contexte :
+  Les prévisions actuelles (Gate R3 / ADR-150) reposent sur des modèles autorégressifs univariés (AutoARIMA, AutoETS, Naive) et la saisonnalité historique. Bien qu'étanches et validés as-of, ils ne peuvent capturer les ruptures structurelles exogènes frappant le marché malgache : chocs des cours mondiaux FOB (riz Inde/Pakistan, huile MDEX, blé) décalés par le délai maritime (45 à 60 jours vers Toamasina), stress agroclimatique différentiel selon le stade cultural (vulnérabilité critique lors de la floraison), et ruptures logistiques sur les corridors routiers (RN2 Toamasina-Tana, RN4 Marovoay-Tana, RN7 Sud, RN34 Bongolava).
+  L'intégration de ces flux alternatifs doit respecter strictement la constitution AGENTS.md : zéro mock, 100% provenance MinIO Bronze immuable (SHA-256), marquage rigoureux `observed_or_imputed = 'forecast'` / `value_kind = 'forecast'` (Principe 9), et évaluation as-of sans fuite temporelle.
+
+- Décision :
+  1. Flux 1 — Cours mondiaux FOB & Fret maritime (Parité d'importation dynamique) :
+     - Acquisition et stockage Bronze des cours mondiaux réels pour les commodités vivrières clés (Riz blanc 25% brisures FOB Inde/Pakistan, Huile de palme brute MDEX Malaisie, Blé meunier, Sucre brut) et des indices de fret maritime (SCFI / Baltic Dry).
+     - Ingestion dans `obs.macro_observation` avec catégories normatives `world_commodity_fob` et `freight_index`, rattachées à des enregistrements `meta.source_record` d'artefacts Bronze MinIO immuables.
+     - Modélisation du décalage de transit maritime déterministe $L \in [1, 2]$ mois (45-60 jours) : le cours mondial au mois $t-L$ constitue une variable explicative directe du prix de gros frontière (Toamasina) et de détail (Antananarivo) au mois $t$.
+  2. Flux 2 — Stress agroclimatique phénologique pondéré :
+     - Croisement spatial et temporel des observations météorologiques (`obs.weather_observation` / CHIRPS / NASA POWER) avec le calendrier cultural officiel (`taxonomy/crop_calendar.yaml`).
+     - Pondération agronomique de l'écart pluviométrique par la sensibilité du stade phénologique : Semis (0.20), Tallage (0.25), Floraison/Épiaison (0.50, phase critique d'avortement floral), Maturation (0.05).
+     - Construction d'un indicateur Gold continu `phenological_stress_index` par région et par mois.
+  3. Flux 3 — Friction spatiale des corridors d'approvisionnement :
+     - Modélisation des coûts de transfert $C_{ij}$ reliant les bassins de production (Alaotra, Marovoay, Bongolava) et les ports d'importation (Toamasina) au marché central d'Antananarivo.
+     - Combinaison du prix officiel du carburant gasoil OMH (`category = 'fuel_price'`) et d'un facteur de friction sécuritaire/infrastructurel (alertes crues cycloniques et insécurité des transports).
+  4. Moteur causal hybride & validation as-of anti-fuite :
+     - Pipeline multivarié dans `ketrika.ml.causal_forecast` (SARIMAX avec covariables exogènes décalées + composante d'ensemble LightGBM).
+     - Protocole de validation temporelle strictly as-of (holdout glissant sur 2024–2026).
+     - Critère de réception scientifique : gain mesuré d'au moins 15 % de réduction du MAPE sur les denrées importées à échéance $h=2$ mois par rapport aux baselines univariées.
+  5. Restitution & Traçabilité :
+     - Exposition des contributions exogènes dans `/v1/forecasts` (décomposition de la part du fret, du taux de change, de la pluviométrie et des cours internationaux).
+     - Intégration dans le Copilote Analyste avec vérification mécanique des preuves textuelles (Principe 6 & 7).
+     - Aucun chiffre inventé : conservation systématique des métriques brutes et des formules explicables.
+
