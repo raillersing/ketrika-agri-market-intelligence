@@ -14,12 +14,14 @@ from datetime import UTC, date, datetime
 from typing import Any
 
 import numpy as np
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ketrika.core.logging import get_logger
-from ketrika.core.models.db import Forecast, ModelRun
+from ketrika.core.models.db import Event, Forecast, MacroObservation, ModelRun, WeatherObservation
 from ketrika.gold.refresh import refresh_gold_views
 from ketrika.ml.backtest import BacktestResult, select_best_model
+from ketrika.ml.causal_model import CausalAgriculturalModel
 from ketrika.ml.conformal import calibrate_conformal_bounds
 from ketrika.ml.models import (
     AutoARIMAModel,
@@ -64,6 +66,8 @@ def _instantiate_model(name: str) -> ForecastModel | DeterministicBaselineModel:
     """Instantiate candidate model by its canonical name."""
     if name == "NaiveLast":
         return NaiveLastModel()
+    elif name == "CausalAgriculturalModel":
+        return CausalAgriculturalModel()
     elif name == "AutoETS":
         return AutoETSModel()
     elif name == "AutoARIMA":
@@ -161,6 +165,47 @@ def run_price_forecasting_pipeline(
     model_version = f"1.0.0@{get_git_sha()}"
     model_run_id = uuid.uuid4()
 
+    # Pre-fetch macroeconomic indicators up to data_cutoff (anti-leakage C022)
+    macro_records = (
+        session.execute(
+            select(MacroObservation)
+            .where(
+                MacroObservation.superseded_by.is_(None),
+                MacroObservation.period_start <= data_cutoff,
+            )
+            .order_by(MacroObservation.period_start)
+        )
+        .scalars()
+        .all()
+    )
+    macro_by_ind: dict[str, dict[date, float]] = {}
+    for m_rec in macro_records:
+        if m_rec.value is not None:
+            macro_by_ind.setdefault(m_rec.indicator_code, {})[m_rec.period_start] = float(m_rec.value)
+
+    # Pre-fetch events up to data_cutoff
+    event_records = (
+        session.execute(
+            select(Event)
+            .where(Event.event_date <= data_cutoff)
+            .order_by(Event.event_date)
+        )
+        .scalars()
+        .all()
+    )
+    events_payload = [
+        {
+            "event_id": str(ev.event_id),
+            "event_type": ev.event_type,
+            "title": ev.title,
+            "event_date": ev.event_date,
+            "severity": ev.severity,
+            "product_ids": [str(p) for p in (ev.product_ids or [])],
+            "location_ids": [str(loc) for loc in (ev.location_ids or [])],
+        }
+        for ev in event_records
+    ]
+
     by_series_metrics: dict[str, Any] = {}
     forecast_objects: list[Forecast] = []
     wapes: list[float] = []
@@ -169,7 +214,20 @@ def run_price_forecasting_pipeline(
     coverages: list[float] = []
 
     for s in eligible_series:
-        y = s.to_numpy_array(fill_strategy="none")
+        pts = [p for p in s.grid if p.price is not None]
+        s_dates = [p.month for p in pts]
+        y = np.array([p.price for p in pts], dtype=float)
+
+        # Align macro indicators to series dates
+        aligned_macro: dict[str, np.ndarray] = {}
+        for ind_code, date_val_map in macro_by_ind.items():
+            arr = []
+            last_known = 0.0
+            for d in s_dates:
+                if d in date_val_map:
+                    last_known = date_val_map[d]
+                arr.append(last_known)
+            aligned_macro[ind_code] = np.array(arr, dtype=float)
 
         # 2. Backtest selection (rolling-origin 6 windows)
         bt_res: BacktestResult = select_best_model(
@@ -177,6 +235,9 @@ def run_price_forecasting_pipeline(
             y=y,
             h=horizon,
             max_windows=6,
+            dates=s_dates,
+            macro_series=aligned_macro,
+            events=events_payload,
         )
 
         wapes.append(bt_res.best_metrics.wape)
@@ -195,12 +256,24 @@ def run_price_forecasting_pipeline(
 
         # 3. Fit winner on historical series and generate predictions
         winner_instance = _instantiate_model(bt_res.best_model_name)
-        fit_res: ModelForecastResult = winner_instance.fit_predict(
-            y,
-            h=horizon,
-            unit=s.unit,
-            currency="MGA",
-        )
+        if getattr(winner_instance, "name", "") == "CausalAgriculturalModel":
+            fit_res: ModelForecastResult = winner_instance.fit_predict(  # type: ignore
+                y,
+                h=horizon,
+                unit=s.unit,
+                currency="MGA",
+                dates=s_dates,
+                series_key=s.series_key,
+                macro_series=aligned_macro,
+                events=events_payload,
+            )
+        else:
+            fit_res = winner_instance.fit_predict(
+                y,
+                h=horizon,
+                unit=s.unit,
+                currency="MGA",
+            )
 
         # 4. Conformal calibration on historical residuals
         valid_y = y[~np.isnan(y)]
@@ -284,7 +357,13 @@ def run_price_forecasting_pipeline(
         trained_at=datetime.now(UTC),
         params={
             "horizon": horizon,
-            "candidates": ["SeasonalNaive", "AutoETS", "AutoARIMA"],
+            "candidates": [
+                "NaiveLast",
+                "SeasonalNaive",
+                "CausalAgriculturalModel",
+                "AutoETS",
+                "AutoARIMA",
+            ],
             "cohort": cohort,
             "dataset_fingerprint": computed_fingerprint,
         },
@@ -297,7 +376,15 @@ def run_price_forecasting_pipeline(
     session.flush()
 
     if refresh_gold:
-        refresh_gold_views(session, views=["forecast_latest"])
+        try:
+            refresh_gold_views(session, views=["forecast_latest"])
+        except Exception as exc:
+            logger.warning("gold_refresh_fallback_sql", reason=str(exc))
+            from sqlalchemy import text
+            session.execute(text("REFRESH MATERIALIZED VIEW gold.forecast_latest;"))
+            session.flush()
+
+    session.commit()
 
     logger.info(
         "price_forecasting_complete",

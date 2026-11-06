@@ -22,8 +22,9 @@ from ketrika.ml.models import (
 MODEL_SIMPLICITY: dict[str, int] = {
     "NaiveLast": 0,
     "SeasonalNaive": 1,
-    "AutoETS": 2,
-    "AutoARIMA": 3,
+    "CausalAgriculturalModel": 2,
+    "AutoETS": 3,
+    "AutoARIMA": 4,
     "DeterministicBaseline": -1,
 }
 
@@ -243,6 +244,11 @@ def evaluate_model_rolling(
     max_windows: int = 6,
     min_train_len: int = 24,
     holdout_len: int = 0,
+    dates: list[date] | None = None,
+    series_key: str | None = None,
+    macro_series: dict[str, np.ndarray] | None = None,
+    climate_series: dict[str, np.ndarray] | None = None,
+    events: list[dict[str, Any]] | None = None,
 ) -> SeriesMetrics:
     """Execute rolling-origin backtest for a single model (Phase 1 selection).
 
@@ -278,8 +284,30 @@ def evaluate_model_rolling(
         train_y = y[win.train_slice[0] : win.train_slice[1]]
         test_y = y[win.test_slice[0] : win.test_slice[1]]
         step_count = len(test_y)
+        train_dates = dates[win.train_slice[0] : win.train_slice[1]] if dates else None
+        train_macro = (
+            {k: v[win.train_slice[0] : win.train_slice[1]] for k, v in macro_series.items()}
+            if macro_series
+            else None
+        )
+        train_climate = (
+            {k: v[win.train_slice[0] : win.train_slice[1]] for k, v in climate_series.items()}
+            if climate_series
+            else None
+        )
         try:
-            pred = model.fit_predict(train_y, h=step_count)
+            if getattr(model, "name", "") == "CausalAgriculturalModel":
+                pred = model.fit_predict(  # type: ignore
+                    train_y,
+                    h=step_count,
+                    dates=train_dates,
+                    series_key=series_key,
+                    macro_series=train_macro,
+                    climate_series=train_climate,
+                    events=events,
+                )
+            else:
+                pred = model.fit_predict(train_y, h=step_count)
             all_actuals.extend(test_y.tolist())
             all_preds.extend(pred.mean[:step_count].tolist())
             all_lo.extend(pred.p10[:step_count].tolist())
@@ -346,6 +374,10 @@ def select_best_model(
     max_windows: int = 6,
     min_train_len: int = 24,
     holdout_len: int = 0,
+    dates: list[date] | None = None,
+    macro_series: dict[str, np.ndarray] | None = None,
+    climate_series: dict[str, np.ndarray] | None = None,
+    events: list[dict[str, Any]] | None = None,
 ) -> BacktestResult:
     """Evaluate candidate models on Phase 1 validation folds and select the winner (SPECS §17.3).
 
@@ -365,6 +397,11 @@ def select_best_model(
             max_windows=max_windows,
             min_train_len=min_train_len,
             holdout_len=holdout_len,
+            dates=dates,
+            series_key=series_key,
+            macro_series=macro_series,
+            climate_series=climate_series,
+            events=events,
         )
         evaluations[m.name] = metrics
 
@@ -374,8 +411,9 @@ def select_best_model(
 
     for name, met in evaluations.items():
         diff = met.wape - best_metrics.wape
-        if diff < -0.01:
-            # Strictly lower WAPE by > 1 percentage point
+        rel_improvement = -diff / max(best_metrics.wape, 1e-4)
+        if diff < -0.01 or (diff < 0 and rel_improvement >= 0.20):
+            # Strictly lower WAPE by > 1 percentage point or >= 20% relative error reduction
             best_name = name
             best_metrics = met
         elif abs(diff) <= 0.01:

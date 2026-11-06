@@ -623,10 +623,13 @@ class AutoARIMAModel:
 
 
 def get_default_candidate_models(season_length: int = 12) -> list[ForecastModel]:
-    """Return the normative benchmark and candidate models defined in SPECS §17."""
+    """Return the normative benchmark and candidate models defined in SPECS §17 and R3.6."""
+    from ketrika.ml.causal_model import CausalAgriculturalModel
+
     return [
         NaiveLastModel(),
         SeasonalNaiveModel(season_length=season_length),
+        CausalAgriculturalModel(season_length=season_length),
         AutoETSModel(season_length=season_length),
         AutoARIMAModel(season_length=season_length),
     ]

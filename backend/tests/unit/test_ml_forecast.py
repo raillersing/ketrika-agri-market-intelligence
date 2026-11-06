@@ -127,7 +127,7 @@ def test_model_selection_lowest_wape_and_simplicity():
         max_windows=3,
     )
     assert res.series_key == "test_series"
-    assert res.best_model_name in ("NaiveLast", "SeasonalNaive", "AutoETS", "AutoARIMA")
+    assert res.best_model_name in ("NaiveLast", "SeasonalNaive", "CausalAgriculturalModel", "AutoETS", "AutoARIMA")
     assert res.best_metrics.wape >= 0.0
     assert "SeasonalNaive" in res.evaluations
 
