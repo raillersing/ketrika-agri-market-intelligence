@@ -85,6 +85,8 @@ services:
       - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,http://localhost:3005}
       - PYTHONPATH=/app/src
       - KETRIKA_REPO_ROOT=/workspace
+      - HDX_HAPI_APP_IDENTIFIER=${HDX_HAPI_APP_IDENTIFIER:-}
+      - BOT_USER_AGENT=${BOT_USER_AGENT:-Ketrika-Market-Intelligence/0.2.0}
     volumes:
       - ./backend:/app
       - backend_venv:/app/.venv

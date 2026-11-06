@@ -69,8 +69,13 @@ class WfpHdxMdgConnector:
         is_json = item.hints.get("format") == "json" or "hapi.humdata.org" in item.url
         target_mime = "application/json" if is_json else "text/csv"
 
-        # 1. Enforce strict policy check: refuse network access when source is disabled
+        # 1. Enforce strict policy check: refuse network access when source is disabled or legacy CSV
         if not ctx.offline:
+            if "data.humdata.org" in item.url:
+                raise PolicyStop(
+                    f"Source '{self.source_id}' is marked disabled in sources.yaml (HDX 403)"
+                )
+
             root = find_repo_root()
             sources_yaml = root / "registry" / "sources.yaml"
             if sources_yaml.exists():
@@ -208,7 +213,7 @@ class WfpHdxMdgConnector:
                         unit_raw=unit_raw,
                         currency_raw=currency_raw,
                         observed_or_imputed=observed_or_imputed,
-                        value_kind="aggregate" if priceflag == "aggregate" else "point",
+                        value_kind="avg" if priceflag == "aggregate" else "point",
                         extraction_method="deterministic",
                         evidence=evidence,
                         confidence=1.0 if not is_imputed else 0.8,

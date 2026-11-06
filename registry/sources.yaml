@@ -36,13 +36,13 @@
   notes: "Référentiel officiel des limites administratives (régions, districts, communes) de Madagascar."
 
 - source_id: wfp_hdx_mdg
-  name: "WFP Food Prices – Madagascar (HDX)"
+  name: "WFP Food Prices – Madagascar (HDX / HAPI)"
   owner: "World Food Programme / OCHA HDX"
   source_family: un_wfp
   priority: P1
-  status: disabled
-  access_method: file
-  connector: ketrika.connectors.wfp_hdx_mdg:Connector
+  status: active
+  access_method: api
+  connector: ketrika.connectors.wfp_hdx_mdg:WfpHdxMdgConnector
   cadence: monthly
   collection_cadence: monthly
   observation_cadence: monthly
@@ -50,10 +50,14 @@
   freshness_sla_days: 62
   partitioning: static
   entrypoints:
+    - url: "https://hapi.humdata.org/api/v2/food-security-nutrition-poverty/food-prices-market-monitor"
+      kind: api
+      verified_at: "2026-11-06T00:00:00Z"
+      verified: true
     - url: "https://data.humdata.org/dataset/wfp-food-prices-for-madagascar"
       kind: landing
-      verified_at: null
-      verified: false
+      verified_at: "2026-11-06T00:00:00Z"
+      verified: true
   languages: [en]
   licence: "Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO)"
   tos_url: "https://data.humdata.org/terms"
@@ -157,7 +161,7 @@
   priority: P1
   status: disabled
   access_method: api
-  connector: ketrika.connectors.nasa_power:Connector
+  connector: ketrika.connectors.nasa_power:NasaPowerConnector
   cadence: daily
   collection_cadence: daily
   observation_cadence: daily
