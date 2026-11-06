@@ -275,3 +275,111 @@ def test_wfp_fetch_offline_into_bronze() -> None:
     assert artifact.object_key.startswith("wfp_hdx_mdg/")
     assert len(artifact.content_sha256) == 64
     assert artifact.mime_type == "text/csv"
+
+
+def test_wfp_hdx_parse_hapi_json() -> None:
+    """Test HDX HAPI v2 JSON payload parsing into normalized PriceRecord objects."""
+    sample_hapi_payload = {
+        "data": [
+            {
+                "location_code": "MDG",
+                "location_name": "Madagascar",
+                "admin1_code": "MG11",
+                "admin1_name": "Analamanga",
+                "admin2_code": "MG11107",
+                "admin2_name": "Anjozorobe",
+                "admin_level": 2,
+                "resource_hdx_id": "d62af4be-cff6-437b-89a3-67f8fa4c53bf",
+                "market_code": "10135",
+                "market_name": "Anjozorobe",
+                "commodity_code": "1332",
+                "commodity_name": "Beans (pois de cap)",
+                "commodity_category": "pulses and nuts",
+                "currency_code": "MGA",
+                "unit": "KG",
+                "price_flag": "aggregate",
+                "price_type": "Retail",
+                "price": 4000.0,
+                "lat": -18.4,
+                "lon": 47.88,
+                "reference_period_start": "2025-04-15T00:00:00",
+                "reference_period_end": "2025-05-14T23:59:59",
+            },
+            {
+                "location_code": "MDG",
+                "location_name": "Madagascar",
+                "admin1_code": "MG11",
+                "admin1_name": "Analamanga",
+                "admin2_code": "MG11101",
+                "admin2_name": "Antananarivo Renivohitra",
+                "admin_level": 2,
+                "resource_hdx_id": "d62af4be-cff6-437b-89a3-67f8fa4c53bf",
+                "market_code": "10136",
+                "market_name": "Anosibe",
+                "commodity_code": "1333",
+                "commodity_name": "Rice (local)",
+                "commodity_category": "cereals and tubers",
+                "currency_code": "MGA",
+                "unit": "KG",
+                "price_flag": "actual",
+                "price_type": "Wholesale",
+                "price": 2800.0,
+                "lat": -18.92,
+                "lon": 47.52,
+                "reference_period_start": "2025-04-15T00:00:00",
+                "reference_period_end": "2025-05-14T23:59:59",
+            },
+        ]
+    }
+
+    connector = WfpHdxMdgConnector()
+    mock_bronze = MagicMock(spec=BronzeStore)
+    mock_bronze.get.return_value = json.dumps(sample_hapi_payload).encode("utf-8")
+    ctx = RunContext(source_id="wfp_hdx_mdg", bronze_store=mock_bronze)
+
+    artifact = RawArtifact(
+        source_record_id="rec-hapi-1",
+        object_key="wfp_hdx_mdg/2026/05/hapi_sample.json",
+        content_sha256="dummy-sha-hapi",
+        mime_type="application/json",
+        url="https://hapi.humdata.org/api/v2/food-security-nutrition-poverty/food-prices-market-monitor",
+        is_new=True,
+    )
+
+    result = connector.parse(artifact, ctx)
+
+    assert len(result.issues) == 0
+    assert len(result.records) == 2
+
+    rec0 = result.records[0]
+    assert rec0.product_raw == "Beans (pois de cap)"
+    assert rec0.location_raw == "Anjozorobe"
+    assert rec0.actor_level == "retail"
+    assert rec0.price_value == 4000.0
+    assert rec0.currency_raw == "MGA"
+    assert rec0.unit_raw == "KG"
+    assert rec0.period_start.isoformat() == "2025-04-15"
+    assert rec0.observed_or_imputed == "observed"
+    assert rec0.evidence["admin1_code"] == "MG11"
+    assert rec0.evidence["latitude"] == -18.4
+
+    rec1 = result.records[1]
+    assert rec1.product_raw == "Rice (local)"
+    assert rec1.location_raw == "Anosibe"
+    assert rec1.actor_level == "wholesale"
+    assert rec1.price_value == 2800.0
+
+
+def test_wfp_hdx_discover_hapi() -> None:
+    """Test HDX HAPI discovery when app_identifier or api_type is set."""
+    connector = WfpHdxMdgConnector()
+    ctx = RunContext(
+        source_id="wfp_hdx_mdg",
+        metadata={"api_type": "hapi", "app_identifier": "test-token-123"},
+    )
+    items = list(connector.discover(ctx))
+    assert len(items) == 1
+    assert "hapi.humdata.org" in items[0].url
+    assert "app_identifier=test-token-123" in items[0].url
+    assert items[0].hints.get("api") == "hapi_v2"
+
