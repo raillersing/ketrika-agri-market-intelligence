@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide de Déploiement en Production — Irooa Ketrika sur VPS Contabo</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #f97316;
+      --accent-hover: #ea580c;
+      --accent-light: rgba(249, 115, 22, 0.15);
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --code-bg: #090d16;
+      --code-border: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.2);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .badge-contabo {
+      background-color: var(--accent-light);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    .badge-success {
+      background-color: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success);
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 800px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .summary-item {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .summary-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .summary-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-top: 4px;
+    }
+
+    .section {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.75rem;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    p {
+      color: #cbd5e1;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin: 1.25rem 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .alert-warning {
+      background-color: var(--warning-bg);
+      border-left: 4px solid var(--warning);
+      color: #fde68a;
+    }
+
+    .alert-success {
+      background-color: var(--success-bg);
+      border-left: 4px solid var(--success);
+      color: #a7f3d0;
+    }
+
+    .alert-info {
+      background-color: rgba(59, 130, 246, 0.15);
+      border-left: 4px solid #3b82f6;
+      color: #bfdbfe;
+    }
+
+    pre {
+      background-color: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.85rem;
+      color: #38bdf8;
+      position: relative;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #fca5a5;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+
+    pre code {
+      color: inherit;
+      background: none;
+      padding: 0;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #cbd5e1;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    ul, ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      padding: 10px 14px;
+      border-bottom: 2px solid var(--card-border);
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--card-border);
+      color: #cbd5e1;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tag-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .tag-green { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .tag-orange { background: rgba(249, 115, 22, 0.2); color: #fb923c; }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--card-border);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="badge badge-contabo">Déploiement VPS Multi-Apps</div>
+    <h1>Guide de Déploiement : Irooa Ketrika sur Serveur Contabo</h1>
+    <p class="subtitle">
+      Procédure pas-à-pas pour déployer l'application <strong>Irooa Ketrika</strong> sur votre VPS Contabo, sous le nom de domaine <code>irooa.store</code>, tout en garantissant la cohabitation 100 % étanche avec l'autre application déjà hébergée sur la machine.
+    </p>
+
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="summary-label">Serveur Cible</div>
+        <div class="summary-value">VPS Contabo (Linux Ubuntu)</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Nom de Domaine</div>
+        <div class="summary-value">irooa.store / www.irooa.store</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Contrainte Majeure</div>
+        <div class="summary-value">Autre application déjà active (Zéro Conflit)</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Certificat SSL</div>
+        <div class="summary-value">Let's Encrypt (HTTPS Automatique)</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- PRINCIPE DE COHABITATION -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">0</span>
+      Architecture de Cohabitation : Comment éviter les conflits ?
+    </div>
+    <p>
+      Sur un serveur qui héberge déjà une application, les ports web standards <code>80</code> (HTTP) et <code>443</code> (HTTPS) sont généralement déjà occupés par un serveur web maître (le plus souvent <strong>Nginx</strong> ou <strong>Apache</strong>).
+    </p>
+    <div class="alert alert-warning">
+      <strong>Règle d'or :</strong> Ne JAMAIS forcer un nouveau conteneur Docker à écouter sur <code>80:80</code> ou <code>443:443</code> directement sur l'hôte, sous peine de planter les deux applications avec l'erreur <em>« bind: address already in use »</em>.
+    </div>
+    <p>
+      <strong>La solution propre et professionnelle :</strong>
+    </p>
+    <ul>
+      <li>Irooa Ketrika tourne dans ses propres conteneurs Docker isolés et expose son frontend uniquement en local sur le port <code>127.0.0.1:3005</code> et son API sur <code>127.0.0.1:8090</code>.</li>
+      <li>La base de données PostgreSQL reste confinée dans le réseau Docker interne (aucun conflit avec un PostgreSQL ou MySQL existant sur le port 5432).</li>
+      <li>Le <strong>Nginx hôte du serveur Contabo</strong> joue le rôle de chef d'orchestre : selon le nom de domaine demandé, il redirige les requêtes de façon transparente :
+        <ul>
+          <li><code>votre-autre-app.com</code> ➔ redirigé vers votre ancienne application.</li>
+          <li><code>irooa.store</code> ➔ redirigé vers Irooa Ketrika (port <code>3005</code>).</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ETAPE 1 : AUDIT DU SERVEUR -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">1</span>
+      Diagnostic du Serveur Contabo (Audit des Ports Actifs)
+    </div>
+    <p>
+      Connectez-vous en SSH à votre serveur Contabo depuis votre terminal :
+    </p>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>ssh root@VOTRE_IP_CONTABO</code></pre>
+
+    <p>Vérifiez quels services et ports sont actuellement occupés sur votre serveur :</p>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>ss -tulpn | grep -E ':(80|443|3000|3005|5432|8000|8090)'</code></pre>
+
+    <p>Vérifiez quel serveur web gère actuellement le port 80/443 :</p>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>systemctl status nginx || systemctl status apache2</code></pre>
+
+    <div class="alert alert-info">
+      <strong>Astuce RAM Contabo (Swap obligatoire) :</strong> Les VPS Contabo disposent souvent de 4 à 8 Go de RAM. Pour éviter tout crash lors de la compilation de Next.js ou de l'exécution des modèles de machine learning, assurez-vous d'avoir 4 Go de mémoire Swap active :
+    </div>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code># Vérifier si le Swap existe déjà
+swapon --show
+
+# Si vide, créer un Swapfile de 4 Go en 3 commandes :
+fallocate -l 4G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile && swapon /swapfile
+echo '/swapfile none swap sw 0 0' >> /etc/fstab</code></pre>
+  </div>
+
+  <!-- ETAPE 2 : CONFIGURATION DNS -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">2</span>
+      Configuration DNS de votre Domaine <code>irooa.store</code>
+    </div>
+    <p>
+      Chez votre registraire de domaine (Cloudflare, Namecheap, Hostinger, GoDaddy, etc.), accédez à la gestion de la <strong>Zone DNS</strong> de <code>irooa.store</code> et ajoutez ces deux enregistrements :
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Nom / Hôte</th>
+            <th>Valeur / Cible</th>
+            <th>TTL</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-blue">A</span></td>
+            <td><code>@</code> (racine)</td>
+            <td><code>VOTRE_IP_CONTABO</code></td>
+            <td>Auto / 300s</td>
+            <td>Pointe <code>irooa.store</code> vers votre serveur</td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-blue">A</span> (ou CNAME)</td>
+            <td><code>www</code></td>
+            <td><code>VOTRE_IP_CONTABO</code></td>
+            <td>Auto / 300s</td>
+            <td>Pointe <code>www.irooa.store</code> vers votre serveur</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Vérifiez que le domaine pointe bien vers votre serveur (depuis votre machine ou le serveur) :</p>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>dig +short irooa.store</code></pre>
+    <p><em>(La commande doit renvoyer l'adresse IP publique exacte de votre VPS Contabo).</em></p>
+  </div>
+
+  <!-- ETAPE 3 : INSTALLATION ET CLONAGE DU DEPOT -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">3</span>
+      Installation du Projet sur le Serveur Contabo
+    </div>
+    <p>
+      Assurez-vous que Docker et Docker Compose sont installés sur le serveur Contabo :
+    </p>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>docker --version && docker compose version</code></pre>
+    <p><em>Si Docker n'est pas installé :</em> <code>curl -fsSL https://get.docker.com | sh</code></p>
+
+    <p>Créez le dossier d'hébergement et clonez le dépôt Git :</p>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>mkdir -p /var/www
+cd /var/www
+git clone https://github.com/raillersing/ketrika-agri-market-intelligence.git irooa-ketrika
+cd irooa-ketrika</code></pre>
+  </div>
+
+  <!-- ETAPE 4 : DOCKER-COMPOSE ET ENVIRONNEMENT PROD -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">4</span>
+      Configuration Docker Dédiée Contabo (Sans Conflit de Ports)
+    </div>
+    <p>
+      Nous allons créer un fichier <code>docker-compose.contabo.yml</code> qui isole les ports et évite tout conflit avec l'autre application :
+    </p>
+
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>cat &lt;&lt; 'EOF' &gt; docker-compose.contabo.yml
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ketrika}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-ketrika}
+    volumes:
+      - irooa_pgdata:/var/lib/postgresql/data
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-ketrika} -d $${POSTGRES_DB:-ketrika}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:RELEASE.2025-02-07T23-21-09Z
+    restart: unless-stopped
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - irooa_miniodata:/data
+    ports:
+      # Accessible en local uniquement si besoin de déboguer
+      - "127.0.0.1:9100:9000"
+      - "127.0.0.1:9101:9001"
+
+  api:
+    image: ketrika-backend:prod
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - APP_ENV=prod
+      - BOOTSTRAP_DEMO_ADMIN=false
+      - DATABASE_URL=postgresql+psycopg://${POSTGRES_USER:-ketrika}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-ketrika}
+      - POSTGRES_USER=${POSTGRES_USER:-ketrika}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB:-ketrika}
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_ACCESS_KEY=${MINIO_ROOT_USER:-admin}
+      - S3_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - S3_BUCKET_BRONZE=bronze
+      - S3_REGION=us-east-1
+      - JWT_SECRET=${JWT_SECRET}
+      - COPILOT_DB_PASSWORD=${COPILOT_DB_PASSWORD}
+      - CORS_ORIGINS=https://irooa.store,https://www.irooa.store
+      - PYTHONPATH=/app/src
+      - KETRIKA_REPO_ROOT=/workspace
+    volumes:
+      - ./:/workspace:ro
+    ports:
+      # L'API FastAPI écoute en local uniquement sur 8090
+      - "127.0.0.1:8090:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: ketrika-web:prod
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=/api/v1
+      - API_INTERNAL_URL=http://api:8000
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    ports:
+      # Le Frontend Next.js écoute en local uniquement sur 3005
+      - "127.0.0.1:3005:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  irooa_pgdata:
+  irooa_miniodata:
+
+networks:
+  default:
+    name: irooa-net
+EOF</code></pre>
+
+    <p>Générez un fichier <code>.env.production</code> sécurisé avec des mots de passe aléatoires forts :</p>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code># Génération des secrets aléatoires
+cat &lt;&lt; EOF &gt; .env
+POSTGRES_USER=ketrika
+POSTGRES_PASSWORD=$(openssl rand -hex 16)
+POSTGRES_DB=ketrika
+MINIO_ROOT_USER=irooa_admin
+MINIO_ROOT_PASSWORD=$(openssl rand -hex 16)
+JWT_SECRET=$(openssl rand -hex 32)
+COPILOT_DB_PASSWORD=$(openssl rand -hex 16)
+DOMAIN=irooa.store
+EOF
+
+# Protéger le fichier d'environnement
+chmod 600 .env</code></pre>
+  </div>
+
+  <!-- ETAPE 5 : CONFIGURATION NGINX EXISTANT -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">5</span>
+      Configuration du Nginx Hôte (Le Reverse Proxy Central)
+    </div>
+    <p>
+      Nous configurons Nginx sur votre VPS pour rediriger le trafic de <code>irooa.store</code> vers le port <code>3005</code> d'Irooa Ketrika, sans toucher à la configuration de votre autre application.
+    </p>
+
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>cat &lt;&lt; 'EOF' &gt; /etc/nginx/sites-available/irooa.store
+server {
+    listen 80;
+    listen [::]:80;
+    server_name irooa.store www.irooa.store;
+
+    client_max_body_size 50M;
+
+    # En-têtes de sécurité
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Redirection vers le frontend Next.js d'Irooa
+    location / {
+        proxy_pass http://127.0.0.1:3005;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+
+        # Timeouts pour les calculs de prédiction ML (12 mois)
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 120s;
+        proxy_read_timeout 120s;
+    }
+}
+EOF</code></pre>
+
+    <p>Activez le site et testez la syntaxe de configuration Nginx :</p>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code># Création du lien symbolique
+ln -s /etc/nginx/sites-available/irooa.store /etc/nginx/sites-enabled/
+
+# Tester qu'aucune syntaxe n'est cassée pour toutes vos applications
+nginx -t
+
+# Si le test est 'successful', recharger Nginx sans coupure
+systemctl reload nginx</code></pre>
+  </div>
+
+  <!-- ETAPE 6 : CERTIFICAT SSL LET'S ENCRYPT -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">6</span>
+      Activation du HTTPS Gratuit avec Certbot (Let's Encrypt)
+    </div>
+    <p>
+      Générez le certificat SSL officiel pour <code>irooa.store</code> et <code>www.irooa.store</code>. Certbot va automatiquement mettre à jour la configuration Nginx avec HTTPS :
+    </p>
+
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code># Installer Certbot si nécessaire
+apt-get update && apt-get install -y certbot python3-certbot-nginx
+
+# Obtenir le certificat SSL automatique
+certbot --nginx -d irooa.store -d www.irooa.store --non-interactive --agree-tos -m contact@irooa.store --redirect</code></pre>
+
+    <div class="alert alert-success">
+      ✅ <strong>Renouvellement automatique :</strong> Let's Encrypt renouvelle le certificat automatiquement tous les 60 jours via le timer systemd de Certbot.
+    </div>
+  </div>
+
+  <!-- ETAPE 7 : DEMARRAGE DE L'APPLICATION -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">7</span>
+      Lancement des Conteneurs et Initialisation des Données
+    </div>
+    <p>
+      Retournez dans le dossier du projet et démarrez la stack Irooa Ketrika en arrière-plan :
+    </p>
+
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>cd /var/www/irooa-ketrika
+
+# Construire et lancer tous les conteneurs
+docker compose -f docker-compose.contabo.yml up -d --build
+
+# Vérifier que tous les conteneurs sont 'healthy' et en marche
+docker compose -f docker-compose.contabo.yml ps</code></pre>
+
+    <p>Créez votre utilisateur administrateur de production :</p>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>docker compose -f docker-compose.contabo.yml exec api python -c "
+from ketrika.core.db import get_db_session
+from ketrika.core.models.db import UserAccount
+from ketrika.api.auth import hash_password
+from uuid import uuid4
+
+with get_db_session() as session:
+    admin = UserAccount(
+        user_id=uuid4(),
+        email='admin@irooa.store',
+        password_hash=hash_password('VOTRE_MOT_DE_PASSE_SECURISE'),
+        role='admin',
+        disabled=False
+    )
+    session.add(admin)
+    session.commit()
+    print('Administrateur admin@irooa.store créé avec succès !')
+"</code></pre>
+  </div>
+
+  <!-- ETAPE 8 : VERIFICATION ET TESTS -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">8</span>
+      Vérification Finale et Mise en Service
+    </div>
+    <p>
+      Testez que votre domaine répond parfaitement en HTTPS :
+    </p>
+    <pre><button class="copy-btn" onclick="copy(this)">Copier</button><code>curl -I https://irooa.store</code></pre>
+    <p><em>(La réponse doit renvoyer <code>HTTP/2 200</code> ou <code>307 Temporary Redirect</code> vers <code>/login</code>).</em></p>
+
+    <div class="alert alert-success">
+      🎉 <strong>Bravo ! Votre application est en ligne !</strong><br>
+      Vous pouvez maintenant vous connecter sur :<br>
+      👉 <a href="https://irooa.store" target="_blank" style="color: #fff; font-weight: bold; text-decoration: underline;">https://irooa.store</a><br>
+      Et votre autre application continue de fonctionner normalement sur ses propres domaines et ports !
+    </div>
+  </div>
+
+  <!-- ETAPE 9 : COMMANDES DE MAINTENANCE COURANTE -->
+  <div class="section">
+    <div class="section-title">
+      <span class="step-number">9</span>
+      Maintenance et Mises à Jour Futures (Mémo Commandes)
+    </div>
+    
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Commande Terminal (dans <code>/var/www/irooa-ketrika</code>)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Mettre à jour l'application</strong> (après un commit git)</td>
+            <td><code>git pull origin main && docker compose -f docker-compose.contabo.yml up -d --build web api</code></td>
+          </tr>
+          <tr>
+            <td><strong>Voir les logs en direct</strong></td>
+            <td><code>docker compose -f docker-compose.contabo.yml logs -f --tail 50</code></td>
+          </tr>
+          <tr>
+            <td><strong>Redémarrer la stack</strong></td>
+            <td><code>docker compose -f docker-compose.contabo.yml restart</code></td>
+          </tr>
+          <tr>
+            <td><strong>Sauvegarder la base de données</strong></td>
+            <td><code>docker compose -f docker-compose.contabo.yml exec -T db pg_dump -U ketrika ketrika > backup_$(date +%F).sql</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Irooa Ketrika Agri Market Intelligence — Document technique de déploiement multi-applications Contabo (Novembre 2026)</p>
+  </footer>
+
+</div>
+
+<script>
+  function copy(btn) {
+    const code = btn.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.innerText = "Copié !";
+      btn.style.background = "#10b981";
+      setTimeout(() => {
+        btn.innerText = "Copier";
+        btn.style.background = "";
+      }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
