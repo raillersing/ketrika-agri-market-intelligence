@@ -354,6 +354,43 @@ def get_multi_model_extrapolations(
         except Exception:
             pass
 
+    # Build Consensus Ensemble (Extrapolation entre les modèles pondérée par l'inverse de l'erreur)
+    if len(models_dict) >= 2:
+        valid_models = [m for m in models_dict.values() if len(m.predictions) == horizon]
+        if valid_models:
+            weights = []
+            for m in valid_models:
+                wape_val = m.historical_wape or 0.05
+                weights.append(1.0 / max(wape_val, 0.005))
+            total_w = sum(weights)
+            norm_weights = [w / total_w for w in weights]
+
+            ensemble_preds = []
+            ensemble_p10 = []
+            ensemble_p90 = []
+            for step_idx in range(horizon):
+                step_vals = [m.predictions[step_idx] for m in valid_models]
+                step_w_mean = sum(val * w for val, w in zip(step_vals, norm_weights))
+                ensemble_preds.append(round(step_w_mean, 1))
+
+                all_p10 = [m.p10[step_idx] for m in valid_models if m.p10 is not None]
+                all_p90 = [m.p90[step_idx] for m in valid_models if m.p90 is not None]
+                ensemble_p10.append(round(min(all_p10), 1) if all_p10 else round(step_w_mean * 0.95, 1))
+                ensemble_p90.append(round(max(all_p90), 1) if all_p90 else round(step_w_mean * 1.05, 1))
+
+            avg_wape = sum((m.historical_wape or 0.05) * w for m, w in zip(valid_models, norm_weights))
+            avg_mae = sum((m.historical_mae or 50.0) * w for m, w in zip(valid_models, norm_weights))
+
+            models_dict["ConsensusEnsemble"] = ModelExtrapolationTrajectory(
+                model_name="ConsensusEnsemble",
+                is_baseline=False,
+                predictions=ensemble_preds,
+                p10=ensemble_p10,
+                p90=ensemble_p90,
+                historical_wape=round(avg_wape, 4),
+                historical_mae=round(avg_mae, 1),
+            )
+
     return MultiModelExtrapolationResponse(
         product_code=selected_series.product_code,
         product_name=selected_series.product_code.replace("_", " ").title(),
