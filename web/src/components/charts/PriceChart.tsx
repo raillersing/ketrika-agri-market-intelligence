@@ -38,6 +38,7 @@ interface PriceChartProps {
   productName?: string;
   unit?: string;
   currency?: string;
+  forecastLabel?: string;
   onPointClick?: (point: PriceDataPoint) => void;
   className?: string;
 }
@@ -48,6 +49,7 @@ export function PriceChart({
   productName = "Riz blanc local",
   unit = "kg",
   currency = "MGA",
+  forecastLabel,
   onPointClick,
   className = "",
 }: PriceChartProps) {
@@ -90,6 +92,8 @@ export function PriceChart({
   }
 
   const hasForecast = chartRows.some((d) => d?.valueKind === "forecast");
+  const forecastCount = chartRows.filter((d) => d?.valueKind === "forecast").length;
+  const activeForecastLegend = forecastLabel || (forecastCount > 0 ? `Prévision (${forecastCount} mois)` : "Prévision");
 
   // Separate historical series and forecast series
   const historicalPrices = chartRows.map((d, idx) => {
@@ -129,7 +133,7 @@ export function PriceChart({
       right: "16",
       top: "16",
       textStyle: { color: palette.text, fontSize: 11, fontFamily: "inherit" },
-      data: ["Historique", "Prévision (6 mois)"],
+      data: ["Historique", activeForecastLegend],
     },
     tooltip: {
       trigger: "axis",
@@ -273,7 +277,7 @@ export function PriceChart({
       ...(hasForecast
         ? [
             {
-              name: "Prévision (6 mois)",
+              name: activeForecastLegend,
               type: "line",
               data: forecastPrices,
               smooth: true,
