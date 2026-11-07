@@ -208,32 +208,48 @@ function PricesContent() {
                     </p>
                   </div>
                   
-                  {/* Horizon selector: 3m, 6m, 9m, 1 an */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                      <SlidersHorizontal className="h-3.5 w-3.5" /> Horizon :
-                    </span>
-                    <div className="inline-flex rounded-lg border border-border bg-card p-0.5 text-xs">
-                      {[
-                        { val: 3, label: "3 mois" },
-                        { val: 6, label: "6 mois" },
-                        { val: 9, label: "9 mois" },
-                        { val: 12, label: "1 an (12m)" },
-                      ].map(({ val, label }) => (
-                        <button
-                          key={val}
-                          type="button"
-                          onClick={() => setHorizon(val)}
-                          className={`px-3 py-1 rounded-md font-medium transition-colors ${
-                            horizon === val
-                              ? "bg-orange-500 text-white shadow-sm font-bold"
-                              : "text-muted-foreground hover:text-foreground"
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      ))}
+                  {/* Horizon selector: 3m, 6m, 9m, 1 an & Matrix toggle button */}
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                        <SlidersHorizontal className="h-3.5 w-3.5" /> Horizon :
+                      </span>
+                      <div className="inline-flex rounded-lg border border-border bg-card p-0.5 text-xs">
+                        {[
+                          { val: 3, label: "3 mois" },
+                          { val: 6, label: "6 mois" },
+                          { val: 9, label: "9 mois" },
+                          { val: 12, label: "1 an (12m)" },
+                        ].map(({ val, label }) => (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setHorizon(val)}
+                            className={`px-3 py-1 rounded-md font-medium transition-colors ${
+                              horizon === val
+                                ? "bg-orange-500 text-white shadow-sm font-bold"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
+
+                    {/* Prominent Matrice Comparative Button in Header */}
+                    <button
+                      type="button"
+                      onClick={() => setShowMatrix(!showMatrix)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border shadow-sm ${
+                        showMatrix
+                          ? "bg-orange-500 text-white border-orange-600 font-bold"
+                          : "bg-card text-foreground border-border hover:border-orange-500/50 hover:bg-orange-500/10"
+                      }`}
+                    >
+                      <Layers className="h-3.5 w-3.5" />
+                      {showMatrix ? "Matrice comparative (Affichée)" : "Afficher la matrice comparative"}
+                    </button>
                   </div>
                 </div>
 
@@ -382,15 +398,25 @@ function PricesContent() {
                 </div>
 
                 {/* Comparative Matrix Table Toggle */}
-                <div>
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                   <button
                     type="button"
                     onClick={() => setShowMatrix(!showMatrix)}
-                    className="inline-flex items-center gap-1.5 text-xs text-orange-700 dark:text-orange-400 font-semibold hover:underline"
+                    className={`inline-flex items-center gap-2 rounded-lg border px-3.5 py-2 text-xs font-semibold transition-all shadow-sm ${
+                      showMatrix
+                        ? "border-orange-500 bg-orange-500/10 text-orange-900 dark:text-orange-200"
+                        : "border-orange-500 bg-orange-500 text-white hover:bg-orange-600"
+                    }`}
                   >
                     <Layers aria-hidden="true" className="h-4 w-4" />
                     {showMatrix ? "Masquer la matrice comparative des extrapolations" : "Afficher la matrice comparative de tous les modèles"}
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${showMatrix ? "bg-orange-500/20" : "bg-black/25 text-white"}`}>
+                      {showMatrix ? "Tableau ouvert" : "Cliquer pour ouvrir le tableau"}
+                    </span>
                   </button>
+                  <span className="text-xs text-muted-foreground">
+                    {showMatrix ? "Comparaison détaillée de toutes les projections mois par mois" : "Affiche la matrice complète côte à côte"}
+                  </span>
                 </div>
 
                 {/* Comparative Matrix Table */}
