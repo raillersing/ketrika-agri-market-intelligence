@@ -412,7 +412,7 @@ function PricesContent() {
                         <div className="text-base font-extrabold text-orange-600 dark:text-orange-400 font-mono tracking-tight">
                           {formatPrice(fc.medianPrice, extrapolations.unit, extrapolations.currency === "MGA" ? "Ar" : extrapolations.currency)}
                         </div>
-                        {fc.p10Price !== null && fc.p90Price !== null && (
+                        {typeof fc.p10Price === "number" && typeof fc.p90Price === "number" && (
                           <div className="text-[10px] text-orange-700/80 dark:text-orange-300/80 font-mono">
                             [{Math.round(fc.p10Price).toLocaleString("fr-FR")} – {Math.round(fc.p90Price).toLocaleString("fr-FR")}]
                           </div>

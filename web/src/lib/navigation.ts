@@ -1,4 +1,4 @@
-export type NavigationIcon = "overview" | "prices" | "map" | "trade" | "economy" | "climate" | "assistant" | "alerts" | "bulletins" | "sources" | "review" | "system" | "about" | "products";
+export type NavigationIcon = "overview" | "prices" | "map" | "trade" | "economy" | "climate" | "assistant" | "alerts" | "bulletins" | "sources" | "review" | "system" | "about" | "products" | "tutorial";
 
 export interface NavigationPage {
   href: string;
@@ -23,6 +23,7 @@ export const NAVIGATION_PAGES: readonly NavigationPage[] = [
   { href: "/products", label: "Produits", description: "Catalogue des denrées et gestion", group: "Gestion des données", icon: "products", keywords: "produits catalogue denrées vivriers création ajouter" },
   { href: "/admin/review", label: "À vérifier", description: "Revue des éléments en attente", group: "Gestion des données", icon: "review", keywords: "revue anomalies validation" },
   { href: "/system", label: "Système", description: "État et configuration de la plateforme", group: "Gestion des données", icon: "system", keywords: "architecture plateforme infrastructure" },
+  { href: "/tutorial", label: "Guide & Quêtes", description: "Tutoriel interactif et missions guidées", group: "Informations", icon: "tutorial", keywords: "tutoriel guide quête mission apprentissage academie aide interactif" },
   { href: "/about", label: "À propos", description: "Irooa et son entreprise mère Ketrikay", group: "Informations", icon: "about", keywords: "entreprise société irooa ketrikay ketrikai" },
 ];
 

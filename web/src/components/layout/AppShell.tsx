@@ -7,6 +7,7 @@ import { Sidebar } from "./Sidebar";
 import { TopHeader } from "./TopHeader";
 import { GlobalFilters } from "./GlobalFilters";
 import { CommandPalette } from "./CommandPalette";
+import { QuestOverlay } from "../tutorial/QuestOverlay";
 import { BRAND } from "@/lib/brand";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -74,6 +75,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main id="main-content" tabIndex={-1} className="mx-auto w-full min-w-0 max-w-[1600px] flex-1 p-4 outline-none md:p-8">{children}</main>
       </div>
       <CommandPalette isOpen={isCommandOpen} onClose={() => setIsCommandOpen(false)} />
+      <QuestOverlay />
     </div>
   );
 }
