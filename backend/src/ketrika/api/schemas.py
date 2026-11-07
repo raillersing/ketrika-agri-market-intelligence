@@ -76,6 +76,66 @@ class ProductItem(BaseModel):
     aliases: list[str] = Field(default_factory=list)
 
 
+class ProductCreateRequest(BaseModel):
+    """Payload to create a new canonical product and its aliases."""
+
+    product_code: str = Field(
+        ...,
+        pattern=r"^[A-Z0-9_]{3,32}$",
+        description="Canonical uppercase product identifier (e.g. ONION_RED, VANILLA)",
+    )
+    canonical_name_fr: str = Field(
+        ..., min_length=2, max_length=120, description="Nom officiel en français"
+    )
+    category: str = Field(
+        "other",
+        description="Catégorie (cereal, root_tuber, pulse, pulse_oilseed, oil, sugar, flour, spice, vegetable, fruit, cash_crop, other)",
+    )
+    base_unit: str = Field("kg", description="Unité de mesure de base (kg, l, t)")
+    hs6_codes: list[str] = Field(
+        default_factory=list, description="Codes du Système Harmonisé à 6 chiffres (ex: 090500)"
+    )
+    faostat_item_codes: list[str] = Field(default_factory=list, description="Identifiants FAOSTAT")
+    aliases: list[str] = Field(
+        default_factory=list,
+        description="Synonymes et libellés bruts pour la détection automatique",
+    )
+    notes: str = Field(default="", description="Notes ou spécifications botaniques/commerciales")
+
+
+class ObservationItemInput(BaseModel):
+    """Input observation item with verified provenance metadata."""
+
+    date: str = Field(..., description="Date de relevé (YYYY-MM-DD ou YYYY-MM)")
+    location_pcode: str = Field("MDG", description="Code géographique P-code (ex: MDG, MDG11, MDG12)")
+    actor_level: str = Field(
+        "retail", description="Stade de vente (retail, wholesale, producer, farmgate)"
+    )
+    price: float = Field(..., gt=0, description="Prix unitaire observé")
+    currency: str = Field("MGA", description="Devise (MGA, EUR, USD)")
+    unit: str = Field("kg", description="Unité de mesure (kg, l, etc.)")
+    source_name: str = Field(
+        "Relevé direct / Saisie utilisateur", description="Référence ou nom de la source"
+    )
+
+
+class ObservationBatchCreateRequest(BaseModel):
+    """Batch observation payload conforming to 100% Bronze provenance (ADR-165)."""
+
+    observations: list[ObservationItemInput] = Field(..., min_length=1)
+    notes: str = Field(default="", description="Contexte de la collecte ou de l'import")
+
+
+class ObservationBatchCreateResponse(BaseModel):
+    """Outcome of observation batch ingestion."""
+
+    product_code: str
+    observations_created: int
+    bronze_content_hash: str
+    source_record_id: uuid.UUID
+    recomputed_gold_views: list[str]
+
+
 class LocationItem(BaseModel):
     """Geographic reference entity."""
 

@@ -12,6 +12,11 @@ ProductCategory = Literal[
     "oil",
     "sugar",
     "flour",
+    "spice",
+    "vegetable",
+    "fruit",
+    "cash_crop",
+    "other",
 ]
 
 LanguageCode = Literal["fr", "mg", "en"]

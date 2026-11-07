@@ -1,5 +1,25 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-11-07T21:45:00Z] ADR-165 : Ajout dynamique de produits et ingestion d'observations avec provenance Bronze immuable
+
+- **Objectifs & Implémentation (ADR-165) :**
+  - **Extension du catalogue produit :** Élargissement des catégories permises dans `ProductCategory` (`spice`, `vegetable`, `fruit`, `cash_crop`, `other`) pour accueillir toutes les commodités vivrières et agricoles.
+  - **Persistance miroir réversible (Principe 4 AGENTS.md) :** Fonctions `append_product_to_yaml` et `append_aliases_to_yaml` pour garantir la synchronisation continue entre la base PostgreSQL canonique (`ref.product`, `ref.product_alias`) et les fichiers déclaratifs `taxonomy/products.yaml` et `taxonomy/aliases.yaml`, assurant la rejouabilité totale hors réseau via `./scripts/dev.ps1 rebuild`.
+  - **Endpoints API dédiés (`/v1/products`) :**
+    - `POST /v1/products` : Création transactionnelle du produit, de ses alias, synchronisation YAML, et rafraîchissement à chaud de `ProductResolver`.
+    - `POST /v1/products/{product_code}/observations` : Ingestion de relevés de prix avec stockage obligatoire du brut dans le Bronze MinIO sous empreinte sha256 immuable, création de `meta.source_record` (`source_id='user_upload'`), insertion dans `obs.price_observation` (`observed_or_imputed='observed'`), et rafraîchissement atomique des vues matérialisées Gold (`gold.price_obs_current`, `gold.price_monthly`, `gold.price_monthly_best`).
+    - `GET /v1/products` et `GET /v1/products/{product_code}` : Consultation unitaire ou globale des produits et alias.
+  - **Interface utilisateur & Expérience produit :**
+    - Nouvelle page `/products` accessible via la navigation latérale et le raccourci `+ Gérer` du sélecteur global (`GlobalFilters`).
+    - Modale de création intuitive (code produit, nom officiel, catégorie, unité, codes douaniers SH6, alias).
+    - Modale d'importation de relevés directs avec confirmation d'empreinte Bronze sha256.
+    - Information transparente sur `/prices` lorsqu'une série est en cours de constitution (< 24 mois), expliquant l'attente du seuil minimal requis pour déclencher les modèles sans valeur fictive (conformité AGENTS.md §4).
+- **Preuves de qualification locale (100% vert) :**
+  - Backend unit tests : `docker compose exec -e APP_ENV=test api pytest tests/unit/test_api_products_dynamic.py tests/unit/test_taxonomy_units_audit.py -m "not integration"` -> **31 passed in 488.94s** (0 échec, 0 régression).
+  - Frontend unit tests : `docker compose exec web npm test` -> **16 test files passed, 116 tests passed in 51.71s** (0 échec, 0 régression).
+  - Ingestion live vérifiée : Création du produit `ONION_LOCAL` (Oignon rouge local) et injection de 3 observations avec hash Bronze `30dd849eaaa60e190b3ec54912cdafafb34bca5b207d9eb4893ce29960e68091`. Requête immédiate sur `/v1/prices?product=ONION_LOCAL` renvoyant fidèlement les médianes mensuelles réelles.
+
+
 ### [2026-11-05T01:30:00Z] Lot 1 : ADR-164 & Contrats de Données Alternatives Exogènes (Parité, Phénologie, Corridors)
 
 - **Mini-plan Lot 1 (ADR-164 & Contrats normatifs) :**

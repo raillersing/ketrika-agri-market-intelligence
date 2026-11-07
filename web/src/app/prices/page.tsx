@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Download, TrendingUp, Layers, Sparkles, SlidersHorizontal } from "lucide-react";
 import { DEFAULT_PRODUCT, summarizePrices, type MarketPrice } from "@/lib/market-overview";
@@ -191,7 +192,23 @@ function PricesContent() {
   return <div className="space-y-6">
     <header className="flex flex-wrap items-start justify-between gap-4"><div className="space-y-2"><h1 className="flex flex-wrap items-center gap-3 text-2xl font-semibold"><TrendingUp aria-hidden="true" className="h-6 w-6 shrink-0 text-primary-readable" />Explorateur des prix vivriers</h1><p className="max-w-3xl text-sm leading-6 text-muted-foreground">Consultez les points mensuels disponibles. Une estimation, une observation et une prévision restent des valeurs de nature différente.</p></div><button type="button" disabled={loading || !!error || !rows.length} onClick={exportCsv} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"><Download aria-hidden="true" className="h-4 w-4" />Exporter la sélection CSV</button></header>
     {loading ? <p role="status" className="text-sm text-muted-foreground">Chargement des points de prix…</p> : error ? <p role="alert" className="rounded-xl border border-rose-500/20 p-4 text-sm text-rose-700 dark:text-rose-300">{error}</p> : <>
-      {!rows.length ? <section className="rounded-xl border border-border bg-card p-6"><h2 className="font-medium">Aucun point de prix pour cette sélection</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Les filtres sont conservés. Un autre produit, une autre zone ou un autre stade peut disposer de données. Cette absence ne signifie pas un prix nul.</p></section> : <>
+      {!rows.length ? (
+        <section className="rounded-xl border border-border bg-card p-6 space-y-3">
+          <h2 className="font-semibold text-foreground">Aucun point de prix pour cette sélection</h2>
+          <p className="text-sm leading-6 text-muted-foreground">
+            Les filtres sont conservés. Cette commodité n'a pas encore de relevés enregistrés pour cette zone ou ce stade de vente. Vous pouvez ajouter des observations directement depuis la gestion des produits.
+          </p>
+          <div className="pt-2">
+            <Link
+              href="/products"
+              prefetch={false}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-orange-500 text-white hover:bg-orange-600 transition-colors shadow-sm"
+            >
+              + Gérer ou ajouter des relevés pour ce produit
+            </Link>
+          </div>
+        </section>
+      ) : <>
         {latest && (
           <section aria-label="Série affichée" className="space-y-5">
             {/* MULTI-MODEL EXTRAPOLATION & PROJECTION CONTROLLER */}
@@ -355,9 +372,17 @@ function PricesContent() {
                 </div>
               </div>
             ) : (
-              <p className="text-sm leading-6 text-muted-foreground">
-                Courbe : {latest.location_name || latest.location_pcode || "Zone non renseignée"} · {saleStageLabel(latest.actor_level)} · {latest.currency}/{latest.unit}. Projection affichée : <strong className="text-foreground">{activeLabelInfo.icon} {activeLabelInfo.label}</strong> ({horizon} mois).
-              </p>
+              <div className="rounded-xl border border-border bg-card/60 p-4 space-y-2">
+                <p className="text-sm leading-6 text-muted-foreground">
+                  Courbe : <strong>{latest.location_name || latest.location_pcode || "Zone non renseignée"}</strong> · {saleStageLabel(latest.actor_level)} · {latest.currency}/{latest.unit}.
+                </p>
+                <div className="flex items-start gap-2 text-xs text-muted-foreground border-t border-border/40 pt-2">
+                  <Sparkles className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+                  <span>
+                    Extrapolations prédictives multi-modèles (AutoARIMA, ETS, SNaïf, Consensus) : activées automatiquement dès que la série atteint 24 mois réels de relevés (conformité stricte AGENTS.md §4 pour proscrire toute valeur fictive).
+                  </span>
+                </div>
+              </div>
             )}
 
             {/* INTERACTIVE PRICE CHART WITH SELECTED MODEL AND HORIZON */}

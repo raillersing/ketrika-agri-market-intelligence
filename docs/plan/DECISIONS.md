@@ -2169,3 +2169,32 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
      - Intégration dans le Copilote Analyste avec vérification mécanique des preuves textuelles (Principe 6 & 7).
      - Aucun chiffre inventé : conservation systématique des métriques brutes et des formules explicables.
 
+
+## ADR-165 | 2026-11-07 | Accepté avant code | Gestion dynamique des produits du catalogue et ingestion d'observations avec provenance Bronze immuable
+
+- Contexte :
+  L'utilisateur souhaite pouvoir enrichir dynamiquement le catalogue de commodités vivrières et agricoles (ex: épices, légumes, cultures de rente, légumineuses) directement depuis l'application, tout en s'assurant que toutes les fonctionnalités de la plateforme (normalisation, consultation des prix, cartographie territoriale, commerce extérieur, alertes de marché, prédictions ML/extrapolations à 12 mois, et copilote) fonctionnent intégralement pour ce nouveau produit.
+  Conformément aux principes constitutionnels non négociables d'AGENTS.md §4 (Principes 1, 2, 3, 4, 8, 9, 10), aucun chiffre inventé ne doit entrer en base, toute observation doit disposer d'une provenance Bronze traçable à 100 % (SHA-256), les valeurs brutes doivent être conservées (`price_raw`, `product_raw`, `location_raw`), et la rejouabilité totale hors réseau (`./scripts/dev.ps1 rebuild`) doit être préservée.
+
+- Décision :
+  1. API de Création et Consultation Produits (`POST /v1/products`) :
+     - Endpoint sécurisé (authentifié) permettant d'ajouter un nouveau produit avec son code canonique normalisé (`product_code` majuscule, ex: `ONION_RED`, `VANILLA_NATURAL`), son libellé officiel français (`canonical_name_fr`), sa catégorie vivrière/agricole, son unité de base (`kg`, `l`, `t`), ses codes douaniers SH6 optionnels, et sa liste de synonymes/alias pour la détection textuelle.
+     - Insertion transactionnelle dans `ref.product` et création des alias correspondants dans `ref.product_alias` avec `origin = 'user_created'` et `human_reviewed = true`.
+     - Rafraîchissement automatique à chaud du dictionnaire en mémoire `ProductResolver` pour une reconnaissance immédiate dans les pipelines de normalisation.
+  2. Rejouabilité totale et Persistance Miroir (Principe 4) :
+     - Synchronisation automatique miroir des définitions créées dans les fichiers sources `taxonomy/products.yaml` et `taxonomy/aliases.yaml`.
+     - Garantit que toute reconstruction à blanc de la base (`dev.ps1 rebuild`) réintègre fidèlement les produits créés sans perte de données.
+  3. Ingestion d'Observations avec Provenance Bronze 100 % (Principes 1, 2, 8) :
+     - Endpoint `POST /v1/products/{product_code}/observations` permettant la saisie unitaire ou l'import par lot de relevés de prix (date, code lieu P-code, stade de vente, prix unitaire, devise, unité).
+     - Stockage obligatoire du payload brut dans le magasin Bronze MinIO avec empreinte immuable sha256 (`meta.source_record` avec `source_id = 'user_upload'`).
+     - Insertion Silver dans `obs.price_observation` avec conservation intégrale des données brutes (`price_raw`, `product_raw`, `location_raw`, `currency_raw`, `unit_raw`), `observed_or_imputed = 'observed'`.
+     - Déclenchement atomique du rafraîchissement des vues Gold (`gold.price_monthly`, `gold.price_obs_current`).
+  4. Robustesse ML et Abstention Gracieuse (Principe 9) :
+     - Si le nouveau produit dispose de $\ge 24$ points mensuels, tous les modèles d'extrapolation (AutoARIMA, AutoETS, Causal, SeasonalNaive, NaiveLast, ConsensusEnsemble) s'exécutent automatiquement jusqu'à l'horizon demandé (jusqu'à 12 mois).
+     - Si le produit a $< 24$ points ou 0 point, le moteur d'extrapolation et l'API renvoient une abstention explicite (`status = 'abstained'`, motif : historique insuffisant), et l'interface affiche un message explicatif sans bloquer ni générer de valeurs factices.
+  5. Interface Utilisateur & Intégration Navigation :
+     - Page `/products` intégrée dans la barre de navigation latérale sous « Gestion des données ».
+     - Tableau de bord du catalogue : liste des commodités, statut, nombre d'observations réelles, filtres.
+     - Modale ergonomique « + Nouveau Produit » avec validation immédiate.
+     - Modale « Importer des observations » pour injecter facilement des séries de prix réels.
+     - Raccordement immédiat au sélecteur global (`GlobalFilters`) pour naviguer instantanément vers `/prices?product=NOUVEAU_PRODUIT`, `/map`, etc.

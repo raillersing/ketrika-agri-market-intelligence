@@ -90,6 +90,86 @@ def get_product(product_code: str, taxonomy_dir: Path | str | None = None) -> Pr
     raise KeyError(f"Product '{product_code}' not found in taxonomy")
 
 
+def append_product_to_yaml(
+    product_code: str,
+    canonical_name_fr: str,
+    category: str,
+    base_unit: str = "kg",
+    hs6_codes: list[str] | None = None,
+    faostat_item_codes: list[int] | None = None,
+    notes: str = "",
+    taxonomy_dir: Path | str | None = None,
+) -> None:
+    """Safely append a new product definition to taxonomy/products.yaml (ADR-165)."""
+    t_dir = Path(taxonomy_dir) if taxonomy_dir else get_default_taxonomy_dir()
+    path = t_dir / "products.yaml"
+    data: list[Any] = []
+    if path.exists():
+        with open(path, encoding="utf-8") as f:
+            loaded = yaml.safe_load(f)
+            if isinstance(loaded, list):
+                data = loaded
+
+    if any(item.get("product_code") == product_code for item in data if isinstance(item, dict)):
+        return
+
+    entry = {
+        "product_code": product_code,
+        "canonical_name_fr": canonical_name_fr,
+        "category": category,
+        "base_unit": base_unit,
+        "hs6_codes": hs6_codes or [],
+        "faostat_item_codes": faostat_item_codes or [],
+        "verified": True,
+        "notes": notes or f"Ajouté via l'application ({canonical_name_fr})",
+    }
+    data.append(entry)
+    with open(path, "w", encoding="utf-8") as f:
+        yaml.safe_dump(data, f, allow_unicode=True, sort_keys=False)
+
+
+def append_aliases_to_yaml(
+    aliases: list[dict[str, Any]],
+    taxonomy_dir: Path | str | None = None,
+) -> None:
+    """Safely append new alias definitions to taxonomy/aliases.yaml (ADR-165)."""
+    if not aliases:
+        return
+    t_dir = Path(taxonomy_dir) if taxonomy_dir else get_default_taxonomy_dir()
+    path = t_dir / "aliases.yaml"
+    data: list[Any] = []
+    if path.exists():
+        with open(path, encoding="utf-8") as f:
+            loaded = yaml.safe_load(f)
+            if isinstance(loaded, list):
+                data = loaded
+
+    existing_norms = {
+        normalize_string(item.get("alias", ""))
+        for item in data
+        if isinstance(item, dict) and item.get("alias")
+    }
+
+    added = False
+    for a in aliases:
+        raw_text = a.get("alias", "").strip()
+        norm = normalize_string(raw_text)
+        if norm and norm not in existing_norms:
+            existing_norms.add(norm)
+            data.append({
+                "alias": raw_text,
+                "lang": a.get("lang", "fr"),
+                "product_code": a["product_code"],
+                "confidence": float(a.get("confidence", 0.95)),
+                "evidence": a.get("evidence", "Création utilisateur via application"),
+            })
+            added = True
+
+    if added:
+        with open(path, "w", encoding="utf-8") as f:
+            yaml.safe_dump(data, f, allow_unicode=True, sort_keys=False)
+
+
 def resolve_product(
     raw_label: str,
     aliases: list[ProductAlias] | None = None,

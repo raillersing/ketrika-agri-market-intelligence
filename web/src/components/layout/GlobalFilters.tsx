@@ -4,6 +4,7 @@ import React, { useId, useTransition, useEffect, useState } from "react";
 import { DEFAULT_PRODUCT } from "@/lib/market-overview";
 import { businessProducts, DQ_SELECTION_MESSAGE, filterFieldsForPath, isLegacyDQProduct, resetVisibleFilters, SALE_STAGES, type ProductReference } from "@/lib/market-filters";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { RotateCcw } from "lucide-react";
 
 export function GlobalFilters() {
@@ -63,13 +64,24 @@ export function GlobalFilters() {
 
   return <section aria-label="Filtres de cette page" aria-busy={isPending || loading} className="border-b border-border bg-header px-4 py-3 md:px-8">
     <div className="flex flex-wrap items-end gap-3">
-      <label className="flex min-w-0 max-w-full flex-col gap-1 text-xs text-muted-foreground"><span>Produit</span>
+      <div className="flex min-w-0 max-w-full flex-col gap-1 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between">
+          <span>Produit</span>
+          <Link
+            href="/products"
+            prefetch={false}
+            className="text-[11px] text-orange-600 dark:text-orange-400 font-medium hover:underline flex items-center gap-0.5 ml-2"
+            title="Gérer ou ajouter des produits"
+          >
+            + Gérer
+          </Link>
+        </div>
         <select value={dqSelected ? "" : product} onChange={event => update("product", event.target.value)} disabled={isPending || loading} className={control}>
           {dqSelected && <option value="" disabled>Choisissez un produit</option>}
           {!dqSelected && !products.some(row => row.product_code === product) && <option value={product}>{loading ? "Chargement du catalogue…" : `Sélection non reconnue : ${product}`}</option>}
           {products.map(row => <option key={row.product_code} value={row.product_code}>{row.canonical_name_fr}</option>)}
         </select>
-      </label>
+      </div>
       {showRegion && <label className="flex min-w-0 max-w-full flex-col gap-1 text-xs text-muted-foreground"><span>Zone</span>
         <select value={region} onChange={event => update("region", event.target.value)} disabled={isPending || loading} className={control}>
           <option value="">Toutes les zones</option>

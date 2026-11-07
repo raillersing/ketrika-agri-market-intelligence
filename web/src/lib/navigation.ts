@@ -1,4 +1,4 @@
-export type NavigationIcon = "overview" | "prices" | "map" | "trade" | "economy" | "climate" | "assistant" | "alerts" | "bulletins" | "sources" | "review" | "system" | "about";
+export type NavigationIcon = "overview" | "prices" | "map" | "trade" | "economy" | "climate" | "assistant" | "alerts" | "bulletins" | "sources" | "review" | "system" | "about" | "products";
 
 export interface NavigationPage {
   href: string;
@@ -20,6 +20,7 @@ export const NAVIGATION_PAGES: readonly NavigationPage[] = [
   { href: "/alerts", label: "Alertes", description: "Alertes enregistrées et suivi", group: "Suivre", icon: "alerts", keywords: "notifications incidents" },
   { href: "/bulletins", label: "Bulletins", description: "Brouillons et publications disponibles", group: "Suivre", icon: "bulletins", keywords: "rapports publications" },
   { href: "/sources", label: "Sources", description: "Origine et état des données", group: "Gestion des données", icon: "sources", keywords: "qualité provenance collecte dataops" },
+  { href: "/products", label: "Produits", description: "Catalogue des denrées et gestion", group: "Gestion des données", icon: "products", keywords: "produits catalogue denrées vivriers création ajouter" },
   { href: "/admin/review", label: "À vérifier", description: "Revue des éléments en attente", group: "Gestion des données", icon: "review", keywords: "revue anomalies validation" },
   { href: "/system", label: "Système", description: "État et configuration de la plateforme", group: "Gestion des données", icon: "system", keywords: "architecture plateforme infrastructure" },
   { href: "/about", label: "À propos", description: "Irooa et son entreprise mère Ketrikay", group: "Informations", icon: "about", keywords: "entreprise société irooa ketrikay ketrikai" },
