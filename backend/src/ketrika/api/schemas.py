@@ -446,6 +446,35 @@ class ForecastPerformanceResponse(BaseModel):
     total_evaluations: int = 0
 
 
+class ModelExtrapolationTrajectory(BaseModel):
+    """Multi-model comparative forecast trajectory."""
+
+    model_name: str
+    is_baseline: bool
+    predictions: list[float]
+    p10: list[float] | None = None
+    p90: list[float] | None = None
+    historical_wape: float | None = None
+    historical_mae: float | None = None
+
+
+class MultiModelExtrapolationResponse(BaseModel):
+    """Multi-model comparative extrapolations response."""
+
+    product_code: str
+    product_name: str | None = None
+    location_pcode: str
+    location_name: str | None = None
+    unit: str
+    currency: str
+    data_cutoff: str
+    last_observed_price: float
+    horizons: list[int]
+    target_periods: list[str]
+    winning_model: str | None = None
+    models: dict[str, ModelExtrapolationTrajectory] = Field(default_factory=dict)
+
+
 # ===================== OPS & ALERTS =====================
 
 

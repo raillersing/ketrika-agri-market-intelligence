@@ -20,8 +20,10 @@ from ketrika.api.schemas import (
     ForecastEvaluationItem,
     ForecastItem,
     ForecastPerformanceResponse,
+    ModelExtrapolationTrajectory,
     ModelRunDetailResponse,
     ModelRunSummaryItem,
+    MultiModelExtrapolationResponse,
     PerformanceMetricsSummary,
 )
 from ketrika.core.db import get_db
@@ -186,6 +188,186 @@ def get_forecasts(
         return export_csv_response(csv_rows, filename="forecasts.csv")
 
     return results
+
+
+@router.get("/extrapolations", response_model=MultiModelExtrapolationResponse)
+def get_multi_model_extrapolations(
+    product: str = Query(..., description="Product code (e.g. RICE_WHITE_IMPORTED, RICE_WHITE_LOCAL, VEG_OIL, MAIZE_GRAIN)"),
+    location: str | None = Query(None, description="Location P-code (e.g. MDG, MDG12)"),
+    horizon: int = Query(6, ge=1, le=12, description="Extrapolation horizon in months (1-12)"),
+    session: Session = Depends(get_db),
+) -> MultiModelExtrapolationResponse:
+    """Generate multi-model comparative price extrapolations (SPECS §17).
+
+    Compares dynamic trajectories and extrapolations across all candidate models:
+    - CausalAgriculturalModel (Macro, climate, events & phenological seasonality)
+    - AutoARIMA (Autoregressive integrated moving average)
+    - AutoETS (Exponential smoothing state-space)
+    - SeasonalNaive (12-month lag seasonal baseline)
+    - NaiveLast (Martingale flat persistence baseline)
+    """
+    from datetime import date
+    import numpy as np
+    from sqlalchemy import select
+    from ketrika.core.models.db import Event, MacroObservation
+    from ketrika.ml.models import (
+        AutoARIMAModel,
+        AutoETSModel,
+        NaiveLastModel,
+        SeasonalNaiveModel,
+    )
+    from ketrika.ml.causal_model import CausalAgriculturalModel
+    from ketrika.ml.series import extract_eligible_series, shift_months
+
+    # Resolve product
+    resolved = resolve_product(product, min_confidence=0.85)
+    target_prod = resolved[0] if resolved else product.upper()
+
+    # Load series up to latest cutoff
+    all_series = extract_eligible_series(session, data_cutoff=date(2026, 10, 1), min_points=24)
+    matching = [
+        s for s in all_series
+        if s.product_code == target_prod or s.product_code == product.upper()
+    ]
+    if not matching:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No eligible time series found for product '{product}'.",
+        )
+
+    # Filter location if provided
+    selected_series = None
+    if location:
+        loc_upper = location.upper()
+        for s in matching:
+            if s.location_pcode.upper() == loc_upper:
+                selected_series = s
+                break
+    if not selected_series:
+        mdg_matches = [s for s in matching if s.location_pcode == "MDG"]
+        selected_series = mdg_matches[0] if mdg_matches else matching[0]
+
+    pts = [p for p in selected_series.grid if p.price is not None]
+    if len(pts) < 12:
+        raise HTTPException(status_code=400, detail="Insufficient price observations for extrapolation")
+
+    s_dates = [p.month for p in pts]
+    y = np.array([p.price for p in pts], dtype=float)
+    last_price = round(float(y[-1]), 1)
+    last_date = s_dates[-1]
+
+    horizons = list(range(1, horizon + 1))
+    target_periods = [shift_months(last_date, h_i).isoformat() for h_i in horizons]
+
+    # Pre-fetch macro and events for causal model
+    macro_rows = session.execute(
+        select(MacroObservation)
+        .where(MacroObservation.superseded_by.is_(None), MacroObservation.period_start <= last_date)
+        .order_by(MacroObservation.period_start)
+    ).scalars().all()
+    macro_by_ind: dict[str, dict[date, float]] = {}
+    for m_rec in macro_rows:
+        if m_rec.value is not None:
+            macro_by_ind.setdefault(m_rec.indicator_code, {})[m_rec.period_start] = float(m_rec.value)
+    aligned_macro = {}
+    for ind_code, dmap in macro_by_ind.items():
+        arr = []
+        last_known = 0.0
+        for d in s_dates:
+            if d in dmap:
+                last_known = dmap[d]
+            arr.append(last_known)
+        aligned_macro[ind_code] = np.array(arr, dtype=float)
+
+    event_rows = session.execute(
+        select(Event).where(Event.event_date <= last_date).order_by(Event.event_date)
+    ).scalars().all()
+    events_payload = [
+        {
+            "event_id": str(ev.event_id),
+            "event_type": ev.event_type,
+            "title": ev.title,
+            "event_date": ev.event_date,
+            "severity": ev.severity,
+        }
+        for ev in event_rows
+    ]
+
+    # Latest model run metrics
+    latest_run = session.execute(
+        text("SELECT metrics FROM ml.model_run WHERE task = 'price_forecast' ORDER BY trained_at DESC LIMIT 1")
+    ).fetchone()
+    historical_metrics: dict[str, Any] = {}
+    winning_model: str | None = None
+    if latest_run and isinstance(latest_run[0], dict):
+        by_series = latest_run[0].get("by_series", {})
+        if selected_series.series_key in by_series:
+            s_info = by_series[selected_series.series_key]
+            winning_model = s_info.get("best_model")
+            historical_metrics = s_info.get("evaluations", {})
+
+    candidate_models = {
+        "CausalAgriculturalModel": (CausalAgriculturalModel(season_length=12), False),
+        "AutoARIMA": (AutoARIMAModel(season_length=12), False),
+        "AutoETS": (AutoETSModel(season_length=12), False),
+        "SeasonalNaive": (SeasonalNaiveModel(season_length=12), True),
+        "NaiveLast": (NaiveLastModel(), True),
+    }
+
+    models_dict: dict[str, ModelExtrapolationTrajectory] = {}
+    for m_name, (m_inst, is_base) in candidate_models.items():
+        try:
+            if m_name == "CausalAgriculturalModel":
+                m_res = m_inst.fit_predict(
+                    y,
+                    h=horizon,
+                    dates=s_dates,
+                    series_key=selected_series.series_key,
+                    macro_series=aligned_macro,
+                    events=events_payload,
+                )
+            else:
+                m_res = m_inst.fit_predict(y, h=horizon)
+
+            preds = [round(float(p), 1) for p in m_res.prediction.mean[:horizon]]
+            p10_vals = (
+                [round(float(p), 1) for p in m_res.prediction.p10[:horizon]]
+                if m_res.prediction.p10 is not None
+                else None
+            )
+            p90_vals = (
+                [round(float(p), 1) for p in m_res.prediction.p90[:horizon]]
+                if m_res.prediction.p90 is not None
+                else None
+            )
+
+            m_hist = historical_metrics.get(m_name, {})
+            models_dict[m_name] = ModelExtrapolationTrajectory(
+                model_name=m_name,
+                is_baseline=is_base,
+                predictions=preds,
+                p10=p10_vals,
+                p90=p90_vals,
+                historical_wape=round(m_hist.get("wape"), 4) if m_hist.get("wape") is not None else None,
+                historical_mae=round(m_hist.get("mae"), 1) if m_hist.get("mae") is not None else None,
+            )
+        except Exception:
+            pass
+
+    return MultiModelExtrapolationResponse(
+        product_code=selected_series.product_code,
+        product_name=selected_series.product_code.replace("_", " ").title(),
+        location_pcode=selected_series.location_pcode,
+        location_name=selected_series.location_pcode,
+        unit=selected_series.unit,
+        currency="MGA",
+        data_cutoff=last_date.isoformat(),
+        last_observed_price=last_price,
+        horizons=horizons,
+        target_periods=target_periods,
+        winning_model=winning_model,
+        models=models_dict,
+    )
 
 
 @router.get("/runs", response_model=list[ModelRunSummaryItem])
