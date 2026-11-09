@@ -63,8 +63,9 @@ def test_actual_document_job_has_no_bronze_step():
 def test_actual_registered_jobs_match_eligible_sources_without_new_assets():
     from ketrika.pipelines.definitions import document_replay_jobs, source_inventory
 
-    assert {job.name for job in document_replay_jobs} == {
+    expected_job_names = {
         f"{entry.source_id}__document_replay" for entry in source_inventory if entry.included
     }
-    assert len(document_replay_jobs) == 12
+    assert {job.name for job in document_replay_jobs} == expected_job_names
+    assert len(document_replay_jobs) == len(expected_job_names)
     assert "instat_nipc__document_replay" not in {job.name for job in document_replay_jobs}

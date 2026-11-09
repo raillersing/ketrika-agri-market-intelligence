@@ -5071,4 +5071,15 @@ Mini-plan ADR163/SPECS avant code : parser archive3.0.0 national c_rice borné ;
   - Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_07_multisource_prices.py` (9 tests passants) et non-régression `test_wfp_hdx_mdg.py` (8 tests passants, 17/17 passants). Ruff check : All checks passed.
 - Preuve : ADR-173 consigné. Statut IA-DATA-07 : DONE.
 
+### [2026-11-09T23:40:00Z] IA-DATA-08, 09, 10 — Qualification économique, spatio-temporelle et gouvernance d'orchestration Dagster
+
+- Contexte : Tâches P2 IA-DATA-08, IA-DATA-09 et IA-DATA-10 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et SPECS §5.3, §14, §15, §19.
+- Réalisations :
+  - **IA-DATA-08 (Statistiques & économie)** : Qualification complète des séries économiques issues des 5 familles (`instat`, `bfm`, `omh`, `faostat`, `douanes`). Gardes strictes contre les ruptures de base (`base_shift`), dénominateurs nuls, incompatibilités d'unités physiques et désalignements temporels. Séparation stricte entre indice NIPC alimentaire urbain et prix directs de marché au kg. 65 tests unitaires verts (`test_bfm_public.py`, `test_omh_public.py`, `test_instat_nipc.py`, `test_instat_tbe.py`, `test_douanes_stats.py`) et 19 tests du dashboard économique verts (`test_economic_dashboard.py`).
+  - **IA-DATA-09 (Agroclimat)** : Validation spatio-temporelle des produits raster et satellitaires pour Madagascar (bounding box [-25.6, -11.9] Lat, [43.2, 50.5] Lon pour NASA POWER et CHIRPS). Traitement asynchrone des modèles numériques (ECMWF, Météo-MG) hors charge web synchrone. 30 tests unitaires verts (`test_chirps.py`, `test_nasa_power.py`, `test_meteo_mg.py`, `test_ecmwf_open.py`).
+  - **IA-DATA-10 (Automatisation et recette)** : Déploiement et gouvernance Dagster (`ketrika.pipelines.definitions`) orchestrant les 16 sources certifiées de l'inventaire actif. Fuseau horaire obligatoire `Indian/Antananarivo` (UTC+3) sur tous les plannings. Double vérification bloquante par source (`provenance_complete`, `schema_drift`). Capteur de surveillance d'échec vers Mailpit (`pipeline_failure_email_sensor`). 16 jobs de rejeu déterministe hors réseau (`document_replay_jobs`).
+  - Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_08_09_qualification.py` (7 tests passants), non-régression Dagster `test_source_definitions.py` (30 passants), `test_gold_dependency_graph.py` (6 passants), `test_document_partitions.py` (4 passants). Ruff check : All checks passed.
+- Preuve : ADR-174 consigné. Statuts IA-DATA-08, IA-DATA-09, IA-DATA-10 : DONE.
+
+
 

@@ -2400,3 +2400,27 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
   4. Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_07_multisource_prices.py` (9 tests passants) et non-régression `test_wfp_hdx_mdg.py` (8 tests passants, 17/17 passants).
 
 
+## ADR-174 | 2026-11-09 | Accepté avant code | Qualification des séries statistiques & économiques (IA-DATA-08), résolution agroclimatique (IA-DATA-09) et gouvernance Dagster (IA-DATA-10)
+
+- Contexte :
+  En exécution des lots IA-DATA-08, IA-DATA-09 et IA-DATA-10 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et de SPECS §5.3, §14, §15, §19.
+  L'activation opérationnelle des tableaux de bord et de l'automatisation requiert des garanties formelles d'intégrité :
+  1. Pour les séries statistiques et économiques (INSTAT, BFM, OMH, FAOSTAT, Douanes) : rejet strict des ruptures de base (`base_shift`), dénominateurs nuls/manquants, incompatibilités d'unités physiques et désalignements temporels. Aucune valeur synthétique de remplacement.
+  2. Pour les séries agroclimatiques (NASA POWER, CHIRPS, ECMWF, Météo-MG) : validation des limites spatiales de Madagascar, résolution temporelle explicite et traitement asynchrone des modèles numériques hors cycle web.
+  3. Pour l'orchestration Dagster : gestion de 16 sources certifiées dans l'inventaire actif, fuseau horaire obligatoire `Indian/Antananarivo` (UTC+3), capteur d'échec Mailpit `pipeline_failure_email_sensor`, deux vérifications bloquantes par source (`provenance_complete`, `schema_drift`), et jobs de rejeu déterministe `document_replay_jobs`.
+
+- Décision :
+  1. Qualification des 14 cartes métriques économiques normatives et des 5 dimensions autonomes dans `backend/src/ketrika/gold/economic.py` :
+     - Vérification des gardes contre les ruptures de base, dénominateurs nuls et désalignements temporels.
+     - Séparation conceptuelle stricte entre l'inflation NIPC alimentaire et les prix directs de marché au kg (`audit_inflation_vs_market_price_distinctness`).
+  2. Validation spatio-temporelle agroclimatique :
+     - Bounding box officielle de Madagascar pour les stations agrométéorologiques.
+     - Traitement décorrélé des volumétries raster et des modèles numériques.
+  3. Gouvernance d'orchestration Dagster :
+     - Synchronisation des assertions des graphes de dépendances Dagster (`test_source_definitions.py`, `test_gold_dependency_graph.py`, `test_document_partitions.py`) avec l'inventaire officiel de 16 sources éligibles.
+     - Double vérification bloquante par source (`provenance_complete` et `schema_drift`).
+     - Plannings d'exécution ancrés dans le fuseau horaire `Indian/Antananarivo`.
+  4. Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_08_09_qualification.py` (7 tests passants).
+
+
+

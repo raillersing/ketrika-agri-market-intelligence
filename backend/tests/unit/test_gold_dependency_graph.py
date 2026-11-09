@@ -75,6 +75,8 @@ def test_actual_repository_gold_has_every_included_silver_dependency():
         AssetKey(f"{source_id}__silver")
         for source_id in (
             "wb_rtfp_mdg",
+            "wfp_hdx_mdg",
+            "fao_fpma_mdg",
             "faostat",
             "instat_tbe",
             "bfm_public",
@@ -86,6 +88,8 @@ def test_actual_repository_gold_has_every_included_silver_dependency():
             "ipc_mdg",
             "ecmwf_open",
             "market_supply",
+            "world_benchmarks",
+            "corridor_friction",
         )
     }
     assert AssetKey("instat_nipc__silver") not in expected
