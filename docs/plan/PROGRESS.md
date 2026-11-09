@@ -5002,3 +5002,16 @@ Mini-plan ADR163/SPECS avant code : parser archive3.0.0 national c_rice borné ;
   - Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_02_source_diagnostics.py` (6 tests verts).
   - Validation frontend complète : 17 suites, 120 tests passants. Ruff check : All checks passed.
 - Preuve : ADR-168 consigné. Statut IA-DATA-02 : DONE.
+
+### [2026-11-09T22:10:00Z] IA-DATA-03 — Adaptateurs universels bornés, streaming contrôlé et checkpoints résilients
+
+- Contexte : Tâche P1 IA-DATA-03 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et SPECS §9, §12.
+- Réalisations :
+  - Sous-package d'adaptateurs universels `backend/src/ketrika/connectors/adapters/` (`pagination.py`, `streaming.py`, `checkpoint.py`).
+  - Moteur de pagination bornée multi-stratégies (`OFFSET_LIMIT`, `PAGE_NUMBER`, `CURSOR`, `NEXT_URL`) avec plafonds de sécurité (`max_pages`, `max_records`, `max_bytes_per_page`, `max_total_bytes`) et détection de boucles et cycles infinis.
+  - Streaming HTTP contrôlé avec vérification préventive de `Content-Length`, lecture chunked (64 Kio), calcul SHA-256 à la volée, et interruption immédiate en cas de dépassement de plafond.
+  - Reprise exacte après incident réseau ou quota (429, 503, coupure) adossée à la table `meta.collection_checkpoint` sans saut de page ni duplication d'enregistrements.
+  - Migration additive `0029_collection_checkpoint.py` créant `meta.collection_checkpoint`.
+  - Assainissement systématique des paramètres sensibles (clés d'API, tokens) dans les URLs journalisées (`sanitize_url_for_logging`).
+  - Suite de tests unitaires et de simulation `backend/tests/unit/test_ia_data_03_common_adapters.py` (10 tests passants). Ruff check : All checks passed.
+- Preuve : ADR-169 consigné. Statut IA-DATA-03 : DONE.

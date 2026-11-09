@@ -2264,3 +2264,26 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
      - Badges d'état DataOps colorés avec sous-titre explicite dans la vue Cartes, la vue Tableau et la chronologie des exécutions récentes.
   6. Suite de tests unitaires et intégration (`backend/tests/unit/test_ia_data_02_source_diagnostics.py`) :
      - 6 tests validant la matrice des 8 états, les 11 motifs de sanitization, l'étanchéité absolue aux secrets, et l'exposition correcte via les routes FastAPI `/v1/sources`, `/v1/sources/{source_id}/health`, `/v1/sources/runs`.
+
+
+## ADR-169 | 2026-11-09 | Accepté avant code | Adaptateurs universels d'acquisition bornée, streaming contrôlé, pagination idempotente et reprise par checkpoints (IA-DATA-03)
+
+- Contexte :
+  En exécution de la tâche IA-DATA-03 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et de SPECS §9, §12.
+  Les connecteurs utilisaient des stratégies de pagination hétérogènes sans garanties communes d'arrêt :
+  1. Risque d'emballement ou de boucle infinie en cas de réémission cyclique d'URLs ou de tokens par l'émetteur.
+  2. Risque de dépassement mémoire (OOM) lors du téléchargement d'archives ou flux volumineux sans streaming contrôlé.
+  3. Perte de position lors d'une interruption transitoire (429, 503, déconnexion), obligeant à reprendre depuis le début ou risquant d'insérer des doublons / d'omettre des tranches.
+  4. Risque de fuite d'identifiants (clés d'API, tokens) dans les URLs paginées journalisées.
+
+- Décision :
+  1. Sous-package d'adaptateurs universels (`backend/src/ketrika/connectors/adapters/`) :
+     - `pagination.py` : pagination bornée multi-stratégies (`OFFSET_LIMIT`, `PAGE_NUMBER`, `CURSOR`, `NEXT_URL`) avec plafonds stricts (`max_pages`, `max_records`, `max_bytes_per_page`, `max_total_bytes`) et détection de boucles (`pagination_infinite_loop_detected`).
+     - `streaming.py` : streaming HTTP contrôlé (`ControlledStreamReader`) avec vérification préalable de `Content-Length`, lecture chunked (64 Kio) avec arrêt strict immédiat (`http_stream_size_exceeds_limit`), et calcul progressif du SHA-256 sans duplication en mémoire.
+     - `checkpoint.py` : modèle `CollectionCheckpoint` et implémentations `SqlCheckpointStore` (adossé à `meta.collection_checkpoint`) et `InMemoryCheckpointStore` pour une reprise exacte de la collecte sans doublon ni trou après incident réseau.
+  2. Migration additive `0029_collection_checkpoint.py` :
+     - Création de la table `meta.collection_checkpoint` indexée par `(source_id, partition_key)`.
+  3. Confidentialité des journaux (`sanitize_url_for_logging`) :
+     - Masquage systématique des paramètres sensibles (`api_key`, `token`, `secret`, `password`, `bearer`) dans les URLs de requêtes paginées.
+  4. Suite de tests unitaires et simulations (`backend/tests/unit/test_ia_data_03_common_adapters.py`) :
+     - 10 tests unitaires et simulations validant l'ensemble des stratégies, la reprise après coupure 503/429, la détection de boucles, le streaming borné, le calcul de SHA-256 et la persistance SQL des checkpoints.
