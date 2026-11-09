@@ -16,7 +16,7 @@ DATA_ROW = JSONShape(
         ("price_date", TEXT, True),
         ("currency", TEXT, True),
         ("data_coverage", DECIMAL, False),
-        ("spatially_interpolated", JSONShape("number"), False),
+        ("spatially_interpolated", DECIMAL, False),
         ("c_rice", DECIMAL, False),
         ("c_sugar", DECIMAL, False),
         ("c_wheat_flour", DECIMAL, False),

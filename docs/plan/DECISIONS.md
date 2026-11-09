@@ -2198,3 +2198,17 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
      - Modale ergonomique « + Nouveau Produit » avec validation immédiate.
      - Modale « Importer des observations » pour injecter facilement des séries de prix réels.
      - Raccordement immédiat au sélecteur global (`GlobalFilters`) pour naviguer instantanément vers `/prices?product=NOUVEAU_PRODUIT`, `/map`, etc.
+
+
+## ADR-166 | 2026-11-09 | Accepté avant code | Tolérance scalaire décimale pour spatially_interpolated dans le schéma WB RTFP v2 (Correction Contabo)
+
+- Contexte :
+  Lors de la première publication Gold sur le serveur de production Contabo, le rafraîchissement a été rejeté par `GoldSchemaRejected` avec le motif `schema_no_variant`. L'API publique Banque Mondiale RTFP v2 (`microdata.worldbank.org/catalog/8240/data-api`) sérialise le champ `spatially_interpolated` sous la forme d'une chaîne de caractères décimale (`"0"` ou `"1"`) sur 120 observations réelles, alors que le contrat initial déclarait `JSONShape("number")`. Dans `schema_json.py`, `number` impose strictement un `JsonNumberToken` (entier/flottant JSON non quoté), causant 120 rejets de type.
+
+- Décision :
+  1. Modification de la déclaration structurelle `DATA_ROW` dans `backend/src/ketrika/core/schema_rtfp.py` :
+     Remplacement de `("spatially_interpolated", JSONShape("number"), False)` par `("spatially_interpolated", DECIMAL, False)`.
+  2. Propriétés du validateur `DECIMAL` :
+     Le type `DECIMAL` dans `schema_json.py` accepte à la fois les nombres JSON bruts (`0`, `1`) et les chaînes numériques décimales (`"0"`, `"1"`), tout en vérifiant strictement que la valeur est convertible en `Decimal` fini. Toute valeur non numérique (texte arbitraire, booléen, `NaN`) reste strictement rejetée.
+  3. Couverture de test :
+     Ajout d'un test de non-régression dans `backend/tests/authentic/test_rtfp_native_json.py` (`test_spatially_interpolated_accepts_both_numeric_and_string_decimal`) vérifiant formellement l'acceptation de `0` (entier fixture), `"0"` (chaîne API live), `"1"`, et le rejet des chaînes non décimales.

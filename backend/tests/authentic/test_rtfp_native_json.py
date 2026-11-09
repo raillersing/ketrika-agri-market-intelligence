@@ -95,3 +95,32 @@ def test_unknown_structure_and_ambiguous_variants_are_refused(change):
     elif change == "ambiguous":
         data["additional"] = study["additional"]
     assert not inspect_json_schema(json.dumps(document).encode(), WB_RTFP_JSON).passed
+
+
+def test_spatially_interpolated_accepts_both_numeric_and_string_decimal():
+    """Non-regression test for Contabo production fix (ADR-166).
+
+    World Bank RTFP API v2 may return spatially_interpolated as '0' (quoted string)
+    or 0 (integer). Both must be verified by the DECIMAL shape without schema drift.
+    """
+    data, _ = (json.loads(content) for content in packet())
+    # 1. Numeric 0 (as in static fixture)
+    data["data"][0]["spatially_interpolated"] = 0
+    inspection = inspect_json_schema(json.dumps(data).encode(), WB_RTFP_JSON)
+    assert inspection.passed, f"Numeric 0 failed: {inspection.reasons}"
+
+    # 2. String '0' (as returned by live WB RTFP API endpoint on Contabo VPS)
+    data["data"][0]["spatially_interpolated"] = "0"
+    inspection_str = inspect_json_schema(json.dumps(data).encode(), WB_RTFP_JSON)
+    assert inspection_str.passed, f"String '0' failed: {inspection_str.reasons}"
+
+    # 3. String '1'
+    data["data"][0]["spatially_interpolated"] = "1"
+    inspection_one = inspect_json_schema(json.dumps(data).encode(), WB_RTFP_JSON)
+    assert inspection_one.passed, f"String '1' failed: {inspection_one.reasons}"
+
+    # 4. Invalid non-decimal string must be rejected
+    data["data"][0]["spatially_interpolated"] = "not_a_number"
+    inspection_invalid = inspect_json_schema(json.dumps(data).encode(), WB_RTFP_JSON)
+    assert not inspection_invalid.passed
+

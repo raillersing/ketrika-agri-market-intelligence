@@ -1,5 +1,37 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-11-09T14:30:00Z] IA-DATA-00 : Audit de l'existant, inventaire des données, sauvegarde & restauration clone isolée, et correction ADR-166
+
+- **Contexte & Mission :**
+  Lancement de la mission d'industrialisation du système autonome de collecte de données Irooa (`docs/plan/IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md`). Exécution complète de la première étape obligatoire d'audit (§4) et de la tâche **IA-DATA-00** (P0).
+- **Audit Git & CI (§4.1) :**
+  - Branche `main` au commit `1e50035` alignée avec `origin/main` (zéro commit en retard ou en avance).
+  - Statut de l'arbre de travail propre (uniquement fichiers de documentation et rapports non suivis, aucune modification destructive).
+  - Dépendances : Python 3.12 (FastAPI 0.115, SQLAlchemy 2.0, Pytest 9.1.1, Fugue 0.9.4) et Node 22+ (Next.js 15, React 19).
+  - Écart Contabo identifié et comblé : Le correctif VPS sur `schema_rtfp.py` (`spatially_interpolated` type chaîne `'0'`) n'était pas reporté dans le dépôt. Il est désormais formellement implémenté avec l'ADR-166 et couvert par 9 tests unitaires passants dont un test de non-régression dédié.
+- **Audit des Données & Magasin Bronze MinIO (§4.2) :**
+  - PostgreSQL : 201 sources répertoriées (20 officielles actives/planifiées, 181 fixtures de test isolées), 504 `meta.source_record`, 564 `meta.ingestion_run`, 41 produits de référence, 35 territoires.
+  - Données Silver :
+    - `obs.price_observation` : 6 740 observations (4 734 `imputed`, 2 006 `observed`). Période couverte : 2010-05-01 à 2026-10-01 sur 25 produits et 6 territoires.
+    - 3 594 observations disposent d'une preuve Bronze intacte ; 3 146 observations (imputations économétriques, fixtures legacy, imports sans reçu) ont été identifiées comme nécessitant une isolation étanche pour ne pas bloquer les publications Gold.
+    - `obs.weather_observation` : 3 336 observations (2024-01 à 2026-11).
+    - `obs.trade_flow` : 651 flux (2021-01 à 2026-10).
+    - `obs.stock_observation` : 38 relevés (2024-01 à 2024-02).
+    - `obs.cpi_observation` : 191 relevés (2019-01 à 2024-03).
+    - `obs.production_observation` : 29 relevés (2004-01 à 2024-01).
+  - Données Gold : 14 vues matérialisées toutes `ispopulated = true` (`price_obs_current`: 1247 lignes, `price_monthly`: 1247 lignes, `price_changes`: 1244 lignes, `market_health`: 1244 lignes, `weather_monthly`: 805 lignes, `economic_dashboard`: 374 lignes, `trade_monthly`: 368 lignes, `forecast_latest`: 129 lignes).
+  - MinIO Bronze : 728 objets dans le bucket `bronze` sous sha256 immuable. 277 enregistrements de sources officielles présents. Identification de 44 anciens enregistrements de Phase 1 `bronze/wfp_hdx_mdg/*.csv` isolés.
+- **Audit des Connecteurs (§4.3) :**
+  - 19 connecteurs enregistrés dans `ketrika.connectors.registry`.
+  - Qualification : `nasa_power` (qualifié, 73 doc), `omh_public` (qualifié), `corridor_friction` (qualifié), `world_benchmarks` (qualifié), `wb_rtfp_mdg` (partiellement opérationnel, prêt pour l'archive historique ZIP), `wfp_hdx_mdg` (partiellement opérationnel, token HAPI requis), `faostat`, `bfm_public`, `miasa_odr`, `mincc_ppn`, `douanes_stats`, `market_supply` (partiellement opérationnels), `instat_nipc` (désactivé éthiquement, Cloudflare anti-bot), `chirps` et `meteo_mg` (planifiés).
+- **Preuves d'Exécution & Restauration Clone (IA-DATA-00) :**
+  - Création du dump binaire compressé `pg_dump -Fc` : `backups/ketrika_backup_ia_data_00.dump` (1.9 Mo).
+  - Empreinte SHA-256 calculée et vérifiée : `57aa51f7e5a26486853939a75a11c0356281f5d49bbcf464aaae9a8aabe4a200`.
+  - Contrôle `pg_restore --list` : 368 entrées TOC lues sans erreur.
+  - Test de restauration en environnement clone isolé : création de `ketrika_clone_test`, restauration complète du dump sans réseau, vérification des comptages (`sources: 201`, `source_records: 504`, `price_obs: 6740`), et suppression propre de la base clone. Zéro écriture, zéro impact sur la production.
+  - Backend tests passants : `docker compose exec -T api pytest -v tests/authentic/test_rtfp_native_json.py tests/unit/test_wb_rtfp_mdg.py tests/unit/test_provenance_rtfp.py` -> **48 passed in 14.52s**.
+
+
 ### [2026-11-07T21:45:00Z] ADR-165 : Ajout dynamique de produits et ingestion d'observations avec provenance Bronze immuable
 
 - **Objectifs & Implémentation (ADR-165) :**
