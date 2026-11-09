@@ -5028,3 +5028,17 @@ Mini-plan ADR163/SPECS avant code : parser archive3.0.0 national c_rice borné ;
   - Enregistrement des contrats de schéma 4.0.0 pour `wb_rtfp_mdg` dans `backend/src/ketrika/core/schema_contracts.py`.
   - Suite de tests unitaires `backend/tests/unit/test_ia_data_04_rtfp_historical.py` (6 tests passants) et non-régression `test_schema_contracts.py`, `test_rtfp_archive.py`, `test_provenance_wb_archive.py`, `test_provenance_rtfp.py` (92/92 passants, ruff check All checks passed).
 - Preuve : ADR-170 consigné. Statut IA-DATA-04 : DONE.
+
+### [2026-11-09T22:45:00Z] IA-DATA-05 — Marchés et géographie datée, règle no_arbitrary_default et file de revue des alias
+
+- Contexte : Tâche P1 IA-DATA-05 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et SPECS §5.4, §13, §19.
+- Réalisations :
+  - Résolveur géographique enrichi `backend/src/ketrika/normalize/locations.py` avec support unifié des entités administratives (0 à 3) et des marchés vivriers (`MKT_...`).
+  - Appariement direct des identifiants fournisseurs (`geo_id` WB RTFP, WFP HDX) via `GEO_ID_MAP` (`gid_mdg_national_average` -> `MDG`, `mkt_mdg_analakely` -> `MKT_ANALAKELY`, etc.).
+  - Respect formel de la règle `no_arbitrary_default` : toute requête inconnue ou ambiguë (< 0.8) retourne `None` et n'est jamais rattachée arbitrairement à un chef-lieu ou à la capitale.
+  - Gestion des divergences historiques datées (`date_reference`) pour les régions composites (`Vatovavy-Fitovinany` MDG23 scindée en 2021) et la 24e région `Ambatosoa` (MDG32).
+  - Génération de propositions d'alias candidates traçables (`propose_alias_candidates`) pour la revue humaine (Gate H5) sans acceptation automatique en base.
+  - Endpoints d'API `/v1/locations/resolve` et `/v1/locations/unresolved` dans `backend/src/ketrika/api/routers/locations.py` exposant la file de revue et les propositions d'appariement.
+  - Enrichissement de `taxonomy/location_aliases.yaml` avec les marchés vivriers authentiques RTFP (`Analakely`, `Alakamisy`, `Market Average`).
+  - Suite de tests unitaires et intégration `backend/tests/unit/test_ia_data_05_geo_markets.py` (9 tests passants) et non-régression `test_geo.py` (16 tests passants). Ruff check : All checks passed.
+- Preuve : ADR-171 consigné. Statut IA-DATA-05 : DONE.

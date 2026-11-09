@@ -354,3 +354,21 @@
   admin_level: "market"
   confidence: 1.0
   note: "Grand marché central de Mahajanga"
+
+- alias: "Analakely"
+  pcode: "MKT_ANALAKELY"
+  admin_level: "market"
+  confidence: 1.0
+  note: "Marché historique central d'Antananarivo"
+
+- alias: "Alakamisy"
+  pcode: "MKT_ALAKAMISY"
+  admin_level: "market"
+  confidence: 1.0
+  note: "Marché hebdomadaire et de gros d'Antsirabe"
+
+- alias: "Market Average"
+  pcode: "MDG"
+  admin_level: "admin0"
+  confidence: 1.0
+  note: "Moyenne nationale synthétique des marchés dans les séries Banque mondiale RTFP"

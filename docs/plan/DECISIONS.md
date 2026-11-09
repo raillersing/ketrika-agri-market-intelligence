@@ -2314,3 +2314,30 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
      - Déclaration explicite des liaisons pour `wb_rtfp_mdg` v4.0.0 pour `application/json`, `application/zip`, `application/octet-stream`.
   5. Suite de tests unitaires et non-régression (`backend/tests/unit/test_ia_data_04_rtfp_historical.py`) :
      - Vérification de l'extraction multi-produits (riz, sucre, farine de blé), de la distinction observation vs interpolation spatiale, de la profondeur historique 2007, de la détection de corruption d'archive, et de la coexistence parfaite des parseurs v3.0.0 et v4.0.0.
+
+
+## ADR-171 | 2026-11-09 | Accepté avant code | Référentiels géographiques datés, appariement de marchés, règle no_arbitrary_default et file de revue des alias (IA-DATA-05)
+
+- Contexte :
+  En exécution de la tâche IA-DATA-05 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et de SPECS §5.4, §13, §19.
+  Le rattachement géographique des observations de prix multisources (Banque mondiale, WFP HDX, ODR, Douanes) exige des garanties formelles d'intégrité :
+  1. Interdiction absolue de tout rattachement par défaut arbitraire vers Antananarivo (`MDG1101`) ou le niveau national lorsque la localisation est inconnue ou ambiguë ("no_arbitrary_default").
+  2. Prise en compte des divergences historiques officielles (22 régions avant août 2021 avec Vatovavy-Fitovinany unifiée, 23 régions Loi 2021-010 avec Vatovavy MDG23 et Fitovinany MDG24, 24e région Ambatosoa en 2024 liée à Analanjirofo MDG32).
+  3. Prise en charge des identifiants fournisseurs (`geo_id` WB RTFP, WFP HDX) et des marchés locaux PPN sans perte de précision.
+  4. Respect du Gate H5 : les 119 observations historiques en attente (`review_status = 'pending'`) et les localisations non résolues ne doivent jamais faire l'objet d'une acceptation en masse automatique.
+
+- Décision :
+  1. Résolveur géographique enrichi (`backend/src/ketrika/normalize/locations.py`) :
+     - Prise en charge des P-Codes OCHA COD-AB (`MDG`, `MDG11..MDG72`, `MDG1101..`) et des marchés vivriers (`MKT_...`).
+     - Appariement direct des identifiants fournisseurs officiels (`geo_id`) via `GEO_ID_MAP` (`gid_mdg_national_average` -> `MDG`, `mkt_mdg_analakely` -> `MKT_ANALAKELY`, `mkt_mdg_alakamisy` -> `MKT_ALAKAMISY`, etc.).
+     - Prise en compte des divergences historiques datées (`date_reference`) pour les régions composites.
+     - Respect absolu de la règle `no_arbitrary_default` : toute requête inconnue retourne `None`, sans projection automatique vers un chef-lieu ou la capitale.
+  2. Proposition d'alias candidats traçables (`propose_alias_candidates`) :
+     - Calcul des correspondances proches avec score de similarité trigramme et confiance pondérée, orientées vers la revue humaine sans altération de la base.
+  3. API FastAPI `/v1/locations` étendu (`backend/src/ketrika/api/routers/locations.py`) :
+     - Route `/v1/locations/resolve` : résolution déterministe d'un toponyme ou `geo_id` avec type de match et confiance.
+     - Route `/v1/locations/unresolved` : exposition pour la file de revue humaine (Gate H5) des observations sans `location_id` ou en attente, avec suggestions et comptage d'occurrences.
+  4. Référentiel des alias géographiques (`taxonomy/location_aliases.yaml`) :
+     - Ajout des marchés vivriers et de la moyenne nationale synthétique (`Analakely`, `Alakamisy`, `Market Average`).
+  5. Suite de tests unitaires et intégration (`backend/tests/unit/test_ia_data_05_geo_markets.py`) :
+     - 9 tests passants validant la concordance du manifest 2024.1, la résolution exacte/marchés/geo_id, l'interdiction du repli arbitraire, les divergences temporelles, les propositions d'alias et les endpoints API.

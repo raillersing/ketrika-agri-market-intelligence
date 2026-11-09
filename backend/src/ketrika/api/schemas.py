@@ -148,6 +148,32 @@ class LocationItem(BaseModel):
     aliases: list[str] = Field(default_factory=list)
 
 
+class LocationResolutionResult(BaseModel):
+    """Result of geographic location resolution."""
+
+    raw_query: str
+    resolved: bool
+    pcode: str | None = None
+    name: str | None = None
+    admin_level: int | None = None
+    confidence: float = 0.0
+    match_type: str | None = None
+    note: str | None = None
+
+
+class UnresolvedLocationItem(BaseModel):
+    """Pending location item awaiting human review (Gate H5)."""
+
+    location_raw: str
+    observation_count: int
+    source_id: str | None = None
+    suggested_pcode: str | None = None
+    suggested_name: str | None = None
+    suggested_confidence: float = 0.0
+    review_status: str = "pending"
+    human_reviewed: bool = False
+
+
 # ===================== PRICES =====================
 
 
