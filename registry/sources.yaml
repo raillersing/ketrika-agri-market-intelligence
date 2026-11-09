@@ -154,6 +154,48 @@
   data_kinds: [production, trade]
   notes: "Statistiques annuelles de production agricole et de bilans alimentaires (Code FAO Madagascar: 129)."
 
+- source_id: fao_fpma_mdg
+  name: "FAO FPMA – Food Price Monitoring and Analysis (Madagascar)"
+  owner: "Food and Agriculture Organization (FAO GIEWS)"
+  source_family: un_fao
+  priority: P1
+  status: active
+  access_method: api
+  connector: ketrika.connectors.fao_fpma_mdg:FaoFpmaConnector
+  cadence: monthly
+  collection_cadence: monthly
+  observation_cadence: monthly
+  publication_cadence: monthly
+  freshness_sla_days: 62
+  partitioning: static
+  entrypoints:
+    - url: "https://fpma.fao.org/giews/fpma/api/v1/prices?country=MDG"
+      kind: api
+      verified_at: "2026-11-09T00:00:00Z"
+      verified: true
+    - url: "https://www.fao.org/giews/food-prices/tool/public/"
+      kind: landing
+      verified_at: "2026-11-09T00:00:00Z"
+      verified: true
+  languages: [en, fr]
+  licence: "Creative Commons Attribution-NonCommercial-ShareAlike 3.0 IGO (CC BY-NC-SA 3.0 IGO)"
+  tos_url: "https://www.fao.org/contact-us/terms/en/"
+  tos_sha256: null
+  tos_checked_at: "2026-11-09T00:00:00Z"
+  robots_checked_at: "2026-11-09T00:00:00Z"
+  crawl_permission: public_open_data
+  pii_class: none
+  allowed_fields: ["*"]
+  max_rps: 0.5
+  daily_request_budget: 300
+  retention_policy: indefinite
+  attribution_required: true
+  redistribution_allowed: yes
+  legal_review_status: approved
+  data_kinds: [price]
+  notes: "Système de suivi et d'analyse des prix des denrées alimentaires de base de la FAO (GIEWS FPMA Tool)."
+
+
 - source_id: nasa_power
   name: "NASA POWER Agroclimatology Daily Point API"
   owner: "NASA Langley Research Center"

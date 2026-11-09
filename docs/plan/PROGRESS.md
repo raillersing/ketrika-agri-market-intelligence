@@ -5057,3 +5057,18 @@ Mini-plan ADR163/SPECS avant code : parser archive3.0.0 national c_rice borné ;
   - Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_06_independent_gold.py` (8 tests passants) et non-régression `test_gold_publication.py` (14 tests passants, 22/22 passants). Ruff check : All checks passed.
 - Preuve : ADR-172 consigné. Statut IA-DATA-06 : DONE.
 
+### [2026-11-09T23:25:00Z] IA-DATA-07 — Prix multisources WFP HDX HAPI & FAO FPMA et neutralisation du biais de double comptage
+
+- Contexte : Tâche P1 IA-DATA-07 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et SPECS §5.2, §14, §15.
+- Réalisations :
+  - Mise à niveau du connecteur WFP HDX `WfpHdxMdgConnector` (v1.3.0 dans `backend/src/ketrika/connectors/wfp_hdx_mdg.py`) : prise en charge de l'API moderne HDX HAPI v2 (`location_code=MDG`), gestion sécurisée de l'identifiant d'application `HDX_HAPI_APP_IDENTIFIER`, pagination offset/limit configurable, normalisation PPN (riz local/importé, maïs, manioc frais, sucre, farine de blé), règle absolue `no_arbitrary_default` pour les marchés manquants ou non résolus, traçabilité `evidence` (`source_family="un_wfp"`, `underlying_collector="WFP VAM"`).
+  - Création du connecteur FAO FPMA `FaoFpmaConnector` (v1.0.0 dans `backend/src/ketrika/connectors/fao_fpma_mdg.py`) : intégration de l'outil GIEWS FPMA de la FAO sous licence CC BY-NC-SA 3.0 IGO, extraction déterministe des séries de prix vivrières (riz usiné, maïs, manioc), unités, devises et dates d'observation, envoi des marchés inconnus en file de revue.
+  - Enregistrement du connecteur dans `backend/src/ketrika/connectors/registry.py` et déclaration formelle dans `registry/sources.yaml` (`source_id: "fao_fpma_mdg"`).
+  - Rédaction de la fiche de qualification source `docs/sources/fao_fpma_mdg.md`.
+  - Fixtures de référence offline pour exécution reproductible sans réseau : `backend/tests/fixtures/wfp_hdx_mdg/wfp_hapi_mdg_sample.json` et `backend/tests/fixtures/fao_fpma_mdg/fpma_prices_mdg_sample.json`.
+  - Analyse approfondie et documentation scientifique du biais de double comptage WB↔WFP↔FAO dans `docs/research/METHODOLOGY_MULTISOURCE_PRICE_DOUBLE_COUNTING.md`.
+  - Extension du moteur d'audit d'indépendance `audit_source_family_independence` (`backend/src/ketrika/gold/kpi.py`) détectant formellement toute dépendance croisée et interdisant une fausse confirmation statistique entre WB RTFP, WFP HDX et FAO FPMA.
+  - Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_07_multisource_prices.py` (9 tests passants) et non-régression `test_wfp_hdx_mdg.py` (8 tests passants, 17/17 passants). Ruff check : All checks passed.
+- Preuve : ADR-173 consigné. Statut IA-DATA-07 : DONE.
+
+

@@ -2371,3 +2371,32 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
      - Schéma de réponse standardisé `GoldDomainRefreshResponse` (`backend/src/ketrika/api/schemas.py`).
   6. Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_06_independent_gold.py` (8/8 passants, 22/22 passants avec régression `test_gold_publication.py`).
 
+
+## ADR-173 | 2026-11-09 | Accepté avant code | Prix multisources WFP HDX HAPI & FAO FPMA et neutralisation du double comptage (IA-DATA-07)
+
+- Contexte :
+  En exécution de la tâche IA-DATA-07 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et de SPECS §5.2, §14, §15.
+  Le téléchargement CSV direct historique WFP HDX subit une interdiction réseau (403 Cloudflare, incident B-R009). OCHA fournit désormais l'API officielle HDX HAPI v2 (`https://hapi.humdata.org/api/v2/food-security-nutrition-poverty/food-prices-market-monitor`) nécessitant un identifiant d'application, une pagination bornée par offset/limit et un traitement rigoureux des métadonnées de marché.
+  Parallèlement, la FAO publie l'outil FPMA (Food Price Monitoring and Analysis Tool) pour Madagascar sous licence ouverte CC BY-NC-SA 3.0 IGO.
+  Cependant, l'ingestion conjointe de WB RTFP (Study 8240), WFP HDX et FAO FPMA comporte un risque majeur de biais de double comptage : WB RTFP et FAO FPMA absorbent et dérivent conjointement des relevés primaires issus du WFP VAM. Traiter ces flux comme des observations indépendantes biaiserait la variance et surévaluerait la confiance statistique.
+
+- Décision :
+  1. Mise à niveau du connecteur WFP HDX (`WfpHdxMdgConnector` v1.3.0 dans `backend/src/ketrika/connectors/wfp_hdx_mdg.py`) :
+     - Prise en charge de l'API moderne HDX HAPI v2 avec authentification par identifiant d'application (`HDX_HAPI_APP_IDENTIFIER`).
+     - Découverte paginée bornée par offset et limit sans exposition des secrets dans les logs.
+     - Prise en charge de la fixture offline `wfp_hapi_mdg_sample.json`.
+     - Normalisation des denrées PPN vivrières stratégiques (riz local/importé, maïs, manioc frais, sucre, farine de blé).
+     - Règle absolue `no_arbitrary_default` : tout enregistrement sans marché valide émet une issue `unresolved_market_needs_review` vers la file de revue sans affectation implicite à la capitale ou au niveau national.
+     - Enrichissement des métadonnées `evidence` (`source_family: "un_wfp"`, `underlying_collector: "WFP VAM"`).
+  2. Implémentation du connecteur FAO FPMA (`FaoFpmaConnector` v1.0.0 dans `backend/src/ketrika/connectors/fao_fpma_mdg.py`) :
+     - Enregistrement dans `backend/src/ketrika/connectors/registry.py` et `registry/sources.yaml` (`source_id: "fao_fpma_mdg"`, `source_family: "un_fao"`).
+     - Rédaction de la fiche source `docs/sources/fao_fpma_mdg.md`.
+     - Support complet offline avec fixture `backend/tests/fixtures/fao_fpma_mdg/fpma_prices_mdg_sample.json`.
+     - Extraction déterministe des commodités vivrières (riz usiné, maïs, manioc), des unités et des devises.
+  3. Neutralisation formelle du biais de double comptage WB↔WFP↔FAO :
+     - Rédaction du document méthodologique `docs/research/METHODOLOGY_MULTISOURCE_PRICE_DOUBLE_COUNTING.md`.
+     - Extension de `audit_source_family_independence` (`backend/src/ketrika/gold/kpi.py`) pour détecter la co-occurrence de WB RTFP, WFP HDX et FAO FPMA, forçant `has_dependent_derivation = True` et `is_truly_independent = False`.
+     - Maintien dans `gold.price_monthly_best` de la sélection unitaire par grain `(product, location, actor_level, month)` et exposition de `chosen_source_family`, `n_families` et `has_conflict`.
+  4. Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_07_multisource_prices.py` (9 tests passants) et non-régression `test_wfp_hdx_mdg.py` (8 tests passants, 17/17 passants).
+
+

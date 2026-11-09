@@ -1,0 +1,79 @@
+{
+  "status": "success",
+  "country": "Madagascar",
+  "iso3": "MDG",
+  "source": "FAO GIEWS FPMA Tool",
+  "license": "CC BY-NC-SA 3.0 IGO",
+  "data": [
+    {
+      "market": "Antananarivo",
+      "market_id": "FPMA_MKT_TANA",
+      "commodity": "Rice (milled)",
+      "commodity_id": "FPMA_COM_RICE",
+      "price_type": "Retail",
+      "price": 3050.0,
+      "currency": "MGA",
+      "unit": "KG",
+      "date": "2025-04-01",
+      "period": "monthly",
+      "data_source": "National / WFP",
+      "flag": "observed"
+    },
+    {
+      "market": "Antananarivo",
+      "market_id": "FPMA_MKT_TANA",
+      "commodity": "Maize (white)",
+      "commodity_id": "FPMA_COM_MAIZE",
+      "price_type": "Retail",
+      "price": 2000.0,
+      "currency": "MGA",
+      "unit": "KG",
+      "date": "2025-04-01",
+      "period": "monthly",
+      "data_source": "National / WFP",
+      "flag": "observed"
+    },
+    {
+      "market": "Toamasina",
+      "market_id": "FPMA_MKT_TOAM",
+      "commodity": "Rice (milled)",
+      "commodity_id": "FPMA_COM_RICE",
+      "price_type": "Retail",
+      "price": 3150.0,
+      "currency": "MGA",
+      "unit": "KG",
+      "date": "2025-04-01",
+      "period": "monthly",
+      "data_source": "National / WFP",
+      "flag": "observed"
+    },
+    {
+      "market": "Toamasina",
+      "market_id": "FPMA_MKT_TOAM",
+      "commodity": "Cassava (fresh)",
+      "commodity_id": "FPMA_COM_CASSAVA",
+      "price_type": "Retail",
+      "price": 1350.0,
+      "currency": "MGA",
+      "unit": "KG",
+      "date": "2025-04-01",
+      "period": "monthly",
+      "data_source": "National / WFP",
+      "flag": "observed"
+    },
+    {
+      "market": "Mahajanga",
+      "market_id": "FPMA_MKT_MAHA",
+      "commodity": "Rice (milled)",
+      "commodity_id": "FPMA_COM_RICE",
+      "price_type": "Wholesale",
+      "price": 2750.0,
+      "currency": "MGA",
+      "unit": "KG",
+      "date": "2025-04-01",
+      "period": "monthly",
+      "data_source": "National / WFP",
+      "flag": "observed"
+    }
+  ]
+}

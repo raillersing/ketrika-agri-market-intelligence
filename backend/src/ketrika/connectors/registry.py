@@ -12,6 +12,7 @@ from ketrika.connectors.corridor_friction import CorridorFrictionConnector
 from ketrika.connectors.douanes_stats import DouanesStatsConnector
 from ketrika.connectors.dummy_csv import DummyCsvConnector
 from ketrika.connectors.ecmwf_open import EcmwfOpenConnector
+from ketrika.connectors.fao_fpma_mdg import FaoFpmaConnector
 from ketrika.connectors.faostat import FaostatConnector
 from ketrika.connectors.fewsnet_ipc import FewsnetConnector, IpcConnector
 from ketrika.connectors.instat_nipc import InstatNipcConnector
@@ -34,6 +35,7 @@ logger = logging.getLogger(__name__)
 _CONNECTOR_REGISTRY: dict[str, type[Connector]] = {
     "dummy_csv": DummyCsvConnector,
     "wfp_hdx_mdg": WfpHdxMdgConnector,
+    "fao_fpma_mdg": FaoFpmaConnector,
     "wb_rtfp_mdg": WbRtfpMdgConnector,
     "faostat": FaostatConnector,
     "nasa_power": NasaPowerConnector,

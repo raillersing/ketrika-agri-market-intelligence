@@ -38,23 +38,42 @@ class WfpHdxMdgConnector:
     """Connector for WFP HDX Food Prices dataset in Madagascar under strict policy rules."""
 
     source_id: ClassVar[str] = "wfp_hdx_mdg"
-    parser_version: ClassVar[str] = "1.2.0"
+    parser_version: ClassVar[str] = "1.3.0"
 
     def discover(self, ctx: RunContext) -> Iterable[DiscoveredItem]:
         """Discover WFP HDX price dataset download target (CSV or HAPI v2)."""
         app_id = os.getenv("HDX_HAPI_APP_IDENTIFIER") or ctx.metadata.get("app_identifier")
         hapi_url = ctx.metadata.get("hapi_url")
-        if hapi_url or (app_id and ctx.metadata.get("api_type") == "hapi"):
+        use_hapi = bool(
+            hapi_url
+            or ctx.metadata.get("api_type") == "hapi"
+            or app_id
+            or ctx.metadata.get("use_hapi")
+        )
+        if use_hapi:
             base_url = hapi_url or HDX_HAPI_API_URL
-            query_url = (
-                f"{base_url}?location_code=MDG&output_format=json&limit=1000"
-                + (f"&app_identifier={app_id}" if app_id else "")
-            )
-            yield DiscoveredItem(
-                url=query_url,
-                partition_key="hdx_hapi_v2_mdg",
-                hints={"publisher": "WFP", "format": "json", "api": "hapi_v2"},
-            )
+            limit = int(ctx.metadata.get("limit", 1000))
+            offset = int(ctx.metadata.get("offset", 0))
+            max_pages = int(ctx.metadata.get("max_pages", 1))
+
+            for page_idx in range(max_pages):
+                current_offset = offset + (page_idx * limit)
+                query_url = (
+                    f"{base_url}?location_code=MDG&output_format=json&limit={limit}&offset={current_offset}"
+                    + (f"&app_identifier={app_id}" if app_id else "")
+                )
+                yield DiscoveredItem(
+                    url=query_url,
+                    partition_key=f"hdx_hapi_v2_mdg_p{page_idx}" if max_pages > 1 else "hdx_hapi_v2_mdg",
+                    hints={
+                        "publisher": "WFP",
+                        "format": "json",
+                        "api": "hapi_v2",
+                        "limit": limit,
+                        "offset": current_offset,
+                        "page": page_idx,
+                    },
+                )
             return
 
         url = ctx.metadata.get("csv_url") or WFP_HDX_CSV_URL
@@ -92,22 +111,30 @@ class WfpHdxMdgConnector:
         if ctx.offline:
             root = find_repo_root()
             base_dir = root / "backend" if (root / "backend").exists() else root
-            fixture_path = (
-                base_dir / "tests" / "fixtures" / "wfp_hdx_mdg" / "wfp_food_prices_mdg_sample.csv"
-            )
+            fixtures_dir = base_dir / "tests" / "fixtures" / "wfp_hdx_mdg"
+
+            if is_json and (fixtures_dir / "wfp_hapi_mdg_sample.json").exists():
+                fixture_path = fixtures_dir / "wfp_hapi_mdg_sample.json"
+                mime = "application/json"
+                ext = "json"
+            else:
+                fixture_path = fixtures_dir / "wfp_food_prices_mdg_sample.csv"
+                mime = "text/csv"
+                ext = "csv"
+
             if not fixture_path.exists():
                 raise FileNotFoundError(f"Offline fixture not found at {fixture_path}")
             content_bytes = fixture_path.read_bytes()
             content_sha256 = hashlib.sha256(content_bytes).hexdigest()
             now = datetime.now(UTC)
-            object_key = f"{self.source_id}/{now.year}/{now.month:02d}/{content_sha256}.csv"
+            object_key = f"{self.source_id}/{now.year}/{now.month:02d}/{content_sha256}.{ext}"
             is_new = True
 
             if ctx.bronze_store:
                 art = ctx.bronze_store.put(
                     source_id=self.source_id,
                     content=content_bytes,
-                    mime_type="text/csv",
+                    mime_type=mime,
                     url=item.url,
                 )
                 object_key = art.object_key
@@ -117,7 +144,7 @@ class WfpHdxMdgConnector:
                 source_record_id="",
                 object_key=object_key,
                 content_sha256=content_sha256,
-                mime_type="text/csv",
+                mime_type=mime,
                 url=item.url,
                 is_new=is_new,
                 published_at=item.published_at,
@@ -186,6 +213,8 @@ class WfpHdxMdgConnector:
                     price_raw = ""
 
                 evidence = {
+                    "source_family": "un_wfp",
+                    "underlying_collector": "WFP VAM",
                     "admin1_code": item.get("admin1_code"),
                     "admin1_name": item.get("admin1_name"),
                     "admin2_code": item.get("admin2_code"),
@@ -316,6 +345,8 @@ class WfpHdxMdgConnector:
                     price_val = None
 
                 evidence = {
+                    "source_family": "un_wfp",
+                    "underlying_collector": "WFP VAM",
                     "admin1": admin1,
                     "admin2": admin2,
                     "market": market,

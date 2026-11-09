@@ -66,6 +66,7 @@ KNOWN_DERIVATIONS: dict[str, str] = {
 ROOT_SOURCE_FAMILIES: dict[str, str] = {
     "wfp_hdx_mdg": "un_wfp",
     "wb_rtfp_mdg": "un_wfp",  # WB RTFP relies on WFP primary data
+    "fao_fpma_mdg": "un_fao",  # FAO FPMA shares WFP / national primary data
     "miasa_odr": "madagascar_gov",
     "mincc_ppn": "madagascar_gov",
     "douanes_stats": "madagascar_gov",
@@ -103,7 +104,7 @@ def audit_source_family_independence(
             fam = item.get("source_family") or ROOT_SOURCE_FAMILIES.get(s_id, s_id)
             dep = item.get("source_dependency")
 
-        if dep == "wfp_fao" or s_id == "wb_rtfp_mdg":
+        if dep in ("wfp_fao", "fao_fpma") or s_id == "wb_rtfp_mdg":
             fam = "un_wfp"
             has_dependent_derivation = True
 
@@ -111,6 +112,12 @@ def audit_source_family_independence(
         declared_families.append(fam)
         root_fam = ROOT_SOURCE_FAMILIES.get(s_id, fam)
         root_families.add(root_fam)
+
+    source_set = set(sources)
+    if "wb_rtfp_mdg" in source_set and ("wfp_hdx_mdg" in source_set or "fao_fpma_mdg" in source_set):
+        has_dependent_derivation = True
+    if "wfp_hdx_mdg" in source_set and "fao_fpma_mdg" in source_set:
+        has_dependent_derivation = True
 
     return {
         "n_sources": len(sources),
