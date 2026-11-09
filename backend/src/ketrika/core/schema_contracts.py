@@ -91,6 +91,34 @@ class SchemaContractRegistry:
         return self._lookup.get((source_id, parser_version, mime_type))
 
 
+MIASA_ODR_CSV = CSVSchemaContract(
+    version="1.0.0",
+    required_columns=(
+        "period_start",
+        "product_raw",
+        "location_raw",
+        "unit_raw",
+        "currency_raw",
+        "price_value",
+        "product_code",
+    ),
+    delimiter=",",
+)
+
+DOUANES_STATS_CSV = CSVSchemaContract(
+    version="1.0.0",
+    required_columns=(
+        "period_start",
+        "product_raw",
+        "location_raw",
+        "unit_raw",
+        "currency_raw",
+        "price_value",
+        "product_code",
+    ),
+    delimiter=",",
+)
+
 # Explicit archived source/version/MIME bindings only; no inferred format or version.
 DECLARED_SCHEMA_BINDINGS = (
     SchemaContractBinding("wb_rtfp_mdg", "2.0.0", "application/json", WB_RTFP_JSON),
@@ -99,6 +127,10 @@ DECLARED_SCHEMA_BINDINGS = (
     SchemaContractBinding(
         "wb_rtfp_mdg", "3.0.0", "application/octet-stream", WBArchiveSchemaContract()
     ),
+    SchemaContractBinding("miasa_odr", "1.0.0", "text/csv", MIASA_ODR_CSV),
+    SchemaContractBinding("miasa_odr", "1.0.0", "application/csv", MIASA_ODR_CSV),
+    SchemaContractBinding("douanes_stats", "1.0.0", "text/csv", DOUANES_STATS_CSV),
+    SchemaContractBinding("douanes_stats", "1.0.0", "application/csv", DOUANES_STATS_CSV),
 )
 DEFAULT_SCHEMA_CONTRACT_REGISTRY = SchemaContractRegistry(DECLARED_SCHEMA_BINDINGS)
 

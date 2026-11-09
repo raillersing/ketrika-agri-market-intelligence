@@ -244,6 +244,16 @@ def audit_observation_provenance(
         if record_ids
         else []
     )
+    synthetic_ids = {
+        row.source_record_id
+        for row in records
+        if row.retrieved_via == "synthetic"
+        or (row.source_url and row.source_url.startswith("fixture:"))
+        or (row.source_id and row.source_id.startswith(("dummy_", "fixture_")))
+    }
+    for index, claim in enumerate(claims):
+        if claim.source_record_id and claim.source_record_id in synthetic_ids:
+            binding_errors[index] = "synthetic_source_record_forbidden"
     references = {
         row.source_record_id: ArtifactReference(
             row.source_record_id,
@@ -253,6 +263,7 @@ def audit_observation_provenance(
             row.mime_type or "",
         )
         for row in records
+        if row.source_record_id not in synthetic_ids
     }
     report = ProvenanceVerifier(reader, references).verify(claims, mode)
     results = tuple(

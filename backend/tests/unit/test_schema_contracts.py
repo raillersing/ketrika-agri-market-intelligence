@@ -31,6 +31,10 @@ def test_default_registry_never_infers_public_or_fixture_contracts():
         ("wb_rtfp_mdg", "3.0.0", "application/json"),
         ("wb_rtfp_mdg", "3.0.0", "application/zip"),
         ("wb_rtfp_mdg", "3.0.0", "application/octet-stream"),
+        ("miasa_odr", "1.0.0", "text/csv"),
+        ("miasa_odr", "1.0.0", "application/csv"),
+        ("douanes_stats", "1.0.0", "text/csv"),
+        ("douanes_stats", "1.0.0", "application/csv"),
     }
     assert registry.resolve("wb_rtfp_mdg", "3.0.0", "text/csv") is None
     assert registry.resolve("wb_rtfp_mdg", "3.0.1", "application/zip") is None

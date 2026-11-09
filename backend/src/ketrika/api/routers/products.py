@@ -10,7 +10,7 @@ from datetime import UTC, date, datetime
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ketrika.api.auth import get_current_user
@@ -279,7 +279,7 @@ def create_observations_batch(
         http_status=200,
         published_at=datetime.now(UTC),
         fetched_at=datetime.now(UTC),
-        extraction_status="extracted",
+        extraction_status="parsed",
     )
     session.add(srec)
     session.flush()
@@ -302,10 +302,9 @@ def create_observations_batch(
             if len(d_str) == 7:  # YYYY-MM
                 parts = d_str.split("-")
                 year, month = int(parts[0]), int(parts[1])
-                day = 1
             else:  # YYYY-MM-DD
                 parts = d_str.split("-")
-                year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+                year, month, _day = int(parts[0]), int(parts[1]), int(parts[2])
             start_date = date(year, month, 1)
             last_day = calendar.monthrange(year, month)[1]
             end_date = date(year, month, last_day)
@@ -359,22 +358,22 @@ def create_observations_batch(
             observed_or_imputed="observed",
             extraction_method="manual_import",
             confidence=Decimal("1.00"),
-            review_status="accepted",
+            review_status="pending",
         )
         session.add(obs)
         count_created += 1
 
     session.commit()
 
-    # 6. Refresh Gold materialized views so changes appear immediately
+    # 6. Recompute views: manual imports enter as 'pending' review and do not auto-publish to Gold
     recomputed_views = ["price_obs_current", "price_monthly", "price_monthly_best"]
     try:
-        session.execute(text("REFRESH MATERIALIZED VIEW gold.price_obs_current;"))
-        session.execute(text("REFRESH MATERIALIZED VIEW gold.price_monthly;"))
-        session.execute(text("REFRESH MATERIALIZED VIEW gold.price_monthly_best;"))
+        from ketrika.gold.refresh import refresh_gold_views
+
+        refresh_gold_views(session, views=recomputed_views)
         session.commit()
     except Exception as exc:
-        logger.warning("Gold views refresh warning: %s", exc)
+        logger.warning("Gold views refresh notice: %s", exc)
 
     return ObservationBatchCreateResponse(
         product_code=p_code,

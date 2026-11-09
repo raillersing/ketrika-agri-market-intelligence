@@ -2212,3 +2212,26 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
      Le type `DECIMAL` dans `schema_json.py` accepte à la fois les nombres JSON bruts (`0`, `1`) et les chaînes numériques décimales (`"0"`, `"1"`), tout en vérifiant strictement que la valeur est convertible en `Decimal` fini. Toute valeur non numérique (texte arbitraire, booléen, `NaN`) reste strictement rejetée.
   3. Couverture de test :
      Ajout d'un test de non-régression dans `backend/tests/authentic/test_rtfp_native_json.py` (`test_spatially_interpolated_accepts_both_numeric_and_string_decimal`) vérifiant formellement l'acceptation de `0` (entier fixture), `"0"` (chaîne API live), `"1"`, et le rejet des chaînes non décimales.
+
+
+## ADR-167 | 2026-11-09 | Accepté avant code | Garde-fous de provenance Gold, étanchéité synthétique, contrats CSV officiels et quarantaine sans perte (IA-DATA-01)
+
+- Contexte :
+  En exécution du plan normatif approuvé `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` (IA-DATA-01) et de la Constitution `AGENTS.md` (§4, Règle 1 "Provenance totale" et Règle 9 "Observé ≠ imputé ≠ prévu").
+  L'audit technique a identifié :
+  1. Des enregistrements de fixtures (`retrieved_via == 'synthetic'`, `source_url LIKE 'fixture:%'`, `source_id LIKE 'dummy_%'`/`fixture_%`) nécessitant une exclusion formelle et auditable des flux de publication Gold.
+  2. 231 observations de prix historiques sans preuve Bronze cellule (`evidence->'provenance'` NULL) risquant de bloquer le rafraîchissement Gold par `binding_proof_missing`.
+  3. Deux sources réelles et authentiques (`miasa_odr` avec 820 lignes et `douanes_stats` avec 328 lignes) possédaient des preuves cellules complètes vers des artefacts Bronze CSV réels, mais manquaient de déclarations explicites dans `SchemaContractRegistry`, provoquant `GoldSchemaRejected: schema_contract_absent`.
+  4. 6 enregistrements de `meta.source_record` portaient des statuts d'extraction non conformes (`'extracted'`, `'accepted'`), brisant l'invariant comptable de dénominateur de publication de `dq.py` (`candidate_files == parsed + failed + review + pending`).
+  5. Le routeur `/products/{product_code}/observations` insérait des imports manuels avec `review_status="accepted"` et `extraction_status="extracted"`, en contradiction avec l'interdiction d'auto-acceptation sans revue.
+
+- Décision :
+  1. Étanchéité synthétique dans `audit_observation_provenance` (`provenance_audit.py`) : identification explicite de tout `SourceRecord` synthétique ou de fixture (`synthetic_ids`) ; émission de l'erreur formelle `synthetic_source_record_forbidden`, exclusion de la table de lecture d'artefacts Bronze, et rejet strict (`passed=False`), garantissant qu'aucune donnée synthétique ne franchit le portail Gold.
+  2. Déclaration et enregistrement formel des contrats CSV `MIASA_ODR_CSV` et `DOUANES_STATS_CSV` (`v1.0.0`, colonnes requises : `period_start,product_raw,location_raw,unit_raw,currency_raw,price_value,product_code`, délimiteur `,`) dans `DECLARED_SCHEMA_BINDINGS` (`schema_contracts.py`).
+  3. Quarantaine non destructrice sans perte de données :
+     - 231 observations de prix non prouvées isolées dans `obs.quarantine_ledger` avec `reason_code = 'UNVERIFIED_LEGACY_OBSERVATION'`.
+     - 106 `meta.source_record` et 36 observations de fixtures dummy isolés avec `reason_code = 'SYNTHETIC_DUMMY_SOURCE_RECORD'` / `'SYNTHETIC_DUMMY_OBSERVATION'`.
+     - Aucun objet Bronze ni aucune observation n'est supprimé (append-only et Bronze immuable respectés à 100%).
+  4. Harmonisation des statuts de `meta.source_record` : normalisation des 6 statuts vers `'parsed'`, rétablissant l'égalité stricte des dénominateurs (504 fichiers = 390 parsés + 114 pending).
+  5. Routeur produits (`products.py`) : passage des imports manuels en `review_status="pending"` et `extraction_status="parsed"`, avec rafraîchissement protégé via `refresh_gold_views`.
+  6. Suite de tests unitaires négatifs dédiée : `backend/tests/unit/test_ia_data_01_provenance_guards.py` couvrant tous les cas d'échec (méthode d'extraction synthétique, source record fixture, preuve cellule manquante, objet Bronze absent, refus GoldProvenanceRejected).

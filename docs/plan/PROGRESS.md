@@ -1,5 +1,30 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-11-09T18:00:00Z] IA-DATA-01 : Garde-fous de provenance Gold, étanchéité synthétique, contrats CSV officiels et quarantaine sans perte (P0)
+
+- **Contexte & Objectifs :**
+  Exécution de **IA-DATA-01** (P0) conformément à `docs/plan/IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et à la Constitution `AGENTS.md` (§4, Principes 1, 2, 3, 5, 9). Bloquer formellement tout chemin synthétique ou de fixture vers Gold, rendre l'étanchéité auditable et testable, interdire toute auto-acceptation d'importation sans revue, enregistrer les contrats CSV manquants et isoler les données historiques non vérifiées en quarantaine sans aucune perte d'artefact Bronze.
+- **Modifications Architecturales & Garde-fous (ADR-167) :**
+  1. **Étanchéité synthétique dans `audit_observation_provenance` (`provenance_audit.py`) :**
+     Détection systématique des `SourceRecord` de test/fixtures (`retrieved_via == 'synthetic'`, `source_url LIKE 'fixture:%'`, `source_id LIKE 'dummy_%'` ou `'fixture_%'`). Émission de l'erreur formelle `synthetic_source_record_forbidden`, exclusion de l'accès aux artefacts Bronze et rejet strict (`passed=False`), empêchant toute valeur synthétique d'atteindre le statut Gold.
+  2. **Contrats CSV officiels (`schema_contracts.py`) :**
+     Déclaration et enregistrement formel des contrats `MIASA_ODR_CSV` et `DOUANES_STATS_CSV` (`v1.0.0`, colonnes requises : `period_start,product_raw,location_raw,unit_raw,currency_raw,price_value,product_code`, délimiteur `,`) dans `DECLARED_SCHEMA_BINDINGS`, régissant avec rigueur 820 observations ODR et 328 observations Douanes réelles.
+  3. **Quarantaine non destructrice sans perte de données :**
+     - 231 observations de prix historiques sans preuve Bronze cellule isolées dans `obs.quarantine_ledger` avec `reason_code = 'UNVERIFIED_LEGACY_OBSERVATION'`.
+     - 106 `meta.source_record` et 36 observations dummy isolés avec `reason_code = 'SYNTHETIC_DUMMY_SOURCE_RECORD'` / `'SYNTHETIC_DUMMY_OBSERVATION'`.
+     - Respect absolu des Principes 2 & 3 : aucun objet Bronze ni aucune observation n'a été altéré ou supprimé.
+  4. **Harmonisation des statuts & Dénominateurs DQ (`dq.py`) :**
+     Normalisation des 6 enregistrements de `meta.source_record` aux statuts non conformes (`'extracted'`, `'accepted'`) vers `'parsed'`, rétablissant l'égalité stricte des dénominateurs de publication : `candidate_files (504) == parsed (390) + failed (0) + review (0) + pending (114)`.
+  5. **Sécurisation de l'importation manuelle (`products.py`) :**
+     Mise à jour du routeur `/products/{product_code}/observations` avec `extraction_status="parsed"`, `review_status="pending"` (interdiction de l'auto-acceptation, file de revue H5 obligatoire) et rafraîchissement sous protection `refresh_gold_views`.
+- **Preuves d'Exécution & Vérification Locale :**
+  - **Rafraîchissement Gold de bout en bout :** `refresh_gold_views(session, views=['price_obs_current', 'price_monthly', 'price_monthly_best', 'price_changes', 'market_coverage'])` exécuté avec succès : `provenance_state: 'cells_verified'` (1 244 observations sources valides, taux 100%), `structure_state: 'structure_verified'` (5 artefacts valides), tous dénominateurs validés sans erreur.
+  - **Tests unitaires négatifs dédiés (`test_ia_data_01_provenance_guards.py`) :** 8/8 passants en 5.61s (rejet extraction synthétique, rejet source record fixture, rejet preuve cellule manquante, rejet objet Bronze absent, rejet GoldProvenanceRejected).
+  - **Tests de contrats de schéma (`test_schema_contracts.py`) :** 17/17 passants.
+  - **Suite complète de non-régression provenance & schémas :** **157 passed in 12.11s** (0 échec, 0 avertissement bloquant).
+  - **Qualité du code :** `ruff check` 100% vert ("All checks passed!").
+
+
 ### [2026-11-09T14:30:00Z] IA-DATA-00 : Audit de l'existant, inventaire des données, sauvegarde & restauration clone isolée, et correction ADR-166
 
 - **Contexte & Mission :**
