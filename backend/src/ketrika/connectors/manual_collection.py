@@ -151,6 +151,9 @@ def _collect_source(sid: str, request_id: UUID, outcomes: list[dict[str, Any]]) 
     try:
         if sid not in eligible_sources():
             outcome["status"] = "blocked"
+            outcome["diagnostic_status"] = "policy_blocked"
+            outcome["diagnostic_code"] = "POLICY_STOP_BLOCKED"
+            outcome["diagnostic_message"] = "Source non éligible ou suspendue par la politique de collecte."
             return outcome
         connector = list_registered_connectors()[sid]()
         if sid == "wb_rtfp_mdg":
@@ -181,10 +184,31 @@ def _collect_source(sid: str, request_id: UUID, outcomes: list[dict[str, Any]]) 
         # Durable Silver must actually have closed its run successfully.
         if outcome["status"] != "success":
             outcome["status"] = "failed"
-    except Exception:
+            outcome["diagnostic_status"] = "failed"
+            outcome["diagnostic_code"] = "COLLECTION_FAILED"
+            outcome["diagnostic_message"] = "Échec lors de la phase de normalisation Silver."
+        elif outcome.get("n_records", 0) == 0:
+            outcome["diagnostic_status"] = "no_data"
+            outcome["diagnostic_code"] = "NO_NEW_DATA"
+            outcome["diagnostic_message"] = (
+                "Collecte terminée avec succès mais aucune observation n'a été extraite."
+            )
+        else:
+            outcome["diagnostic_status"] = "normalized"
+            outcome["diagnostic_code"] = "NORMALIZED_SILVER"
+            outcome["diagnostic_message"] = (
+                f"{outcome['n_records']} observation(s) normalisée(s) en Silver avec succès."
+            )
+    except Exception as exc:
         # Untrusted source text, URLs, credentials and SQL errors never enter UI receipts.
+        from ketrika.core.diagnostics import sanitize_diagnostic_error
+
+        diag_status, diag_code, diag_msg, _cat = sanitize_diagnostic_error(type(exc).__name__)
         outcome["status"] = "failed"
-        outcome["error"] = "collection_source_failed"
+        outcome["diagnostic_status"] = diag_status
+        outcome["diagnostic_code"] = diag_code
+        outcome["diagnostic_message"] = diag_msg
+        outcome["error"] = diag_code
         if ctx.run_id is not None:
             outcome["run_id"] = str(ctx.run_id)
     return outcome

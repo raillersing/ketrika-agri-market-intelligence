@@ -44,6 +44,9 @@ interface SourceItem {
   isStale?: boolean | null;
   latestRunStatus?: string;
   lastRunStartedAt?: string;
+  diagnosticStatus?: string;
+  diagnosticCode?: string;
+  diagnosticMessage?: string;
 }
 
 interface SourceRunItem {
@@ -57,6 +60,9 @@ interface SourceRunItem {
   n_records: number | null;
   n_fetched: number | null;
   error?: string;
+  diagnostic_status?: string;
+  diagnostic_code?: string;
+  diagnostic_message?: string;
 }
 
 // Catégories riches pour utilisateur non technique
@@ -184,6 +190,60 @@ const CATEGORIES = [
   { id: "global", label: "Bailleurs & International", icon: Compass },
 ];
 
+function diagnosticBadge(status?: string, code?: string) {
+  switch (status) {
+    case "published":
+      return {
+        label: "Publié Gold",
+        className: "bg-emerald-500/15 text-primary-readable border-emerald-500/30",
+        dotColor: "bg-emerald-400",
+      };
+    case "normalized":
+      return {
+        label: code === "REVIEW_REQUIRED" ? "Silver (Revue requise)" : "Normalisé Silver",
+        className: "bg-teal-500/15 text-teal-700 dark:text-teal-300 border-teal-500/30",
+        dotColor: "bg-teal-400",
+      };
+    case "downloaded":
+      return {
+        label: "En cours",
+        className: "bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30",
+        dotColor: "bg-blue-400 animate-pulse",
+      };
+    case "no_data":
+      return {
+        label: "0 observation",
+        className: "bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-500/30",
+        dotColor: "bg-slate-400",
+      };
+    case "policy_blocked":
+      return {
+        label: "Bloqué politique",
+        className: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30",
+        dotColor: "bg-amber-400",
+      };
+    case "schema_drift":
+      return {
+        label: "Dérive schéma",
+        className: "bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30",
+        dotColor: "bg-purple-400",
+      };
+    case "failed":
+      return {
+        label: "Échec",
+        className: "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30",
+        dotColor: "bg-rose-400",
+      };
+    case "idle":
+    default:
+      return {
+        label: "En attente",
+        className: "bg-slate-500/10 text-muted-foreground border-border",
+        dotColor: "bg-muted-foreground/60",
+      };
+  }
+}
+
 export default function SourcesPage() {
   const [sources, setSources] = useState<SourceItem[]>([]);
   const [runs, setRuns] = useState<SourceRunItem[]>([]);
@@ -241,6 +301,9 @@ export default function SourcesPage() {
           isStale: measuredFreshness(s.freshness_days, s.is_stale),
           latestRunStatus: s.latest_run_status,
           lastRunStartedAt: s.last_run_started_at,
+          diagnosticStatus: s.diagnostic_status,
+          diagnosticCode: s.diagnostic_code,
+          diagnosticMessage: s.diagnostic_message,
         }));
         setSources(items);
       }
@@ -685,18 +748,29 @@ export default function SourcesPage() {
                       </div>
                     </div>
 
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-medium border shrink-0 ${
-                        (source.status !== "active" || source.isStale !== false)
-                          ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/25"
-                          : "bg-emerald-500/15 text-primary-readable border-emerald-500/25"
-                      }`}
-                    >
+                    <div className="flex flex-col items-end gap-1.5 shrink-0">
                       <span
-                        className={`w-1.5 h-1.5 rounded-full ${(source.status !== "active" || source.isStale !== false) ? "bg-amber-400" : "bg-emerald-400 animate-pulse"}`}
-                      />
-                      {freshnessLabel(source.status, source.isStale)}
-                    </span>
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-medium border shrink-0 ${
+                          (source.status !== "active" || source.isStale !== false)
+                            ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/25"
+                            : "bg-emerald-500/15 text-primary-readable border-emerald-500/25"
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${(source.status !== "active" || source.isStale !== false) ? "bg-amber-400" : "bg-emerald-400 animate-pulse"}`}
+                        />
+                        {freshnessLabel(source.status, source.isStale)}
+                      </span>
+                      {source.diagnosticStatus && (
+                        <span
+                          title={source.diagnosticMessage || source.diagnosticCode}
+                          className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold border ${diagnosticBadge(source.diagnosticStatus, source.diagnosticCode).className}`}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${diagnosticBadge(source.diagnosticStatus, source.diagnosticCode).dotColor}`} />
+                          {diagnosticBadge(source.diagnosticStatus, source.diagnosticCode).label}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Institution */}
@@ -708,6 +782,15 @@ export default function SourcesPage() {
                   <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                     {meta.description}
                   </p>
+
+                  {source.diagnosticMessage && (
+                    <div className="p-2 rounded-xl bg-foreground/[0.03] border border-border/60 text-[11px] font-mono text-muted-foreground leading-snug">
+                      <span className="text-foreground/70 font-semibold block text-[10px] uppercase tracking-wider mb-0.5">
+                        Santé DataOps ({source.diagnosticCode || "ÉTAT"}):
+                      </span>
+                      {source.diagnosticMessage}
+                    </div>
+                  )}
 
                   {/* Produits suivis */}
                   <div className="space-y-1.5 pt-1">
@@ -794,18 +877,29 @@ export default function SourcesPage() {
                         {meta.cadenceHuman}
                       </td>
                       <td className="px-5 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium border ${
-                            (source.status !== "active" || source.isStale !== false)
-                              ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/25"
-                              : "bg-emerald-500/15 text-primary-readable border-emerald-500/25"
-                          }`}
-                        >
+                        <div className="flex flex-col gap-1 items-start">
                           <span
-                            className={`w-1.5 h-1.5 rounded-full ${(source.status !== "active" || source.isStale !== false) ? "bg-amber-400" : "bg-emerald-400"}`}
-                          />
-                          {freshnessLabel(source.status, source.isStale)}
-                        </span>
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-medium border ${
+                              (source.status !== "active" || source.isStale !== false)
+                                ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/25"
+                                : "bg-emerald-500/15 text-primary-readable border-emerald-500/25"
+                            }`}
+                          >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${(source.status !== "active" || source.isStale !== false) ? "bg-amber-400" : "bg-emerald-400"}`}
+                            />
+                            {freshnessLabel(source.status, source.isStale)}
+                          </span>
+                          {source.diagnosticStatus && (
+                            <span
+                              title={source.diagnosticMessage || source.diagnosticCode}
+                              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold border ${diagnosticBadge(source.diagnosticStatus, source.diagnosticCode).className}`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${diagnosticBadge(source.diagnosticStatus, source.diagnosticCode).dotColor}`} />
+                              {diagnosticBadge(source.diagnosticStatus, source.diagnosticCode).label}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-5 py-4 text-right">
                         <button
@@ -866,11 +960,18 @@ export default function SourcesPage() {
                       run.status === "success" ? "bg-emerald-400" : "bg-rose-400"
                     }`}
                   />
-                  <div>
-                    <span className="font-bold text-foreground block">
-                      {run.source_name || run.source_id} — {({ success: "Terminé", running: "En cours", failed: "Échec", partial: "Partiel" } as Record<string, string>)[run.status] || "État inconnu"}
-                    </span>
-                    <span className="text-[11px] text-muted-foreground font-mono">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-foreground">
+                        {run.source_name || run.source_id}
+                      </span>
+                      {run.diagnostic_status && (
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono border font-semibold ${diagnosticBadge(run.diagnostic_status, run.diagnostic_code).className}`}>
+                          {diagnosticBadge(run.diagnostic_status, run.diagnostic_code).label}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-muted-foreground font-mono block">
                       {new Date(run.started_at).toLocaleString("fr-FR", {
                         day: "2-digit",
                         month: "short",
@@ -879,6 +980,11 @@ export default function SourcesPage() {
                         timeZone: "Indian/Antananarivo",
                       })}
                     </span>
+                    {run.diagnostic_message && (
+                      <span className="text-[10px] text-muted-foreground/80 line-clamp-1 block mt-0.5 font-mono" title={run.diagnostic_message}>
+                        {run.diagnostic_message}
+                      </span>
+                    )}
                   </div>
                 </div>
 

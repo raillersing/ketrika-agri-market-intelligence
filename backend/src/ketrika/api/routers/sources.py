@@ -23,6 +23,7 @@ from ketrika.api.schemas import (
 from ketrika.connectors import manual_collection
 from ketrika.connectors.manual_collection import RECOMPUTE_VIEWS
 from ketrika.core.db import get_db
+from ketrika.core.diagnostics import classify_run_diagnostic
 from ketrika.gold.refresh import refresh_gold_views
 
 router = APIRouter(prefix="/v1/sources", tags=["sources"])
@@ -61,11 +62,16 @@ def list_sources(session: Session = Depends(get_db)) -> list[SourceItem]:
             sh.freshness_days,
             sh.is_stale,
             lr.latest_run_status AS latest_run_status,
-            lr.started_at AS last_run_started_at
+            lr.started_at AS last_run_started_at,
+            lr.n_records AS latest_run_records,
+            lr.n_fetched AS latest_run_fetched,
+            lr.error AS latest_run_error,
+            COALESCE(sh.open_review_items, 0)::integer AS open_review_items,
+            COALESCE(sh.n_records_30d, 0)::integer AS n_records_30d
         FROM meta.source s
         {health_join}
         LEFT JOIN LATERAL (
-            SELECT status AS latest_run_status, started_at
+            SELECT status AS latest_run_status, started_at, n_records, n_fetched, error
             FROM meta.ingestion_run ir
             WHERE ir.source_id = s.source_id
             ORDER BY ir.started_at DESC, ir.run_id DESC
@@ -78,6 +84,14 @@ def list_sources(session: Session = Depends(get_db)) -> list[SourceItem]:
 
     items: list[SourceItem] = []
     for r in rows:
+        diag = classify_run_diagnostic(
+            status=r[7],
+            n_records=r[9],
+            n_fetched=r[10],
+            error=r[11],
+            has_published_gold=(r[13] > 0 and r[6] is False),
+            open_review_items=r[12],
+        )
         items.append(
             SourceItem(
                 source_id=r[0],
@@ -89,6 +103,9 @@ def list_sources(session: Session = Depends(get_db)) -> list[SourceItem]:
                 is_stale=r[6] if r[5] is not None else None,
                 latest_run_status=r[7],
                 last_run_started_at=r[8],
+                diagnostic_status=diag.diagnostic_status,
+                diagnostic_code=diag.diagnostic_code,
+                diagnostic_message=diag.diagnostic_message,
             )
         )
     return items
@@ -109,20 +126,23 @@ def get_source_health(
     sql = text(
         """
         SELECT
-            source_id,
-            source_name,
-            priority,
-            freshness_sla_days,
-            freshness_days,
-            is_stale,
+            sh.source_id,
+            sh.source_name,
+            sh.priority,
+            sh.freshness_sla_days,
+            sh.freshness_days,
+            sh.is_stale,
             lr.latest_run_status,
             lr.started_at AS last_run_started_at,
-            n_records_30d,
-            parse_success_rate::float,
-            open_review_items
+            sh.n_records_30d,
+            sh.parse_success_rate::float,
+            sh.open_review_items,
+            lr.n_records AS latest_run_records,
+            lr.n_fetched AS latest_run_fetched,
+            lr.error AS latest_run_error
         FROM gold.source_health sh
         LEFT JOIN LATERAL (
-            SELECT status AS latest_run_status, started_at
+            SELECT status AS latest_run_status, started_at, n_records, n_fetched, error
             FROM meta.ingestion_run ir
             WHERE ir.source_id = sh.source_id
             ORDER BY ir.started_at DESC, ir.run_id DESC
@@ -134,6 +154,15 @@ def get_source_health(
     row = session.execute(sql, {"sid": source_id}).fetchone()
     if not row:
         raise NotFoundException(f"Source {source_id} health not found")
+
+    diag = classify_run_diagnostic(
+        status=row[6],
+        n_records=row[11],
+        n_fetched=row[12],
+        error=row[13],
+        has_published_gold=(int(row[8]) > 0 and not bool(row[5])),
+        open_review_items=int(row[10]),
+    )
 
     return SourceHealthItem(
         source_id=row[0],
@@ -147,6 +176,9 @@ def get_source_health(
         n_records_30d=int(row[8]),
         parse_success_rate=float(row[9]),
         open_review_items=int(row[10]),
+        diagnostic_status=diag.diagnostic_status,
+        diagnostic_code=diag.diagnostic_code,
+        diagnostic_message=diag.diagnostic_message,
     )
 
 
@@ -177,21 +209,32 @@ def list_recent_runs(
         """
     )
     rows = session.execute(sql, {"lim": bounded_limit}).fetchall()
-    return [
-        SourceRunItem(
-            run_id=r[0],
-            source_id=r[1],
-            source_name=r[2],
+    items: list[SourceRunItem] = []
+    for r in rows:
+        diag = classify_run_diagnostic(
             status=r[3],
-            started_at=r[4],
-            finished_at=r[5],
-            duration_seconds=float(r[6]) if r[6] is not None else None,
             n_records=int(r[7]) if r[7] is not None else None,
             n_fetched=int(r[8]) if r[8] is not None else None,
-            error="Traitement interrompu ou refusé." if r[9] else None,
+            error=r[9],
         )
-        for r in rows
-    ]
+        items.append(
+            SourceRunItem(
+                run_id=r[0],
+                source_id=r[1],
+                source_name=r[2],
+                status=r[3],
+                started_at=r[4],
+                finished_at=r[5],
+                duration_seconds=float(r[6]) if r[6] is not None else None,
+                n_records=int(r[7]) if r[7] is not None else None,
+                n_fetched=int(r[8]) if r[8] is not None else None,
+                error=diag.diagnostic_code if r[9] else None,
+                diagnostic_status=diag.diagnostic_status,
+                diagnostic_code=diag.diagnostic_code,
+                diagnostic_message=diag.diagnostic_message,
+            )
+        )
+    return items
 
 
 @router.get("/collection-options", dependencies=[Depends(get_current_user)])

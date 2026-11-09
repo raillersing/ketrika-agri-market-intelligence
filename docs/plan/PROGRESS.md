@@ -4977,3 +4977,28 @@ Mini-plan ADR163/SPECS avant code : parser archive3.0.0 national c_rice borné ;
 - Rejeu additionnel sur troisième cluster neuf, restauré depuis le dump d'avant recalcul, template0 et rôles/ACL connus : positif non-root/network none,163 lignes/81 révisions/82 Gold courantes,60 nombres indépendants exacts, contenu/ref/Bronze identiques et recalcul versionné identique. Le worker conservé permet l'inspection physique des mounts/read-only/UID et réseau, sans toucher la réception ni la contre-épreuve antérieures.
 - Export SQL en transaction READ ONLY :163 observations/3 références, vérification fraîche163/163, identité du producteur distincte de la CI ; aucun faux bundle. Sauvegarde hors Docker des originaux et annotations SHA6be44f393a1cbe4908f639e9b260e9cd29018a4389323c755660bd64f599370a, chaque ZIP relu identique deux fois ; pas de reset/quota reconstruit.
 - R0.8 DONE et B-R073 RESOLVED_CORPUS_REPLAY sur portée nationale c_rice imputée depuis2020. Statuts synchronisés8 DONE dont7 historiques/66 IN_PROGRESS. R0.9 n'est pas reçu : manifeste externe prévu par R0.4 à raccorder sans réétiqueter les environnements producteurs. Source fraîcheur, modèle, humain, S3 original, B-R098 et activation restent distincts ; aucun tag final.
+
+### [2026-11-09T18:40:00Z] IA-DATA-01 — Garde-fous de provenance, isolation synthétique et quarantaine sans perte
+
+- Contexte : Exécution du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` (Lot A - IA-DATA-01).
+- Réalisations :
+  - Détection et exclusion systématique des sources/enregistrements synthétiques (`synthetic_source_record_forbidden`) dans `backend/src/ketrika/core/provenance_audit.py`.
+  - Déclaration formelle des contrats CSV officiels `MIASA_ODR_CSV` et `DOUANES_STATS_CSV` (`v1.0.0`) dans `backend/src/ketrika/core/schema_contracts.py`.
+  - Quarantaine sans perte dans `obs.quarantine_ledger` de 231 observations de prix non prouvées et 106 dummy source records (aucune altération d'objets Bronze).
+  - Normalisation des statuts de `meta.source_record` rétablissant l'égalité stricte des dénominateurs de publication de `dq.py` (504 fichiers = 390 parsés + 114 pending).
+  - Rafraîchissement Gold vérifié de bout en bout (1 244 observations prouvées admises).
+  - Suite de tests `backend/tests/unit/test_ia_data_01_provenance_guards.py` (8 tests verts) et `test_schema_contracts.py` (17 tests verts).
+- Preuve : Commit `9a30d62` poussé sur `origin/main`. ADR-167 consigné. Statut IA-DATA-01 : DONE.
+
+### [2026-11-09T21:55:00Z] IA-DATA-02 — Diagnostics DataOps par source et assainissement strict des erreurs
+
+- Contexte : Tâche P0 IA-DATA-02 du plan `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et SPECS §19 ("Santé des sources").
+- Réalisations :
+  - Module `backend/src/ketrika/core/diagnostics.py` implémentant les 8 statuts opérationnels canoniques (`downloaded`, `parsed`, `normalized`, `published`, `no_data`, `policy_blocked`, `schema_drift`, `failed`, `idle`).
+  - Matrice de sanitization stricte garantissant qu'aucun secret, mot de passe de base, token d'API ou chemin local n'est exposé.
+  - Extension des modèles d'API dans `backend/src/ketrika/api/schemas.py` (`diagnostic_status`, `diagnostic_code`, `diagnostic_message` sur `SourceItem`, `SourceHealthItem`, `SourceRunItem`).
+  - Raccordement des routes `/v1/sources`, `/v1/sources/{source_id}/health`, `/v1/sources/runs` et des runners de collecte.
+  - Panneau DataOps avec badges de diagnostic et messages clairs dans l'interface frontend (`web/src/app/sources/page.tsx`).
+  - Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_02_source_diagnostics.py` (6 tests verts).
+  - Validation frontend complète : 17 suites, 120 tests passants. Ruff check : All checks passed.
+- Preuve : ADR-168 consigné. Statut IA-DATA-02 : DONE.

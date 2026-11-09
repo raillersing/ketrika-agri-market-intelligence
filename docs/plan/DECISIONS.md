@@ -2235,3 +2235,32 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
   4. Harmonisation des statuts de `meta.source_record` : normalisation des 6 statuts vers `'parsed'`, rétablissant l'égalité stricte des dénominateurs (504 fichiers = 390 parsés + 114 pending).
   5. Routeur produits (`products.py`) : passage des imports manuels en `review_status="pending"` et `extraction_status="parsed"`, avec rafraîchissement protégé via `refresh_gold_views`.
   6. Suite de tests unitaires négatifs dédiée : `backend/tests/unit/test_ia_data_01_provenance_guards.py` couvrant tous les cas d'échec (méthode d'extraction synthétique, source record fixture, preuve cellule manquante, objet Bronze absent, refus GoldProvenanceRejected).
+
+
+## ADR-168 | 2026-11-09 | Accepté avant code | Diagnostics DataOps par source, matrice d'états opérationnels et assainissement strict des codes d'erreur (IA-DATA-02)
+
+- Contexte :
+  En exécution de la tâche IA-DATA-02 du plan `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et de SPECS §19 ("Santé des sources").
+  L'application manquait d'une granularité suffisante pour qualifier l'état opérationnel réel de chaque source de données :
+  1. Des exécutions terminées avec succès mais 0 document/observation (`no_data`) étaient indiscernables d'exécutions ayant produit et publié des observations (`published`).
+  2. Les arrêts éthiques ou de quotas (`PolicyStop` : robots.txt, rate limits, 401/403) étaient confondus avec des crashs techniques inexpliqués (`failed`).
+  3. Les anomalies de format ou contrats manquants (`schema_drift`) n'étaient pas catégorisées distinctement.
+  4. Les erreurs brutes d'exécution (`meta.ingestion_run.error`) risquaient de laisser fuiter des informations sensibles (mots de passe dans des chaînes de connexion, clés d'API, tokens Bearer, chemins absolus du système de fichiers hôte).
+
+- Décision :
+  1. Module canonique de diagnostic DataOps (`backend/src/ketrika/core/diagnostics.py`) :
+     - Définition des 8 états opérationnels canoniques (`DataOpsDiagnosticStatus`) : `downloaded`, `parsed`, `normalized`, `published`, `no_data`, `policy_blocked`, `schema_drift`, `failed`, `idle`.
+     - Modèle typé et immuable `DiagnosticOutcome` (champs : `diagnostic_status`, `diagnostic_code`, `diagnostic_message`, `error_category`).
+  2. Matrice de sanitization stricte (`sanitize_diagnostic_error`) :
+     - Cartographie déterministe des exceptions et anomalies vers des codes d'erreur stables en majuscules (ex: `POLICY_STOP_ROBOTS`, `POLICY_STOP_RATE_LIMIT`, `POLICY_STOP_AUTH_REQUIRED`, `SCHEMA_DRIFT_MISMATCH`, `SCHEMA_CONTRACT_ABSENT`, `UPSTREAM_CONNECT_ERROR`, `UPSTREAM_TIMEOUT`, `UPSTREAM_HTTP_500`, `UPSTREAM_HTTP_404`, `NO_NEW_DATA`).
+     - Règle de sécurité absolue : aucun mot de passe, token Bearer, URL de base de données avec identifiants, ni chemin de fichier système n'est exposé dans les codes et messages renvoyés aux clients.
+  3. Extension des schémas d'API (`backend/src/ketrika/api/schemas.py`) :
+     - Ajout des champs `diagnostic_status`, `diagnostic_code`, `diagnostic_message` sur `SourceItem`, `SourceHealthItem`, et `SourceRunItem`.
+  4. Raccordement des routes et runners :
+     - `list_sources`, `get_source_health`, `list_recent_runs` dans `backend/src/ketrika/api/routers/sources.py`.
+     - `execute_manual_collection` dans `backend/src/ketrika/connectors/manual_collection.py`.
+     - `execute_connector_pipeline` dans `backend/src/ketrika/connectors/runner.py`.
+  5. Affichage DataOps dans le tableau de bord frontend (`web/src/app/sources/page.tsx`) :
+     - Badges d'état DataOps colorés avec sous-titre explicite dans la vue Cartes, la vue Tableau et la chronologie des exécutions récentes.
+  6. Suite de tests unitaires et intégration (`backend/tests/unit/test_ia_data_02_source_diagnostics.py`) :
+     - 6 tests validant la matrice des 8 états, les 11 motifs de sanitization, l'étanchéité absolue aux secrets, et l'exposition correcte via les routes FastAPI `/v1/sources`, `/v1/sources/{source_id}/health`, `/v1/sources/runs`.

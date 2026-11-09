@@ -992,9 +992,12 @@ def execute_connector_pipeline(
         if failed_run_id is not None and session.is_active:
             run = session.get(IngestionRun, failed_run_id)
             if run is not None and run.source_id == connector.source_id:
+                from ketrika.core.diagnostics import sanitize_diagnostic_error
+
+                _st, diag_code, _msg, _cat = sanitize_diagnostic_error(type(exc).__name__)
                 run.status = "failed"
                 run.finished_at = datetime.now(UTC)
-                run.error = type(exc).__name__
+                run.error = diag_code
                 session.flush()
         send_pipeline_failure_email(
             job_name=f"connector_{connector.source_id}",

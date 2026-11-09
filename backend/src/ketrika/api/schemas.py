@@ -585,6 +585,9 @@ class SourceItem(BaseModel):
     is_stale: bool | None = None
     latest_run_status: str | None = None
     last_run_started_at: datetime | None = None
+    diagnostic_status: str | None = None
+    diagnostic_code: str | None = None
+    diagnostic_message: str | None = None
 
 
 class SourceHealthItem(BaseModel):
@@ -601,6 +604,9 @@ class SourceHealthItem(BaseModel):
     n_records_30d: int = 0
     parse_success_rate: float = 1.0
     open_review_items: int = 0
+    diagnostic_status: str | None = None
+    diagnostic_code: str | None = None
+    diagnostic_message: str | None = None
 
 
 class SourceRunItem(BaseModel):
@@ -616,6 +622,9 @@ class SourceRunItem(BaseModel):
     n_records: int | None = None
     n_fetched: int | None = None
     error: str | None = None
+    diagnostic_status: str | None = None
+    diagnostic_code: str | None = None
+    diagnostic_message: str | None = None
 
 
 class SourceRefreshResponse(BaseModel):
