@@ -10,10 +10,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ketrika.api.auth import create_api_key_for_user, require_admin
-from ketrika.api.errors import NotFoundException
+from ketrika.api.errors import BadRequestException, NotFoundException
 from ketrika.api.schemas import (
     ApiKeyCreateRequest,
     ApiKeyResponse,
+    GoldDomainRefreshResponse,
     ReviewItemOut,
     ReviewResolveRequest,
 )
@@ -100,3 +101,61 @@ def create_api_key(
         revoked_at=api_key_obj.revoked_at,
         last_used_at=api_key_obj.last_used_at,
     )
+
+
+@router.post("/gold/refresh", response_model=GoldDomainRefreshResponse)
+def refresh_gold(
+    domain: str | None = Query(
+        None,
+        description="Optional domain (price, trade, climate, macro). If omitted, refreshes all domains independently.",
+    ),
+    concurrently: bool = Query(False, description="Whether to refresh concurrently if possible."),
+    admin_user: UserAccount = Depends(require_admin),
+    session: Session = Depends(get_db),
+) -> GoldDomainRefreshResponse:
+    """Trigger a refresh of Gold materialized views by domain or across all domains independently (IA-DATA-06)."""
+    from ketrika.gold.dq import GoldDqRejected
+    from ketrika.gold.refresh import (
+        GOLD_DOMAINS,
+        refresh_all_domains_independent,
+        refresh_domain_views,
+    )
+
+    if domain is not None:
+        if domain not in GOLD_DOMAINS:
+            raise BadRequestException(
+                f"unsupported_gold_domain: {domain}. Allowed domains: {sorted(GOLD_DOMAINS.keys())}"
+            )
+        try:
+            res = refresh_domain_views(session, domain=domain, concurrently=concurrently)
+            return GoldDomainRefreshResponse(
+                status="success",
+                domains_succeeded=[domain],
+                domains_failed=[],
+                domain_errors={},
+                views_refreshed=res.get("views_refreshed", []),
+                count=len(res.get("views_refreshed", [])),
+                refreshed_at=datetime.now(UTC),
+            )
+        except (GoldDqRejected, ValueError) as exc:
+            return GoldDomainRefreshResponse(
+                status="failed",
+                domains_succeeded=[],
+                domains_failed=[domain],
+                domain_errors={domain: str(exc)},
+                views_refreshed=[],
+                count=0,
+                refreshed_at=datetime.now(UTC),
+            )
+
+    res = refresh_all_domains_independent(session, concurrently=concurrently)
+    return GoldDomainRefreshResponse(
+        status=res["status"],
+        domains_succeeded=res["domains_succeeded"],
+        domains_failed=res["domains_failed"],
+        domain_errors=res["domain_errors"],
+        views_refreshed=res["views_refreshed"],
+        count=res["count"],
+        refreshed_at=datetime.now(UTC),
+    )
+

@@ -2341,3 +2341,33 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
      - Ajout des marchés vivriers et de la moyenne nationale synthétique (`Analakely`, `Alakamisy`, `Market Average`).
   5. Suite de tests unitaires et intégration (`backend/tests/unit/test_ia_data_05_geo_markets.py`) :
      - 9 tests passants validant la concordance du manifest 2024.1, la résolution exacte/marchés/geo_id, l'interdiction du repli arbitraire, les divergences temporelles, les propositions d'alias et les endpoints API.
+
+
+## ADR-172 | 2026-11-09 | Accepté avant code | Découplage du rafraîchissement des vues Gold par domaine, atomicité par savepoint et isolation des erreurs (IA-DATA-06)
+
+- Contexte :
+  En exécution de la tâche IA-DATA-06 du plan normatif `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et de SPECS §15.
+  Historiquement, le rafraîchissement de la couche Gold (`refresh_gold_views`) était monolithique : l'ensemble des vues matérialisées était recalculé en un seul bloc.
+  En cas d'anomalie ou de rejet d'une vérification de qualité (DQ) sur les indicateurs macro-économiques (ex: `cpi_food`, `source_health`) ou climatiques, l'ensemble de la transaction était annulé, bloquant la publication de données de prix valides.
+  De plus, les vues réservées (`economic_dashboard`) devaient être strictement protégées et ne jamais être exposées publiquement.
+
+- Décision :
+  1. Découpage formel de la couche Gold en 4 domaines orthogonaux (`GOLD_DOMAINS` dans `backend/src/ketrika/gold/refresh.py`) :
+     - `price` : `price_obs_current`, `price_monthly`, `price_monthly_best`, `price_changes`, `market_coverage`.
+     - `trade` : `stock_latest`, `trade_monthly`, `import_dependency`.
+     - `climate` : `weather_monthly`.
+     - `macro` : `cpi_food`, `source_health`, `market_health`, `forecast_latest`.
+  2. Maintien des vues sous embargo formel : `economic_dashboard` reste exclu des domaines de publication (`UNPUBLISHED_GOLD_VIEWS`).
+  3. Rafraîchissement ciblé par domaine (`refresh_domain_views`) :
+     - Validation stricte du domaine demandé (`unsupported_gold_domain`).
+     - Validation que les vues demandées appartiennent exclusivement au domaine spécifié (`views_outside_requested_domain`).
+  4. Isolation transactionnelle des domaines via savepoints PostgreSQL (`refresh_all_domains_independent`) :
+     - Chaque domaine exécute son rafraîchissement sous un savepoint imbriqué `session.begin_nested()`.
+     - Un échec ou rejet DQ sur un domaine (ex: Macro ou Climat) déclenche un rollback de son propre savepoint sans annuler les publications réussies (ex: Prix).
+     - Statut global tri-état : `success` (tous les domaines réussis), `partial_success` (au moins un domaine réussi, un ou plusieurs en échec documenté), ou `failed` (aucun domaine réussi).
+  5. Exposition API d'administration (`POST /v1/admin/gold/refresh` dans `backend/src/ketrika/api/routers/admin.py`) :
+     - Support du paramètre optionnel `domain` pour rafraîchir un domaine individuel ou l'ensemble des domaines indépendamment.
+     - Contrôle strict du rôle administrateur (`require_admin`).
+     - Schéma de réponse standardisé `GoldDomainRefreshResponse` (`backend/src/ketrika/api/schemas.py`).
+  6. Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_06_independent_gold.py` (8/8 passants, 22/22 passants avec régression `test_gold_publication.py`).
+

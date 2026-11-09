@@ -32,15 +32,27 @@ from ketrika.gold.kpi import (
     calculate_variation,
 )
 from ketrika.gold.refresh import (
+    GOLD_DOMAINS,
     ORDERED_GOLD_VIEWS,
+    VIEW_TO_DOMAIN,
+    get_domain_views,
+    get_view_domain,
     init_gold_views,
+    refresh_all_domains_independent,
+    refresh_domain_views,
     refresh_gold_views,
 )
 
 __all__ = [
+    "GOLD_DOMAINS",
     "ORDERED_GOLD_VIEWS",
+    "VIEW_TO_DOMAIN",
+    "get_domain_views",
+    "get_view_domain",
     "init_gold_views",
     "refresh_gold_views",
+    "refresh_domain_views",
+    "refresh_all_domains_independent",
     "check_and_upgrade_historical_gold_definitions",
     "is_gold_definition_outdated",
     "calculate_variation",

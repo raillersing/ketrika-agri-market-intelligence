@@ -665,6 +665,19 @@ class SourceRefreshResponse(BaseModel):
     refreshed_at: datetime
 
 
+class GoldDomainRefreshResponse(BaseModel):
+    """Response of a domain-isolated or multi-domain Gold refresh (IA-DATA-06)."""
+
+    status: str
+    domains_succeeded: list[str] = Field(default_factory=list)
+    domains_failed: list[str] = Field(default_factory=list)
+    domain_errors: dict[str, str] = Field(default_factory=dict)
+    views_refreshed: list[str] = Field(default_factory=list)
+    count: int = 0
+    refreshed_at: datetime
+
+
+
 class ReviewItemOut(BaseModel):
     """Review queue item."""
 

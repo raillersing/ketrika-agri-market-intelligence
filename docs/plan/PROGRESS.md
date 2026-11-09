@@ -5042,3 +5042,18 @@ Mini-plan ADR163/SPECS avant code : parser archive3.0.0 national c_rice borné ;
   - Enrichissement de `taxonomy/location_aliases.yaml` avec les marchés vivriers authentiques RTFP (`Analakely`, `Alakamisy`, `Market Average`).
   - Suite de tests unitaires et intégration `backend/tests/unit/test_ia_data_05_geo_markets.py` (9 tests passants) et non-régression `test_geo.py` (16 tests passants). Ruff check : All checks passed.
 - Preuve : ADR-171 consigné. Statut IA-DATA-05 : DONE.
+
+### [2026-11-09T23:10:00Z] IA-DATA-06 — Découplage du rafraîchissement des vues Gold par domaine et atomicité par savepoint
+
+- Contexte : Tâche P1 IA-DATA-06 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et SPECS §15.
+- Réalisations :
+  - Découpage formel de la couche Gold en 4 domaines orthogonaux (`GOLD_DOMAINS` dans `backend/src/ketrika/gold/refresh.py`) : `price`, `trade`, `climate`, `macro`.
+  - Maintien sous embargo des vues non publiées (`economic_dashboard` reste exclu via `UNPUBLISHED_GOLD_VIEWS`).
+  - Fonction de rafraîchissement ciblé par domaine `refresh_domain_views(session, domain=...)` avec vérification stricte du périmètre des vues (`views_outside_requested_domain`).
+  - Moteur de rafraîchissement multi-domaines indépendant `refresh_all_domains_independent(session)` avec isolation transactionnelle par savepoint PostgreSQL (`session.begin_nested()`).
+  - Tolérance aux pannes et isolation des erreurs : un échec ou rejet DQ sur un domaine (Macro ou Climat) ne compromet pas la publication réussie des autres domaines (Prix ou Commerce).
+  - Statut tri-état explicite : `success`, `partial_success` (avec rapport détaillé des domaines réussis et échoués), ou `failed`.
+  - Exposition API sécurisée `POST /v1/admin/gold/refresh` dans `backend/src/ketrika/api/routers/admin.py` avec schéma de réponse standardisé `GoldDomainRefreshResponse`.
+  - Suite de tests unitaires dédiée `backend/tests/unit/test_ia_data_06_independent_gold.py` (8 tests passants) et non-régression `test_gold_publication.py` (14 tests passants, 22/22 passants). Ruff check : All checks passed.
+- Preuve : ADR-172 consigné. Statut IA-DATA-06 : DONE.
+

@@ -42,17 +42,60 @@ ORDERED_GOLD_VIEWS: list[str] = [
     "economic_dashboard",
 ]
 
+# Formal Gold publication domains (IA-DATA-06)
+GOLD_DOMAINS: dict[str, tuple[str, ...]] = {
+    "price": (
+        "price_obs_current",
+        "price_monthly",
+        "price_monthly_best",
+        "price_changes",
+        "market_coverage",
+    ),
+    "trade": (
+        "stock_latest",
+        "trade_monthly",
+        "import_dependency",
+    ),
+    "climate": (
+        "weather_monthly",
+    ),
+    "macro": (
+        "cpi_food",
+        "source_health",
+        "market_health",
+        "forecast_latest",
+    ),
+}
+
+VIEW_TO_DOMAIN: dict[str, str] = {
+    view: domain for domain, views in GOLD_DOMAINS.items() for view in views
+}
+
 GOLD_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "price_monthly": ("price_obs_current",),
     "price_monthly_best": ("price_monthly",),
     "price_changes": ("price_monthly_best",),
     "market_health": ("price_changes", "stock_latest", "weather_monthly"),
     "market_coverage": ("price_monthly",),
+    "import_dependency": ("trade_monthly",),
 }
 
 # Publication-reserved Gold caches: the R2 macro publication gate forbids any
 # refresh through the provenance entry point, so content identity excludes them.
 UNPUBLISHED_GOLD_VIEWS: frozenset[str] = frozenset({"economic_dashboard"})
+
+
+def get_domain_views(domain: str) -> list[str]:
+    """Retrieve ordered materialized view names belonging to a domain."""
+    if domain not in GOLD_DOMAINS:
+        raise ValueError(f"unsupported_gold_domain: {domain}")
+    domain_set = set(GOLD_DOMAINS[domain])
+    return [view for view in ORDERED_GOLD_VIEWS if view in domain_set]
+
+
+def get_view_domain(view_name: str) -> str | None:
+    """Return the owning business domain for a Gold view."""
+    return VIEW_TO_DOMAIN.get(view_name)
 
 
 def publication_views(requested: list[str]) -> list[str]:
@@ -117,18 +160,32 @@ def refresh_gold_views(
     concurrently: bool = False,
     views: list[str] | None = None,
     *,
+    domain: str | None = None,
     reader: ArtifactReader | None = None,
     schema_registry: SchemaContractRegistry | None = None,
 ) -> dict[str, Any]:
-    """Fresh cell check and atomic publication; no model/conversion qualification."""
+    """Fresh cell check and atomic publication; supports domain-isolated refresh."""
     withheld = (
         dict.fromkeys(UNPUBLISHED_GOLD_VIEWS, "macro_publication_not_qualified")
-        if views is None
+        if views is None and domain is None
         else {}
     )
-    requested = (
-        [view for view in ORDERED_GOLD_VIEWS if view not in withheld] if views is None else views
-    )
+    if domain is not None:
+        if domain not in GOLD_DOMAINS:
+            raise ValueError(f"unsupported_gold_domain: {domain}")
+        domain_views = get_domain_views(domain)
+        if views is not None:
+            outside = set(views) - set(domain_views)
+            if outside:
+                raise ValueError(f"views_outside_requested_domain: {sorted(outside)}")
+            requested = views
+        else:
+            requested = domain_views
+    elif views is None:
+        requested = [view for view in ORDERED_GOLD_VIEWS if view not in withheld]
+    else:
+        requested = views
+
     target_views = publication_views(requested)
     logger.info("Refreshing %d Gold materialized views...", len(target_views))
 
@@ -197,4 +254,72 @@ def refresh_gold_views(
             "rejected_rows": denominators.rejected_rows,
             "review_rows": denominators.review_rows,
         },
+    }
+
+
+def refresh_domain_views(
+    session: Session,
+    domain: str,
+    concurrently: bool = False,
+    *,
+    reader: ArtifactReader | None = None,
+    schema_registry: SchemaContractRegistry | None = None,
+) -> dict[str, Any]:
+    """Refresh Gold views strictly restricted to a single business domain."""
+    return refresh_gold_views(
+        session,
+        concurrently=concurrently,
+        domain=domain,
+        reader=reader,
+        schema_registry=schema_registry,
+    )
+
+
+def refresh_all_domains_independent(
+    session: Session,
+    concurrently: bool = False,
+    *,
+    reader: ArtifactReader | None = None,
+    schema_registry: SchemaContractRegistry | None = None,
+) -> dict[str, Any]:
+    """Refresh each domain independently with atomic savepoints.
+
+    A failure in Macro or Climate does not prevent or rollback a valid Price publication.
+    """
+    domain_results: dict[str, Any] = {}
+    domain_errors: dict[str, str] = {}
+    total_refreshed: list[str] = []
+
+    for domain_name in ("price", "trade", "climate", "macro"):
+        try:
+            with session.begin_nested():
+                res = refresh_gold_views(
+                    session,
+                    concurrently=concurrently,
+                    domain=domain_name,
+                    reader=reader,
+                    schema_registry=schema_registry,
+                )
+                domain_results[domain_name] = res
+                total_refreshed.extend(res.get("views_refreshed", []))
+        except (GoldDqRejected, ValueError) as exc:
+            logger.warning("Domain '%s' refresh rejected or failed: %s", domain_name, exc)
+            domain_errors[domain_name] = str(exc)
+        except SQLAlchemyError as exc:
+            logger.error("SQLAlchemy error during domain '%s' refresh: %s", domain_name, exc)
+            domain_errors[domain_name] = "domain_sql_error"
+
+    status = (
+        "success"
+        if not domain_errors
+        else ("partial_success" if domain_results else "failed")
+    )
+    return {
+        "status": status,
+        "domains_succeeded": list(domain_results.keys()),
+        "domains_failed": list(domain_errors.keys()),
+        "domain_errors": domain_errors,
+        "views_refreshed": total_refreshed,
+        "count": len(total_refreshed),
+        "domain_details": domain_results,
     }
