@@ -2287,3 +2287,30 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
      - Masquage systématique des paramètres sensibles (`api_key`, `token`, `secret`, `password`, `bearer`) dans les URLs de requêtes paginées.
   4. Suite de tests unitaires et simulations (`backend/tests/unit/test_ia_data_03_common_adapters.py`) :
      - 10 tests unitaires et simulations validant l'ensemble des stratégies, la reprise après coupure 503/429, la détection de boucles, le streaming borné, le calcul de SHA-256 et la persistance SQL des checkpoints.
+
+
+## ADR-170 | 2026-11-09 | Accepté avant code | Parseur d'archive historique RTFP Banque mondiale pour marchés locaux et multi-commodités PPN (IA-DATA-04)
+
+- Contexte :
+  En exécution de la tâche IA-DATA-04 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et de SPECS §9, §11, §12.
+  Le connecteur existant `rtfp_archive.py` (v3.0.0, format `rtfp_zip_csv_v1`) était volontairement borné à la série de moyenne nationale sur le riz (`c_rice`, `geo_id == NATIONAL["geo_id"]`) et bridé à la période postérieure à 2020 pour la qualification R0.8.
+  L'archive brute officielle de la Banque mondiale (`MDG_RTFP_mkt_2007_...zip`) contient l'historique complet depuis 2007 pour l'ensemble des marchés locaux géoréférencés de Madagascar et pour 3 commodités PPN vivrières stratégiques : le riz (`c_rice`), le sucre (`c_sugar`), et la farine de blé (`c_wheat_flour`).
+  Elle comporte en outre l'indicateur binaire d'imputation `spatially_interpolated` (0 = observation directe, 1 = interpolation spatiale).
+
+- Décision :
+  1. Préservation stricte de la qualification nationale existante :
+     - `rtfp_archive.py` v3.0.0 et son format de preuve `rtfp_zip_csv_v1` restent intacts pour garantir la stabilité de la série nationale R0.8.
+  2. Parseur d'archive multi-marchés et multi-produits v4.0.0 (`backend/src/ketrika/connectors/rtfp_market_archive.py`) :
+     - `PARSER_VERSION = "4.0.0"`.
+     - Extraction systématique des 3 commodités PPN vivrières : `Rice (local)` (`c_rice`), `Sugar` (`c_sugar`), `Wheat flour` (`c_wheat_flour`) liées aux index respectifs de `additional.ticker_info` du document de contexte officiel WB Study 8240.
+     - Prise en charge de tous les marchés géoréférencés (`mkt_name`, `geo_id`) et de la moyenne nationale.
+     - Couverture temporelle intégrale depuis le 1er janvier 2007 jusqu'au millésime de l'archive.
+     - Attribution exacte de la nature d'observation selon `spatially_interpolated` : `"0"` -> `observed_or_imputed="observed"`, `value_kind="point"`, `"1"` -> `observed_or_imputed="imputed"`, `value_kind="imputed"`.
+  3. Format de preuve cryptographique `rtfp_zip_market_v1` (`backend/src/ketrika/core/provenance_wb_market.py`) :
+     - Vérification déterministe hors réseau des coordonnées de cellules CSV (`cells`) et de la concordance exacte des prix, dates, devises et localités.
+     - Découpage par lots (chunks de 5 000 cellules) pour respecter les plafonds de lecture de `wb_archive.py` sans dépassement de coordonnées.
+     - Raccordement du vérificateur et de l'audit de provenance dans `provenance.py` et `provenance_audit.py`.
+  4. Enregistrement des contrats de schéma 4.0.0 (`backend/src/ketrika/core/schema_contracts.py`) :
+     - Déclaration explicite des liaisons pour `wb_rtfp_mdg` v4.0.0 pour `application/json`, `application/zip`, `application/octet-stream`.
+  5. Suite de tests unitaires et non-régression (`backend/tests/unit/test_ia_data_04_rtfp_historical.py`) :
+     - Vérification de l'extraction multi-produits (riz, sucre, farine de blé), de la distinction observation vs interpolation spatiale, de la profondeur historique 2007, de la détection de corruption d'archive, et de la coexistence parfaite des parseurs v3.0.0 et v4.0.0.

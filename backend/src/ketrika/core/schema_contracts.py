@@ -127,6 +127,11 @@ DECLARED_SCHEMA_BINDINGS = (
     SchemaContractBinding(
         "wb_rtfp_mdg", "3.0.0", "application/octet-stream", WBArchiveSchemaContract()
     ),
+    SchemaContractBinding("wb_rtfp_mdg", "4.0.0", "application/json", WB_RTFP_JSON.alternatives[1]),
+    SchemaContractBinding("wb_rtfp_mdg", "4.0.0", "application/zip", WBArchiveSchemaContract()),
+    SchemaContractBinding(
+        "wb_rtfp_mdg", "4.0.0", "application/octet-stream", WBArchiveSchemaContract()
+    ),
     SchemaContractBinding("miasa_odr", "1.0.0", "text/csv", MIASA_ODR_CSV),
     SchemaContractBinding("miasa_odr", "1.0.0", "application/csv", MIASA_ODR_CSV),
     SchemaContractBinding("douanes_stats", "1.0.0", "text/csv", DOUANES_STATS_CSV),

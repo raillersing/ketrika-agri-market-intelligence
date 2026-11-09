@@ -5014,4 +5014,17 @@ Mini-plan ADR163/SPECS avant code : parser archive3.0.0 national c_rice borné ;
   - Migration additive `0029_collection_checkpoint.py` créant `meta.collection_checkpoint`.
   - Assainissement systématique des paramètres sensibles (clés d'API, tokens) dans les URLs journalisées (`sanitize_url_for_logging`).
   - Suite de tests unitaires et de simulation `backend/tests/unit/test_ia_data_03_common_adapters.py` (10 tests passants). Ruff check : All checks passed.
-- Preuve : ADR-169 consigné. Statut IA-DATA-03 : DONE.
+### [2026-11-09T22:30:00Z] IA-DATA-04 — Parseur d'archive historique RTFP Banque mondiale pour marchés locaux et multi-commodités PPN
+
+- Contexte : Tâche P1 IA-DATA-04 du plan d'industrialisation `IROOA_PLAN_IMPLEMENTATION_COLLECTE_AUTONOME_2026-11-09.md` et SPECS §9, §11, §12.
+- Réalisations :
+  - Préservation intégrale du parseur national `rtfp_archive.py` (v3.0.0, format `rtfp_zip_csv_v1`) garantissant la stabilité de la série nationale de clôture R0.8.
+  - Parseur multi-marchés et multi-produits `backend/src/ketrika/connectors/rtfp_market_archive.py` (`PARSER_VERSION = "4.0.0"`).
+  - Extraction déterministe des 3 commodités PPN vivrières stratégiques : `Rice (local)` (`c_rice`), `Sugar` (`c_sugar`), `Wheat flour` (`c_wheat_flour`), mappées aux tickers officiels de l'étude WB Study 8240.
+  - Extraction de tous les marchés géoréférencés sub-nationaux et de la moyenne nationale sur la période historique complète de 2007 au millésime de l'archive.
+  - Attribution stricte de la nature d'observation selon l'indicateur officiel `spatially_interpolated` : 0 = `observed` / `point`, 1 = `imputed` / `imputed`.
+  - Format de preuve cryptographique `rtfp_zip_market_v1` dans `backend/src/ketrika/core/provenance_wb_market.py` avec validation de cellules par lots (chunks de 5 000 cellules) respectant les limites mémoires.
+  - Raccordement du vérificateur de provenance et de l'audit dans `provenance.py` et `provenance_audit.py`.
+  - Enregistrement des contrats de schéma 4.0.0 pour `wb_rtfp_mdg` dans `backend/src/ketrika/core/schema_contracts.py`.
+  - Suite de tests unitaires `backend/tests/unit/test_ia_data_04_rtfp_historical.py` (6 tests passants) et non-régression `test_schema_contracts.py`, `test_rtfp_archive.py`, `test_provenance_wb_archive.py`, `test_provenance_rtfp.py` (92/92 passants, ruff check All checks passed).
+- Preuve : ADR-170 consigné. Statut IA-DATA-04 : DONE.
