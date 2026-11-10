@@ -51,7 +51,7 @@ export default function SystemPage() {
     {
       name: "Orchestrateur Dagster Cockpit",
       port: "3010",
-      url: "http://localhost:3010",
+      url: process.env.NEXT_PUBLIC_DAGSTER_URL || "http://localhost:3010",
       role: "Graphe d'actifs de données, planification cron (Schedules) et sensors d'alerte",
       badge: "DataOps",
       color: "border-purple-500/30 bg-purple-500/5",
@@ -297,7 +297,7 @@ export default function SystemPage() {
             </div>
           </div>
           <a
-            href="http://localhost:3010/schedules"
+            href={`${process.env.NEXT_PUBLIC_DAGSTER_URL || "http://localhost:3010"}/schedules`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-600 text-primary-foreground text-xs font-medium hover:bg-purple-700 transition-colors"
