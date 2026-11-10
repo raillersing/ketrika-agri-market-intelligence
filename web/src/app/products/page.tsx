@@ -554,7 +554,7 @@ export default function ProductsPage() {
                   maxLength={6}
                   className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring"
                 />
-                <p className="text-[10px] text-muted-foreground">Code à 6 chiffres pour l'analyse des imports/exports</p>
+                <p className="text-[10px] text-muted-foreground">Code à 6 chiffres pour l&apos;analyse des imports/exports</p>
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
@@ -716,7 +716,7 @@ export default function ProductsPage() {
                   Règle de traçabilité absolue (AGENTS.md §4) :
                 </div>
                 <p>
-                  Ce relevé sera déposé dans le magasin Bronze MinIO avec empreinte immuable SHA-256 avant d'être injecté dans la couche Silver et agrégé dans les vues Gold.
+                  Ce relevé sera déposé dans le magasin Bronze MinIO avec empreinte immuable SHA-256 avant d&apos;être injecté dans la couche Silver et agrégé dans les vues Gold.
                 </p>
               </div>
 

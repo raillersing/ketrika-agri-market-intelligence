@@ -196,7 +196,7 @@ function PricesContent() {
         <section className="rounded-xl border border-border bg-card p-6 space-y-3">
           <h2 className="font-semibold text-foreground">Aucun point de prix pour cette sélection</h2>
           <p className="text-sm leading-6 text-muted-foreground">
-            Les filtres sont conservés. Cette commodité n'a pas encore de relevés enregistrés pour cette zone ou ce stade de vente. Vous pouvez ajouter des observations directement depuis la gestion des produits.
+            Les filtres sont conservés. Cette commodité n&apos;a pas encore de relevés enregistrés pour cette zone ou ce stade de vente. Vous pouvez ajouter des observations directement depuis la gestion des produits.
           </p>
           <div className="pt-2">
             <Link
@@ -218,7 +218,7 @@ function PricesContent() {
                   <div>
                     <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
                       <Sparkles aria-hidden="true" className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-                      Extrapolations & Projections jusqu'à 1 An (Multi-Modèles)
+                      Extrapolations & Projections jusqu&apos;à 1 An (Multi-Modèles)
                     </h2>
                     <p className="text-xs text-muted-foreground mt-1">
                       Sélectionnez la technique de modélisation pour projeter la trajectoire de prix sur le graphique et comparer les scénarios.
