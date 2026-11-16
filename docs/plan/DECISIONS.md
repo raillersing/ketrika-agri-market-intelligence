@@ -2424,3 +2424,12 @@ omettant le contexte, les lignes hors portée ou les valeurs effectivement en DB
 
 
 
+
+
+## ADR-175 | 2026-11-16 | Décision de correction A04 avant code | Refus Gold bloquant pour les prévisions
+
+- **Contexte :** `backend/src/ketrika/ml/forecast.py` effectuait un `REFRESH MATERIALIZED VIEW gold.forecast_latest` direct après une exception de `refresh_gold_views`. Ce chemin ne rejouait pas explicitement les contrôles de provenance, de structure et de qualité ; il pouvait rendre visibles des prévisions dont la publication avait été rejetée.
+- **Décision :** le chemin de prévision doit appeler exclusivement `refresh_gold_views(session, views=["forecast_latest"])`. Si la publication refuse le lot, l'exception d'origine est propagée et la transaction de la session est annulée ; aucun `session.commit()` ni `REFRESH MATERIALIZED VIEW` direct ne peut se produire pour ce lot. En cas de publication acceptée, le comportement transactionnel existant est conservé.
+- **Tests de réception :** injecter un refus Gold et vérifier la propagation, le rollback, l'absence de commit et l'absence de SQL de contournement ; garder un test positif pour la publication qualifiée.
+- **Portée :** corrective uniquement, sans changer les vues SQL, les seuils DQ, les tables de provenance ni les données existantes. N'autorise aucun déploiement Contabo et ne conclut pas la qualification R0.9 ou R6.
+- **Alternative rejetée :** rafraîchissement SQL direct ou dégradation silencieuse de la publication, car ils masquent un refus de qualification.
