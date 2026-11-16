@@ -18,7 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ketrika.core.logging import get_logger
-from ketrika.core.models.db import Event, Forecast, MacroObservation, ModelRun, WeatherObservation
+from ketrika.core.models.db import Event, Forecast, MacroObservation, ModelRun
 from ketrika.gold.refresh import refresh_gold_views
 from ketrika.ml.backtest import BacktestResult, select_best_model
 from ketrika.ml.causal_model import CausalAgriculturalModel
