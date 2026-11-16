@@ -42,6 +42,7 @@ def test_parse_corridor_friction_csv(raw_corridors_csv: bytes) -> None:
     # Check values and units
     for r in rn2_cost:
         assert isinstance(r, MacroRecord)
+        assert r.value is not None
         assert 200000.0 <= r.value <= 400000.0
         assert r.unit == "MGA/Tonne"
         assert r.frequency == "monthly"
@@ -49,6 +50,7 @@ def test_parse_corridor_friction_csv(raw_corridors_csv: bytes) -> None:
 
     for r in rn4_sec:
         assert isinstance(r, MacroRecord)
+        assert r.value is not None
         assert 0.05 <= r.value <= 0.35
         assert r.unit == "ratio"
 
