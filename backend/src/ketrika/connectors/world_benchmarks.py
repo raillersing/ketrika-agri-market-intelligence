@@ -8,6 +8,8 @@ causal price forecasts.
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 import csv
 import io
 import logging
@@ -163,7 +165,8 @@ def parse_world_benchmarks_csv(
 class WorldBenchmarksConnector:
     """Connector for international FOB benchmarks and maritime freight."""
 
-    source_id: str = WORLD_BENCHMARKS_SOURCE_ID
+    source_id: ClassVar[str] = WORLD_BENCHMARKS_SOURCE_ID
+    parser_version: ClassVar[str] = "1.0.0"
 
     def discover(self, run_ctx: RunContext) -> Iterable[DiscoveredItem]:
         """Discover the monthly world commodity price feed."""
