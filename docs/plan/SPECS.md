@@ -1574,6 +1574,8 @@ L'UI **DOIT** toujours afficher les composantes à côté du score.
 
 ## 17. Prévisions et anomalies
 
+**Garde de publication des prévisions (ADR-175, correctif A04).** Lorsque le pipeline demande la publication de `gold.forecast_latest`, le seul chemin autorisé est `refresh_gold_views`, avec l'ensemble de ses contrôles de provenance, structure et qualité. Tout refus ou échec de ce garde DOIT annuler la transaction du lot et propager l'erreur, sans `REFRESH MATERIALIZED VIEW` direct, sans commit du lot et sans promotion silencieuse d'un résultat non qualifié. Un calcul interne peut exister en mémoire sans être publiable ; aucune sortie Gold n'est déclarée reçue avant la validation indépendante du check complet.
+
 ### 17.1 Éligibilité et calendrier des séries (ADR-004, ADR-073, R3.1)
 
 - **Clé de série explicite à 5 composantes :** `series_key = "{product_code}|{quality_grade}|{actor_level}|{location_pcode}|{unit}"` (ex: `rice_milled|standard|retail|MG11|kg`). Les clés historiques à 3 composantes restent parsables en rétro-compatibilité avec valeurs par défaut (`quality_grade='standard'`, `unit='kg'`).

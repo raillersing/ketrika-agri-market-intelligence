@@ -379,10 +379,12 @@ def run_price_forecasting_pipeline(
         try:
             refresh_gold_views(session, views=["forecast_latest"])
         except Exception as exc:
-            logger.warning("gold_refresh_fallback_sql", reason=str(exc))
-            from sqlalchemy import text
-            session.execute(text("REFRESH MATERIALIZED VIEW gold.forecast_latest;"))
-            session.flush()
+            logger.warning(
+                "gold_forecast_publication_rejected",
+                error_type=type(exc).__name__,
+            )
+            session.rollback()
+            raise
 
     session.commit()
 

@@ -128,6 +128,72 @@ def test_run_price_forecasting_pipeline_preserves_lineage_and_metadata(
         assert fc.interval_width == round(fc.p90 - fc.p10, 4) or fc.interval_width is not None
 
 
+
+def test_forecast_gold_rejection_rolls_back_and_never_bypasses_gate(
+    dummy_price_series: list[EligibleSeries], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A refused Gold publication must never fall back to a direct materialized-view refresh."""
+    cutoff = date(2026, 1, 1)
+    report = SeriesEligibilityReport(
+        data_cutoff=cutoff,
+        total_series_evaluated=1,
+        eligible_count=1,
+        excluded_count=0,
+        eligible_series=dummy_price_series,
+        excluded_series=[],
+        summary_reasons={},
+    )
+    monkeypatch.setattr("ketrika.ml.forecast.audit_series_eligibility", lambda **kwargs: report)
+
+    def reject_publication(*args: object, **kwargs: object) -> None:
+        raise ValueError("gold_publication_failed")
+
+    monkeypatch.setattr("ketrika.ml.forecast.refresh_gold_views", reject_publication)
+    mock_session = MagicMock()
+
+    with pytest.raises(ValueError, match="gold_publication_failed"):
+        run_price_forecasting_pipeline(
+            session=mock_session, data_cutoff=cutoff, horizon=3, refresh_gold=True
+        )
+
+    mock_session.rollback.assert_called_once_with()
+    mock_session.commit.assert_not_called()
+    assert all(
+        "REFRESH MATERIALIZED VIEW" not in str(call.args[0])
+        for call in mock_session.execute.call_args_list
+    )
+
+
+def test_forecast_qualified_gold_publication_commits(
+    dummy_price_series: list[EligibleSeries], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A validated publication follows the guarded path and commits the batch once."""
+    cutoff = date(2026, 1, 1)
+    report = SeriesEligibilityReport(
+        data_cutoff=cutoff,
+        total_series_evaluated=1,
+        eligible_count=1,
+        excluded_count=0,
+        eligible_series=dummy_price_series,
+        excluded_series=[],
+        summary_reasons={},
+    )
+    monkeypatch.setattr("ketrika.ml.forecast.audit_series_eligibility", lambda **kwargs: report)
+    guarded = MagicMock(return_value={"views_refreshed": ["forecast_latest"]})
+    monkeypatch.setattr("ketrika.ml.forecast.refresh_gold_views", guarded)
+    mock_session = MagicMock()
+
+    result = run_price_forecasting_pipeline(
+        session=mock_session, data_cutoff=cutoff, horizon=3, refresh_gold=True
+    )
+
+    assert result["forecasts_generated"] == 3
+    guarded.assert_called_once_with(mock_session, views=["forecast_latest"])
+    mock_session.rollback.assert_not_called()
+    mock_session.commit.assert_called_once_with()
+
+
+
 def test_forecast_abstentions_and_rejections_recorded(monkeypatch: pytest.MonkeyPatch) -> None:
     """When series are excluded, pipeline records documented abstentions and generates 0 forecasts."""
     cutoff = date(2026, 1, 1)
