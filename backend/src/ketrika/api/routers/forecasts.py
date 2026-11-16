@@ -326,7 +326,10 @@ def get_multi_model_extrapolations(
             winning_model = s_info.get("best_model")
             historical_metrics = s_info.get("evaluations", {})
 
-    candidate_models = {
+    candidate_models: dict[
+        str,
+        tuple[CausalAgriculturalModel | AutoARIMAModel | AutoETSModel | SeasonalNaiveModel | NaiveLastModel, bool],
+    ] = {
         "CausalAgriculturalModel": (CausalAgriculturalModel(season_length=12), False),
         "AutoARIMA": (AutoARIMAModel(season_length=12), False),
         "AutoETS": (AutoETSModel(season_length=12), False),
@@ -337,7 +340,7 @@ def get_multi_model_extrapolations(
     models_dict: dict[str, ModelExtrapolationTrajectory] = {}
     for m_name, (m_inst, is_base) in candidate_models.items():
         try:
-            if m_name == "CausalAgriculturalModel":
+            if isinstance(m_inst, CausalAgriculturalModel):
                 m_res = m_inst.fit_predict(
                     y,
                     h=horizon,
