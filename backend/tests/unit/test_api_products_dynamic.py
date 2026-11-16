@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import uuid
+from collections.abc import Generator
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -31,7 +32,7 @@ def mock_user() -> UserAccount:
 
 
 @pytest.fixture
-def test_client(mock_user: UserAccount) -> TestClient:
+def test_client(mock_user: UserAccount) -> Generator[TestClient, None, None]:
     """FastAPI TestClient with overridden auth."""
     app.dependency_overrides[get_current_user] = lambda: mock_user
     client = TestClient(app)
