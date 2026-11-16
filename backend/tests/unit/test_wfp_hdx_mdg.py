@@ -352,6 +352,7 @@ def test_wfp_hdx_parse_hapi_json() -> None:
     assert len(result.records) == 2
 
     rec0 = result.records[0]
+    assert isinstance(rec0, PriceRecord)
     assert rec0.product_raw == "Beans (pois de cap)"
     assert rec0.location_raw == "Anjozorobe"
     assert rec0.actor_level == "retail"
@@ -364,6 +365,7 @@ def test_wfp_hdx_parse_hapi_json() -> None:
     assert rec0.evidence["latitude"] == -18.4
 
     rec1 = result.records[1]
+    assert isinstance(rec1, PriceRecord)
     assert rec1.product_raw == "Rice (local)"
     assert rec1.location_raw == "Anosibe"
     assert rec1.actor_level == "wholesale"
