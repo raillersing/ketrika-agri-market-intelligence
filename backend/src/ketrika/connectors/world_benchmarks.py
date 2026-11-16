@@ -8,13 +8,12 @@ causal price forecasts.
 
 from __future__ import annotations
 
-from typing import ClassVar
-
 import csv
 import io
 import logging
 from collections.abc import Iterable
 from datetime import UTC, date, datetime
+from typing import ClassVar
 
 from ketrika.connectors.base import (
     DiscoveredItem,
