@@ -6,9 +6,7 @@ import { apiHealthLabel, classifyApiHealth, type ApiHealth } from "../../lib/sys
 import {
   Activity,
   AlertTriangle,
-  ArrowRight,
   Check,
-  CheckCircle2,
   Clock,
   Copy,
   Cpu,
@@ -214,7 +212,7 @@ export default function SystemPage() {
               </p>
             </div>
           </div>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${apiHealth === "reachable" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-muted text-muted-foreground border-border"}`}>
             <Activity className="w-3 h-3" />
             {apiHealthLabel(apiHealth)}
           </span>
@@ -307,7 +305,7 @@ export default function SystemPage() {
                   <td className="py-3.5 px-4 font-medium text-foreground">{cad.sources}</td>
                   <td className="py-3.5 px-4 text-muted-foreground">{cad.description}</td>
                   <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-muted-foreground border border-border">
                       <Clock className="w-3 h-3" />
                       {cad.status}
                     </span>
