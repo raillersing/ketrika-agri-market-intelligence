@@ -2325,6 +2325,66 @@
       },
       "annotator": "agent",
       "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/corridor_friction/corridor_freight_benchmarks_2024_2026.csv",
+      "sha256": "297c21dfa3a80273cc682f5ab4f608368b638518bdb1421230e849a4f78d6860",
+      "size_bytes": 8453,
+      "artifact_type": "csv",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_test_fixture",
+        "reference": "tests/unit/test_corridor_friction.py",
+        "limitations": "Repository-only example fixture used by code/tests; not a verified upstream acquisition, not evidence of market prices, and never eligible for Gold."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/fao_fpma_mdg/fpma_prices_mdg_sample.json",
+      "sha256": "ab9db70f2ea02d372442b07c9804322a4789a9d74a737f3a6a9628a8c0c8f79a",
+      "size_bytes": 2022,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_test_fixture",
+        "reference": "src/ketrika/connectors/fao_fpma_mdg.py",
+        "limitations": "Repository-only example fixture used by code/tests; not a verified upstream acquisition, not evidence of market prices, and never eligible for Gold."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
+    },
+    {
+      "path": "tests/fixtures/wfp_hdx_mdg/wfp_hapi_mdg_sample.json",
+      "sha256": "acb1c774a703c8c8f0c686176814ea528bf99c94691f521131d713c4da79c5f1",
+      "size_bytes": 4665,
+      "artifact_type": "json",
+      "authenticity": "synthetic",
+      "origin": {
+        "kind": "repository_test_fixture",
+        "reference": "tests/unit/test_wfp_hdx_mdg.py",
+        "limitations": "Repository-only example fixture used by code/tests; not a verified upstream acquisition, not evidence of market prices, and never eligible for Gold."
+      },
+      "rights": {
+        "status": "internal_test_only",
+        "licence": null,
+        "evidence": null,
+        "redistribution_allowed": false
+      },
+      "annotator": "agent",
+      "human_reviewed": false
     }
   ]
 }
