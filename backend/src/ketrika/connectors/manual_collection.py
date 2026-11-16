@@ -153,9 +153,7 @@ def _collect_source(sid: str, request_id: UUID, outcomes: list[dict[str, Any]]) 
             outcome["status"] = "blocked"
             outcome["diagnostic_status"] = "policy_blocked"
             outcome["diagnostic_code"] = "POLICY_STOP_BLOCKED"
-            outcome["diagnostic_message"] = (
-                "Source non éligible ou suspendue par la politique de collecte."
-            )
+            outcome["diagnostic_message"] = "Source non éligible ou suspendue par la politique de collecte."
             return outcome
         connector = list_registered_connectors()[sid]()
         if sid == "wb_rtfp_mdg":

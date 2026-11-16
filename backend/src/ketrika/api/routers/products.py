@@ -170,15 +170,13 @@ def create_product(
         )
         session.add(alias_row)
         registered_aliases.append(cleaned)
-        yaml_aliases.append(
-            {
-                "alias": cleaned,
-                "lang": "fr",
-                "product_code": p_code,
-                "confidence": 0.95,
-                "evidence": f"Créé par {current_user.email} (ADR-165)",
-            }
-        )
+        yaml_aliases.append({
+            "alias": cleaned,
+            "lang": "fr",
+            "product_code": p_code,
+            "confidence": 0.95,
+            "evidence": f"Créé par {current_user.email} (ADR-165)",
+        })
 
     session.commit()
 
@@ -291,10 +289,7 @@ def create_observations_batch(
     for loc in session.scalars(select(Location)).all():
         if loc.pcode:
             locations_by_pcode[loc.pcode.upper()] = loc
-    national_loc = (
-        locations_by_pcode.get("MDG")
-        or session.scalars(select(Location).where(Location.admin_level == 0)).first()
-    )
+    national_loc = locations_by_pcode.get("MDG") or session.scalars(select(Location).where(Location.admin_level == 0)).first()
 
     # 5. Insert observations in Silver (obs.price_observation)
     count_created = 0

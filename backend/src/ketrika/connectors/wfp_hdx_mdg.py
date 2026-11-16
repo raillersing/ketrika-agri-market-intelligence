@@ -64,7 +64,7 @@ class WfpHdxMdgConnector:
                 )
                 yield DiscoveredItem(
                     url=query_url,
-
+                    partition_key=f"hdx_hapi_v2_mdg_p{page_idx}" if max_pages > 1 else "hdx_hapi_v2_mdg",
                     hints={
                         "publisher": "WFP",
                         "format": "json",
@@ -187,20 +187,16 @@ class WfpHdxMdgConnector:
                 obs_date = date.fromisoformat(str(date_str)[:10])
 
                 end_date_str = item.get("reference_period_end")
-                end_date = date.fromisoformat(str(end_date_str)[:10]) if end_date_str else obs_date
+                end_date = (
+                    date.fromisoformat(str(end_date_str)[:10]) if end_date_str else obs_date
+                )
 
                 unit_raw = str(item.get("unit") or "KG").strip()
-                pricetype = (
-                    str(item.get("price_type") or item.get("pricetype") or "Retail").strip().lower()
-                )
+                pricetype = str(item.get("price_type") or item.get("pricetype") or "Retail").strip().lower()
                 actor_level = "wholesale" if "wholesale" in pricetype else "retail"
-                currency_raw = str(
-                    item.get("currency_code") or item.get("currency") or "MGA"
-                ).strip()
+                currency_raw = str(item.get("currency_code") or item.get("currency") or "MGA").strip()
 
-                priceflag = (
-                    str(item.get("price_flag") or item.get("priceflag") or "actual").strip().lower()
-                )
+                priceflag = str(item.get("price_flag") or item.get("priceflag") or "actual").strip().lower()
                 is_imputed = priceflag in ("forecast", "imputed", "estimated")
                 observed_or_imputed = "imputed" if is_imputed else "observed"
 

@@ -159,31 +159,12 @@ def compute_corridor_friction(
         status = "normal_flow"
 
     provenance = [
-        {
-            "indicator": base_indicator,
-            "source_id": base_src,
-            "sha256": base_sha,
-            "period": base_period.isoformat(),
-        }
+        {"indicator": base_indicator, "source_id": base_src, "sha256": base_sha, "period": base_period.isoformat()}
     ]
     if road_res:
-        provenance.append(
-            {
-                "indicator": road_indicator,
-                "source_id": road_res[2],
-                "sha256": road_res[3],
-                "period": road_res[1].isoformat(),
-            }
-        )
+        provenance.append({"indicator": road_indicator, "source_id": road_res[2], "sha256": road_res[3], "period": road_res[1].isoformat()})
     if sec_res:
-        provenance.append(
-            {
-                "indicator": security_indicator,
-                "source_id": sec_res[2],
-                "sha256": sec_res[3],
-                "period": sec_res[1].isoformat(),
-            }
-        )
+        provenance.append({"indicator": security_indicator, "source_id": sec_res[2], "sha256": sec_res[3], "period": sec_res[1].isoformat()})
 
     return {
         "corridor_code": code,

@@ -46,27 +46,9 @@ def test_bounded_pagination_offset_limit_strategy() -> None:
     p3 = json.dumps({"data": [{"id": 5}]}).encode()
 
     mock_client.get.side_effect = [
-        FetchResult(
-            url="https://api.example.org/items?offset=0&limit=2",
-            status_code=200,
-            content=p1,
-            text=p1.decode(),
-            headers={"content-type": "application/json"},
-        ),
-        FetchResult(
-            url="https://api.example.org/items?offset=2&limit=2",
-            status_code=200,
-            content=p2,
-            text=p2.decode(),
-            headers={"content-type": "application/json"},
-        ),
-        FetchResult(
-            url="https://api.example.org/items?offset=4&limit=2",
-            status_code=200,
-            content=p3,
-            text=p3.decode(),
-            headers={"content-type": "application/json"},
-        ),
+        FetchResult(url="https://api.example.org/items?offset=0&limit=2", status_code=200, content=p1, text=p1.decode(), headers={"content-type": "application/json"}),
+        FetchResult(url="https://api.example.org/items?offset=2&limit=2", status_code=200, content=p2, text=p2.decode(), headers={"content-type": "application/json"}),
+        FetchResult(url="https://api.example.org/items?offset=4&limit=2", status_code=200, content=p3, text=p3.decode(), headers={"content-type": "application/json"}),
     ]
 
     config = PaginationConfig(
@@ -100,20 +82,8 @@ def test_bounded_pagination_cursor_strategy() -> None:
     p2 = json.dumps({"items": [{"val": "b"}], "next_token": None}).encode()
 
     mock_client.get.side_effect = [
-        FetchResult(
-            url="https://api.example.org/records",
-            status_code=200,
-            content=p1,
-            text=p1.decode(),
-            headers={"content-type": "application/json"},
-        ),
-        FetchResult(
-            url="https://api.example.org/records?cursor=cursor_b",
-            status_code=200,
-            content=p2,
-            text=p2.decode(),
-            headers={"content-type": "application/json"},
-        ),
+        FetchResult(url="https://api.example.org/records", status_code=200, content=p1, text=p1.decode(), headers={"content-type": "application/json"}),
+        FetchResult(url="https://api.example.org/records?cursor=cursor_b", status_code=200, content=p2, text=p2.decode(), headers={"content-type": "application/json"}),
     ]
 
     config = PaginationConfig(
@@ -206,20 +176,8 @@ def test_pagination_resumes_from_checkpoint_without_duplicates_or_gaps() -> None
     p1 = json.dumps({"data": [{"id": "item_1"}, {"id": "item_2"}]}).encode()
 
     mock_client.get.side_effect = [
-        FetchResult(
-            url="https://api.example.org/v1/data?offset=0&limit=2",
-            status_code=200,
-            content=p1,
-            text=p1.decode(),
-            headers={"content-type": "application/json"},
-        ),
-        FetchResult(
-            url="https://api.example.org/v1/data?offset=2&limit=2",
-            status_code=503,
-            content=b"Service Unavailable",
-            text="Service Unavailable",
-            headers={},
-        ),
+        FetchResult(url="https://api.example.org/v1/data?offset=0&limit=2", status_code=200, content=p1, text=p1.decode(), headers={"content-type": "application/json"}),
+        FetchResult(url="https://api.example.org/v1/data?offset=2&limit=2", status_code=503, content=b"Service Unavailable", text="Service Unavailable", headers={}),
     ]
 
     config = PaginationConfig(
@@ -258,20 +216,8 @@ def test_pagination_resumes_from_checkpoint_without_duplicates_or_gaps() -> None
 
     mock_client.reset_mock()
     mock_client.get.side_effect = [
-        FetchResult(
-            url="https://api.example.org/v1/data?offset=2&limit=2",
-            status_code=200,
-            content=p2,
-            text=p2.decode(),
-            headers={"content-type": "application/json"},
-        ),
-        FetchResult(
-            url="https://api.example.org/v1/data?offset=4&limit=2",
-            status_code=200,
-            content=p3,
-            text=p3.decode(),
-            headers={"content-type": "application/json"},
-        ),
+        FetchResult(url="https://api.example.org/v1/data?offset=2&limit=2", status_code=200, content=p2, text=p2.decode(), headers={"content-type": "application/json"}),
+        FetchResult(url="https://api.example.org/v1/data?offset=4&limit=2", status_code=200, content=p3, text=p3.decode(), headers={"content-type": "application/json"}),
     ]
 
     pag2 = BoundedPaginator(
@@ -303,10 +249,7 @@ def test_controlled_streaming_enforces_content_length_limit() -> None:
     mock_client = MagicMock()
     mock_resp = MagicMock()
     mock_resp.status_code = 200
-    mock_resp.headers = {
-        "Content-Length": "104857600",
-        "Content-Type": "application/zip",
-    }  # 100 MiB
+    mock_resp.headers = {"Content-Length": "104857600", "Content-Type": "application/zip"}  # 100 MiB
     mock_client.send.return_value = mock_resp
 
     reader = ControlledStreamReader(
@@ -344,11 +287,7 @@ def test_controlled_streaming_calculates_sha256_accurately() -> None:
     mock_client = MagicMock()
     mock_resp = MagicMock()
     mock_resp.status_code = 200
-    mock_resp.headers = {
-        "Content-Length": str(len(payload)),
-        "Content-Type": "text/plain",
-        "ETag": '"abc123"',
-    }
+    mock_resp.headers = {"Content-Length": str(len(payload)), "Content-Type": "text/plain", "ETag": '"abc123"'}
     mock_resp.iter_bytes.return_value = [payload[:10], payload[10:]]
     mock_client.send.return_value = mock_resp
 

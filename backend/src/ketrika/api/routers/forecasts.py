@@ -192,10 +192,7 @@ def get_forecasts(
 
 @router.get("/extrapolations", response_model=MultiModelExtrapolationResponse)
 def get_multi_model_extrapolations(
-    product: str = Query(
-        ...,
-        description="Product code (e.g. RICE_WHITE_IMPORTED, RICE_WHITE_LOCAL, VEG_OIL, MAIZE_GRAIN)",
-    ),
+    product: str = Query(..., description="Product code (e.g. RICE_WHITE_IMPORTED, RICE_WHITE_LOCAL, VEG_OIL, MAIZE_GRAIN)"),
     location: str | None = Query(None, description="Location P-code (e.g. MDG, MDG12)"),
     horizon: int = Query(6, ge=1, le=12, description="Extrapolation horizon in months (1-12)"),
     session: Session = Depends(get_db),
@@ -231,7 +228,8 @@ def get_multi_model_extrapolations(
     # Load series up to latest cutoff
     all_series = extract_eligible_series(session, data_cutoff=date(2026, 10, 1), min_points=24)
     matching = [
-        s for s in all_series if s.product_code == target_prod or s.product_code == product.upper()
+        s for s in all_series
+        if s.product_code == target_prod or s.product_code == product.upper()
     ]
     if not matching:
         raise HTTPException(
@@ -253,9 +251,7 @@ def get_multi_model_extrapolations(
 
     pts = [p for p in selected_series.grid if p.price is not None]
     if len(pts) < 12:
-        raise HTTPException(
-            status_code=400, detail="Insufficient price observations for extrapolation"
-        )
+        raise HTTPException(status_code=400, detail="Insufficient price observations for extrapolation")
 
     s_dates = [p.month for p in pts]
     y = np.array([p.price for p in pts], dtype=float)
@@ -266,23 +262,15 @@ def get_multi_model_extrapolations(
     target_periods = [shift_months(last_date, h_i).isoformat() for h_i in horizons]
 
     # Pre-fetch macro and events for causal model
-    macro_rows = (
-        session.execute(
-            select(MacroObservation)
-            .where(
-                MacroObservation.superseded_by.is_(None), MacroObservation.period_start <= last_date
-            )
-            .order_by(MacroObservation.period_start)
-        )
-        .scalars()
-        .all()
-    )
+    macro_rows = session.execute(
+        select(MacroObservation)
+        .where(MacroObservation.superseded_by.is_(None), MacroObservation.period_start <= last_date)
+        .order_by(MacroObservation.period_start)
+    ).scalars().all()
     macro_by_ind: dict[str, dict[date, float]] = {}
     for m_rec in macro_rows:
         if m_rec.value is not None:
-            macro_by_ind.setdefault(m_rec.indicator_code, {})[m_rec.period_start] = float(
-                m_rec.value
-            )
+            macro_by_ind.setdefault(m_rec.indicator_code, {})[m_rec.period_start] = float(m_rec.value)
     aligned_macro = {}
     for ind_code, dmap in macro_by_ind.items():
         arr = []
@@ -293,13 +281,9 @@ def get_multi_model_extrapolations(
             arr.append(last_known)
         aligned_macro[ind_code] = np.array(arr, dtype=float)
 
-    event_rows = (
-        session.execute(
-            select(Event).where(Event.event_date <= last_date).order_by(Event.event_date)
-        )
-        .scalars()
-        .all()
-    )
+    event_rows = session.execute(
+        select(Event).where(Event.event_date <= last_date).order_by(Event.event_date)
+    ).scalars().all()
     events_payload = [
         {
             "event_id": str(ev.event_id),
@@ -313,9 +297,7 @@ def get_multi_model_extrapolations(
 
     # Latest model run metrics
     latest_run = session.execute(
-        text(
-            "SELECT metrics FROM ml.model_run WHERE task = 'price_forecast' ORDER BY trained_at DESC LIMIT 1"
-        )
+        text("SELECT metrics FROM ml.model_run WHERE task = 'price_forecast' ORDER BY trained_at DESC LIMIT 1")
     ).fetchone()
     historical_metrics: dict[str, Any] = {}
     winning_model: str | None = None
@@ -368,12 +350,8 @@ def get_multi_model_extrapolations(
                 predictions=preds,
                 p10=p10_vals,
                 p90=p90_vals,
-                historical_wape=round(m_hist.get("wape"), 4)
-                if m_hist.get("wape") is not None
-                else None,
-                historical_mae=round(m_hist.get("mae"), 1)
-                if m_hist.get("mae") is not None
-                else None,
+                historical_wape=round(m_hist.get("wape"), 4) if m_hist.get("wape") is not None else None,
+                historical_mae=round(m_hist.get("mae"), 1) if m_hist.get("mae") is not None else None,
             )
         except Exception:
             pass
@@ -399,21 +377,11 @@ def get_multi_model_extrapolations(
 
                 all_p10 = [m.p10[step_idx] for m in valid_models if m.p10 is not None]
                 all_p90 = [m.p90[step_idx] for m in valid_models if m.p90 is not None]
-                ensemble_p10.append(
-                    round(min(all_p10), 1) if all_p10 else round(step_w_mean * 0.95, 1)
-                )
-                ensemble_p90.append(
-                    round(max(all_p90), 1) if all_p90 else round(step_w_mean * 1.05, 1)
-                )
+                ensemble_p10.append(round(min(all_p10), 1) if all_p10 else round(step_w_mean * 0.95, 1))
+                ensemble_p90.append(round(max(all_p90), 1) if all_p90 else round(step_w_mean * 1.05, 1))
 
-            avg_wape = sum(
-                (m.historical_wape or 0.05) * w
-                for m, w in zip(valid_models, norm_weights, strict=True)
-            )
-            avg_mae = sum(
-                (m.historical_mae or 50.0) * w
-                for m, w in zip(valid_models, norm_weights, strict=True)
-            )
+            avg_wape = sum((m.historical_wape or 0.05) * w for m, w in zip(valid_models, norm_weights, strict=True))
+            avg_mae = sum((m.historical_mae or 50.0) * w for m, w in zip(valid_models, norm_weights, strict=True))
 
             models_dict["ConsensusEnsemble"] = ModelExtrapolationTrajectory(
                 model_name="ConsensusEnsemble",

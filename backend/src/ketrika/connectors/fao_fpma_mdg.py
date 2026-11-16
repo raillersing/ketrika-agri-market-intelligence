@@ -61,7 +61,11 @@ class FaoFpmaConnector:
             root = find_repo_root()
             base_dir = root / "backend" if (root / "backend").exists() else root
             fixture_path = (
-
+                base_dir
+                / "tests"
+                / "fixtures"
+                / "fao_fpma_mdg"
+                / "fpma_prices_mdg_sample.json"
             )
             if not fixture_path.exists():
                 raise FileNotFoundError(f"Offline fixture not found at {fixture_path}")
@@ -69,7 +73,9 @@ class FaoFpmaConnector:
             content_bytes = fixture_path.read_bytes()
             content_sha256 = hashlib.sha256(content_bytes).hexdigest()
             now = datetime.now(UTC)
-
+            object_key = (
+                f"{self.source_id}/{now.year}/{now.month:02d}/{content_sha256}.json"
+            )
             is_new = True
 
             if ctx.bronze_store:
@@ -117,11 +123,15 @@ class FaoFpmaConnector:
 
         for row_idx, item in enumerate(items):
             try:
-                commodity = str(item.get("commodity") or item.get("commodity_name") or "").strip()
+                commodity = str(
+                    item.get("commodity") or item.get("commodity_name") or ""
+                ).strip()
                 if not commodity:
                     continue
 
-                market = str(item.get("market") or item.get("market_name") or "").strip()
+                market = str(
+                    item.get("market") or item.get("market_name") or ""
+                ).strip()
                 # Strict no_arbitrary_default rule: missing market goes to review queue
                 if not market:
                     issues.append(
@@ -137,7 +147,9 @@ class FaoFpmaConnector:
                     )
                     continue
 
-                date_str = str(item.get("date") or item.get("period_start") or "").strip()
+                date_str = str(
+                    item.get("date") or item.get("period_start") or ""
+                ).strip()
                 if not date_str:
                     continue
                 obs_date = date.fromisoformat(date_str[:10])
@@ -154,9 +166,9 @@ class FaoFpmaConnector:
                     price_val = None
                     price_raw = ""
 
-                price_type = (
-                    str(item.get("price_type") or item.get("pricetype") or "Retail").strip().lower()
-                )
+                price_type = str(
+                    item.get("price_type") or item.get("pricetype") or "Retail"
+                ).strip().lower()
                 actor_level = "wholesale" if "wholesale" in price_type else "retail"
 
                 unit_raw = str(item.get("unit") or "KG").strip()

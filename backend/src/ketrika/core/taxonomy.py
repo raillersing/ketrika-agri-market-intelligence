@@ -156,15 +156,13 @@ def append_aliases_to_yaml(
         norm = normalize_string(raw_text)
         if norm and norm not in existing_norms:
             existing_norms.add(norm)
-            data.append(
-                {
-                    "alias": raw_text,
-                    "lang": a.get("lang", "fr"),
-                    "product_code": a["product_code"],
-                    "confidence": float(a.get("confidence", 0.95)),
-                    "evidence": a.get("evidence", "Création utilisateur via application"),
-                }
-            )
+            data.append({
+                "alias": raw_text,
+                "lang": a.get("lang", "fr"),
+                "product_code": a["product_code"],
+                "confidence": float(a.get("confidence", 0.95)),
+                "evidence": a.get("evidence", "Création utilisateur via application"),
+            })
             added = True
 
     if added:

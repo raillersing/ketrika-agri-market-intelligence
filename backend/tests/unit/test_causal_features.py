@@ -28,7 +28,6 @@ from ketrika.gold.parity_pricing import (
 # 1. PARITY PRICING UNIT TESTS
 # =========================================================================
 
-
 def test_shift_months():
     """Verify month arithmetic handles year boundaries and leaps correctly."""
     assert shift_months(date(2026, 10, 1), -2) == date(2026, 8, 1)
@@ -46,42 +45,17 @@ def test_parity_pricing_rice_calculation():
         ind = params["indicator"]
         mock_result = MagicMock()
         if ind == "WORLD_FOB_RICE_WHITE_25_USD_MT":
-            mock_result.fetchone.return_value = (
-                520.0,
-                date(2026, 8, 1),
-                "world_benchmarks",
-                "sha_fob_rice",
-            )
+            mock_result.fetchone.return_value = (520.0, date(2026, 8, 1), "world_benchmarks", "sha_fob_rice")
         elif ind == "FREIGHT_SCFI_CONTAINER_INDEX":
-            mock_result.fetchone.return_value = (
-                85.0,
-                date(2026, 8, 1),
-                "world_benchmarks",
-                "sha_freight",
-            )
+            mock_result.fetchone.return_value = (85.0, date(2026, 8, 1), "world_benchmarks", "sha_freight")
         elif ind == "FX_USD_MGA":
             mock_result.fetchone.return_value = (4600.0, date(2026, 10, 1), "bfm_fx", "sha_fx")
         elif ind == "CORRIDOR_BASE_COST_RN2_TON_MGA":
-            mock_result.fetchone.return_value = (
-                45000.0,
-                date(2026, 10, 1),
-                "corridor_friction",
-                "sha_rn2",
-            )
+            mock_result.fetchone.return_value = (45000.0, date(2026, 10, 1), "corridor_friction", "sha_rn2")
         elif ind == "CORRIDOR_SECURITY_FRICTION_RN2_PCT":
-            mock_result.fetchone.return_value = (
-                5.0,
-                date(2026, 10, 1),
-                "corridor_friction",
-                "sha_rn2_sec",
-            )
+            mock_result.fetchone.return_value = (5.0, date(2026, 10, 1), "corridor_friction", "sha_rn2_sec")
         elif ind == "CORRIDOR_ROAD_FACTOR_RN2":
-            mock_result.fetchone.return_value = (
-                1.05,
-                date(2026, 10, 1),
-                "corridor_friction",
-                "sha_rn2_road",
-            )
+            mock_result.fetchone.return_value = (1.05, date(2026, 10, 1), "corridor_friction", "sha_rn2_road")
         else:
             mock_result.fetchone.return_value = None
         return mock_result
@@ -127,28 +101,13 @@ def test_parity_pricing_veg_oil():
         ind = params["indicator"]
         mock_result = MagicMock()
         if ind == "WORLD_FOB_PALM_OIL_USD_MT":
-            mock_result.fetchone.return_value = (
-                950.0,
-                date(2026, 8, 1),
-                "world_benchmarks",
-                "sha_fob_oil",
-            )
+            mock_result.fetchone.return_value = (950.0, date(2026, 8, 1), "world_benchmarks", "sha_fob_oil")
         elif ind == "FREIGHT_SCFI_CONTAINER_INDEX":
-            mock_result.fetchone.return_value = (
-                100.0,
-                date(2026, 8, 1),
-                "world_benchmarks",
-                "sha_freight",
-            )
+            mock_result.fetchone.return_value = (100.0, date(2026, 8, 1), "world_benchmarks", "sha_freight")
         elif ind == "FX_USD_MGA":
             mock_result.fetchone.return_value = (4500.0, date(2026, 10, 1), "bfm_fx", "sha_fx")
         elif ind == "CORRIDOR_BASE_COST_RN2_TON_MGA":
-            mock_result.fetchone.return_value = (
-                40000.0,
-                date(2026, 10, 1),
-                "corridor_friction",
-                "sha_rn2",
-            )
+            mock_result.fetchone.return_value = (40000.0, date(2026, 10, 1), "corridor_friction", "sha_rn2")
         else:
             mock_result.fetchone.return_value = None
         return mock_result
@@ -180,33 +139,16 @@ def test_parity_spread_transmission_status():
         if "indicator" in params:
             ind = params["indicator"]
             if ind == "WORLD_FOB_RICE_WHITE_25_USD_MT":
-                mock_result.fetchone.return_value = (
-                    500.0,
-                    date(2026, 8, 1),
-                    "world_benchmarks",
-                    "sha_fob",
-                )
+                mock_result.fetchone.return_value = (500.0, date(2026, 8, 1), "world_benchmarks", "sha_fob")
             elif ind == "FREIGHT_SCFI_CONTAINER_INDEX":
-                mock_result.fetchone.return_value = (
-                    80.0,
-                    date(2026, 8, 1),
-                    "world_benchmarks",
-                    "sha_fr",
-                )
+                mock_result.fetchone.return_value = (80.0, date(2026, 8, 1), "world_benchmarks", "sha_fr")
             elif ind == "FX_USD_MGA":
                 mock_result.fetchone.return_value = (4500.0, date(2026, 10, 1), "bfm_fx", "sha_fx")
             else:
                 mock_result.fetchone.return_value = None
         else:
             # Observed price query: returns 3800 MGA/kg
-            mock_result.fetchone.return_value = (
-                3800.0,
-                "wholesale",
-                date(2026, 10, 1),
-                "odr_mdg",
-                "Riz blanc importé",
-                "Antananarivo",
-            )
+            mock_result.fetchone.return_value = (3800.0, "wholesale", date(2026, 10, 1), "odr_mdg", "Riz blanc importé", "Antananarivo")
         return mock_result
 
     session.execute.side_effect = mock_execute_excess
@@ -220,7 +162,6 @@ def test_parity_spread_transmission_status():
 # =========================================================================
 # 2. AGROCLIMATE PHENOLOGICAL STRESS UNIT TESTS
 # =========================================================================
-
 
 def test_stage_weights_contract():
     """Verify normative vulnerability weights adhere strictly to SPECS §27.1.3."""
@@ -242,8 +183,8 @@ def test_phenological_stress_deficit_scenario():
         mock_result = MagicMock()
         mock_result.fetchall.return_value = [
             (date(2026, 3, 1), 50.0, 100.0, -0.50),  # -50% anomaly
-            (date(2026, 4, 1), 30.0, 90.0, -0.66),  # -66% anomaly during flowering
-            (date(2026, 5, 1), 20.0, 50.0, -0.60),  # -60% anomaly
+            (date(2026, 4, 1), 30.0, 90.0, -0.66),   # -66% anomaly during flowering
+            (date(2026, 5, 1), 20.0, 50.0, -0.60),   # -60% anomaly
         ]
         return mock_result
 
@@ -296,7 +237,6 @@ def test_phenological_stress_optimal_scenario():
 # 3. CORRIDOR FRICTION UNIT TESTS
 # =========================================================================
 
-
 def test_corridor_friction_rn2():
     """Verify RN2 corridor transport cost and friction decomposition."""
     session = MagicMock()
@@ -305,33 +245,13 @@ def test_corridor_friction_rn2():
         ind = params["indicator"]
         mock_result = MagicMock()
         if ind == "CORRIDOR_BASE_COST_RN2_TON_MGA":
-            mock_result.fetchone.return_value = (
-                42000.0,
-                date(2026, 10, 1),
-                "corridor_friction",
-                "sha_base",
-            )
+            mock_result.fetchone.return_value = (42000.0, date(2026, 10, 1), "corridor_friction", "sha_base")
         elif ind == "CORRIDOR_ROAD_FACTOR_RN2":
-            mock_result.fetchone.return_value = (
-                1.10,
-                date(2026, 10, 1),
-                "corridor_friction",
-                "sha_road",
-            )
+            mock_result.fetchone.return_value = (1.10, date(2026, 10, 1), "corridor_friction", "sha_road")
         elif ind == "CORRIDOR_SECURITY_FRICTION_RN2_PCT":
-            mock_result.fetchone.return_value = (
-                5.0,
-                date(2026, 10, 1),
-                "corridor_friction",
-                "sha_sec",
-            )
+            mock_result.fetchone.return_value = (5.0, date(2026, 10, 1), "corridor_friction", "sha_sec")
         elif ind == "FUEL_DIESEL":
-            mock_result.fetchone.return_value = (
-                4900.0,
-                date(2026, 10, 1),
-                "omh_diesel",
-                "sha_fuel",
-            )
+            mock_result.fetchone.return_value = (4900.0, date(2026, 10, 1), "omh_diesel", "sha_fuel")
         else:
             mock_result.fetchone.return_value = None
         return mock_result
@@ -363,26 +283,11 @@ def test_corridor_friction_critical_alert():
         ind = params["indicator"]
         mock_result = MagicMock()
         if ind == "CORRIDOR_BASE_COST_RN34_TON_MGA":
-            mock_result.fetchone.return_value = (
-                55000.0,
-                date(2026, 2, 1),
-                "corridor_friction",
-                "sha_base_34",
-            )
+            mock_result.fetchone.return_value = (55000.0, date(2026, 2, 1), "corridor_friction", "sha_base_34")
         elif ind == "CORRIDOR_ROAD_FACTOR_RN34":
-            mock_result.fetchone.return_value = (
-                1.20,
-                date(2026, 2, 1),
-                "corridor_friction",
-                "sha_road_34",
-            )
+            mock_result.fetchone.return_value = (1.20, date(2026, 2, 1), "corridor_friction", "sha_road_34")
         elif ind == "CORRIDOR_SECURITY_FRICTION_RN34_PCT":
-            mock_result.fetchone.return_value = (
-                15.0,
-                date(2026, 2, 1),
-                "corridor_friction",
-                "sha_sec_34",
-            )
+            mock_result.fetchone.return_value = (15.0, date(2026, 2, 1), "corridor_friction", "sha_sec_34")
         else:
             mock_result.fetchone.return_value = None
         return mock_result
@@ -405,19 +310,9 @@ def test_get_all_corridors_summary():
         ind = params["indicator"]
         mock_result = MagicMock()
         if "BASE_COST" in ind:
-            mock_result.fetchone.return_value = (
-                40000.0,
-                date(2026, 10, 1),
-                "corridor_friction",
-                "sha_base",
-            )
+            mock_result.fetchone.return_value = (40000.0, date(2026, 10, 1), "corridor_friction", "sha_base")
         else:
-            mock_result.fetchone.return_value = (
-                1.0,
-                date(2026, 10, 1),
-                "corridor_friction",
-                "sha_other",
-            )
+            mock_result.fetchone.return_value = (1.0, date(2026, 10, 1), "corridor_friction", "sha_other")
         return mock_result
 
     session.execute.side_effect = mock_corridor

@@ -123,3 +123,4 @@ def test_spatially_interpolated_accepts_both_numeric_and_string_decimal():
     data["data"][0]["spatially_interpolated"] = "not_a_number"
     inspection_invalid = inspect_json_schema(json.dumps(data).encode(), WB_RTFP_JSON)
     assert not inspection_invalid.passed
+

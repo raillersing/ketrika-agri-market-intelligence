@@ -107,9 +107,7 @@ class ObservationItemInput(BaseModel):
     """Input observation item with verified provenance metadata."""
 
     date: str = Field(..., description="Date de relevé (YYYY-MM-DD ou YYYY-MM)")
-    location_pcode: str = Field(
-        "MDG", description="Code géographique P-code (ex: MDG, MDG11, MDG12)"
-    )
+    location_pcode: str = Field("MDG", description="Code géographique P-code (ex: MDG, MDG11, MDG12)")
     actor_level: str = Field(
         "retail", description="Stade de vente (retail, wholesale, producer, farmgate)"
     )
@@ -677,6 +675,7 @@ class GoldDomainRefreshResponse(BaseModel):
     views_refreshed: list[str] = Field(default_factory=list)
     count: int = 0
     refreshed_at: datetime
+
 
 
 class ReviewItemOut(BaseModel):
