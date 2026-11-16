@@ -212,9 +212,7 @@ class CorridorFrictionConnector:
             store = run_ctx.bronze_store
 
         content = store.get(artifact.object_key)
-        records = parse_corridor_friction_csv(
-            content, source_record_id=artifact.source_record_id
-        )
+        records = parse_corridor_friction_csv(content, source_record_id=artifact.source_record_id)
 
         return ParseResult(
             records=records,

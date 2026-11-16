@@ -101,14 +101,18 @@ class ControlledStreamReader:
                     content=b"",
                     content_sha256=hashlib.sha256(b"").hexdigest(),
                     bytes_downloaded=0,
-                    mime_type=resp.headers.get("content-type", "application/octet-stream").split(";")[0].strip(),
+                    mime_type=resp.headers.get("content-type", "application/octet-stream")
+                    .split(";")[0]
+                    .strip(),
                     etag=resp.headers.get("ETag"),
                     last_modified=resp.headers.get("Last-Modified"),
                 )
 
             # 2. Pre-check Content-Length header
             if self.config.verify_content_length:
-                content_len_hdr = resp.headers.get("content-length") or resp.headers.get("Content-Length")
+                content_len_hdr = resp.headers.get("content-length") or resp.headers.get(
+                    "Content-Length"
+                )
                 if content_len_hdr and str(content_len_hdr).isdigit():
                     content_len = int(content_len_hdr)
                     if content_len > self.config.max_bytes:
