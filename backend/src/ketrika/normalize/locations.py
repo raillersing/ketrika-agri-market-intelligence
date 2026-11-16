@@ -217,13 +217,13 @@ class LocationResolver:
         best_alias_norm: str | None = None
         for alias_norm, (pcode, _conf) in self._exact_alias_map.items():
             details = self._alias_details.get(alias_norm)
-            lvl_int: int | None = details[2] if details else None
-            if lvl_int is None:
+            fuzzy_level: int | None = details[2] if details else None
+            if fuzzy_level is None:
                 ent_fuzzy = self._pcode_map.get(pcode)
                 if ent_fuzzy:
-                    lvl_int = parse_admin_level(ent_fuzzy.admin_level)
+                    fuzzy_level = parse_admin_level(ent_fuzzy.admin_level)
 
-            if target_admin_level is not None and lvl_int != target_admin_level:
+            if target_admin_level is not None and fuzzy_level != target_admin_level:
                 continue
 
             score = fuzz.token_sort_ratio(norm_raw, alias_norm)
