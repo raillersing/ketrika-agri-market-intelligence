@@ -14,6 +14,7 @@ if not _script_path.exists():
 spec = importlib.util.spec_from_file_location(
     "quarantine_bronze_copy", _script_path
 )
+spec = importlib.util.spec_from_file_location("quarantine_bronze_copy", _script_path)
 assert spec is not None and spec.loader is not None
 copy = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(copy)
