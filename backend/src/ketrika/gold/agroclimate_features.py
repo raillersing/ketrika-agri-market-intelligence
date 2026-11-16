@@ -230,7 +230,11 @@ def compute_phenological_stress(
 
     # Identify primary vulnerability stage
     critical_stages = [e for e in stage_evaluations if e.weight >= 0.25 and e.stage != "off_season"]
-    primary_stage = critical_stages[-1].stage if critical_stages else (stage_evaluations[-1].stage if stage_evaluations else "off_season")
+    primary_stage = (
+        critical_stages[-1].stage
+        if critical_stages
+        else (stage_evaluations[-1].stage if stage_evaluations else "off_season")
+    )
 
     return {
         "location_pcode": location_pcode,
@@ -253,7 +257,9 @@ def compute_phenological_stress(
                 "weight": e.weight,
                 "precip_mm": e.observed_precip_mm,
                 "baseline_precip_mm": e.baseline_precip_mm,
-                "rain_anom_pct": round(e.rain_anom_pct * 100.0, 1) if e.rain_anom_pct is not None else None,
+                "rain_anom_pct": round(e.rain_anom_pct * 100.0, 1)
+                if e.rain_anom_pct is not None
+                else None,
                 "deficit_stress": e.deficit_stress,
                 "excess_stress": e.excess_stress,
             }

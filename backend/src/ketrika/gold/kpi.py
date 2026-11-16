@@ -114,7 +114,9 @@ def audit_source_family_independence(
         root_families.add(root_fam)
 
     source_set = set(sources)
-    if "wb_rtfp_mdg" in source_set and ("wfp_hdx_mdg" in source_set or "fao_fpma_mdg" in source_set):
+    if "wb_rtfp_mdg" in source_set and (
+        "wfp_hdx_mdg" in source_set or "fao_fpma_mdg" in source_set
+    ):
         has_dependent_derivation = True
     if "wfp_hdx_mdg" in source_set and "fao_fpma_mdg" in source_set:
         has_dependent_derivation = True

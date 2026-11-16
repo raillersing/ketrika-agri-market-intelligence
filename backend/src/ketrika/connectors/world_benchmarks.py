@@ -213,9 +213,7 @@ class WorldBenchmarksConnector:
             store = run_ctx.bronze_store
 
         content = store.get(artifact.object_key)
-        records = parse_world_benchmarks_csv(
-            content, source_record_id=artifact.source_record_id
-        )
+        records = parse_world_benchmarks_csv(content, source_record_id=artifact.source_record_id)
 
         return ParseResult(
             records=records,

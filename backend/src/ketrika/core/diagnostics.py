@@ -61,11 +61,20 @@ _NOT_FOUND_PATTERN = re.compile(r"(404|not_found)", re.IGNORECASE)
 
 
 def sanitize_diagnostic_error(raw_error: str | None) -> tuple[DataOpsDiagnosticStatus, str, str, str]:
+def sanitize_diagnostic_error(
+    raw_error: str | None,
+) -> tuple[DataOpsDiagnosticStatus, str, str, str]:
     """Map raw exception text to a sanitized status, stable code, user message, and category.
 
     Guarantees that no secret, path, token or raw traceback is exposed.
     """
     if not raw_error:
+        return (
+            "failed",
+            "COLLECTION_FAILED",
+            "Échec de collecte ou traitement interrompu.",
+            "unknown",
+        )
         return "failed", "COLLECTION_FAILED", "Échec de collecte ou traitement interrompu.", "unknown"
 
     err = str(raw_error).strip()

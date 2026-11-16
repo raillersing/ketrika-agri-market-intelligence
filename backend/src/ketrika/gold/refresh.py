@@ -56,9 +56,7 @@ GOLD_DOMAINS: dict[str, tuple[str, ...]] = {
         "trade_monthly",
         "import_dependency",
     ),
-    "climate": (
-        "weather_monthly",
-    ),
+
     "macro": (
         "cpi_food",
         "source_health",
@@ -309,11 +307,7 @@ def refresh_all_domains_independent(
             logger.error("SQLAlchemy error during domain '%s' refresh: %s", domain_name, exc)
             domain_errors[domain_name] = "domain_sql_error"
 
-    status = (
-        "success"
-        if not domain_errors
-        else ("partial_success" if domain_results else "failed")
-    )
+    status = "success" if not domain_errors else ("partial_success" if domain_results else "failed")
     return {
         "status": status,
         "domains_succeeded": list(domain_results.keys()),

@@ -395,7 +395,9 @@ def compute_authenticated_import_parity(
     rn2_cost_res = get_macro_indicator_as_of(session, "CORRIDOR_BASE_COST_RN2_TON_MGA", as_of_date)
     base_rn2_cost_mt = rn2_cost_res[0] if rn2_cost_res else 42000.0
 
-    rn2_fric_res = get_macro_indicator_as_of(session, "CORRIDOR_SECURITY_FRICTION_RN2_PCT", as_of_date)
+    rn2_fric_res = get_macro_indicator_as_of(
+        session, "CORRIDOR_SECURITY_FRICTION_RN2_PCT", as_of_date
+    )
     friction_pct = rn2_fric_res[0] if rn2_fric_res else 0.0
 
     rn2_road_res = get_macro_indicator_as_of(session, "CORRIDOR_ROAD_FACTOR_RN2", as_of_date)
@@ -431,20 +433,71 @@ def compute_authenticated_import_parity(
     wholesale_parity_kg = round((wholesale_cost_mt * (1.0 + wholesale_margin)) / 1000.0, 2)
 
     provenance_records = [
-        {"indicator": config["fob_indicator"], "source_id": fob_src, "sha256": fob_sha, "period": fob_period.isoformat()},
-        {"indicator": config["freight_indicator"], "source_id": freight_src, "sha256": freight_sha, "period": freight_period.isoformat()},
-        {"indicator": "FX_USD_MGA", "source_id": fx_src, "sha256": fx_sha, "period": fx_period.isoformat()},
+        {
+            "indicator": config["fob_indicator"],
+            "source_id": fob_src,
+            "sha256": fob_sha,
+            "period": fob_period.isoformat(),
+        },
+        {
+            "indicator": config["freight_indicator"],
+            "source_id": freight_src,
+            "sha256": freight_sha,
+            "period": freight_period.isoformat(),
+        },
+        {
+            "indicator": "FX_USD_MGA",
+            "source_id": fx_src,
+            "sha256": fx_sha,
+            "period": fx_period.isoformat(),
+        },
     ]
     if rn2_cost_res:
-        provenance_records.append({"indicator": "CORRIDOR_BASE_COST_RN2_TON_MGA", "source_id": rn2_cost_res[2], "sha256": rn2_cost_res[3], "period": rn2_cost_res[1].isoformat()})
+        provenance_records.append(
+            {
+                "indicator": "CORRIDOR_BASE_COST_RN2_TON_MGA",
+                "source_id": rn2_cost_res[2],
+                "sha256": rn2_cost_res[3],
+                "period": rn2_cost_res[1].isoformat(),
+            }
+        )
     else:
-        provenance_records.append({"indicator": "CORRIDOR_BASE_COST_RN2_TON_MGA", "source_id": "reference_statutory_benchmark", "sha256": "statutory_benchmark_42000", "period": as_of_date.isoformat(), "is_baseline_reference": True})
+        provenance_records.append(
+            {
+                "indicator": "CORRIDOR_BASE_COST_RN2_TON_MGA",
+                "source_id": "reference_statutory_benchmark",
+                "sha256": "statutory_benchmark_42000",
+                "period": as_of_date.isoformat(),
+                "is_baseline_reference": True,
+            }
+        )
     if diesel_res:
-        provenance_records.append({"indicator": "FUEL_DIESEL", "source_id": diesel_res[2], "sha256": diesel_res[3], "period": diesel_res[1].isoformat()})
+        provenance_records.append(
+            {
+                "indicator": "FUEL_DIESEL",
+                "source_id": diesel_res[2],
+                "sha256": diesel_res[3],
+                "period": diesel_res[1].isoformat(),
+            }
+        )
     if rn2_fric_res:
-        provenance_records.append({"indicator": "CORRIDOR_SECURITY_FRICTION_RN2_PCT", "source_id": rn2_fric_res[2], "sha256": rn2_fric_res[3], "period": rn2_fric_res[1].isoformat()})
+        provenance_records.append(
+            {
+                "indicator": "CORRIDOR_SECURITY_FRICTION_RN2_PCT",
+                "source_id": rn2_fric_res[2],
+                "sha256": rn2_fric_res[3],
+                "period": rn2_fric_res[1].isoformat(),
+            }
+        )
     if rn2_road_res:
-        provenance_records.append({"indicator": "CORRIDOR_ROAD_FACTOR_RN2", "source_id": rn2_road_res[2], "sha256": rn2_road_res[3], "period": rn2_road_res[1].isoformat()})
+        provenance_records.append(
+            {
+                "indicator": "CORRIDOR_ROAD_FACTOR_RN2",
+                "source_id": rn2_road_res[2],
+                "sha256": rn2_road_res[3],
+                "period": rn2_road_res[1].isoformat(),
+            }
+        )
 
     return {
         "product_code": product_code,
