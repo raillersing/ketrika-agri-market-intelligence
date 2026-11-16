@@ -71,9 +71,9 @@ class WfpHdxMdgConnector:
                         "publisher": "WFP",
                         "format": "json",
                         "api": "hapi_v2",
-                        "limit": limit,
-                        "offset": current_offset,
-                        "page": page_idx,
+                        "limit": str(limit),
+                        "offset": str(current_offset),
+                        "page": str(page_idx),
                     },
                 )
             return
