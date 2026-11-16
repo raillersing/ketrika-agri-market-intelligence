@@ -172,8 +172,9 @@ def test_direct_refresh_refuses_structure_without_changing_published_cache(
     publication_case, mode, request
 ):
     session, registry, reader, add, current, record, content, rejected_source = publication_case
+    drift_record = None
     if mode == "drift":
-        add(drift=True)
+        _, drift_record, _ = add(drift=True)
     if mode == "absent":
         registry = SchemaContractRegistry()
     elif mode == "wrong_parser":
@@ -195,11 +196,11 @@ def test_direct_refresh_refuses_structure_without_changing_published_cache(
     class FreshSecondRead:
         def get(self, key):
             calls.append(key)
-            # The first read is provenance; the next must independently measure structure.
-            if mode == "unreadable" and len(calls) == 2:
+            # Structure is measured directly; no artificial provenance approval.
+            if mode == "unreadable" and len(calls) == 1:
                 raise RuntimeError("untrusted detail must not be emitted")
             result = reader.get(key)
-            return result + b"damage" if mode == "sha" and len(calls) == 2 else result
+            return result + b"damage" if mode == "sha" and len(calls) == 1 else result
 
     statements = []
     connection = session.connection()
@@ -212,8 +213,13 @@ def test_direct_refresh_refuses_structure_without_changing_published_cache(
     try:
         # Explicitly isolate schema checking from the production provenance
         # gate: no synthetic record is promoted to Gold to run these negatives.
+        candidates = (
+            (record.source_record_id, drift_record.source_record_id)
+            if drift_record is not None
+            else (record.source_record_id,)
+        )
         selected = PublicationCheck(
-            "cells_verified", ("price_observation",), None, (record.source_record_id,)
+            "cells_verified", ("price_observation",), None, candidates
         )
         with pytest.raises(GoldSchemaRejected) as rejected:
             require_gold_structure(session, FreshSecondRead(), selected, registry)
