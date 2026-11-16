@@ -34,6 +34,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Block newly committed backups and private credentials
+        run: |
+          python3 scripts/guard_sensitive_artifacts.py --self-test
+          python3 scripts/guard_sensitive_artifacts.py --base HEAD^
 
       - name: Reserve build space on the ephemeral hosted runner
         run: |

@@ -75,3 +75,13 @@ dagster_home/
 *.swo
 .DS_Store
 Thumbs.db
+
+# Fail-safe for operational secrets and database backups (A02)
+.env.*
+!.env.example
+!.env.*.example
+*.dump
+*.backup
+*.pgdump
+*.sqlite
+*.sqlite3
