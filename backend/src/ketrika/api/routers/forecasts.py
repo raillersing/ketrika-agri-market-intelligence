@@ -328,7 +328,14 @@ def get_multi_model_extrapolations(
 
     candidate_models: dict[
         str,
-        tuple[CausalAgriculturalModel | AutoARIMAModel | AutoETSModel | SeasonalNaiveModel | NaiveLastModel, bool],
+        tuple[
+            CausalAgriculturalModel
+            | AutoARIMAModel
+            | AutoETSModel
+            | SeasonalNaiveModel
+            | NaiveLastModel,
+            bool,
+        ],
     ] = {
         "CausalAgriculturalModel": (CausalAgriculturalModel(season_length=12), False),
         "AutoARIMA": (AutoARIMAModel(season_length=12), False),
