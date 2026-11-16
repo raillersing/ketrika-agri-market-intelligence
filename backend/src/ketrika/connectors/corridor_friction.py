@@ -10,6 +10,8 @@ friction / risk surcharges across the 4 critical national corridors:
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 import csv
 import io
 import logging
@@ -162,7 +164,8 @@ def parse_corridor_friction_csv(
 class CorridorFrictionConnector:
     """Connector for corridor transport costs and security friction."""
 
-    source_id: str = CORRIDOR_FRICTION_SOURCE_ID
+    source_id: ClassVar[str] = CORRIDOR_FRICTION_SOURCE_ID
+    parser_version: ClassVar[str] = "1.0.0"
 
     def discover(self, run_ctx: RunContext) -> Iterable[DiscoveredItem]:
         """Discover the monthly corridor transport feed."""
