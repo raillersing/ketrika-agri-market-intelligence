@@ -217,7 +217,7 @@ class LocationResolver:
         best_alias_norm: str | None = None
         for alias_norm, (pcode, _conf) in self._exact_alias_map.items():
             details = self._alias_details.get(alias_norm)
-            lvl_int = details[2] if details else None
+            lvl_int: int | None = details[2] if details else None
             if lvl_int is None:
                 ent_fuzzy = self._pcode_map.get(pcode)
                 if ent_fuzzy:
