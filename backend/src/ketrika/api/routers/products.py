@@ -320,9 +320,9 @@ def create_observations_batch(
             ) from exc
 
         # Resolve location
-        loc = locations_by_pcode.get(item.location_pcode.strip().upper()) or national_loc
-        loc_id = loc.location_id if loc else None
-        loc_pcode = loc.pcode if loc else item.location_pcode
+        resolved_loc = locations_by_pcode.get(item.location_pcode.strip().upper()) or national_loc
+        loc_id = resolved_loc.location_id if resolved_loc else None
+        loc_pcode = resolved_loc.pcode if resolved_loc else item.location_pcode
 
         nat_key = f"{p_code}:{loc_pcode}:{item.actor_level}:{start_date.isoformat()}"
 
