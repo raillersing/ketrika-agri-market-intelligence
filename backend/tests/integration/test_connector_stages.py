@@ -102,8 +102,15 @@ def test_committed_bronze_replayed_without_http_then_revision_is_append_only(htt
             receipt = audit_observation_provenance(
                 session, BronzeProofReader(store), mode="incremental", targets=targets
             )
-            assert receipt.report.total == receipt.report.valid == 4
-            assert receipt.report.objects_read == 2
+            # The connector uses an explicitly synthetic test source: its raw
+            # objects remain replayable, but none may qualify for Gold.
+            assert receipt.report.total == 4
+            assert receipt.report.valid == 0
+            assert all(
+                result.reason == "synthetic_source_record_forbidden"
+                for result in receipt.report.results
+            )
+            assert receipt.report.objects_read == 0
             session.commit()
     finally:
         engine.dispose()
