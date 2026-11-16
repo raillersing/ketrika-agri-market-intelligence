@@ -24,7 +24,7 @@ class DiscoveredItem:
     url: str
     partition_key: str | None = None  # e.g. "2025-05" or document ID
     published_at: datetime | None = None
-    hints: dict[str, str] = field(default_factory=dict)
+    hints: dict[str, str | int] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
