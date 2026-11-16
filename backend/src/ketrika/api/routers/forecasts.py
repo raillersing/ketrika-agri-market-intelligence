@@ -207,16 +207,18 @@ def get_multi_model_extrapolations(
     - NaiveLast (Martingale flat persistence baseline)
     """
     from datetime import date
+
     import numpy as np
     from sqlalchemy import select
+
     from ketrika.core.models.db import Event, MacroObservation
+    from ketrika.ml.causal_model import CausalAgriculturalModel
     from ketrika.ml.models import (
         AutoARIMAModel,
         AutoETSModel,
         NaiveLastModel,
         SeasonalNaiveModel,
     )
-    from ketrika.ml.causal_model import CausalAgriculturalModel
     from ketrika.ml.series import extract_eligible_series, shift_months
 
     # Resolve product
@@ -370,7 +372,7 @@ def get_multi_model_extrapolations(
             ensemble_p90 = []
             for step_idx in range(horizon):
                 step_vals = [m.predictions[step_idx] for m in valid_models]
-                step_w_mean = sum(val * w for val, w in zip(step_vals, norm_weights))
+                step_w_mean = sum(val * w for val, w in zip(step_vals, norm_weights, strict=True))
                 ensemble_preds.append(round(step_w_mean, 1))
 
                 all_p10 = [m.p10[step_idx] for m in valid_models if m.p10 is not None]
@@ -378,8 +380,8 @@ def get_multi_model_extrapolations(
                 ensemble_p10.append(round(min(all_p10), 1) if all_p10 else round(step_w_mean * 0.95, 1))
                 ensemble_p90.append(round(max(all_p90), 1) if all_p90 else round(step_w_mean * 1.05, 1))
 
-            avg_wape = sum((m.historical_wape or 0.05) * w for m, w in zip(valid_models, norm_weights))
-            avg_mae = sum((m.historical_mae or 50.0) * w for m, w in zip(valid_models, norm_weights))
+            avg_wape = sum((m.historical_wape or 0.05) * w for m, w in zip(valid_models, norm_weights, strict=True))
+            avg_mae = sum((m.historical_mae or 50.0) * w for m, w in zip(valid_models, norm_weights, strict=True))
 
             models_dict["ConsensusEnsemble"] = ModelExtrapolationTrajectory(
                 model_name="ConsensusEnsemble",
