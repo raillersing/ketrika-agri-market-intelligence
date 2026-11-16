@@ -42,6 +42,7 @@ def test_parse_world_benchmarks_csv(raw_benchmarks_csv: bytes) -> None:
     # Check value ranges
     for r in rice_records:
         assert isinstance(r, MacroRecord)
+        assert r.value is not None
         assert 400.0 <= r.value <= 700.0
         assert r.frequency == "monthly"
         assert r.geo_scope == "global"
@@ -51,6 +52,7 @@ def test_parse_world_benchmarks_csv(raw_benchmarks_csv: bytes) -> None:
 
     for r in freight_records:
         assert isinstance(r, MacroRecord)
+        assert r.value is not None
         assert 1500.0 <= r.value <= 4000.0
         assert r.unit == "index"
         assert r.geo_scope == "global"
