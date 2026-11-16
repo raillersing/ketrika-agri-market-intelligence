@@ -30,7 +30,13 @@ from ketrika.pipelines.definitions import (
 def test_ia_data_08_economic_catalog_coverage_and_families():
     """Verify that economic metric cards cover all 5 autonomous dimensions with qualified source families."""
     dimensions = {card.dimension for card in ECONOMIC_METRIC_CARDS.values()}
-    assert dimensions == {"inflation", "exchange_rate", "fuel_energy", "external_trade", "real_activity"}
+    assert dimensions == {
+        "inflation",
+        "exchange_rate",
+        "fuel_energy",
+        "external_trade",
+        "real_activity",
+    }
 
     families = {card.source_family for card in ECONOMIC_METRIC_CARDS.values()}
     assert "instat" in families

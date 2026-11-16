@@ -382,4 +382,3 @@ def test_wfp_hdx_discover_hapi() -> None:
     assert "hapi.humdata.org" in items[0].url
     assert "app_identifier=test-token-123" in items[0].url
     assert items[0].hints.get("api") == "hapi_v2"
-

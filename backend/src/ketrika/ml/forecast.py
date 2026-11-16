@@ -181,14 +181,14 @@ def run_price_forecasting_pipeline(
     macro_by_ind: dict[str, dict[date, float]] = {}
     for m_rec in macro_records:
         if m_rec.value is not None:
-            macro_by_ind.setdefault(m_rec.indicator_code, {})[m_rec.period_start] = float(m_rec.value)
+            macro_by_ind.setdefault(m_rec.indicator_code, {})[m_rec.period_start] = float(
+                m_rec.value
+            )
 
     # Pre-fetch events up to data_cutoff
     event_records = (
         session.execute(
-            select(Event)
-            .where(Event.event_date <= data_cutoff)
-            .order_by(Event.event_date)
+            select(Event).where(Event.event_date <= data_cutoff).order_by(Event.event_date)
         )
         .scalars()
         .all()

@@ -158,4 +158,3 @@ def refresh_gold(
         count=res["count"],
         refreshed_at=datetime.now(UTC),
     )
-

@@ -136,8 +136,7 @@ def list_unresolved_locations(
             isouter=True,
         )
         .where(
-            (PriceObservation.location_id.is_(None))
-            | (PriceObservation.review_status == "pending")
+            (PriceObservation.location_id.is_(None)) | (PriceObservation.review_status == "pending")
         )
         .group_by(PriceObservation.location_raw, SourceRecord.source_id)
         .order_by(func.count(PriceObservation.observation_id).desc())

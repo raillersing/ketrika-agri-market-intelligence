@@ -270,8 +270,6 @@ def test_double_counting_detection_across_wb_wfp_fao():
     assert wfp_fao_audit["is_truly_independent"] is False
 
     # 4. Triplet WB RTFP + WFP HDX + FAO FPMA
-    triplet_audit = audit_source_family_independence(
-        ["wb_rtfp_mdg", "wfp_hdx_mdg", "fao_fpma_mdg"]
-    )
+    triplet_audit = audit_source_family_independence(["wb_rtfp_mdg", "wfp_hdx_mdg", "fao_fpma_mdg"])
     assert triplet_audit["has_dependent_derivation"] is True
     assert triplet_audit["is_truly_independent"] is False
