@@ -457,10 +457,13 @@ def test_api_forecast_performance_endpoint() -> None:
 
     app.dependency_overrides[get_db] = lambda: mock_session
     client = TestClient(app)
+    # Distinct, stable client identity for both requests. Keep the real 60/min
+    # rate limiter enabled; avoid inherited traffic from unrelated tests.
+    headers = {"X-API-Key": f"test-forecast-performance-{uuid.uuid4().hex}"}
 
     try:
         # 1. Test JSON response
-        resp = client.get("/v1/forecasts/performance?product=rice_vary_gasy")
+        resp = client.get("/v1/forecasts/performance?product=rice_vary_gasy", headers=headers)
         assert resp.status_code == 200
         data = resp.json()
         assert "summary" in data
@@ -476,7 +479,7 @@ def test_api_forecast_performance_endpoint() -> None:
         assert eval_item["actual_price"] == 2550.0
 
         # 2. Test CSV export
-        resp_csv = client.get("/v1/forecasts/performance?format=csv")
+        resp_csv = client.get("/v1/forecasts/performance?format=csv", headers=headers)
         assert resp_csv.status_code == 200
         assert "text/csv" in resp_csv.headers["content-type"]
         assert "rice_vary_gasy" in resp_csv.text
