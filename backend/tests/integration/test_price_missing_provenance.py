@@ -81,10 +81,9 @@ def test_missing_price_reloads_with_real_proof_and_never_enters_numeric_gold(cod
             targets=[ObservationTarget("price_observation", reloaded.observation_id)],
         )
         assert receipt.report.total == 1
-        assert receipt.report.valid == int(code == source_marker)
-        assert receipt.report.passed is (code == source_marker)
-        if code != source_marker:
-            assert receipt.report.results[0].reason == "value_mismatch"
+        assert receipt.report.valid == 0
+        assert not receipt.report.passed
+        assert receipt.report.results[0].reason == "synthetic_source_record_forbidden"
         published = refresh_gold_views(
             session, views=["price_obs_current"], reader=BronzeProofReader(store)
         )
@@ -95,7 +94,7 @@ def test_missing_price_reloads_with_real_proof_and_never_enters_numeric_gold(cod
         receipt_id = receipt.dq_id
     with get_session() as session:
         saved = session.get(DqResult, receipt_id)
-        assert saved is not None and saved.passed is (code == source_marker)
+        assert saved is not None and not saved.passed
         assert (
             session.scalar(
                 select(PriceObservation.price_value).where(
