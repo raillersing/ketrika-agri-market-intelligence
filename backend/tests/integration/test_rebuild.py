@@ -129,8 +129,7 @@ def test_rebuild_preserves_exact_counts_offline(httpserver, db_session):
     assert receipt.report.valid == 0
     assert not receipt.report.passed
     assert all(
-        result.reason == "synthetic_source_record_forbidden"
-        for result in receipt.report.results
+        result.reason == "synthetic_source_record_forbidden" for result in receipt.report.results
     )
     assert receipt.report.objects_read == 0
 
