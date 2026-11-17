@@ -127,6 +127,7 @@ def test_orphan_is_interrupted_never_automatically_recollected(monkeypatch):
     "sid", ["wfp_hdx_mdg", "nasa_power", "chirps", "dummy_csv", "not_registered"]
 )
 def test_ineligible_sources_never_reach_phase_owner(monkeypatch, sid):
+    monkeypatch.setattr(manual, "eligible_sources", lambda: [])
     monkeypatch.setattr(manual, "_collect_source", lambda *args: pytest.fail("ineligible wire"))
     with pytest.raises(manual.CollectionError, match="not_eligible"):
         manual.collect(uuid4(), sid)
