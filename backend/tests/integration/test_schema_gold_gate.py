@@ -5,6 +5,7 @@ import hashlib
 import io
 import json
 from datetime import UTC, datetime
+from decimal import Decimal
 from uuid import UUID, uuid4
 
 import pytest
