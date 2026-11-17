@@ -29,8 +29,7 @@ from ketrika.core.schema_audit import CSVSchemaContract, audit_source_schema
 from ketrika.core.schema_contracts import SchemaContractBinding, SchemaContractRegistry
 from ketrika.gold.provenance_gate import GoldProvenanceRejected, PublicationCheck
 from ketrika.gold.refresh import init_gold_views, refresh_gold_views
-from ketrika.gold.schema_gate import require_gold_structure
-from ketrika.gold.schema_gate import GoldSchemaRejected
+from ketrika.gold.schema_gate import GoldSchemaRejected, require_gold_structure
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
 from tests.integration.test_gold_publication_provenance import signature
 from tests.unit.test_provenance_audit import price_example
