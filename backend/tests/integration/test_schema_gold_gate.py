@@ -5,7 +5,6 @@ import hashlib
 import io
 import json
 from datetime import UTC, datetime
-from decimal import Decimal
 from uuid import UUID, uuid4
 
 import pytest
@@ -168,8 +167,9 @@ def test_explicit_structure_blocks_actual_gold_refresh(drift, format_id, request
         )
     finally:
         event.remove(engine, "before_cursor_execute", capture_sql)
-    assert result.success is (not drift)
-    assert len(statements) == (0 if drift else 13)
+    # Synthetic source records must never publish Gold, even with a valid schema.
+    assert not result.success
+    assert len(statements) == 0
     assert all("economic_dashboard" not in statement for statement in statements)
     evaluations = result.get_asset_check_evaluations()
     assert len(evaluations) == 2
@@ -177,7 +177,7 @@ def test_explicit_structure_blocks_actual_gold_refresh(drift, format_id, request
         item for item in evaluations if item.check_name.endswith("__provenance_complete")
     )
     structure = next(item for item in evaluations if item.check_name.endswith("__schema_drift"))
-    assert provenance.passed and structure.passed is (not drift)
+    assert not provenance.passed and structure.passed is (not drift)
     dq_id = UUID(structure.metadata["dq_id"].value)
     with get_session() as session:
         saved = session.get(DqResult, dq_id)
@@ -188,12 +188,7 @@ def test_explicit_structure_blocks_actual_gold_refresh(drift, format_id, request
         populated = session.scalar(
             text("SELECT count(*) FROM pg_matviews WHERE schemaname='gold' AND ispopulated")
         )
-        assert populated == (0 if drift else 13)
-        if not drift:
-            assert session.scalar(text("SELECT count(*) FROM gold.price_obs_current")) == 1
-            assert session.scalar(
-                text("SELECT price_mga_per_base FROM gold.price_obs_current")
-            ) == Decimal("3000.1250")
+        assert populated == 0
     assert (
         hashlib.sha256(BronzeProofReader(store).get(artifact.object_key)).hexdigest()
         == artifact.content_sha256
@@ -205,7 +200,7 @@ def test_explicit_structure_blocks_actual_gold_refresh(drift, format_id, request
                 {
                     "schema_drift": drift,
                     "format": format_id,
-                    "source_provenance_passed": True,
+                    "source_provenance_passed": False,
                     "schema_total": 1,
                     "schema_valid": int(not drift),
                     "gold_refresh_statements": len(statements),
