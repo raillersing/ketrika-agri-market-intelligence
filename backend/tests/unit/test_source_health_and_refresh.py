@@ -235,7 +235,7 @@ def test_r1_12_failure_and_idempotent_recovery() -> None:
     assert run.finished_at is not None
     assert run.error == "COLLECTION_FAILED"
     mock_email.assert_called_once()
-    assert mock_email.call_args.kwargs["error_message"] == "COLLECTION_FAILED"
+    assert mock_email.call_args.kwargs["error_message"] == "ConnectionResetError"
 
     # Run 2: Recovery run succeeds idempotently
     recovered_run = IngestionRun(
