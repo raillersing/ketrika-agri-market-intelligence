@@ -35,13 +35,13 @@ def test_wfp_hdx_hapi_discovery_with_pagination_and_app_id():
     assert "limit=500" in items[0].url
     assert "offset=0" in items[0].url
     assert "app_identifier=sec-test-app-id" in items[0].url
-    assert items[0].hints.get("page") == 0
+    assert items[0].hints.get("page") == "0"
 
     assert "offset=500" in items[1].url
-    assert items[1].hints.get("page") == 1
+    assert items[1].hints.get("page") == "1"
 
     assert "offset=1000" in items[2].url
-    assert items[2].hints.get("page") == 2
+    assert items[2].hints.get("page") == "2"
 
 
 def test_wfp_hdx_offline_fetch_loads_hapi_sample():
