@@ -48,7 +48,11 @@ def list_sources(session: Session = Depends(get_db)) -> list[SourceItem]:
     health_join = (
         "LEFT JOIN gold.source_health sh ON s.source_id = sh.source_id"
         if _health_cache_populated(session)
-        else "LEFT JOIN (SELECT NULL::integer AS freshness_days, NULL::boolean AS is_stale) sh ON FALSE"
+        else (
+            "LEFT JOIN (SELECT NULL::integer AS freshness_days, "
+            "NULL::boolean AS is_stale, NULL::integer AS open_review_items, "
+            "NULL::integer AS n_records_30d) sh ON FALSE"
+        )
     )
     # Only fixed code-owned SQL fragments; no source or request content.
     sql = text(
