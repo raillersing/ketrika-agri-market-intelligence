@@ -329,7 +329,7 @@ def test_collection_failure_keeps_actual_run_identity_and_safe_notification():
         execute_connector_pipeline(connector, ctx, session)
     assert ctx.run_id == run.run_id
     assert run.status == "failed" and run.finished_at is not None
-    assert run.error == "RuntimeError"
+    assert run.error == "COLLECTION_FAILED"
     assert notify.call_args.kwargs["run_id"] == str(run.run_id)
     assert notify.call_args.kwargs["error_message"] == "RuntimeError"
     session.commit.assert_not_called()
