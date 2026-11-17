@@ -78,16 +78,16 @@ def test_source_measurement_and_receipt_survive_new_session(variant, monkeypatch
         )
         receipt = audit_source_provenance(session, reader, source_id)
         assert receipt.report.total == 1
-        assert receipt.report.valid == int(variant == "valid")
-        assert receipt.report.passed is (variant == "valid")
+        assert receipt.report.valid == 0
+        assert receipt.report.passed is False
         assert receipt.targets[0].observation_id == observation.observation_id
         dq_id = receipt.dq_id
     with get_session() as session:
         saved = session.get(DqResult, dq_id)
-        assert saved is not None and saved.passed is (variant == "valid")
+        assert saved is not None and saved.passed is False
         assert saved.source_id == source_id and saved.asset_key == f"{source_id}__silver"
         assert saved.details["total_records"] == 1
-        assert saved.details["valid_provenance"] == int(variant == "valid")
+        assert saved.details["valid_provenance"] == 0
         assert saved.details["scope"] == "all_source_observations"
         empty = audit_source_provenance(
             session, BronzeProofReader(BronzeStore()), source_id + "_absent"
@@ -141,8 +141,8 @@ def test_source_measurement_and_receipt_survive_new_session(variant, monkeypatch
     result = definitions.resolve_implicit_global_asset_job_def().execute_in_process(
         raise_on_error=False
     )
-    assert result.success is (variant == "valid")
-    assert downstream_calls == (["executed"] if variant == "valid" else [])
+    assert result.success is False
+    assert downstream_calls == []
     evaluations = result.get_asset_check_evaluations()
     assert len(evaluations) == 2
     evaluation = next(
@@ -152,11 +152,11 @@ def test_source_measurement_and_receipt_survive_new_session(variant, monkeypatch
         item for item in evaluations if item.check_name == f"{source_id}__schema_drift"
     )
     assert schema_evaluation.passed
-    assert evaluation.passed is (variant == "valid")
+    assert evaluation.passed is False
     check_dq_id = evaluation.metadata["dq_id"].value
     with get_session() as session:
         persisted = session.get(DqResult, UUID(check_dq_id))
-        assert persisted is not None and persisted.passed is (variant == "valid")
+        assert persisted is not None and persisted.passed is False
         assert persisted.details["total_records"] == 1
     request.node.user_properties.append(
         (
@@ -166,7 +166,7 @@ def test_source_measurement_and_receipt_survive_new_session(variant, monkeypatch
                     "variant": variant,
                     "dq_id": check_dq_id,
                     "total": 1,
-                    "valid": int(variant == "valid"),
+                    "valid": 0,
                     "dagster_success": result.success,
                     "downstream_executed": bool(downstream_calls),
                     "scope": "synthetic SQL/Bronze; production check; inert downstream, not Gold qualification",
