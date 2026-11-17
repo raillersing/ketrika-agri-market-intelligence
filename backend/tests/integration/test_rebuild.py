@@ -125,8 +125,14 @@ def test_rebuild_preserves_exact_counts_offline(httpserver, db_session):
         mode="incremental",
         targets=[ObservationTarget("price_observation", row.observation_id) for row in obs_after],
     )
-    assert receipt.report.valid == receipt.report.total == 3
-    assert receipt.report.objects_read == 1 and receipt.report.passed
+    assert receipt.report.total == 3
+    assert receipt.report.valid == 0
+    assert not receipt.report.passed
+    assert all(
+        result.reason == "synthetic_source_record_forbidden"
+        for result in receipt.report.results
+    )
+    assert receipt.report.objects_read == 0
 
     # Verify attributes preserved
     prices_after = sorted([float(o.price_value) for o in obs_after if o.price_value is not None])
