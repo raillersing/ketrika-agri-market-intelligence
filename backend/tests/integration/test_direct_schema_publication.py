@@ -157,7 +157,16 @@ def publication_case():
         assert rejected.value.receipt.report.total == 1
         assert signature(session)[0] == 0
         try:
-            yield session, registry, reader, add_observation, current, record, content, rejected.value
+            yield (
+                session,
+                registry,
+                reader,
+                add_observation,
+                current,
+                record,
+                content,
+                rejected.value,
+            )
         finally:
             if not session.is_active:
                 session.rollback()
@@ -217,9 +226,7 @@ def test_direct_refresh_refuses_structure_without_changing_published_cache(
             if drift_record is not None
             else (record.source_record_id,)
         )
-        selected = PublicationCheck(
-            "cells_verified", ("price_observation",), None, candidates
-        )
+        selected = PublicationCheck("cells_verified", ("price_observation",), None, candidates)
         with pytest.raises(GoldSchemaRejected) as rejected:
             require_gold_structure(session, FreshSecondRead(), selected, registry)
         with pytest.raises(GoldProvenanceRejected):
