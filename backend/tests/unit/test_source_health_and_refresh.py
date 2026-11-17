@@ -233,9 +233,9 @@ def test_r1_12_failure_and_idempotent_recovery() -> None:
     # Verify run was marked failed and notification was sent to Mailpit
     assert run.status == "failed"
     assert run.finished_at is not None
-    assert run.error == "ConnectionResetError"
+    assert run.error == "COLLECTION_FAILED"
     mock_email.assert_called_once()
-    assert mock_email.call_args.kwargs["error_message"] == "ConnectionResetError"
+    assert mock_email.call_args.kwargs["error_message"] == "COLLECTION_FAILED"
 
     # Run 2: Recovery run succeeds idempotently
     recovered_run = IngestionRun(
@@ -342,6 +342,11 @@ def test_r1_12_sources_api_and_health_visibility() -> None:
             True,  # is_stale
             "failed",  # latest_run_status
             datetime(2026, 10, 1, 10, 0, 0, tzinfo=UTC),
+            0,
+            0,
+            "COLLECTION_FAILED",
+            2,
+            0,
         ),
         (
             "instat_nipc",
@@ -353,6 +358,11 @@ def test_r1_12_sources_api_and_health_visibility() -> None:
             False,
             "success",
             datetime(2026, 10, 14, 8, 30, 0, tzinfo=UTC),
+            150,
+            150,
+            None,
+            2,
+            150,
         ),
     ]
 
@@ -400,6 +410,9 @@ def test_r1_12_single_source_health_endpoint() -> None:
         150,  # n_records_30d
         0.9850,  # parse_success_rate
         2,  # open_review_items
+        150,  # latest_run_records
+        150,  # latest_run_fetched
+        None,  # latest_run_error
     )
 
     mock_session = MagicMock()
