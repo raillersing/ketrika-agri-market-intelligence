@@ -47,7 +47,9 @@ def test_sanitize_diagnostic_error_all_categories() -> None:
     assert "robots.txt" in msg
 
     # 3. Policy stopped: rate / budget
-    status, code, msg, cat = sanitize_diagnostic_error("HTTP 429 Too Many Requests: Rate limit exceeded")
+    status, code, msg, cat = sanitize_diagnostic_error(
+        "HTTP 429 Too Many Requests: Rate limit exceeded"
+    )
     assert status == "policy_blocked"
     assert code == "POLICY_STOP_RATE_LIMIT"
     assert cat == "policy"
@@ -59,31 +61,41 @@ def test_sanitize_diagnostic_error_all_categories() -> None:
     assert cat == "policy"
 
     # 5. Policy stopped: general policy stop
-    status, code, msg, cat = sanitize_diagnostic_error("PolicyStop: source disabled by administrator")
+    status, code, msg, cat = sanitize_diagnostic_error(
+        "PolicyStop: source disabled by administrator"
+    )
     assert status == "policy_blocked"
     assert code == "POLICY_STOP_BLOCKED"
     assert cat == "policy"
 
     # 6. Schema drift: mismatch
-    status, code, msg, cat = sanitize_diagnostic_error("SchemaDrift: column 'price_ariary' unexpected shape")
+    status, code, msg, cat = sanitize_diagnostic_error(
+        "SchemaDrift: column 'price_ariary' unexpected shape"
+    )
     assert status == "schema_drift"
     assert code == "SCHEMA_DRIFT_MISMATCH"
     assert cat == "schema"
 
     # 7. Schema drift: contract absent
-    status, code, msg, cat = sanitize_diagnostic_error("contract_absent: no registered schema for format")
+    status, code, msg, cat = sanitize_diagnostic_error(
+        "contract_absent: no registered schema for format"
+    )
     assert status == "schema_drift"
     assert code == "SCHEMA_CONTRACT_ABSENT"
     assert cat == "schema"
 
     # 8. Network: connect error
-    status, code, msg, cat = sanitize_diagnostic_error("httpx.ConnectError: [Errno 111] Connection refused")
+    status, code, msg, cat = sanitize_diagnostic_error(
+        "httpx.ConnectError: [Errno 111] Connection refused"
+    )
     assert status == "failed"
     assert code == "UPSTREAM_CONNECT_ERROR"
     assert cat == "network"
 
     # 9. Network: timeout
-    status, code, msg, cat = sanitize_diagnostic_error("httpx.ReadTimeout: The read operation timed out")
+    status, code, msg, cat = sanitize_diagnostic_error(
+        "httpx.ReadTimeout: The read operation timed out"
+    )
     assert status == "failed"
     assert code == "UPSTREAM_TIMEOUT"
     assert cat == "network"
@@ -112,7 +124,13 @@ def test_sanitize_diagnostic_error_strictly_protects_secrets() -> None:
     assert status == "failed"
     assert code == "COLLECTION_FAILED"
     # Verify zero leakage
-    for forbidden in ["SuperSecretPass123", "ketrika_admin", "eyJhbGci", "db-prod.internal", "/home/raillersing"]:
+    for forbidden in [
+        "SuperSecretPass123",
+        "ketrika_admin",
+        "eyJhbGci",
+        "db-prod.internal",
+        "/home/raillersing",
+    ]:
         assert forbidden not in code
         assert forbidden not in msg
 
@@ -172,9 +190,7 @@ def test_classify_run_diagnostic_all_operational_states() -> None:
     assert diag.diagnostic_code == "NORMALIZED_SILVER"
 
     # 8. Failed: Network timeout
-    diag = classify_run_diagnostic(
-        status="failed", error="ConnectTimeout: host unreachable"
-    )
+    diag = classify_run_diagnostic(status="failed", error="ConnectTimeout: host unreachable")
     assert diag.diagnostic_status == "failed"
     assert diag.diagnostic_code in ("UPSTREAM_CONNECT_ERROR", "UPSTREAM_TIMEOUT")
 

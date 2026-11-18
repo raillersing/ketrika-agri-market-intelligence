@@ -35,13 +35,13 @@ def test_wfp_hdx_hapi_discovery_with_pagination_and_app_id():
     assert "limit=500" in items[0].url
     assert "offset=0" in items[0].url
     assert "app_identifier=sec-test-app-id" in items[0].url
-    assert items[0].hints.get("page") == 0
+    assert items[0].hints.get("page") == "0"
 
     assert "offset=500" in items[1].url
-    assert items[1].hints.get("page") == 1
+    assert items[1].hints.get("page") == "1"
 
     assert "offset=1000" in items[2].url
-    assert items[2].hints.get("page") == 2
+    assert items[2].hints.get("page") == "2"
 
 
 def test_wfp_hdx_offline_fetch_loads_hapi_sample():
@@ -270,8 +270,6 @@ def test_double_counting_detection_across_wb_wfp_fao():
     assert wfp_fao_audit["is_truly_independent"] is False
 
     # 4. Triplet WB RTFP + WFP HDX + FAO FPMA
-    triplet_audit = audit_source_family_independence(
-        ["wb_rtfp_mdg", "wfp_hdx_mdg", "fao_fpma_mdg"]
-    )
+    triplet_audit = audit_source_family_independence(["wb_rtfp_mdg", "wfp_hdx_mdg", "fao_fpma_mdg"])
     assert triplet_audit["has_dependent_derivation"] is True
     assert triplet_audit["is_truly_independent"] is False

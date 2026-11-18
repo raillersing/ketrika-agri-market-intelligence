@@ -66,7 +66,7 @@ export function GlobalFilters() {
     <div className="flex flex-wrap items-end gap-3">
       <div className="flex min-w-0 max-w-full flex-col gap-1 text-xs text-muted-foreground">
         <div className="flex items-center justify-between">
-          <span>Produit</span>
+          <span id={`${id}-product-label`}>Produit</span>
           <Link
             href="/products"
             prefetch={false}
@@ -76,7 +76,7 @@ export function GlobalFilters() {
             + Gérer
           </Link>
         </div>
-        <select value={dqSelected ? "" : product} onChange={event => update("product", event.target.value)} disabled={isPending || loading} className={control}>
+        <select aria-labelledby={`${id}-product-label`} value={dqSelected ? "" : product} onChange={event => update("product", event.target.value)} disabled={isPending || loading} className={control}>
           {dqSelected && <option value="" disabled>Choisissez un produit</option>}
           {!dqSelected && !products.some(row => row.product_code === product) && <option value={product}>{loading ? "Chargement du catalogue…" : `Sélection non reconnue : ${product}`}</option>}
           {products.map(row => <option key={row.product_code} value={row.product_code}>{row.canonical_name_fr}</option>)}

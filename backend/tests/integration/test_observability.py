@@ -139,7 +139,7 @@ def test_forced_connector_failure_records_failed_and_dispatches_email(
     )
     assert failed_run is not None
     assert failed_run.status == "failed"
-    assert failed_run.error == "RuntimeError"
+    assert failed_run.error == "COLLECTION_FAILED"
     assert ctx.run_id == failed_run.run_id
 
     # 3. Assert an alert email was sent to Mailpit

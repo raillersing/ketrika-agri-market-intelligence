@@ -128,7 +128,6 @@ def test_run_price_forecasting_pipeline_preserves_lineage_and_metadata(
         assert fc.interval_width == round(fc.p90 - fc.p10, 4) or fc.interval_width is not None
 
 
-
 def test_forecast_gold_rejection_rolls_back_and_never_bypasses_gate(
     dummy_price_series: list[EligibleSeries], monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -191,7 +190,6 @@ def test_forecast_qualified_gold_publication_commits(
     guarded.assert_called_once_with(mock_session, views=["forecast_latest"])
     mock_session.rollback.assert_not_called()
     mock_session.commit.assert_called_once_with()
-
 
 
 def test_forecast_abstentions_and_rejections_recorded(monkeypatch: pytest.MonkeyPatch) -> None:

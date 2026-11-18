@@ -25,6 +25,11 @@ def test_list_always_reports_meta_run_and_unpublished_freshness_is_null(populate
             False if populated else None,
             "failed",
             started,
+            0,  # latest_run_records
+            0,  # latest_run_fetched
+            "COLLECTION_FAILED",
+            0,  # open_review_items
+            0,  # n_records_30d
         )
     ]
     result = list_sources(session)
@@ -66,6 +71,9 @@ def test_health_preserves_cached_metrics_but_queries_current_meta_run():
         4,
         0.75,
         2,
+        4,  # latest_run_records
+        4,  # latest_run_fetched
+        "COLLECTION_FAILED",
     )
     result = get_source_health("synthetic", session)
     assert result.latest_run_status == "failed" and result.last_run_started_at == started

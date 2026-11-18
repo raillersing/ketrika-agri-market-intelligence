@@ -170,13 +170,15 @@ def create_product(
         )
         session.add(alias_row)
         registered_aliases.append(cleaned)
-        yaml_aliases.append({
-            "alias": cleaned,
-            "lang": "fr",
-            "product_code": p_code,
-            "confidence": 0.95,
-            "evidence": f"Créé par {current_user.email} (ADR-165)",
-        })
+        yaml_aliases.append(
+            {
+                "alias": cleaned,
+                "lang": "fr",
+                "product_code": p_code,
+                "confidence": 0.95,
+                "evidence": f"Créé par {current_user.email} (ADR-165)",
+            }
+        )
 
     session.commit()
 
@@ -289,7 +291,10 @@ def create_observations_batch(
     for loc in session.scalars(select(Location)).all():
         if loc.pcode:
             locations_by_pcode[loc.pcode.upper()] = loc
-    national_loc = locations_by_pcode.get("MDG") or session.scalars(select(Location).where(Location.admin_level == 0)).first()
+    national_loc = (
+        locations_by_pcode.get("MDG")
+        or session.scalars(select(Location).where(Location.admin_level == 0)).first()
+    )
 
     # 5. Insert observations in Silver (obs.price_observation)
     count_created = 0
@@ -315,9 +320,9 @@ def create_observations_batch(
             ) from exc
 
         # Resolve location
-        loc = locations_by_pcode.get(item.location_pcode.strip().upper()) or national_loc
-        loc_id = loc.location_id if loc else None
-        loc_pcode = loc.pcode if loc else item.location_pcode
+        resolved_loc = locations_by_pcode.get(item.location_pcode.strip().upper()) or national_loc
+        loc_id = resolved_loc.location_id if resolved_loc else None
+        loc_pcode = resolved_loc.pcode if resolved_loc else item.location_pcode
 
         nat_key = f"{p_code}:{loc_pcode}:{item.actor_level}:{start_date.isoformat()}"
 

@@ -93,12 +93,24 @@ class LocationResolver:
             norm_fr = normalize_location_string(e.name_fr)
             if norm_fr:
                 self._exact_alias_map[norm_fr] = (e.pcode, 1.0)
-                self._alias_details[norm_fr] = (e.pcode, e.name_fr, lvl_int, 1.0, "Nom canonique FR")
+                self._alias_details[norm_fr] = (
+                    e.pcode,
+                    e.name_fr,
+                    lvl_int,
+                    1.0,
+                    "Nom canonique FR",
+                )
             if e.name_mg:
                 norm_mg = normalize_location_string(e.name_mg)
                 if norm_mg:
                     self._exact_alias_map[norm_mg] = (e.pcode, 1.0)
-                    self._alias_details[norm_mg] = (e.pcode, e.name_mg, lvl_int, 1.0, "Nom canonique MG")
+                    self._alias_details[norm_mg] = (
+                        e.pcode,
+                        e.name_mg,
+                        lvl_int,
+                        1.0,
+                        "Nom canonique MG",
+                    )
             pcode_norm = normalize_location_string(e.pcode)
             self._exact_alias_map[pcode_norm] = (e.pcode, 1.0)
             self._alias_details[pcode_norm] = (e.pcode, e.name_fr, lvl_int, 1.0, "P-Code")
@@ -205,13 +217,13 @@ class LocationResolver:
         best_alias_norm: str | None = None
         for alias_norm, (pcode, _conf) in self._exact_alias_map.items():
             details = self._alias_details.get(alias_norm)
-            lvl_int = details[2] if details else None
-            if lvl_int is None:
+            fuzzy_level: int | None = details[2] if details else None
+            if fuzzy_level is None:
                 ent_fuzzy = self._pcode_map.get(pcode)
                 if ent_fuzzy:
-                    lvl_int = parse_admin_level(ent_fuzzy.admin_level)
+                    fuzzy_level = parse_admin_level(ent_fuzzy.admin_level)
 
-            if target_admin_level is not None and lvl_int != target_admin_level:
+            if target_admin_level is not None and fuzzy_level != target_admin_level:
                 continue
 
             score = fuzz.token_sort_ratio(norm_raw, alias_norm)

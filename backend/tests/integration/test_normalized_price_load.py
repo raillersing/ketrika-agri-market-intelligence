@@ -170,7 +170,12 @@ def test_source_alias_normalization_retry_revision_and_proof_across_sessions(req
                 ObservationTarget("price_observation", revised_id),
             ],
         )
-        assert receipt.report.total == receipt.report.valid == 2 and receipt.report.passed
+        assert receipt.report.total == 2 and receipt.report.valid == 0
+        assert not receipt.report.passed
+        assert all(
+            result.reason == "synthetic_source_record_forbidden"
+            for result in receipt.report.results
+        )
         request.node.user_properties.append(
             (
                 "ketrika.normalization",
@@ -180,7 +185,7 @@ def test_source_alias_normalization_retry_revision_and_proof_across_sessions(req
                         "currency": currency,
                         "old_id": str(first_id),
                         "new_id": str(revised_id),
-                        "valid": 2,
+                        "valid": 0,
                         "total": 2,
                         "objects_read": receipt.report.objects_read,
                         "retry_action": "idempotent_skipped",

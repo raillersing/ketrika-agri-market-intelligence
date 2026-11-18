@@ -27,8 +27,9 @@ from ketrika.core.provenance_bronze import BronzeProofReader
 from ketrika.core.qualification import require_synthetic_test_database
 from ketrika.core.schema_audit import CSVSchemaContract, audit_source_schema
 from ketrika.core.schema_contracts import SchemaContractBinding, SchemaContractRegistry
+from ketrika.gold.provenance_gate import GoldProvenanceRejected, PublicationCheck
 from ketrika.gold.refresh import init_gold_views, refresh_gold_views
-from ketrika.gold.schema_gate import GoldSchemaRejected
+from ketrika.gold.schema_gate import GoldSchemaRejected, require_gold_structure
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
 from tests.integration.test_gold_publication_provenance import signature
 from tests.unit.test_provenance_audit import price_example
@@ -45,6 +46,9 @@ def publication_case():
         require_synthetic_test_database(target.host, target.database)
         assert store.bucket == "ketrika-qa-bronze"
         wipe_silver_gold_tables(session)
+        init_gold_views(session)
+        empty = refresh_gold_views(session, views=["price_obs_current"])
+        assert empty["provenance_state"] == "empty"
         source_id = "dummy_direct_schema_" + uuid4().hex
         product = Product(
             product_id=uuid4(),
@@ -142,15 +146,27 @@ def publication_case():
             return observation, record, content
 
         current, record, content = add_observation()
-        init_gold_views(session)
         reader = BronzeProofReader(store)
-        positive = refresh_gold_views(
-            session, views=["price_obs_current"], reader=reader, schema_registry=registry
-        )
-        assert positive["structure_state"] == "structure_verified"
-        assert positive["structure_artifacts_total"] == positive["structure_artifacts_valid"] == 1
+        # A synthetic source must fail the real Gold provenance gate, even if its
+        # CSV structure is valid. Structure tests below invoke only the schema gate.
+        with pytest.raises(GoldProvenanceRejected) as rejected:
+            refresh_gold_views(
+                session, views=["price_obs_current"], reader=reader, schema_registry=registry
+            )
+        assert rejected.value.receipt.report.valid == 0
+        assert rejected.value.receipt.report.total == 1
+        assert signature(session)[0] == 0
         try:
-            yield session, registry, reader, add_observation, current, record, content, positive
+            yield (
+                session,
+                registry,
+                reader,
+                add_observation,
+                current,
+                record,
+                content,
+                rejected.value,
+            )
         finally:
             if not session.is_active:
                 session.rollback()
@@ -163,9 +179,10 @@ def publication_case():
 def test_direct_refresh_refuses_structure_without_changing_published_cache(
     publication_case, mode, request
 ):
-    session, registry, reader, add, current, record, content, positive = publication_case
+    session, registry, reader, add, current, record, content, rejected_source = publication_case
+    drift_record = None
     if mode == "drift":
-        add(drift=True)
+        _, drift_record, _ = add(drift=True)
     if mode == "absent":
         registry = SchemaContractRegistry()
     elif mode == "wrong_parser":
@@ -187,11 +204,11 @@ def test_direct_refresh_refuses_structure_without_changing_published_cache(
     class FreshSecondRead:
         def get(self, key):
             calls.append(key)
-            # The first read is provenance; the next must independently measure structure.
-            if mode == "unreadable" and len(calls) == 2:
+            # Structure is measured directly; no artificial provenance approval.
+            if mode == "unreadable" and len(calls) == 1:
                 raise RuntimeError("untrusted detail must not be emitted")
             result = reader.get(key)
-            return result + b"damage" if mode == "sha" and len(calls) == 2 else result
+            return result + b"damage" if mode == "sha" and len(calls) == 1 else result
 
     statements = []
     connection = session.connection()
@@ -202,12 +219,19 @@ def test_direct_refresh_refuses_structure_without_changing_published_cache(
 
     event.listen(connection, "before_cursor_execute", capture)
     try:
+        # Explicitly isolate schema checking from the production provenance
+        # gate: no synthetic record is promoted to Gold to run these negatives.
+        candidates = (
+            (record.source_record_id, drift_record.source_record_id)
+            if drift_record is not None
+            else (record.source_record_id,)
+        )
+        selected = PublicationCheck("cells_verified", ("price_observation",), None, candidates)
         with pytest.raises(GoldSchemaRejected) as rejected:
+            require_gold_structure(session, FreshSecondRead(), selected, registry)
+        with pytest.raises(GoldProvenanceRejected):
             refresh_gold_views(
-                session,
-                views=["price_obs_current"],
-                reader=FreshSecondRead(),
-                schema_registry=registry,
+                session, views=["price_obs_current"], reader=reader, schema_registry=registry
             )
     finally:
         event.remove(connection, "before_cursor_execute", capture)
@@ -228,7 +252,7 @@ def test_direct_refresh_refuses_structure_without_changing_published_cache(
         assert saved.details["scope"] == "publication_candidate_artifacts"
         assert "RUN_TOOL_NOW" not in json.dumps(saved.details)
         assert "untrusted detail" not in json.dumps(saved.details)
-    assert len(calls) >= 2
+    assert len(calls) >= 1
     # Caller explicitly commits the diagnostic; the helper never commits implicitly.
     ids = [r.dq_id for r in rejected.value.receipts]
     session.commit()
@@ -254,14 +278,16 @@ def test_direct_refresh_refuses_structure_without_changing_published_cache(
 
 @pytest.mark.integration
 def test_pending_and_superseded_unknown_versions_do_not_enter_publication_scope(publication_case):
-    session, registry, reader, add, current, record, content, positive = publication_case
+    session, registry, reader, add, current, record, content, rejected_source = publication_case
     add(parser="unknown-parser", pending=True)
     add(parser="unknown-parser", superseded_by=current.observation_id)
-    result = refresh_gold_views(
-        session, views=["price_obs_current"], reader=reader, schema_registry=registry
-    )
-    assert result["source_observations_total"] == result["structure_artifacts_total"] == 1
-    assert signature(session)[0] == 1
+    with pytest.raises(GoldProvenanceRejected) as denied:
+        refresh_gold_views(
+            session, views=["price_obs_current"], reader=reader, schema_registry=registry
+        )
+    assert denied.value.receipt.report.valid == 0
+    assert denied.value.receipt.report.total == 1
+    assert signature(session)[0] == 0
     history = audit_source_schema(session, reader, record.source_id, registry=registry)
     assert history.report.total_artifacts == 3 and history.report.valid_artifacts == 1
     assert not history.report.passed
@@ -269,7 +295,7 @@ def test_pending_and_superseded_unknown_versions_do_not_enter_publication_scope(
 
 @pytest.mark.integration
 def test_metadata_only_does_not_claim_structure_certification(publication_case):
-    session, registry, reader, add, current, record, content, positive = publication_case
+    session, registry, reader, add, current, record, content, rejected_source = publication_case
     result = refresh_gold_views(
         session, views=["source_health"], reader=reader, schema_registry=SchemaContractRegistry()
     )
@@ -280,7 +306,7 @@ def test_metadata_only_does_not_claim_structure_certification(publication_case):
 
 @pytest.mark.integration
 def test_empty_numeric_views_are_not_structure_verified(publication_case):
-    session, registry, reader, add, current, record, content, positive = publication_case
+    session, registry, reader, add, current, record, content, rejected_source = publication_case
     session.commit()  # Settle deferred observation triggers before the isolated fixture wipe.
     wipe_silver_gold_tables(session)
     result = refresh_gold_views(
@@ -296,7 +322,7 @@ def test_empty_numeric_views_are_not_structure_verified(publication_case):
 
 @pytest.mark.integration
 def test_candidate_locks_prevent_concurrent_observation_insert(publication_case):
-    session, registry, reader, add, current, record, content, positive = publication_case
+    session, registry, reader, add, current, record, content, rejected_source = publication_case
     values = {
         column.key: getattr(current, column.key) for column in PriceObservation.__table__.columns
     }

@@ -13,6 +13,7 @@ import io
 import logging
 from collections.abc import Iterable
 from datetime import UTC, date, datetime
+from typing import ClassVar
 
 from ketrika.connectors.base import (
     DiscoveredItem,
@@ -163,7 +164,8 @@ def parse_world_benchmarks_csv(
 class WorldBenchmarksConnector:
     """Connector for international FOB benchmarks and maritime freight."""
 
-    source_id: str = WORLD_BENCHMARKS_SOURCE_ID
+    source_id: ClassVar[str] = WORLD_BENCHMARKS_SOURCE_ID
+    parser_version: ClassVar[str] = "1.0.0"
 
     def discover(self, run_ctx: RunContext) -> Iterable[DiscoveredItem]:
         """Discover the monthly world commodity price feed."""
@@ -213,9 +215,7 @@ class WorldBenchmarksConnector:
             store = run_ctx.bronze_store
 
         content = store.get(artifact.object_key)
-        records = parse_world_benchmarks_csv(
-            content, source_record_id=artifact.source_record_id
-        )
+        records = parse_world_benchmarks_csv(content, source_record_id=artifact.source_record_id)
 
         return ParseResult(
             records=records,

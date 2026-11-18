@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import uuid
+from collections.abc import Generator
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -31,7 +32,7 @@ def mock_user() -> UserAccount:
 
 
 @pytest.fixture
-def test_client(mock_user: UserAccount) -> TestClient:
+def test_client(mock_user: UserAccount) -> Generator[TestClient, None, None]:
     """FastAPI TestClient with overridden auth."""
     app.dependency_overrides[get_current_user] = lambda: mock_user
     client = TestClient(app)
@@ -125,8 +126,10 @@ def test_create_product_success(test_client: TestClient) -> None:
 
     app.dependency_overrides[get_db] = lambda: mock_session
     try:
-        with patch("ketrika.api.routers.products.append_product_to_yaml") as mock_append_p, \
-             patch("ketrika.api.routers.products.append_aliases_to_yaml") as mock_append_a:
+        with (
+            patch("ketrika.api.routers.products.append_product_to_yaml") as mock_append_p,
+            patch("ketrika.api.routers.products.append_aliases_to_yaml") as mock_append_a,
+        ):
             payload = {
                 "product_code": "CLOVE_SPICE",
                 "canonical_name_fr": "Girofle de Madagascar",
@@ -272,6 +275,7 @@ def test_append_product_and_aliases_to_yaml(tmp_path) -> None:
     )
 
     from ketrika.core.taxonomy import load_aliases
+
     aliases_loaded = load_aliases(tmp_path)
     assert len(aliases_loaded) == 2
     assert any(a.alias == "dipoiny" for a in aliases_loaded)

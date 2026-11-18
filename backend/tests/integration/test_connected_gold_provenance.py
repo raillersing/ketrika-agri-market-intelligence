@@ -19,6 +19,7 @@ from ketrika.core.models.db import DqResult, Location, Product, Source, SourceRe
 from ketrika.core.provenance_bronze import BronzeProofReader
 from ketrika.core.qualification import require_synthetic_test_database
 from ketrika.core.schema_audit import CSVSchemaContract
+from ketrika.gold.provenance_gate import GoldProvenanceRejected
 from ketrika.gold.refresh import init_gold_views, refresh_gold_views
 from ketrika.pipelines.factory import build_gold_refresh_asset, build_source_assets
 from ketrika.pipelines.rebuild import wipe_silver_gold_tables
@@ -73,6 +74,10 @@ def test_production_check_controls_actual_gold_sql(damaged, monkeypatch, request
         require_synthetic_test_database(target.host, target.database)
         assert store.bucket == "ketrika-qa-bronze"
         wipe_silver_gold_tables(session)
+        init_gold_views(session)
+        initial = refresh_gold_views(session)
+        assert initial["source_observations_total"] == 0
+        assert gold_signature(session)[0] == 0
         product = Product(
             product_id=uuid4(),
             product_code=f"fixture_actual_gold_{uuid4().hex}",
@@ -131,12 +136,17 @@ def test_production_check_controls_actual_gold_sql(damaged, monkeypatch, request
         observation.review_status = "accepted"
         session.add(observation)
         session.flush()
-        init_gold_views(session)
-        baseline_refresh = refresh_gold_views(session)
-        assert baseline_refresh["source_observations_valid"] == 1
-        assert baseline_refresh["source_observations_total"] == 1
+        # Never certify a synthetic dataset as a valid positive Gold case.
+        with pytest.raises(GoldProvenanceRejected) as denied:
+            refresh_gold_views(session)
+        assert denied.value.receipt.report.total == 1
+        assert denied.value.receipt.report.valid == 0
+        assert all(
+            item.reason == "synthetic_source_record_forbidden"
+            for item in denied.value.receipt.report.results
+        )
         baseline = gold_signature(session)
-        assert baseline[0] == 1
+        assert baseline[0] == 0
 
     reader = BronzeProofReader(store)
     original_sha = hashlib.sha256(reader.get(artifact.object_key)).hexdigest()
@@ -167,8 +177,8 @@ def test_production_check_controls_actual_gold_sql(damaged, monkeypatch, request
         )
     finally:
         event.remove(engine, "before_cursor_execute", capture_sql)
-    assert result.success is (not damaged)
-    assert len(statements) == (0 if damaged else 13)
+    assert not result.success
+    assert len(statements) == 0
     assert all("economic_dashboard" not in statement for statement in statements)
     evaluations = result.get_asset_check_evaluations()
     assert len(evaluations) == 2
@@ -176,13 +186,13 @@ def test_production_check_controls_actual_gold_sql(damaged, monkeypatch, request
         item for item in evaluations if item.check_name.endswith("__provenance_complete")
     )
     structure = next(item for item in evaluations if item.check_name.endswith("__schema_drift"))
-    assert provenance.passed is (not damaged) and structure.passed
+    assert not provenance.passed and structure.passed
     dq_id = UUID(provenance.metadata["dq_id"].value)
     with get_session() as session:
         saved = session.get(DqResult, dq_id)
-        assert saved is not None and saved.passed is (not damaged)
+        assert saved is not None and not saved.passed
         assert saved.details["total_records"] == 1
-        assert saved.details["valid_provenance"] == int(not damaged)
+        assert saved.details["valid_provenance"] == 0
         schema_dq = session.get(DqResult, UUID(structure.metadata["dq_id"].value))
         assert schema_dq is not None and schema_dq.passed
         assert schema_dq.details["total_artifacts"] == 1
@@ -197,7 +207,7 @@ def test_production_check_controls_actual_gold_sql(damaged, monkeypatch, request
                     "damaged_in_memory_only": damaged,
                     "gold_sql_refresh_count": len(statements),
                     "source_check_total": 1,
-                    "source_check_valid": int(not damaged),
+                    "source_check_valid": 0,
                     "dq_id": str(dq_id),
                     "schema_check_passed": True,
                     "gold_signature_unchanged": True,

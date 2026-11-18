@@ -142,15 +142,15 @@ class CausalAgriculturalModel:
                 # Soudure (Nov-Feb): prices rise ~2-4% per month
                 # Harvest (Apr-Jun): prices drop ~3-5% per month
                 defaults = {
-                    1: 0.035,   # Jan: peak lean season rise
-                    2: 0.025,   # Feb: plateauing lean season
+                    1: 0.035,  # Jan: peak lean season rise
+                    2: 0.025,  # Feb: plateauing lean season
                     3: -0.010,  # Mar: early harvests approach
                     4: -0.035,  # Apr: Asara harvest begins
                     5: -0.045,  # May: peak harvest arrivals
                     6: -0.020,  # Jun: harvest concludes
-                    7: 0.005,   # Jul: stable post-harvest
-                    8: 0.010,   # Aug: steady trading
-                    9: 0.015,   # Sep: stocks begin to decline
+                    7: 0.005,  # Jul: stable post-harvest
+                    8: 0.010,  # Aug: steady trading
+                    9: 0.015,  # Sep: stocks begin to decline
                     10: 0.020,  # Oct: early lean season onset
                     11: 0.030,  # Nov: soudure accelerates
                     12: 0.040,  # Dec: holidays and granary exhaustion
@@ -161,7 +161,9 @@ class CausalAgriculturalModel:
         # Elasticities calibrated from Madagascar economic literature:
         # FX pass-through: ~0.35 on imported goods, ~0.15 on domestic staples
         # Fuel diesel pass-through: ~0.10 to transport friction
-        is_imported = "IMPORTED" in (series_key or "").upper() or "OIL" in (series_key or "").upper()
+        is_imported = (
+            "IMPORTED" in (series_key or "").upper() or "OIL" in (series_key or "").upper()
+        )
         fx_elasticity = 0.35 if is_imported else 0.15
         fuel_elasticity = 0.12 if is_imported else 0.08
         fob_elasticity = 0.25 if is_imported else 0.10
@@ -183,7 +185,10 @@ class CausalAgriculturalModel:
                     macro_lift_pct += fuel_elasticity * max(-0.05, min(0.10, float(fuel_pct))) / 3.0
 
             # Check world FOB benchmark
-            if "WORLD_FOB_RICE_WHITE_25_USD_MT" in macro_series and "RICE" in (series_key or "").upper():
+            if (
+                "WORLD_FOB_RICE_WHITE_25_USD_MT" in macro_series
+                and "RICE" in (series_key or "").upper()
+            ):
                 fob_arr = macro_series["WORLD_FOB_RICE_WHITE_25_USD_MT"]
                 if len(fob_arr) >= 3 and fob_arr[-3] > 0:
                     fob_pct = (fob_arr[-1] - fob_arr[-3]) / fob_arr[-3]

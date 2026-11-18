@@ -127,7 +127,10 @@ class SqlCheckpointStore:
         if self._session is not None:
             row = self._session.execute(sql, params).fetchone()
         else:
-            with self._engine.connect() as conn:
+            engine = self._engine
+            if engine is None:
+                raise RuntimeError("Checkpoint store requires a configured SQLAlchemy engine")
+            with engine.connect() as conn:
                 row = conn.execute(sql, params).fetchone()
 
         if not row:
@@ -195,7 +198,10 @@ class SqlCheckpointStore:
         if self._session is not None:
             self._session.execute(sql, params)
         else:
-            with self._engine.begin() as conn:
+            engine = self._engine
+            if engine is None:
+                raise RuntimeError("Checkpoint store requires a configured SQLAlchemy engine")
+            with engine.begin() as conn:
                 conn.execute(sql, params)
 
     def reset(self, source_id: str, partition_key: str = "") -> None:
@@ -206,5 +212,8 @@ class SqlCheckpointStore:
         if self._session is not None:
             self._session.execute(sql, params)
         else:
-            with self._engine.begin() as conn:
+            engine = self._engine
+            if engine is None:
+                raise RuntimeError("Checkpoint store requires a configured SQLAlchemy engine")
+            with engine.begin() as conn:
                 conn.execute(sql, params)
