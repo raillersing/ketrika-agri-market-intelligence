@@ -2141,3 +2141,15 @@ lire les ZIP originaux, sans réponse HTTP ni objet Bronze dérivé fabriqué.
 - Les prévisions générées sont stockées avec `observed_or_imputed = 'forecast'` et `value_kind = 'forecast'`.
 - Critère de qualification scientifique : réduction mesurée d'au moins 15 % du MAPE sur les denrées importées à $h=2$ mois par rapport aux baselines univariées R3.
 
+
+### 28. Qualification R0.9 d'un paquet authentique externe (ADR-176)
+
+Ce contrat autorise uniquement la préparation du raccordement ; il ne certifie pas un paquet absent du runner et ne change pas les statuts R.
+
+1. Le paquet authentique est une **entrée explicite**, montée en **lecture seule** hors du checkout et de toute destination active. Aucun chemin réseau, copie Git ou recherche implicite dans les volumes utilisateur. Le chemin et la racine autorisée doivent être fournis avant l'exécution ; pas de résolution de liens symboliques ni de traversée hors racine.
+2. Un manifeste versionné nomme, pour chaque objet original, le chemin relatif, la taille, le SHA-256, l'origine primaire, le reçu d'acquisition UTC, la preuve de droits, la portée temporelle et géographique, et l'identité de source. Les annotations indépendantes identifient les valeurs et les coordonnées exactes dans l'objet original. Aucun label `authentic` provenant du seul demandeur n'est une preuve.
+3. Le validateur recalcule les empreintes **sur les octets** et vérifie la correspondance avec les reçus; chaque référence provenance/Gold doit se résoudre à ce paquet et à sa lignée SourceRecord/Bronze. Les deux éditions authentiques WB du reçu R0.8 restent bornées à la série nationale `c_rice` imputée ; elles ne justifient aucune donnée observée, régionale, récente ou prévision scientifiquement calibrée.
+4. Le reçu de qualification doit lier commit SHA, empreinte de source, identité du paquet, environnement, date UTC et comptes/empreintes de la reconstruction. Les preuves frontend/backend synthétiques restent distinguées de l'identité des données authentiques. Un test de corruption à **effectif égal** doit échouer.
+5. Le moindre écart produit un refus documenté : données manquantes ou mixtes, droits/horodatage insuffisants, mismatch SHA, hors périmètre, mapping incomplet, réseau accessible pendant rejeu, ou preuve non reproductible. Aucun contournement de `core.qualify` ni promotion de données synthétiques vers Gold.
+6. **Réception finale :** contrôle complet et E2E sur la source figée, rejeu PostgreSQL/Bronze sur clone isolé et sans réseau, puis `qualify R0` avec le paquet vérifié. Tant que l'entrée externe n'est pas effectivement disponible et ces tests reçus, R0.9 reste `IN_PROGRESS`, sans tag ni activation production.
+
