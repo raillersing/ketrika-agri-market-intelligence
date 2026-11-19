@@ -1,5 +1,13 @@
 # PROGRESS : registre d'exécution du MVP
 
+### [2026-11-19T05:15:32Z] Reprise après A03/A05 — R0.9 : contrat de preuve authentique externe (IN_PROGRESS)
+
+- PR #17 fusionnée (`1ed7765fce9e03cb0f4813746c9e3eede68b6735`) ; deux CI réussies `44230373225`/`44230392889`. PR #16 fusionnée (`90b13a29cbe0edcf8cbdfb1515934d1fc6b2422f`) après CI `44232945792` réussie : correctifs logiciels A03/A05, **pas qualification des données R0.9**.
+- Première MUST non reçue : R0.9. Le `HANDOFF` confirme deux ZIP WB externes et le rejeu R0.8 borné, mais `core.qualify` ne consomme que le manifeste des tests internes. La CI reste une preuve de logiciel, pas de paquet authentique live.
+- Mini-plan : (1) fixer ADR-176 ; (2) préciser SPECS §28 ; (3) vérifier l'identité et les droits du paquet externe existant ; (4) implémenter un raccordement readonly/fail-closed ; (5) négatifs SHA, liens et révisions ; (6) reconstruire sur clone network=none ; (7) recevoir `qa-isolated check`/E2E ; (8) `qualify R0` sur même commit ; (9) consigner les reçus ; (10) seulement alors qualifier R0.9.
+- Ce lot documentaire ne modifie ni `core.qualify`, ni Bronze, ni QA, ni le réseau. **Aucune qualification, aucun tag, aucun déploiement** n'en découle. Les ZIP hors dépôt n'ont pas été inspectés dans cette session. R0.9 reste IN_PROGRESS, 8/74 DONE inchangé.
+
+
 ### [2026-11-09T18:00:00Z] IA-DATA-01 : Garde-fous de provenance Gold, étanchéité synthétique, contrats CSV officiels et quarantaine sans perte (P0)
 
 - **Contexte & Objectifs :**
