@@ -1,3 +1,12 @@
+## Mise à jour — 19 novembre 2026 : A03/A05 fusionnées ; R0.9 à réceptionner
+
+- A03 / PR #17 : merge `1ed7765fce9e03cb0f4813746c9e3eede68b6735`, runs `44230373225` et `44230392889` success.
+- A05 / PR #16 : merge `90b13a29cbe0edcf8cbdfb1515934d1fc6b2422f`, run `44232945792` success.
+- Ces preuves sont logicielles (CI), et **ne qualifient pas** les archives originales WB ni R0.9.
+- Prochain lot autorisé : ADR-176 et SPECS §28 (contrat de preuve externe). À réaliser : accès explicite **readonly** au paquet existant `ketrika_wb_revision_packet_20261104`, aux reçus d'origine/droits et à son manifeste/annotations ; vérifier tailles/SHA et lignée, ensuite modifier `core.qualify` avec tests fail-closed et reçu de qualification réel.
+- Conditions d'arrêt : aucun tag ni DONE R0.9 sans `qualify R0`, check complet et E2E sur le même contenu, clone hors réseau avec corruption détectée. Ne jamais déplacer/copier le corpus vers `tests/fixtures` pour simuler sa présence.
+- Les volumes et la sauvegarde du 4 novembre sont **mentionnés dans la passation historique**, mais n'ont pas été lus dans cette session ; leur existence et leur intégrité actuelles ne sont pas confirmées. Les chemins locaux du document historique ne sont pas accessibles dans ce contexte GitHub.
+
 # Passation — programme R PARTIAL
 
 R0.8 est reçu sur le contenu authentique borné. Les74 statuts sont synchronisés :
