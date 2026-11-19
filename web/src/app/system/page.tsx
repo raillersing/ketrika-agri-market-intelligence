@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import { apiHealthLabel, classifyApiHealth, type ApiHealth } from "../../lib/system-health";
 import {
   Activity,
   AlertTriangle,
-  ArrowRight,
   Check,
-  CheckCircle2,
   Clock,
   Copy,
   Cpu,
@@ -22,6 +22,29 @@ import {
 
 export default function SystemPage() {
   const [copiedText, setCopiedText] = useState<string | null>(null);
+  const [apiHealth, setApiHealth] = useState<ApiHealth>("checking");
+  const isDevelopment = process.env.NODE_ENV === "development";
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const checkApi = async () => {
+      try {
+        const response = await fetch("/api/v1/health", {
+          cache: "no-store",
+          credentials: "include",
+          signal: controller.signal,
+        });
+        const payload: unknown = response.ok ? await response.json() : null;
+        if (!controller.signal.aborted) {
+          setApiHealth(classifyApiHealth(response.ok, payload));
+        }
+      } catch {
+        if (!controller.signal.aborted) setApiHealth("unverified");
+      }
+    };
+    void checkApi();
+    return () => controller.abort();
+  }, []);
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -29,11 +52,11 @@ export default function SystemPage() {
     setTimeout(() => setCopiedText(null), 2500);
   };
 
-  const projectPath = "C:\\Users\\raillersing\\Documents\\#Entreprise\\Ketrika AI\\AI Agent";
+  // The host filesystem path is intentionally never sent to a browser.
 
   const localServices = [
     {
-      name: "Dashboard Web (Next.js 14)",
+      name: "Dashboard Web (Next.js)",
       port: "3005",
       url: "http://localhost:3005",
       role: "Interface utilisateur principale et visualisations analytiques",
@@ -68,7 +91,7 @@ export default function SystemPage() {
       name: "Stockage Bronze MinIO (S3)",
       port: "9101 / 9100",
       url: "http://localhost:9101",
-      role: "Bucket S3 'bronze' versionné et immuable (identifiants: minioadmin / minioadmin)",
+      role: "Stockage des artefacts bruts ; état à vérifier dans la supervision",
       badge: "Storage",
       color: "border-rose-500/30 bg-rose-500/5",
     },
@@ -88,28 +111,28 @@ export default function SystemPage() {
       cron: "0 6 * * * (06h00 UTC)",
       sources: "NASA POWER Agroclimatology & CHIRPS",
       description: "Précipitations, températures moyennes et minimales par district et région.",
-      status: "Actif",
+      status: "Non vérifié",
     },
     {
       cadence: "Hebdomadaire (Weekly)",
       cron: "0 7 * * 1 (Lundi 07h00 UTC)",
       sources: "MiASA / Observatoire du Riz (ODR), MinCC Prix & Stocks",
       description: "Bulletins hebdomadaires ODR (cours du riz), stocks régionaux déclarés, déclenchement du moteur d'alertes et édition du bulletin.",
-      status: "Actif",
+      status: "Non vérifié",
     },
     {
       cadence: "Mensuelle (Monthly)",
       cron: "0 8 1 * * (1er du mois 08h00 UTC)",
       sources: "Banque Mondiale RTFP, WFP HDX, INSTAT NIPC, Douanes",
       description: "Indices haute fréquence RTFP, cours WFP, indice officiel d'inflation alimentaire NIPC et flux d'importation sous douane.",
-      status: "Actif",
+      status: "Non vérifié",
     },
     {
       cadence: "Annuelle (Annual)",
       cron: "0 10 1 1 * (1er janvier 10h00 UTC)",
       sources: "FAOSTAT Madagascar",
       description: "Bilans statistiques nationaux de production vivrière (riz paddy, maïs, manioc).",
-      status: "Actif",
+      status: "Non vérifié",
     },
   ];
 
@@ -128,7 +151,7 @@ export default function SystemPage() {
     },
     {
       cmd: "./scripts/dev.ps1 check",
-      desc: "Exécute le contrôle qualité complet (lint ruff, types mypy, 215 tests backend, tests frontend vitest).",
+      desc: "Exécute le contrôle qualité complet (lint, types, tests backend et frontend).",
     },
     {
       cmd: "./scripts/dev.ps1 demo",
@@ -153,72 +176,24 @@ export default function SystemPage() {
           DataOps & Infrastructure Système
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
-          Architecture, Emplacement & Mises à Jour Automatiques
+          Architecture et supervision technique
         </h1>
         <p className="text-sm text-muted-foreground mt-2 max-w-3xl leading-relaxed">
-          Guide technique complet sur le fonctionnement de l&apos;orchestration automatisée des pipelines, la chaîne de données médaillon (Bronze, Silver, Gold), l&apos;emplacement local des fichiers et les commandes de pilotage.
+          Présentation de l&apos;architecture et des tâches prévues. Seule la réponse de l&apos;API est mesurée ici ; l&apos;état des autres services et cadences n&apos;est pas certifié par cette page.
         </p>
       </div>
 
-      {/* 1. Emplacement Local du Projet */}
-      <section className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-4">
-        <div className="flex items-center gap-3 border-b border-border pb-4">
-          <div className="w-10 h-10 rounded-lg bg-primary-action/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 font-bold">
-            <Folder className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-foreground">
-              Emplacement local du projet sur votre machine
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              Répertoire de travail racine contenant l&apos;ensemble du code source, de la configuration et des documents.
-            </p>
-          </div>
+      {/* 1. Configuration propre au déploiement */}
+      <section className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-3">
+        <div className="flex items-center gap-3">
+          <Folder className="w-5 h-5 text-muted-foreground" />
+          <h2 className="text-lg font-bold text-foreground">Configuration du déploiement</h2>
         </div>
-
-        <div className="space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-muted/60 border border-border rounded-lg font-mono text-xs">
-            <div className="flex items-center gap-2 overflow-x-auto text-foreground font-semibold">
-              <span className="text-muted-foreground font-normal">Chemin absolu :</span>
-              <span className="text-emerald-600 dark:text-primary-readable select-all">{projectPath}</span>
-            </div>
-            <button
-              onClick={() => copyToClipboard(projectPath, "path")}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-card border border-border text-foreground hover:bg-muted text-xs font-medium transition-colors shrink-0"
-            >
-              {copiedText === "path" ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Copié !</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" />
-                  <span>Copier le chemin</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="p-3 bg-card border border-border rounded-lg">
-              <div className="font-semibold text-foreground font-mono">backend/</div>
-              <p className="text-muted-foreground mt-1 text-[11px]">API FastAPI, connecteurs, Dagster, SQLAlchemy, ML.</p>
-            </div>
-            <div className="p-3 bg-card border border-border rounded-lg">
-              <div className="font-semibold text-foreground font-mono">web/</div>
-              <p className="text-muted-foreground mt-1 text-[11px]">Frontend Next.js 14, Tailwind, composants et cartes.</p>
-            </div>
-            <div className="p-3 bg-card border border-border rounded-lg">
-              <div className="font-semibold text-foreground font-mono">deploy/</div>
-              <p className="text-muted-foreground mt-1 text-[11px]">Caddyfile, scripts de backup, restore et bootstrap VPS.</p>
-            </div>
-            <div className="p-3 bg-card border border-border rounded-lg">
-              <div className="font-semibold text-foreground font-mono">docs/</div>
-              <p className="text-muted-foreground mt-1 text-[11px]">Runbooks, fiches sources, rapport MVP et HANDOFF.</p>
-            </div>
-          </div>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          L&apos;emplacement absolu du code, les secrets et les accès internes dépendent de
+          l&apos;installation. Ils ne sont pas exposés par cette page publique.
+          Consultez les runbooks de déploiement et les journaux internes pour les vérifier.
+        </p>
       </section>
 
       {/* 2. Console des Services Locaux & Ports */}
@@ -230,21 +205,24 @@ export default function SystemPage() {
             </div>
             <div>
               <h2 className="text-lg font-bold text-foreground">
-                Services Docker conteneurisés en cours d&apos;exécution
+                Services techniques et points d&apos;accès
               </h2>
               <p className="text-xs text-muted-foreground">
-                Tous les services tournent en conteneurs autonomes isolés sans conflit de ports (ADR-007).
+                Les ports ci-dessous sont des exemples de développement, pas un inventaire vérifié de la production.
               </p>
             </div>
           </div>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            6/6 Services UP & Healthy
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${apiHealth === "reachable" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-muted text-muted-foreground border-border"}`}>
+            <Activity className="w-3 h-3" />
+            {apiHealthLabel(apiHealth)}
           </span>
         </div>
 
+        {!isDevelopment && (
+          <p className="text-sm text-muted-foreground">Les adresses localhost et les ports internes sont masqués sur les déploiements de production. Pour connaître la fraîcheur et les collectes réelles, consultez la page Sources.</p>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {localServices.map((svc) => (
+          {(isDevelopment ? localServices : []).map((svc) => (
             <div
               key={svc.name}
               className={`border rounded-lg p-4 flex flex-col justify-between space-y-3 transition-all hover:shadow-md ${svc.color}`}
@@ -292,17 +270,15 @@ export default function SystemPage() {
                 Comment les données sont-elles mises à jour automatiquement ?
               </h2>
               <p className="text-xs text-muted-foreground">
-                Le démon <code className="font-mono text-purple-600 font-semibold">dagster-daemon</code> surveille et applique les fréquences d&apos;ingestion en continu.
+                Les fréquences ci-dessous décrivent une configuration attendue. Leur activation et leur dernière exécution doivent être vérifiées dans Dagster et dans l&apos;historique des Sources.
               </p>
             </div>
           </div>
           <a
-            href={`${process.env.NEXT_PUBLIC_DAGSTER_URL || "http://localhost:3010"}/schedules`}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/sources"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-purple-600 text-primary-foreground text-xs font-medium hover:bg-purple-700 transition-colors"
           >
-            <span>Gérer les Schedules dans Dagster</span>
+            <span>Voir les mesures des sources</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </div>
@@ -329,8 +305,8 @@ export default function SystemPage() {
                   <td className="py-3.5 px-4 font-medium text-foreground">{cad.sources}</td>
                   <td className="py-3.5 px-4 text-muted-foreground">{cad.description}</td>
                   <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                      <CheckCircle2 className="w-3 h-3" />
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-muted-foreground border border-border">
+                      <Clock className="w-3 h-3" />
                       {cad.status}
                     </span>
                   </td>
@@ -352,7 +328,7 @@ export default function SystemPage() {
               Architecture des données : Cycle de vie médaillon
             </h2>
             <p className="text-xs text-muted-foreground">
-              Chaque observation affichée conserve une chaîne de provenance mécanique ininterrompue de bout en bout.
+              Les contrôles de provenance servent à qualifier les observations publiables ; les résultats de validation doivent être consultés séparément.
             </p>
           </div>
         </div>
@@ -398,7 +374,7 @@ export default function SystemPage() {
               </div>
               <h3 className="font-bold text-base text-foreground">Couche Gold (Analytique)</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                12 vues matérialisées dans <code className="font-mono text-xs">gold.*</code>. Calcul des prix médians mensuels, Market Health Score (0-100), alertes automatiques et modèles prévisionnels LightGBM / AutoARIMA (quantiles p10/p50/p90).
+                Vues matérialisées du schéma <code className="font-mono text-xs">gold.*</code>. Les publications sont soumises à des contrôles avant affichage ; l&apos;existence d&apos;une vue ne prouve ni sa fraîcheur ni la validité d&apos;un modèle.
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-border/60 text-[11px] font-mono text-muted-foreground">
@@ -500,7 +476,7 @@ export default function SystemPage() {
               Alerte Sensor & Statut Dégradé
             </h3>
             <p className="text-muted-foreground text-[11px] leading-relaxed">
-              Le capteur d&apos;échec Dagster (<code className="font-mono">pipeline_failure_sensor</code>) intercepte l&apos;erreur et expédie un email d&apos;alerte dans Mailpit. La source bascule en badge rouge &quot;failed&quot; sur le cockpit /sources.
+              Les échecs peuvent être enregistrés par Dagster et examinés dans la supervision. La livraison d&apos;une alerte et l&apos;état de chaque source doivent être contrôlés sur les événements réels.
             </p>
           </div>
         </div>
