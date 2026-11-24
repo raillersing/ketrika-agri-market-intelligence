@@ -143,9 +143,7 @@ def _references(
 ) -> dict[UUID, ArtifactReference]:
     entries = load_manifest(packet)["entries"]
     originals = {
-        item["sha256"]: item
-        for item in entries
-        if item["origin"]["kind"] == "official_acquisition"
+        item["sha256"]: item for item in entries if item["origin"]["kind"] == "official_acquisition"
     }
     records = [
         json.loads(raw)
@@ -242,8 +240,7 @@ def _native_report(root: Path, document: dict[str, Any], role: str) -> dict[str,
     with path.open("rb") as stream:
         raw = stream.read(MAX_NATIVE_BYTES + 1)
     _require(
-        len(raw) <= MAX_NATIVE_BYTES
-        and hashlib.sha256(raw).hexdigest() == reference["sha256"],
+        len(raw) <= MAX_NATIVE_BYTES and hashlib.sha256(raw).hexdigest() == reference["sha256"],
         "external_native_hash",
     )
     result = json.loads(raw, object_pairs_hook=_unique_object)
