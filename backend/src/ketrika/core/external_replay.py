@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections import Counter
 from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -16,6 +17,7 @@ from ketrika.core.external_corpus import _directory, _readonly
 from ketrika.core.models.db import PriceObservation
 from ketrika.core.provenance import ArtifactReference, ProvenanceVerifier
 from ketrika.core.provenance_audit import bind_observation
+from ketrika.core.provenance_wb_archive import is_archive_proof
 from ketrika.core.qualification import QualificationSafetyError
 from ketrika.core.qualification_reports import load_json_report
 from ketrika.core.rebuild_bronze import LocalBronzeClient
@@ -178,6 +180,8 @@ def _claims(snapshot: dict[str, Any]) -> list[Any]:
     stable = set()
     current = set()
     superseded = []
+    coordinates = set()
+    editions: Counter[str] = Counter()
     for row in rows:
         identity = row["observation_id"]
         business = {
@@ -196,9 +200,16 @@ def _claims(snapshot: dict[str, Any]) -> list[Any]:
             superseded.append(row["superseded_by"])
         values = {key: _typed(val) for key, val in business.items()}
         value = PriceObservation(observation_id=UUID(digest[:32]), **values)
-        claims.append(bind_observation("price_observation", value))
+        claim = bind_observation("price_observation", value)
+        _require(is_archive_proof(claim.proof), "external_archive_proof_required")
+        coordinate = (claim.source_record_id, claim.proof["member"], claim.proof["row"])
+        _require(coordinate not in coordinates, "external_duplicate_source_cell")
+        coordinates.add(coordinate)
+        editions[claim.proof["member"]] += 1
+        claims.append(claim)
     _require(
-        len(current) == 82
+        sorted(editions.values()) == [81, 82]
+        and len(current) == 82
         and len(superseded) == 81
         and all(link[:2] == ["observation", PRICE] and link[2] in current for link in superseded),
         "external_revision_lineage",
