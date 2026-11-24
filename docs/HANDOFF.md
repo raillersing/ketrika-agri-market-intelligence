@@ -1,3 +1,9 @@
+## Mise à jour — 24 novembre 2026 : lecteur externe reçu, dernier lot R0.9
+
+- PR #19 fusionnée : `54f20e97c64fd360f12e23e62c9f8b741e066380`. CI 45335053671 verte ; le porteur du projet a transmis un contrôle Docker réel réussi, 6 fichiers/664 cellules/exit 0 et paquet `ce7524a0447a47e0c87d7c913dd9ebd8635425334d7322f23ca030b360ce8a20`.
+- Lot suivant (ADR-177, SPECS §28.2) : scripts/r09-receive.ps1 orchestre la préparation, le clone de contre-épreuve, les contrôles QA/E2E et le gate R0 sur preuves natives et montage historique readonly. Les traces/rapports et dumps de test restent hors Git dans de nouveaux volumes nommés par identifiant unique. Aucun tag, déploiement ou statut DONE n'est acquis avant réception effective.
+- Le runner et ses tests doivent d'abord recevoir une CI verte ; aucun résultat de rejeu du nouveau lot n'est encore disponible. Les preuves R0.8 restent historiques.
+
 ## Mise à jour — 19 novembre 2026 : A03/A05 fusionnées ; R0.9 à réceptionner
 
 - A03 / PR #17 : merge `1ed7765fce9e03cb0f4813746c9e3eede68b6735`, runs `44230373225` et `44230392889` success.
