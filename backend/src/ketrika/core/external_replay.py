@@ -14,14 +14,15 @@ from uuid import UUID
 from ketrika.core.bronze import BronzeStore
 from ketrika.core.corpus import load_manifest
 from ketrika.core.external_corpus import _directory, _readonly
-from ketrika.core.models.db import PriceObservation
+from ketrika.core.models.db import Base, PriceObservation
 from ketrika.core.provenance import ArtifactReference, ProvenanceVerifier
 from ketrika.core.provenance_audit import bind_observation
 from ketrika.core.provenance_wb_archive import is_archive_proof
 from ketrika.core.qualification import QualificationSafetyError
-from ketrika.core.qualification_reports import load_json_report
+from ketrika.core.qualification_reports import _unique_object, load_json_report
 from ketrika.core.rebuild_bronze import LocalBronzeClient
 from ketrika.core.rebuild_manifest import OBS_COLUMNS, _digest, compare_manifests
+from ketrika.core.reference_manifest import TABLES as REFERENCE_TABLES
 from ketrika.pipelines.rebuild_qualification import bronze_inventory_fingerprint
 
 PRODUCER = "wb-offline-replay-v1"
@@ -65,6 +66,12 @@ def _typed(value: list[Any]) -> Any:
 def _protected(receipt: dict[str, Any]) -> dict[str, Any]:
     first, second = receipt["protected_before"], receipt["protected_after"]
     tables = first["tables"]
+    expected = {
+        name
+        for name, table in Base.metadata.tables.items()
+        if table.schema == "ref" or name in {"meta.source", "meta.source_record"}
+    }
+    _require(set(tables) == expected, "external_protected_inventory")
     _require(first == second, "external_protected_changed")
     _require(first["sha256"] == _digest(tables), "external_protected_hash_mismatch")
     for table in tables.values():
@@ -72,7 +79,7 @@ def _protected(receipt: dict[str, Any]) -> dict[str, Any]:
             table["count"] == len(table["rows"]),
             "external_protected_count_mismatch",
         )
-    return first
+    return dict(first)
 
 
 def _native(receipt: dict[str, Any], *, negative: bool) -> dict[str, Any]:
@@ -167,9 +174,7 @@ def _references(
             "external_source_record_mismatch",
         )
         identity = UUID(row["source_record_id"])
-        references[identity] = ArtifactReference(
-            identity, SOURCE, row["object_key"], digest, mime
-        )
+        references[identity] = ArtifactReference(identity, SOURCE, row["object_key"], digest, mime)
     _require(len(references) == 3, "external_duplicate_source_record")
     return references
 
@@ -241,7 +246,7 @@ def _native_report(root: Path, document: dict[str, Any], role: str) -> dict[str,
         and hashlib.sha256(raw).hexdigest() == reference["sha256"],
         "external_native_hash",
     )
-    result = json.loads(raw)
+    result = json.loads(raw, object_pairs_hook=_unique_object)
     _require(isinstance(result, dict), "external_native_not_object")
     for field in ("commit", "source_fingerprint", "packet_sha256", "producer_environment"):
         expected = document["environment"] if field == "producer_environment" else document[field]
@@ -302,6 +307,25 @@ def verify_external_replay(
     _require(
         len(reference_keys) == 1 and next(iter(reference_keys)).startswith("reference_manifest/"),
         "external_reference_snapshot_missing",
+    )
+    reference_content = json.loads(store.get(next(iter(reference_keys))))
+    _require(
+        isinstance(reference_content, list)
+        and len(reference_content) == 2
+        and reference_content[0] == "reference_manifest_v1",
+        "external_reference_snapshot_invalid",
+    )
+    members = reference_content[1]
+    protected = positive["protected_before"]["tables"]
+    _require(
+        {member[0] for member in members} <= set(REFERENCE_TABLES)
+        and len({(member[0], member[1]) for member in members}) == len(members)
+        and all(
+            Counter(member[2] for member in members if member[0] == table)
+            == Counter(protected["ref." + table]["rows"])
+            for table in REFERENCE_TABLES
+        ),
+        "external_reference_snapshot_mismatch",
     )
     claims = _claims(positive["before"])
     report = ProvenanceVerifier(store, references).verify(claims)
