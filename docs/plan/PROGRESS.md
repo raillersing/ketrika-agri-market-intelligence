@@ -1,5 +1,14 @@
 # PROGRESS : registre d'exécution du MVP
 
+### 2026-11-24 — R0.9 : lecteur externe et réception opérationnelle R7 (IN_PROGRESS)
+
+- Reprise : résultat local transmis par le porteur du projet sur `cbfaf36` : sauvegarde historique SHA-256 conforme, 6/6 fichiers conformes, 13 185 491 octets, 3 documents et 3 annotations, 664 cellules vérifiées. Reçu historique : 60 annotations numériques, human_reviewed=false, silver_imported=false, rebuild_qualified=false. Cette preuve locale de contrôle documentaire n'est pas une preuve du nouveau commit ni de la reconstruction ; le chargement Python de diagnostic n'était pas un check Docker complet.
+- Lot : SPECS §28.1, lecteur du paquet WB externe figé, vérification readonly et des chemins, identité SHA-256, liaison au critère corpus de core.qualify, refus explicite des critères de rejeu et provenance encore non raccordés, tests unitaires négatifs. Aucune modification de l'ancien validateur ni de ses seuils.
+- Suite : qualification logicielle de la branche, exécution du lecteur sur montage réel readonly, raccordement des producteurs SQL/Bronze et de leurs reçus de reconstruction, contre-épreuve à effectif constant, gate R0.9 sur contenu figé. Les tests unitaires simulés ne sont pas des preuves authentiques. Statuts R0–R6 inchangés.
+- Orientation R7 approuvée ; [plan de réception opérationnelle](PRODUCTION_READINESS_PLAN.md) ajouté séparément. Aucune tâche R7 reçue. La sécurité et les préparatifs isolés peuvent avancer sans activation production.
+- Aucun accès aux volumes actifs, aucun déploiement, aucun tag. Tests complets de ce lot à recevoir sur la CI.
+
+
 ### [2026-11-19T05:15:32Z] Reprise après A03/A05 — R0.9 : contrat de preuve authentique externe (IN_PROGRESS)
 
 - PR #17 fusionnée (`1ed7765fce9e03cb0f4813746c9e3eede68b6735`) ; deux CI réussies `44230373225`/`44230392889`. PR #16 fusionnée (`90b13a29cbe0edcf8cbdfb1515934d1fc6b2422f`) après CI `44232945792` réussie : correctifs logiciels A03/A05, **pas qualification des données R0.9**.
