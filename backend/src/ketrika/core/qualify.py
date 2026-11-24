@@ -147,7 +147,9 @@ def qualify(
         if key not in cache:
             document = load_json_report(path(key))
             producer_environment = environment
-            if external_corpus is not None and key in ("provenance", "rebuild"):
+            if external_corpus is not None and external_bronze is not None and key in (
+                "corpus", "provenance", "rebuild"
+            ):
                 producer_environment = {
                     "producer": PRODUCER,
                     "backend_image_id": environment.get("backend_image_id", ""),
@@ -202,13 +204,13 @@ def qualify(
         if external_corpus is not None and identity in ("provenance", "llm_gold", "rebuild"):
             if external_root is None or external_bronze is None:
                 raise QualificationSafetyError("external_producer_binding_pending")
-            if evidence.get("provenance") != evidence.get("rebuild"):
+            if not evidence.get("corpus") == evidence.get("provenance") == evidence.get("rebuild"):
                 raise QualificationSafetyError("external_replay_receipts_not_shared")
             if external_measure is None:
                 packet = inspect_packet(root, external_root, external_corpus)
                 native = report("rebuild")
                 external_measure = verify_external_replay(
-                    native, external_corpus, external_bronze, packet["packet_sha256"]
+                    native, external_corpus, external_bronze, packet["packet_sha256"], evidence_root
                 )
             value = external_measure
             if identity == "rebuild":
