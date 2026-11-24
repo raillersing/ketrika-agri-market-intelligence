@@ -14,6 +14,7 @@ from uuid import uuid4
 
 from ketrika.core import qualification_metrics as metrics
 from ketrika.core.corpus import load_manifest, validate_manifest
+from ketrika.core.external_corpus import inspect_packet
 from ketrika.core.qualification import QualificationSafetyError
 from ketrika.core.qualification_reports import (
     ENVIRONMENT_IDENTITY,
@@ -108,10 +109,16 @@ def qualify(
     *,
     now: datetime | None = None,
     environment: Mapping[str, str] = ENVIRONMENT_IDENTITY,
+    external_root: Path | None = None,
+    external_corpus: Path | None = None,
 ) -> dict[str, Any]:
     now = now or datetime.now(UTC)
     if phase not in ("R0", "all"):
         raise QualificationSafetyError("qualification_phase_unavailable")
+    if (external_root is None) != (external_corpus is None):
+        raise QualificationSafetyError("external_paths_required_together")
+    if external_corpus is not None and phase != "R0":
+        raise QualificationSafetyError("external_packet_only_for_R0")
     fingerprint = source_fingerprint(root)
     reason: str | None = None
     bundle: dict[str, Any] = {}
@@ -158,8 +165,13 @@ def qualify(
             counts = frontend_counts(receipt, load_json_report(path("frontend_vitest")))
             return metrics.measurement(counts["tests"], counts["tests"], True, counts=counts)
         if identity == "corpus":
-            report("corpus")
-            measured = validate_manifest(root / "backend", load_manifest(root / "backend"))
+            receipt = report("corpus")
+            if external_root is not None and external_corpus is not None:
+                measured = inspect_packet(root, external_root, external_corpus)
+                if receipt.get("packet_sha256") != measured["packet_sha256"]:
+                    raise QualificationSafetyError("external_packet_receipt_mismatch")
+            else:
+                measured = validate_manifest(root / "backend", load_manifest(root / "backend"))
             documents = len(measured["authentic_documents"])
             cells = measured["verified_annotation_cells"]
             return metrics.measurement(
@@ -168,7 +180,10 @@ def qualify(
                 documents > 0 and cells > 0,
                 annotation_cells=cells,
                 scope=measured["scope"],
+                **({"packet_sha256": measured["packet_sha256"]} if external_corpus else {}),
             )
+        if external_corpus is not None and identity in ("provenance", "llm_gold", "rebuild"):
+            raise QualificationSafetyError("external_producer_binding_pending")
         if identity in ("provenance", "llm_gold"):
             document = report("provenance")
             if document["dataset"] == "authentic":
@@ -308,6 +323,8 @@ def main() -> int:
     parser.add_argument("--root", type=Path, default=Path("/workspace"))
     parser.add_argument("--evidence", default="docs/evidence/qualification")
     parser.add_argument("--commit", required=True)
+    parser.add_argument("--external-root", type=Path)
+    parser.add_argument("--external-corpus", type=Path)
     parser.add_argument("--reports", type=Path, default=Path("/reports/qualification"))
     args = parser.parse_args()
     try:
@@ -321,7 +338,13 @@ def main() -> int:
         ):
             raise QualificationSafetyError("evidence_outside_repository")
         result = qualify(
-            args.root, target, args.commit, args.phase, environment=native_environment()
+            args.root,
+            target,
+            args.commit,
+            args.phase,
+            environment=native_environment(),
+            external_root=args.external_root,
+            external_corpus=args.external_corpus,
         )
         directory = args.reports / uuid4().hex
         directory.mkdir(parents=True, exist_ok=False)
