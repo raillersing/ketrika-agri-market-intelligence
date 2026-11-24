@@ -1,5 +1,13 @@
 # PROGRESS : registre d'exécution du MVP
 
+### 2026-11-24 — R0.9 : raccordement des preuves natives (IN_PROGRESS)
+
+- PR #19 fusionnée dans main : `54f20e97c64fd360f12e23e62c9f8b741e066380`, CI `45335053671` success, 2897 backend, 123 frontend, 26 E2E. Réception réelle du lecteur sur le volume historique transmise par le porteur du projet : exit 0, 6 fichiers, 664 cellules, paquet `ce7524a0447a47e0c87d7c913dd9ebd8635425334d7322f23ca030b360ce8a20` ; pas de réception SQL de ce commit.
+- Mini-plan : ADR/SPECS §28.2 ; producteur natif positif et négatif ; liaison des octets Bronze, SourceRecord, observations et références ; manifestes complets et contrôle de cellules ; tests négatifs ; assemblage QA sans modifier les rapports ; orchestration locale unique ; CI puis réception réelle du gate.
+- Nouveau lot : external_replay, raccordement core.qualify, scripts r09_native_replay/r09_assemble et scripts/r09-receive.ps1. Le runner doit travailler sur worktree propre, créer de nouveaux volumes, monter paquet/Bronze/code en lecture seule pendant le rejeu et conserver tous les reçus. Aucune mutation de production, aucune réutilisation destructive des volumes historiques.
+- Tests et réception à confirmer. Ne pas marquer DONE, ni créer mi-r0-qualified avant CI complète et rapport natif du gate sur le commit exact. R1 et R7 demeurent à recevoir.
+
+
 ### 2026-11-24 — R0.9 : lecteur externe et réception opérationnelle R7 (IN_PROGRESS)
 
 - Reprise : résultat local transmis par le porteur du projet sur `cbfaf36` : sauvegarde historique SHA-256 conforme, 6/6 fichiers conformes, 13 185 491 octets, 3 documents et 3 annotations, 664 cellules vérifiées. Reçu historique : 60 annotations numériques, human_reviewed=false, silver_imported=false, rebuild_qualified=false. Cette preuve locale de contrôle documentaire n'est pas une preuve du nouveau commit ni de la reconstruction ; le chargement Python de diagnostic n'était pas un check Docker complet.
