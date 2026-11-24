@@ -122,3 +122,69 @@ def test_mutation_during_validation_rejected(packet, monkeypatch):
 def test_readwrite_filesystem_rejected(tmp_path):
     with pytest.raises(QualificationSafetyError, match="external_mount_not_readonly"):
         external_corpus._readonly(tmp_path)
+
+
+def test_qualification_requires_both_external_paths(tmp_path):
+    from ketrika.core.qualify import qualify
+
+    with pytest.raises(QualificationSafetyError, match="external_paths_required_together"):
+        qualify(tmp_path, tmp_path, "a" * 40, "R0", external_root=tmp_path)
+    with pytest.raises(QualificationSafetyError, match="external_packet_only_for_R0"):
+        qualify(
+            tmp_path,
+            tmp_path,
+            "a" * 40,
+            "all",
+            external_root=tmp_path,
+            external_corpus=tmp_path,
+        )
+
+
+@pytest.mark.parametrize("matches", [True, False])
+def test_external_corpus_receipt_cannot_close_replay(packet, monkeypatch, matches):
+    from datetime import UTC, datetime
+
+    from ketrika.core import qualify as gate
+
+    checkout, allowed, base = packet
+    measured = external_corpus.inspect_packet(checkout, allowed, base)
+    measured.update(files=6, scope="unit-test-only")
+    now = datetime.now(UTC)
+    binding = {
+        "version": 1,
+        "commit": "a" * 40,
+        "source_fingerprint": "b" * 64,
+        "environment": dict(gate.ENVIRONMENT_IDENTITY),
+        "captured_at": now.isoformat(),
+        "dataset": "authentic",
+    }
+    bundle = {**binding, "evidence": {"corpus": {"path": "corpus.json"}}}
+    receipt = {
+        **binding,
+        "packet_sha256": measured["packet_sha256"] if matches else "0" * 64,
+    }
+    monkeypatch.setattr(gate, "source_fingerprint", lambda root: "b" * 64)
+    monkeypatch.setattr(gate, "load_sources", lambda path: [])
+    monkeypatch.setattr(gate, "evidence_path", lambda root, ref: root / ref["path"])
+    monkeypatch.setattr(
+        gate, "load_json_report", lambda path: bundle if path.name == "bundle.json" else receipt
+    )
+    monkeypatch.setattr(gate, "inspect_packet", lambda *args: measured)
+
+    result = gate.qualify(
+        checkout,
+        checkout,
+        binding["commit"],
+        "R0",
+        now=now,
+        external_root=allowed,
+        external_corpus=base,
+    )
+    criteria = {item["id"]: item for item in result["criteria"]}
+    assert criteria["corpus"]["state"] == ("passed" if matches else "unknown")
+    if not matches:
+        assert criteria["corpus"]["reason"] == "external_packet_receipt_mismatch"
+    for identity in ("provenance", "rebuild", "llm_gold"):
+        assert criteria[identity]["reason"] == "external_producer_binding_pending"
+    assert not result["passed"]
+    assert result["exit_code"] == 1
