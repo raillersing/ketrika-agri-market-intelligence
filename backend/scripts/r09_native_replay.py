@@ -25,10 +25,11 @@ from ketrika.pipelines.rebuild_qualification import (
     run_offline_replay,
     versioned_recompute_receipt,
 )
-from wb_archive_qualification import COPY, PACKET, store
 
 ROOT = Path("/workspace")
 OUT = Path("/out")
+COPY = Path("/copy")
+PACKET = Path("/packet/corpus")
 
 
 def binding() -> dict[str, Any]:
@@ -51,6 +52,8 @@ def binding() -> dict[str, Any]:
 
 
 def run(role: str) -> None:
+    from wb_archive_qualification import store
+
     if os.getuid() != 1000:
         raise ValueError("r09_nonroot_worker_required")
     require_network_none()
