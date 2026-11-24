@@ -156,9 +156,10 @@ def qualify(
                     "producer": PRODUCER,
                     "backend_image_id": environment.get("backend_image_id", ""),
                 }
-                if re.fullmatch(
-                    r"sha256:[0-9a-f]{64}", producer_environment["backend_image_id"]
-                ) is None:
+                if (
+                    re.fullmatch(r"sha256:[0-9a-f]{64}", producer_environment["backend_image_id"])
+                    is None
+                ):
                     raise QualificationSafetyError("external_backend_identity_missing")
             verify_binding(document, commit, fingerprint, producer_environment, now)
             cache[key] = document
@@ -206,7 +207,9 @@ def qualify(
         if external_corpus is not None and identity in ("provenance", "llm_gold", "rebuild"):
             if external_root is None or external_bronze is None:
                 raise QualificationSafetyError("external_producer_binding_pending")
-            if not (evidence.get("corpus") == evidence.get("provenance") == evidence.get("rebuild")):
+            if not (
+                evidence.get("corpus") == evidence.get("provenance") == evidence.get("rebuild")
+            ):
                 raise QualificationSafetyError("external_replay_receipts_not_shared")
             if external_measure is None:
                 packet = inspect_packet(root, external_root, external_corpus)
