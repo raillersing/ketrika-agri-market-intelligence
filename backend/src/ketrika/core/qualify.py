@@ -15,6 +15,7 @@ from uuid import uuid4
 from ketrika.core import qualification_metrics as metrics
 from ketrika.core.corpus import load_manifest, validate_manifest
 from ketrika.core.external_corpus import inspect_packet
+from ketrika.core.external_replay import PRODUCER, verify_external_replay
 from ketrika.core.qualification import QualificationSafetyError
 from ketrika.core.qualification_reports import (
     ENVIRONMENT_IDENTITY,
@@ -111,11 +112,14 @@ def qualify(
     environment: Mapping[str, str] = ENVIRONMENT_IDENTITY,
     external_root: Path | None = None,
     external_corpus: Path | None = None,
+    external_bronze: Path | None = None,
 ) -> dict[str, Any]:
     now = now or datetime.now(UTC)
     if phase not in ("R0", "all"):
         raise QualificationSafetyError("qualification_phase_unavailable")
     if (external_root is None) != (external_corpus is None):
+        raise QualificationSafetyError("external_paths_required_together")
+    if external_bronze is not None and external_corpus is None:
         raise QualificationSafetyError("external_paths_required_together")
     if external_corpus is not None and phase != "R0":
         raise QualificationSafetyError("external_packet_only_for_R0")
@@ -142,11 +146,24 @@ def qualify(
     def report(key: str) -> dict[str, Any]:
         if key not in cache:
             document = load_json_report(path(key))
-            verify_binding(document, commit, fingerprint, environment, now)
+            producer_environment = environment
+            if external_corpus is not None and key in ("provenance", "rebuild"):
+                producer_environment = {
+                    "producer": PRODUCER,
+                    "backend_image_id": environment.get("backend_image_id", ""),
+                }
+                if re.fullmatch(
+                    r"sha256:[0-9a-f]{64}", producer_environment["backend_image_id"]
+                ) is None:
+                    raise QualificationSafetyError("external_backend_identity_missing")
+            verify_binding(document, commit, fingerprint, producer_environment, now)
             cache[key] = document
         return cache[key]
 
+    external_measure: dict[str, Any] | None = None
+
     def compute(identity: str) -> dict[str, Any]:
+        nonlocal external_measure
         if identity == "e2e" and "e2e_receipt" in evidence:
             receipt = report("e2e_receipt")
             counts = e2e_counts(receipt, evidence_root)
@@ -183,7 +200,22 @@ def qualify(
                 **({"packet_sha256": measured["packet_sha256"]} if external_corpus else {}),
             )
         if external_corpus is not None and identity in ("provenance", "llm_gold", "rebuild"):
-            raise QualificationSafetyError("external_producer_binding_pending")
+            if external_root is None or external_bronze is None:
+                raise QualificationSafetyError("external_producer_binding_pending")
+            if evidence.get("provenance") != evidence.get("rebuild"):
+                raise QualificationSafetyError("external_replay_receipts_not_shared")
+            if external_measure is None:
+                packet = inspect_packet(root, external_root, external_corpus)
+                native = report("rebuild")
+                external_measure = verify_external_replay(
+                    native, external_corpus, external_bronze, packet["packet_sha256"]
+                )
+            value = external_measure
+            if identity == "rebuild":
+                return metrics.measurement(0, value["observations"], True, **value)
+            if identity == "llm_gold":
+                return metrics.measurement(0, value["observations"], True)
+            return metrics.measurement(value["valid"], value["observations"], True, **value)
         if identity in ("provenance", "llm_gold"):
             document = report("provenance")
             if document["dataset"] == "authentic":
@@ -325,6 +357,8 @@ def main() -> int:
     parser.add_argument("--commit", required=True)
     parser.add_argument("--external-root", type=Path)
     parser.add_argument("--external-corpus", type=Path)
+    parser.add_argument("--external-bronze", type=Path)
+    parser.add_argument("--external-evidence", type=Path)
     parser.add_argument("--reports", type=Path, default=Path("/reports/qualification"))
     args = parser.parse_args()
     try:
@@ -337,6 +371,12 @@ def main() -> int:
             or not target.is_relative_to(args.root.resolve())
         ):
             raise QualificationSafetyError("evidence_outside_repository")
+        if args.external_evidence is not None:
+            if args.external_corpus is None or not args.external_evidence.is_absolute():
+                raise QualificationSafetyError("external_evidence_requires_packet")
+            target = args.external_evidence.resolve(strict=True)
+            if target.is_relative_to(args.root.resolve()) or not target.is_dir():
+                raise QualificationSafetyError("external_evidence_must_be_outside_repository")
         result = qualify(
             args.root,
             target,
@@ -345,6 +385,7 @@ def main() -> int:
             environment=native_environment(),
             external_root=args.external_root,
             external_corpus=args.external_corpus,
+            external_bronze=args.external_bronze,
         )
         directory = args.reports / uuid4().hex
         directory.mkdir(parents=True, exist_ok=False)
