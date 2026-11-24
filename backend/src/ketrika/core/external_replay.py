@@ -215,9 +215,7 @@ def _claims(snapshot: dict[str, Any]) -> list[Any]:
 MAX_NATIVE_BYTES = 64 * 1024 * 1024
 
 
-def _native_report(
-    root: Path, document: dict[str, Any], role: str
-) -> dict[str, Any]:
+def _native_report(root: Path, document: dict[str, Any], role: str) -> dict[str, Any]:
     reference = document[role]
     name = role + ".json"
     path = root / name
@@ -237,6 +235,11 @@ def _native_report(
     for field in ("commit", "source_fingerprint", "packet_sha256", "producer_environment"):
         expected = document["environment"] if field == "producer_environment" else document[field]
         _require(result[field] == expected, "external_native_binding")
+    _require(result["role"] == role, "external_native_role")
+    from ketrika.core.qualify import utc
+
+    age = (utc(document["captured_at"]) - utc(result["captured_at"])).total_seconds()
+    _require(0 <= age <= 86400, "external_native_stale")
     return dict(result)
 
 
@@ -253,6 +256,15 @@ def verify_external_replay(
     negative = _native_report(evidence_root, document, "negative")
     diff = _native(positive, negative=False)
     _native(negative, negative=True)
+    recompute = positive["versioned_recompute"]
+    _require(
+        recompute["min_points_required"] == 36
+        and recompute["recompute_equal"] is True
+        and recompute["forecasts_recomputed"] is True
+        and recompute["eligible_series"] == 1
+        and recompute["forecasts_generated"] == [3, 3],
+        "external_versioned_recompute_missing",
+    )
     _require(
         positive["before"] == negative["before"]
         and positive["protected_before"] == negative["protected_before"]
