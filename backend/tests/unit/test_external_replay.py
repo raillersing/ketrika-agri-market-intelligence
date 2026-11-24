@@ -72,9 +72,7 @@ def test_reject_wrong_observation_identity(historical):
 
 
 def test_typed_roundtrip():
-    assert _typed(["object", [["x", ["array", [["int", "1"], ["null"]]]]]]) == {
-        "x": [1, None]
-    }
+    assert _typed(["object", [["x", ["array", [["int", "1"], ["null"]]]]]]) == {"x": [1, None]}
     with pytest.raises(QualificationSafetyError, match="external_unknown_manifest_type"):
         _typed(["unknown", 0])
 
