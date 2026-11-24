@@ -59,8 +59,10 @@ def _inventory(base: Path, expected: set[str]) -> None:
             raise QualificationSafetyError("external_directory_invalid")
         _readonly(directory)
         for item in directory.iterdir():
-            name = item.relative_to(base)
-            if item.is_symlink() or (name not in directories and name.as_posix() not in expected):
+            relative_item = item.relative_to(base)
+            if item.is_symlink() or (
+                relative_item not in directories and relative_item.as_posix() not in expected
+            ):
                 raise QualificationSafetyError("external_inventory_invalid")
 
 
