@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from datetime import date, datetime
 from decimal import Decimal
@@ -80,7 +81,7 @@ def _native(receipt: dict[str, Any], *, negative: bool) -> dict[str, Any]:
         receipt["network_before"] == receipt["network_after"] == NETWORK,
         "external_replay_network",
     )
-    _require(receipt["replay_passed"] is not negative, "external_replay_result")
+    _require(receipt["replay_passed"] is (not negative), "external_replay_result")
     stats = receipt["replay_stats"]
     _require(
         stats["source_records_total"] == stats["source_records_replayed"] == 3
@@ -96,7 +97,7 @@ def _native(receipt: dict[str, Any], *, negative: bool) -> dict[str, Any]:
     before, after = receipt["before"], receipt["after"]
     diff = compare_manifests(before, after)
     _require(diff == receipt["diff"], "external_diff_mismatch")
-    _require(diff["content_identical"] is not negative, "external_content_identity")
+    _require(diff["content_identical"] is (not negative), "external_content_identity")
     for snapshot in (before, after):
         tables = snapshot["tables"]
         _require(
@@ -211,12 +212,45 @@ def _claims(snapshot: dict[str, Any]) -> list[Any]:
     return claims
 
 
+MAX_NATIVE_BYTES = 64 * 1024 * 1024
+
+
+def _native_report(
+    root: Path, document: dict[str, Any], role: str
+) -> dict[str, Any]:
+    reference = document[role]
+    name = role + ".json"
+    path = root / name
+    _require(
+        reference["path"] == name and path.is_file() and not path.is_symlink(),
+        "external_native_path",
+    )
+    with path.open("rb") as stream:
+        raw = stream.read(MAX_NATIVE_BYTES + 1)
+    _require(
+        len(raw) <= MAX_NATIVE_BYTES
+        and hashlib.sha256(raw).hexdigest() == reference["sha256"],
+        "external_native_hash",
+    )
+    result = json.loads(raw)
+    _require(isinstance(result, dict), "external_native_not_object")
+    for field in ("commit", "source_fingerprint", "packet_sha256", "producer_environment"):
+        expected = document["environment"] if field == "producer_environment" else document[field]
+        _require(result[field] == expected, "external_native_binding")
+    return dict(result)
+
+
 def verify_external_replay(
-    document: dict[str, Any], packet: Path, bronze: Path, packet_sha256: str
+    document: dict[str, Any],
+    packet: Path,
+    bronze: Path,
+    packet_sha256: str,
+    evidence_root: Path,
 ) -> dict[str, Any]:
     """Compute native manifest equality and cell provenance, not a report flag."""
     _require(document["packet_sha256"] == packet_sha256, "external_replay_packet_mismatch")
-    positive, negative = document["positive"], document["negative"]
+    positive = _native_report(evidence_root, document, "positive")
+    negative = _native_report(evidence_root, document, "negative")
     diff = _native(positive, negative=False)
     _native(negative, negative=True)
     _require(
