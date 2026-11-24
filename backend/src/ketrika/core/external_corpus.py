@@ -21,7 +21,7 @@ MAX_METADATA_BYTES = 1024 * 1024
 def _directory(path: Path) -> Path:
     if not path.is_absolute() or ".." in path.parts:
         raise QualificationSafetyError("external_path_not_absolute")
-    for part in (path, *path.parents):
+    for part in reversed((path, *path.parents)):
         if part.is_symlink():
             raise QualificationSafetyError("external_symlink_forbidden")
     if not path.is_dir():
@@ -53,16 +53,14 @@ def _inventory(base: Path, expected: set[str]) -> None:
     directories = {Path(".")}
     for name in expected:
         directories.update(Path(name).parents)
-    for relative in directories:
+    for relative in sorted(directories, key=lambda path: (len(path.parts), str(path))):
         directory = base / relative
         if directory.is_symlink() or not directory.is_dir():
             raise QualificationSafetyError("external_directory_invalid")
         _readonly(directory)
         for item in directory.iterdir():
             name = item.relative_to(base)
-            if item.is_symlink() or (
-                name not in directories and name.as_posix() not in expected
-            ):
+            if item.is_symlink() or (name not in directories and name.as_posix() not in expected):
                 raise QualificationSafetyError("external_inventory_invalid")
 
 
